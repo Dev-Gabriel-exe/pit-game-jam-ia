@@ -105,6 +105,7 @@ function renderMain(){
  $('mainContent').innerHTML=phaseBody(m);
  phaseButtons();
  if(TEACHER){
+  // Pré-visualizar é diferente de liberar: o botão azul compartilha a etapa/fase com a turma.
   $('missionStatus').textContent=m.n===state.current_stage?'ETAPA ATIVA · '+phaseNames[state.phase]: 'ETAPA '+String(m.n).padStart(2,'0')+' · PRÉVIA';
   $('missionStatus').className='state-pill';
   $('navPrimary').textContent=m.n===state.current_stage?'Atualizar fase da turma':'Iniciar etapa '+String(m.n).padStart(2,'0')+' para turma';
@@ -257,9 +258,9 @@ function renderRoster(){
  const visible=roster.filter(x=>f==='all'||(f==='pending'&&x.stages?.some(p=>p.status==='submitted'))||(f==='online'&&Date.now()-new Date(x.last_seen_at).getTime()<90000)||(f==='help'&&Number(x.unread_chat)>0));
  $('rosterContent').innerHTML='<table class="roster-table"><thead><tr><th>Aluno</th><th>Etapa</th><th>Entregas</th><th>Atividade</th></tr></thead><tbody>'+
   visible.map(s=>{
-   const stages=s.stages||[],latest=stages[stages.length-1];
+   const stages=s.stages||[],latest=stages.find(p=>Number(p.stage)===Number(s.active_stage))||stages[stages.length-1];
    const when=Date.now()-new Date(s.last_seen_at).getTime()<90000?'🟢 Online':'⚪ Ausente';
-   return '<tr data-student="'+esc(s.id)+'"><td><b>'+esc(s.display_name)+'</b>'+(s.unread_chat?' <span class="count-bubble">'+s.unread_chat+'</span>':'')+'</td><td>'+esc(latest?.stage||0)+'/10 · '+esc(chooseStatus(latest?.status))+'</td><td>'+s.approved+' aprovadas</td><td>'+when+'</td></tr>'
+   return '<tr data-student="'+esc(s.id)+'"><td><b>'+esc(s.display_name)+'</b>'+(s.unread_chat?' <span class="count-bubble">'+s.unread_chat+'</span>':'')+'</td><td>'+esc(s.active_stage||latest?.stage||0)+'/10 · '+esc(chooseStatus(latest?.status))+'</td><td>'+s.approved+' aprovadas</td><td>'+when+'</td></tr>'
   }).join('')+'</tbody></table>'+(visible.length?'':'<p class="notice">Nenhum estudante nesse filtro.</p>');
  $('rosterContent').querySelectorAll('tr[data-student]').forEach(tr=>tr.onclick=()=>{selectedRoster=tr.dataset.student;renderStudentDetails()});
 }

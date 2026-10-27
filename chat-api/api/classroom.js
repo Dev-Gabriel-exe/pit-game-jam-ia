@@ -34,7 +34,7 @@ module.exports=async function handler(req,res){
   if(req.method==='POST'&&action==='heartbeat'){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
-   await pool.query('UPDATE pit_students SET last_seen_at=NOW() WHERE id=$1',[me.id]);
+   await pool.query('UPDATE pit_students SET last_seen_at=NOW(),active_stage=$2 WHERE id=$1',[me.id,n]);
    return res.json({ok:true,stage:n});
   }
   if(req.method==='POST'&&action==='progress'){
@@ -57,7 +57,7 @@ module.exports=async function handler(req,res){
   if(req.method==='GET'&&action==='roster'){
    if(!isTeacher)return err(res,403,'Acompanhamento exclusivo do professor.');
    const state=await classroom();
-   const query='SELECT s.id,s.display_name,s.joined_at,s.last_seen_at,'+
+   const query='SELECT s.id,s.display_name,s.joined_at,s.last_seen_at,s.active_stage,'+
    'COALESCE((SELECT MAX(p.stage) FROM pit_student_stages p WHERE p.student_id=s.id),0) AS highest_stage,'+
    "COALESCE((SELECT count(*)::int FROM pit_student_stages p WHERE p.student_id=s.id AND p.status='approved'),0) AS approved,"+
    "COALESCE((SELECT count(*)::int FROM pit_chat_messages m WHERE m.student_id=s.id AND m.author='student' AND m.read_at IS NULL),0) AS unread_chat,"+
