@@ -23,15 +23,18 @@ const assert=require('node:assert/strict');
  assert(dl[0].suggestedFilename().endsWith('.glb'),'glb download');
  console.log('PASS: resource filtering, searching, PNG and GLB browser downloads');
  const studentId='00000000-0000-4000-8000-000000000001',token='a'.repeat(64);
- const messages=[];
+ const messages=[];let teacherHasRead=false,studentHasRead=false;
+ const unreadMessages=(author)=>messages.filter(m=>m.author===author&&!(author==='student'?teacherHasRead:studentHasRead)).length;
  await page.route('https://pit-game-jam-chat.vercel.app/api/chat**',async route=>{
   const r=route.request(),u=new URL(r.url()),action=u.searchParams.get('action'),data=r.postDataJSON()||{};
   let body={ok:true};
   if(action==='health')body={ok:true,chat:true};
   if(action==='join')body={ok:true,studentId,name:data.name,token,code:'PITGAME26'};
   if(action==='messages')body={ok:true,messages};
-  if(action==='send'){messages.push({id:messages.length+1,author:r.headers()['x-pit-teacher-pin']?'teacher':'student',mission:data.mission||2,body:data.body,created_at:new Date().toISOString()});body={ok:true,id:messages.length}}
-  if(action==='threads')body={ok:true,threads:[{id:studentId,display_name:'Aluno Teste',unread:1,last_body:'Dúvida no jogo'}]};
+  if(action==='unread')body={ok:true,unread:unreadMessages(r.headers()['x-pit-teacher-pin']?'student':'teacher')};
+  if(action==='read'){if(r.headers()['x-pit-teacher-pin'])teacherHasRead=true;else studentHasRead=true;body={ok:true}}
+  if(action==='send'){const author=r.headers()['x-pit-teacher-pin']?'teacher':'student';messages.push({id:messages.length+1,author,mission:data.mission||2,body:data.body,created_at:new Date().toISOString()});if(author==='teacher')studentHasRead=false;else teacherHasRead=false;body={ok:true,id:messages.length}}
+  if(action==='threads')body={ok:true,threads:[{id:studentId,display_name:'Aluno Teste',unread:unreadMessages('student'),last_body:messages.length?messages[messages.length-1].body:'Dúvida no jogo'}]};
   if(action==='teacher-login')body={ok:true,room:'PITGAME26'};
   await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
  });
@@ -55,10 +58,24 @@ const assert=require('node:assert/strict');
  await page.locator('#pit-chat-root .pitc-fab').click();
  await page.locator('#pit-chat-root input[type="password"]').fill('test-pin-only');
  await page.locator('#pit-chat-root .pitc-primary').click();
+ await page.locator('#pit-chat-root .pitc-close').click();
+ await page.waitForFunction(()=>document.querySelector('#pit-chat-root .pitc-badge')?.textContent==='1');
+ assert.equal(await page.locator('#pit-chat-root .pitc-badge').isVisible(),true,'teacher unread visible with chat closed');
+ await page.locator('#pit-chat-root .pitc-fab').click();
  await page.locator('#pit-chat-root .pitc-thread').first().click();
+ await page.waitForFunction(()=>document.querySelector('#pit-chat-root .pitc-badge')?.hidden===true);
+ console.log('PASS: teacher badge appears while closed; clears when student question is read');
  await page.locator('#pit-chat-root textarea').fill('Acesse Objects, Add object, 3D Model e selecione seu GLB.');
  await page.locator('#pit-chat-root .pitc-primary').click();
  assert.equal(messages.length,2);
+ await page.goto(base+'aluno.html',{waitUntil:'domcontentloaded'});
+ await page.locator('#pit-quest-deck').waitFor();
+ await page.waitForFunction(()=>document.querySelector('#pit-chat-root .pitc-badge')?.textContent==='1');
+ assert.equal(await page.locator('#pit-chat-root .pitc-badge').isVisible(),true,'student reply badge visible with chat closed');
+ await page.locator('#pit-chat-root .pitc-fab').click();
+ await page.locator('#pit-chat-root .pitc-messages').waitFor();
+ await page.waitForFunction(()=>document.querySelector('#pit-chat-root .pitc-badge')?.hidden===true);
+ console.log('PASS: student receives reply notification on closed button; clears when opened');
  console.log('PASS: professor inbox, individual reply UI');
  assert.equal(errors.length,0,'browser JS errors: '+errors.join('; '));
  await browser.close();

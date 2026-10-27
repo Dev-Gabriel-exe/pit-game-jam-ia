@@ -22,6 +22,9 @@ async function call(action,method='GET',body=null,token='',pin='',origin='https:
  const token=joined.body.token,studentId=joined.body.studentId;
  console.log('PASS: student join (QA account '+studentId+')');
  const wrongToken=await call('messages');assert.equal(wrongToken.status,401);
+ const noTokenUnread=await call('unread');assert.equal(noTokenUnread.status,401);
+ const initialUnread=await call('unread','GET',null,token);
+ assert.equal(initialUnread.status,200);assert.equal(initialUnread.body.unread,0,'new student has no teacher replies');
  const teacherBlocked=await call('threads');assert.equal(teacherBlocked.status,403);
  const badPin=await call('teacher-login','POST',{},'','wrong-teacher-pin');assert.equal(badPin.status,403);
  const disallowed=await call('health','GET',null,'','','https://evil.example');assert.equal(disallowed.status,403);
@@ -31,7 +34,9 @@ async function call(action,method='GET',body=null,token='',pin='',origin='https:
  assert.equal(sent.status,201,JSON.stringify(sent.body));
  const fetched=await call('messages','GET',null,token);
  assert.equal(fetched.status,200);assert(fetched.body.messages.some(m=>m.body===question&&m.author==='student'));
- console.log('PASS: student -> real API -> persistent DB -> student inbox');
+ const stillNoReplies=await call('unread','GET',null,token);
+ assert.equal(stillNoReplies.status,200);assert.equal(stillNoReplies.body.unread,0);
+ console.log('PASS: student -> real API -> persistent DB -> student inbox & unread notifications');
  const read=await call('read','POST',{},token);assert.equal(read.status,200);
  console.log('PASS: read/update message status');
  console.log('NOTE: teacher reply requires private PIN, tested separately without publishing a credential.');

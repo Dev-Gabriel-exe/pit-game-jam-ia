@@ -65,6 +65,16 @@ module.exports = async function handler(req, res) {
       if(!teacherOK(req)) return sendError(res,403,'PIN do professor inválido.');
       return res.status(200).json({ok:true,room:ROOM});
     }
+    if(req.method==='GET' && action==='unread') {
+      if(teacherOK(req)) {
+        const rows=await db.query("SELECT count(*)::int AS unread FROM pit_chat_messages WHERE room_code=$1 AND author='student' AND read_at IS NULL",[ROOM]);
+        return res.status(200).json({ok:true,unread:rows.rows[0].unread});
+      }
+      const me=await student(req);
+      if(!me) return sendError(res,401,'Sessão do aluno inválida.');
+      const rows=await db.query("SELECT count(*)::int AS unread FROM pit_chat_messages WHERE room_code=$1 AND student_id=$2 AND author='teacher' AND read_at IS NULL",[ROOM,me.id]);
+      return res.status(200).json({ok:true,unread:rows.rows[0].unread});
+    }
     if(req.method==='GET' && action==='threads') {
       if(!teacherOK(req)) return sendError(res,403,'Acesso exclusivo do professor.');
       const data=await db.query(
