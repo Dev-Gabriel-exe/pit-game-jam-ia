@@ -54,6 +54,14 @@ const assert=require('node:assert/strict');
  console.log('PASS: 6 missions, 3D practical route, student chat login/send UI');
  await page.goto(base+'professor.html',{waitUntil:'domcontentloaded'});
  await page.locator('#pit-quest-deck').waitFor();
+ // Regressão: "Apresentar missão" deve selecionar e abrir as instruções, não apenas fechar a animação.
+ await page.locator('[data-pit-scene="4"]').click();
+ await page.locator('#pitTransition.active').waitFor();
+ await page.locator('#pitTransition button').click(); // Pular transição
+ assert.equal(await page.locator('#pit-quest-deck [data-qmission="4"]').getAttribute('aria-selected'),'true','apresentar missão 4 seleciona a missão detalhada');
+ assert.match(await page.locator('#pit-quest-deck .pitq-pane h3').textContent(),/FORJA DE IA/);
+ console.log('PASS: teacher presents selected mission after cinematic skip');
+
  assert.equal(await page.locator('.pitq-rail button').count(),6);
  await page.locator('#pit-chat-root .pitc-fab').click();
  await page.locator('#pit-chat-root input[type="password"]').fill('test-pin-only');
