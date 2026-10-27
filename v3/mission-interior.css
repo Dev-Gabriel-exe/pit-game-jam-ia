@@ -250,3 +250,10 @@ body[data-role="student"].pit-mission-one #phasebar{display:none}
 body[data-role="student"].pit-mission-one #missionTitle,body[data-role="student"].pit-mission-one #missionSubtitle{display:none}
 body[data-role="student"].pit-mission-one .mainhead{padding:7px 16px}
 body[data-role="student"].pit-mission-one .mission-actions #roomState{max-width:48ch}
+
+/* Os capítulos da coluna lateral usam as mesmas dez artes aprovadas no carrossel. */
+body[data-role="student"] .stage-poster{background:#0d0d11}
+body[data-role="student"] .stage-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.74) saturate(1.08);z-index:0}
+body[data-role="student"] .stage-btn.current .stage-art{filter:brightness(.95) saturate(1.15)}
+body[data-role="student"] .stage-poster:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(90deg,#090b0c52,#090b0c11 53%,#0000005c)}
+body[data-role="student"] .stage-emoji{z-index:1;font-size:23px;opacity:.85}
