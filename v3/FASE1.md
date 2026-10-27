@@ -49,3 +49,24 @@
 - [ ] Conferir professor, acompanhamento e chat sem regressões.
 
 **Critério de encerramento:** todos os testes em navegador real aprovados e visual do carrossel validado pelo responsável. Somente então começar a fase pedagógica seguinte.
+
+## Iteração dark fantasy — 27/10/2026
+
+Referência aprovada pelo responsável: seleção visual de missões inspirada em dark-fantasy/RPG, com identidade autoral PIT Game Jam e sem usar assets proprietários de Diablo.
+
+### Entregue nesta iteração (branch V3, sem alterar main)
+
+- Tela de seleção reformulada em formato de trilha/carrossel horizontal responsivo, com dez missões ilustradas.
+- Cenário gótico vetorial original (`v3/abyss-bg.svg`), molduras de ferro e bronze, luz de brasas e painel de abertura cinematográfica.
+- Dez ilustrações vetoriais originais (`v3/mission-art.js`) inseridas nos cards com o tema visual (`v3/diablo-theme.css`).
+- Cabeçalho de RPG, progresso **real** calculado apenas por missões aprovadas, nome autenticado do aluno e etapas liberadas.
+- Mantidas as restrições de missão bloqueada, o registro de evidência, o caderno e a lógica existente de integração.
+- Navegação por card, setas, teclas e toque, com modo de movimento reduzido.
+- Verificações estáticas aprovadas: sintaxe dos 3 JS, geração das 10 ilustrações, presença dos IDs de integração, CSS balanceado, scripts incluídos e bloqueio de missão pela lógica existente.
+
+### Pendente
+
+- Homologação visual no navegador real e testes manuais desktop/celular.
+- Testar autenticação, progressão, aprovações, bloqueio docente e abertura cinematográfica com uma turma de teste.
+- Rever a qualidade gráfica com o responsável. O visual implementado usa arte vetorial, não reprodução fotográfica pixel a pixel do conceito gerado.
+- Não avançar para Fase 2 até validação do responsável.
