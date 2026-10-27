@@ -25,7 +25,7 @@ O projeto possui seis horas e dez missões. A proporção entre conceitos e ofic
 | 08 Polimento | 5 | 4 | 28 | 3 | 40 |
 | 09 Playtest Cruzado | 3 | 3 | 16 | 3 | 25 |
 | 10 O Lançamento | 4 | 3 | 18 | 5 | 30 |
-| **TOTAL** | **61** | **45** | **225** | **29** | **360** |
+| **TOTAL** | **61** | **45** | **226** | **28** | **360** |
 
 Os minutos são **pesos didáticos**, não um cronômetro obrigatório ou falas de professor. As abas do professor exibem o tempo de cada parte.
 
