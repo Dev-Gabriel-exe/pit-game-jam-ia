@@ -191,3 +191,11 @@
  .pit-arcade .arcade-journey-fill{transition:none}
  .pit-arcade .arcade-track{scroll-behavior:auto}
 }
+
+/* Preview mode is intentionally read-only; it does not connect to the classroom. */
+.visual-preview-option{margin-top:14px;padding:16px 10px 6px;text-align:center;border-top:1px solid #71809655}
+.visual-preview-option p{color:#b4c8d5;font-size:14px;line-height:1.45;margin:0 0 11px}
+.visual-preview-button{display:block;width:100%;min-height:50px;padding:12px 16px;color:#ffe2bb;background:linear-gradient(180deg,#552919,#221513);border:2px solid #aa643e;border-radius:8px;font-weight:900;letter-spacing:.055em;cursor:pointer;box-shadow:0 0 14px #db4f2333}
+.visual-preview-button:hover,.visual-preview-button:focus-visible{border-color:#ffb46d;background:#70331d}
+body.pit-v3-visual-preview #chatButton,body.pit-v3-visual-preview #changeUser,body.pit-v3-visual-preview #startWork,body.pit-v3-visual-preview #submitWork{display:none!important}
+body.pit-v3-visual-preview .mission-submission:after{content:"DEMONSTRAÇÃO VISUAL · O ENVIO REAL É FEITO PELA OFICINA OFICIAL";display:block;text-align:center;font-size:11px;color:#eab77e;padding:7px}
