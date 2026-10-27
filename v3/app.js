@@ -174,6 +174,8 @@ function renderMain(){
  $('missionTitle').textContent=m.icon+' '+m.title.toUpperCase();
  $('missionSubtitle').textContent=m.subtitle;
  const missionOne=!TEACHER&&m.n===1&&!!window.PIT_MISSION_ONE;
+ document.body.classList.toggle('pit-mission-one',missionOne);
+ if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
  $('mainContent').innerHTML=missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
  phaseButtons();
  if(TEACHER){
