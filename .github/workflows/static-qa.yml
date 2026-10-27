@@ -26,14 +26,18 @@ jobs:
           prof=(root/"professor.html").read_text()
           js=(root/"biblioteca.js").read_text()
           assert index.count('data-filter=') == 6
-          assert 'pit_creator_mode_v08' in aluno and 'pit_gamejam_student_v02' in aluno
-          assert 'pit-portal-nav' in aluno and 'pit-portal-nav' in prof
-          assert 'pit-sync-guide' in aluno and 'pit-sync-guide' in prof
+          assert 'data-role="student"' in aluno and 'data-role="teacher"' in prof
+          assert 'v2/missions.js' in aluno and 'v2/app.js' in aluno
+          assert 'v2/missions.js' in prof and 'v2/app.js' in prof
+          missions=(root/'v2/missions.js').read_text()
+          assert len(re.findall(r'\{n:\d+,title:', missions))==10
+          assert (root/'v2/style.css').stat().st_size > 10000
+          assert (root/'qa/v2-e2e.cjs').stat().st_size > 5000
           assert "glb-bau" in js and "mapa-cidade" in js and "wav-coleta" in js
           ids=re.findall(r"\{id:'([^']+)'", js)
           assert len(ids)==28 and len(set(ids))==28, (len(ids),len(set(ids)))
           assert (root/"cover.jpg").read_bytes()[:3] == b'\xff\xd8\xff'
-          print("PASS: 3 pages, 28 unique resources, links and browser storage contracts")
+          print("PASS: V2 10 missions, 28 resources, functioning generators")
           PY
       - name: Test GLB, WAV and SVG resource generators
         run: |

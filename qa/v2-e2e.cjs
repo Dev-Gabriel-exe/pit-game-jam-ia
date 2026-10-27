@@ -32,13 +32,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const tc=await browser.newContext({viewport:{width:1440,height:980}}),sc=await browser.newContext({viewport:{width:1440,height:980}});
  const tp=await tc.newPage(),sp=await sc.newPage();
  for(const p of [tp,sp]){p.on('pageerror',e=>error.push(e.message));await p.route('https://pit-game-jam-chat.vercel.app/api/**',fixture)}
- await tp.goto(base+'professor-v2.html');
+ await tp.goto(base+'professor.html');
  await tp.locator('#authPin').fill('test-pin-1234567890');
  await tp.locator('#authSubmit').click();
  await tp.locator('#workspace:visible').waitFor();
  assert.equal(await tp.locator('.stage-btn').count(),10);
  assert.match(await tp.locator('#missionTitle').innerText(),/O CHAMADO/);
- await sp.goto(base+'aluno-v2.html');
+ await sp.goto(base+'aluno.html');
  await sp.locator('#authName').fill('Aluno QA');
  await sp.locator('#authCode').fill('PITGAME26');
  await sp.locator('#authSubmit').click();
