@@ -75,7 +75,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await sp.locator('#submitWork').isDisabled(),false,'proof unlocked for the same three practiced steps');
  await sp.locator('#evidenceInput').fill('Criei o conceito de um jogo de exploração com três objetos.');
  await sp.locator('#startWork').click();
- await sp.getByText('Em andamento').first().waitFor();
+ await sp.waitForFunction(()=>document.getElementById('missionStatus')?.textContent?.includes('Em atividade'));
  await sp.locator('#submitWork').click();
  await sp.getByText('Aguardando validação').first().waitFor();
  await tp.locator('#rosterButton').click();
