@@ -1,0 +1,36 @@
+name: PIT Game Jam · Phase 1 Arcade Preview
+on:
+  push:
+    paths:
+      - 'fase1.html'
+      - 'v3/phase1.css'
+      - 'v3/phase1.js'
+      - 'qa/phase1-e2e.cjs'
+      - '.github/workflows/phase1-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  phase1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test dependency
+        run: npm install --no-save --ignore-scripts playwright@1.58.2
+      - name: Run preview screenshot and navigation tests
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/preview.log 2>&1 &
+          node --check v3/phase1.js
+          node qa/phase1-e2e.cjs
+      - name: Capture screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fase1-desktop-mobile
+          path: |
+            /tmp/phase1-desktop.png
+            /tmp/phase1-mobile.png
+          if-no-files-found: ignore
