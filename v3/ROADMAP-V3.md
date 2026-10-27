@@ -99,3 +99,15 @@ Implementar **Fase 2 — Missão 01 ponta a ponta** antes de multiplicar telas o
 ## Atualização da Fase 2 — 27/10/2026
 
 Missão 01 — O Chamado implementada na branch V3 com interface de fantasia gótica e campos de planejamento vinculados à entrega real da oficina. O carrossel Fase 1 segue intacto. Documentação detalhada em [FASE2.md](./FASE2.md). Antes de começar a expansão das 9 missões, validar o piloto no navegador real e fazer pelo menos um teste completo de cadastro, envio, revisão e aprovação. O código do professor e a API não foram modificados nesta fase.
+
+## Consolidação do Caderno do Professor — Fase 2.5 (27/10/2026)
+
+**Perfil didático confirmado:** professor sem experiência prévia com jogos, lecionando para estudantes de ensino superior de TI. **Sem notas de fala, sem texto de condução ao professor e sem slides superficiais.** A própria apresentação contém conceito, explicação técnica, exemplo executável e relação com a prática do aluno.
+
+- Implementada a **Missão 01 do Professor**, com conceitos completos de game design, mecânica/dinâmica/experiência, core game loop, objetivo, regras e feedback.
+- Incluído simulador de coleta de cristais e porta com lógica que pode ser testada e reiniciada, para compreender condições/ações antes de abrir o GDevelop.
+- Conceitos, exemplo, criação e resultados correspondem exatamente ao registro da Missão 01 do aluno.
+- **Distribuição temporal das dez missões** ajustada: maior proporção de explicação nas missões conceituais e maior peso de oficina nas missões técnicas, totalizando 360 minutos. Tempo mostrado nas abas do professor.
+- Identidade gótica aplicada ao Caderno do Professor, com dez ilustrações e prévia isolada de banco de dados/`?preview=1`.
+- Piloto Fase 2.5 implementado, mas **não homologado em navegador real**. As missões 02–10 do professor ainda usam o conteúdo anterior e precisam ser revistas junto com o aluno na Fase 3.
+- Detalhes, matriz de horários e testes: [FASE2-5-PROFESSOR.md](./FASE2-5-PROFESSOR.md).
