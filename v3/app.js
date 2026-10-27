@@ -65,6 +65,11 @@ function tasks(list){return list.map((text,i)=>'<div class="task-card"><span cla
 
 function getTeacherContent(m){return teacherContent[m.n-1]||null}
 function visualSimulator(m){
+ if(m.n===5)return '<section class="simulation logic-lab"><div class="simulation-head"><span>◈ LABORATÓRIO VIVO DE LÓGICA</span><span>EVENTOS → VARIÁVEIS</span></div>'+
+ '<h3>O jogo muda quando uma regra é ativada.</h3><p>Uma variável registra um fato. Outro evento consulta esse fato e decide o que acontecerá a seguir.</p>'+
+ '<div class="logic-states"><div><small>VIDA</small><strong id="logicHealth">3</strong></div><div><small>SCORE</small><strong id="logicScore">0</strong></div><div><small>TEM CHAVE?</small><strong id="logicKey">NÃO</strong></div><div><small>PORTA</small><strong id="logicDoor">FECHADA</strong></div></div>'+
+ '<div class="buttonrow logic-actions"><button class="outline" type="button" data-logic="item">💎 Coletar item</button><button class="outline" type="button" data-logic="damage">❤️ Tomar dano</button><button class="outline" type="button" data-logic="key">🔑 Pegar chave</button><button class="action" type="button" data-logic="door">🚪 Tentar porta</button><button class="ghost" type="button" data-logic="reset">↺ Reiniciar</button></div>'+
+ '<div class="logic-output" id="logicOutput" aria-live="polite">Jogo iniciado. Score=0 · Vida=3 · TemChave=0. Escolha uma ação para observar a regra.</div></section>';
  const info=getTeacherContent(m);
  if(!info)return '';
  const body=info.labels.map((label,i)=>'<div class="sim-cell '+(i===0?'sim-on':'')+'" data-sim-stage="'+i+'"><span class="sim-cell-index">0'+(i+1)+'</span><span class="sim-cell-symbol">'+['🎮','⚡','🏆'][i]+'</span><strong>'+esc(label)+'</strong><p>'+esc(info.details[i])+'</p></div>').join('');
@@ -186,6 +191,27 @@ function renderMain(){
   localStorage.setItem('pit_v3_checks_'+m.n,JSON.stringify([...checks].sort()));
   renderMain();
  });
+ const logicButtons=$('mainContent').querySelectorAll('[data-logic]');
+ if(logicButtons.length){
+  const logic={health:3,score:0,key:false,door:false};
+  logicButtons.forEach(btn=>btn.onclick=()=>{
+   const action=btn.dataset.logic;
+   let message='';
+   if(action==='reset'){logic.health=3;logic.score=0;logic.key=false;logic.door=false;message='Estado restaurado. Observe como cada nova decisão modifica as variáveis.'}
+   if(action==='item'){logic.score++;message='SE o jogador toca no item → remover item e aumentar Score em 1.'}
+   if(action==='damage'){logic.health=Math.max(0,logic.health-1);message=logic.health?'SE recebe dano → reduzir Vida em 1.':'Vida chegou a zero: uma condição de derrota pode acontecer.'}
+   if(action==='key'){logic.key=true;message='SE pega chave → guardar TemChave=1. A porta continua fechada até receber uma nova interação.'}
+   if(action==='door'){
+    if(logic.key){logic.door=true;message='SE toca porta E TemChave=1 → abrir a porta. O jogo consultou a variável.'}
+    else message='Sem chave: a porta permanece fechada. A condição não foi satisfeita.';
+   }
+   $('logicHealth').textContent=String(logic.health);
+   $('logicScore').textContent=String(logic.score);
+   $('logicKey').textContent=logic.key?'SIM':'NÃO';
+   $('logicDoor').textContent=logic.door?'ABERTA ✓':'FECHADA';
+   $('logicOutput').textContent=message;
+  });
+ }
  const sim=$('simNext');if(sim){let current=0;sim.onclick=()=>{
   current=(current+1)%3;
   $('mainContent').querySelectorAll('[data-sim-stage]').forEach(el=>el.classList.toggle('sim-on',Number(el.dataset.simStage)===current));
