@@ -1,0 +1,193 @@
+/* V3 · Dark fantasy, visual direction inspired by dungeon RPGs.
+   No proprietary game assets. Original vector backdrop and responsive CSS.
+   Loaded AFTER arcade-gallery.css, only inside the student mission gallery. */
+.pit-arcade.gallery-overlay {
+ --abyss:#090b0e; --iron:#25282b; --steel:#72716d; --bronze:#ac7050; --gold:#f6c781; --ember:#ff662b; --parchment:#f1e4cf;
+ color:var(--parchment); background:#090c10;
+ font-family:"Segoe UI",Arial,sans-serif;
+}
+.pit-arcade .arcade-ambient{
+ position:fixed; inset:0;z-index:-1;
+ background:linear-gradient(180deg,#080a0dd9 0%,#090b11a8 21%,#090a0fc9 58%,#05070aea 95%),url("./abyss-bg.svg") center center / cover no-repeat;
+}
+.pit-arcade .arcade-ambient:before{
+ background:radial-gradient(circle at 0% 60%,#ea592120,transparent 36%),radial-gradient(circle at 100% 56%,#ef612b16,transparent 36%),repeating-linear-gradient(0deg,transparent 0 90px,#ffe4bf04 91px 92px);
+ background-size:auto;mask-image:none;
+}
+.pit-arcade .arcade-ambient:after{box-shadow:inset 0 0 180px 45px #050608}
+.pit-arcade .arcade-layout{width:min(1920px,100%);min-height:100dvh;max-width:1920px}
+.pit-arcade .arcade-hud{
+ height:auto;min-height:80px;display:grid;grid-template-columns:minmax(235px,1fr) auto minmax(235px,1fr);
+ gap:14px;padding:10px clamp(16px,2.4vw,44px);border-bottom:1px solid #83664b6b;
+ background:linear-gradient(#030507ee,#17151aec);box-shadow:0 3px 17px #000c,inset 0 -2px #170b0c;
+}
+.pit-arcade .arcade-brand{gap:12px;font:700 clamp(16px,1.6vw,24px)/1.1 Georgia,"Times New Roman",serif;letter-spacing:.14em;text-shadow:0 2px 7px black}
+.pit-arcade .arcade-brand-mark{
+ width:47px;height:54px;flex-shrink:0;clip-path:polygon(50% 0,88% 13%,96% 55%,50% 100%,4% 55%,12% 13%);
+ background:linear-gradient(120deg,#6f3827,#241917 33%,#121516 58%,#d88440);
+ box-shadow:inset 0 0 10px #e8a048;
+ border:2px solid #c29a66;filter:drop-shadow(0 0 14px #fa561764);color:#ffb65c;font-size:25px;
+}
+.pit-arcade .arcade-brand small{font:600 9px/1.5 "Segoe UI",sans-serif;letter-spacing:.24em;color:#b6a18e;margin-top:4px}
+.pit-arcade .arcade-tabs{display:flex;align-items:stretch;justify-content:center;gap:clamp(10px,2vw,34px)}
+.pit-arcade .arcade-tab{min-width:85px;padding:9px 6px;display:grid;align-content:center;justify-items:center;gap:5px;border-bottom:2px solid transparent;color:#938b8e;font-size:10px;font-weight:800;letter-spacing:.13em;user-select:none}
+.pit-arcade .arcade-tab .tab-glyph{font-size:22px;filter:grayscale(1);opacity:.62}
+.pit-arcade .arcade-tab.selected{color:#ffddb0;border-bottom-color:#ef5d36;background:radial-gradient(ellipse at bottom,#b83e2438,transparent 70%);text-shadow:0 0 10px #f68a53}
+.pit-arcade .arcade-tab.selected .tab-glyph{filter:none;opacity:1}
+.pit-arcade .arcade-hud-right{justify-content:flex-end;min-width:0;gap:15px}
+.pit-arcade .arcade-player{padding:7px 14px 7px 12px;min-width:155px;background:linear-gradient(100deg,#130f0ec4,#101216e0);border:1px solid #6b544281;box-shadow:inset 0 0 17px #000a;display:grid;gap:4px}
+.pit-arcade .arcade-player strong{font:600 13px/1.1 Georgia,serif;letter-spacing:.07em;color:#f4e4d0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:145px}
+.pit-arcade .arcade-player small{font-size:10px;letter-spacing:.09em;color:#c89370}
+.pit-arcade .arcade-season{display:none}
+.pit-arcade .arcade-exit{font-size:11px;border-color:#7d5446;border-radius:50%;width:43px;height:43px;padding:0;background:radial-gradient(circle,#4c2323,#170e11 75%);color:#eed0bc;box-shadow:inset 0 0 8px #ee553640,0 0 6px #000;transition:box-shadow .2s,transform .2s}
+.pit-arcade .arcade-exit:hover{background:#6b3020;border-color:#e5a16b;transform:scale(1.08)}
+.pit-arcade .arcade-heading{position:relative;padding:22px clamp(15px,3vw,60px) 6px;display:flex;align-items:center;justify-content:center;gap:24px;min-height:145px}
+.pit-arcade .arcade-title-block{text-align:center;flex:1;min-width:0;padding-left:min(17vw,210px)}
+.pit-arcade .arcade-overline{font-size:10px;font-weight:700;color:#c09b71;letter-spacing:.32em}
+.pit-arcade .arcade-heading h2{font:700 clamp(30px,3.1vw,55px)/1.12 Georgia,"Times New Roman",serif;letter-spacing:.16em;margin:6px 0 6px;color:#f4e8da;text-shadow:0 3px 1px #27100c,0 0 25px #ed6d3936}
+.pit-arcade .arcade-heading h2 span{color:#f4e8da;text-shadow:inherit}
+.pit-arcade .arcade-heading p{color:#cabbaa;letter-spacing:.3em;font:600 clamp(9px,.9vw,13px)/1.4 Georgia,serif;text-transform:uppercase;margin-top:7px}
+.pit-arcade .arcade-journey{
+ flex:0 0 clamp(180px,18vw,260px);border:1px solid #77624b;background:linear-gradient(165deg,#09090ce9,#1e1b1cd9);
+ box-shadow:0 0 0 4px #08090bb3,0 12px 25px #000a,inset 0 0 15px #000; padding:13px 15px;align-self:center;
+}
+.pit-arcade .arcade-journey-head{display:flex;justify-content:space-between;gap:9px;align-items:center}
+.pit-arcade .arcade-journey-head small{font-size:10px;letter-spacing:.13em;color:#c0b2a1;font-weight:800}
+.pit-arcade .arcade-journey-head strong{font:700 21px Georgia,serif;color:#eed9be}
+.pit-arcade .arcade-journey-rail{height:9px;background:#060609;box-shadow:inset 0 1px 5px #000;border:1px solid #453f40;overflow:hidden;margin-top:10px}
+.pit-arcade .arcade-journey-fill{height:100%;width:0%;display:block;background:linear-gradient(90deg,#82201c,#f45327 75%,#ffc278);box-shadow:0 0 14px #ff5717;transition:width .45s}
+.pit-arcade .arcade-journey-foot{color:#a8a0a0;font-size:11px;margin-top:8px}
+.pit-arcade .arcade-line{width:96%;height:3px;margin:12px auto 0;background:linear-gradient(90deg,transparent,#834b38,#ec713a,#6c463b,transparent);box-shadow:0 2px 5px #000}
+.pit-arcade .arcade-carousel-area{flex:0 0 auto;min-height:0;display:flex;align-items:center;padding:19px clamp(32px,3.4vw,68px) 0}
+.pit-arcade .arcade-track{
+ display:flex;align-items:center;gap:clamp(7px,.65vw,13px);
+ width:100%;height:clamp(360px,29vw,435px);padding:14px 9px 20px;
+ position:relative;perspective:none;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#714431 #090b0e;
+ scroll-snap-type:x mandatory;overscroll-behavior-x:contain;touch-action:pan-x pan-y;
+}
+.pit-arcade .arcade-card,
+.pit-arcade .arcade-card[data-distance],
+.pit-arcade .arcade-card.out-of-view{
+ --mx:0px;--my:0px;position:relative;top:auto;left:auto;display:block;flex:0 0 clamp(145px,9.4vw,185px);
+ width:clamp(145px,9.4vw,185px);height:clamp(338px,27vw,400px);padding:4px;margin:0;
+ transform:none;opacity:1;z-index:1;filter:none;
+ border:2px ridge #6d5141;border-radius:1px;pointer-events:auto;
+ background:linear-gradient(135deg,#201f20,#080a0e 32%,#343131 96%);
+ box-shadow:inset 0 0 0 1px #111,0 8px 19px #000c;
+ will-change:auto;scroll-snap-align:center;
+ transition:filter .22s,box-shadow .22s,border-color .22s,background .22s;
+}
+.pit-arcade .arcade-card:before{inset:-4px;opacity:.0;border-radius:2px;background:linear-gradient(45deg,#f35b22,transparent 35%,#ffb152);transition:opacity .25s;filter:blur(9px)}
+.pit-arcade .arcade-card.current{border-color:#ffab43;box-shadow:0 0 0 2px #4d2615,0 0 20px #ff6a27c9,inset 0 0 12px #d9421d;z-index:4}
+.pit-arcade .arcade-card.current:before{opacity:.85}
+.pit-arcade .arcade-card[data-state="locked"]{filter:grayscale(.82) brightness(.52)}
+.pit-arcade .arcade-card[data-state="locked"].current{filter:grayscale(.55) brightness(.8)}
+.pit-arcade .arcade-card[data-state="complete"]{border-color:#c29d58}
+.pit-arcade .arcade-card:hover:not(.current){border-color:#c88b58;filter:brightness(1.2)}
+.pit-arcade .arcade-card[data-state="locked"]:hover:not(.current){filter:grayscale(.65) brightness(.7)}
+.pit-arcade .arcade-card.current:hover{filter:brightness(1.08)}
+.pit-arcade .arcade-card-button{height:calc(100% - 29px);border-radius:0;background:#070a0d}
+.pit-arcade .arcade-poster{inset:0}
+.pit-arcade .arcade-poster:after{background:linear-gradient(0deg,#060607 2%,#08090bed 16%,#06060825 48%,#08080958 100%)}
+.pit-arcade .arcade-poster .mission-illustration{width:100%;height:100%;transform:scale(1.04)}
+.pit-arcade .arcade-poster-top{left:0;top:0;right:auto;display:flex;font-size:12px;letter-spacing:0}
+.pit-arcade .arcade-number-shield{
+ padding:9px 8px 10px;min-width:39px;display:grid;place-items:center;background:linear-gradient(140deg,#681c18,#170b12 70%);
+ border:2px ridge #b77943;clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);
+ color:#fff2dc;font:700 20px Georgia,serif;text-shadow:0 2px 3px #000;
+}
+.pit-arcade .arcade-card[data-state="complete"] .arcade-number-shield{background:linear-gradient(#796029,#292113)}
+.pit-arcade .arcade-card[data-state="locked"] .arcade-number-shield{background:linear-gradient(#3d4047,#15171a);border-color:#888}
+.pit-arcade .arcade-poster-status{top:43px;left:8px;font-size:8px;color:#ffc89b;background:#0a0808d9;border:1px solid #ab5734;padding:4px 6px}
+.pit-arcade .arcade-poster-status.locked{color:#d2cbcd;border-color:#8b8586}
+.pit-arcade .arcade-poster-status.complete{color:#ffe29c;border-color:#c9a460}
+.pit-arcade .arcade-card-bottom{bottom:4px;left:7px;right:6px;gap:6px}
+.pit-arcade .arcade-chapter{display:none}
+.pit-arcade .arcade-card-bottom strong{font:700 clamp(14px,1.03vw,19px)/1.07 Georgia,serif;text-transform:uppercase;letter-spacing:.01em;color:#f3e8da;min-height:34px;display:block;text-align:center;text-shadow:0 2px 6px #000}
+.pit-arcade .arcade-card-bottom small{font-size:11px;line-height:1.3;color:#c7cbd0;text-align:center;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:28px}
+.pit-arcade .arcade-card-footer{padding:5px 4px 0;min-height:26px;font-size:10px;color:#d4b8a0;border-top:1px solid #634e40;gap:6px}
+.pit-arcade .arcade-card-stars{letter-spacing:1px;color:#ddb16d}
+.pit-arcade .arcade-arrow{top:50%;margin-top:-30px;z-index:9;width:47px;height:55px;border-radius:50%;background:radial-gradient(circle,#403537,#100e12 72%);border:2px ridge #907158;color:#f3d6a2;box-shadow:0 0 0 3px #090a0be8,0 0 9px #000;font-size:35px}
+.pit-arcade .arcade-arrow.prev{left:clamp(5px,.8vw,19px)}
+.pit-arcade .arcade-arrow.next{right:clamp(5px,.8vw,19px)}
+.pit-arcade .arcade-arrow:hover{background:radial-gradient(circle,#79412b,#1a1113);border-color:#f0b16e}
+.pit-arcade .arcade-dossier{
+ width:min(1180px,calc(100% - 60px));margin:8px auto 12px;padding:15px 22px;
+ background:linear-gradient(110deg,#0b0b0de8,#1b1818eb 47%,#0c0d0de8);
+ border:1px solid #79533f;box-shadow:0 0 0 3px #0a0b0ad4,inset 0 1px #b5835844,0 12px 28px #000c;
+ border-radius:0;gap:22px;
+}
+.pit-arcade .arcade-dossier-heading{gap:14px}
+.pit-arcade .arcade-status{color:#eeb472;font-size:10px}
+.pit-arcade .arcade-status.complete{color:#f4d27d}
+.pit-arcade .arcade-dossier h3{font:700 clamp(21px,2vw,31px)/1.1 Georgia,serif;color:#f5e3d0;letter-spacing:.05em;margin:3px 0}
+.pit-arcade .arcade-dossier p{font-size:13px;color:#d3c8c0;line-height:1.35;max-width:770px}
+.pit-arcade .arcade-outcome{color:#c1bab5;font-size:12px;line-height:1.3}
+.pit-arcade .arcade-outcome strong{color:#e8af70}
+.pit-arcade .arcade-dossier-actions{min-width:210px}
+.pit-arcade .arcade-enter{border-radius:2px;min-height:46px;padding:9px 17px;font:800 14px "Segoe UI",sans-serif;letter-spacing:.065em;background:linear-gradient(#ffb44e,#de6b22 50%,#7d280f);border:2px ridge #ffa954;color:#241006;box-shadow:0 0 15px #fb6a3d59,inset 0 2px #fff1ad6e}
+.pit-arcade .arcade-enter:disabled{background:#222326;border-color:#555050;color:#9c9695;box-shadow:none}
+.pit-arcade .arcade-dossier-actions small{color:#a59b94;letter-spacing:.06em}
+.pit-arcade .arcade-chapters{width:min(1220px,94%);margin:3px auto 15px;padding:16px 15px 26px;display:flex;flex-wrap:nowrap;justify-content:space-around;gap:9px;position:relative}
+.pit-arcade .arcade-chapters:before{content:"";position:absolute;left:4%;right:4%;top:50%;height:4px;background:linear-gradient(90deg,#8d3b20,#3d3436 55%,#15191d);border:1px solid #5b453a;transform:translateY(-14px);z-index:0}
+.pit-arcade .arcade-chapter-dot{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;padding:0;background:radial-gradient(circle,#242527,#090a0e);border:2px solid #6d5c51;box-shadow:0 4px 9px #000b,inset 0 0 8px #000;color:#c6bdb6;font:700 12px Georgia,serif}
+.pit-arcade .arcade-chapter-dot.locked{opacity:1;color:#898889;border-color:#4f4d50}
+.pit-arcade .arcade-chapter-dot.done{border-color:#dfaa57}
+.pit-arcade .arcade-chapter-dot.current{background:radial-gradient(circle,#c64a1e,#470c0b 62%,#1c0c0b);border-color:#ffd18c;box-shadow:0 0 20px #ff6724,inset 0 0 14px #da482d;color:#fff6dd}
+.pit-arcade .arcade-chapter-dot.done:before{content:"★";font-size:12px;top:-14px;right:7px}
+.pit-arcade .arcade-chapter-dot.locked span:before{content:"♧";font-size:11px;display:block;opacity:.7}
+.pit-arcade .arcade-cinematic{background:radial-gradient(ellipse at center,#501a12 0%,#140b0c 40%,#050608 78%)}
+.pit-arcade .arcade-cinematic:before{background:conic-gradient(from 180deg,transparent 0 20%,#ffb15eaa 23%,#fc401b4d 28%,transparent 34% 60%,#f0933b9c 66%,transparent 72%);filter:blur(34px)}
+.pit-arcade .arcade-cinematic:after{background:radial-gradient(ellipse,#b4311b48,#050608 73%)}
+.pit-arcade .arcade-cinematic-content .arcade-power{color:#ff8d45;text-shadow:0 0 40px #fd5b2a}
+.pit-arcade .arcade-cinematic-content small{color:#ffd0a6}
+.pit-arcade .arcade-cinematic-content strong{font-family:Georgia,serif;color:#f9e4c9;text-shadow:0 0 35px #e4532d}
+.pit-arcade .arcade-skip{background:#170f0fe6;border-color:#8f5637;color:#ffe2c1}
+.pit-arcade .arcade-footer-runes{text-align:center;color:#6c6058;font-size:11px;letter-spacing:.4em;margin-bottom:12px}
+@media (min-width:1700px) and (min-height:800px){
+ .pit-arcade .arcade-track{height:456px}
+ .pit-arcade .arcade-card,.pit-arcade .arcade-card[data-distance],.pit-arcade .arcade-card.out-of-view{height:420px;flex-basis:clamp(155px,9.2vw,188px);width:clamp(155px,9.2vw,188px)}
+}
+@media (max-width:1100px){
+ .pit-arcade .arcade-hud{grid-template-columns:1fr auto}
+ .pit-arcade .arcade-tabs{grid-column:1/-1;grid-row:2;border-top:1px solid #382b28}
+ .pit-arcade .arcade-tab{min-width:90px}
+ .pit-arcade .arcade-heading{min-height:118px}
+ .pit-arcade .arcade-title-block{padding-left:0}
+ .pit-arcade .arcade-journey{flex-basis:190px}
+ .pit-arcade .arcade-track{height:411px}
+ .pit-arcade .arcade-card,.pit-arcade .arcade-card[data-distance],.pit-arcade .arcade-card.out-of-view{flex-basis:166px;width:166px;height:386px}
+}
+@media (max-width:650px){
+ .pit-arcade .arcade-hud{grid-template-columns:1fr auto;padding:8px 12px;min-height:60px;gap:4px}
+ .pit-arcade .arcade-brand{font-size:16px}
+ .pit-arcade .arcade-brand-mark{width:33px;height:40px}
+ .pit-arcade .arcade-player{display:none}
+ .pit-arcade .arcade-tabs{gap:0;justify-content:space-around}
+ .pit-arcade .arcade-tab{min-width:0;flex:1;padding:9px 3px;font-size:8px}
+ .pit-arcade .arcade-tab .tab-glyph{font-size:18px}
+ .pit-arcade .arcade-heading{display:block;min-height:0;padding:17px 12px 0}
+ .pit-arcade .arcade-heading h2{font-size:27px;letter-spacing:.09em}
+ .pit-arcade .arcade-heading p{font-size:9px;letter-spacing:.12em}
+ .pit-arcade .arcade-journey{width:min(350px,100%);margin:12px auto 0;padding:8px 12px}
+ .pit-arcade .arcade-journey-head strong{font-size:17px}
+ .pit-arcade .arcade-line{margin-top:13px}
+ .pit-arcade .arcade-carousel-area{padding:12px 38px 0}
+ .pit-arcade .arcade-track{height:395px;padding:10px 5px 18px;gap:10px}
+ .pit-arcade .arcade-card,.pit-arcade .arcade-card[data-distance],.pit-arcade .arcade-card.out-of-view{width:204px;flex-basis:204px;height:360px}
+ .pit-arcade .arcade-card-bottom strong{font-size:19px}
+ .pit-arcade .arcade-card-bottom small{font-size:12px}
+ .pit-arcade .arcade-arrow{width:34px;height:42px;font-size:27px}
+ .pit-arcade .arcade-arrow.prev{left:3px}.pit-arcade .arcade-arrow.next{right:3px}
+ .pit-arcade .arcade-dossier{width:calc(100% - 20px);margin-top:0;padding:12px;gap:10px;grid-template-columns:1fr}
+ .pit-arcade .arcade-dossier h3{font-size:22px}
+ .pit-arcade .arcade-dossier-actions{min-width:0}
+ .pit-arcade .arcade-chapters{width:98%;padding:13px 3px 25px;gap:3px}
+ .pit-arcade .arcade-chapter-dot{width:28px;height:28px;font-size:10px;border-width:1px}
+ .pit-arcade .arcade-chapter-dot.done:before{top:-10px}
+ .pit-arcade .arcade-footer-runes{font-size:8px;letter-spacing:.14em}
+}
+@media(prefers-reduced-motion:reduce){
+ .pit-arcade .arcade-journey-fill{transition:none}
+ .pit-arcade .arcade-track{scroll-behavior:auto}
+}
