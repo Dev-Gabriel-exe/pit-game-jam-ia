@@ -19,7 +19,7 @@ Atualizado em 27/10/2026. Oficina de **6 horas**, prevista para a semana de 02 a
 | Fase | Situação | Escopo | Critério de aceite |
 |---|---|---|---|
 | 1. Seleção de missões | **Visual aprovado**; homologação final pendente | Carrossel RPG, 10 artes WebP, molduras, transição, prévia sem login | Aceite visual obtido; não alterar indiscriminadamente o design |
-| **2. Missão interna do aluno** | **Próxima** | Uma tela interna de missão completa: abertura, briefing, construir, entregar, retorno, salvamento de rascunho; refinamento gótico do caderno | Missão 01 ponta a ponta em desktop e celular, coerente, sem informação perdida |
+| **2. Missão interna do aluno** | **Implementada; homologação pendente** | Missão 01 gótica, briefing, construção estruturada, ficha viva, rascunho individual, evidência integrada à API, prévia offline | Testes estáticos aprovados; ainda validar visual, login, envio e revisão em navegador real |
 | 3. Conteúdo das dez missões | Planejada | Calibrar objetivo, conceito, ferramenta, tutorial 2D/3D, desafio autoral, evidência e fallback por missão | Todas as dez missões acionáveis, sincronizadas com as aulas e com resultados verificáveis |
 | 4. Professor — visual + material | Planejada | Caderno do professor na mesma identidade; conceitos ricos, simuladores, exemplos reais do GDevelop, fase/etapa, resultados | Um professor sem preparação adicional entende cada conceito, demonstra a técnica e sabe avaliar |
 | 5. Funcionalidades reais da oficina | Planejada | Login/código, PIN docente, liberação de etapas, status, rascunhos, evidências, aprovações, chat, acompanhamento, persistência | Cenários professor + 3 alunos testados sem inconsistências, vazamentos ou perda de registros |
@@ -94,3 +94,8 @@ O piloto aprova o **template**, não apenas a aparência. Só então expandir pa
 ## Decisão de próxima implementação
 
 Implementar **Fase 2 — Missão 01 ponta a ponta** antes de multiplicar telas ou investir em animações secundárias. Ao terminar, registrar no roadmap o que foi validado, o que não foi e a evidência dos testes.
+
+
+## Atualização da Fase 2 — 27/10/2026
+
+Missão 01 — O Chamado implementada na branch V3 com interface de fantasia gótica e campos de planejamento vinculados à entrega real da oficina. O carrossel Fase 1 segue intacto. Documentação detalhada em [FASE2.md](./FASE2.md). Antes de começar a expansão das 9 missões, validar o piloto no navegador real e fazer pelo menos um teste completo de cadastro, envio, revisão e aprovação. O código do professor e a API não foram modificados nesta fase.
