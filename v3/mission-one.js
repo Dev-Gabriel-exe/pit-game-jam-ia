@@ -21,6 +21,23 @@ function load(session){
  }catch{return initial();}
 }
 function save(session,draft){try{localStorage.setItem(key(session),JSON.stringify(draft))}catch{}}
+function hydrate(session,serverEvidence,status){
+ if(!serverEvidence||typeof serverEvidence!=='string'||!serverEvidence.startsWith('MISSÃO 01 — O CHAMADO'))return;
+ const stored=load(session),exists=Object.values(stored).some(x=>!!x);
+ // A entrega aprovada/enviada é a versão oficial, não um rascunho antigo.
+ if(exists&&status!=='approved'&&status!=='submitted')return;
+ const lines=serverEvidence.split('\n'),parsed=initial();
+ const take=prefix=>{const line=lines.find(x=>x.startsWith(prefix));return line?line.slice(prefix.length).trim():''};
+ parsed.title=take('Jogo: ');
+ const pair=take('Gênero: ');
+ const split=pair.indexOf('; Protagonista: ');
+ if(split>=0){parsed.genre=pair.slice(0,split);parsed.hero=pair.slice(split+'; Protagonista: '.length)}
+ parsed.action=take('Ação principal: ');
+ parsed.objective=take('Objetivo do jogador: ');
+ parsed.victory=take('Condição de conclusão: ');
+ parsed.feedback=take('Feedback da conquista: ');
+ if(parsed.title&&parsed.genre&&parsed.action)save(session,parsed);
+}
 function stepProgress(draft){
  return [
   !!(draft.genre&&draft.title.trim().length>=3&&draft.hero.trim().length>=3),
@@ -175,5 +192,5 @@ function mount(ctx){
  }));
  update(root,ctx.session);
 }
-window.PIT_MISSION_ONE={render,mount,validate,evidence,load,stepProgress};
+window.PIT_MISSION_ONE={render,mount,validate,evidence,load,hydrate,stepProgress};
 })();
