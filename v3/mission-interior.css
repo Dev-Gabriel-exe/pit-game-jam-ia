@@ -257,3 +257,8 @@ body[data-role="student"] .stage-art{position:absolute;inset:0;width:100%;height
 body[data-role="student"] .stage-btn.current .stage-art{filter:brightness(.95) saturate(1.15)}
 body[data-role="student"] .stage-poster:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(90deg,#090b0c52,#090b0c11 53%,#0000005c)}
 body[data-role="student"] .stage-emoji{z-index:1;font-size:23px;opacity:.85}
+
+/* Elimina os últimos realces ciano herdados da interface anterior. */
+body[data-role="student"] .main-pane:before{background:linear-gradient(90deg,transparent,#e6a66b);box-shadow:0 0 14px #bb6d3d57;opacity:.65}
+body[data-role="student"] .mainhead:before{background:linear-gradient(90deg,#0a0c0ef2,#161111a1)}
+body[data-role="student"] .eyebrow,body[data-role="student"] .state-pill{color:#e9c39c}
