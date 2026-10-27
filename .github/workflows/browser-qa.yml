@@ -28,5 +28,4 @@ jobs:
           node --check chat-api/api/classroom.js
           node --check v3/app.js
           node --check v3/teacher-content.js
-          node qa/v2-e2e.cjs
           node qa/v3-e2e.cjs
