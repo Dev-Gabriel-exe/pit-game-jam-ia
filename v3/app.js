@@ -254,7 +254,7 @@ async function teacherAdvance(stage,phase){
 // Galeria cinematográfica de missões, independente da rolagem do caderno.
 function showMissionGallery(){
  if(!TEACHER&&window.PIT_ARCADE){
-  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,onEnter:n=>{selectStage(n);$('mainContent').scrollTop=0;}});
+  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,studentName:studentSession?.name||'AVENTUREIRO',onEnter:n=>{selectStage(n);$('mainContent').scrollTop=0;}});
   return;
  }
  const modal=$('missionGallery');if(!modal)return;
@@ -298,7 +298,7 @@ async function poll(){
     } else if(state.phase!==oldPhase&&activeStage===state.current_stage&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();}
     else {renderRight();renderJourney();}
   }else{if(state.current_stage!==oldStage||state.phase!==oldPhase){renderRight();renderJourney();}}
-  if(!TEACHER&&window.PIT_ARCADE?.isOpen())window.PIT_ARCADE.refresh({activeStage,currentStage:state.current_stage,progress});
+  if(!TEACHER&&window.PIT_ARCADE?.isOpen())window.PIT_ARCADE.refresh({activeStage,currentStage:state.current_stage,progress,studentName:studentSession?.name||'AVENTUREIRO'});
    if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
   if(rosterOpen)await loadRoster();
   if(chatOpen)await loadChat();
