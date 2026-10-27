@@ -253,6 +253,10 @@ async function teacherAdvance(stage,phase){
 
 // Galeria cinematográfica de missões, independente da rolagem do caderno.
 function showMissionGallery(){
+ if(!TEACHER&&window.PIT_ARCADE){
+  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,onEnter:n=>{selectStage(n);$('mainContent').scrollTop=0;}});
+  return;
+ }
  const modal=$('missionGallery');if(!modal)return;
  modal.hidden=false;modal.classList.add('open');
  const gallery=$('missionGalleryGrid');
@@ -263,7 +267,7 @@ function showMissionGallery(){
  gallery.querySelectorAll('[data-gallery-stage]').forEach(b=>b.onclick=()=>{selectStage(Number(b.dataset.galleryStage));closeGallery()});
  $('missionGalleryClose').focus();
 }
-function closeGallery(){const x=$('missionGallery');if(x){x.hidden=true;x.classList.remove('open')}}
+function closeGallery(){if(!TEACHER&&window.PIT_ARCADE){window.PIT_ARCADE.close();return;}const x=$('missionGallery');if(x){x.hidden=true;x.classList.remove('open')}}
 if($('openGallery'))$('openGallery').onclick=showMissionGallery;
 if($('missionGalleryClose'))$('missionGalleryClose').onclick=closeGallery;
 if($('missionGallery'))$('missionGallery').addEventListener('click',e=>{if(e.target===$('missionGallery'))closeGallery()});
@@ -294,7 +298,8 @@ async function poll(){
     } else if(state.phase!==oldPhase&&activeStage===state.current_stage&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();}
     else {renderRight();renderJourney();}
   }else{if(state.current_stage!==oldStage||state.phase!==oldPhase){renderRight();renderJourney();}}
-  if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
+  if(!TEACHER&&window.PIT_ARCADE?.isOpen())window.PIT_ARCADE.refresh({activeStage,currentStage:state.current_stage,progress});
+   if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
   if(rosterOpen)await loadRoster();
   if(chatOpen)await loadChat();
   else await refreshUnread();
@@ -334,6 +339,7 @@ async function startApp(){
   activeStage=state.current_stage;activePhase=TEACHER?state.phase:(state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase);lastServerStage=state.current_stage;
   $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name;
   renderAll();$('loading').hidden=true;$('workspace').hidden=false;
+  if(!TEACHER)showMissionGallery();
   $('lastSync').textContent='Conectado · '+stamp();
   clearInterval(window.pitPoll);window.pitPoll=setInterval(poll,14000);
   await refreshUnread();
