@@ -199,3 +199,24 @@
 .visual-preview-button:hover,.visual-preview-button:focus-visible{border-color:#ffb46d;background:#70331d}
 body.pit-v3-visual-preview #chatButton,body.pit-v3-visual-preview #changeUser,body.pit-v3-visual-preview #startWork,body.pit-v3-visual-preview #submitWork{display:none!important}
 body.pit-v3-visual-preview .mission-submission:after{content:"DEMONSTRAÇÃO VISUAL · O ENVIO REAL É FEITO PELA OFICINA OFICIAL";display:block;text-align:center;font-size:11px;color:#eab77e;padding:7px}
+
+/* Cinematic mission artwork: lightweight parallax, free of video credits. */
+.pit-arcade .arcade-poster>.mission-illustration{position:absolute;inset:0}
+.pit-arcade .arcade-mission-photo{
+ position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;z-index:1;
+ filter:saturate(1.13) contrast(1.04);transform:scale(1.075);
+ transition:transform .9s cubic-bezier(.18,.71,.25,1),filter .7s ease;
+ will-change:transform;
+}
+.pit-arcade .arcade-mission-photo[hidden]{display:none}
+.pit-arcade .arcade-card.current .arcade-mission-photo{animation:pit-fantasy-breathe 15s ease-in-out infinite alternate}
+.pit-arcade .arcade-card.current:hover .arcade-mission-photo{transform:scale(1.17) translateY(-1.1%);filter:saturate(1.2) brightness(1.09)}
+.pit-arcade .arcade-poster:after{z-index:2;pointer-events:none}
+.pit-arcade .arcade-poster-top,.pit-arcade .arcade-card-bottom,.pit-arcade .arcade-poster-status{z-index:3}
+.pit-arcade .arcade-card.current .arcade-poster:before{
+ content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 37%,#ffd59e16 49%,transparent 57%);
+ z-index:3;pointer-events:none;animation:pit-fantasy-shimmer 9s ease-in-out infinite;
+}
+@keyframes pit-fantasy-breathe{from{transform:scale(1.055) translate3d(0,0,0)}to{transform:scale(1.14) translate3d(-1.1%,-.9%,0)}}
+@keyframes pit-fantasy-shimmer{0%,42%{transform:translateX(-85%);opacity:0}54%{opacity:1}80%,100%{transform:translateX(85%);opacity:0}}
+@media(prefers-reduced-motion:reduce){.pit-arcade .arcade-mission-photo{animation:none!important;transition:none!important;will-change:auto}}
