@@ -44,7 +44,7 @@ function renderJourney(){
   const e=entry(m.n),locked=!TEACHER&&m.n>state.current_stage,selected=m.n===activeStage;
   const short=TEACHER?(m.n===state.current_stage?'ETAPA DA TURMA':'PRÉVIA'):e?.status==='approved'?'CONCLUÍDA':locked?'BLOQUEADA':e?.status==='submitted'?'AGUARDANDO AVALIAÇÃO':e?.status==='revision'?'REVISAR':e?.status==='working'?'EM PRODUÇÃO':m.n===state.current_stage?'DISPONÍVEL':'REVISAR';
   return '<button type="button" class="stage-btn '+(selected?'current ':'')+(locked?'locked ':'')+(e?.status==='approved'?'approved':'')+'" data-stage="'+m.n+'" aria-current="'+selected+'" '+(locked?'disabled':'')+'>'+
-   '<span class="stage-poster" style="--mission-tint:'+stageThumbs[m.n-1]+'"><span class="stage-cover-index">'+String(m.n).padStart(2,'0')+'</span><span class="stage-emoji">'+m.icon+'</span></span>'+
+   '<span class="stage-poster" style="--mission-tint:'+stageThumbs[m.n-1]+'"><img class="stage-art" src="./v3/assets/missions/missao-'+String(m.n).padStart(2,'0')+'.webp" alt="" loading="lazy" decoding="async"><span class="stage-cover-index">'+String(m.n).padStart(2,'0')+'</span><span class="stage-emoji">'+m.icon+'</span></span>'+
    '<span class="stage-main"><span class="stage-time">'+esc(m.time)+'</span><strong>'+esc(m.title.toUpperCase())+'</strong><small>'+esc(m.subtitle)+'</small><em class="stage-state">'+esc(short)+'</em></span>'+
    '<span class="stage-status-dot" aria-hidden="true">'+(e?.status==='approved'?'✓':selected?'◆':locked?'🔒':'')+'</span></button>';
  }).join('');
