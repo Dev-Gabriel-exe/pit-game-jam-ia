@@ -2,6 +2,7 @@
 'use strict';
 const MISSIONS=window.PIT_MISSIONS||[],BASE='https://pit-game-jam-chat.vercel.app/api/';
 const role=document.body.dataset.role==='teacher'?'teacher':'student',TEACHER=role==='teacher';
+let visualPreview=false;
 const $=id=>document.getElementById(id),esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const phaseNames={briefing:'Entender',demo:'Assistir',practice:'Criar',review:'Comprovar'};
 const phaseList=TEACHER?['briefing','demo','practice','review']:['briefing','practice','review'];
@@ -16,6 +17,7 @@ let lastUnread=0,rosterFilter='all',requestInFlight=false;
 function stamp(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 function setToast(message,bad=false){const el=$('toast');el.textContent=message;el.hidden=false;el.style.borderColor=bad?'#fa7285':'#53dcb7';clearTimeout(setToast.timer);setToast.timer=setTimeout(()=>el.hidden=true,5300)}
 async function call(service,action,method='GET',data=null){
+ if(visualPreview)throw Error('Modo demonstração: nenhuma informação é enviada ao servidor.');
  const u=new URL(BASE+service+'.js');u.pathname='/api/'+service;u.searchParams.set('action',action);
  const headers={'Content-Type':'application/json'};
  if(TEACHER&&teacherPin)headers['X-PIT-Teacher-Pin']=teacherPin;
@@ -230,6 +232,7 @@ function selectStage(n,fromServer=false){
  $('mainContent').scrollTop=0;
 }
 async function sendWork(status){
+ if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
  const evidence=$('evidenceInput')?.value||'';
  const route=$('routeSelect')?.value||'2d';
  if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
@@ -254,7 +257,7 @@ async function teacherAdvance(stage,phase){
 // Galeria cinematográfica de missões, independente da rolagem do caderno.
 function showMissionGallery(){
  if(!TEACHER&&window.PIT_ARCADE){
-  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,studentName:studentSession?.name||'AVENTUREIRO',onEnter:n=>{selectStage(n);$('mainContent').scrollTop=0;}});
+  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,studentName:visualPreview?'VISITANTE · PRÉVIA':studentSession?.name||'AVENTUREIRO',onEnter:n=>{selectStage(n);$('mainContent').scrollTop=0;}});
   return;
  }
  const modal=$('missionGallery');if(!modal)return;
@@ -452,10 +455,25 @@ $('chatForm').onsubmit=async e=>{
   field.value='';await loadChat();setToast('Mensagem enviada ✓');
  }catch(err){setToast(err.message,true)}
 };
+function startVisualPreview(){
+ if(TEACHER||!window.PIT_ARCADE){setToast('Prévia indisponível nesta página.',true);return;}
+ visualPreview=true;
+ document.body.classList.add('pit-v3-visual-preview');
+ progress=[];state={current_stage:1,phase:'practice',updated_at:null};activeStage=1;activePhase='briefing';
+ $('auth').hidden=true;$('loading').hidden=true;$('workspace').hidden=false;
+ $('currentUser').textContent='VISITANTE · DEMONSTRAÇÃO';
+ $('lastSync').textContent='Prévia local, sem conexão nem cadastro';
+ $('roomState').textContent='MODO VISUAL · PROGRESSO NÃO REGISTRADO';
+ $('roleSubtitle').textContent='PRÉVIA DA INTERFACE · SEM DADOS REAIS';
+ renderAll();
+ showMissionGallery();
+}
+if($('previewOnly'))$('previewOnly').onclick=startVisualPreview;
 $('showResources').onclick=()=>{window.open('./index.html#recursos','_blank','noopener')};
 $('changeUser').onclick=()=>{if(TEACHER){sessionStorage.removeItem('pit_teacher_pin');teacherPin=''}else{localStorage.removeItem('pit_chat_student_v09');studentSession=null}location.reload()};
 (async()=>{
  if(MISSIONS.length!==10){$('loading').textContent='Erro: catálogo de etapas incompleto.';return}
+ if(!TEACHER&&new URLSearchParams(location.search).get('preview')==='1'){startVisualPreview();return}
  if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token)){
   try{await startApp();if($('workspace').hidden)await authenticate()}
   catch{await authenticate()}
