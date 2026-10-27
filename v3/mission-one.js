@@ -87,6 +87,22 @@ function worldPreview(d,large=false){
  '<p><b>MISSÃO</b> <span data-q-preview="mission">'+escapeHTML((d.action&&d.objective)?d.action+' para '+d.objective:'Escolha uma ação e um objetivo')+'</span></p>'+
  '<p><b>CONQUISTA</b> <span data-q-preview="victory">'+escapeHTML(d.victory||'O que define a vitória?')+'</span></p></div></aside>';
 }
+/* The student sees the same design logic as the professor, without extra fields.
+   This is a draft model, not a claim that a playable game already exists. */
+function designFlow(d){
+ const items=[
+  ['01','DESAFIO','objective','Qual resultado o jogador busca?'],
+  ['02','AÇÃO','action','O que o jogador faz?'],
+  ['03','CONDIÇÃO','victory','Quando a tentativa dá certo?'],
+  ['04','FEEDBACK FINAL','feedback','Como a conquista aparece?']
+ ];
+ return '<section class="qo-cycle" aria-label="Modelo da ideia para implementação">'+
+ '<div class="qo-cycle-head"><span>◈ DA IDEIA À MECÂNICA</span><strong>SEU PRIMEIRO MODELO DE JOGO</strong></div>'+
+ '<div class="qo-cycle-steps">'+
+ items.map(([num,label,id,empty])=>'<div class="qo-cycle-step '+(d[id].trim()?'filled':'')+'">'+
+ '<span class="qo-cycle-step-number">'+num+'</span><div><strong>'+label+'</strong><p data-q-flow="'+id+'">'+escapeHTML(d[id].trim()||empty)+'</p></div></div>').join('')+
+ '</div><p class="qo-cycle-explain">Durante a partida, o jogador tenta, observa o resultado e decide novamente. A condição e o feedback acima definem quando esse ciclo termina.</p></section>';
+}
 function progressMarkup(d){
  const steps=stepProgress(d),done=steps.filter(Boolean).length;
  return '<div class="qo-fragments" aria-label="Progresso do planejamento">'+
@@ -122,7 +138,7 @@ function building(session,status,preview){
  field('feedback','Como o jogador percebe a conquista?','Uma mensagem, mudança de cena, cor ou som já resolve.',d,'Ex.: Surge a mensagem “Castelo libertado!”',disabled)+'</section>'+
  '<div class="qo-builder-bottom">'+progressMarkup(d)+
  '<button class="qo-action" type="button" data-q-action="review">VER MINHA FICHA DE MISSÃO <span aria-hidden="true">›</span></button></div>'+
- '</div><div class="qo-preview-column">'+worldPreview(d)+
+ '</div><div class="qo-preview-column">'+worldPreview(d)+designFlow(d)+
  '<div class="qo-tip"><span>✧ EXEMPLO DE INSPIRAÇÃO</span><p>Em um jogo de exploração, a personagem coleta três itens para abrir uma saída. Você pode criar uma aventura completamente diferente.</p></div>'+
  '<div class="qo-tip qo-tip-ai"><span>✦ A IA É SUA ALIADA</span><p>Peça sugestões, compare ideias e escolha o que combina com o jogo que <strong>você</strong> quer criar. Não é preciso copiar um roteiro pronto.</p><button type="button" data-q-action="copy-prompt" class="qo-secondary">COPIAR PROMPT DE IDEIAS</button></div></div></div></div>';
 }
@@ -135,7 +151,7 @@ function delivery(session,status,feedback,preview,canSubmit){
  '<p>Esta ficha reúne as escolhas da oficina. Ela será a referência para criar o primeiro protótipo na próxima missão.</p></div>'+
  '<div class="qo-delivery-layout"><div class="qo-delivery-main"><div class="qo-quest-stamp '+escapeHTML(status||'')+'">'+statusMsg+'</div>'+
  (feedback?'<div class="qo-feedback"><b>RETORNO DO PROFESSOR</b><p>'+escapeHTML(feedback)+'</p></div>':'')+
- worldPreview(d,true)+
+ worldPreview(d,true)+designFlow(d)+
  '<section class="qo-record"><div class="qo-record-head"><span>◈ REGISTRO DO CRIADOR</span><small>GERADO A PARTIR DAS SUAS ESCOLHAS</small></div>'+
  '<label for="evidenceInput" class="qo-record-label">Texto que será enviado ao professor</label>'+
  '<textarea id="evidenceInput" maxlength="750" readonly>'+escapeHTML(evidence(session))+'</textarea>'+
@@ -167,6 +183,14 @@ function update(root,session){
  val('hero',d.hero||'Quem será controlado?');
  val('mission',d.action&&d.objective?d.action+' para '+d.objective:'Escolha uma ação e um objetivo');
  val('victory',d.victory||'O que define a vitória?');
+ root.querySelectorAll('[data-q-flow]').forEach(el=>{
+  const id=el.dataset.qFlow;
+  const entry=d[id]||'';
+  const empty={objective:'Qual resultado o jogador busca?',action:'O que o jogador faz?',victory:'Quando a tentativa dá certo?',feedback:'Como a conquista aparece?'};
+  el.textContent=entry.trim()||empty[id]||'';
+  const step=el.closest('.qo-cycle-step');
+  if(step)step.classList.toggle('filled',Boolean(entry.trim()));
+ });
  const a=root.querySelector('#qoSentenceAction'),b=root.querySelector('#qoSentenceGoal');
  if(a)a.textContent=d.action||'[FAZER ALGO]';if(b)b.textContent=d.objective||'[ALCANÇAR O OBJETIVO]';
  const flags=stepProgress(d),count=flags.filter(Boolean).length;
