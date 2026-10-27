@@ -186,3 +186,19 @@
  }
  .tm-pro-root *, .tm-pro-root *:before,.tm-pro-root *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+/* Etapas 02–10: animações de entrada também no conteúdo docente anterior.
+   O aprofundamento pedagógico dessas etapas será realizado na Fase 3. */
+body[data-role="teacher"] .learning-card{animation:tm-pro-card-enter .72s cubic-bezier(.2,.75,.2,1) both;transition:transform .2s,border-color .2s,box-shadow .2s}
+body[data-role="teacher"] .learning-card:nth-child(2){animation-delay:110ms}
+body[data-role="teacher"] .learning-card:nth-child(3){animation-delay:220ms}
+body[data-role="teacher"] .learning-card:hover{transform:translateY(-4px);border-color:#e4ab72;box-shadow:0 13px 30px #0006}
+body[data-role="teacher"] .teacher-walkthrough article{animation:tm-pro-card-enter .68s both}
+body[data-role="teacher"] .teacher-walkthrough article:nth-child(2){animation-delay:130ms}
+body[data-role="teacher"] .teacher-walkthrough article:nth-child(3){animation-delay:260ms}
+body[data-role="teacher"] .result-criterion{animation:tm-pro-enter .65s both}
+body[data-role="teacher"] .result-criterion:nth-child(2){animation-delay:120ms}
+body[data-role="teacher"] .result-criterion:nth-child(3){animation-delay:240ms}
+@media(prefers-reduced-motion:reduce){
+ body[data-role="teacher"] .learning-card,body[data-role="teacher"] .teacher-walkthrough article,body[data-role="teacher"] .result-criterion{animation:none!important;transition:none!important}
+}
