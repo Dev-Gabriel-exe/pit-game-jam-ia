@@ -126,3 +126,26 @@ A primeira edição recebeu críticas por conteúdo pouco técnico, passagens pa
 
 - Hunicke, LeBlanc e Zubek (2004). *MDA: A Formal Approach to Game Design and Game Research*. AAAI.
 - GDevelop Documentation. *Basic game making concepts*; *Events editor*; *Objects*.
+
+## Guia de eventos GDevelop integrado — 27/10/2026
+
+### Problema corrigido
+A seção "Uma regra = condições + ações" tinha um botão externo para a documentação do GDevelop. Para um professor iniciante, isso interrompia a aula e podia abrir uma página em inglês sem contexto. **O botão foi removido da área de demonstração.**
+
+### Implementado
+- Novo componente `v3/teacher-gdevelop-guide.js`, carregado diretamente pela `professor-v3.html`, com estilos em `v3/teacher-gdevelop-guide.css`.
+- 5 etapas navegáveis na própria página: **localizar as abas Cena/Eventos; adicionar evento; compreender condições e ações; ver dois eventos completos; conferir o resultado no Preview**.
+- 3 capturas originais da documentação do GDevelop, com tradução de cada comando em português e explicação inline. A UI das capturas está em inglês; botões podem mudar entre versões.
+- Ilustração vetorial original, em português, publicada em `v3/assets/guide/gdevelop-eventos-pt.svg`, com as condições e ações dos eventos de coleta/porta. Além de didática, ela funciona como recurso visual local para casos em que as capturas externas não carregam.
+- Explicações técnicas sobre **variável de cena, seleção da instância tocada (object picking), execução de eventos a cada frame, condições múltiplas e testes 0/3, 2/3 e 3/3**.
+- Interação acessível com abas e botões Próximo/Anterior, incluindo teclado e movimento reduzido.
+- Conteúdo incorporado após o simulador do professor na aba "Exemplo em ação"; professor e alunos conseguem compreender tudo sem acessar outro site.
+- **Testes:** 17/17 verificações de interação, carregamento de scripts, fallback local, imagem no repositório e integração, além de conferência da documentação oficial.
+
+### Fontes utilizadas
+- https://wiki.gdevelop.io/gdevelop5/interface/events-editor/
+- https://wiki.gdevelop.io/gdevelop5/events/
+- https://wiki.gdevelop.io/gdevelop5/tutorials/basic-game-making-concepts/
+
+### Limites e pendências
+A tela em português é **uma ilustração didática**, não captura literal da UI do GDevelop. As três imagens oficiais incorporadas foram feitas em 2023 e a interface pode mudar. Não foi feito ensaio ao vivo com o editor 2026; testar os nomes dos comandos antes da aula continua necessário. A próxima etapa deve incluir tutoriais reais e atualizados de implementação nas missões que usam o GDevelop.
