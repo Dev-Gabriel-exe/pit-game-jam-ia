@@ -58,8 +58,15 @@ function render(){
 }
 function panel(index){
  const d=stage[index];
+ const labels=[
+  ['GameScene = Cena','GameScene (Events) = Eventos'],
+  ['Add an event = Adicionar evento'],
+  ['Add condition = Adicionar condição','Add action = Adicionar ação'],
+  [],[]
+ ][index];
+ const captions=labels.length?'<div class="tm-guide-image-translations" aria-label="Tradução das palavras exibidas na imagem">'+labels.map(x=>'<span>'+escapeHTML(x)+'</span>').join('')+'</div>':'';
  const img='<img loading="lazy" decoding="async" src="'+escapeHTML(d.img)+'" alt="'+escapeHTML(d.alt)+'" onerror="this.onerror=null;this.src=&#39;./v3/assets/guide/gdevelop-eventos-pt.svg&#39;;this.alt=&#39;Esquema local em português que representa condições e ações&#39;">';
- return '<div class="tm-guide-panel tm-guide-panel-in"><div class="tm-guide-image"><div class="tm-guide-image-head"><span>'+(index<3?'CAPTURA REAL DO GDEVELOP':'ILUSTRAÇÃO EM PORTUGUÊS')+'</span><strong>'+String(index+1).padStart(2,'0')+' / 05</strong></div>'+img+'</div>'+
+ return '<div class="tm-guide-panel tm-guide-panel-in"><div class="tm-guide-image"><div class="tm-guide-image-head"><span>'+(index<3?'CAPTURA REAL DO GDEVELOP':'ILUSTRAÇÃO EM PORTUGUÊS')+'</span><strong>'+String(index+1).padStart(2,'0')+' / 05</strong></div><div class="tm-guide-image-shot">'+img+captions+'</div></div>'+
  '<div class="tm-guide-explanation"><span class="tm-guide-part">ETAPA '+String(index+1).padStart(2,'0')+'</span>'+
  '<h4>'+d.title+'</h4><p class="tm-guide-lead">'+d.lead+'</p>'+
  d.steps.map(([title,desc],i)=>'<div class="tm-guide-item"><span class="tm-guide-step">'+String(i+1).padStart(2,'0')+'</span><div><strong>'+title+'</strong><p>'+desc+'</p></div></div>').join('')+
