@@ -208,3 +208,8 @@ body[data-role="teacher"].pit-v3-visual-preview #roomState{color:#f0ba8e}
  body[data-role="teacher"] .gallery-photo{height:155px}
 }
 @media(prefers-reduced-motion:reduce){.tm1-gem{animation:none!important}.tm1-gate{transition:none!important}}
+
+.tm1-sources{border-top:1px solid #6e4d34;margin-top:18px;padding:14px 0 3px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tm1-sources span{color:#bf956d;font-size:10px;font-weight:900;letter-spacing:.1em;margin-right:5px}
+.tm1-sources a{font-size:12px;text-decoration:none;color:#f4d0a1;border:1px solid #78553d;background:#271b18;padding:8px 11px;border-radius:2px}
+.tm1-sources a:hover,.tm1-sources a:focus-visible{border-color:#efb57c;text-decoration:underline}
