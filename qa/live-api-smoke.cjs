@@ -1,0 +1,38 @@
+'use strict';
+const assert=require('node:assert/strict');
+const API='https://pit-game-jam-chat.vercel.app/api/chat';
+async function call(action,method='GET',body=null,token='',pin='',origin='https://dev-gabriel-exe.github.io'){
+ const u=new URL(API);u.searchParams.set('action',action);
+ const headers={'Accept':'application/json','Origin':origin};
+ if(body)headers['Content-Type']='application/json';
+ if(token)headers['X-PIT-Student-Token']=token;
+ if(pin)headers['X-PIT-Teacher-Pin']=pin;
+ const r=await fetch(u,{method,headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(17000)});
+ let j;try{j=await r.json()}catch{j={}};
+ return {status:r.status,body:j,origin:r.headers.get('access-control-allow-origin')};
+}
+(async()=>{
+ const health=await call('health');assert.equal(health.status,200);assert.equal(health.body.db,true);assert.equal(health.origin,'https://dev-gabriel-exe.github.io');
+ console.log('PASS: real Vercel API and Neon DB');
+ const invalidRoom=await call('join','POST',{name:'QA Teste',code:'WRONG'});assert.equal(invalidRoom.status,403);
+ const name='[TESTE AUTOMATICO] Chat PIT';
+ const joined=await call('join','POST',{name,code:'PITGAME26'});
+ assert.equal(joined.status,201,JSON.stringify(joined.body));
+ assert.match(joined.body.token,/^[a-f0-9]{64}$/);
+ const token=joined.body.token,studentId=joined.body.studentId;
+ console.log('PASS: student join (QA account '+studentId+')');
+ const wrongToken=await call('messages');assert.equal(wrongToken.status,401);
+ const teacherBlocked=await call('threads');assert.equal(teacherBlocked.status,403);
+ const badPin=await call('teacher-login','POST',{},'','wrong-teacher-pin');assert.equal(badPin.status,403);
+ const disallowed=await call('health','GET',null,'','','https://evil.example');assert.equal(disallowed.status,403);
+ console.log('PASS: student/teacher access restrictions and CORS');
+ const question='TESTE AUTOMATICO: Como importar GLB no GDevelop?';
+ const sent=await call('send','POST',{body:question,mission:4},token);
+ assert.equal(sent.status,201,JSON.stringify(sent.body));
+ const fetched=await call('messages','GET',null,token);
+ assert.equal(fetched.status,200);assert(fetched.body.messages.some(m=>m.body===question&&m.author==='student'));
+ console.log('PASS: student -> real API -> persistent DB -> student inbox');
+ const read=await call('read','POST',{},token);assert.equal(read.status,200);
+ console.log('PASS: read/update message status');
+ console.log('NOTE: teacher reply requires private PIN, tested separately without publishing a credential.');
+})().catch(e=>{console.error('LIVE TEST FAILED',e.message);process.exit(1)});

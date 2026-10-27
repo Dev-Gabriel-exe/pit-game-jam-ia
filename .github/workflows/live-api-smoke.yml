@@ -1,0 +1,19 @@
+name: PIT Chat — HTTP Live Smoke
+on:
+  push:
+    paths:
+      - 'qa/live-api-smoke.cjs'
+      - '.github/workflows/live-api-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-chat-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify production chat API with real HTTP and Neon
+        run: node qa/live-api-smoke.cjs
