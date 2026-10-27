@@ -85,7 +85,7 @@ function studentWorkForm(m){
  const e=entry(m.n)||{};
  const draft=localStorage.getItem('pit_v2_draft_'+m.n);
  const evidence=draft!==null?draft:(e.evidence||'');
- const locked=m.n>state.current_stage;
+ const locked=m.n>state.current_stage||(m.n===state.current_stage&&!['practice','review'].includes(state.phase));
  const approved=e.status==='approved';
  return '<div class="concept-card"><strong>📋 Seu registro de atividade</strong>'+
   '<p>O que você fez ou testou? Descreva o resultado real. O professor poderá verificar e devolver comentários.</p>'+
@@ -94,6 +94,7 @@ function studentWorkForm(m){
   '<div class="buttonrow"><button type="button" class="outline" id="startWork" '+(locked||approved?'disabled':'')+'>Registrar em andamento</button><button type="button" class="action" id="submitWork" '+(locked||approved?'disabled':'')+'>Enviar para validação</button></div>'+
   '<p class="step-hint">Situação: <span class="state-pill '+(e.status||'')+'">'+statusLabel(m.n)+'</span></p>'+
   (e.feedback?'<div class="notice gold"><b>Comentário do professor:</b> '+esc(e.feedback)+'</div>':'')+
+  (locked&&!approved?'<div class="notice gold">⏳ Aguarde o professor liberar a prática desta etapa. Você já pode acompanhar a explicação e a demonstração.</div>':'')+
   (approved?'<div class="notice green">Missão validada! Você pode revisar o material enquanto aguarda a próxima etapa.</div>':'')+
   '</div>';
 }

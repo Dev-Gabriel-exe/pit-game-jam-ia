@@ -41,6 +41,7 @@ module.exports=async function handler(req,res){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
    const state=await classroom();if(n>state.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
+   if(n===state.current_stage&&!['practice','review'].includes(state.phase))return err(res,403,'A prática desta etapa ainda não foi liberada pelo professor.');
    const status=clean(req.body?.status,20),route=clean(req.body?.route,10);
    if(!['working','submitted'].includes(status)||!['2d','3d'].includes(route))return err(res,400,'Progresso inválido.');
    const evidence=clean(req.body?.evidence,750);
