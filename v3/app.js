@@ -136,24 +136,26 @@ function phaseBody(m){
 }
 function studentWorkForm(m){
  const e=entry(m.n)||{};
- const draft=localStorage.getItem('pit_v2_draft_'+m.n);
- const evidence=draft!==null?draft:(e.evidence||'');
+ const draft=localStorage.getItem('pit_v2_draft_'+m.n),evidence=draft!==null?draft:(e.evidence||'');
  const locked=m.n>state.current_stage||(m.n===state.current_stage&&!['practice','review'].includes(state.phase));
  const approved=e.status==='approved';
- return '<div class="concept-card"><strong>📋 Seu registro de atividade</strong>'+
-  '<p>O que você fez ou testou? Descreva o resultado real. O professor poderá verificar e devolver comentários.</p>'+
-  '<div class="formline"><label for="evidenceInput">Minha evidência</label><textarea id="evidenceInput" maxlength="750" '+(approved?'disabled':'')+' placeholder="Ex.: Consegui abrir o Preview e meu personagem se move com WASD.">'+esc(evidence)+'</textarea></div>'+
-  '<div class="formline"><label for="routeSelect">Rota escolhida</label><select id="routeSelect" '+(approved?'disabled':'')+'><option value="2d" '+((e.route||'2d')==='2d'?'selected':'')+'>🎮 2D</option><option value="3d" '+(e.route==='3d'?'selected':'')+'>🧊 3D</option></select></div>'+
-  '<div class="buttonrow"><button type="button" class="outline" id="startWork" '+(locked||approved?'disabled':'')+'>Registrar em andamento</button><button type="button" class="action" id="submitWork" '+(locked||approved?'disabled':'')+'>Enviar para validação</button></div>'+
-  '<p class="step-hint">Situação: <span class="state-pill '+(e.status||'')+'">'+statusLabel(m.n)+'</span></p>'+
-  (e.feedback?'<div class="notice gold"><b>Comentário do professor:</b> '+esc(e.feedback)+'</div>':'')+
-  (locked&&!approved?'<div class="notice gold">⏳ Aguarde o professor liberar a prática desta etapa. Você já pode acompanhar a explicação e a demonstração.</div>':'')+
-  (approved?'<div class="notice green">Missão validada! Você pode revisar o material enquanto aguarda a próxima etapa.</div>':'')+
-  '</div>';
+ const done=savedChecks(m.n).length,ready=done>=m.steps.length;
+ return '<section class="mission-submission"><div class="submission-head"><span>◈ REGISTRO DE MISSÃO</span><span class="state-pill '+esc(e.status||'')+'">'+esc(statusLabel(m.n))+'</span></div>'+
+  '<h3>Seu jogo é a evidência.</h3><p>Faça os três passos acima e descreva o resultado que realmente funcionou. É esta mesma prática que o professor vai avaliar.</p>'+
+  '<div class="submission-progress"><strong>'+done+' / '+m.steps.length+' passos realizados</strong><div class="mini-progress"><span style="width:'+Math.round(done/m.steps.length*100)+'%"></span></div></div>'+
+  '<div class="formline"><label for="evidenceInput">O que você conseguiu construir ou testar?</label><textarea id="evidenceInput" maxlength="750" '+(approved?'disabled':'')+' placeholder="'+esc(m.deliver)+'">'+esc(evidence)+'</textarea></div>'+
+  (m.n>=4?'<div class="formline"><label for="routeSelect">Meu jogo será</label><select id="routeSelect" '+(approved?'disabled':'')+'><option value="2d" '+((e.route||'2d')==='2d'?'selected':'')+'>🎮 2D</option><option value="3d" '+(e.route==='3d'?'selected':'')+'>🧊 3D</option></select></div>':'')+
+  '<div class="buttonrow"><button type="button" class="outline" id="startWork" '+(locked||approved?'disabled':'')+'>Salvar andamento</button><button type="button" class="action" id="submitWork" '+(locked||approved||!ready?'disabled':'')+'>🏆 Entregar missão para avaliação</button></div>'+
+  (!ready?'<p class="submission-warning">Marque os passos que realmente realizou para ativar a entrega.</p>':'')+
+  (locked&&!approved?'<div class="notice gold">⏳ Aguarde a liberação da prática pelo professor. Você pode preparar seu projeto e revisar os passos.</div>':'')+
+  (e.feedback?'<div class="notice gold"><b>Retorno do professor:</b> '+esc(e.feedback)+'</div>':'')+
+  (approved?'<div class="notice green">🏆 Missão aprovada! Sua conquista foi registrada no placar.</div>':'')+
+ '</section>';
 }
 function renderMain(){
  const m=mission(),e=entry(m.n);
- $('missionNumber').textContent='ETAPA '+String(m.n).padStart(2,'0')+' / 10 · '+esc(m.time)+' · '+m.minutes+' MINUTOS';
+ $('missionNumber').textContent='MISSÃO '+String(m.n).padStart(2,'0')+' / 10 · '+esc(m.time)+' · '+m.minutes+' MINUTOS';
+ $('mainPane').style.setProperty('--mission-accent',stageThumbs[m.n-1]);
  $('missionTitle').textContent=m.icon+' '+m.title.toUpperCase();
  $('missionSubtitle').textContent=m.subtitle;
  $('mainContent').innerHTML=phaseBody(m);
@@ -169,7 +171,7 @@ function renderMain(){
  }else{
   $('missionStatus').textContent=statusLabel(m.n);
   $('missionStatus').className='state-pill '+(e?.status||'');
-  $('navPrimary').textContent=activePhase==='review'?'Conferir a entrega':'Próximo passo →';
+  $('navPrimary').textContent=activePhase==='review'?'🏆 Entregar missão':'Continuar a missão →';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='← Passo anterior';
   $('navSecondary').disabled=activePhase==='briefing';
@@ -178,6 +180,21 @@ function renderMain(){
  if(evidence)evidence.oninput=()=>localStorage.setItem('pit_v2_draft_'+m.n,evidence.value);
  if($('startWork'))$('startWork').onclick=()=>sendWork('working');
  if($('submitWork'))$('submitWork').onclick=()=>sendWork('submitted');
+ $('mainContent').querySelectorAll('[data-step-check]').forEach(input=>input.onchange=()=>{
+  const checks=new Set(savedChecks(m.n));const n=Number(input.dataset.stepCheck);
+  if(input.checked)checks.add(n);else checks.delete(n);
+  localStorage.setItem('pit_v3_checks_'+m.n,JSON.stringify([...checks].sort()));
+  renderMain();
+ });
+ const sim=$('simNext');if(sim){let current=0;sim.onclick=()=>{
+  current=(current+1)%3;
+  $('mainContent').querySelectorAll('[data-sim-stage]').forEach(el=>el.classList.toggle('sim-on',Number(el.dataset.simStage)===current));
+  const info=getTeacherContent(m);
+  $('simDescription').textContent=info?.details[current]||'';
+  $('simCount').textContent=String(current+1).padStart(2,'0')+' / 03';
+  sim.textContent=current===2?'↺ Reiniciar exemplo':'▶ Próxima transformação';
+ }}
+ const status=$('missionStatus');if(status)status.title=TEACHER?'Ao escolher outra fase, clique no botão azul para enviar a atualização à turma.':'';
 }
 function renderAll(){renderJourney();renderRight();renderMain();}
 function selectStage(n,fromServer=false){
@@ -189,6 +206,7 @@ function selectStage(n,fromServer=false){
 async function sendWork(status){
  const evidence=$('evidenceInput')?.value||'';
  const route=$('routeSelect')?.value||'2d';
+ if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
  if(status==='submitted'&&evidence.trim().length<8)return setToast('Descreva sua evidência em pelo menos 8 caracteres.',true);
  try{
   const response=await call('classroom','progress','POST',{stage:activeStage,route,evidence,status});
@@ -206,11 +224,30 @@ async function teacherAdvance(stage,phase){
   setToast('Turma atualizada: etapa '+stage+' · '+phaseNames[phase]+'.');
  }catch(e){setToast(e.message,true)}
 }
+
+// Galeria cinematográfica de missões, independente da rolagem do caderno.
+function showMissionGallery(){
+ const modal=$('missionGallery');if(!modal)return;
+ modal.hidden=false;modal.classList.add('open');
+ const gallery=$('missionGalleryGrid');
+ gallery.innerHTML=MISSIONS.map(m=>{
+  const locked=!TEACHER&&m.n>state.current_stage,done=!TEACHER&&entry(m.n)?.status==='approved';
+  return '<button type="button" class="gallery-card '+(activeStage===m.n?'selected ':'')+(locked?'locked ':'')+'" data-gallery-stage="'+m.n+'" '+(locked?'disabled':'')+' style="--card-color:'+stageThumbs[m.n-1]+'"><span class="gallery-photo"><span>'+m.icon+'</span></span><span class="gallery-card-content"><small>MISSÃO '+String(m.n).padStart(2,'0')+' · '+m.minutes+' MIN</small><strong>'+esc(m.title)+'</strong><em>'+esc(done?'✓ CONQUISTADA':locked?'🔒 BLOQUEADA':m.subtitle)+'</em></span></button>'
+ }).join('');
+ gallery.querySelectorAll('[data-gallery-stage]').forEach(b=>b.onclick=()=>{selectStage(Number(b.dataset.galleryStage));closeGallery()});
+ $('missionGalleryClose').focus();
+}
+function closeGallery(){const x=$('missionGallery');if(x){x.hidden=true;x.classList.remove('open')}}
+if($('openGallery'))$('openGallery').onclick=showMissionGallery;
+if($('missionGalleryClose'))$('missionGalleryClose').onclick=closeGallery;
+if($('missionGallery'))$('missionGallery').addEventListener('click',e=>{if(e.target===$('missionGallery'))closeGallery()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGallery()});
+
 $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage,activePhase);
  const idx=phaseList.indexOf(activePhase);
- if(idx<3){activePhase=phaseList[idx+1];renderMain();$('mainContent').scrollTop=0;}
- else {$('mainContent').scrollTop=$('mainContent').scrollHeight;setToast('Registre a evidência e envie para validação.')}
+ if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();$('mainContent').scrollTop=0;}
+ else {$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10){selectStage(activeStage+1);teacherAdvance(activeStage,'briefing')}return}
@@ -226,9 +263,9 @@ async function poll(){
   if(!TEACHER){progress=data.progress||[];
     if(state.current_stage!==oldStage){
      const typing=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
-     if(!typing){activeStage=state.current_stage;activePhase=state.phase;renderAll();setToast('O professor iniciou a etapa '+state.current_stage+'.')}
+     if(!typing){activeStage=state.current_stage;activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();setToast('O professor iniciou a missão '+state.current_stage+'.')}
      else {$('roomState').textContent='NOVA ETAPA LIBERADA · '+state.current_stage;setToast('Nova etapa disponível. Termine seu registro antes de avançar.');}
-    } else if(state.phase!==oldPhase&&activeStage===state.current_stage&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){activePhase=state.phase;renderAll();}
+    } else if(state.phase!==oldPhase&&activeStage===state.current_stage&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();}
     else {renderRight();renderJourney();}
   }else{if(state.current_stage!==oldStage||state.phase!==oldPhase){renderRight();renderJourney();}}
   if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
@@ -268,7 +305,7 @@ async function startApp(){
  try{
   const data=await call('classroom','state');
   state=data.state;progress=data.progress||[];
-  activeStage=state.current_stage;activePhase=state.phase;lastServerStage=state.current_stage;
+  activeStage=state.current_stage;activePhase=TEACHER?state.phase:(state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase);lastServerStage=state.current_stage;
   $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name;
   renderAll();$('loading').hidden=true;$('workspace').hidden=false;
   $('lastSync').textContent='Conectado · '+stamp();
