@@ -156,3 +156,13 @@ body{background:#020915;background-image:radial-gradient(ellipse 140% 90% at 30%
 @media(max-width:800px){.sim-stage{grid-template-columns:1fr}.sim-cell{min-height:110px}.teacher-grid-bottom{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){body{overflow:auto}.shell{height:auto;min-height:100dvh}.dashboard{display:flex;flex-direction:column;height:auto}.dashboard>.panel:first-child{max-height:206px;min-height:0}.journey-list{display:flex;height:135px;max-height:136px;overflow:auto;gap:6px;align-items:stretch}.stage-btn{min-width:220px;height:108px;min-height:108px}.stage-poster{width:73px;min-width:73px;height:89px}.main-pane{min-height:520px;height:auto;max-height:none}.mainhead{min-height:125px}.main-content{max-height:none;overflow:visible;padding:16px}.side{display:grid}.hero{min-height:95px;flex:0 0 95px}.gallery-grid{grid-template-columns:repeat(2,1fr)}.gallery-inner{padding:15px}.gallery-photo{height:108px}.gallery-card-content strong{font-size:16px}.mission-actions{flex-wrap:wrap}.lesson-headline h2{font-size:24px}.stage-story{padding:18px;min-height:350px}.topnav{flex:0 0 auto}.footer{padding-bottom:76px}.widget-actions{z-index:880}.learning-card>p{font-size:16px}}
 @media(prefers-reduced-motion:reduce){.learning-card,.gallery-overlay{animation:none!important}.sim-cell,.stage-btn,.gallery-card{transition:none!important}html,.main-content{scroll-behavior:auto!important}}
+
+
+/* Laboratório: variável que realmente muda, sem depender de imagens estáticas */
+.logic-states{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:16px 0}
+.logic-states>div{display:grid;justify-items:center;gap:5px;padding:16px 8px;background:#07182e;border:1px solid #3b77a0;border-radius:10px;box-shadow:inset 0 0 25px #1777b922}
+.logic-states small{font-size:12px;letter-spacing:.1em;color:#b9e8ff;font-weight:900}
+.logic-states strong{font-size:clamp(18px,2.2vw,28px);color:#a6efff;font-weight:900}
+.logic-actions{margin:17px 0}.logic-actions button{flex:1;min-width:115px}
+.logic-output{background:#041126;border-left:3px solid #f0ce79;padding:14px;border-radius:6px;font-size:17px;color:#f0f5ff;line-height:1.4;min-height:74px}
+@media(max-width:700px){.logic-states{grid-template-columns:1fr 1fr}}
