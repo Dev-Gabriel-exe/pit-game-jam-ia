@@ -1,0 +1,246 @@
+/* PIT Game Jam V3 — Fase 2. O caderno do aluno assume a linguagem de fantasia gótica.
+   Regras restritas ao student para não alterar o controle do professor nesta fase. */
+body[data-role="student"]{
+ --pit-ivory:#f3e4ca;--pit-muted:#c8b5a4;--pit-amber:#e8b06b;--pit-rust:#b45d35;
+ background:#08090c url("./abyss-bg.svg") center center / cover fixed no-repeat;color:var(--pit-ivory);
+}
+body[data-role="student"] .hero{
+ background:linear-gradient(90deg,#08090deb 0%,#0d0c10a1 55%,#07090bc7 100%),url("./abyss-bg.svg") center 41%/cover no-repeat;
+ border-bottom:1px solid #73543a;box-shadow:inset 0 0 85px #060708b5;
+}
+body[data-role="student"] .hero:before{background:linear-gradient(90deg,#060609dc,transparent 75%)}
+body[data-role="student"] .brand-title{font-family:Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:.09em;font-size:clamp(27px,3.4vw,50px)}
+body[data-role="student"] .brand-title strong,
+body[data-role="student"] .brand-title em{background:linear-gradient(#ffe9ca,#c48e5d 79%,#855039);background-clip:text;color:transparent}
+body[data-role="student"] .brand-sub{color:#d4b997;font:700 10px/1.3 "Segoe UI",sans-serif;letter-spacing:.16em}
+body[data-role="student"] .hero-slogan{color:#ded0bd;font-family:Georgia,serif}
+body[data-role="student"] .topnav{background:linear-gradient(180deg,#151316,#0c0e12);border-bottom:1px solid #594839;box-shadow:0 3px 18px #000c}
+body[data-role="student"] .topnav .navbrand{color:#e7bb83;font-family:Georgia,serif;letter-spacing:.05em}
+body[data-role="student"] .topnav button.active{background:#3f2018;border:1px solid #bb8658;color:#ffe5c5;box-shadow:0 0 15px #a64c2060}
+body[data-role="student"] .topnav button:hover{color:#ffe0b8}
+body[data-role="student"] .role-tag{background:linear-gradient(#f0c67f,#ad6434);color:#28150d}
+body[data-role="student"] .dashboard{grid-template-columns:minmax(212px,19%) minmax(0,1fr);padding:9px 12px;gap:12px}
+body[data-role="student"] .dashboard>.side{display:none}
+body[data-role="student"] .dashboard>.panel:first-child{border:1px solid #614739;background:linear-gradient(145deg,#161416,#090d0f);box-shadow:inset 0 0 34px #0006}
+body[data-role="student"] .panel-heading{color:#e0b683;border-bottom-color:#6e4b34;text-shadow:none;font-family:Georgia,serif;font-size:17px}
+body[data-role="student"] .stage-btn{
+ height:82px;min-height:82px;border:1px solid #51463f;border-radius:2px;
+ background:linear-gradient(100deg,#221d1b,#0d0f13);box-shadow:inset 0 0 11px #0009;
+}
+body[data-role="student"] .stage-btn.current{border:1px solid #d48a46;background:linear-gradient(100deg,#3b281e,#1a1516);box-shadow:inset 0 0 12px #aa4e253a,0 0 10px #d170292e}
+body[data-role="student"] .stage-btn:hover{border-color:#dfa16b;background:#29211e}
+body[data-role="student"] .stage-btn.approved{border-color:#bb995c}
+body[data-role="student"] .stage-btn.locked{opacity:.56}
+body[data-role="student"] .stage-poster{min-width:76px;width:76px;height:66px;background:linear-gradient(0deg,#06070888,#140a0b22),url("./assets/missions/missao-01.webp") center/cover;border:1px solid #78543b;border-radius:1px}
+body[data-role="student"] .stage-poster:before{opacity:0}
+body[data-role="student"] .stage-emoji{font-size:27px;text-shadow:0 3px 7px black;filter:drop-shadow(0 2px 8px black)}
+body[data-role="student"] .stage-cover-index{background:#452014;color:#fce4bb;border:1px solid #b88b59}
+body[data-role="student"] .stage-main strong{color:#f0d5b6;font:700 14px/1.1 Georgia,serif}
+body[data-role="student"] .stage-main small{color:#bdb0a6;font-size:11px}
+body[data-role="student"] .main-pane{
+ min-width:0;border:1px solid #73533d;background:#0a0c0e;box-shadow:0 0 0 2px #0a0b0c,0 12px 35px #0009;overflow:hidden;
+}
+body[data-role="student"] .mainhead{
+ min-height:0;padding:9px 24px 8px;border-bottom:1px solid #4c3931;
+ background:linear-gradient(95deg,#171518,#0d1012);display:grid;gap:2px;
+}
+body[data-role="student"] #missionNumber{color:#bb9471;font:700 10px Georgia,serif;letter-spacing:.14em}
+body[data-role="student"] #missionTitle{font:700 20px/1.2 Georgia,serif;letter-spacing:.06em;color:#e7c79d;margin:1px 0}
+body[data-role="student"] #missionSubtitle{color:#bcb1aa;font-size:12px}
+body[data-role="student"] .phasebar{border-bottom:1px solid #62402e;background:#110e0f;gap:0}
+body[data-role="student"] .phasebar button{color:#bfb0a3;background:transparent;font-family:Georgia,serif;border-radius:0}
+body[data-role="student"] .phasebar button.active{background:#3c211b;color:#ffe4bf;border-color:#a4633d;box-shadow:inset 0 -2px #e59c5a}
+body[data-role="student"] .phasebar button:hover{color:#fff0d3}
+body[data-role="student"] .main-content{padding:0;overflow-y:auto;scrollbar-color:#7b4b32 #0b0b0d;scrollbar-width:thin;min-height:0}
+body[data-role="student"] .mission-actions{background:linear-gradient(#161315,#0d0e11);border-top:1px solid #634831;color:#dbbf9f}
+body[data-role="student"] .mission-actions #roomState{font-size:11px;color:#a99a8a}
+body[data-role="student"] .mission-actions .action{background:linear-gradient(#efba72,#ab6636);border:1px solid #ffd295;color:#201410;font-weight:800}
+body[data-role="student"] .mission-actions .outline{border:1px solid #70513f;color:#e9c7a0;background:#1e1817}
+body[data-role="student"] .footer{background:#0b0b0c;border-color:#584335;color:#9f8975}
+body[data-role="student"] .widget-actions .floating-btn{background:linear-gradient(#5f3523,#241714);border-color:#bc8154;color:#f1ddc3}
+body[data-role="student"] .auth{background:linear-gradient(145deg,#241819,#0a0f15);border-color:#9d7049}
+/* Chapter shell and painted header */
+.qo-root{position:relative;color:#ead7c0;font-family:"Segoe UI",Arial,sans-serif;min-height:100%}
+.qo-root *{box-sizing:border-box}
+.qo-banner{min-height:181px;position:relative;display:flex;align-items:flex-end;overflow:hidden;background:#0f1115}
+.qo-banner-image{position:absolute;inset:-9%;background:linear-gradient(90deg,#07090df8 0%,#0d0d10e8 37%,#0a0b0e73 69%,#09090abb 100%),url("./assets/missions/missao-01.webp") 72% 43%/cover no-repeat;animation:qo-float 22s ease-in-out infinite alternate}
+.qo-banner:after{content:"";position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(transparent,#090b0e);pointer-events:none}
+.qo-banner-content{position:relative;z-index:2;flex:1;padding:26px 30px 19px}
+.qo-breadcrumb{font:800 10px/1.3 "Segoe UI",sans-serif;letter-spacing:.15em;color:#c1a285}
+.qo-breadcrumb span{color:#b9673e;padding:0 6px}
+.qo-banner-title{display:flex;align-items:center;gap:20px;margin-top:14px}
+.qo-shield{flex:0 0 63px;height:73px;display:grid;place-items:center;clip-path:polygon(10% 0,90% 0,100% 20%,100% 74%,50% 100%,0 74%,0 20%);
+ background:linear-gradient(135deg,#9f6941,#2b1b1c 42%,#6f3c29);border:2px solid #d1ac73;color:#ffe0ad;font:700 40px Georgia,serif;text-shadow:0 2px 8px #000}
+.qo-banner-title small{font-weight:800;font-size:11px;letter-spacing:.2em;color:#db9b63}
+.qo-banner-title h2{font:700 clamp(35px,3.5vw,56px)/1.02 Georgia,serif;letter-spacing:.13em;color:#fff0d8;margin:5px 0 4px;text-shadow:0 4px 15px #000}
+.qo-banner-title p{margin:0;font:italic 15px Georgia,serif;color:#d9b996}
+.qo-banner-rune{z-index:2;position:absolute;right:30px;top:40px;color:#db8954;font-size:65px;opacity:.38;text-shadow:0 0 28px #f76625}
+.qo-map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0 18px;border-bottom:1px solid #6b4630;background:linear-gradient(#191417,#0b0c10);gap:9px}
+.qo-map button{display:flex;align-items:center;justify-content:center;gap:9px;background:transparent;border:0;border-bottom:3px solid transparent;border-radius:0;min-height:51px;padding:10px 9px;color:#ab9990;font:700 12px Georgia,serif;letter-spacing:.08em;cursor:pointer}
+.qo-map button.active{color:#ffe7c5;border-bottom-color:#f6a75c;background:linear-gradient(transparent,#a4552524)}
+.qo-map button:hover,.qo-map button:focus-visible{color:#f9d3ac}
+.qo-map-glyph{font-size:21px;color:#d38c53}
+.qo-page{padding:25px clamp(14px,2.4vw,35px) 25px;background:radial-gradient(ellipse at 70% 0%,#48271d19,transparent 67%),linear-gradient(170deg,#0e1013,#0a0c0e);animation:qo-appear .35s ease both}
+.qo-crest{color:#d59d6c;font-weight:800;font-size:11px;letter-spacing:.18em}
+.qo-lead{margin:0 0 22px}
+.qo-lead h3{font:700 clamp(28px,3vw,42px)/1.12 Georgia,serif;color:#ffebd0;margin:11px 0 9px}
+.qo-lead h3 em{color:#df9a66;font-weight:400}
+.qo-lead>p{font-size:15px;color:#c5b5a7;line-height:1.52;max-width:700px;margin:6px 0}
+.qo-intro-hero{display:grid;grid-template-columns:minmax(210px,.86fr) minmax(300px,1.14fr);align-items:stretch;min-height:360px;background:#100e0e;border:1px solid #624331;box-shadow:0 8px 22px #0008}
+.qo-intro-portrait{background:linear-gradient(0deg,#120c0dd9,transparent 45%),url("./assets/missions/missao-01.webp") center 43%/cover no-repeat;min-height:370px;animation:qo-portrait 18s ease-in-out infinite alternate}
+.qo-intro-copy{padding:clamp(22px,2.6vw,39px);background:radial-gradient(circle at 100% 0%,#6a332125,transparent 65%),linear-gradient(110deg,#191516,#0d1012)}
+.qo-intro-copy h3{font:700 clamp(28px,2.7vw,43px)/1.15 Georgia,serif;margin:17px 0 17px;color:#f9e8cf}
+.qo-intro-copy h3 em{color:#e8ab71;font-weight:400}
+.qo-intro-copy>p{color:#cec3b9;font-size:16px;line-height:1.6}
+.qo-intro-copy>p strong{color:#f4d6b0}
+.qo-objective{display:flex;gap:14px;background:#211812;border-left:3px solid #e8a46a;padding:15px;margin:22px 0}
+.qo-objective>span{font-size:26px;color:#eead6a}
+.qo-objective strong{color:#f2b678;font-size:12px;letter-spacing:.12em}
+.qo-objective p{font-size:14px;line-height:1.4;margin:4px 0;color:#e0ccb8}
+.qo-action{display:inline-flex;align-items:center;justify-content:center;gap:12px;background:linear-gradient(#f4c27c,#d18b4b 49%,#9b4927);border:2px solid #e8af69;color:#25120a;min-height:47px;border-radius:2px;padding:11px 21px;box-shadow:inset 0 1px #ffedb5,0 0 16px #e57b2a44;font-weight:900;font-size:13px;letter-spacing:.045em;cursor:pointer;transition:filter .2s,box-shadow .2s,transform .2s;text-decoration:none}
+.qo-action:hover:not(:disabled){filter:brightness(1.12);box-shadow:0 0 23px #d86b339e;transform:translateY(-1px)}
+.qo-action:disabled{filter:grayscale(.85);opacity:.52;cursor:not-allowed;box-shadow:none}
+.qo-brief-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:15px}
+.qo-brief-bottom article{padding:17px 15px;border:1px solid #46382e;background:linear-gradient(#201a19,#0f1114)}
+.qo-brief-bottom article span{font-weight:900;color:#e9ae6e;font-size:12px;letter-spacing:.08em}
+.qo-brief-bottom article p{margin:8px 0 0;font-size:14px;color:#c4b5a6;line-height:1.4}
+/* Build — interactive manuscript */
+.qo-builder-grid{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(225px,.8fr);gap:18px;align-items:start}
+.qo-fields{display:grid;gap:15px}
+.qo-section{border:1px solid #624635;background:linear-gradient(140deg,#1c1718,#111316 95%);padding:20px 22px;box-shadow:inset 0 0 35px #0005;position:relative}
+.qo-section:before{position:absolute;content:"";left:10px;top:10px;width:18px;height:18px;border-left:2px solid #ba8259;border-top:2px solid #ba8259;opacity:.6}
+.qo-section-kicker{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.15em;color:#d5a06b;font-weight:900}
+.qo-step-icon{font-size:20px}
+.qo-section h3{font:700 25px/1.18 Georgia,serif;color:#ffebd1;margin:10px 0 6px}
+.qo-section-desc{font-size:14px;color:#bcaeaa;margin:5px 0 17px;line-height:1.45}
+.qo-input-wrap{display:grid;gap:6px;margin-bottom:15px}
+.qo-input-wrap>span{color:#e8d6bf;font-size:14px;font-weight:800}
+.qo-input-wrap>small{color:#aa9f95;font-size:12px;line-height:1.35}
+.qo-input-wrap input,.qo-input-wrap select{
+ width:100%;min-width:0;min-height:44px;background:#080e13;border:1px solid #786049;color:#fff0dc;border-radius:2px;
+ padding:10px 12px;font:15px "Segoe UI",sans-serif;outline:none;box-shadow:inset 0 2px 8px #0008}
+.qo-input-wrap select{color-scheme:dark}
+.qo-input-wrap input::placeholder{color:#8a898a}
+.qo-input-wrap input:focus,.qo-input-wrap select:focus{border-color:#ffc27f;box-shadow:0 0 0 2px #ad622e66}
+.qo-input-wrap input:disabled,.qo-input-wrap select:disabled{opacity:.8}
+.qo-formula{background:#322014;border:1px solid #755135;border-left:3px solid #eab16c;padding:12px 14px;font-size:12px;line-height:1.6;color:#bca58f;letter-spacing:.02em}
+.qo-formula strong{color:#f8d4a7}
+.qo-lock-note{border:1px solid #b78d51;background:#2b2116;padding:11px 14px;color:#f5dbb5;font-size:13px;margin:12px 0}
+.qo-preview-column{display:grid;gap:15px;position:sticky;top:8px}
+.qo-vision{border:2px ridge #9b6d49;background:linear-gradient(#171418,#090d11);box-shadow:0 0 0 3px #0b0c0d,0 13px 23px #000a;overflow:hidden;min-width:0}
+.qo-vision-art{position:relative;min-height:190px;background:linear-gradient(0deg,#08090ced,transparent 58%),url("./assets/missions/missao-02.webp") center 35%/cover no-repeat;overflow:hidden}
+.qo-vision-art:after{position:absolute;inset:0;content:"";background:linear-gradient(120deg,transparent,#f8bf8821,transparent);animation:qo-shine 8s linear infinite;pointer-events:none}
+.qo-vision-label{position:absolute;top:11px;left:13px;background:#0a0b0ddd;border:1px solid #b07c50;color:#f6d3a6;font-size:10px;font-weight:800;letter-spacing:.1em;padding:6px 8px;z-index:1}
+.qo-vision-moon{position:absolute;right:12px;bottom:0;font-size:43px;color:#f0aa6c;text-shadow:0 0 13px #ef5b2b}
+.qo-vision-info{padding:18px}
+.qo-vision-genre{font-size:10px;font-weight:900;letter-spacing:.14em;color:#eeb476;text-transform:uppercase}
+.qo-vision-info h3{font:700 clamp(22px,2vw,32px)/1.11 Georgia,serif;color:#fff0d8;overflow-wrap:anywhere;margin:9px 0 13px;text-transform:uppercase}
+.qo-vision-divider{height:2px;background:linear-gradient(90deg,#bb6f43,transparent);margin-bottom:11px}
+.qo-vision-info p{font-size:13px;line-height:1.45;color:#e0cab4;margin:11px 0;overflow-wrap:anywhere}
+.qo-vision-info p b{display:block;font-size:10px;color:#c59567;letter-spacing:.15em;margin-bottom:2px}
+.qo-tip{background:#171719;border:1px solid #554335;padding:17px 18px}
+.qo-tip span{font-size:11px;color:#edb072;font-weight:900;letter-spacing:.1em}
+.qo-tip p{font-size:13px;line-height:1.55;color:#c8bbb1;margin:9px 0 0}
+.qo-tip-ai{background:radial-gradient(circle at top right,#49301d45,transparent),#171619}
+.qo-secondary{background:#211918;border:1px solid #aa7852;color:#efd5b6;border-radius:2px;padding:11px 13px;min-height:43px;cursor:pointer;font-size:12px;letter-spacing:.05em;font-weight:800}
+.qo-secondary:hover:not(:disabled){background:#42291e;border-color:#f6b878}
+.qo-secondary:disabled{opacity:.45;cursor:not-allowed}
+.qo-tip .qo-secondary{margin-top:12px;width:100%}
+.qo-builder-bottom{padding:14px 8px;border-top:1px solid #6b4c3b;display:grid;gap:13px;justify-items:start}
+.qo-fragments{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.qo-fragment{display:flex;align-items:center;gap:5px;color:#ac9c8c}
+.qo-fragment span{border:1px solid #665347;display:grid;place-items:center;width:26px;height:26px;font:700 12px Georgia,serif;background:#201b1a}
+.qo-fragment.complete span{color:#ffd28a;border-color:#d39054;box-shadow:0 0 10px #f18a4a4b}
+.qo-fragment small{font-size:10px;letter-spacing:.04em}
+.qo-save-notice{font-size:12px;color:#a6ad9e}
+.qo-builder-bottom .qo-action{width:100%}
+/* Delivery — honest status, no fake XP */
+.qo-delivery-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(230px,.7fr);gap:18px}
+.qo-quest-stamp{background:#2a1d16;border:1px solid #89603c;border-left:4px solid #eba86c;color:#f8d5a1;padding:14px 16px;font:700 12px Georgia,serif;letter-spacing:.08em;margin-bottom:14px}
+.qo-quest-stamp.approved{border-color:#cbb673;color:#ffe8b3;background:#342819}
+.qo-quest-stamp.revision{border-color:#d59171;color:#ffd0ac}
+.qo-quest-stamp.submitted{color:#e6ca9b}
+.qo-vision-large{display:grid;grid-template-columns:minmax(120px,.46fr) minmax(0,1fr)}
+.qo-vision-large .qo-vision-art{min-height:295px}
+.qo-vision-large .qo-vision-info{padding:22px}
+.qo-record{padding:16px;border:1px solid #79604d;background:linear-gradient(#181518,#0b1013);margin-top:14px}
+.qo-record-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#ecc58b;font-weight:900;font-size:12px;letter-spacing:.09em}
+.qo-record-head small{color:#a69991;font-size:9px}
+.qo-record-label{display:block;font-size:12px;color:#b8aaa0;margin:12px 0 5px}
+.qo-record textarea{width:100%;min-height:180px;resize:vertical;padding:13px 15px;background:#080d10;color:#e7ddcf;border:1px solid #755945;font:14px/1.6 Consolas,Monaco,monospace}
+.qo-record-help{font-size:12px;color:#ac9b92;margin:8px 0 0}
+.qo-delivery-buttons{display:flex;justify-content:flex-end;gap:11px;margin-top:15px;flex-wrap:wrap}
+.qo-feedback{border:1px solid #b57f4e;background:#262019;padding:14px;margin-bottom:14px}
+.qo-feedback b{color:#f2c18a;font-size:11px}
+.qo-feedback p{color:#e2d1bc;font-size:14px;line-height:1.4}
+.qo-validation{color:#f0b8a0;font-size:13px;margin-top:10px}
+.qo-preview-disclaimer{font-size:11px;color:#dbbd92;margin-top:8px}
+.qo-delivery-aside{display:grid;gap:13px;align-content:start}
+.qo-reward{min-height:220px;border:1px solid #906d49;background:radial-gradient(circle at center 0%,#70421d3d,transparent 67%),linear-gradient(#1f1716,#101116);display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:27px 19px}
+.qo-reward-star{width:75px;height:75px;border:2px ridge #b17e50;border-radius:50%;display:grid;place-items:center;font-size:37px;background:radial-gradient(#5f2e18,#190e11);color:#e6a66c;text-shadow:0 0 16px #d77732}
+.qo-reward>span:nth-child(2){font-size:10px;letter-spacing:.14em;color:#cda97d}
+.qo-reward strong{font:700 23px Georgia,serif;color:#f0d1a3}
+.qo-reward p{font-size:12px;line-height:1.45;color:#b9ac9e}
+.qo-fineprint{text-align:center;padding:14px 8px 18px;border-top:1px solid #423227;background:#0a0b0d;font-size:10px;letter-spacing:.08em;color:#806e5e}
+.qo-fineprint span{color:#b17e50;padding:0 9px}
+.qo-root button:focus-visible{outline:2px solid #ffd08c;outline-offset:3px}
+@keyframes qo-appear{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes qo-float{from{transform:scale(1.05)}to{transform:scale(1.15) translate(-1%,1%)}}
+@keyframes qo-portrait{from{background-size:auto,cover}to{background-size:auto,110% auto}}
+@keyframes qo-shine{from{transform:translateX(-150%)}to{transform:translateX(150%)}}
+@media(min-width:701px){
+ body[data-role="student"] .dashboard{height:calc(100dvh - 203px)}
+ body[data-role="student"] .main-pane{display:flex;flex-direction:column}
+ body[data-role="student"] .main-content{flex:1;overflow:auto}
+}
+@media(max-width:1100px){
+ .qo-builder-grid{grid-template-columns:minmax(0,1fr) minmax(210px,.7fr)}
+ .qo-intro-hero{grid-template-columns:minmax(185px,.7fr) minmax(0,1.3fr)}
+ .qo-section{padding:16px}
+ body[data-role="student"] .dashboard{grid-template-columns:195px minmax(0,1fr)}
+}
+@media(max-width:850px){
+ .qo-builder-grid,.qo-delivery-layout{grid-template-columns:1fr}
+ .qo-preview-column{position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .qo-preview-column .qo-vision{grid-column:1/-1}
+ .qo-intro-hero{grid-template-columns:1fr}
+ .qo-intro-portrait{min-height:240px;background-position:center 40%}
+ .qo-intro-copy{padding:24px}
+}
+@media(max-width:700px){
+ body[data-role="student"] .dashboard{display:flex;flex-direction:column;height:auto;padding:7px}
+ body[data-role="student"] .dashboard>.panel:first-child{max-height:159px}
+ body[data-role="student"] .journey-list{height:102px;max-height:108px}
+ body[data-role="student"] .stage-btn{min-width:208px;min-height:92px;height:92px}
+ body[data-role="student"] .main-pane{height:auto;min-height:0;max-height:none}
+ body[data-role="student"] .main-content{overflow:visible;padding:0}
+ body[data-role="student"] .mainhead{padding:8px 14px}
+ body[data-role="student"] .hero{min-height:86px;flex-basis:86px}
+ body[data-role="student"] .brand-title{font-size:26px}
+ .qo-banner{min-height:167px}
+ .qo-banner-content{padding:20px 15px 17px}
+ .qo-banner-title{gap:12px}
+ .qo-shield{flex-basis:45px;height:56px;font-size:29px}
+ .qo-banner-title h2{font-size:32px}
+ .qo-breadcrumb{font-size:9px}
+ .qo-banner-rune{right:9px;top:36px;font-size:36px}
+ .qo-map{padding:0 3px;gap:0}
+ .qo-map button{font-size:10px;min-height:48px;padding:9px 2px;gap:4px;letter-spacing:0}
+ .qo-map-glyph{font-size:16px}
+ .qo-page{padding:17px 13px}
+ .qo-intro-portrait{min-height:220px}
+ .qo-intro-copy h3{font-size:29px}
+ .qo-brief-bottom{grid-template-columns:1fr;gap:8px}
+ .qo-brief-bottom article{padding:10px 13px}
+ .qo-lead h3{font-size:30px}
+ .qo-preview-column{grid-template-columns:1fr}
+ .qo-vision-large{grid-template-columns:1fr}
+ .qo-vision-large .qo-vision-art{min-height:185px}
+ .qo-delivery-buttons{flex-direction:column}
+ .qo-delivery-buttons button{width:100%}
+ .qo-record textarea{font-size:12px;min-height:190px}
+}
+@media(prefers-reduced-motion:reduce){
+ .qo-page,.qo-banner-image,.qo-vision-art:after,.qo-intro-portrait{animation:none!important}
+ .qo-action{transition:none!important}
+}
