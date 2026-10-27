@@ -56,7 +56,7 @@ function renderRight(){
  const done=TEACHER?0:progress.filter(x=>x.status==='approved').length;
  $('progressText').textContent=TEACHER?'ETAPA '+String(state.current_stage).padStart(2,'0')+'/10':Math.round(done/10*100)+'%';
  $('progressCircle').style.borderColor=TEACHER?'#14759b':'#0e4863';
- $('progressLabel').textContent=TEACHER?'Sala PITGAME26 · '+phaseNames[state.phase]:'XP '+done*100+' / 1000 · '+done+' etapa(s) aprovadas';
+ $('progressLabel').textContent=TEACHER?(visualPreview?'PRÉVIA · SEM TURMA':'Sala PITGAME26 · '+phaseNames[state.phase]):'XP '+done*100+' / 1000 · '+done+' etapa(s) aprovadas';
  $('badgeList').innerHTML=MISSIONS.map(m=>{
   const isDone=!TEACHER&&entry(m.n)?.status==='approved';
   const isActive=m.n===state.current_stage;
@@ -72,7 +72,7 @@ function scrollMissionToStart(){
  if(content)content.scrollTop=0;
  window.requestAnimationFrame(()=>{
   if(content)content.scrollTop=0;
-  if(TEACHER||!pane||!window.matchMedia('(max-width: 700px)').matches)return;
+  if(!pane||!window.matchMedia('(max-width: 700px)').matches)return;
   const nav=document.querySelector('.topnav');
   const sticky=nav&&['sticky','fixed'].includes(window.getComputedStyle(nav).position);
   const offset=sticky?nav.getBoundingClientRect().height+8:8;
@@ -82,7 +82,8 @@ function scrollMissionToStart(){
 }
 function phaseButtons(){
  const labels=TEACHER?{briefing:'Conceitos',demo:'Exemplo em ação',practice:'Oficina liberada',review:'Resultados'}:{briefing:'Briefing',practice:'Construir',review:'Entregar'};
- $('phasebar').innerHTML=phaseList.map((p,i)=>'<button type="button" data-phase="'+p+'" class="'+(p===activePhase?'active':'')+'" aria-current="'+(p===activePhase)+'"><span class="step-count">'+String(i+1).padStart(2,'0')+'/'+String(phaseList.length).padStart(2,'0')+'</span>'+labels[p]+'</button>').join('');
+ const cadence=TEACHER&&window.PIT_TEACHER_MISSION_ONE?window.PIT_TEACHER_MISSION_ONE.minutes(activeStage):null;
+ $('phasebar').innerHTML=phaseList.map((p,i)=>'<button type="button" data-phase="'+p+'" class="'+(p===activePhase?'active':'')+'" aria-current="'+(p===activePhase)+'"><span class="step-count">'+(cadence?cadence[i]+' MIN':String(i+1).padStart(2,'0')+'/'+String(phaseList.length).padStart(2,'0'))+'</span>'+labels[p]+'</button>').join('');
  $('phasebar').querySelectorAll('[data-phase]').forEach(x=>x.onclick=()=>{activePhase=x.dataset.phase;renderMain();scrollMissionToStart()});
 }
 function cards(list){return list.map(([heading,description])=>'<div class="concept-card"><strong>'+esc(heading)+'</strong><p>'+esc(description)+'</p></div>').join('')}
@@ -189,9 +190,10 @@ function renderMain(){
  $('missionTitle').textContent=m.icon+' '+m.title.toUpperCase();
  $('missionSubtitle').textContent=m.subtitle;
  const missionOne=!TEACHER&&m.n===1&&!!window.PIT_MISSION_ONE;
+ const teacherMissionOne=TEACHER&&m.n===1&&!!window.PIT_TEACHER_MISSION_ONE;
  document.body.classList.toggle('pit-mission-one',missionOne);
  if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
+ $('mainContent').innerHTML=teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
  phaseButtons();
  if(TEACHER){
   // Pré-visualizar é diferente de liberar: o botão azul compartilha a etapa/fase com a turma.
@@ -213,6 +215,7 @@ function renderMain(){
  if(evidence)evidence.oninput=()=>localStorage.setItem('pit_v2_draft_'+m.n,evidence.value);
  if($('startWork'))$('startWork').onclick=()=>sendWork('working');
  if($('submitWork'))$('submitWork').onclick=()=>sendWork('submitted');
+ if(teacherMissionOne)window.PIT_TEACHER_MISSION_ONE.mount();
  if(missionOne)window.PIT_MISSION_ONE.mount({
   ...missionOneContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
@@ -286,6 +289,12 @@ async function sendWork(status){
  }catch(e){setToast(e.message,true)}
 }
 async function teacherAdvance(stage,phase){
+ if(visualPreview){
+  state={current_stage:stage,phase,updated_at:null};activeStage=stage;activePhase=phase;
+  renderAll();scrollMissionToStart();
+  setToast('Prévia didática: a turma real não foi alterada.');
+  return;
+ }
  try{
   const result=await call('classroom','stage','POST',{stage,phase});
   state=result.state;lastServerStage=state.current_stage;
@@ -305,7 +314,7 @@ function showMissionGallery(){
  const gallery=$('missionGalleryGrid');
  gallery.innerHTML=MISSIONS.map(m=>{
   const locked=!TEACHER&&m.n>state.current_stage,done=!TEACHER&&entry(m.n)?.status==='approved';
-  return '<button type="button" class="gallery-card '+(activeStage===m.n?'selected ':'')+(locked?'locked ':'')+'" data-gallery-stage="'+m.n+'" '+(locked?'disabled':'')+' style="--card-color:'+stageThumbs[m.n-1]+'"><span class="gallery-photo"><span>'+m.icon+'</span></span><span class="gallery-card-content"><small>MISSÃO '+String(m.n).padStart(2,'0')+' · '+m.minutes+' MIN</small><strong>'+esc(m.title)+'</strong><em>'+esc(done?'✓ CONQUISTADA':locked?'🔒 BLOQUEADA':m.subtitle)+'</em></span></button>'
+  return '<button type="button" class="gallery-card '+(activeStage===m.n?'selected ':'')+(locked?'locked ':'')+'" data-gallery-stage="'+m.n+'" '+(locked?'disabled':'')+' style="--card-color:'+stageThumbs[m.n-1]+'"><span class="gallery-photo"><img class="tm1-gallery-art" loading="lazy" decoding="async" src="./v3/assets/missions/missao-'+String(m.n).padStart(2,'0')+'.webp" alt=""><span>'+m.icon+'</span></span><span class="gallery-card-content"><small>MISSÃO '+String(m.n).padStart(2,'0')+' · '+m.minutes+' MIN</small><strong>'+esc(m.title)+'</strong><em>'+esc(done?'✓ CONQUISTADA':locked?'🔒 BLOQUEADA':m.subtitle)+'</em></span></button>'
  }).join('');
  gallery.querySelectorAll('[data-gallery-stage]').forEach(b=>b.onclick=()=>{selectStage(Number(b.dataset.galleryStage));closeGallery()});
  $('missionGalleryClose').focus();
@@ -495,6 +504,17 @@ $('chatForm').onsubmit=async e=>{
   field.value='';await loadChat();setToast('Mensagem enviada ✓');
  }catch(err){setToast(err.message,true)}
 };
+function startTeacherPreview(){
+ if(!TEACHER)return;
+ visualPreview=true;document.body.classList.add('pit-v3-visual-preview');
+ state={current_stage:1,phase:'briefing',updated_at:null};activeStage=1;activePhase='briefing';progress=[];
+ $('auth').hidden=true;$('loading').hidden=true;$('workspace').hidden=false;
+ $('currentUser').textContent='MESTRE DA JORNADA · PRÉVIA';
+ renderAll();
+ $('roomState').textContent='PRÉVIA LOCAL · NÃO CONTROLA A TURMA';
+ $('lastSync').textContent='Modo demonstração, sem conexão com alunos';
+ showMissionGallery();
+}
 function startVisualPreview(){
  if(TEACHER||!window.PIT_ARCADE){setToast('Prévia indisponível nesta página.',true);return;}
  visualPreview=true;
@@ -513,7 +533,10 @@ $('showResources').onclick=()=>{window.open('./index.html#recursos','_blank','no
 $('changeUser').onclick=()=>{if(TEACHER){sessionStorage.removeItem('pit_teacher_pin');teacherPin=''}else{localStorage.removeItem('pit_chat_student_v09');studentSession=null}location.reload()};
 (async()=>{
  if(MISSIONS.length!==10){$('loading').textContent='Erro: catálogo de etapas incompleto.';return}
- if(!TEACHER&&new URLSearchParams(location.search).get('preview')==='1'){startVisualPreview();return}
+ if(new URLSearchParams(location.search).get('preview')==='1'){
+   if(TEACHER)startTeacherPreview();else startVisualPreview();
+   return;
+  }
  if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token)){
   try{await startApp();if($('workspace').hidden)await authenticate()}
   catch{await authenticate()}
