@@ -85,7 +85,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.progress[0].status,'approved','teacher approves submitted work');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
- assert.match(await sp.locator('.stage-btn[data-stage="1"] small').textContent(),/Concluída/);
+ assert.match(await sp.locator('.stage-btn[data-stage="1"]').innerText(),/CONCLUÍDA/i);
  await tp.locator('#rosterClose').click();
  await tp.locator('#navSecondary').click();
  assert.equal(store.stage,2,'teacher opens stage 2 for the group');
