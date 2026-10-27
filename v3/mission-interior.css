@@ -262,3 +262,22 @@ body[data-role="student"] .stage-emoji{z-index:1;font-size:23px;opacity:.85}
 body[data-role="student"] .main-pane:before{background:linear-gradient(90deg,transparent,#e6a66b);box-shadow:0 0 14px #bb6d3d57;opacity:.65}
 body[data-role="student"] .mainhead:before{background:linear-gradient(90deg,#0a0c0ef2,#161111a1)}
 body[data-role="student"] .eyebrow,body[data-role="student"] .state-pill{color:#e9c39c}
+
+/* Student phase 2.5: live model derived from existing inputs, never an extra assignment. */
+.qo-cycle{min-width:0;border:1px solid #916a48;background:linear-gradient(153deg,#241b1a,#111417 85%);box-shadow:0 10px 24px #0007;overflow:hidden}
+.qo-cycle-head{display:grid;gap:7px;background:linear-gradient(90deg,#563321,#1e1818);border-bottom:1px solid #89603e;padding:14px 17px}
+.qo-cycle-head>span{font-size:10px;font-weight:900;letter-spacing:.14em;color:#f4bf80}
+.qo-cycle-head>strong{font:700 clamp(16px,1.4vw,19px)/1.25 Georgia,serif;color:#ffead0}
+.qo-cycle-steps{padding:13px;display:grid;gap:7px}
+.qo-cycle-step{position:relative;display:grid;grid-template-columns:29px minmax(0,1fr);align-items:start;gap:10px;padding:11px 9px;border:1px solid #59463b;background:#111519;transition:background .22s,border-color .22s}
+.qo-cycle-step:not(:last-child):after{content:"↓";position:absolute;bottom:-14px;left:19px;z-index:2;color:#e8b57d;font-size:13px;line-height:17px;text-shadow:0 2px 4px #000}
+.qo-cycle-step.filled{background:#33221b;border-color:#b08054}
+.qo-cycle-step-number{width:27px;height:27px;display:grid;place-items:center;border:1px solid #88684e;color:#f5d0a4;background:#2e211c;font:700 13px Georgia,serif}
+.qo-cycle-step.filled .qo-cycle-step-number{border-color:#e4af73;background:#73442a}
+.qo-cycle-step strong{font-size:10px;letter-spacing:.11em;font-weight:900;color:#cda078}
+.qo-cycle-step p{margin:5px 0 0;color:#b2a79e;font-size:12px;line-height:1.44;overflow-wrap:anywhere}
+.qo-cycle-step.filled p{color:#ffe0b8;font-weight:650}
+.qo-cycle-explain{border-top:1px solid #674b37;margin:0;padding:12px 16px;color:#cfbca8;font-size:12px;line-height:1.48;background:#251b19}
+.qo-delivery-main>.qo-cycle{margin-top:14px}
+@media(min-width:850px){.qo-delivery-main>.qo-cycle .qo-cycle-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.qo-delivery-main>.qo-cycle .qo-cycle-step:after{display:none}}
+@media(prefers-reduced-motion:reduce){.qo-cycle-step{transition:none!important}}
