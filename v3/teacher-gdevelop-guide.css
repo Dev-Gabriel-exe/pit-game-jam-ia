@@ -42,3 +42,9 @@
 .tm-pro-guide-direction{display:inline-flex;align-items:center;justify-content:center;white-space:normal;line-height:1.35;flex:none;max-width:200px;padding:11px;border:1px solid #e0af76;background:#493021;color:#ffddb5;font-size:11px;letter-spacing:.07em;text-align:center;font-weight:900}
 .tm-pro-guide-fallback{padding:17px;border:1px solid #91694d;color:#f2d4b4;background:#241a18}
 @media(max-width:850px){.tm-pro-guide-direction{max-width:none;width:100%}}
+
+/* Traduções integradas sobre as capturas oficiais, com a imagem preservada. */
+.tm-guide-image-shot{position:relative;isolation:isolate}
+.tm-guide-image-translations{position:absolute;z-index:2;left:10px;right:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:7px;pointer-events:none}
+.tm-guide-image-translations span{font-size:11px;letter-spacing:.02em;font-weight:850;padding:7px 10px;border:1px solid #dcb17a;color:#ffe7c4;background:#221b1ded;box-shadow:0 3px 12px #0009}
+@media(max-width:700px){.tm-guide-image-translations{bottom:5px;left:5px;right:5px;gap:4px}.tm-guide-image-translations span{font-size:9px;padding:5px 6px}}
