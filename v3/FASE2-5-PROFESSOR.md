@@ -97,3 +97,32 @@ Critérios de avaliação concretos: identidade, interação e conclusão. Contr
 - [GDevelop — editor de eventos](https://wiki.gdevelop.io/gdevelop5/interface/events-editor/)
 - [Unity — Core game loop](https://unity.com/blog/find-your-core-game-loop)
 - [Hunicke, LeBlanc & Zubek — MDA](https://aaai.org/papers/ws04-04-001-mda-a-formal-approach-to-game-design-and-game-research/)
+
+## Revisão universitária / edição 2 — 27/10/2026
+
+### Feedback incorporado
+
+A primeira edição recebeu críticas por conteúdo pouco técnico, passagens parecidas com notas de professor e apresentações estáticas. A edição 2 **substitui a implementação ativa da Missão 01** por um módulo novo com conteúdo acadêmico verificável e animação.
+
+### Entregue
+
+- **Novo módulo ativo:** `v3/teacher-mission-one-pro.js`. O arquivo anterior `teacher-mission-one.js` fica preservado como versão histórica, sem carregamento na página atual.
+- **Nova folha visual:** `v3/teacher-depth.css`, carregada após `professor-gothic.css`. A identidade gótica permanece, mas os cards têm entrada progressiva por `IntersectionObserver`, atraso escalonado, iluminação, hover e transição entre painéis. Na ausência do observador ou com movimento reduzido, o conteúdo fica visível normalmente.
+- **Conceitos:** modelagem `S(t+1) = T(S(t), ação)`, distinção entre requisitos e implementação, modelo MDA de Hunicke/LeBlanc/Zubek, loop de gameplay versus loop técnico da engine, variáveis de estado, condições booleanas, feedback e mapeamento para Scene/Objects/Behaviors/Events/Variables/Preview do GDevelop.
+- **Comparação interativa:** RPG, Puzzle e Terror; texto de ações, condições, feedback e pseudocódigo se altera a cada seleção.
+- **Laboratório com execução:** coletar cristal, tentar porta e reiniciar; depurador didático com regra atual destacada, log de eventos, barra do contador, representação da máquina de estados e cenários A/B/C de caixa-preta.
+- **Oficina:** ficha de game design com sete campos sincronizados com o caderno do aluno, explicação técnica dos dados e critérios de aceitação do exemplo.
+- **Resultados:** três critérios observáveis e contraste entre descrição vaga e requisito verificável.
+- **Missões 02–10:** receberam animação escalonada também nos cards anteriores, sem alteração ainda do conteúdo pedagógico; aprofundamento planejado para Fase 3.
+- **Preservado:** autenticação, APIs, dados da turma, liberação das fases, chat, avaliação e formulários do aluno.
+
+### Verificações realizadas
+
+- 24 verificações de estrutura, conteúdo, integração, acessibilidade, tempo, sintaxe e segurança da prévia.
+- 12 verificações de interação: entrada dos cards, alteração entre gêneros, coleta, bloqueio de porta, abertura com três cristais, reinício, rastro limitado e testes A/B/C.
+- **Não equivale a teste visual em navegador.** Permanecem pendentes inspeção em Chrome/Android e desktop, projeção em sala e teste com usuário real.
+
+### Fontes conceituais
+
+- Hunicke, LeBlanc e Zubek (2004). *MDA: A Formal Approach to Game Design and Game Research*. AAAI.
+- GDevelop Documentation. *Basic game making concepts*; *Events editor*; *Objects*.
