@@ -77,8 +77,8 @@ Referência aprovada pelo responsável: seleção visual de missões inspirada e
 - Arquivos organizados em `v3/assets/missions/missao-01.webp` ... `missao-10.webp`.
 - Integração de código já realizada em `arcade-gallery.js`: imagem real sobre a ilustração SVG anterior, que segue como fallback caso o arquivo esteja ausente.
 - Efeitos no tema `diablo-theme.css`: movimento lento da imagem, brilho cinematográfico, hover e respeito a `prefers-reduced-motion`.
-- A biblioteca de imagens está num ZIP de entrega da conversa, **ainda não publicada no GitHub**. Até o upload dos 10 WebPs para os caminhos indicados, a interface continuará mostrando as artes SVG anteriores.
+- A biblioteca das 10 imagens WebP foi **publicada no GitHub**, no commit `755b39b`, com os caminhos esperados pelo front. Os SVG anteriores permanecem apenas como fallback de carregamento.
 - A montagem com 10 imagens também foi salva no Canva para referência de identidade visual.
 - Não foram gerados vídeos. Google Flow é uma possibilidade futura para abertura de capítulo, mas não é requisito para os cards.
 
-**Pendente desta etapa:** publicar os 10 arquivos WebP no repositório, abrir a prévia de browser e validar visualmente cada card antes de concluir a fase.
+**Verificação de integração realizada:** a árvore Git contém 10 arquivos WebP distintos, os caminhos correspondem ao front, o JS do carrossel passou no teste de sintaxe e o link de prévia sem login continua habilitado. **Pendente:** homologação visual real em navegador e testes completos do fluxo da oficina.
