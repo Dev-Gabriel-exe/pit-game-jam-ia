@@ -65,3 +65,15 @@ Fluxo: selecionar o card 01 → clicar "Entrar" → ver Briefing → Construir �
 - Implementado `scrollMissionToStart()`: reposiciona o conteúdo interno e, no celular, alinha o topo de `#mainPane` à janela respeitando a altura da navegação fixa.
 - Testes unitários de comportamento da função: mobile com navegação fixa/normal, desktop e professor, além de verificação dos pontos de chamada; **12/12 aprovados**.
 - **Ainda pendente:** confirmar visualmente a rolagem em Chrome/Android e Safari/iOS reais.
+
+## Ajuste final do aluno — alinhamento com o professor (27/10/2026)
+
+Com a Missão 01 do Professor aprovada em seu conteúdo, o Caderno do Aluno recebeu um reforço **prático e sem novos campos**: o quadro visual "Da ideia à mecânica", derivado em tempo real das escolhas já preenchidas.
+
+- O quadro liga **Desafio → Ação → Condição de conclusão → Feedback final**.
+- Ao digitar no formulário, cada cartão se atualiza instantaneamente. Campos ainda vazios apresentam orientações curtas; campos preenchidos recebem destaque visual.
+- O mesmo diagrama aparece na ficha de entrega, para o estudante conferir se sua ideia tem uma interação e uma condição testável.
+- A explicação sobre o *game loop* permanece curta no aluno: ele tenta, recebe retorno e decide novamente até cumprir a condição. A explicação conceitual aprofundada já está na apresentação do professor.
+- **Sem novas perguntas, novas entregas ou mudanças na API.** Evidência continua gerada nos mesmos sete campos e o tempo previsto de 20 minutos foi mantido.
+- Verificações de JS, sincronização, rascunho, HTML escaping, limite de evidência, ausência de novos endpoints, responsividade e estado em tempo real: 16/16 aprovadas.
+- Pendente: conferência da aparência no celular/computador reais, ainda não realizada.
