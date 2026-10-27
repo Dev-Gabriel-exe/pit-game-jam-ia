@@ -76,6 +76,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.messages.at(-1).author,'teacher');
  await sp.locator('#chatButton').click();
  await sp.locator('#chatWindow.open').waitFor();
+ await sp.locator('#chatMessages .msg').filter({hasText:'Bom trabalho na etapa 1.'}).waitFor({timeout:6500});
  assert.match(await sp.locator('#chatMessages').innerText(),/Bom trabalho/);
  assert.equal(error.length,0,'No browser JS errors: '+error.join('|'));
  console.log('PASS: 10 stages in order, separate teacher and student sessions');
