@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070c25">
+<title>PIT Game Jam IA · Fase 1 — Seleção de Missões</title>
+<meta name="description" content="Protótipo visual da nova seleção cinematográfica de missões do PIT Game Jam IA">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./v3/phase1.css">
+</head><body>
+<div class="demo-shell">
+ <header class="topbar">
+  <div class="logo"><span class="logo-gem" aria-hidden="true">✦</span><span><strong>PIT GAME JAM <span style="color:#e2a5fa">IA</span></strong><small>CREATOR MODE · MISSÕES</small></span></div>
+  <nav class="top-menu" aria-label="Navegação do protótipo"><span class="selected">◈ Missões</span><span>✦ Conquistas</span><span>▣ Inventário</span></nav>
+  <div class="demo-note">Prévia isolada · Fase 1</div>
+  <div class="xp" aria-label="Barra visual ilustrativa de experiência, sem dados de alunos"><span class="xp-star" aria-hidden="true">★</span><div>XP VISUAL<div class="xp-rail"><span></span></div></div></div>
+ </header>
+ <section class="intro" aria-label="Apresentação das missões"><div class="kicker">◆ PIT GAME STUDIO <span>·</span> CAMPANHA EM 10 CAPÍTULOS</div><h1>Escolha sua <span>missão</span></h1><p>De uma ideia ao jogo publicado. Cada desafio aproxima você da sua própria criação.</p></section>
+ <div class="mission-divider"><span>◈ CARROSSEL DE MISSÕES ◈</span></div>
+ <div class="carousel-shell">
+  <button class="arrow prev" id="previous" type="button" aria-label="Missão anterior">‹</button>
+  <div class="carousel" id="carousel" aria-label="Carrossel animado com dez missões"><div id="cardTrack"></div></div>
+  <button class="arrow next" id="next" type="button" aria-label="Próxima missão">›</button>
+ </div>
+ <section class="mission-summary" aria-live="polite">
+  <div><span class="summary-eyebrow" id="selectedEyebrow">MISSÃO 01</span><h2 id="selectedName">Carregando missão</h2><p id="selectedGoal"></p></div>
+  <div class="summary-goal"><span aria-hidden="true" id="selectedPoster">🎮</span><div><small>RESULTADO DA MISSÃO</small><div id="completionGoal"></div></div></div>
+  <div class="summary-actions"><div class="chapter-index" id="steps" aria-label="Navegação rápida entre missões"></div><button class="launch" id="launchMission" type="button">▶ VER BRIEFING</button></div>
+ </section>
+ <footer class="demo-footer"><span>PIT GAME JAM IA · TERESINA, PIAUÍ</span><span><b id="missionCount">01 / 10</b> · <span id="stageMinutes">20 MINUTOS</span></span><span>PRÉVIA DE DESIGN — NÃO REGISTRA PROGRESSO</span><div class="meter" aria-hidden="true"><span id="progressMeter" style="width:10%"></span></div></footer>
+</div>
+<div class="brief-overlay" id="briefModal" hidden role="presentation"><section class="brief-window" role="dialog" aria-modal="true" aria-labelledby="briefTitle">
+<button class="brief-close" id="closeBrief" type="button" aria-label="Fechar briefing">×</button>
+<div class="brief-kicker" id="briefIndex">MISSÃO 01</div><h2 id="briefTitle">O Chamado</h2><p id="briefIntro"></p>
+<h3>SEQUÊNCIA DA OFICINA</h3><ol id="briefSteps"></ol>
+<h3>CONQUISTA ESPERADA</h3><div class="brief-result" id="briefResult"></div>
+<p class="brief-disclaimer">Esta é uma prévia visual isolada da fase 1. Nenhuma mensagem, entrega ou progresso é gravado e a sala real permanece inalterada.</p>
+</section></div>
+<script src="./v2/missions.js"></script><script src="./v3/phase1.js"></script>
+</body></html>
