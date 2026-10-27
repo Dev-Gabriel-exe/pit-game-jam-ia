@@ -65,10 +65,25 @@ function renderRight(){
  $('roleSubtitle').textContent=TEACHER?'MISSION CONTROL · CONTROLE DIDÁTICO':'CREATOR MODE · MINHA JORNADA';
  $('roomState').textContent='TURMA · ETAPA '+String(state.current_stage).padStart(2,'0')+' · '+phaseNames[state.phase].toUpperCase();
 }
+// A tela do aluno usa scroll interno no desktop, mas scroll da página no celular.
+// Ao trocar de etapa, reposicionamos no início do capítulo, nunca no meio da etapa nova.
+function scrollMissionToStart(){
+ const content=$('mainContent'),pane=$('mainPane');
+ if(content)content.scrollTop=0;
+ window.requestAnimationFrame(()=>{
+  if(content)content.scrollTop=0;
+  if(TEACHER||!pane||!window.matchMedia('(max-width: 700px)').matches)return;
+  const nav=document.querySelector('.topnav');
+  const sticky=nav&&['sticky','fixed'].includes(window.getComputedStyle(nav).position);
+  const offset=sticky?nav.getBoundingClientRect().height+8:8;
+  const y=Math.max(0,window.scrollY+pane.getBoundingClientRect().top-offset);
+  window.scrollTo({top:y,behavior:'auto'});
+ });
+}
 function phaseButtons(){
  const labels=TEACHER?{briefing:'Conceitos',demo:'Exemplo em ação',practice:'Oficina liberada',review:'Resultados'}:{briefing:'Briefing',practice:'Construir',review:'Entregar'};
  $('phasebar').innerHTML=phaseList.map((p,i)=>'<button type="button" data-phase="'+p+'" class="'+(p===activePhase?'active':'')+'" aria-current="'+(p===activePhase)+'"><span class="step-count">'+String(i+1).padStart(2,'0')+'/'+String(phaseList.length).padStart(2,'0')+'</span>'+labels[p]+'</button>').join('');
- $('phasebar').querySelectorAll('[data-phase]').forEach(x=>x.onclick=()=>{activePhase=x.dataset.phase;renderMain()});
+ $('phasebar').querySelectorAll('[data-phase]').forEach(x=>x.onclick=()=>{activePhase=x.dataset.phase;renderMain();scrollMissionToStart()});
 }
 function cards(list){return list.map(([heading,description])=>'<div class="concept-card"><strong>'+esc(heading)+'</strong><p>'+esc(description)+'</p></div>').join('')}
 function tasks(list){return list.map((text,i)=>'<div class="task-card"><span class="num">'+String(i+1).padStart(2,'0')+'</span><div><p>'+esc(text)+'</p></div></div>').join('')}
@@ -200,7 +215,7 @@ function renderMain(){
  if($('submitWork'))$('submitWork').onclick=()=>sendWork('submitted');
  if(missionOne)window.PIT_MISSION_ONE.mount({
   ...missionOneContext(),
-  onPhase:p=>{activePhase=p;renderMain();$('mainContent').scrollTop=0;},
+  onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
   onToast:message=>setToast(message)
  });
  $('mainContent').querySelectorAll('[data-step-check]').forEach(input=>input.onchange=()=>{
@@ -245,7 +260,7 @@ function selectStage(n,fromServer=false){
  if(!Number.isInteger(n)||n<1||n>10||(!TEACHER&&n>state.current_stage))return;
  activeStage=n;activePhase=fromServer?state.phase:'briefing';
  renderAll();
- $('mainContent').scrollTop=0;
+ scrollMissionToStart();
 }
 async function sendWork(status){
  const pilot=!TEACHER&&activeStage===1&&!!window.PIT_MISSION_ONE;
@@ -282,7 +297,7 @@ async function teacherAdvance(stage,phase){
 // Galeria cinematográfica de missões, independente da rolagem do caderno.
 function showMissionGallery(){
  if(!TEACHER&&window.PIT_ARCADE){
-  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,studentName:visualPreview?'VISITANTE · PRÉVIA':studentSession?.name||'AVENTUREIRO',onEnter:n=>{selectStage(n);$('mainContent').scrollTop=0;}});
+  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,studentName:visualPreview?'VISITANTE · PRÉVIA':studentSession?.name||'AVENTUREIRO',onEnter:n=>selectStage(n)});
   return;
  }
  const modal=$('missionGallery');if(!modal)return;
@@ -304,12 +319,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGallery()});
 $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage,activePhase);
  const idx=phaseList.indexOf(activePhase);
- if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();$('mainContent').scrollTop=0;}
+ if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();scrollMissionToStart();}
  else {if(!TEACHER&&activeStage===1&&window.PIT_MISSION_ONE){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é criada automaticamente a partir das escolhas.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10){selectStage(activeStage+1);teacherAdvance(activeStage,'briefing')}return}
- const idx=phaseList.indexOf(activePhase);if(idx>0){activePhase=phaseList[idx-1];renderMain();}
+ const idx=phaseList.indexOf(activePhase);if(idx>0){activePhase=phaseList[idx-1];renderMain();scrollMissionToStart();}
 };
 async function poll(){
  if(requestInFlight||document.visibilityState==='hidden')return;
