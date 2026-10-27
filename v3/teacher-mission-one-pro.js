@@ -107,8 +107,9 @@ function demo(){
  '<p>Cada teste isola uma entrada e compara o estado final com o resultado esperado.</p>'+
  '<div class="tm-pro-tests"><button type="button" data-tm-test="0">TESTE A · 0/3</button><button type="button" data-tm-test="2">TESTE B · 2/3</button><button type="button" data-tm-test="3">TESTE C · 3/3</button></div>'+
  '<div class="tm-pro-test-result" id="tm1TestResult" aria-live="polite">Escolha um cenário para verificar a regra de abertura.</div></article></div>'+
- '<div class="tm-pro-engine" data-reveal><div><span>NO MOTOR GDEVELOP</span><h4>Uma regra = condições + ações</h4><p><b>Objeto:</b> Player, Cristal e Porta. <b>Variável da cena:</b> cristais. <b>Condição:</b> colisão ou interação com objeto. <b>Ação:</b> atualizar estado, remover item selecionado ou mudar a cena. <b>Preview:</b> verificar o resultado.</p></div>'+
- '<a href="https://wiki.gdevelop.io/gdevelop5/interface/events-editor/" target="_blank" rel="noopener noreferrer">EVENTOS NO GDEVELOP ↗</a></div>');
+ '<div class="tm-pro-engine" data-reveal><div><span>NO MOTOR GDEVELOP</span><h4>Uma regra = condições + ações</h4><p><b>Objeto:</b> Jogador, Cristal e Porta. <b>Variável da cena:</b> cristais. <b>Condição:</b> colisão com objeto. <b>Ações:</b> excluir o item selecionado, somar ao contador ou concluir a partida. O <b>Preview</b> verifica o resultado real do evento.</p></div>'+
+ '<span class="tm-pro-guide-direction">EXPLICAÇÃO COMPLETA LOGO ABAIXO ↓</span></div>'+
+ (window.PIT_TEACHER_GDEVELOP_GUIDE?window.PIT_TEACHER_GDEVELOP_GUIDE.render():'<p class="tm-pro-guide-fallback">Os eventos combinam condições (SE) e ações (ENTÃO).</p>'));
 }
 const cases=[
  ['GÊNERO','Aventura / RPG','Define a linguagem de interação e expectativas do jogador.'],
@@ -154,6 +155,7 @@ function review(){
 function render(phase){return phase==='demo'?demo():phase==='practice'?practice():phase==='review'?review():concepts()}
 function mount(){
  const root=document.querySelector('.tm1-root');if(!root)return;
+ if(window.PIT_TEACHER_GDEVELOP_GUIDE)window.PIT_TEACHER_GDEVELOP_GUIDE.mount();
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const reveal=[...root.querySelectorAll('[data-reveal]')];
  if(!reduced&&typeof IntersectionObserver!=='undefined'){
