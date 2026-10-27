@@ -60,7 +60,27 @@ const assert=require('node:assert/strict');
  await page.locator('#pitTransition button').click(); // Pular transição
  assert.equal(await page.locator('#pit-quest-deck [data-qmission="4"]').getAttribute('aria-selected'),'true','apresentar missão 4 seleciona a missão detalhada');
  assert.match(await page.locator('#pit-quest-deck .pitq-pane h3').textContent(),/FORJA DE IA/);
- console.log('PASS: teacher presents selected mission after cinematic skip');
+ await page.waitForFunction(()=>{
+   const el=document.querySelector('#pit-quest-deck .pitq-pane');
+   if(!el)return false;
+   const y=el.getBoundingClientRect().top;
+   return y>=-30 && y<=140;
+ },null,{timeout:6500});
+ const studentLink=page.locator('#pit-quest-deck .pitq-pane a[href*="aluno.html?missao=4"]').first();
+ assert.equal(await studentLink.count(),1,'link da missão correspondente no aluno');
+ console.log('PASS: teacher presents mission 4, scrolls to details, and links to student mission');
+ // A transição completa, sem pular, também precisa abrir a missão certa.
+ await page.locator('[data-pit-scene="2"]').click();
+ await page.waitForFunction(()=>document.querySelector('#pit-quest-deck [data-qmission="2"]')?.getAttribute('aria-selected')==='true',null,{timeout:4200});
+ assert.match(await page.locator('#pit-quest-deck .pitq-pane h3').textContent(),/IGNIÇÃO/);
+ console.log('PASS: automatic cinematic completion opens mission 2');
+ // Professor compartilha URL e aluno já chega ao mesmo capítulo.
+ await page.goto(base+'aluno.html?missao=4#pit-creator-missions',{waitUntil:'domcontentloaded'});
+ await page.locator('#pit-quest-deck').waitFor();
+ assert.equal(await page.locator('#pit-quest-deck [data-qmission="4"]').getAttribute('aria-selected'),'true','deep-link synchronizes student to mission 4');
+ console.log('PASS: student opens precise chapter via teacher link');
+ await page.goto(base+'professor.html',{waitUntil:'domcontentloaded'});
+ await page.locator('#pit-quest-deck').waitFor();
 
  assert.equal(await page.locator('.pitq-rail button').count(),6);
  await page.locator('#pit-chat-root .pitc-fab').click();
