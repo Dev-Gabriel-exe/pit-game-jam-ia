@@ -244,3 +244,9 @@ body[data-role="student"] .auth{background:linear-gradient(145deg,#241819,#0a0f1
  .qo-page,.qo-banner-image,.qo-vision-art:after,.qo-intro-portrait{animation:none!important}
  .qo-action{transition:none!important}
 }
+
+/* Uma única navegação de capítulos na Missão 01, evitando tabs duplicadas. */
+body[data-role="student"].pit-mission-one #phasebar{display:none}
+body[data-role="student"].pit-mission-one #missionTitle,body[data-role="student"].pit-mission-one #missionSubtitle{display:none}
+body[data-role="student"].pit-mission-one .mainhead{padding:7px 16px}
+body[data-role="student"].pit-mission-one .mission-actions #roomState{max-width:48ch}
