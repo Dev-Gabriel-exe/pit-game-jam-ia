@@ -41,6 +41,17 @@ const assert=require('node:assert/strict');
  await page.goto(base+'aluno.html',{waitUntil:'domcontentloaded'});
  await page.locator('#pit-quest-deck').waitFor();
  assert.equal(await page.locator('.pitq-rail button').count(),6);
+ // Regressão: cards numerados 01-06 devem abrir a missão correspondente (não capítulos 02-10 do roteiro legado).
+ const chapterNames=['O CHAMADO','IGNIÇÃO','PRIMEIRA REGRA','FORJA DE IA','UNIVERSO VIVO','LANÇAMENTO'];
+ for(let i=1;i<=6;i++){
+   await page.locator('[data-pit-nav="'+i+'"]').click();
+   await page.locator('#pitTransition.active').waitFor();
+   await page.locator('#pitTransition button').click();
+   assert.equal(await page.locator('#pit-quest-deck [data-qmission="'+i+'"]').getAttribute('aria-selected'),'true','etapa '+i+' seleciona missão '+i);
+   assert((await page.locator('#pit-quest-deck .pitq-pane h3').textContent()).toUpperCase().includes(chapterNames[i-1]),'etapa '+i+' abre instruções corretas');
+   await page.waitForFunction(()=>{const el=document.querySelector('#pit-quest-deck .pitq-pane');const top=el.getBoundingClientRect().top;return top>=-60&&top<=160},null,{timeout:6500});
+ }
+ console.log('PASS: all 6 student cards open matching missions and scroll to correct content');
  await page.locator('.pitq-rail button[data-qmission="2"]').click();
  await page.locator('.pitq-route button[data-qroute="3d"]').click();
  assert((await page.locator('.pitq-steps').innerText()).includes('3D'),'3D mission route');
