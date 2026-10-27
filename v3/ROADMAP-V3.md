@@ -111,3 +111,7 @@ Missão 01 — O Chamado implementada na branch V3 com interface de fantasia gó
 - Identidade gótica aplicada ao Caderno do Professor, com dez ilustrações e prévia isolada de banco de dados/`?preview=1`.
 - Piloto Fase 2.5 implementado, mas **não homologado em navegador real**. As missões 02–10 do professor ainda usam o conteúdo anterior e precisam ser revistas junto com o aluno na Fase 3.
 - Detalhes, matriz de horários e testes: [FASE2-5-PROFESSOR.md](./FASE2-5-PROFESSOR.md).
+
+### Revisão de qualidade pedagógica — Caderno do Professor (27/10/2026)
+
+A versão inicial da Missão 01 do professor foi reprovada por superficialidade técnica, estilo de texto semelhante a notas e ausência de animações. Foi substituída por `teacher-mission-one-pro.js` e `teacher-depth.css`, incluindo teoria mais precisa, código e condições verificáveis, animação de entrada de cards, comparação de gêneros, simulador com log de eventos e três casos de teste. O novo padrão é o mínimo exigido para as missões 02–10. Ainda falta homologação visual no navegador e teste presencial; **a Fase 3 continua pendente**.
