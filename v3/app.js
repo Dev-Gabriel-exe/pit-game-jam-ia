@@ -199,7 +199,7 @@ function renderMain(){
   // Pré-visualizar é diferente de liberar: o botão azul compartilha a etapa/fase com a turma.
   $('missionStatus').textContent=m.n===state.current_stage?'ETAPA ATIVA · '+phaseNames[state.phase]: 'ETAPA '+String(m.n).padStart(2,'0')+' · PRÉVIA';
   $('missionStatus').className='state-pill';
-  $('navPrimary').textContent=m.n===state.current_stage?'Atualizar fase da turma':'Iniciar etapa '+String(m.n).padStart(2,'0')+' para turma';
+  $('navPrimary').textContent=visualPreview?'SIMULAR LIBERAÇÃO (SEM TURMA)':m.n===state.current_stage?'Atualizar fase da turma':'Iniciar etapa '+String(m.n).padStart(2,'0')+' para turma';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='Próxima etapa →';
   $('navSecondary').disabled=m.n>=10;
