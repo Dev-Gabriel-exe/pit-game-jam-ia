@@ -122,7 +122,7 @@ module.exports = async function handler(req, res) {
         "SELECT count(*)::int AS n FROM pit_chat_messages WHERE student_id=$1 AND author=$2 AND created_at>now()-interval '1 minute'",[id,author]);
       if(count.rows[0].n>=12) return sendError(res,429,'Limite de mensagens por minuto atingido.');
       const rawMission=Number(req.body?.mission);
-      const mission=Number.isInteger(rawMission)&&rawMission>=1&&rawMission<=6 ? rawMission : null;
+      const mission=Number.isInteger(rawMission)&&rawMission>=1&&rawMission<=10 ? rawMission : null;
       const result=await db.query(
         'INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',
         [ROOM,id,author,mission,body]);
