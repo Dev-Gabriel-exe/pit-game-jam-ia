@@ -72,14 +72,14 @@ function loadProgress(data){
 }
 function poster(m){
  const color=palettes[m.n-1],status=stateOf(m);
- return '<article class="arcade-card" data-index="'+(m.n-1)+'" style="--accent:'+color[0]+';--halo:'+color[1]+'">'+
+ return '<article class="arcade-card" data-index="'+(m.n-1)+'" data-state="'+status[1]+'" style="--accent:'+color[0]+';--halo:'+color[1]+'">'+
  '<button type="button" class="arcade-card-button" data-pick="'+(m.n-1)+'" aria-label="Selecionar missão '+pad(m.n)+': '+esc(m.title)+'">'+
- '<span class="arcade-poster">'+scene(m)+'</span>'+
- '<span class="arcade-poster-top"><span>PIT / '+pad(m.n)+'</span><span class="arcade-diamond">✦</span></span>'+
+ '<span class="arcade-poster">'+(window.PIT_GOTHIC_ART?window.PIT_GOTHIC_ART(m):scene(m))+'</span>'+
+ '<span class="arcade-poster-top"><span class="arcade-number-shield">'+pad(m.n)+'</span></span>'+
  '<span class="arcade-poster-status '+status[1]+'">'+(status[1]==='locked'?'◆ ':status[1]==='complete'?'★ ':'')+status[0]+'</span>'+
  '<span class="arcade-card-bottom"><span class="arcade-chapter">CAPÍTULO '+pad(m.n)+' / 10</span>'+
  '<strong>'+esc(m.title)+'</strong><small>'+esc(m.subtitle)+'</small></span></button>'+
- '<div class="arcade-card-footer"><span>'+m.minutes+' MIN · '+esc(m.icon)+'</span><span class="arcade-card-stars" aria-hidden="true">✦ ✦ ✦</span></div></article>';
+ '<div class="arcade-card-footer"><span>'+m.minutes+' MIN · OFICINA</span><span class="arcade-card-stars" aria-label="'+(isDone(m)?'Missão aprovada':'Ainda não aprovada')+'">'+(isDone(m)?'★':'☆')+'</span></div></article>';
 }
 function build(){
  track.innerHTML=M.map(poster).join('');
@@ -100,9 +100,10 @@ function choose(index,initial){
   if(delta< -5)delta+=M.length;
   card.dataset.distance=String(delta);
   card.classList.toggle('current',delta===0);
-  card.classList.toggle('out-of-view',Math.abs(delta)>2);
-  card.setAttribute('aria-hidden',String(Math.abs(delta)>2));
-  card.querySelector('button').tabIndex=Math.abs(delta)>2?-1:0;
+  card.classList.remove('out-of-view');
+  card.dataset.state=stateOf(M[Number(card.dataset.index)])[1];
+  card.removeAttribute('aria-hidden');
+  card.querySelector('button').tabIndex=0;
  });
  const m=M[active],status=stateOf(m),locked=isLocked(m);
  $('arcadeTitle').textContent=m.title;
@@ -114,13 +115,22 @@ function choose(index,initial){
  $('arcadeIndex').textContent=pad(m.n)+' / 10';
  const launch=$('arcadeEnter');
  launch.disabled=locked;launch.textContent=locked?'◆ AGUARDANDO LIBERAÇÃO':'▶ ENTRAR NA MISSÃO '+pad(m.n);
+ const approved=M.filter(isDone).length,percent=Math.round(approved/M.length*100);
+ if($('arcadePercent'))$('arcadePercent').textContent=percent+'%';
+ if($('arcadeProgressFill'))$('arcadeProgressFill').style.width=percent+'%';
+ if($('arcadeProgress'))$('arcadeProgress').setAttribute('aria-valuenow',String(approved));
+ if($('arcadeProgressLabel'))$('arcadeProgressLabel').textContent=approved+' de '+M.length+' missões aprovadas';
+ if($('arcadePlayerName'))$('arcadePlayerName').textContent=options.studentName||'AVENTUREIRO';
+ if($('arcadePlayerStage'))$('arcadePlayerStage').textContent='MISSÃO LIBERADA '+pad(options.currentStage||1)+' / 10';
  steps.querySelectorAll('button').forEach((dot,i)=>{
   dot.classList.toggle('current',i===active);
   dot.classList.toggle('done',isDone(M[i]));
   dot.classList.toggle('locked',isLocked(M[i]));
   dot.setAttribute('aria-current',String(i===active));
  });
- if(!initial&&!reduced){const card=track.querySelector('.arcade-card.current');card.classList.remove('arcade-pop');void card.offsetWidth;card.classList.add('arcade-pop');}
+ const selected=track.querySelector('.arcade-card.current');
+ if(selected&&selected.scrollIntoView)selected.scrollIntoView({behavior:initial||reduced?'auto':'smooth',block:'nearest',inline:'center'});
+ if(!initial&&!reduced&&selected){selected.classList.remove('arcade-pop');void selected.offsetWidth;selected.classList.add('arcade-pop');}
 }
 function enter(){
  if(!opened||launching)return;
