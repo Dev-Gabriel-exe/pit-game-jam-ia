@@ -57,3 +57,11 @@ Verificações automatizadas estáticas executadas durante a implementação:
 `https://raw.githack.com/Dev-Gabriel-exe/pit-game-jam-ia/feature/pit-gamejam-v3-arcade/aluno-v3.html?preview=1`
 
 Fluxo: selecionar o card 01 → clicar "Entrar" → ver Briefing → Construir → Entregar → simular entrega sem API.
+
+## Correção de navegação móvel — 27/10/2026
+
+- Corrigido o posicionamento ao alternar Briefing → Construir → Entregar, voltar uma etapa, usar as abas internas e entrar pelo card do carrossel.
+- Causa: no computador o conteúdo rola em `#mainContent`, mas em celular (até 700 px) quem rola é a página. Ajustar apenas `mainContent.scrollTop=0` não mudava o ponto de leitura na tela.
+- Implementado `scrollMissionToStart()`: reposiciona o conteúdo interno e, no celular, alinha o topo de `#mainPane` à janela respeitando a altura da navegação fixa.
+- Testes unitários de comportamento da função: mobile com navegação fixa/normal, desktop e professor, além de verificação dos pontos de chamada; **12/12 aprovados**.
+- **Ainda pendente:** confirmar visualmente a rolagem em Chrome/Android e Safari/iOS reais.
