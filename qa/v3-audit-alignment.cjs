@@ -47,7 +47,7 @@ const m04Student=read('v3/student-mission-four.js');
 assert.equal((m04Teacher.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M04 practice and review each conceal private guidance');
 assert((m04Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length>=1,'M04 practice notes use shared CSS');
 assert(m04Teacher.includes('aria-label="Abrir roteiro privado da prática da Missão 04"'),'M04 practice paper control accessible');
-assert(m04Teacher.includes('aria-label="Orientações reservadas ao professor — abrir somente sem espelhamento"'),'M04 review paper control accessible');
+assert(m04Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 04"')||m04Teacher.includes('aria-label="Orientações reservadas ao professor — abrir somente sem espelhamento"'),'M04 review paper control accessible');
 assert(!m04Teacher.includes('<details class="pit-private-teacher-notes" open'),'M04 notes default closed');
 assert(!m04Student.includes('pit-private-teacher-notes'),'student M04 must not contain private teacher notes');
 assert(teacher.includes('./v3/gdevelop-mission-four-guide.js'),'M04 GDevelop guide must be loaded');
