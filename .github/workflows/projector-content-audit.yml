@@ -12,6 +12,13 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { width: 1280, height: 720 }
+          - { width: 1600, height: 900 }
+          - { width: 1920, height: 1080 }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,9 +30,12 @@ jobs:
         run: python3 -m http.server 8899 --bind 127.0.0.1 > /tmp/pit-projection.log 2>&1 &
       - name: Audit all ten missions and four teacher phases in Chrome
         run: node qa/v3-projector-content-audit.cjs
+        env:
+          PIT_AUDIT_WIDTH: ${{ matrix.width }}
+          PIT_AUDIT_HEIGHT: ${{ matrix.height }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: projector-audit-metrics
+          name: projector-audit-${{ matrix.width }}x${{ matrix.height }}
           path: qa/projector-audit-artifacts/
           retention-days: 7
