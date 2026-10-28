@@ -58,8 +58,9 @@ const {chromium}=require('playwright');
    }
    // A failed PNG decode must show an explicit fallback, never an apparently valid preview.
    await page.evaluate(()=>{
-    const api=window.PIT_LIBRARY_API,original=api.assetBlob;
-    api.assetBlob=async a=>a.id==='explorador'?new Blob(['not-a-png'],{type:'image/png'}):original(a);
+    // The API is frozen: simulate corruption at the actual browser blob URL boundary.
+    const original=URL.createObjectURL.bind(URL);
+    URL.createObjectURL=blob=>blob.type==='image/png'?original(new Blob(['not-a-png'],{type:'image/png'})):original(blob);
    });
    await open('explorador');
    await page.locator('#pitPreviewStage .pit-preview-error').waitFor({state:'visible'});
