@@ -13,7 +13,7 @@ let teacherPin=sessionStorage.getItem('pit_teacher_pin')||'';
 let studentSession=null;try{studentSession=JSON.parse(localStorage.getItem('pit_chat_student_v09')||'null')}catch{}
 let state={current_stage:1,phase:'briefing',updated_at:null},progress=[],roster=[],activeStage=1,activePhase='briefing';
 let selectedThread=null,selectedRoster=null,chatOpen=false,chatTimer=null,rosterOpen=false,lastServerStage=1;
-let lastUnread=0,rosterFilter='all',requestInFlight=false;
+let lastUnread=0,rosterFilter='all',requestInFlight=false,chatRequest=0,chatSending=false;
 function stamp(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 function setToast(message,bad=false){const el=$('toast');el.textContent=message;el.hidden=false;el.style.borderColor=bad?'#fa7285':'#53dcb7';clearTimeout(setToast.timer);setToast.timer=setTimeout(()=>el.hidden=true,5300)}
 async function call(service,action,method='GET',data=null){
@@ -765,11 +765,19 @@ function openDrawer(which){
  $('rosterDrawer').classList.toggle('open',rosterOpen);
  $('rosterDrawer').setAttribute('aria-hidden',String(!rosterOpen));
  $('chatWindow').classList.toggle('open',chatOpen);
+ $('chatWindow').setAttribute('aria-hidden',String(!chatOpen));
  $('chatButton').setAttribute('aria-expanded',String(chatOpen));
  if(rosterOpen)loadRoster();
- if(chatOpen)loadChat();
+ if(chatOpen){loadChat();$('chatClose').focus();}
 }
-function closePanels(){rosterOpen=false;chatOpen=false;$('drawerShade').classList.remove('open');$('rosterDrawer').classList.remove('open');$('rosterDrawer').setAttribute('aria-hidden','true');$('chatWindow').classList.remove('open');$('chatButton').setAttribute('aria-expanded','false')}
+function closePanels(){
+ const restore=chatOpen&&$('chatWindow').contains(document.activeElement);
+ rosterOpen=false;chatOpen=false;chatRequest++;
+ $('drawerShade').classList.remove('open');$('rosterDrawer').classList.remove('open');
+ $('rosterDrawer').setAttribute('aria-hidden','true');$('chatWindow').classList.remove('open');
+ $('chatWindow').setAttribute('aria-hidden','true');$('chatButton').setAttribute('aria-expanded','false');
+ if(restore)$('chatButton').focus();
+}
 $('rosterButton').onclick=()=>openDrawer('roster');
 $('rosterClose').onclick=closePanels;$('drawerShade').onclick=closePanels;
 $('chatButton').onclick=()=>chatOpen?closePanels():openDrawer('chat');
@@ -830,46 +838,76 @@ async function refreshUnread(){
  try{const data=await call('chat','unread');lastUnread=Number(data.unread)||0;$('chatBadge').textContent=lastUnread>99?'99+':String(lastUnread);$('chatBadge').hidden=!lastUnread;$('chatButton').title=lastUnread+' nova(s) mensagem(ns)'}
  catch{}
 }
+function setChatStatus(message,kind='info'){
+ const status=$('chatStatus');if(status){status.textContent=message;status.dataset.kind=kind}
+ const retry=$('chatRetry');if(retry)retry.hidden=kind!=='error';
+}
+function setChatEnabled(enabled){
+ const input=$('chatInput'),submit=$('chatForm')?.querySelector('button[type="submit"]');
+ if(input)input.disabled=!enabled;
+ if(submit)submit.disabled=!enabled||chatSending;
+}
+$('chatRetry').onclick=()=>loadChat();
 async function loadChat(){
  if(!chatOpen)return;
+ const request=++chatRequest;
+ setChatStatus('Atualizando conversa…');$('chatRetry').hidden=true;
  try{
   if(TEACHER){
-   const response=await call('chat','threads');const threads=response.threads||[];
-   $('chatThreads').innerHTML=threads.map(t=>'<button type="button" data-thread="'+esc(t.id)+'" class="'+(t.id===selectedThread?'active':'')+'">'+esc(t.display_name)+(t.unread?' • '+t.unread:'')+'</button>').join('');
+   const response=await call('chat','threads');
+   if(!chatOpen||request!==chatRequest)return;
+   const threads=response.threads||[];
+   if(!threads.some(t=>t.id===selectedThread))selectedThread=threads[0]?.id||null;
+   $('chatThreads').innerHTML=threads.map(t=>'<button type="button" data-thread="'+esc(t.id)+'" aria-pressed="'+String(t.id===selectedThread)+'" class="'+(t.id===selectedThread?'active':'')+'">'+esc(t.display_name)+(t.unread?' • '+Number(t.unread):'')+'</button>').join('')||'<p class="chat-empty">Nenhuma conversa disponível.</p>';
    $('chatThreads').querySelectorAll('button').forEach(b=>b.onclick=()=>{selectedThread=b.dataset.thread;loadChat()});
-   if(!selectedThread&&threads.length)selectedThread=threads[0].id;
-   if(!selectedThread){$('chatMessages').innerHTML='<p class="muted">Nenhum aluno se cadastrou ainda.</p>';return}
+   if(!selectedThread){
+    setChatEnabled(false);
+    $('chatMessages').innerHTML='<div class="chat-empty"><strong>Aguardando o primeiro aluno</strong>Quando alguém entrar na turma, a conversa individual aparecerá aqui.</div>';
+    setChatStatus('Nenhum aluno disponível para responder.');return;
+   }
+   setChatEnabled(true);
    const student=threads.find(t=>t.id===selectedThread);
    const uri=new URL(BASE+'chat');uri.searchParams.set('action','messages');uri.searchParams.set('studentId',selectedThread);
    const response2=await fetch(uri,{headers:{'X-PIT-Teacher-Pin':teacherPin},cache:'no-store'});
    const read=await response2.json();if(!response2.ok)throw Error(read.error||'Erro ao ler conversa.');
+   if(!chatOpen||request!==chatRequest)return;
    renderChat(read.messages);
+   setChatStatus('Conversa individual com '+(student?.display_name||'aluno')+'.','success');
    if(student?.unread){await call('chat','read','POST',{studentId:selectedThread});await refreshUnread()}
   }else{
    $('chatThreads').innerHTML='';
+   setChatEnabled(true);
    const response=await call('chat','messages');
+   if(!chatOpen||request!==chatRequest)return;
    renderChat(response.messages);
+   setChatStatus('Conversa privada com o professor.','success');
    await call('chat','read','POST');await refreshUnread();
   }
- }catch(e){$('chatMessages').textContent='Erro: '+e.message}
+ }catch(e){
+  if(!chatOpen||request!==chatRequest)return;
+  setChatStatus('Não foi possível atualizar a conversa: '+e.message,'error');
+  if(!$('chatMessages').querySelector('.msg'))$('chatMessages').innerHTML='<div class="chat-empty"><strong>Conexão indisponível</strong>Suas mensagens digitadas não foram apagadas. Tente novamente quando houver conexão.</div>';
+ }
 }
 function renderChat(messages){
- const el=$('chatMessages');const prevBottom=el.scrollHeight-el.scrollTop-el.clientHeight;
+ const el=$('chatMessages'),prevBottom=el.scrollHeight-el.scrollTop-el.clientHeight;
  el.innerHTML=(messages||[]).map(m=>{
   const mine=(TEACHER&&m.author==='teacher')||(!TEACHER&&m.author==='student');
   return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+esc(m.body)+'</div>'
- }).join('')||'<p class="muted">Ainda não há mensagens.</p>';
+ }).join('')||'<div class="chat-empty"><strong>Nenhuma mensagem ainda</strong>'+(TEACHER?'Selecione uma conversa e envie uma orientação.':'Descreva em qual missão e passo você precisa de ajuda.')+'</div>';
  if(prevBottom<120)el.scrollTop=el.scrollHeight;
 }
 $('chatForm').onsubmit=async e=>{
  e.preventDefault();
  const field=$('chatInput'),text=field.value.trim();
- if(text.length<2)return;
- if(TEACHER&&!selectedThread)return setToast('Escolha um aluno antes de responder.',true);
+ if(chatSending||text.length<2)return;
+ if(TEACHER&&!selectedThread)return setChatStatus('Escolha um aluno antes de responder.','error');
+ chatSending=true;setChatEnabled(true);setChatStatus('Enviando mensagem…');
  try{
   await call('chat','send','POST',{body:text,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
   field.value='';await loadChat();setToast('Mensagem enviada ✓');
- }catch(err){setToast(err.message,true)}
+ }catch(err){setChatStatus('Falha no envio: '+err.message+'. A mensagem continua no campo.','error');setToast(err.message,true)}
+ finally{chatSending=false;setChatEnabled(!TEACHER||!!selectedThread)}
 };
 function startTeacherPreview(){
  if(!TEACHER)return;
