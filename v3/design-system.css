@@ -91,3 +91,24 @@ body[data-role="teacher"]>.shell>.hero{
  #recursos.resources{background-position:center,65% top}
  .final-award.is-earned{background-size:cover,auto 55%;background-position:center,right bottom}
 }
+
+/* ART-03 · Original icon sprites: status from API state, formats from real asset type.
+ * Text labels remain visible if CSS/images are unavailable. */
+.stage-btn[data-mission-state]:not([data-mission-state="preview"]) .stage-status-dot{
+ display:block;width:22px;height:22px;font-size:0;color:transparent;
+ background:url("./assets/art/estados-missao.svg") no-repeat 0 50% / 500% 100%;
+}
+.stage-btn[data-mission-state="locked"] .stage-status-dot{background-position:0% 50%}
+.stage-btn[data-mission-state="active"] .stage-status-dot{background-position:25% 50%}
+.stage-btn[data-mission-state="submitted"] .stage-status-dot{background-position:50% 50%}
+.stage-btn[data-mission-state="revision"] .stage-status-dot{background-position:75% 50%}
+.stage-btn[data-mission-state="approved"] .stage-status-dot{background-position:100% 50%}
+.resource-card[data-asset-format] .res-inner>small:first-child::before,
+[data-quick-kit]::before{
+ content:"";display:inline-block;vertical-align:-4px;margin-right:7px;
+ width:20px;height:20px;background:url("./assets/art/tipos-recurso.svg") no-repeat 0 50% / 400% 100%;
+}
+.resource-card[data-asset-format="png"] .res-inner>small:first-child::before{background-position:0% 50%}
+.resource-card[data-asset-format="glb"] .res-inner>small:first-child::before{background-position:33.333% 50%}
+.resource-card[data-asset-format="wav"] .res-inner>small:first-child::before{background-position:66.667% 50%}
+[data-quick-kit]::before{background-position:100% 50%}
