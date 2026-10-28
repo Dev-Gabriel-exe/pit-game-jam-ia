@@ -7,7 +7,7 @@ const data=vm.runInContext('({assets,genreExamples,assetMatches})',ctx);
 const {assets,genreExamples,assetMatches}=data;
 assert.equal(assets.length,28,'28 original resources');
 assert.equal(new Set(assets.map(x=>x.id)).size,28,'unique resource IDs');
-const formats={2d:18,3d:5,audio:5};
+const formats={'2d':18,'3d':5,audio:5};
 for(const [format,expected] of Object.entries(formats))assert.equal(assets.filter(a=>assetMatches(a,{format})).length,expected,format+' resources');
 for(const [genre,ids] of Object.entries(genreExamples)){
  assert(ids.length>0,'nonempty genre '+genre);
