@@ -1,0 +1,57 @@
+/* PIT Game Jam V3 · Missão 04 (professor) · Tutorial oficial do GDevelop */
+.g4-tutorial{font-family:"Segoe UI",Arial,sans-serif;color:#ead9c5;border:2px ridge #aa8054;margin:19px 0;background:#101418;box-shadow:0 13px 29px #0007;overflow:hidden;min-width:0}
+.g4-tutorial *{box-sizing:border-box}
+.g4-tutorial h3,.g4-tutorial h4{font-family:Georgia,"Times New Roman",serif}
+.g4-heading{padding:21px clamp(15px,3vw,28px);background:linear-gradient(105deg,#30251f,#15181c),url("./assets/missions/missao-04.webp") center/cover}
+.g4-heading>div{background:#151619d9;padding:15px 17px;border-left:3px solid #e6ad76}
+.g4-heading span{font-size:11px;letter-spacing:.13em;font-weight:900;color:#f1b885}
+.g4-heading h3{font-size:clamp(24px,2.5vw,33px);line-height:1.2;color:#ffe4bd;margin:10px 0}
+.g4-heading p{font-size:14px;line-height:1.6;color:#ddc8b7;max-width:920px;margin:6px 0}
+.g4-heading b{color:#ffce94}
+.g4-branches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px;background:#0e1014;border-top:1px solid #6c4934;border-bottom:1px solid #9c6d45}
+.g4-branches button{background:#251e1f;color:#e0c6aa;border:1px solid #79563c;min-height:58px;padding:10px;display:grid;align-content:center;gap:5px;text-align:left;cursor:pointer;transition:background .2s,border-color .2s}
+.g4-branches button[aria-selected=true],.g4-branches button:hover{background:#65412b;border-color:#edbd8d;color:#ffebc7}
+.g4-branches button strong{font-size:11px;letter-spacing:.08em;font-weight:900}
+.g4-branches button small{font-size:11px;color:#bda38a}
+.g4-branches button[aria-selected=true] small{color:#edd2af}
+.g4-context{display:flex;align-items:center;gap:14px;padding:14px 21px;background:#332720;border-bottom:1px solid #71503b}
+.g4-context strong{color:#f4c58f;font-size:11px;letter-spacing:.08em;min-width:130px}
+.g4-context p{color:#e2cbb5;font-size:13px;line-height:1.48;margin:0}
+.g4-frame{min-width:0}
+.g4-exposition{animation:g4-enter .35s ease-out both}
+.g4-step{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr)}
+.g4-step-picture{display:flex;flex-direction:column;min-width:0;background:#161c22;border-right:1px solid #694f3d}
+.g4-picture-label{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:12px 15px;background:#2b292e}
+.g4-picture-label span{color:#edb984;font-size:11px;font-weight:900;letter-spacing:.055em}
+.g4-picture-label b{color:#f7dec1;font-size:12px;white-space:nowrap}
+.g4-step-picture img{width:100%;height:360px;max-height:450px;object-fit:contain;background:#222730;border:none;display:block}
+.g4-picture-source{margin-top:auto;padding:12px 15px;color:#aeb0ad;font-size:11px;line-height:1.48;background:#11191e}
+.g4-step-guide{padding:21px clamp(16px,2.4vw,27px);background:linear-gradient(130deg,#26201e,#141719)}
+.g4-mini-tag{color:#dfa86e;font-size:11px;letter-spacing:.11em;font-weight:900}
+.g4-step-guide h4{font-size:clamp(21px,2vw,28px);line-height:1.19;color:#ffe3bf;margin:12px 0 16px}
+.g4-instruction{border:1px solid #59463a;padding:11px 13px;margin:9px 0;background:#15181c}
+.g4-instruction strong{display:flex;gap:9px;align-items:center;font-size:11px;color:#f2bc83;letter-spacing:.08em}
+.g4-instruction strong span{display:grid;place-items:center;background:#4c3426;width:24px;height:24px;color:#efc28b;border:1px solid #ac7850;font:700 13px Georgia,serif}
+.g4-instruction p{font-size:13px;line-height:1.56;color:#dec9b7;margin:8px 0 0}
+.g4-result{border-left:3px solid #bfa06e;background:#34291e;padding:12px 15px;margin-top:11px}
+.g4-result strong{color:#f7ce97;font-size:11px;letter-spacing:.07em}
+.g4-result p{color:#ecd7bf;font-size:13px;line-height:1.52;margin:7px 0 0}
+.g4-diagnostic{border-top:1px solid #715441;padding:12px 0;margin-top:15px}
+.g4-diagnostic summary{font-size:12px;font-weight:900;cursor:pointer;color:#eaba89}
+.g4-diagnostic p{font-size:13px;line-height:1.5;color:#ddc6ad}
+.g4-source-link{display:inline-block;text-decoration:none;font-size:11px;color:#edbd90;border-bottom:1px solid #af805c;margin-top:10px;padding:5px}
+.g4-source-link:hover{text-decoration:underline}
+.g4-pager{display:flex;justify-content:space-between;align-items:center;gap:11px;padding:13px 16px;background:#151719;border-top:1px solid #80583e}
+.g4-pager button{background:#4e3125;color:#ffe5c6;border:1px solid #c28d60;padding:10px 13px;min-height:43px;font-size:11px;font-weight:900;cursor:pointer}
+.g4-pager button:hover:not(:disabled){background:#805032}
+.g4-pager button:disabled{opacity:.38;cursor:not-allowed}
+.g4-pager>span{font-size:11px;color:#ccae94;text-align:center}
+.g4-pager>span b{color:#f5bf8b;font:700 18px Georgia,serif}
+.g4-footer{padding:15px 20px;background:linear-gradient(100deg,#3a2a22,#211c1b);border-top:1px solid #80583d}
+.g4-footer strong{font-size:10px;letter-spacing:.12em;color:#e5b077}
+.g4-footer p{color:#e1c9b2;font-size:12px;line-height:1.55;margin:7px 0 0}
+.g4-tutorial button:focus-visible,.g4-tutorial a:focus-visible{outline:2px solid #ffcd8a;outline-offset:3px}
+@keyframes g4-enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@media(max-width:990px){.g4-step{grid-template-columns:1fr}.g4-step-picture{border-right:0;border-bottom:1px solid #704f3c}.g4-step-picture img{max-height:345px;height:auto;min-height:180px}.g4-branches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.g4-context{display:grid;gap:7px;padding:13px}.g4-heading{padding:12px}.g4-heading>div{padding:11px}.g4-heading h3{font-size:25px}.g4-step-guide{padding:15px 12px}.g4-picture-label{padding:10px}.g4-picture-label span{font-size:10px}.g4-pager{padding:11px 8px}.g4-pager button{padding:10px 8px;font-size:10px}.g4-pager span{font-size:10px}.g4-footer{padding:13px}}
+@media(prefers-reduced-motion:reduce){.g4-tutorial *{animation:none!important;transition:none!important}.g4-exposition{animation:none!important}}
