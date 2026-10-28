@@ -3,6 +3,11 @@ on:
   push:
     branches:
       - feature/comparativo-hero-3-videos-20261028
+  pull_request:
+    paths:
+      - 'previews/hero-comparativo.html'
+      - 'qa/hero-comparativo.cjs'
+      - '.github/workflows/hero-comparativo-qa.yml'
   workflow_dispatch:
 permissions:
   contents: read
