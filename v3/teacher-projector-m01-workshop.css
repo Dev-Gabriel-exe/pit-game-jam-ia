@@ -1,0 +1,118 @@
+/* Missão 01 · Oficina em 7 telas · componente aditivo e isolado */
+#pitProjector.pit-projector-m01 .pit-workshop-deck{gap:clamp(10px,1.3vh,17px);font-family:var(--pit-font-reading,"Source Sans 3","Segoe UI",sans-serif);min-height:0}
+#pitProjector.pit-projector-m01 .pit-workshop-deck .pit-m01-kicker{flex:0 0 auto;line-height:1.2}
+#pitProjector.pit-projector-m01 .pit-workshop-deck .pit-ws-lead{font:500 clamp(17px,1.56vw,24px)/1.37 var(--pit-font-reading,"Segoe UI",sans-serif);color:#efdfcc;flex-shrink:0}
+#pitProjector.pit-projector-m01 .pit-ws-concepts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(9px,1.3vw,18px);flex:1;min-height:0;align-items:stretch}
+#pitProjector.pit-projector-m01 .pit-ws-concept{display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,1vh,15px);min-width:0;border:1px solid #805b43;background:linear-gradient(155deg,#252023,#17191e);border-radius:14px;padding:clamp(13px,1.55vw,25px);box-shadow:inset 0 1px #ffe2ad14}
+#pitProjector.pit-projector-m01 .pit-ws-concept>span{font:800 clamp(12px,1.04vw,17px)/1.2 var(--pit-font-reading,"Segoe UI",sans-serif);color:#ecb97a;letter-spacing:.065em}
+#pitProjector.pit-projector-m01 .pit-ws-concept h3{font:700 clamp(20px,1.86vw,31px)/1.2 var(--pit-font-chapter,Georgia,serif)!important;color:#ffdbad;margin:0;text-wrap:balance}
+#pitProjector.pit-projector-m01 .pit-ws-concept p{font:500 clamp(17px,1.4vw,23px)/1.43 var(--pit-font-reading,"Segoe UI",sans-serif)!important;margin:0}
+#pitProjector.pit-projector-m01 .pit-ws-bottom{display:flex;align-items:center;flex-wrap:wrap;gap:12px 16px;flex:0 0 auto;border:1px solid #99734c;border-radius:11px;padding:13px clamp(13px,1.5vw,24px);background:#281e1b;font:550 clamp(16px,1.25vw,21px)/1.38 var(--pit-font-reading,"Segoe UI",sans-serif)}
+#pitProjector.pit-projector-m01 .pit-ws-bottom strong{color:#f7c68e}
+#pitProjector.pit-projector-m01 .pit-ws-depth-trigger,#pitProjector.pit-projector-m01 .pit-ws-quiet{margin-left:auto;border:1px solid #be9063;border-radius:9px;background:#493020;color:#ffe8c7;min-height:42px;padding:9px 13px;font:780 clamp(14px,1vw,17px)/1.2 var(--pit-font-reading,"Segoe UI",sans-serif);white-space:nowrap;cursor:pointer}
+#pitProjector.pit-projector-m01 .pit-ws-depth-trigger:hover,#pitProjector.pit-projector-m01 .pit-ws-quiet:hover{background:#65402a}
+#pitProjector.pit-projector-m01 .pit-ws-quiet{margin-left:0}
+#pitProjector.pit-projector-m01 .pit-ws-flow{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr) 24px minmax(0,1fr) 24px minmax(0,1fr);align-items:stretch;gap:6px;flex:1;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-flow-node{padding:clamp(12px,1.35vw,22px);min-width:0;display:flex;flex-direction:column;justify-content:center;gap:12px;border:1px solid #8f6945;border-radius:12px;background:linear-gradient(155deg,#2a2323,#161b1f)}
+#pitProjector.pit-projector-m01 .pit-ws-flow-node span{font:850 25px var(--pit-font-reading,"Segoe UI",sans-serif);color:#da9d63}
+#pitProjector.pit-projector-m01 .pit-ws-flow-node h3{font:760 clamp(21px,1.8vw,31px) var(--pit-font-chapter,Georgia,serif)!important;color:#f8d49f;margin:0}
+#pitProjector.pit-projector-m01 .pit-ws-flow-node p{font:500 clamp(17px,1.4vw,23px)/1.39 var(--pit-font-reading,"Segoe UI",sans-serif)!important}
+#pitProjector.pit-projector-m01 .pit-ws-flow>b{align-self:center;color:#e6af70;font-size:35px;text-align:center}
+#pitProjector.pit-projector-m01 .pit-ws-engine .pit-ws-concept{gap:8px}
+#pitProjector.pit-projector-m01 .pit-ws-review{grid-template-columns:repeat(3,minmax(0,1fr))}
+#pitProjector.pit-projector-m01 .pit-ws-review .pit-ws-concept{padding:clamp(20px,2.2vw,34px)}
+#pitProjector.pit-projector-m01 .pit-ws-compact-lead{font-size:clamp(16px,1.28vw,20px);line-height:1.27}
+#pitProjector.pit-projector-m01 .pit-ws-simulator{min-height:0;flex:1;overflow:hidden}
+#pitProjector.pit-projector-m01 .pit-ws-simulator .pit-m01-sim-grid{height:100%;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-stage,#pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-debugger{overflow:hidden;justify-content:space-between}
+#pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-game-scene{height:clamp(105px,17vh,190px)}
+#pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-trace{display:none!important}
+#pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-rule-stack>div{padding:5px 10px}
+#pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-dbg-message{padding:8px 10px}
+#pitProjector.pit-projector-m01 .pit-ws-cover{grid-template-columns:1fr .9fr;gap:clamp(18px,3vw,42px);align-items:center;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-cover-copy{min-width:0}
+#pitProjector.pit-projector-m01 .pit-ws-cover h2{font:700 clamp(35px,4.6vw,67px)/1.13 var(--pit-font-gothic,Georgia,serif)!important;margin:0 0 20px;text-wrap:balance}
+#pitProjector.pit-projector-m01 .pit-ws-cover p{font:500 clamp(20px,1.92vw,29px)/1.43 var(--pit-font-reading,"Segoe UI",sans-serif)!important}
+#pitProjector.pit-projector-m01 .pit-ws-cover .pit-m01-hero-cinema{min-height:clamp(235px,46vh,450px);max-height:56vh;width:100%}
+#pitProjector.pit-projector-m01 .pit-ws-cover .pit-m01-chips span{font-size:clamp(12px,1.05vw,17px)}
+#pitProjector.pit-projector-m01 .pit-ws-practice{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(12px,1.6vw,23px);flex:1;min-height:0;align-items:stretch}
+#pitProjector.pit-projector-m01 .pit-ws-worksheet,#pitProjector.pit-projector-m01 .pit-ws-task{padding:clamp(16px,1.6vw,23px);border:1px solid #886348;background:linear-gradient(160deg,#201d21,#16181c);border-radius:13px;min-height:0;display:flex;flex-direction:column}
+#pitProjector.pit-projector-m01 .pit-ws-worksheet h3{font:700 clamp(22px,1.9vw,31px)/1.15 var(--pit-font-chapter,Georgia,serif)!important;margin:0 0 15px}
+#pitProjector.pit-projector-m01 .pit-ws-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(8px,1vh,13px);align-items:stretch;flex:1}
+#pitProjector.pit-projector-m01 .pit-ws-fields>div{display:flex;align-items:center;gap:10px;border:1px solid #694e3f;border-radius:8px;background:#292125;padding:9px 12px;min-width:0}
+#pitProjector.pit-projector-m01 .pit-ws-fields b{font:800 clamp(17px,1.4vw,24px) var(--pit-font-reading,"Segoe UI",sans-serif);color:#f1b979}
+#pitProjector.pit-projector-m01 .pit-ws-fields span{display:flex;flex-direction:column;min-width:0;gap:2px}
+#pitProjector.pit-projector-m01 .pit-ws-fields strong{font:760 clamp(14px,1.14vw,19px)/1.17 var(--pit-font-reading,"Segoe UI",sans-serif);color:#f9dcbd}
+#pitProjector.pit-projector-m01 .pit-ws-fields small{font:500 clamp(12px,.95vw,16px)/1.2 var(--pit-font-reading,"Segoe UI",sans-serif);color:#d6bfb0}
+#pitProjector.pit-projector-m01 .pit-ws-task{gap:clamp(8px,1vh,12px);justify-content:center}
+#pitProjector.pit-projector-m01 .pit-ws-task-top{font:850 clamp(13px,1.04vw,17px)/1.25 var(--pit-font-reading,"Segoe UI",sans-serif);color:#eeb874;letter-spacing:.1em;text-align:center}
+#pitProjector.pit-projector-m01 .pit-ws-timer{font:850 clamp(52px,6vw,86px)/1 var(--pit-font-reading,"Segoe UI",sans-serif);color:#f5dda9;text-align:center;font-variant-numeric:tabular-nums;text-shadow:0 0 22px #a978393f}
+#pitProjector.pit-projector-m01 .pit-ws-timer.pit-ws-time-over{color:#faa785}
+#pitProjector.pit-projector-m01 .pit-ws-timer-controls{display:flex;justify-content:center;gap:8px}
+#pitProjector.pit-projector-m01 .pit-ws-timer-controls button{border:1px solid #c39061;background:#4b3025;color:#ffeed4;font:780 15px var(--pit-font-reading,"Segoe UI",sans-serif);padding:8px 14px;border-radius:8px;min-width:120px}
+#pitProjector.pit-projector-m01 .pit-ws-task p{font:500 clamp(15px,1.17vw,20px)/1.3 var(--pit-font-reading,"Segoe UI",sans-serif)!important;border-bottom:1px solid #6f4e3a;padding:0 0 9px}
+#pitProjector.pit-projector-m01 .pit-ws-check{display:flex;align-items:center;gap:10px;font:630 clamp(14px,1.14vw,18px)/1.22 var(--pit-font-reading,"Segoe UI",sans-serif);color:#e8d4c3;cursor:pointer}
+#pitProjector.pit-projector-m01 .pit-ws-check input{width:20px;height:20px;accent-color:#d39d5e}
+#pitProjector.pit-projector-m01 .pit-ws-progress{text-align:right;font:700 13px var(--pit-font-reading,"Segoe UI",sans-serif);color:#b8e0bf}
+#pitProjector .pit-ws-depth-modal{position:fixed;inset:0;z-index:25;display:grid;place-items:center;padding:clamp(16px,3vw,48px);background:#060508e9;backdrop-filter:blur(10px)}
+#pitProjector .pit-ws-depth-pane{width:min(1150px,100%);max-height:92vh;min-height:250px;display:flex;flex-direction:column;border:1px solid #d0a06b;border-radius:14px;background:linear-gradient(140deg,#261e21,#11151a);box-shadow:0 30px 90px #000f;overflow:hidden}
+#pitProjector .pit-ws-depth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:25px;padding:clamp(17px,2vw,28px);border-bottom:1px solid #94704b}
+#pitProjector .pit-ws-depth-head small{font:770 clamp(11px,1vw,15px) var(--pit-font-reading,"Segoe UI",sans-serif);color:#dbaa75;letter-spacing:.07em}
+#pitProjector .pit-ws-depth-head h2{font:700 clamp(25px,2.5vw,40px)/1.2 var(--pit-font-chapter,Georgia,serif);margin:7px 0 0}
+#pitProjector .pit-ws-depth-head button{white-space:nowrap;border:1px solid #b58b63;border-radius:8px;background:#40291f;color:#ffe3c4;padding:11px 15px;font:750 16px var(--pit-font-reading,"Segoe UI",sans-serif)}
+#pitProjector .pit-ws-depth-body{padding:clamp(17px,2vw,30px);overflow:auto;overscroll-behavior:contain}
+#pitProjector .pit-ws-depth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+#pitProjector .pit-ws-depth-grid article{padding:20px 23px;border:1px solid #755941;border-radius:9px;background:#1d1b21}
+#pitProjector .pit-ws-depth-grid h3{font:700 clamp(21px,1.65vw,28px)/1.24 var(--pit-font-chapter,Georgia,serif);color:#f4cb9b;margin:0 0 14px}
+#pitProjector .pit-ws-depth-grid p{font:500 clamp(18px,1.3vw,22px)/1.43 var(--pit-font-reading,"Segoe UI",sans-serif);margin:0 0 12px}
+#pitProjector .pit-ws-depth-foot{margin:20px 0 0;font-size:16px}
+#pitProjector .pit-ws-depth-foot a{color:#eac091;text-decoration:underline}
+#pitProjector .pit-ws-code{white-space:pre-wrap;font:650 clamp(16px,1.3vw,22px)/1.5 Consolas,monospace;color:#c2ebe1;padding:20px;border:1px solid #598177;border-radius:8px;background:#101b20}
+#pitProjector .pit-ws-guide-list{display:grid;gap:14px}
+#pitProjector .pit-ws-guide-list article{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);gap:20px;padding:15px;border:1px solid #6f5a46;border-radius:12px;background:#1d1c22}
+#pitProjector .pit-ws-guide-art{background:#111419;border:1px solid #524838;border-radius:9px;min-height:180px;display:grid;place-items:center;overflow:hidden}
+#pitProjector .pit-ws-guide-art img{display:block;max-width:100%;height:auto;max-height:310px;object-fit:contain}
+#pitProjector .pit-ws-guide-list small{font:850 13px var(--pit-font-reading,"Segoe UI",sans-serif);color:#e0a868}
+#pitProjector .pit-ws-guide-list h3{font:750 24px var(--pit-font-chapter,Georgia,serif);color:#f4c992;margin:7px 0 10px}
+#pitProjector .pit-ws-guide-list p,#pitProjector .pit-ws-guide-list li{font:500 17px/1.45 var(--pit-font-reading,"Segoe UI",sans-serif)}
+#pitProjector .pit-ws-guide-list ol{margin:12px 0;padding-left:25px}
+#pitProjector .pit-ws-guide-note{color:#cdb69f}
+@media(max-height:780px) and (min-width:901px){
+ #pitProjector.pit-projector-m01 .pit-workshop-deck{gap:7px}
+ #pitProjector.pit-projector-m01 .pit-ws-concepts{gap:10px}
+ #pitProjector.pit-projector-m01 .pit-ws-concept{padding:11px 14px;gap:7px}
+ #pitProjector.pit-projector-m01 .pit-ws-concept h3{font-size:clamp(18px,1.7vw,26px)!important}
+ #pitProjector.pit-projector-m01 .pit-ws-concept p{font-size:clamp(15px,1.22vw,19px)!important}
+ #pitProjector.pit-projector-m01 .pit-ws-bottom{padding:8px 12px;font-size:15px}
+ #pitProjector.pit-projector-m01 .pit-ws-lead{font-size:clamp(16px,1.35vw,20px)}
+ #pitProjector.pit-projector-m01 .pit-ws-fields>div{padding:6px 10px}
+ #pitProjector.pit-projector-m01 .pit-ws-fields{gap:6px}
+ #pitProjector.pit-projector-m01 .pit-ws-timer{font-size:54px}
+ #pitProjector.pit-projector-m01 .pit-ws-task{gap:5px;padding:13px}
+ #pitProjector.pit-projector-m01 .pit-ws-worksheet{padding:13px}
+ #pitProjector.pit-projector-m01 .pit-ws-task p{padding-bottom:4px}
+ #pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-game-scene{height:105px}
+ #pitProjector.pit-projector-m01 .pit-ws-simulator .tm-pro-rule-stack>div{padding:4px}
+}
+@media(max-width:1100px) and (min-width:901px){
+ #pitProjector.pit-projector-m01 .pit-ws-concepts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pitProjector.pit-projector-m01 .pit-ws-flow{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+ #pitProjector.pit-projector-m01 .pit-ws-flow>b{display:none}
+}
+@media(max-width:900px){
+ #pitProjector.pit-projector-m01 .pit-workshop-deck{height:auto;max-height:none}
+ #pitProjector.pit-projector-m01 .pit-ws-cover{grid-template-columns:1fr;gap:14px}
+ #pitProjector.pit-projector-m01 .pit-ws-cover .pit-m01-hero-cinema{min-height:220px;max-height:310px}
+ #pitProjector.pit-projector-m01 .pit-ws-concepts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pitProjector.pit-projector-m01 .pit-ws-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pitProjector.pit-projector-m01 .pit-ws-flow>b{display:none}
+ #pitProjector.pit-projector-m01 .pit-ws-practice{grid-template-columns:1fr}
+ #pitProjector .pit-ws-depth-grid,#pitProjector .pit-ws-guide-list article{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+ #pitProjector.pit-projector-m01 .pit-ws-concepts{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-fields{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-bottom{font-size:15px}
+ #pitProjector.pit-projector-m01 .pit-ws-depth-trigger,#pitProjector.pit-projector-m01 .pit-ws-quiet{width:100%;white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){#pitProjector .pit-workshop-deck *,#pitProjector .pit-ws-depth-modal *{animation:none!important;transition:none!important}}
