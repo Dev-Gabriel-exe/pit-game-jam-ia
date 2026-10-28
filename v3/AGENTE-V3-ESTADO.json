@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M06-05",
+  "priority": "M07-01",
   "current_phase": "MISSOES",
-  "last_task": "M06-04",
+  "last_task": "M06-05",
   "completed_count": 12,
   "total_tasks": 59,
   "tasks": [
@@ -236,11 +236,15 @@
       "description": "Professor/aluno integração, tutoriais comprováveis, contingência offline, teste de importação e de interface mobile",
       "group": "M06",
       "position": 13,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "blocked",
+      "updated_at": "2026-10-28T02:50:22.246Z",
+      "commit": "5e10e9748482045fd11ff7413de5f80be4ef94c1",
+      "tests": [
+        "18/18 V8 assertions executed: module syntax, professor/student fields, phase integration, offline fallback, static responsive CSS, evidence roundtrip",
+        "qa/v3-m06-integration.cjs added, not run in Node",
+        "Real GDevelop import and mobile browser tests NOT executed"
+      ],
+      "blocker": "Aceite integral depende de executar importação PNG/WAV/GLB/MP4 em projeto GDevelop fictício e verificar layout em navegador móvel real; nenhum editor/navegador com esse ambiente foi acessado nesta rodada. API/turma reais não utilizados."
     },
     {
       "id": "M07-01",
@@ -972,6 +976,21 @@
       ],
       "tests": "20/20 V8 checks with fictitious sessions; real browser/API/GDevelop not executed",
       "notes": "Student chooses one asset route; manual import, provenance, license and Preview evidence required before submission."
+    },
+    {
+      "id": "M06-05",
+      "completed_at": "2026-10-28T02:50:22.246Z",
+      "commit": "5e10e9748482045fd11ff7413de5f80be4ef94c1",
+      "files": [
+        "v3/teacher-mission-six-validation.js",
+        "v3/teacher-mission-six-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m06-integration.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "18/18 V8 checks passed; real editor/mobile/browser tests blocked",
+      "notes": "Teacher rubric and offline fallback integrated; task intentionally blocked pending actual GDevelop import and mobile verification."
     }
   ]
 }
