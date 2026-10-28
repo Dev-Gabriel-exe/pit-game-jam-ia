@@ -87,6 +87,8 @@ const {chromium}=require('playwright');
    await page.locator('.pit-preview-close').click();
    await page.reload({waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
+   // Exhaustive asset generation is viewport-independent: run once, not twice.
+   if(width===390){
    // Verify the actual downloaded bytes, filenames and MIME for all 46 resources.
    const downloads=await page.evaluate(async()=>{
     const api=window.PIT_LIBRARY_API,rows=[];
@@ -163,6 +165,7 @@ const {chromium}=require('playwright');
      assert.equal(a.sampleRate,22050,'WAV sample rate '+a.id);
      assert.equal(a.bits,16,'WAV PCM depth '+a.id);
     }
+   }
    }
    await open('glb-cristal');
    await page.locator('#pitPreviewStage canvas').waitFor();
