@@ -10,6 +10,8 @@
 
 ## PNG — personagem, item ou mapa
 
+A biblioteca também inclui a **Coruja mecânica** (personagem), o **Jardim bioluminescente** (mapa) e a **Ampulheta do tempo** (item). São imagens originais geradas localmente; o mapa não possui colisões e a ampulheta não implementa temporizador por si só.
+
 1. Na cena, crie um objeto **Sprite** para personagem/item e selecione o PNG baixado como imagem.
 2. Para mapas, use o PNG como imagem de cenário (1024 × 576); ele **não** contém colisões ou tilemap configurado. Acrescente colisões separadamente.
 3. Execute **Preview** e verifique escala, posição e transparência do Sprite.
@@ -41,4 +43,4 @@ Preencha: **recurso**, **formato**, **origem**, **objeto/cena**, **resultado do 
 - [ ] Importar GLB em objeto 3D, testar material/escala e salvar/reabrir.
 - [ ] Conferir interface mobile/dispositivo físico e registrar limitações.
 
-**Limites:** 36 PNG, 5 WAV, 5 GLB; os testes automatizados cobrem geração, decodificação e estrutura, não a execução dentro do GDevelop. Nenhum serviço pago é necessário para este roteiro. A interface pode mudar conforme a versão do editor.
+**Limites:** 39 PNG, 5 WAV, 5 GLB; os testes automatizados cobrem geração, decodificação e estrutura, não a execução dentro do GDevelop. Nenhum serviço pago é necessário para este roteiro. A interface pode mudar conforme a versão do editor.
