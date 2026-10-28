@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T03:38:31.135Z",
+  "last_completed_at": "2026-10-28T04:17:32.855Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "UI-06",
-  "current_phase": "MISSOES",
-  "last_task": "UI-05",
-  "completed_count": 34,
+  "priority": "UI-07",
+  "current_phase": "TELAS",
+  "last_task": "UI-06",
+  "completed_count": 35,
   "total_tasks": 59,
   "tasks": [
     {
@@ -643,10 +643,14 @@
       "description": "Kits rápidos: starters e downloads efetivos de PNG/GLB/WAV e exemplos de projetos reutilizáveis; conferir conteúdo/validade do arquivo",
       "group": "UI",
       "position": 39,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T04:17:32.855Z",
+      "commit": "2e1c3f3885374381e2c50cdcab5b300cfba9236b",
+      "tests": [
+        "GitHub Actions static QA 40631408937 success: ZIP CRC32, central directory, 4 manifests, real GLB/WAV and PNG stub",
+        "GitHub Actions Browser QA 40631408882 success: four real Chrome ZIP downloads with actual PNG canvas dimensions, GLB and WAV signatures",
+        "Node --check v3/quick-kits.js success in static QA; existing 70 mission pages remain in browser regression"
+      ],
       "blocker": null
     },
     {
@@ -1435,6 +1439,22 @@
       ],
       "tests": "Static QA 40629213658 success; Browser QA 40629180903 success with PNG/GLB/WAV actual downloads",
       "notes": "Procedural origin disclosed; actual GDevelop import and third-party license validation remain pending."
+    },
+    {
+      "id": "UI-06",
+      "completed_at": "2026-10-28T04:17:32.855Z",
+      "commit": "2e1c3f3885374381e2c50cdcab5b300cfba9236b",
+      "files": [
+        "biblioteca.js",
+        "v3/quick-kits.js",
+        "index.html",
+        "qa/v3-quick-kits.cjs",
+        "qa/v3-e2e.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/REVISAO-KITS-UI-06.md"
+      ],
+      "tests": "Static QA 40631408937 success; Browser QA 40631408882 success: four ZIPs downloaded in Chrome",
+      "notes": "Four procedural kits with official starter links; no embedded GDevelop project. Real GDevelop import pending."
     }
   ]
 }
