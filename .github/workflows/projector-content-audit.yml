@@ -1,0 +1,31 @@
+name: PIT Game Jam — Projector Content Audit
+on:
+  push:
+    paths:
+      - 'qa/v3-projector-content-audit.cjs'
+      - 'v3/teacher-projector-m01.js'
+      - 'v3/teacher-projector-m01.css'
+      - '.github/workflows/projector-content-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: npm install --no-save --ignore-scripts playwright@1.58.2
+      - name: Start isolated local static site
+        run: python3 -m http.server 8899 --bind 127.0.0.1 > /tmp/pit-projection.log 2>&1 &
+      - name: Audit all ten missions and four teacher phases in Chrome
+        run: node qa/v3-projector-content-audit.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: projector-audit-metrics
+          path: qa/projector-audit-artifacts/
+          retention-days: 7
