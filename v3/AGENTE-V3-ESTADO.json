@@ -2233,6 +2233,12 @@
       "task": "REL-01",
       "commit": "21422c6aa97255a7539d7e4113afc055f2fc5930",
       "summary": "Previous 36-PNG decode browser run 40692311960 reached and passed library preview step; overall workflow still running FUN-09 at last observation. Added pixel alpha assertions for all 25 sprite/item PNG transparent corners and 11 maps opaque center, in addition to 36 PNG decode and dimensions. CI pending; 54/59 unchanged; GDevelop GUI/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M06-05",
+      "commit": "8b958dac9ad80c52033ff2efa7a737947d1b79a0",
+      "summary": "Added practical GDevelop import guide for 36 PNG, 5 WAV, 5 GLB with student evidence, save/reopen checklist, 2D vs 3D limitations and explicit manual NOT_RUN. PNG alpha Browser QA 40692649696 and 40692663836 still running at last check; static QA succeeded. 54/59 unchanged."
     }
   ]
 }
