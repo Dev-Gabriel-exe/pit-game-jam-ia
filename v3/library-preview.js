@@ -40,12 +40,16 @@ function makeButton(label,action){
  const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',action);tools.appendChild(b);return b;
 }
 function readGlb(buffer){
+ if(!(buffer instanceof ArrayBuffer)||buffer.byteLength<28)throw Error('Arquivo GLB incompleto');
  const v=new DataView(buffer),u=new Uint8Array(buffer);
  if(v.getUint32(0,true)!==0x46546c67||v.getUint32(4,true)!==2||v.getUint32(8,true)!==buffer.byteLength)throw Error('Arquivo GLB inválido');
  const length=v.getUint32(12,true);
+ if(length<2||length%4||20+length+8>buffer.byteLength)throw Error('Tamanho do JSON GLB inválido');
  if(v.getUint32(16,true)!==0x4e4f534a)throw Error('GLB sem JSON');
  const gltf=JSON.parse(new TextDecoder().decode(u.subarray(20,20+length)).trim());
  const binary=20+length;
+ const binaryLength=v.getUint32(binary,true);
+ if(binaryLength%4||binary+8+binaryLength>buffer.byteLength)throw Error('Dados binários GLB incompletos');
  if(v.getUint32(binary+4,true)!==0x004e4942)throw Error('GLB sem geometria');
  const prim=gltf.meshes?.[0]?.primitives?.[0],binStart=binary+8;
  if(!prim)throw Error('GLB sem malha');
@@ -53,6 +57,8 @@ function readGlb(buffer){
   const a=gltf.accessors[index],view=gltf.bufferViews[a.bufferView];
   if(a.componentType!==component||view.byteStride)throw Error('Formato GLB não suportado na prévia');
   const offset=binStart+(view.byteOffset||0)+(a.byteOffset||0);
+  const bytes=component===5126?12:2;
+  if(!Number.isInteger(a.count)||a.count<1||offset<binStart||offset+a.count*bytes>binStart+binaryLength)throw Error('Acessor GLB fora dos limites');
   return {offset,count:a.count};
  }
  const p=accessor(prim.attributes.POSITION,5126),i=accessor(prim.indices,5123);
