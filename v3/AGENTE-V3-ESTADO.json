@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "UI-05",
+  "priority": "UI-06",
   "current_phase": "MISSOES",
-  "last_task": "UI-04",
-  "completed_count": 33,
+  "last_task": "UI-05",
+  "completed_count": 34,
   "total_tasks": 59,
   "tasks": [
     {
@@ -627,10 +627,14 @@
       "description": "Biblioteca de assets: catálogo filtrável por gênero/tipo 2D/3D, arquivos de verdade para baixar, instruções de GDevelop e licença",
       "group": "UI",
       "position": 38,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:57:00Z",
+      "commit": "1ae1b8b509e3b66baa08b533da34f26960136145",
+      "tests": [
+        "GitHub Actions static QA run 40629213658 completed success, 28 IDs, 4 genres, 3 formats, intersections and provenance",
+        "GitHub Actions Browser QA run 40629180903 completed success, 3 real Chrome downloads: PNG/GLB/WAV, file names, nonzero bytes and magic signatures",
+        "Chrome verified filters 3D=5, corrida+3D=1, corrida+audio=3, all 70 mission pages still passed"
+      ],
       "blocker": null
     },
     {
@@ -1416,6 +1420,21 @@
       ],
       "tests": "Browser QA 40628996955 success: roster filter accessibility, review feedback guard, approval and chat fake API",
       "notes": "UI-04 validated in isolated Chrome; real backend authorization, concurrency and classroom remain future functional QA."
+    },
+    {
+      "id": "UI-05",
+      "completed_at": "2026-10-28T03:57:00Z",
+      "commit": "1ae1b8b509e3b66baa08b533da34f26960136145",
+      "files": [
+        "index.html",
+        "biblioteca.js",
+        "qa/v3-library-filters.cjs",
+        "qa/v3-e2e.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/REVISAO-BIBLIOTECA-UI-05.md"
+      ],
+      "tests": "Static QA 40629213658 success; Browser QA 40629180903 success with PNG/GLB/WAV actual downloads",
+      "notes": "Procedural origin disclosed; actual GDevelop import and third-party license validation remain pending."
     }
   ]
 }
