@@ -72,8 +72,8 @@ function results(){
  );
 }
 function render(phase){return phase==='review'?results():practice()}
-function mount(){
- const root=document.querySelector('.t4v-root');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.t4v-root');if(!root)return;
  const tabs=[...root.querySelectorAll('[data-t4v-tab]')],panel=root.querySelector('#t4vPanel');
  if(panel&&tabs.length){
   function change(i,focus){
