@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:06:45.623Z",
+  "last_completed_at": "2026-10-28T02:13:24.058Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M05-01",
+  "priority": "M05-02",
   "current_phase": "MISSOES",
-  "last_task": "M04-04",
-  "completed_count": 4,
+  "last_task": "M05-01",
+  "completed_count": 5,
   "total_tasks": 59,
   "tasks": [
     {
@@ -96,10 +96,24 @@
       "description": "Professor: conteúdo técnico de eventos, event loop, condições, ações, variáveis e erros de repetição por frame; simulador de estado",
       "group": "M05",
       "position": 5,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:13:24.058Z",
+      "commit": "f66415ee5b38e3670bc53fdc5f412ce12e15e63c",
+      "tests": [
+        "PASS: JS source parses",
+        "PASS: v3/app.js parses",
+        "PASS: Node QA file parses",
+        "PASS: M05 teacher briefing wired",
+        "PASS: M05 module loaded before app",
+        "PASS: M05 CSS loaded",
+        "PASS: M01–04 teacher routing retained",
+        "PASS: 40 minute plan",
+        "PASS: bug: five points in five frames",
+        "PASS: protected: one point in five frames",
+        "PASS: negative: door blocked",
+        "PASS: positive: key unlocks door",
+        "PASS: safe: no simulator persistence or network"
+      ],
       "blocker": null
     },
     {
@@ -810,6 +824,20 @@
       ],
       "tests": "32/32 module checks + 14/14 simulated API scenarios + 28/28 repeatable regression assertions",
       "notes": "Aligned M04 teacher practice/results with student; prevented submitted/approved overwrite, required revision guidance, room-scoped teacher review, readable multiline evidence. Real browser/Neon/GDevelop E2E remains pending."
+    },
+    {
+      "id": "M05-01",
+      "completed_at": "2026-10-28T02:13:24.058Z",
+      "commit": "f66415ee5b38e3670bc53fdc5f412ce12e15e63c",
+      "files": [
+        "v3/teacher-mission-five-foundations.js",
+        "v3/teacher-mission-five-foundations.css",
+        "v3/app.js",
+        "professor-v3.html",
+        "qa/v3-m05-foundations.cjs"
+      ],
+      "tests": "13 in-process JS/static assertions passed; repeatable Node QA file committed but not run in local checkout",
+      "notes": "M05 teacher concepts and 2D/3D genre examples plus interactive protected-vs-repeated frame simulator wired into briefing. Fixed frame counter for key, door, release. No browser, GDevelop engine or live API tests; those remain pending."
     }
   ]
 }
