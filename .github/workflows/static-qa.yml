@@ -30,6 +30,16 @@ jobs:
         run: node qa/v3-m08-acceptance.cjs
       - name: Audit V3 teacher/student alignment
         run: node qa/v3-audit-alignment.cjs
+      - name: Verify M07 student/teacher flow and shared tutorial offline
+        run: |
+          node --check v3/student-mission-seven.js
+          node --check v3/teacher-mission-seven-validation.js
+          node --check v3/teacher-mission-seven-foundations.js
+          node --check v3/gdevelop-mission-seven-guide.js
+          node qa/v3-m07-foundations.cjs
+          node qa/v3-m07-guide.cjs
+          node qa/v3-m07-student.cjs
+          node qa/v3-m07-integration.cjs
       - name: Audit V3 GDevelop tutorials
         run: node qa/v3-audit-guides.cjs
       - name: Audit V3 AI tools and free licenses
