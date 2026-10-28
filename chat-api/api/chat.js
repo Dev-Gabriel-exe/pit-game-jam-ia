@@ -141,6 +141,7 @@ module.exports = async function handler(req, res) {
       if(teacher){const exists=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2',[id,ROOM]);if(!exists.rowCount)return sendError(res,404,'Aluno não encontrado.');}
       const mime=String(req.body?.mime||''),bytes=decodeImage(req.body?.image,mime);
       if(!bytes)return sendError(res,400,'Imagem inválida ou acima de 2 MB.');
+      const caption=clean(req.body?.caption,MAX_BODY);
       const author=teacher?'teacher':'student';
       const count=await db.query("SELECT count(*)::int AS n FROM pit_chat_messages WHERE student_id=$1 AND author=$2 AND created_at>now()-interval '1 minute'",[id,author]);
       if(count.rows[0].n>=6)return sendError(res,429,'Aguarde antes de enviar outra imagem.');
@@ -149,7 +150,7 @@ module.exports = async function handler(req, res) {
       const client=await db.connect();
       try {
        await client.query('BEGIN');
-       const msg=await client.query('INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',[ROOM,id,author,mission,'[Imagem]']);
+       const msg=await client.query('INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',[ROOM,id,author,mission,caption?'[Imagem]\n'+caption:'[Imagem]']);
        await client.query('INSERT INTO pit_chat_images(message_id,mime,bytes) VALUES($1,$2,$3)',[msg.rows[0].id,mime,bytes]);
        await client.query('COMMIT');
        return res.status(201).json({ok:true,id:msg.rows[0].id});
@@ -169,7 +170,7 @@ module.exports = async function handler(req, res) {
         id=me.id;
       }
       const body=clean(req.body?.body,MAX_BODY);
-      if(body==='[Imagem]')return sendError(res,400,'Use o anexo para enviar imagens.');
+      if(body.startsWith('[Imagem]'))return sendError(res,400,'Use o anexo para enviar imagens.');
       if(body.length<2) return sendError(res,400,'Escreva pelo menos dois caracteres.');
       const author=teacher?'teacher':'student';
       const count=await db.query(
