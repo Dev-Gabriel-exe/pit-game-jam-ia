@@ -32,6 +32,8 @@ jobs:
         run: node qa/v3-design-tokens.cjs
       - name: Verify ART-02 original SVGs and integrations
         run: python3 qa/v3-art-assets.py
+      - name: Verify ART-03 mission and asset icon variants
+        run: node qa/v3-art-variants.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
