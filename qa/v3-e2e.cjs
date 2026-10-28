@@ -124,6 +124,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
 
  // AUD-05: traverse all ten real mission pages in both roles with isolated fixture data.
  // This is browser rendering coverage, not a claim of GDevelop execution or student approval.
+ for(const p of [tp,sp]){if(await p.locator('#chatWindow.open').count()){await p.locator('#chatClose').click();await p.locator('#chatWindow.open').waitFor({state:'hidden'});}}
  const missionAudit=[];
  for(let stage=1;stage<=10;stage++){
   await tp.locator('.stage-btn[data-stage="'+stage+'"]').click();
