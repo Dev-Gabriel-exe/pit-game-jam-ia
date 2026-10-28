@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M07-04",
+  "priority": "M08-01",
   "current_phase": "MISSOES",
-  "last_task": "M07-03",
+  "last_task": "M07-04",
   "completed_count": 15,
   "total_tasks": 59,
   "tasks": [
@@ -298,11 +298,15 @@
       "description": "Testes de vitória prematura, condição não cumprida, tela final, rascunho e envio",
       "group": "M07",
       "position": 17,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "blocked",
+      "updated_at": "2026-10-28T02:55:15.219Z",
+      "commit": "312571d99045600f417185ca68257652f1afccbc",
+      "tests": [
+        "20/20 V8 assertions executed: teacher/student rubric, state machine, negative and victory cases, evidence, integration and responsive CSS",
+        "qa/v3-m07-integration.cjs committed, not executed in Node",
+        "Real GDevelop and isolated backend submission/review tests NOT executed"
+      ],
+      "blocker": "Aceite integral exige executar login fictício, rascunho, envio, revisão e aprovação em backend isolado e Preview GDevelop 2D/3D; ambientes não acessados nesta rodada. Não usar turma real."
     },
     {
       "id": "M08-01",
@@ -1047,6 +1051,21 @@
       ],
       "tests": "21/21 V8 checks passed; real editor/browser/API not executed",
       "notes": "Student creates own completion with SE/ENTÃO, negative test and 3D-aware route; no automatic approval."
+    },
+    {
+      "id": "M07-04",
+      "completed_at": "2026-10-28T02:55:15.219Z",
+      "commit": "312571d99045600f417185ca68257652f1afccbc",
+      "files": [
+        "v3/teacher-mission-seven-validation.js",
+        "v3/teacher-mission-seven-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m07-integration.cjs",
+        "v3/FASE3-MISSAO7.md"
+      ],
+      "tests": "20/20 V8 checks passed; backend/GDevelop E2E blocked",
+      "notes": "Teacher rubric and practice mirror student, but real submission/review/approval remains unverified."
     }
   ]
 }
