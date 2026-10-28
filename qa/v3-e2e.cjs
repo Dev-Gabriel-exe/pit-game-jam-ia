@@ -22,7 +22,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    if(action==='teacher-login')body={ok:true,room:'PITGAME26'};
    if(action==='unread')body={ok:true,unread:0};
    if(action==='threads')body={ok:true,threads:[{id,display_name:'Aluno QA',unread:0}]};
-   if(action==='messages')body={ok:true,messages:store.messages};
+   if(action==='messages'){
+    if(teacher&&url.searchParams.get('studentId')!==id){status=400;body={ok:false,error:'studentId ausente ou incorreto no chat do professor'};}
+    else body={ok:true,messages:store.messages};
+   }
    if(action==='read')body={ok:true};
    if(action==='send'){store.messages.push({id:store.messages.length+1,author:teacher?'teacher':'student',mission:posted.mission,body:posted.body,created_at:new Date().toISOString()});body={ok:true,id:store.messages.length}}
   }else{
