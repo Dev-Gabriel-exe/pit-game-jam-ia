@@ -16,7 +16,7 @@
   ],
   "priority": "REL-01",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "REL-02",
+  "last_task": "REL-01",
   "completed_count": 52,
   "total_tasks": 59,
   "tasks": [
@@ -299,14 +299,14 @@
       "group": "M07",
       "position": 17,
       "status": "blocked",
-      "updated_at": "2026-10-28T05:46:00Z",
+      "updated_at": "2026-10-28T06:07:00Z",
       "commit": "312571d99045600f417185ca68257652f1afccbc",
       "tests": [
         "20/20 V8 assertions executed: teacher/student rubric, state machine, negative and victory cases, evidence, integration and responsive CSS",
         "qa/v3-m07-integration.cjs committed, not executed in Node",
         "Real GDevelop and isolated backend submission/review tests NOT executed"
       ],
-      "blocker": "Isolated handler and Chrome fake-API student/teacher submission, revision and approval now tested (FUN-05/FUN-09); still missing actual GDevelop 2D/3D Preview and real Postgres disposable integration."
+      "blocker": "Actual classroom/chat handlers passed disposable Postgres 16 integration (GitHub Actions 40637833387) plus isolated Chrome review flow; still missing real GDevelop 2D/3D Preview for the mission acceptance."
     },
     {
       "id": "M08-01",
@@ -917,14 +917,15 @@
       "group": "REL",
       "position": 57,
       "status": "blocked",
-      "updated_at": "2026-10-28T05:46:00Z",
-      "commit": "6d2bd941eefe655f975732eb6aed65e02c0bcab2",
+      "updated_at": "2026-10-28T06:07:00Z",
+      "commit": "c1e8f70b5b0069b035bd8613caa5ec733fae9b72",
       "tests": [
         "Static QA 40637308970 success: full static regression suite including FUN-10",
         "Browser QA 40637186741 success: Chrome E2E 3 fictional students, teacher and simulated 503",
-        "Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint"
+        "Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint",
+        "Postgres QA 40637833387 success: actual handlers against disposable PostgreSQL 16, 3 fictional students, token hashing, review/revision, roster and isolated chat"
       ],
-      "blocker": "P1 acceptance blockers remain: real GDevelop import/Preview, disposable Postgres E2E and observed peer test. Cannot certify release or strict gate until these are resolved."
+      "blocker": "P1 acceptance blockers remain: real GDevelop asset import/Preview, physical/mobile editor confirmation and observed peer testing. Disposable Postgres 16 handler integration is now verified; no production/Neon writes."
     },
     {
       "id": "REL-02",
@@ -1798,6 +1799,19 @@
       ],
       "tests": "Browser QA 40637691150 success: operational guide eight sections, keyboard skip link, FAQ, mobile 390px and desktop 1280px; Static QA 40637691076 success: full static regression after guide and test correction",
       "notes": "Standalone offline Portuguese operational guide linked from teacher panel; no speaking notes. Chrome used local static server, not production."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "c1e8f70b5b0069b035bd8613caa5ec733fae9b72",
+      "files": [
+        "qa/v3-postgres-integration.cjs",
+        ".github/workflows/postgres-isolated-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "Postgres QA 40637833387 success",
+      "notes": "One P1 blocker resolved with actual disposable Postgres 16; remaining GDevelop/peer acceptance unverified."
     }
   ]
 }
