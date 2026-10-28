@@ -260,7 +260,7 @@ function studentBrief(m){
  '<p class="story-wait">'+(isReleased?'Prepare seu projeto. Siga para CONSTRUIR quando chegar a hora da prática.':'🔒 Aguarde a liberação desta missão pelo professor.')+'</p></div>';
 }
 function studentBuild(m){
- const canWork=m.n<=state.current_stage&& (m.n!==state.current_stage||['practice','review'].includes(state.phase));
+ const canWork=m.n<=state.current_stage;
  return '<div class="quest-kicker">MISSÃO '+String(m.n).padStart(2,'0')+' · OFICINA</div>'+
  '<h2 class="quest-title">Agora é sua vez de criar.</h2><p class="lesson-lead">'+esc(m.goal)+'</p>'+studentGenreFocus(m)+
  (!canWork?'<div class="notice gold">⏳ A prática ainda não foi liberada. Os passos estão disponíveis para você conhecer o objetivo; o envio só abre quando o professor autorizar.</div>':'')+
@@ -284,7 +284,7 @@ function phaseBody(m){
 function studentWorkForm(m){
  const e=entry(m.n)||{};
  const draft=localStorage.getItem(studentStorageKey('draft',m.n)),evidence=draft!==null?draft:(e.evidence||'');
- const locked=m.n>state.current_stage||(m.n===state.current_stage&&!['practice','review'].includes(state.phase));
+ const locked=m.n>state.current_stage;
  const approved=e.status==='approved',genre=genreContext(m.n);
  const done=savedChecks(m.n).length,ready=done>=m.steps.length;
  return '<section class="mission-submission"><div class="submission-head"><span>◈ REGISTRO DE MISSÃO</span><span class="state-pill '+esc(e.status||'')+'">'+esc(statusLabel(m.n))+'</span></div>'+
