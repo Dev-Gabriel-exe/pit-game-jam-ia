@@ -100,10 +100,12 @@ function showHero(){
  status(state.preview?'MODO DEMONSTRAÇÃO · SEM DADOS DA TURMA':state.teacher?'ARENA DO PROFESSOR':'HERÓI VINCULADO AO CADASTRO');
 }
 async function setup3D(){
+ $('v5Practice').disabled=true;
  try{
   const module=await import('./arena-three.js?v=5a');
   const quality=(navigator.deviceMemory||4)<4?'low':'auto';
   state.stage=module.createStage($('v5Stage'),{quality,onEvent});
+  $('v5Practice').disabled=false;
   previewHero();
   status(state.preview?'DEMONSTRAÇÃO · SIMULAÇÃO SEM NOTAS':'3D PRONTO · THREE.JS');
  }catch(e){
