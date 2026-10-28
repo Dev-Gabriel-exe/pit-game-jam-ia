@@ -256,6 +256,7 @@ function renderMain(){
  const teacherMissionFourBriefing=TEACHER&&m.n===4&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS;
  const teacherMissionFourDemo=TEACHER&&m.n===4&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M04_GUIDE;
  const teacherMissionFourValidation=TEACHER&&m.n===4&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_FOUR_VALIDATION;
+ const teacherMissionFiveDemo=TEACHER&&m.n===5&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M05_GUIDE;
  const teacherMissionFiveBriefing=TEACHER&&m.n===5&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS;
  document.body.classList.toggle('pit-mission-one',missionOne);
  document.body.classList.toggle('pit-mission-two',missionTwo);
@@ -266,6 +267,7 @@ function renderMain(){
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.hydrate(missionThreeContext().session,e?.evidence,e?.status);
  if(missionFour)window.PIT_STUDENT_MISSION_FOUR.hydrate(missionFourContext().session,e?.evidence,e?.status);
  $('mainContent').innerHTML=teacherMissionFiveBriefing?window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.render():
+  teacherMissionFiveDemo?window.PIT_GDEVELOP_M05_GUIDE.render():
   teacherMissionFourValidation?window.PIT_TEACHER_MISSION_FOUR_VALIDATION.render(activePhase):
   teacherMissionFourDemo?window.PIT_GDEVELOP_M04_GUIDE.render():
   teacherMissionFourBriefing?window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS.render():
@@ -304,6 +306,7 @@ function renderMain(){
  if(teacherMissionFourDemo)window.PIT_GDEVELOP_M04_GUIDE.mount();
  if(teacherMissionFourValidation)window.PIT_TEACHER_MISSION_FOUR_VALIDATION.mount();
  if(teacherMissionFiveBriefing)window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.mount();
+ if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
  if(missionFour)window.PIT_STUDENT_MISSION_FOUR.mount({
   ...missionFourContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
