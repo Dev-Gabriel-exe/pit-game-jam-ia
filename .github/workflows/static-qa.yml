@@ -53,6 +53,11 @@ jobs:
           node qa/v3-isolated-backend.cjs
       - name: Verify FUN-10 security, accessibility and provenance guards
         run: node qa/v3-security-audit.cjs
+      - name: Verify native GDevelop evidence gate with synthetic negative cases
+        run: |
+          node --check qa/v3-gdevelop-native-results.cjs
+          node --check qa/v3-gdevelop-native-results-selftest.cjs
+          node qa/v3-gdevelop-native-results-selftest.cjs
       - name: Audit REL-01 release gate (diagnostic, no deployment)
         run: node qa/v3-release-gate.cjs
       - name: Validate core HTML, asset filenames and gamification storage
