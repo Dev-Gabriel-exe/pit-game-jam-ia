@@ -1,6 +1,7 @@
 'use strict';
 /* Browser integration for the actual procedural asset previews, not placeholders. */
 const assert=require('node:assert/strict');
+const fs=require('node:fs/promises');
 const {chromium}=require('playwright');
 (async()=>{
  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
@@ -32,6 +33,12 @@ const {chromium}=require('playwright');
      const [download]=await Promise.all([page.waitForEvent('download',{timeout:30000}),button.click()]);
      assert.equal(download.suggestedFilename(),asset.file,'browser download filename '+id);
      assert.equal(await download.failure(),null,'browser download completed '+id);
+     const downloaded=await fs.readFile(await download.path());
+     assert(downloaded.length>100,'download contains actual bytes '+id);
+     const expected=asset.cat==='modelo'?'glTF':asset.cat==='som'?'RIFF':'\x89PNG\r\n\x1a\n';
+     assert.equal(downloaded.subarray(0,expected.length).toString('latin1'),expected,'download signature '+id);
+     if(asset.cat==='modelo')assert.equal(downloaded.readUInt32LE(8),downloaded.length,'downloaded GLB size '+id);
+     if(asset.cat==='som')assert.equal(downloaded.readUInt32LE(4)+8,downloaded.length,'downloaded WAV size '+id);
     }
    }
    await open('explorador');
