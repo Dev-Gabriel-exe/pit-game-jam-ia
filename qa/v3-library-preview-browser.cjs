@@ -87,6 +87,33 @@ const {chromium}=require('playwright');
    await page.locator('.pit-preview-close').click();
    await page.reload({waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
+   // Verify the actual downloaded bytes, filenames and MIME for all 46 resources.
+   const downloads=await page.evaluate(async()=>{
+    const api=window.PIT_LIBRARY_API,rows=[];
+    for(const asset of api.assets){
+     const blob=await api.assetBlob(asset);
+     const bytes=new Uint8Array(await blob.slice(0,12).arrayBuffer());
+     const signature=Array.from(bytes.slice(0,4));
+     const expected=asset.cat==='modelo'?'glb':asset.cat==='som'?'wav':'png';
+     rows.push({id:asset.id,file:asset.file,type:blob.type,size:blob.size,expected,signature,head8:Array.from(bytes.slice(0,8))});
+    }
+    return rows;
+   });
+   assert.equal(downloads.length,46,'all catalogue entries yield downloadable bytes');
+   for(const item of downloads){
+    assert(item.file.endsWith('.'+item.expected),'correct filename extension '+item.id);
+    assert(item.size>100,'nonempty download '+item.id);
+    if(item.expected==='png'){
+     assert.equal(item.type,'image/png','PNG MIME '+item.id);
+     assert.deepEqual(item.head8,[137,80,78,71,13,10,26,10],'PNG magic '+item.id);
+    }else if(item.expected==='glb'){
+     assert.equal(item.type,'model/gltf-binary','GLB MIME '+item.id);
+     assert.deepEqual(item.signature,[103,108,84,70],'GLB magic '+item.id);
+    }else{
+     assert.equal(item.type,'audio/wav','WAV MIME '+item.id);
+     assert.deepEqual(item.signature,[82,73,70,70],'RIFF magic '+item.id);
+    }
+   }
    await open('glb-cristal');
    await page.locator('#pitPreviewStage canvas').waitFor();
    const mesh=await page.evaluate(()=>{
