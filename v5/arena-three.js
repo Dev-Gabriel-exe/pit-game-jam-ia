@@ -158,13 +158,18 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
-  const item={id:String(id),name:b.name,build:b,mesh:m,hp:100,dead:false};
+  const label=caption(b.name,b.name.length>18?43:56);
+  label.position.set(0,3.35,0);m.root.add(label);
+  const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
+  const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
+  const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
+  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,hp:100,dead:false};
   individuals.set(item.id,item);
   return item;
  }
  function preview(b){
   simulation=null;playing=false;clearHeroes();
-  const item=addHero(b,'preview',{x:0,z:0},1.75);
+  const item=addHero(b,'preview',{x:0,z:0},1.75);item.bar.visible=false;
   camera.position.set(7.5,5.5,10);controls.target.set(0,1.4,0);controls.update();
   return item;
  }
@@ -192,6 +197,9 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  function sync(f){
   const unit=individuals.get(f.id);if(!unit)return;
   unit.hp=f.hp;unit.dead=!f.alive;
+  const health=Math.max(.001,f.hp/f.stats.hp);
+  unit.fill.scale.x=health;unit.fill.position.x=-.65*(1-health);
+  unit.fill.material.color.setHex(health>.55?0xd0a86e:health>.24?0xd08e52:0xbf5051);
   unit.mesh.root.position.set(f.x,Math.max(0,f.y||0),f.z);
   unit.mesh.actor.rotation.y=f.face;
   if(!f.alive){unit.mesh.actor.rotation.z=THREE.MathUtils.lerp(unit.mesh.actor.rotation.z,-1.2,.07);unit.mesh.circle.visible=false}
@@ -243,6 +251,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
     for(const [key,m] of shots)if(!active.has(key)){root.remove(m);m.geometry.dispose();m.material.dispose();shots.delete(key)}
   }
   for(const [id,u] of individuals){
+   u.bar.quaternion.copy(camera.quaternion);
    const a=u.mesh.actor,active=!u.dead;
    if(!active)continue;
    const wobble=reduce?0:Math.sin(elapsed*2.7+id.length)*.055;
