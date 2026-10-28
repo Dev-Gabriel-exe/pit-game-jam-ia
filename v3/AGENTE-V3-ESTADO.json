@@ -2086,6 +2086,12 @@
       "task": "REL-01",
       "commit": "d63599cab8224515e9d5148f442ac4570927a040",
       "summary": "Verified latest static QA 40671846999 and Browser QA 40671846818 success. No code modifications or manual homologation; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "ebeebb73684df8c181cdb4d3c4f3657a5383c9e5",
+      "summary": "Corrected stale UI-05 documentation that still claimed 28 resources; current catalogue is 38; linked verified CI and distinguished manual GDevelop acceptance. No code/runtime test this round; 54/59 unchanged."
     }
   ]
 }
