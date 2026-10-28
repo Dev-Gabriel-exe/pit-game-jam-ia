@@ -56,6 +56,7 @@ function simulator(){
 }
 function practice(){
  return shell('practice',intro('ESPECIFICAÇÃO E BACKLOG','Uma ideia só está reduzida quando tem critério de pronto.','A construção desta missão é <strong>um documento curto de planejamento</strong>, não um projeto já executado na engine. A cena, a mecânica, os elementos essenciais e o teste de conclusão serão implementados nas missões seguintes.')+
+ '<div class="tm2-requirement" data-reveal><span>GUIA OPERACIONAL DA MISSÃO 02</span><strong>O aluno planeja; ainda não precisa abrir o GDevelop.</strong><p>Na tela do aluno: selecionar “Definir meu MVP”; preencher uma cena curta, uma mecânica central, exatamente três elementos separados por vírgula e um teste no formato Dado / Quando / Então. O campo “Depois” é opcional. Conferir as quatro decisões no resumo, selecionar “Ver meu plano de jogo” e, com a prática liberada, “Enviar ao professor”. Se não conseguir enviar, verificar campos incompletos, quantidade de elementos, liberação da prática e estado da entrega. Avaliar a coerência entre cena, mecânica, elementos e teste; não exigir jogo pronto nesta missão.</p></div>'+
  '<div class="tm2-spec-architecture" data-reveal><div class="tm2-spec-art"></div><div><span>MODELAGEM DO PRIMEIRO MVP</span><h4>1 cena + 1 ação + elementos essenciais + 1 condição final</h4>'+
  '<p>O plano é um contrato de escopo. Se uma funcionalidade não ajuda a executar a ação principal ou chegar ao resultado, ela entra na lista de melhorias futuras.</p></div></div>'+
  '<div class="tm2-spec-grid">'+
