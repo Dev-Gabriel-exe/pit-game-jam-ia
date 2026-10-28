@@ -1,0 +1,22 @@
+/* M07-04 · professor prática e revisão */
+.t7v-root{color:#f1dec7;background:#101920;font:15px/1.6 Arial,sans-serif;padding:clamp(14px,3vw,30px);border:1px solid #86674c}
+.t7v-root *{box-sizing:border-box}.t7v-root h2,.t7v-root h3{font-family:Georgia,serif;color:#ffe0b8}
+.t7v-root header{background:linear-gradient(110deg,#30212b,#192c35);border-left:4px solid #dba46e;padding:20px}
+.t7v-root header small{color:#f0ba82;font-weight:900;letter-spacing:.1em}
+.t7v-root h2{font-size:clamp(25px,3vw,38px);margin:10px 0}
+.t7v-work{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:20px 0}
+.t7v-work article{padding:17px;background:#1d2a33;border:1px solid #8c6a4d}
+.t7v-work small,.t7v-rubric small{color:#f1bc82;letter-spacing:.1em;font-weight:bold}
+.t7v-work h3{font-size:21px}.t7v-work strong{color:#bde6c5}
+.t7v-rubric{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:18px 0}
+.t7v-rubric article{display:flex;gap:12px;padding:15px;background:#1d2b34;border:1px solid #84684e}
+.t7v-rubric article>span{font:700 24px Georgia,serif;color:#efbd84}
+.t7v-rubric h3{font-size:20px;margin:6px 0}.t7v-rubric p{margin:0}
+.t7v-decisions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.t7v-decisions article{padding:16px;background:#28382d;border:1px solid #73997a}
+.t7v-decisions article:last-child{background:#38292c;border-color:#ac776b}
+.t7v-note{padding:16px;margin-top:16px;background:#24343c;border-left:3px solid #a2c8d4}
+.t7v-note b{color:#f4c18b}
+@media(max-width:850px){.t7v-work{grid-template-columns:1fr}}
+@media(max-width:700px){.t7v-rubric,.t7v-decisions{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.t7v-root *{animation:none!important;transition:none!important}}

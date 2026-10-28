@@ -1,0 +1,2269 @@
+{
+  "project": "PIT Game Jam IA — V3",
+  "repository": "Dev-Gabriel-exe/pit-game-jam-ia",
+  "branch": "feature/pit-gamejam-v3-arcade",
+  "workflow_version": 1,
+  "initialized_at": "2026-10-27",
+  "last_completed_at": "2026-10-28T10:20:00Z",
+  "status": "RUNNING",
+  "cadence_requested_minutes": 60,
+  "cadence_supported_by_chatgpt_minutes": 60,
+  "execution_policy": "Execute as many consecutive safe, verifiable goals per run as practical; commit, test and checkpoint each. Never fabricate GDevelop or peer tests, never publish or merge main.",
+  "content_approved": [
+    "M01",
+    "M02",
+    "M03"
+  ],
+  "priority": "REL-01",
+  "current_phase": "MISSOES",
+  "last_task": "UI-05",
+  "completed_count": 54,
+  "total_tasks": 59,
+  "tasks": [
+    {
+      "id": "M04-01",
+      "phase": "MISSOES",
+      "description": "Professor: conceitos essenciais de entrada, comportamento, atualização por frame, colisão e câmera; exemplos 2D/3D, conteúdo autossuficiente",
+      "group": "M04",
+      "position": 1,
+      "status": "done",
+      "updated_at": "2026-10-28T01:34:54.929Z",
+      "commit": "ab88e33206d903edfc5b180b947107fb58c687b7",
+      "tests": [
+        "30/30 automated checks passed: JS/CSS syntax and balance, academic definitions, 2D/3D genre routes, responsive/animated slides",
+        "Interactive tabs: click, keyboard End and ArrowRight, ARIA selection changes confirmed in controlled mocks",
+        "GDevelop technical claims cross-checked against official behaviors, platformer and collisions documentation",
+        "Teacher-only M04 briefing integrated; M04 demo/practice/results remain on existing generic content until later tasks"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M04-02",
+      "phase": "MISSOES",
+      "description": "Tutorial ilustrado real de GDevelop para adicionar controles e limites; botões em português, screenshots verificados e fallback",
+      "group": "M04",
+      "position": 2,
+      "status": "done",
+      "updated_at": "2026-10-28T01:45:01.176Z",
+      "commit": "cdc3f6085e1c5fea0742a400f04ed8efdc4be43d",
+      "tests": [
+        "37/37 deterministic checks passed: syntax, CSS, SVG labeling, screenshot origins, role/phase isolation",
+        "Four GDevelop paths × four steps: Top-down, Platformer, Puzzle/Click, 3D starter with physics",
+        "Client-side control mocks: next/back, keyboard, ARIA route selection, scroll and image fallback",
+        "Official wiki pages and free MIT 3D starter verified via live source lookup",
+        "Pending: manual browser screenshot visual QA, real GDevelop procedure check, API classroom E2E"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M04-03",
+      "phase": "MISSOES",
+      "description": "Aluno: prática autoral com rascunho, checklist de teste no Preview, personalização por gênero e continuidade do projeto da Missão 03",
+      "group": "M04",
+      "position": 3,
+      "status": "done",
+      "updated_at": "2026-10-28T01:55:01.980Z",
+      "commit": "07f762a1dfbf34c7c41d238ce27018ac08d00c6f",
+      "tests": [
+        "41/41 static and functional checks: M04 student JS, CSS, 3-phase rendering, genres 2D/3D, prior mission data, submissions and 750-char budget",
+        "18/18 interaction mocks: tutorial route persistence, edited responses and live preview, manual checkboxes, phase navigation, student isolation",
+        "Maximum submitted evidence 723 characters; complete text of all fields within the displayed input limits",
+        "Teacher retains original tutorial default while student guide preselects a genre-appropriate route",
+        "Pending: real-browser visual QA, actual GDevelop editor operation, authenticated classroom API E2E"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M04-04",
+      "phase": "MISSOES",
+      "description": "Integração aluno/professor, evidência observável sem inventar resultado, status/revisão e testes de regressão do fluxo",
+      "group": "M04",
+      "position": 4,
+      "status": "done",
+      "updated_at": "2026-10-28T02:06:45.623Z",
+      "commit": "3cf9f324c398725ead288e0a4efb94250c8e2539",
+      "tests": [
+        "32/32 module integration checks: professor/aluno phase alignment, evaluation rubric, keyboard navigation, CSS/JS and API guards",
+        "14/14 mock SQL authorization/transition cases: locked stage, release, submit, duplicate block, revision feedback, resubmit, approval, classroom isolation",
+        "28/28 assertions in qa/v3-m04-regression.cjs executed in JS runtime with mocked Node native modules and fake PostgreSQL",
+        "No real browser screenshots, actual GDevelop execution or connected Neon/Postgres E2E were performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M05-01",
+      "phase": "MISSOES",
+      "description": "Professor: conteúdo técnico de eventos, event loop, condições, ações, variáveis e erros de repetição por frame; simulador de estado",
+      "group": "M05",
+      "position": 5,
+      "status": "done",
+      "updated_at": "2026-10-28T02:13:24.058Z",
+      "commit": "f66415ee5b38e3670bc53fdc5f412ce12e15e63c",
+      "tests": [
+        "PASS: JS source parses",
+        "PASS: v3/app.js parses",
+        "PASS: Node QA file parses",
+        "PASS: M05 teacher briefing wired",
+        "PASS: M05 module loaded before app",
+        "PASS: M05 CSS loaded",
+        "PASS: M01–04 teacher routing retained",
+        "PASS: 40 minute plan",
+        "PASS: bug: five points in five frames",
+        "PASS: protected: one point in five frames",
+        "PASS: negative: door blocked",
+        "PASS: positive: key unlocks door",
+        "PASS: safe: no simulator persistence or network"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M05-02",
+      "phase": "MISSOES",
+      "description": "Tutorial ilustrado GDevelop: criar evento de interação, variável/contador e feedback; versão clique 2D/3D sem exigir cópia de jogo",
+      "group": "M05",
+      "position": 6,
+      "status": "done",
+      "updated_at": "2026-10-28T02:22:52.095Z",
+      "commit": "b2cd9a0c3d5e6c415224811a06a3b786114d3347",
+      "tests": [
+        "38/38 source, syntax, content, route, tab-keyboard, navigation, screenshot fallback and isolation checks passed",
+        "25/25 checks in qa/v3-m05-guide.cjs executed on repository source with mocked Node native modules",
+        "Verified official documentation sources for five screenshot URLs, Trigger once and 3D Physics collision distinction",
+        "No real browser, GDevelop runtime, or authenticated API/Neon test performed; all remain future QA"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M05-03",
+      "phase": "MISSOES",
+      "description": "Aluno: implementar a regra do próprio jogo, testar antes/depois e registrar evidência verificável e diagnóstico",
+      "group": "M05",
+      "position": 7,
+      "status": "done",
+      "updated_at": "2026-10-28T02:33:13.463Z",
+      "commit": "46af120261655c3f6d19d2e8646093a26e22edf4",
+      "tests": [
+        "48/48 code, CSS, payload length, prior mission data, personalization and API integration checks passed",
+        "19/19 simulated student UI interactions: route switching, placeholders, draft persistence, validations and review navigation",
+        "33/33 assertions in qa/v3-m05-student.cjs executed with Node system modules mocked; file committed for real Node execution",
+        "Maximum-length evidence 728 characters, preserving full user fields and fitting 750-character API limit",
+        "Real browser/GDevelop/Neon authenticated E2E not run; remain pending for M05-04 and final validation"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M05-04",
+      "phase": "MISSOES",
+      "description": "Teste professor/aluno, três casos de aceitação da regra, persistência e qualidade visual",
+      "group": "M05",
+      "position": 8,
+      "status": "done",
+      "updated_at": "2026-10-28T02:40:31.041Z",
+      "commit": "1bf4000b9036abc0e40f2498f31d344e830333af",
+      "tests": [
+        "31/31 module+interaction simulations: teacher practices, 3 rule tests, keyboard tab navigation, route differences, responsive reduced motion CSS and lesson isolation",
+        "32/32 repeatable assertions in qa/v3-m05-integration.cjs run with repository JS and mocked Node native modules",
+        "Source guards verified for approval/review workflow; no Neon, GDevelop or real browser E2E tested"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M06-01",
+      "phase": "MISSOES",
+      "description": "Professor: pipeline de assets, formatos PNG/GLB/WAV/MP4, importação, autoria, licenças e limites de planos gratuitos",
+      "group": "M06",
+      "position": 9,
+      "status": "done",
+      "updated_at": "2026-10-28T02:43:52.600Z",
+      "commit": "00c3d273bd2c8274936e5300202d0c4525bc39f4",
+      "tests": [
+        "27/27 static + functional checks for M06 professor foundation, official formats and demo quiz",
+        "Format guidance grounded in current official GDevelop docs for Sprite, WAV/AAC, MP4/H.264/AAC, GLB",
+        "No browser/GDevelop or real classroom API test yet"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M06-02",
+      "phase": "MISSOES",
+      "description": "Matriz de escolhas: imagem (Gemini e fallback local), vídeo curto/cutscene (Google Flow quando viável), música (Suno), voz/efeitos (ElevenLabs), 3D (Meshy); verificar limites reais e termos atuais",
+      "group": "M06",
+      "position": 10,
+      "status": "done",
+      "updated_at": "2026-10-28T02:46:00.491Z",
+      "commit": "10c15024feeee8796d8b4dc9913d5dc2eb9c3895",
+      "tests": [
+        "13/13 V8 assertions executed: syntax, five routes, source links, licensing, fallback, rendering, app wiring, DOM-simulated filter/reset",
+        "qa/v3-m06-matrix.cjs committed but not executed in Node",
+        "Official Gemini/Flow/Suno/ElevenLabs/Meshy documentation checked 2026-10-27"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M06-03",
+      "phase": "MISSOES",
+      "description": "Tutoriais segmentados por NECESSIDADE do jogo, com prompts personalizados pelo gênero, botões copiar, exportação/compatibilidade e fallback",
+      "group": "M06",
+      "position": 11,
+      "status": "done",
+      "updated_at": "2026-10-28T02:47:28.512Z",
+      "commit": "34225c82f22eb9636f9b19c0cacf67aa6f7668ee",
+      "tests": [
+        "15/15 V8 assertions executed: syntax, escaping, five routes, prompts, app wiring and simulated DOM",
+        "qa/v3-m06-tutorial.cjs added for later Node execution; not run in Node"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M06-04",
+      "phase": "MISSOES",
+      "description": "Aluno escolhe somente UMA trilha de criação, importa asset no GDevelop, testa no Preview e registra procedência/licença; não exigir créditos pagos",
+      "group": "M06",
+      "position": 12,
+      "status": "done",
+      "updated_at": "2026-10-28T02:49:08.782Z",
+      "commit": "ec6f830d92aa3178fd4565bbe63dac7bc316c3b2",
+      "tests": [
+        "20/20 V8 assertions executed with fictitious sessions; syntax, validation, evidence parsing, hydration, HTML, app integration, responsive CSS",
+        "Worst-case 732-character evidence within 750-char limit; all fields preserved",
+        "qa/v3-m06-student.cjs committed, not executed in Node"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M06-05",
+      "phase": "MISSOES",
+      "description": "Professor/aluno integração, tutoriais comprováveis, contingência offline, teste de importação e de interface mobile",
+      "group": "M06",
+      "position": 13,
+      "status": "blocked",
+      "updated_at": "2026-10-28T08:36:00Z",
+      "commit": "3e09626ec9356ab09ed8f4f624c4162ee71dd095",
+      "tests": [
+        "18/18 V8 assertions executed: module syntax, professor/student fields, phase integration, offline fallback, static responsive CSS, evidence roundtrip",
+        "qa/v3-m06-integration.cjs added, not run in Node",
+        "Real GDevelop import and mobile browser tests NOT executed",
+        "Native GDevelop 5.6.285 run 40657143854 SUCCESS: 2D PIT PNG and 3D PIT GLB loaded/rendered, 8/8 gameplay tests; manual screenshots reviewed; Chrome WAV/PNG decode run 40656562279 SUCCESS.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
+      ],
+      "blocker": "Real GDevelop native runtime and screenshots verified for PIT PNG/GLB, but GUI drag-and-drop import, WAV audible GDevelop playback, offline mobile physical verification and starter save/reopen remain NOT_RUN."
+    },
+    {
+      "id": "M07-01",
+      "phase": "MISSOES",
+      "description": "Professor: fluxo de estados, condições de conclusão, game loop, cena inicial/final e feedback claro",
+      "group": "M07",
+      "position": 14,
+      "status": "done",
+      "updated_at": "2026-10-28T02:51:21.901Z",
+      "commit": "24928929e9971b277ccbe3b228db444db1b4ddf6",
+      "tests": [
+        "18/18 V8 assertions executed: state machine, no premature victory, terminal states, reset, pure transition, app syntax, responsive CSS",
+        "qa/v3-m07-foundations.cjs committed, not executed in Node"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M07-02",
+      "phase": "MISSOES",
+      "description": "Tutorial 2D e 3D com demonstração progressiva de GDevelop de início → interação → resultado",
+      "group": "M07",
+      "position": 15,
+      "status": "done",
+      "updated_at": "2026-10-28T02:52:42.087Z",
+      "commit": "97ad236f1296e443e95a36cfa13943d079fbfc0f",
+      "tests": [
+        "16/16 V8 assertions executed: 2D/3D routes, navigation, source URLs, app syntax, DOM simulation, CSS",
+        "3 official GDevelop screenshot URLs opened and visually checked via web",
+        "qa/v3-m07-guide.cjs committed, not run in Node"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M07-03",
+      "phase": "MISSOES",
+      "description": "Aluno: criar condição autoral de conclusão e tela/feedback, mantendo a ideia original das Missões 01–02",
+      "group": "M07",
+      "position": 16,
+      "status": "done",
+      "updated_at": "2026-10-28T02:54:21.778Z",
+      "commit": "ed760767f1e6dc7b6b93ed83403e08928dac022d",
+      "tests": [
+        "21/21 V8 assertions executed: student evidence, validation, isolation, 3D route, hydration, app wiring, HTML/CSS",
+        "qa/v3-m07-student.cjs committed, not run in Node"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M07-04",
+      "phase": "MISSOES",
+      "description": "Testes de vitória prematura, condição não cumprida, tela final, rascunho e envio",
+      "group": "M07",
+      "position": 17,
+      "status": "done",
+      "updated_at": "2026-10-28T09:10:00Z",
+      "commit": "5a843488b20525642c62ef7da0c57d614f445474",
+      "tests": [
+        "20/20 V8 assertions executed: teacher/student rubric, state machine, negative and victory cases, evidence, integration and responsive CSS",
+        "qa/v3-m07-integration.cjs committed, not executed in Node",
+        "Real GDevelop and isolated backend submission/review tests NOT executed",
+        "Native GDevelop run 40657143854 SUCCESS: 2D and 3D conditional-victory events tested with negative, positive and persistence assertions; 8/8 total gameplay tests.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "2026-10-28: Added real GDevelop gameplay harness screenshot after conditional victory, plus fail-closed requirement for screenshot artifact. V8 syntax PASS on both changed JS files; native CI pending, authorial final victory screen still unverified.",
+        "2026-10-28: native GDevelop victory screenshot test and validator both passed in official Actions runs 40659339655 (982af1c0) and 40659350215 (4ee9fbf6). This verifies screenshot evidence of a gated victory event, NOT an authored final-screen UX or complete submission/review.",
+        "2026-10-28: conditional GDevelop TextObject victory-banner prototype added to disposable fixture; V8 syntax PASS; native CI and visible banner behavior NOT_RUN. Prototype conditional on starter containing TextObject.",
+        "2026-10-28: native GDevelop QA 40660294582 SUCCESS, 2D/3D TextObject victory banner with before/after screenshots; static QA 40660294650 SUCCESS. This proves native fixture, not student-authored project or real submission/review.",
+        "2026-10-28: isolated real classroom handler M07 draft->submission->revision->resubmission->approval PASS in complete static QA 40661334064; native GDevelop victory 2D/3D and before/after screenshots PASS 40660294582.",
+        "ACCEPTANCE M07-04: premature victory false, conditional true and persistent, real 2D/3D GDevelop final victory text and before/after screenshots PASS native run 40660294582; real classroom handlers draft/submission/revision/resubmission/approval PASS static QA 40661334064. Human-authored student artifact remains release/manual acceptance outside this test task."
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M08-01",
+      "phase": "MISSOES",
+      "description": "Professor: UX de jogos, affordance, instruções, HUD, contraste, resposta ao input e feedback de erro",
+      "group": "M08",
+      "position": 18,
+      "status": "done",
+      "updated_at": "2026-10-28T02:56:35.226Z",
+      "commit": "e43058c407fcbd5541213d0526cf34199deca218",
+      "tests": [
+        "16/16 V8 assertions executed: six UX concepts, before-after simulation, syntax, integration, responsive CSS",
+        "qa/v3-m08-foundations.cjs committed, not executed in Node"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M08-02",
+      "phase": "MISSOES",
+      "description": "Tutorial do GDevelop para uma melhoria pequena e verificável, com prints e alternativa por gênero",
+      "group": "M08",
+      "position": 19,
+      "status": "done",
+      "updated_at": "2026-10-28T03:16:07.363Z",
+      "commit": "d25bd6ebbe79dec523906979bcdb83d092e97340",
+      "tests": [
+        "19/19 V8 checks executed on fetched repository source: JS syntax, routes, step instructions, official screenshot URLs, responsive CSS, script wiring, fake DOM route/pager and keyboard navigation",
+        "GDevelop documentation for Text, Events Editor and UI consulted 2026-10-28; screenshots reuse official reference URLs already present in M07 guide",
+        "No real browser, GDevelop Preview or mobile device execution performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M08-03",
+      "phase": "MISSOES",
+      "description": "Aluno: implementar ao menos uma melhoria real de usabilidade, comparando antes/depois no Preview",
+      "group": "M08",
+      "position": 20,
+      "status": "done",
+      "updated_at": "2026-10-28T03:17:48.544Z",
+      "commit": "5601d9934e59d82c666277e751c5ecfa1f04a0fa",
+      "tests": [
+        "22/22 V8 checks on fetched repository sources: JS syntax, student validation, max evidence, roundtrip, mock-session isolation, HTML escape, route callback, CSS and app submission guards",
+        "No actual GDevelop Preview, browser UI or authenticated API test performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M08-04",
+      "phase": "MISSOES",
+      "description": "Integração da evidência e testes de acessibilidade, desempenho e mobile",
+      "group": "M08",
+      "position": 21,
+      "status": "blocked",
+      "updated_at": "2026-10-28T05:46:00Z",
+      "commit": "ad784b99dc41c16843213d585a3f6788f53d47b3",
+      "tests": [
+        "12/12 V8 static integration checks executed on fetched files: teacher rubric, student validation, accessibility styles, responsive rules and wiring",
+        "Browser E2E run 40626036851 launched in GitHub Actions; outcome not yet confirmed at checkpoint",
+        "No actual GDevelop Preview, measured FPS or real mobile device inspection",
+        "2026-10-28: qa/v3-m08-acceptance.cjs added and wired into static CI: checks distinct before/after, negative case, evidence persistence/isolation, teacher mobile/accessibility/performance rubric; CI run 40661631619 pending. Does not substitute physical mobile or GDevelop Preview.",
+        "Static QA run 40661631619 SUCCESS on ad784b99: automated before/after, student isolation, negative evidence, teacher accessibility/mobile/performance rubric and app integration passed.",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
+      ],
+      "blocker": "Automated M08 acceptance CI PASS 40661631619; real GDevelop Preview before/after and physical mobile FPS/UX inspection still unverified."
+    },
+    {
+      "id": "M09-01",
+      "phase": "MISSOES",
+      "description": "Professor: hipóteses, roteiro de teste, observação, defeitos reprodutíveis e prioridade de correção",
+      "group": "M09",
+      "position": 22,
+      "status": "done",
+      "updated_at": "2026-10-28T03:21:21.041Z",
+      "commit": "dcaccb5224868af7d8c751184f992db997e5f27f",
+      "tests": [
+        "14/14 V8 assertions on fetched source: five concepts, 3 triage scenarios, expected/observed, priority, keyboard tabs, mobile CSS, professor wiring",
+        "No real student playtest, browser E2E or GDevelop executed in this task"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M09-02",
+      "phase": "MISSOES",
+      "description": "Aluno: roteiro rápido sem inventar resultado; colega testa jogo, registra observação e falha/sucesso",
+      "group": "M09",
+      "position": 23,
+      "status": "done",
+      "updated_at": "2026-10-28T03:22:44.325Z",
+      "commit": "fb147f760450401c98c3dde2f126345e5a5f374d",
+      "tests": [
+        "19/19 V8 checks on fetched sources: schema, validation, evidence roundtrip, isolated mock sessions, empty real observations, preview guard, 3D route, HTML/CSS",
+        "No actual cross-student playtest, browser E2E or authenticated backend test performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M09-03",
+      "phase": "MISSOES",
+      "description": "Alunos aplicam uma correção pequena ou justificam backlog; professor acompanha e revisa sem avaliações falsas",
+      "group": "M09",
+      "position": 24,
+      "status": "blocked",
+      "updated_at": "2026-10-28T05:46:00Z",
+      "commit": "86697c3a435f553edb4a667b9bb509b61d08df7a",
+      "tests": [
+        "12/12 V8 source/integration checks executed: student resolution fixed/backlog, evidence roundtrip, teacher review rubric, module wiring",
+        "GitHub Actions static QA passes on recent feature commits; browser E2E under repair (obsolete selectors updated, latest run pending)",
+        "No actual peer playtest, GDevelop retest or backend review performed",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
+      ],
+      "blocker": "Fake-API Chrome and isolated SQL review/revision flows now passed; real peer test observation with fictional participants in an isolated classroom has not been executed."
+    },
+    {
+      "id": "M10-01",
+      "phase": "MISSOES",
+      "description": "Professor: distribuição segura, projeto editável, link/Preview, apresentação técnica e breve pitch",
+      "group": "M10",
+      "position": 25,
+      "status": "done",
+      "updated_at": "2026-10-28T03:25:14.207Z",
+      "commit": "81c94e355ae28591a84cd4afe35398f9992a97bf",
+      "tests": [
+        "15/15 V8 source and fake DOM checks: five concepts, three delivery options, official source, time allocation, keyboard, responsive CSS, app integration",
+        "GDevelop publishing documentation verified 2026-10-28; no actual export or public publication performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M10-02",
+      "phase": "MISSOES",
+      "description": "Tutorial GDevelop atualizado sobre salvar projeto, exportar/compartilhar quando disponível, opções e plano B",
+      "group": "M10",
+      "position": 26,
+      "status": "done",
+      "updated_at": "2026-10-28T03:26:32.468Z",
+      "commit": "670bd899ba6c54e2066eee9d616370feb171aa3f",
+      "tests": [
+        "15/15 V8 checks executed: three routes, four steps, DOM pager, keyboard, official links, responsive CSS, professor integration",
+        "Official GDevelop docs on Save, Share, gd.games and paid cloud collaboration checked 2026-10-28",
+        "Diagram is explicitly schematic, not a screenshot; no actual GDevelop export, publishing or link verification performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M10-03",
+      "phase": "MISSOES",
+      "description": "Aluno: mini-pitch autoral, demonstração, entrega de evidência/URL ou arquivo acessível, sem obrigar publicação paga",
+      "group": "M10",
+      "position": 27,
+      "status": "done",
+      "updated_at": "2026-10-28T03:28:36.770Z",
+      "commit": "174e2c4b15ae6c83a62ce14c409da6340c60275a",
+      "tests": [
+        "20/20 V8 checks: eight fields, three delivery routes, URL token guard, evidence roundtrip, session isolation, HTML/CSS, app submit guards",
+        "No real game presentation, file upload, GDevelop export or backend approval executed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "M10-04",
+      "phase": "MISSOES",
+      "description": "Tela de conquista final baseada em aprovações reais, testes dos critérios e preservação do projeto",
+      "group": "M10",
+      "position": 28,
+      "status": "done",
+      "updated_at": "2026-10-28T03:29:59.470Z",
+      "commit": "1e5d7526eddd195883d3354d84b3018bc64f149c",
+      "tests": [
+        "16/16 V8 checks: nine vs ten approvals, duplicates, invalid stages, preview isolation, teacher rubric, HTML/CSS, API progress status filter",
+        "No authenticated real backend approval, actual game presentation or GDevelop project preservation test performed; final E2E phase still required"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "AUD-01",
+      "phase": "AUDITORIA_MISSOES",
+      "description": "Conferir matriz 01–10: objetivos, duração total de 360 min, conceitos por densidade prática, sequência cumulativa",
+      "group": "AUD",
+      "position": 29,
+      "status": "done",
+      "updated_at": "2026-10-28T03:31:37.537Z",
+      "commit": "17a48f70673959cce98a7ece70bfb55cdbb5c088",
+      "tests": [
+        "V8 evaluated actual v2/missions.js and teacher PLAN: 10 missions, 360 min, all phase sums match",
+        "GitHub Actions run 40627167962: 'Audit V3 360-minute mission matrix' step completed success, static QA steps success; overall job finalizing",
+        "226/360 min (62.8%) practice; continuous 00:00-06:00 timeline"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "AUD-02",
+      "phase": "AUDITORIA_MISSOES",
+      "description": "Comparar literalmente professor/aluno em cada missão; eliminar notas de fala, atividades desencontradas e conceitos sem explicação",
+      "group": "AUD",
+      "position": 30,
+      "status": "done",
+      "updated_at": "2026-10-28T03:33:53.920Z",
+      "commit": "ab507f21c463ac8423454b116ea4322f5205f635",
+      "tests": [
+        "9/9 V8 checks executed on fetched source: M03/M07/M08 durations, M09 demo and all ten module links",
+        "GitHub Actions run 40627380065 completed success, including 'Audit V3 teacher/student alignment' and matrix audit",
+        "Browser E2E and actual GDevelop/peer activities remain unverified"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "AUD-03",
+      "phase": "AUDITORIA_MISSOES",
+      "description": "Checar TODOS os tutoriais GDevelop: imagens reais versus ilustrações, ordem dos cliques, nomes do editor, links, resultados e fallback",
+      "group": "AUD",
+      "position": 31,
+      "status": "done",
+      "updated_at": "2026-10-28T03:37:15.746Z",
+      "commit": "8d866ff27b79ff5c00a9181283b9d37f26e7ae8b",
+      "tests": [
+        "GitHub Actions run 40627702889: 'Audit V3 GDevelop tutorials' step completed success; all prior audit/static steps success",
+        "Manual web inspection 2026-10-28: 21 original image URLs examined, 20 loaded, one inaccessible replaced with verified official screenshot",
+        "Seven route-based guides, local SVG fallbacks and M06/M10 diagrams checked",
+        "No actual GDevelop editor session, export or mobile browser test performed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "AUD-04",
+      "phase": "AUDITORIA_MISSOES",
+      "description": "Checar TODAS as ferramentas IA, limites gratuitos, licenças/uso, links e formas de exportar/importar; atualizar somente com fontes verificadas",
+      "group": "AUD",
+      "position": 32,
+      "status": "done",
+      "updated_at": "2026-10-28T03:38:31.135Z",
+      "commit": "7a559b18c87148668edfae8e531f65df5a7ffeeb",
+      "tests": [
+        "Official Gemini, Flow, Suno, ElevenLabs and Meshy sources reviewed 2026-10-28; free limits, licenses and fallbacks cross-checked",
+        "GitHub Actions run 40627821351 completed success, including 'Audit V3 AI tools and free licenses'",
+        "No real account, generation, export or download tested"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "AUD-05",
+      "phase": "AUDITORIA_MISSOES",
+      "description": "Executar verificações de páginas e evidências por missão; corrigir defeitos P0/P1 antes de avançar",
+      "group": "AUD",
+      "position": 33,
+      "status": "done",
+      "updated_at": "2026-10-28T03:49:00Z",
+      "commit": "224a92372b77a0f7027c82a9cc88d64716274194",
+      "tests": [
+        "GitHub Actions Browser QA run 40628604617 completed success, commit 043d938a",
+        "Chrome Playwright checked 40 teacher + 30 student mission/phase pages (70 total)",
+        "Fake API flow: stage release, M01 submission/approval, chat, 390px mobile and JS errors all passed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-01",
+      "phase": "TELAS",
+      "description": "Inventariar todas as telas/rotas reais e dependências: index.html, fase1.html, aluno-v3.html, professor-v3.html, biblioteca.js, galeria e HUD",
+      "group": "UI",
+      "position": 34,
+      "status": "done",
+      "updated_at": "2026-10-28T03:47:00Z",
+      "commit": "6bfcefa51c6a27fc90a52b7cdba6a851f7bbff3c",
+      "tests": [
+        "GitHub Actions static QA run 40628435393 success, including UI-01 route inventory",
+        "8 HTML routes, local src/href dependencies and 10 posters checked by qa/v3-ui-route-inventory.cjs"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-02",
+      "phase": "TELAS",
+      "description": "Portal público/cadastro/entrada: integrar identidade RPG, acessibilidade, navegação fluida e coerência com a turma",
+      "group": "UI",
+      "position": 35,
+      "status": "done",
+      "updated_at": "2026-10-28T03:51:00Z",
+      "commit": "bf0ac14b77c5868751c52e4ffcec41ef50555f7c",
+      "tests": [
+        "GitHub Actions static QA run 40628745840 completed success on 96d3162f",
+        "Browser QA run 40628745770 completed success: portal V3 routes, first keyboard Tab skip link, hero artwork, 390px no overflow",
+        "All 70 teacher/student mission phase pages and fake classroom flows remained green in same browser run"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-03",
+      "phase": "TELAS",
+      "description": "Caderno do aluno: header, jornada/carrossel, mapa de missões, páginas auxiliares e progresso real",
+      "group": "UI",
+      "position": 36,
+      "status": "done",
+      "updated_at": "2026-10-28T03:53:00Z",
+      "commit": "c6c88529ec7ef44c9269730bda756074e1bd9368",
+      "tests": [
+        "GitHub Actions Browser QA run 40628836785 completed success, commit 317d14e7",
+        "Chrome checked 70 mission/role/phase pages and gallery progress after fake M01 teacher approval: 1/10, aria-valuenow=1",
+        "GitHub Actions static QA run 40628836783 completed success"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-04",
+      "phase": "TELAS",
+      "description": "Caderno do professor: painel de turma e progresso por aluno/missão, filtros, liberação, feedback e revisão",
+      "group": "UI",
+      "position": 37,
+      "status": "done",
+      "updated_at": "2026-10-28T03:55:00Z",
+      "commit": "7a4e1437a0fb77dbc45c2c57fa9926534f7799d2",
+      "tests": [
+        "GitHub Actions Browser QA run 40628996955 completed success on f5f9c1a7",
+        "Chrome tested pending/help/all roster filters, aria-pressed state, mandatory revision feedback, teacher approval and student progress using fake backend",
+        "Static QA on f5f9c1a7 pending/success should be checked separately; no live API or real class used"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-05",
+      "phase": "TELAS",
+      "description": "Biblioteca de assets: catálogo filtrável por gênero/tipo 2D/3D, arquivos de verdade para baixar, instruções de GDevelop e licença",
+      "group": "UI",
+      "position": 38,
+      "status": "done",
+      "updated_at": "2026-10-28T13:15:46.237Z",
+      "commit": "e90ab285072ecf5b7567fe91e0bf4d5e7981a1ee",
+      "tests": [
+        "GitHub Actions static QA run 40629213658 completed success, 28 IDs, 4 genres, 3 formats, intersections and provenance",
+        "GitHub Actions Browser QA run 40629180903 completed success, 3 real Chrome downloads: PNG/GLB/WAV, file names, nonzero bytes and magic signatures",
+        "Chrome verified filters 3D=5, corrida+3D=1, corrida+audio=3, all 70 mission pages still passed",
+        "2026-10-28: actual procedural PNG sprite/map, GLB geometry and WAV audio preview modal integrated on portal; Chrome Browser QA 40668919135 SUCCESS at 390px/1280px, 28 preview buttons, real media decoding, focus restoration and Escape.",
+        "2026-10-28: expanded procedural library 28→34 with feiticeira/golem, ruins/swamp maps, lantern/shield sprites, original SVG geometry and downloadable PNG. Browser previews reuse the same generated source, with 34 preview controls and six new PNG decode assertions.",
+        "2026-10-28: GitHub Actions static QA run 40669904173 SUCCESS: 34 unique assets, filters, all asset MIME/GLB/WAV signatures; Browser QA run 40669806579 SUCCESS with six new PNG previews, UI-08 and simulated chat/roster/evidence. Latest dynamic portal count test commit c31c099b awaiting its own CI.",
+        "2026-10-28: library expanded 34→38 with original procedural necropolis/observatory 1024×576 PNG maps and spikes/pedestal 160×160 PNG sprites; SVG shape source, genre filters, index static counts, browser preview assertions, and provenance documentation updated. V8 syntax, 38 unique IDs, dimensions and RPG discovery checks PASS in this run. Static and browser GitHub Actions at 97a2cfbc queued/running at checkpoint; manual GDevelop GUI and physical mobile remain NOT_RUN.",
+        "2026-10-28: GitHub Actions Browser QA 40670539982 SUCCESS at d9e529f4: 38 preview buttons, 10 expansion PNG downloads decoded at 390px/1280px, GLB/WAV real previews, focus/Escape; UI-08 12 Chrome route/viewport checks SUCCESS. Static QA 40670660476 SUCCESS at checkpoint 27e9325c, including 38 assets and binary ZIP tests. Intermediate static QA failed only due old 34-count inline assertion, fixed in 97a2cfbc. Latest browser reruns pending; no manual GDevelop/physical mobile claimed.",
+        "2026-10-28: expanded procedural catalogue 46→49 (39 PNG, 5 GLB, 5 WAV) with new owl character, bioluminescent garden map and hourglass item; static QA 40694559980 SUCCESS including genre filters, unique IDs/files and SVG structure. Browser QA 40694560079 SUCCESS at e90ab285: all 49 resource previews, binary checks, PNG decode/transparency, GLB geometry, WAV and UI-08 viewport/chat passed; simulated auth, roster, evidence and privacy tests also passed. Manual GDevelop GUI/mobile/peer NOT_RUN."
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-06",
+      "phase": "TELAS",
+      "description": "Kits rápidos: starters e downloads efetivos de PNG/GLB/WAV e exemplos de projetos reutilizáveis; conferir conteúdo/validade do arquivo",
+      "group": "UI",
+      "position": 39,
+      "status": "done",
+      "updated_at": "2026-10-28T04:17:32.855Z",
+      "commit": "2e1c3f3885374381e2c50cdcab5b300cfba9236b",
+      "tests": [
+        "GitHub Actions static QA 40631408937 success: ZIP CRC32, central directory, 4 manifests, real GLB/WAV and PNG stub",
+        "GitHub Actions Browser QA 40631408882 success: four real Chrome ZIP downloads with actual PNG canvas dimensions, GLB and WAV signatures",
+        "Node --check v3/quick-kits.js success in static QA; existing 70 mission pages remain in browser regression"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-07",
+      "phase": "TELAS",
+      "description": "Chat interno e telas de notificação: identidade visual, estado vazio/erro, responsividade, acessibilidade",
+      "group": "UI",
+      "position": 40,
+      "status": "done",
+      "updated_at": "2026-10-28T04:20:52.811Z",
+      "commit": "9a6fe85fd69f8ace928d6c1e853bed95ad82a8e0",
+      "tests": [
+        "GitHub Actions static QA 40631670509 success",
+        "GitHub Actions Browser QA 40631670537 success: chat empty state, fake HTTP 503, retry, draft persistence, role=log, focus restore, 70 mission page regression"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "UI-08",
+      "phase": "TELAS",
+      "description": "Revisão visual global: todas as páginas desktop/tablet/celular, contraste, foco, teclado, movimento reduzido, carregamento",
+      "group": "UI",
+      "position": 41,
+      "status": "done",
+      "updated_at": "2026-10-28T04:37:16.731Z",
+      "commit": "1fdc814dbd9f97c401c05370e81ba26bd2b50d21",
+      "tests": [
+        "GitHub Actions static QA 40633154088 success",
+        "GitHub Actions Browser QA 40633153958 success: 12 V3 route/viewport checks, 12 screenshots, keyboard focus, reduced motion, no overflow, no broken local images",
+        "Visually inspected screenshot contact sheet and student/teacher 390px; formal WCAG contrast and screen-reader tests remain FUN-10"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "ART-01",
+      "phase": "ARTES",
+      "description": "Definir design system único: paleta gótica, tipografia, texturas, hierarquia, estados e regras de motion",
+      "group": "ART",
+      "position": 42,
+      "status": "done",
+      "updated_at": "2026-10-28T04:43:57.612Z",
+      "commit": "bbc63e92f20816a319036fc88f21c409b17baca6",
+      "tests": [
+        "GitHub Actions static QA 40633916857: success; node qa/v3-design-tokens.cjs checked 6 opaque contrast pairs, 4 HTML inclusions, semantics, docs and reduced motion",
+        "Prior browser UI-08 40633153958 success; new browser QA still running"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "ART-02",
+      "phase": "ARTES",
+      "description": "Criar imagens originais adicionais para portal, professor, biblioteca e momentos de conquista; usar ferramenta de geração somente se disponível",
+      "group": "ART",
+      "position": 43,
+      "status": "done",
+      "updated_at": "2026-10-28T04:45:38.688Z",
+      "commit": "7f2ef851a974455258df591d9f59a3c5dad46a17",
+      "tests": [
+        "Static QA 40634093683: success, including XML parse of 4 SVGs, no remote content, safe CSS references and fallbacks",
+        "Browser QA 40634093652 still running at checkpoint; earlier run 40634056734 failed in E2E (not claimed passed)"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "ART-03",
+      "phase": "ARTES",
+      "description": "Criar variantes originais para estados de missão e tipos de asset, sem usar franquias ou marcas protegidas",
+      "group": "ART",
+      "position": 44,
+      "status": "done",
+      "updated_at": "2026-10-28T04:49:24.809Z",
+      "commit": "cce3e359b667b91c3f2273f4a6295008d102f864",
+      "tests": [
+        "Static QA 40634432778: success, including ART-03 Node icon variants and Python XML parsing",
+        "Browser QA 40634344438: success after updating outdated portal image assertion; latest run pending"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "ART-04",
+      "phase": "ARTES",
+      "description": "Integrar WebP/AVIF otimizados com lazy loading, alternativas leves e respeito a movimento reduzido",
+      "group": "ART",
+      "position": 45,
+      "status": "done",
+      "updated_at": "2026-10-28T04:51:34.040Z",
+      "commit": "4bd6fa77a91617ffdf76fc8329e5aa52dca6445f",
+      "tests": [
+        "Static QA 40634595614: success; 10 WebP signatures/sizes, fallback VM loop guard, reduced motion and script order",
+        "Browser QA 40634595591: success; fake API E2E, 12 Chrome viewports and mobile broken-WebP fallback"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "ART-05",
+      "phase": "ARTES",
+      "description": "Polir transições cinematográficas, feedbacks e conquistas baseadas em dados reais; verificar performance e redução de estímulo",
+      "group": "ART",
+      "position": 46,
+      "status": "done",
+      "updated_at": "2026-10-28T04:54:10.160Z",
+      "commit": "41dadd8533e40f4d6cbd30349aff1e552241eba4",
+      "tests": [
+        "Static QA 40634818278: success; earned-only award, preview guard, saveData/reduced motion, WebP budget",
+        "Browser QA 40634818191: success; fake API E2E and 12 Chrome visual/keyboard/reduced-motion/fallback checks"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-01",
+      "phase": "FUNCIONALIDADES",
+      "description": "Verificar versão final de hospedagem, GitHub Pages, Vercel e CORS; nunca presumir que raw.githack possui API",
+      "group": "FUN",
+      "position": 47,
+      "status": "done",
+      "updated_at": "2026-10-28T04:57:48.816Z",
+      "commit": "b63e6aef4e6568a06e3667255613fcae04fb896c",
+      "tests": [
+        "Static QA 40635164256 success: Pages main-only, Vercel config, CORS allowlist, origin policy",
+        "Read-only live hosting probe 40635164103 success: API OPTIONS/health GET and Pages GET; no credentials or writes",
+        "Browser QA 40635127839 success: fake API E2E and static mirror login blocked/preview allowed, zero real API calls"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-02",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste de portal/cadastro e sessão autenticada de aluno; rejeição de token inválido e persistência por usuário",
+      "group": "FUN",
+      "position": 48,
+      "status": "done",
+      "updated_at": "2026-10-28T05:01:05.780Z",
+      "commit": "17d8e573fee00a404a7de3d003a0143e481ad5bd",
+      "tests": [
+        "Static QA 40635407764 success: actual chat/classroom handlers with disposable SQL fixture, 2 fictional users, token hashes and isolation",
+        "Browser QA 40635407765 success: 2 Chrome sessions, reload persistence, invalid token rejection and zero production API calls"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-03",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste de login professor, proteção por PIN, permissões e isolamento de dados",
+      "group": "FUN",
+      "position": 49,
+      "status": "done",
+      "updated_at": "2026-10-28T05:03:50.033Z",
+      "commit": "a1bed50d0d6b58ed5b590a8ecd80db841474a659",
+      "tests": [
+        "Static QA 40635705516 success: actual handlers with mock SQL, PIN rejection, teacher-only roster/stage/review/chat",
+        "Browser QA 40635659892 success: fake API teacher PIN login, sessionStorage, reload and fictional roster"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-04",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste de liberar/bloquear missões e fases, com propagação confiável para aluno sem perder rascunho",
+      "group": "FUN",
+      "position": 50,
+      "status": "done",
+      "updated_at": "2026-10-28T05:12:00Z",
+      "commit": "85d34a89632131997d957d433a61e93be21a5b64",
+      "tests": [
+        "Browser QA 40635953139 success: Chrome fake API teacher stage/phase release, future lock and M01 draft persistence",
+        "Static QA 40635953113 success: actual classroom handler with disposable SQL verifies future stage/briefing rejection, practice release, previous evidence persistence"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-05",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste real de evidências 01–10, rascunhos, limite, envio, revisão solicitada, edição e aprovação",
+      "group": "FUN",
+      "position": 51,
+      "status": "done",
+      "updated_at": "2026-10-28T05:15:00Z",
+      "commit": "f0b6460d71df17a294ccb2f40057ac827f9fb825",
+      "tests": [
+        "Static QA 40636673696 success: actual classroom handlers with disposable SQL, 10 missions, 3 fictional students, 2D/3D, drafts, short/long evidence, revision, edit, resubmit, approval and immutability",
+        "Regression fix: revision cannot be approved before a new submitted evidence (409)"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-06",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste do acompanhamento/roster por aluno, atividade, status, progresso e atualizações",
+      "group": "FUN",
+      "position": 52,
+      "status": "done",
+      "updated_at": "2026-10-28T05:20:00Z",
+      "commit": "4e4acd5ecb11519fa0de3a07eb00537772840446",
+      "tests": [
+        "Static QA 40636760085 success: actual roster and heartbeat handlers with 3 fictional students and disposable SQL; verified approved count, per-stage progress, activity, future stage rejection",
+        "Browser QA 40636789133 success: Chrome teacher panel with 3 fictional students; stats, pending/online/help filters, detail/back navigation"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-07",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste do chat bidirecional, mensagens não lidas, ordenação, isolação por aluno e erro de rede",
+      "group": "FUN",
+      "position": 53,
+      "status": "done",
+      "updated_at": "2026-10-28T05:23:00Z",
+      "commit": "2b312b720a959f4fd1e23f439e65f6da56d62ab7",
+      "tests": [
+        "Static QA 40636877700 success: real chat handlers with disposable SQL, 3 fictional students, bidirectional send, thread order, read/unread, isolation, 1200-character and 12/minute caps",
+        "Browser QA 40636789133 success: existing Chrome E2E chat teacher-to-student, 503 fake network error, retry and draft preservation"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-08",
+      "phase": "FUNCIONALIDADES",
+      "description": "Teste de downloads PNG/GLB/WAV/starters, MIME, integridade e importação no GDevelop",
+      "group": "FUN",
+      "position": 54,
+      "status": "done",
+      "updated_at": "2026-10-28T09:25:00Z",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+      "tests": [
+        "Static QA 40636997100 success: 28 generated asset MIME/signatures, GLB v2 mesh/chunks, WAV PCM headers, 4 ZIP CRC/manifest",
+        "Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint",
+        "Khronos GLB QA 40649579075 SUCCESS: 5/5 procedural models validated with 0 errors/0 warnings; import into GDevelop remains NOT_RUN",
+        "Chrome Browser QA 40656562279 SUCCESS: 5 WAV files decoded with Web Audio and 4 PNGs decoded/pixel inspected. Native GDevelop 40657143854 SUCCESS: 2D PNG and 3D GLB rendered in disposable projects; 8/8 gameplay tests, screenshots validated.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
+        "FUN-08 AUTOMATED ACCEPTANCE: PNG/WAV/GLB signatures and generated ZIP CRC/manifest verified static QA 40661334064; Chrome WAV/PNG decode run 40656562279 PASS; official native GDevelop 2D PNG and 3D GLB import/render, WAV registered/PlaySound event, project programmatic save/reopen and SHA256 checks PASS runs 40658856014 and 40660294582. GUI drag/drop, audible speaker and physical mobile remain REL-01 manual release blockers, not claimed."
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-09",
+      "phase": "FUNCIONALIDADES",
+      "description": "Testes E2E com professor e pelo menos três alunos fictícios; 2D/3D, desktop/móvel e falhas de conexão",
+      "group": "FUN",
+      "position": 55,
+      "status": "done",
+      "updated_at": "2026-10-28T05:36:00Z",
+      "commit": "7f88e2428ac4fbb059a6d0bcac3660584fba0ee8",
+      "tests": [
+        "Browser QA 40637186741 success: 1 teacher + 3 fictional students in isolated Chrome contexts, 2D/3D evidence via fake API, review/revision/approval, M05 release, mobile draft persistence, simulated HTTP 503 recovery",
+        "Static QA 40637186779 success: existing isolated backend and asset regression suite"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "FUN-10",
+      "phase": "FUNCIONALIDADES",
+      "description": "Auditoria de segurança, acessibilidade, regressões, desempenho, direitos de uso e backup/rollback",
+      "group": "FUN",
+      "position": 56,
+      "status": "done",
+      "updated_at": "2026-10-28T05:41:00Z",
+      "commit": "5bc9feb298b49697c2adfea16d16d74d0e0860bd",
+      "tests": [
+        "Static QA 40637308970 success: security/accessibility/provenance audit, handler guards, downloads, regressions",
+        "Browser QA 40637186741 success: 3 fictional students, mobile/desktop, stage/review, simulated outage; prior UI-08 viewport/focus/reduced motion browser checks"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "REL-01",
+      "phase": "ENTREGA",
+      "description": "Consolidar bugs P0/P1/P2 e corrigir os impeditivos; executar novamente o conjunto completo de testes",
+      "group": "REL",
+      "position": 57,
+      "status": "blocked",
+      "updated_at": "2026-10-28T08:37:00Z",
+      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
+      "tests": [
+        "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
+        "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
+        "Browser QA 40643089001 success: Chrome E2E, 12 viewport audit, two fictional students sharing one browser, fallback M05 draft/checklist isolation, student/teacher sign-out",
+        "Postgres QA 40637833387 success (previous unchanged handlers; disposable PostgreSQL 16)",
+        "Static QA 40649326394 SUCCESS: syntax/security regression for guarded teacher chat requests",
+        "Browser QA 40649326459 SUCCESS: Chrome E2E including teacher chat history scoped by studentId, UI and regressions",
+        "Khronos GLB QA 40649579075 SUCCESS: five procedural GLBs, 0 glTF 2.0 errors and 0 warnings",
+        "GDevelop editor sandbox QA 40649114129 FAILED (expected limitation): official 2D/3D editor URLs return HTTP 200 but land on Log in/Sign up page, no Preview observed; NOT_RUN for real editor acceptance",
+        "Postgres QA 40637833387 previously SUCCESS, backend handlers unchanged",
+        "Strict release gate NOT PASSED; 7 acceptance IDs remain blocked",
+        "2026-10-28: release gate executed in isolated V8 against actual checkpoint: NOT READY (52/59), 7 blocked; Node/CI execution of updated gate not performed",
+        "Added qa/v3-release-gate-selftest.cjs with four synthetic Node regression cases; wired into static-qa.yml. CI run 40656964777 queued at checkpoint; outcome not claimed.",
+        "Native GDevelop 40657143854 SUCCESS: 8/8 real 2D/3D gameplay tests including conditional victory; screenshots of original PIT sprite and crystal inspected. Browser QA 40656562279 SUCCESS: WAV/PNG media decoding. Static QA 40657155850 SUCCESS: evidence-gate synthetic negative cases.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "QA evidence manifest qa/evidence/native-gdevelop-2026-10-28.json committed at 99c490a00a2a720e546fc1c6f558a1a4614a0f31; contains verified 8/8 native GDevelop results, source asset and screenshot SHA-256, with manual limitations explicit.",
+        "2026-10-28: GDevelop fixture extended with project JSON save/reopen structural roundtrip and SHA-256 resource integrity assertions. V8 syntax parse PASS; native CI execution pending.",
+        "2026-10-28: native GDevelop run 40658610737 fixture preparation SUCCESS; gameplay/result verification still in_progress when checked. Added validator assertion that all generated asset entries have nonempty byte sizes; CI outcome pending.",
+        "2026-10-28: Added PNG IHDR and minimum 320x180 screenshot dimension checks in native GDevelop results validator. V8 syntax PASS; CI native gameplay 40658610737 and 40658856014 still in_progress when checked; new checks NOT_RUN in CI.",
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
+        "2026-10-28: Added real GDevelop gameplay harness screenshot after conditional victory, plus fail-closed requirement for screenshot artifact. V8 syntax PASS on both changed JS files; native CI pending, authorial final victory screen still unverified.",
+        "2026-10-28: native GDevelop victory screenshot test and validator both passed in official Actions runs 40659339655 (982af1c0) and 40659350215 (4ee9fbf6). This verifies screenshot evidence of a gated victory event, NOT an authored final-screen UX or complete submission/review.",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN.",
+        "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN.",
+        "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN.",
+        "2026-10-28: browser QA 40662326867 SUCCESS; triage register v3/TRIAGEM-DEFEITOS.md commit 20d667ac with explicit P0/P1/P2 and NOT_RUN distinction, linked from pre-delivery report commit 1ef62d41. Human verification pending.",
+        "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending.",
+        "2026-10-28: unified 10 experimental LTX MP4 clips with latest V3 student gallery, motion manifest and playback controller; static QA 40665593226 PASS; added dedicated media regression test, latest CI pending.",
+        "2026-10-28: fixed keyboard focus restoration after auto-opened student gallery; Browser QA 40668919135 SUCCESS: UI-08 12 viewport checks, FUN-01/02/03/04/09, REL-01/02. Release remains blocked on manual GUI/GDevelop/mobile/peer sign-off.",
+        "Manual acceptance matrix documented (LIB-PNG/GLB/WAV/MAP and UI08-KEY/MOTION/MOBILE); execution NOT_RUN, no pass claimed.",
+        "2026-10-28: GitHub Actions on checkpoint 0bf207fb: PIT Game Jam QA run 40671063508 SUCCESS and Browser QA run 40671063511 SUCCESS. These are automated regressions, not manual GDevelop/mobile/peer approval.",
+        "2026-10-28: checkpoint d63599ca validated: static QA 40671846999 SUCCESS; Browser QA 40671846818 SUCCESS; manual criteria NOT_RUN.",
+        "Actual PNG preview code committed 9b72e3ab; GitHub CI pending; no browser or GDevelop validation claimed.",
+        "Browser QA 40677106597 FAIL: async preview test race at 1280px (sprite has real image, 0!==1). Test wait/decode fix committed 57ca0e8; new CI result pending.",
+        "2026-10-28 confirmed: corrected PNG async preview regression Browser QA 40678411209 SUCCESS, static 40678411153 SUCCESS; checkpoint Browser QA 40678431100 SUCCESS, static 40678431018 SUCCESS. Manual tests NOT_RUN."
+      ],
+      "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
+    },
+    {
+      "id": "REL-02",
+      "phase": "ENTREGA",
+      "description": "Produzir guia operacional em português para professor leigo: entrar, liberar, acompanhar, revisar, contingências, sem notas de fala nos materiais de aula",
+      "group": "REL",
+      "position": 58,
+      "status": "done",
+      "updated_at": "2026-10-28T06:00:00Z",
+      "commit": "d67258d893713b976e2fadf034749e459ab8388a",
+      "tests": [
+        "Browser QA 40637691150 success: operational guide eight sections, keyboard skip link, FAQ, mobile 390px and desktop 1280px",
+        "Static QA 40637691076 success: full static regression after guide and test correction"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "REL-03",
+      "phase": "ENTREGA",
+      "description": "Gerar relatório final com commits, URLs testadas, status da API, recursos que realmente funcionaram, pendências e decisão de publicação sem efetuar merge em main sem aprovação",
+      "group": "REL",
+      "position": 59,
+      "status": "blocked",
+      "updated_at": "2026-10-28T07:22:56.983Z",
+      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
+      "tests": [
+        "Static QA 40637632552 success on preliminary report branch",
+        "Release gate 40637450547 diagnostic success, explicitly NOT READY",
+        "Preliminary report updated with verified GLB QA 40649579075, Chrome/Static chat QA 40649326459/40649326394 and failed anonymous GDevelop editor attempt 40649114129",
+        "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN.",
+        "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN.",
+        "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending."
+      ],
+      "blocker": "Final 59/59 and READY_FOR_FINAL_REVIEW remain blocked by M06-05, M07-04, M08-04, M09-03, FUN-08 and REL-01. Preliminary report updated, but not a final homologation."
+    }
+  ],
+  "history": [
+    {
+      "id": "M04-01",
+      "completed_at": "2026-10-28T01:34:54.929Z",
+      "commit": "ab88e33206d903edfc5b180b947107fb58c687b7",
+      "files": [
+        "v3/teacher-mission-four-foundations.js",
+        "v3/teacher-mission-four-foundations.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "30/30 checks passed",
+      "notes": "Teacher foundations done: inputs, behaviors, Δt, collision response, camera; four interactive 2D/3D route examples. No browser or live API test."
+    },
+    {
+      "id": "M04-02",
+      "completed_at": "2026-10-28T01:45:01.176Z",
+      "commit": "cdc3f6085e1c5fea0742a400f04ed8efdc4be43d",
+      "files": [
+        "v3/gdevelop-mission-four-guide.js",
+        "v3/gdevelop-mission-four-guide.css",
+        "v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg",
+        "professor-v3.html",
+        "v3/app.js",
+        "v3/FASE3-MISSAO4.md"
+      ],
+      "tests": "37/37 checks passed",
+      "notes": "Verified official GDevelop screenshot URLs from docs; actual browser visual QA and GDevelop engine operation not yet tested. 4 route tabs, 16 steps, offline illustration fallback, official MIT 3D starter."
+    },
+    {
+      "id": "M04-03",
+      "completed_at": "2026-10-28T01:55:01.980Z",
+      "commit": "07f762a1dfbf34c7c41d238ce27018ac08d00c6f",
+      "files": [
+        "v3/student-mission-four.js",
+        "v3/student-mission-four.css",
+        "v3/gdevelop-mission-four-guide.js",
+        "aluno-v3.html",
+        "v3/app.js",
+        "v3/FASE3-MISSAO4.md"
+      ],
+      "tests": "59/59 static/functional and simulated UI checks passed",
+      "notes": "Student reuses M01–M03 data and existing GDevelop project; one control and one limit; 2D/3D route choice, three honest Preview tests, persistent evidence under 750 chars, safe preview mode. No real browser/API tests yet."
+    },
+    {
+      "id": "M04-04",
+      "completed_at": "2026-10-28T02:06:45.623Z",
+      "commit": "3cf9f324c398725ead288e0a4efb94250c8e2539",
+      "files": [
+        "v3/teacher-mission-four-validation.js",
+        "v3/teacher-mission-four-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "chat-api/api/classroom.js",
+        "qa/v3-m04-regression.cjs",
+        "v3/FASE3-MISSAO4.md"
+      ],
+      "tests": "32/32 module checks + 14/14 simulated API scenarios + 28/28 repeatable regression assertions",
+      "notes": "Aligned M04 teacher practice/results with student; prevented submitted/approved overwrite, required revision guidance, room-scoped teacher review, readable multiline evidence. Real browser/Neon/GDevelop E2E remains pending."
+    },
+    {
+      "id": "M05-01",
+      "completed_at": "2026-10-28T02:13:24.058Z",
+      "commit": "f66415ee5b38e3670bc53fdc5f412ce12e15e63c",
+      "files": [
+        "v3/teacher-mission-five-foundations.js",
+        "v3/teacher-mission-five-foundations.css",
+        "v3/app.js",
+        "professor-v3.html",
+        "qa/v3-m05-foundations.cjs"
+      ],
+      "tests": "13 in-process JS/static assertions passed; repeatable Node QA file committed but not run in local checkout",
+      "notes": "M05 teacher concepts and 2D/3D genre examples plus interactive protected-vs-repeated frame simulator wired into briefing. Fixed frame counter for key, door, release. No browser, GDevelop engine or live API tests; those remain pending."
+    },
+    {
+      "id": "M05-02",
+      "completed_at": "2026-10-28T02:22:52.095Z",
+      "commit": "b2cd9a0c3d5e6c415224811a06a3b786114d3347",
+      "files": [
+        "v3/gdevelop-mission-five-guide.js",
+        "v3/gdevelop-mission-five-guide.css",
+        "professor-v3.html",
+        "qa/v3-m05-guide.cjs",
+        "v3/FASE3-MISSAO5.md"
+      ],
+      "tests": "38/38 functional/static simulations + 25/25 repeatable QA assertions",
+      "notes": "Completed GDevelop 5-step illustrated Events demo; 3 alternative paths; official screenshot URLs; offline clearly-labeled diagram; keyboard, fallback, reduced motion. Real browser/editor E2E remains pending."
+    },
+    {
+      "id": "M05-03",
+      "completed_at": "2026-10-28T02:33:13.463Z",
+      "commit": "46af120261655c3f6d19d2e8646093a26e22edf4",
+      "files": [
+        "v3/student-mission-five.js",
+        "v3/student-mission-five.css",
+        "v3/gdevelop-mission-five-guide.js",
+        "aluno-v3.html",
+        "v3/app.js",
+        "qa/v3-m05-student.cjs",
+        "v3/FASE3-MISSAO5.md"
+      ],
+      "tests": "48/48 module checks + 19/19 simulated UI interactions + 33/33 persistent QA assertions",
+      "notes": "Student M05 reuses M01–M04 game data; one customizable event; three real Preview tests self-reported; 2D/3D route; 728 char max evidence; no real browser, GDevelop or Neon test."
+    },
+    {
+      "id": "M05-04",
+      "completed_at": "2026-10-28T02:40:31.041Z",
+      "commit": "1bf4000b9036abc0e40f2498f31d344e830333af",
+      "files": [
+        "v3/teacher-mission-five-validation.js",
+        "v3/teacher-mission-five-validation.css",
+        "v3/app.js",
+        "professor-v3.html",
+        "qa/v3-m05-integration.cjs",
+        "v3/FASE3-MISSAO5.md"
+      ],
+      "tests": "31/31 functional/static checks and 32/32 offline regression assertions",
+      "notes": "Teacher M05 practical and review now mirror student M05; required positive negative and duplicate-protection test. Real browser, GDevelop and Neon E2E pending."
+    },
+    {
+      "id": "M06-01",
+      "completed_at": "2026-10-28T02:43:52.600Z",
+      "commit": "00c3d273bd2c8274936e5300202d0c4525bc39f4",
+      "files": [
+        "v3/teacher-mission-six-foundations.js",
+        "v3/teacher-mission-six-foundations.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "27/27 deterministic JS+CSS integration and simulated decision-quiz checks",
+      "notes": "Five-minute pipeline: one AI/fallback asset only. PNG sprite, WAV/AAC audio, MP4 H.264/AAC cutscene optional, GLB low-poly. Provenance/license/privacy/fallback checked. No real editor/browser E2E."
+    },
+    {
+      "id": "M06-02",
+      "completed_at": "2026-10-28T02:46:00.491Z",
+      "commit": "10c15024feeee8796d8b4dc9913d5dc2eb9c3895",
+      "files": [
+        "v3/teacher-mission-six-matrix.js",
+        "v3/teacher-mission-six-matrix.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m06-matrix.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "13/13 V8 runtime/static assertions executed; Node/browser/GDevelop E2E pending",
+      "notes": "Source-backed choice matrix; Suno/ElevenLabs noncommercial caveats; Meshy export restrictions; Flow daily credit limits; five zero-cost fallbacks."
+    },
+    {
+      "id": "M06-03",
+      "completed_at": "2026-10-28T02:47:28.512Z",
+      "commit": "34225c82f22eb9636f9b19c0cacf67aa6f7668ee",
+      "files": [
+        "v3/asset-forge-tutorial.js",
+        "v3/asset-forge-tutorial.css",
+        "v3/app.js",
+        "professor-v3.html",
+        "qa/v3-m06-tutorial.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "15/15 V8 assertions executed; browser/GDevelop not executed",
+      "notes": "Five optional tutorials with editable project-specific prompts, copy fallback, export/import steps and no-credit alternatives."
+    },
+    {
+      "id": "M06-04",
+      "completed_at": "2026-10-28T02:49:08.782Z",
+      "commit": "ec6f830d92aa3178fd4565bbe63dac7bc316c3b2",
+      "files": [
+        "v3/student-mission-six.js",
+        "v3/student-mission-six.css",
+        "aluno-v3.html",
+        "v3/app.js",
+        "qa/v3-m06-student.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "20/20 V8 checks with fictitious sessions; real browser/API/GDevelop not executed",
+      "notes": "Student chooses one asset route; manual import, provenance, license and Preview evidence required before submission."
+    },
+    {
+      "id": "M06-05",
+      "completed_at": "2026-10-28T02:50:22.246Z",
+      "commit": "5e10e9748482045fd11ff7413de5f80be4ef94c1",
+      "files": [
+        "v3/teacher-mission-six-validation.js",
+        "v3/teacher-mission-six-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m06-integration.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "18/18 V8 checks passed; real editor/mobile/browser tests blocked",
+      "notes": "Teacher rubric and offline fallback integrated; task intentionally blocked pending actual GDevelop import and mobile verification."
+    },
+    {
+      "id": "M07-01",
+      "completed_at": "2026-10-28T02:51:21.901Z",
+      "commit": "24928929e9971b277ccbe3b228db444db1b4ddf6",
+      "files": [
+        "v3/teacher-mission-seven-foundations.js",
+        "v3/teacher-mission-seven-foundations.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m07-foundations.cjs",
+        "v3/FASE3-MISSAO7.md"
+      ],
+      "tests": "18/18 V8 checks passed; real GDevelop/browser not executed",
+      "notes": "Teacher state machine and four genre examples; simulator does not claim engine execution."
+    },
+    {
+      "id": "M07-02",
+      "completed_at": "2026-10-28T02:52:42.087Z",
+      "commit": "97ad236f1296e443e95a36cfa13943d079fbfc0f",
+      "files": [
+        "v3/gdevelop-mission-seven-guide.js",
+        "v3/gdevelop-mission-seven-guide.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m07-guide.cjs",
+        "v3/FASE3-MISSAO7.md"
+      ],
+      "tests": "16/16 V8 assertions; 3 official image URLs checked; no GDevelop Preview",
+      "notes": "Illustrated scene flow for 2D and Physics 3D, fallback labeled, no claim of actual editor run."
+    },
+    {
+      "id": "M07-03",
+      "completed_at": "2026-10-28T02:54:21.778Z",
+      "commit": "ed760767f1e6dc7b6b93ed83403e08928dac022d",
+      "files": [
+        "v3/student-mission-seven.js",
+        "v3/student-mission-seven.css",
+        "v3/gdevelop-mission-seven-guide.js",
+        "aluno-v3.html",
+        "v3/app.js",
+        "qa/v3-m07-student.cjs",
+        "v3/FASE3-MISSAO7.md"
+      ],
+      "tests": "21/21 V8 checks passed; real editor/browser/API not executed",
+      "notes": "Student creates own completion with SE/ENTÃO, negative test and 3D-aware route; no automatic approval."
+    },
+    {
+      "id": "M07-04",
+      "completed_at": "2026-10-28T02:55:15.219Z",
+      "commit": "312571d99045600f417185ca68257652f1afccbc",
+      "files": [
+        "v3/teacher-mission-seven-validation.js",
+        "v3/teacher-mission-seven-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m07-integration.cjs",
+        "v3/FASE3-MISSAO7.md"
+      ],
+      "tests": "20/20 V8 checks passed; backend/GDevelop E2E blocked",
+      "notes": "Teacher rubric and practice mirror student, but real submission/review/approval remains unverified."
+    },
+    {
+      "id": "M08-01",
+      "completed_at": "2026-10-28T02:56:35.226Z",
+      "commit": "e43058c407fcbd5541213d0526cf34199deca218",
+      "files": [
+        "v3/teacher-mission-eight-foundations.js",
+        "v3/teacher-mission-eight-foundations.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m08-foundations.cjs",
+        "v3/FASE3-MISSAO8.md"
+      ],
+      "tests": "16/16 V8 assertions; browser/GDevelop not executed",
+      "notes": "Teacher UX concepts and accessible before-after simulator; no claims of engine execution."
+    },
+    {
+      "id": "M08-02",
+      "completed_at": "2026-10-28T03:16:07.363Z",
+      "commit": "d25bd6ebbe79dec523906979bcdb83d092e97340",
+      "files": [
+        "v3/gdevelop-mission-eight-guide.js",
+        "v3/gdevelop-mission-eight-guide.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "19/19 V8 checks passed; real browser/GDevelop not executed",
+      "notes": "Three genre routes; text/HUD/feedback, official screenshots with diagram fallback, keyboard tabs, before-after checks."
+    },
+    {
+      "id": "M08-03",
+      "completed_at": "2026-10-28T03:17:48.544Z",
+      "commit": "5601d9934e59d82c666277e751c5ecfa1f04a0fa",
+      "files": [
+        "v3/student-mission-eight.js",
+        "v3/student-mission-eight.css",
+        "v3/gdevelop-mission-eight-guide.js",
+        "aluno-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "22/22 V8 source and simulated state checks passed",
+      "notes": "Student practice requires one real UX improvement, before/after, negative case and project reference; no auto-approval."
+    },
+    {
+      "id": "M08-04",
+      "completed_at": "2026-10-28T03:19:56.018Z",
+      "commit": "0d7d8e1aa3a20cbe0a26b876abb308933ae9b596",
+      "files": [
+        "v3/teacher-mission-eight-validation.js",
+        "v3/teacher-mission-eight-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-e2e.cjs"
+      ],
+      "tests": "12/12 V8 checks passed; real browser CI pending; GDevelop/FPS/mobile hardware not tested",
+      "notes": "Teacher acceptance rubric and updated browser QA. Status blocked pending real tests."
+    },
+    {
+      "id": "M09-01",
+      "completed_at": "2026-10-28T03:21:21.041Z",
+      "commit": "dcaccb5224868af7d8c751184f992db997e5f27f",
+      "files": [
+        "v3/teacher-mission-nine-foundations.js",
+        "v3/teacher-mission-nine-foundations.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "14/14 V8 source + simulated DOM checks passed",
+      "notes": "Professor playtest protocol and interactive fictitious triage examples, no real student data."
+    },
+    {
+      "id": "M09-02",
+      "completed_at": "2026-10-28T03:22:44.325Z",
+      "commit": "fb147f760450401c98c3dde2f126345e5a5f374d",
+      "files": [
+        "v3/student-mission-nine.js",
+        "v3/student-mission-nine.css",
+        "aluno-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "19/19 V8 static and simulated student state checks passed",
+      "notes": "Student records peer observation, reproducible steps and fix/backlog; no invented outcomes."
+    },
+    {
+      "id": "M09-03",
+      "completed_at": "2026-10-28T03:24:16.218Z",
+      "commit": "86697c3a435f553edb4a667b9bb509b61d08df7a",
+      "files": [
+        "v3/student-mission-nine.js",
+        "v3/teacher-mission-nine-validation.js",
+        "v3/teacher-mission-nine-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-e2e.cjs"
+      ],
+      "tests": "12/12 V8 checks passed; real playtest/backend not executed",
+      "notes": "Resolution fixed/backlog and professor rubric implemented; blocked pending real peer test and E2E."
+    },
+    {
+      "id": "M10-01",
+      "completed_at": "2026-10-28T03:25:14.207Z",
+      "commit": "81c94e355ae28591a84cd4afe35398f9992a97bf",
+      "files": [
+        "v3/teacher-mission-ten-foundations.js",
+        "v3/teacher-mission-ten-foundations.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "15/15 V8 checks passed; no actual export/publication",
+      "notes": "Safe editable project + optional link/build, no forced publishing, technical pitch and privacy."
+    },
+    {
+      "id": "M10-02",
+      "completed_at": "2026-10-28T03:26:32.468Z",
+      "commit": "670bd899ba6c54e2066eee9d616370feb171aa3f",
+      "files": [
+        "v3/gdevelop-mission-ten-guide.js",
+        "v3/gdevelop-mission-ten-guide.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "15/15 V8 checks passed; actual export not executed",
+      "notes": "Save/Preview, manual web export and optional gd.games routes with explicit schematic illustration and no-cost fallback."
+    },
+    {
+      "id": "M10-03",
+      "completed_at": "2026-10-28T03:28:36.770Z",
+      "commit": "174e2c4b15ae6c83a62ce14c409da6340c60275a",
+      "files": [
+        "v3/student-mission-ten.js",
+        "v3/student-mission-ten.css",
+        "aluno-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "20/20 V8 static and simulated state checks passed",
+      "notes": "Pitch, local/web/gd.games choice, project reference, privacy, no paid publishing or automatic approval."
+    },
+    {
+      "id": "M10-04",
+      "completed_at": "2026-10-28T03:29:59.470Z",
+      "commit": "1e5d7526eddd195883d3354d84b3018bc64f149c",
+      "files": [
+        "v3/final-achievement.js",
+        "v3/final-achievement.css",
+        "v3/student-mission-ten.js",
+        "v3/teacher-mission-ten-validation.js",
+        "v3/teacher-mission-ten-validation.css",
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html"
+      ],
+      "tests": "16/16 V8 pure logic and static integration checks passed",
+      "notes": "Award only if 10 backend statuses approved and preview false; no automatic approval."
+    },
+    {
+      "id": "AUD-01",
+      "completed_at": "2026-10-28T03:31:37.537Z",
+      "commit": "17a48f70673959cce98a7ece70bfb55cdbb5c088",
+      "files": [
+        "qa/v3-audit-matrix.cjs",
+        "v3/AUDITORIA-MATRIZ-01-10.md",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "10 mission plan checks in V8; GitHub Actions AUD-01 step success in run 40627167962",
+      "notes": "360-minute timeline, 226 practice minutes, sequence and goals audited."
+    },
+    {
+      "id": "AUD-02",
+      "completed_at": "2026-10-28T03:33:53.920Z",
+      "commit": "ab507f21c463ac8423454b116ea4322f5205f635",
+      "files": [
+        "v3/student-mission-three.js",
+        "v3/student-mission-seven.js",
+        "v3/teacher-mission-seven-validation.js",
+        "v3/student-mission-eight.js",
+        "v3/teacher-mission-eight-validation.js",
+        "v3/teacher-mission-nine-foundations.js",
+        "v3/app.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-ALINHAMENTO-PROFESSOR-ALUNO.md",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "9/9 V8 checks; GitHub Actions static QA run 40627380065 success",
+      "notes": "M03/M07/M08 practical time aligned; M09 teacher demo replaced legacy notes; 10 modules checked."
+    },
+    {
+      "id": "AUD-03",
+      "completed_at": "2026-10-28T03:37:15.746Z",
+      "commit": "8d866ff27b79ff5c00a9181283b9d37f26e7ae8b",
+      "files": [
+        "v3/gdevelop-first-run.js",
+        "v3/gdevelop-mission-four-guide.js",
+        "v3/gdevelop-mission-eight-guide.js",
+        "v3/teacher-gdevelop-guide.js",
+        "v3/asset-forge-tutorial.js",
+        "v3/asset-forge-tutorial.css",
+        "qa/v3-audit-guides.cjs",
+        "v3/AUDITORIA-GDEVELOP-TUTORIAIS.md",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "GitHub Actions AUD-03 step success run 40627702889; 21 image URLs manually inspected; GDevelop not run",
+      "notes": "Accurate screenshot labels, offline fallbacks, replaced one inaccessible image, M06 schematic."
+    },
+    {
+      "id": "AUD-04",
+      "completed_at": "2026-10-28T03:38:31.135Z",
+      "commit": "7a559b18c87148668edfae8e531f65df5a7ffeeb",
+      "files": [
+        "v3/teacher-mission-six-matrix.js",
+        "qa/v3-audit-tools.cjs",
+        "v3/AUDITORIA-FERRAMENTAS-IA.md",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "GitHub Actions AUD-04 success run 40627821351; official sources reviewed, no account testing",
+      "notes": "Updated Suno lifetime downloads, Gemini free resolution, ElevenLabs shared credits and rights."
+    },
+    {
+      "id": "UI-01",
+      "completed_at": "2026-10-28T03:47:00Z",
+      "commit": "6bfcefa51c6a27fc90a52b7cdba6a851f7bbff3c",
+      "files": [
+        "qa/v3-ui-route-inventory.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-ROTAS-UI.md"
+      ],
+      "tests": "GitHub Actions run 40628435393 success; route inventory and local links",
+      "notes": "Detected mixed legacy/V3 portal links for UI-02; AUD-05 70-phase browser audit still pending."
+    },
+    {
+      "id": "AUD-05",
+      "completed_at": "2026-10-28T03:49:00Z",
+      "commit": "224a92372b77a0f7027c82a9cc88d64716274194",
+      "files": [
+        "qa/v3-e2e.cjs",
+        "v3/AUDITORIA-PAGINAS-E-EVIDENCIAS.md"
+      ],
+      "tests": "70 mission/role/phase Playwright checks PASS, run 40628604617; fake classroom submission/approval/chat/mobile PASS",
+      "notes": "GDevelop, real peer test and real backend remain explicitly unverified; no live student data."
+    },
+    {
+      "id": "UI-02",
+      "completed_at": "2026-10-28T03:51:00Z",
+      "commit": "bf0ac14b77c5868751c52e4ffcec41ef50555f7c",
+      "files": [
+        "index.html",
+        "qa/v3-ui-route-inventory.cjs",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-PORTAL-UI-02.md"
+      ],
+      "tests": "GitHub Actions static QA 40628745840 and Browser QA 40628745770 both success; portal keyboard/mobile/V3 routing",
+      "notes": "Replaced 6 legacy links, added skip link and Gothic hero. No live deployment, screen reader or human visual approval."
+    },
+    {
+      "id": "UI-03",
+      "completed_at": "2026-10-28T03:53:00Z",
+      "commit": "c6c88529ec7ef44c9269730bda756074e1bd9368",
+      "files": [
+        "aluno-v3.html",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-ALUNO-UI-03.md"
+      ],
+      "tests": "Browser QA 40628836785 success: gallery approved progress, aria-live, all 70 mission pages",
+      "notes": "Chat async test flakiness observed in a later run; QA wait repaired in dece9bca, fresh run pending. No real backend or screen reader."
+    },
+    {
+      "id": "UI-04",
+      "completed_at": "2026-10-28T03:55:00Z",
+      "commit": "7a4e1437a0fb77dbc45c2c57fa9926534f7799d2",
+      "files": [
+        "v3/app.js",
+        "professor-v3.html",
+        "v3/professor-gothic.css",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-PAINEL-UI-04.md"
+      ],
+      "tests": "Browser QA 40628996955 success: roster filter accessibility, review feedback guard, approval and chat fake API",
+      "notes": "UI-04 validated in isolated Chrome; real backend authorization, concurrency and classroom remain future functional QA."
+    },
+    {
+      "id": "UI-05",
+      "completed_at": "2026-10-28T03:57:00Z",
+      "commit": "1ae1b8b509e3b66baa08b533da34f26960136145",
+      "files": [
+        "index.html",
+        "biblioteca.js",
+        "qa/v3-library-filters.cjs",
+        "qa/v3-e2e.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/REVISAO-BIBLIOTECA-UI-05.md"
+      ],
+      "tests": "Static QA 40629213658 success; Browser QA 40629180903 success with PNG/GLB/WAV actual downloads",
+      "notes": "Procedural origin disclosed; actual GDevelop import and third-party license validation remain pending."
+    },
+    {
+      "id": "UI-06",
+      "completed_at": "2026-10-28T04:17:32.855Z",
+      "commit": "2e1c3f3885374381e2c50cdcab5b300cfba9236b",
+      "files": [
+        "biblioteca.js",
+        "v3/quick-kits.js",
+        "index.html",
+        "qa/v3-quick-kits.cjs",
+        "qa/v3-e2e.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/REVISAO-KITS-UI-06.md"
+      ],
+      "tests": "Static QA 40631408937 success; Browser QA 40631408882 success: four ZIPs downloaded in Chrome",
+      "notes": "Four procedural kits with official starter links; no embedded GDevelop project. Real GDevelop import pending."
+    },
+    {
+      "id": "UI-07",
+      "completed_at": "2026-10-28T04:20:52.811Z",
+      "commit": "9a6fe85fd69f8ace928d6c1e853bed95ad82a8e0",
+      "files": [
+        "aluno-v3.html",
+        "professor-v3.html",
+        "v3/chat-gothic.css",
+        "v3/app.js",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-CHAT-UI-07.md"
+      ],
+      "tests": "Static QA 40631670509 success; Browser QA 40631670537 success (fake API chat error/retry, focus, empty state)",
+      "notes": "No live API, screen reader or isolated mobile chat viewport test. Global UI-08 should check mobile."
+    },
+    {
+      "id": "UI-08",
+      "completed_at": "2026-10-28T04:37:16.731Z",
+      "commit": "1fdc814dbd9f97c401c05370e81ba26bd2b50d21",
+      "files": [
+        "v3/accessibility-v3.css",
+        "index.html",
+        "fase1.html",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "qa/v3-visual-audit.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/REVISAO-GLOBAL-UI-08.md"
+      ],
+      "tests": "Static QA 40633154088 success; Browser QA 40633153958 success; 12 screenshots artifact 12792411418",
+      "notes": "Fixed 768px student navigation overflow. V3 main surfaces checked; legacy V2, WCAG contrast measurement and screen reader remain pending."
+    },
+    {
+      "id": "ART-01",
+      "completed_at": "2026-10-28T04:43:57.612Z",
+      "commit": "bbc63e92f20816a319036fc88f21c409b17baca6",
+      "files": [
+        "v3/design-system.css",
+        "v3/DESIGN-SYSTEM.md",
+        "qa/v3-design-tokens.cjs"
+      ],
+      "tests": "Static QA 40633916857 success, including six contrast pairs and semantic rules",
+      "notes": "Browser QA for this commit in progress; contrast over imagery and assistive technology remain pending."
+    },
+    {
+      "id": "ART-02",
+      "completed_at": "2026-10-28T04:45:38.688Z",
+      "commit": "7f2ef851a974455258df591d9f59a3c5dad46a17",
+      "files": [
+        "v3/assets/art/portal-arcano.svg",
+        "v3/assets/art/mesa-do-mestre.svg",
+        "v3/assets/art/biblioteca-arcana.svg",
+        "v3/assets/art/conquista-dez-missoes.svg",
+        "v3/design-system.css",
+        "qa/v3-art-assets.py",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "Static QA 40634093683 success (4 original SVG XML/assets/security and CSS integration)",
+      "notes": "Browser QA still running; one intermediate run failed in browser E2E. Need inspect latest result before claiming browser validation."
+    },
+    {
+      "id": "ART-03",
+      "completed_at": "2026-10-28T04:49:24.809Z",
+      "commit": "cce3e359b667b91c3f2273f4a6295008d102f864",
+      "files": [
+        "v3/assets/art/estados-missao.svg",
+        "v3/assets/art/tipos-recurso.svg",
+        "v3/app.js",
+        "biblioteca.js",
+        "v3/design-system.css",
+        "qa/v3-art-variants.cjs",
+        "qa/v3-art-assets.py",
+        "qa/v3-e2e.cjs",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "Static QA 40634432778 success; browser QA 40634344438 success after corrected ART-02 hero assertion",
+      "notes": "Status variants read actual progress; labels remain. New browser QA in progress, and GDevelop/manual accessibility still pending."
+    },
+    {
+      "id": "ART-04",
+      "completed_at": "2026-10-28T04:51:34.040Z",
+      "commit": "4bd6fa77a91617ffdf76fc8329e5aa52dca6445f",
+      "files": [
+        "v3/assets/art/poster-fallback.svg",
+        "v3/media-fallback.js",
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "v3/design-system.css",
+        "qa/v3-media-fallback.cjs",
+        "qa/v3-visual-audit.cjs",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "Static QA 40634595614 success; Browser QA 40634595591 success including actual Chrome fallback and 12 viewport checks",
+      "notes": "10 existing WebP posters below 120KB each; no AVIF generated. Fallback is local SVG. GDevelop and real backend remain pending."
+    },
+    {
+      "id": "ART-05",
+      "completed_at": "2026-10-28T04:54:10.160Z",
+      "commit": "41dadd8533e40f4d6cbd30349aff1e552241eba4",
+      "files": [
+        "v3/arcade-gallery.js",
+        "v3/diablo-theme.css",
+        "v3/final-achievement.js",
+        "v3/final-achievement.css",
+        "qa/v3-art-motion.cjs",
+        "qa/v3-visual-audit.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/ART-AUDITORIA.md"
+      ],
+      "tests": "Static QA 40634818278 success; Browser QA 40634818191 success (Chrome 12 viewports and reduced-stimulus assertion)",
+      "notes": "One-shot earned animation only with 10 approved backend stages; no real production approval tested. Save-Data branch statically audited, not emulated in browser."
+    },
+    {
+      "id": "FUN-01",
+      "completed_at": "2026-10-28T04:57:48.816Z",
+      "commit": "b63e6aef4e6568a06e3667255613fcae04fb896c",
+      "files": [
+        "v3/hosting-policy.js",
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "index.html",
+        "qa/v3-hosting-audit.cjs",
+        "qa/v3-hosting-browser.cjs",
+        ".github/workflows/hosting-readonly-qa.yml",
+        ".github/workflows/static-qa.yml",
+        ".github/workflows/browser-qa.yml",
+        "v3/HOSPEDAGEM-FUN-01.md"
+      ],
+      "tests": "Static QA 40635164256 success; read-only live hosting 40635164103 success; Browser QA 40635127839 success (untrusted mirror + fake API)",
+      "notes": "Feature V3 not deployed to main; Pages HTTP 200 does not prove feature is live. No production writes or real students used."
+    },
+    {
+      "id": "FUN-02",
+      "completed_at": "2026-10-28T05:01:05.780Z",
+      "commit": "17d8e573fee00a404a7de3d003a0143e481ad5bd",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-session-browser.cjs",
+        ".github/workflows/static-qa.yml",
+        ".github/workflows/browser-qa.yml",
+        "v3/TESTES-FUN-02.md"
+      ],
+      "tests": "Static QA 40635407764 success (actual handlers+mock SQL); Browser QA 40635407765 success (2 fake students, reload and forged token)",
+      "notes": "No real Neon/Postgres transaction or production registration tested; isolated in-memory SQL and fake HTTP only."
+    },
+    {
+      "id": "FUN-03",
+      "completed_at": "2026-10-28T05:03:50.033Z",
+      "commit": "a1bed50d0d6b58ed5b590a8ecd80db841474a659",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-teacher-browser.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/TESTES-FUN-03.md"
+      ],
+      "tests": "Static QA 40635705516 success; Browser QA 40635659892 success (PIN + sessionStorage + fake roster)",
+      "notes": "PIN stored in sessionStorage remains an architectural limitation; no real PIN, DB or production data used."
+    },
+    {
+      "id": "FUN-04",
+      "completed_at": "2026-10-28T05:12:00Z",
+      "commit": "85d34a89632131997d957d433a61e93be21a5b64",
+      "files": [
+        "qa/v3-release-browser.cjs",
+        "qa/v3-isolated-backend.cjs",
+        ".github/workflows/browser-qa.yml"
+      ],
+      "tests": "Browser QA 40635953139 success: Chrome fake API teacher stage/phase release, future lock and M01 draft persistence; Static QA 40635953113 success: actual classroom handler with disposable SQL verifies future stage/briefing rejection, practice release, previous evidence persistence",
+      "notes": "Confirmed existing committed FUN-04 code at branch HEAD and successful actual GitHub Actions runs; Chrome used fake API and fictional student, SQL disposable mock; no live classroom DB tested."
+    },
+    {
+      "id": "FUN-05",
+      "completed_at": "2026-10-28T05:15:00Z",
+      "commit": "f0b6460d71df17a294ccb2f40057ac827f9fb825",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "chat-api/api/classroom.js",
+        "v3/TESTES-FUN-05.md"
+      ],
+      "tests": "Static QA 40636673696 success: actual classroom handlers with disposable SQL, 10 missions, 3 fictional students, 2D/3D, drafts, short/long evidence, revision, edit, resubmit, approval and immutability; Regression fix: revision cannot be approved before a new submitted evidence (409)",
+      "notes": "Real handler tests executed in disposable in-memory SQL, not live Postgres or full browser UI; those remain FUN-09."
+    },
+    {
+      "id": "FUN-06",
+      "completed_at": "2026-10-28T05:20:00Z",
+      "commit": "4e4acd5ecb11519fa0de3a07eb00537772840446",
+      "files": [
+        "chat-api/api/classroom.js",
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-teacher-browser.cjs",
+        "v3/TESTES-FUN-06.md"
+      ],
+      "tests": "Static QA 40636760085 success: actual roster and heartbeat handlers with 3 fictional students and disposable SQL; verified approved count, per-stage progress, activity, future stage rejection; Browser QA 40636789133 success: Chrome teacher panel with 3 fictional students; stats, pending/online/help filters, detail/back navigation",
+      "notes": "Real handlers with in-memory SQL and Chrome with fake API only; no real database or student data. Heartbeat spoofed future stage now returns 403."
+    },
+    {
+      "id": "FUN-07",
+      "completed_at": "2026-10-28T05:23:00Z",
+      "commit": "2b312b720a959f4fd1e23f439e65f6da56d62ab7",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "v3/TESTES-FUN-07.md"
+      ],
+      "tests": "Static QA 40636877700 success: real chat handlers with disposable SQL, 3 fictional students, bidirectional send, thread order, read/unread, isolation, 1200-character and 12/minute caps; Browser QA 40636789133 success: existing Chrome E2E chat teacher-to-student, 503 fake network error, retry and draft preservation",
+      "notes": "Actual handlers with disposable in-memory SQL; Chrome uses fake HTTP backend, network error simulated. No live chat or real student data."
+    },
+    {
+      "id": "FUN-08",
+      "completed_at": null,
+      "commit": "afd4c525b020945ef97a25c8a5b71c307af781c4",
+      "files": [
+        "qa/v3-quick-kits.cjs",
+        "qa/v3-e2e.cjs",
+        "v3/TESTES-FUN-08.md"
+      ],
+      "tests": "Static QA 40636997100 success: 28 generated asset MIME/signatures, GLB v2 mesh/chunks, WAV PCM headers, 4 ZIP CRC/manifest; Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint",
+      "notes": "GDevelop editor import of PNG/GLB/WAV and starter project opening/saving was not executed; MIME/byte validation is not equivalent to real import. Requires isolated editor test."
+    },
+    {
+      "id": "FUN-09",
+      "completed_at": "2026-10-28T05:36:00Z",
+      "commit": "7f88e2428ac4fbb059a6d0bcac3660584fba0ee8",
+      "files": [
+        "qa/v3-multi-student-browser.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/TESTES-FUN-09.md"
+      ],
+      "tests": "Browser QA 40637186741 success: 1 teacher + 3 fictional students in isolated Chrome contexts, 2D/3D evidence via fake API, review/revision/approval, M05 release, mobile draft persistence, simulated HTTP 503 recovery; Static QA 40637186779 success: existing isolated backend and asset regression suite",
+      "notes": "All HTTP backend responses were mocked, and 2D/3D evidence was posted via page fetch, not actual GDevelop projects. No real DB, students or production writes."
+    },
+    {
+      "id": "FUN-10",
+      "completed_at": "2026-10-28T05:41:00Z",
+      "commit": "5bc9feb298b49697c2adfea16d16d74d0e0860bd",
+      "files": [
+        "qa/v3-security-audit.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/SEGURANCA-ROLLBACK-FUN-10.md"
+      ],
+      "tests": "Static QA 40637308970 success: security/accessibility/provenance audit, handler guards, downloads, regressions; Browser QA 40637186741 success: 3 fictional students, mobile/desktop, stage/review, simulated outage; prior UI-08 viewport/focus/reduced motion browser checks",
+      "notes": "Audit completed with P1/P2 risk register and unexecuted backup/rollback plan. No production pentest, live dependency scan, real DB or GDevelop import. Not release approval."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "6d2bd941eefe655f975732eb6aed65e02c0bcab2",
+      "files": [
+        "qa/v3-release-gate.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Static QA 40637308970 success: full static regression suite including FUN-10; Browser QA 40637186741 success: Chrome E2E 3 fictional students, teacher and simulated 503; Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint",
+      "notes": "P1 acceptance blockers remain: real GDevelop import/Preview, disposable Postgres E2E and observed peer test. Cannot certify release or strict gate until these are resolved."
+    },
+    {
+      "id": "REL-03",
+      "completed_at": null,
+      "commit": "b8ef0c6ced4aeee211cf36c90abb75a718b7b0b4",
+      "files": [
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "Static QA 40637632552 success on preliminary report branch; Release gate 40637450547 diagnostic success, explicitly NOT READY",
+      "notes": "Final audit/READY_FOR_FINAL_REVIEW requires 59/59 done; 5 pedagogical/functional GDevelop and peer-test blockers plus REL-01 unresolved. Preliminary report exists but is not final."
+    },
+    {
+      "id": "REL-02",
+      "completed_at": "2026-10-28T06:00:00Z",
+      "commit": "d67258d893713b976e2fadf034749e459ab8388a",
+      "files": [
+        "v3/guia-professor.html",
+        "professor-v3.html",
+        "qa/v3-teacher-guide-browser.cjs",
+        ".github/workflows/browser-qa.yml"
+      ],
+      "tests": "Browser QA 40637691150 success: operational guide eight sections, keyboard skip link, FAQ, mobile 390px and desktop 1280px; Static QA 40637691076 success: full static regression after guide and test correction",
+      "notes": "Standalone offline Portuguese operational guide linked from teacher panel; no speaking notes. Chrome used local static server, not production."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "c1e8f70b5b0069b035bd8613caa5ec733fae9b72",
+      "files": [
+        "qa/v3-postgres-integration.cjs",
+        ".github/workflows/postgres-isolated-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "Postgres QA 40637833387 success",
+      "notes": "One P1 blocker resolved with actual disposable Postgres 16; remaining GDevelop/peer acceptance unverified."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "8da3aa47f4703ad14b58d7c3881640295022515c",
+      "files": [
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "v3/style.css",
+        "qa/v3-shared-device-browser.cjs",
+        "qa/v3-teacher-browser.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/REL-01-HOMOLOGACAO-MANUAL.md",
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "V8 helper 6/6 PASS; Static QA 40643089008 success; Browser QA 40643089001 success; PostgreSQL 40637833387 previously passed, backend unchanged",
+      "notes": "Fixed cross-account leakage of fallback drafts/checklists on shared devices, exposed teacher/student sign-out, fixed tablet nav overflow; manual GDevelop/peer acceptance still NOT_RUN. No production, main, real students or paid services."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "0add8b4d7d36b28424ac3b3c892c8def34a258ec",
+      "files": [
+        "v3/app.js",
+        "qa/v3-e2e.cjs",
+        "qa/v3-security-audit.cjs",
+        "qa/v3-gltf-validator.cjs",
+        "qa/v3-gdevelop-editor-smoke.cjs",
+        ".github/workflows/gdevelop-editor-sandbox-qa.yml",
+        ".github/workflows/gltf-validator-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "Static QA 40649326394 success; Browser QA 40649326459 success; Khronos GLB QA 40649579075 success (5/5, zero errors/warnings); GDevelop web-editor attempt 40649114129 failed on login/onboarding, no Preview; Postgres QA 40637833387 prior success",
+      "notes": "Teacher chat history now uses guarded request helper with timeout and studentId; independent Khronos validation of all generated GLBs. No account created, no GDevelop import/Preview claimed. 52/59; 7 blocked. No production/main/real class/paid services."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "81eba6da21b2646fd561353962d188d7755fb7b8",
+      "summary": "Hardened release gate; isolated V8 diagnostic passed, still NOT READY."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "8df392aa58a0bbeea3e141672374c68c37b42c16",
+      "summary": "Added real Node release-gate selftests to static CI; waiting for Actions confirmation."
+    },
+    {
+      "at": "2026-10-28T08:34:00Z",
+      "task": "REL-01",
+      "commit": "0910c61b629003fc596d392c1e393298312c7d1c",
+      "summary": "Real GDevelop 5.6.285 8/8 native gameplay tests passed on disposable 2D/3D PIT PNG/GLB fixtures, victory event assertions; Chrome 5 WAV + 4 PNG decoded. Remaining manual acceptance explicitly blocked."
+    },
+    {
+      "at": "2026-10-28T08:36:00Z",
+      "task": "REL-01",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+      "summary": "GDevelop native 40657474661 SUCCESS: 8/8 real 2D/3D gameplay tests with conditional victory and PlaySound WAV action; sound audibility and manual editor import still NOT_RUN."
+    },
+    {
+      "at": "2026-10-28T08:37:00Z",
+      "task": "REL-01",
+      "commit": "99c490a00a2a720e546fc1c6f558a1a4614a0f31",
+      "summary": "Persisted native GDevelop 8/8 results, SHA-256 hashes and visual evidence descriptions without claiming GUI import or human playtest."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "2bec35c6cf928149f1449c0274c0f8568112f8c9",
+      "summary": "Added disk roundtrip and asset integrity assertions to native GDevelop fixtures; V8 syntax pass, CI pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6",
+      "summary": "Strengthened native GDevelop asset validator; tracked running gameplay QA without claiming completion."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "de55f8048ec3b283ef755c42893c5e08a6d6b9d5",
+      "summary": "Native screenshot evidence hardened against tiny PNG placeholders; V8 syntax passed, native CI pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "summary": "Verified two successful native GDevelop QA workflows and recorded evidence across M06-05/FUN-08/REL-01; no false completion.",
+      "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6"
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "4ee9fbf6ee9fb8ab293483a0d89657fbb02f8fb6",
+      "summary": "Native GDevelop victory screenshot captured after earned state; CI execution pending. No task completion claimed."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "4ee9fbf6ee9fb8ab293483a0d89657fbb02f8fb6",
+      "summary": "Verified official native GDevelop victory screenshots in two successful workflows; authorial final screen remains blocked."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "d7a199af4b5ad610ff24b6337912431b73ad7241",
+      "summary": "Prototype native text victory banner in disposable GDevelop fixture; native gameplay pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "531a7121504c58bbbdfc37888fd1ec39562e94ea",
+      "summary": "GDevelop native victory banner passed 2D/3D and pre/post screenshots; real student-authored end-to-end acceptance still pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "5a843488b20525642c62ef7da0c57d614f445474",
+      "summary": "Full static QA PASS 40661334064, native victory PASS 40660294582. Authorial classroom acceptance remains pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "5a843488b20525642c62ef7da0c57d614f445474",
+      "summary": "M07-04 test acceptance completed with native GDevelop and isolated handler CI evidence; classroom/student-authored validation explicitly deferred to REL-01."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "FUN-08",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+      "summary": "Automated download/MIME/integrity/native GDevelop resource-import acceptance completed. Manual GUI, audible playback and physical-device homologation remains REL-01."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M08-04",
+      "commit": "ad784b99dc41c16843213d585a3f6788f53d47b3",
+      "summary": "M08 automated acceptance CI PASS 40661631619; physical-device and real GDevelop Preview remain manual."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "e6e57c748c2e5b3fd89da9a6bbc209ab2f242349",
+      "summary": "Created executable, non-fabricated human acceptance protocol for remaining GDevelop GUI/mobile/peer tests; still 54/59."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-03",
+      "commit": "5209fc4ce7875ff8239166c96b092c8d96502f09",
+      "summary": "Prepared pre-delivery report and fail-closed evidence ledger; 54/59 unchanged, human sign-off explicitly pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "16ebef235437ac338ecc4c42dec113d18beedcfb",
+      "summary": "Dynamic release ledger CI passed, structured human sign-off template and fail-closed validator added; no manual acceptance claimed."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "1ef62d41346dde039ead5046318fee01a1184dfb",
+      "summary": "Browser QA PASS; P0/P1/P2 triage and unrun-test ledger prepared. No human execution claimed."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
+      "summary": "Hardened release readiness against unsigned 59/59; repaired isolated test fixture, awaiting full CI."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "e42851d9170434ff6003cf85737361168f39804d",
+      "summary": "Unified experimental cinematic cards with latest V3 missions; kept 54/59 until manual acceptance."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "bcf6c0a3474e7d0e8737b4a09196bc613d345342",
+      "summary": "Added real procedural sprite/map, GLB mesh and WAV previews with keyboard-accessible modal, plus gallery focus fix; static QA 40668919128 and full Browser QA 40668919135 SUCCESS. 54/59 unchanged; manual sign-off still blocked."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "c31c099b28319411f70cf723cbc110beec7afd6c",
+      "summary": "Expanded procedural game catalogue to 34 with six original PNG assets and browser-tested previews; dynamic portal totals now derive from catalogue and ten mission cards. Static and full Browser QA passed at f0548a5a; latest portal-count regression awaiting CI. No human GDevelop or live API validation claimed. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "97a2cfbc7be9c4b0cd7741713e4037ae181e86ef",
+      "summary": "Added four original procedural 2D assets (34→38), updated real previews and filters, corrected static portal fallback and removed stale hardcoded CI asset count. V8 checks PASS; final GitHub Actions pending. 54/59 unchanged; human homologation remains blocked."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "e2ea47bd1712de7bb71db609cdc72a7fe5c2dc8b",
+      "summary": "Verified 38-resource library expansion in real Chrome: Browser QA 40670539982 SUCCESS (390px/1280px, all previews, UI-08); static QA 40670660476 SUCCESS after fixing hardcoded count. Manual GDevelop, real mobile and peer review still NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "aec07946e325c22ff3d3800d65098cca5232746b",
+      "summary": "Added explicit seven-case manual acceptance matrix for real GDevelop library imports, audio, maps, UI-08 keyboard/reduced motion/mobile; documentation-only checkpoint, no manual tests executed; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "0bf207fba85f801d679c30d36860ba953fd0748d",
+      "summary": "Verified GitHub Actions static QA 40671063508 and Browser QA 40671063511 both SUCCESS for prior checkpoint; manual blockers unchanged; no production deployment."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "d63599cab8224515e9d5148f442ac4570927a040",
+      "summary": "Verified latest static QA 40671846999 and Browser QA 40671846818 success. No code modifications or manual homologation; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "ebeebb73684df8c181cdb4d3c4f3657a5383c9e5",
+      "summary": "Corrected stale UI-05 documentation that still claimed 28 resources; current catalogue is 38; linked verified CI and distinguished manual GDevelop acceptance. No code/runtime test this round; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "9b72e3ab1e8ff4b747d23a9891ca0dca1560c71c",
+      "summary": "Changed enlarged 2D library preview to use actual generated PNG blob rather than SVG stand-in, with token cancellation, MIME/size validation and URL cleanup. GitHub CI pending; no manual GDevelop signoff. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "57ca0e84998cb81cd9758c04d47da30eb6030963",
+      "summary": "Diagnosed Browser QA run 40677106597 failure: PNG preview generation is async; test asserted image synchronously at 1280px. Updated Chrome regression to wait for image and decode, and for WAV audio; fixed stale 'six' label for ten resources. CI on new commit not yet observed. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "49450dab5605c2f2da5eedde04f6a8785818b04c",
+      "summary": "Verified fix 57ca0e84 and checkpoint 49450dab: static QA 40678411153 and 40678431018 SUCCESS; Browser QA 40678411209 and 40678431100 SUCCESS. Prior 40677106597 failed; regression recovered. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "8ad5e9a3c389e7a4aaf63798ab61199230d8a455",
+      "summary": "Hardened actual GLB 3D preview parser against truncated headers, malformed chunk lengths and out-of-bounds accessors; new CI pending, manual GDevelop NOT_RUN. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "f80f7050ae8d79e25afc44d810da7512dee0ca4b",
+      "summary": "Added accessible WAV preview playback error fallback preserving download; static QA for prior GLB hardening 40679660907 SUCCESS; Browser QA 40679660911 in_progress at observation; new CI pending; manual GDevelop NOT_RUN, 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "5408ee7fa3f974ea00622e0fe81d470bf5cb1cde",
+      "summary": "Verified static and Browser QA 40679787168/40679787236 SUCCESS for WAV fallback and prior GLB hardening. Hardened 3D GLB preview against bufferView overread, non-triangle indices, out-of-range mesh indices and excessive geometry. CI for new change pending; manual GDevelop/mobile/peer NOT_RUN. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "93de1c646e756f1c73ee9668631418175c22c542",
+      "summary": "Confirmed GLB mesh hardening static QA 40680196993 and Browser QA 40680197894 SUCCESS. WAV preview now verifies nonempty audio MIME and real RIFF/WAVE signature before playback, with async token cancellation; new CI pending. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "c081835c4363db0c5b05c9ddc6a6cbfb3c9abe3e",
+      "summary": "Added two distinct original procedural PNG character sprites (sentinela and arqueiro), with dedicated SVG artwork, generated PNG previews/downloads and GDevelop usage descriptions; library 38→40. Static QA for prior WAV signature guard 40683045809 SUCCESS; Browser QA 40683045194 still in_progress when checked; new CI pending. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "77a9e0a9766fe02e556167205c0f1ca54a2d159c",
+      "summary": "Detected real static QA 40683185509 and Browser QA 40683185604 failures after adding two sprites (40 resources): static test hardcoded 38/28 and Browser QA preview regression failed; updated static regression for 40/30 and 12 unique additions. Browser QA root cause not yet confirmed; new CI pending. Manual tests NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "510168748072675fc70ded988e98624114ac08de",
+      "summary": "Read actual failed GitHub Actions logs: static QA failed because new sentinela/arqueiro were absent from all genreExamples; Browser QA failed because preview browser test still asserted 38 resources. Added both to RPG filter (5bb0c78f) and updated browser test for 40 preview buttons, 40 counter and both PNG previews (51016874). New CI pending; manual GDevelop/mobile/peer NOT_RUN. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "4aa0fb4e9c900cc6f951fb2ae0fd56fdfdec285f",
+      "summary": "Three consecutive work rounds: (1) verified static QA 40683894216 and Browser QA 40683894329 SUCCESS for 40 assets; (2) added original archipelago and eclipse fortress 1024x576 procedural PNG maps with RPG/puzzle filters (3b332c0e), catalogue 40→42; (3) updated static and Chrome preview tests for 42 resources and new map previews (b7e46235, 4aa0fb4e). New CI pending; pre-test static QA for feature commit failed as expected due hardcoded old count. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "51bcd26fa4af12129f4fd81290d3b0131c03785a",
+      "summary": "Four consecutive rounds: 1 verified static QA 40684456875 and Browser QA 40684456895 SUCCESS for 42 resources; 2 added two original 160x160 procedural item sprites (astral compass and eclipse relic) with RPG/puzzle genre filters, library 42→44 (0fbc7825); 3 updated static library QA for 44 assets, 34 2D and 16 original additions (87a505cc); 4 updated Chrome preview QA for 44 preview buttons, portal count and new PNG dimensions (51bcd26f). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "e9e6c38a8b4a8ab1bdaad5f895dd866af8fa68d0",
+      "summary": "Four consecutive rounds: (1) verified static QA 40685828053 and Browser QA 40685828077 SUCCESS for 44 resources; (2) added original griffin and druid 160x160 character sprites with RPG/platform/puzzle genre mappings, 44→46 assets (7db6c98e); (3) updated static library tests for 46 resources, 36 2D and 18 additions (9252521e); (4) updated Chrome preview tests for 46 preview buttons and new character PNGs (e9e6c38a). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "a9940c4d42e3baff7cffe3daa7b86994cd4e67e7",
+      "summary": "Verified previous Browser QA 40685851384 SUCCESS with UI-08 12/12 route/viewport checks; identified explicit test coverage gap: preview mode did not exercise authenticated mobile chat. Added qa/v3-ui08-chat-mobile.cjs using a fictional student token and fully intercepted HTTP API; checks 320/390/768px chat geometry, ARIA open/close, focus restoration, Escape and Enter, and JS errors (cd0d7f37). Wired new regression into browser-qa.yml (a9940c4d). Local node --check PASS; new Browser QA 40686431158 pending. No real student data or live API used; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "66fdef5a71ab6622b6160ee63126506e842749cd",
+      "summary": "New authenticated mobile chat regression found a real UI-08 focus defect in Browser QA 40686485596: Escape from chat focused #openGallery instead of #chatButton. Root cause: global Escape called closeGallery() while gallery already closed; arcade-gallery.close() unconditionally focused launcher. Fixed v3/app.js to only close an actually open gallery (66fdef5a), preserving chat focus restoration. UI-08 existing 12/12 viewport tests PASS in failed run, static QA 40686485590 SUCCESS. New browser CI for fix pending; no manual/GDevelop/mobile/peer signoff claimed. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "66fdef5a71ab6622b6160ee63126506e842749cd",
+      "summary": "Verified final fix in GitHub Actions: static QA 40686880529 SUCCESS and Browser QA 40686880632 SUCCESS. The Browser QA ran UI-08 12 viewport/route checks and new authenticated chat tests at 320/390/768px; both dedicated steps SUCCESS. Regression fixed Escape focus theft from #chatButton to #openGallery (66fdef5a). Manual GDevelop GUI, physical mobile and peer tests still NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "39bffe2c6908eb08890e6707ac716aec029c6718",
+      "summary": "Verified static QA 40687173789 and Browser QA 40687173773 SUCCESS on prior V3. Hardened real PNG preview to await decode and validate map 1024x576 / sprite 160x160 before claiming successful display (6b9c2447). Added Chrome negative regression that replaces one PNG with malformed bytes, requires visible fallback error, then reloads before GLB/WAV checks (39bffe2c). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "d3434c40e7759fc568a63374a46961c93022c905",
+      "summary": "Browser QA failed in run 40688042939 on invalid PNG fallback test line 65 (timeout); static QA 40688043022 SUCCESS. Root cause: test attempted to mutate Object.freeze(PIT_LIBRARY_API), so corruption never reached preview. Corrected negative test to intercept URL.createObjectURL for image/png and serve malformed bytes; production PNG decode validation remains unchanged. New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "94caa500dfe6e6408a67275c2b195214f7e78f3c",
+      "summary": "Verified prior invalid-PNG fix Browser QA 40688815690 SUCCESS and static QA 40688815692 SUCCESS. Added GLB MIME validation in v3/library-preview.js (c76dea71) before mesh parsing, and browser negative test to inject text/plain GLB and assert visible fallback (94caa500). CI for new GLB test pending. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "ff506e6f9f98724b566a7be55a23d79c0582dd7d",
+      "summary": "Verified prior GLB MIME hardening static QA 40689488633 SUCCESS and Browser QA 40689488626 SUCCESS. Added RIFF chunk length check (WAV header bytes 4-7 must match blob size minus 8) in preview (cca0be86). Added Chrome negative regression forging RIFF size via Blob constructor to ensure visible error, then reload for normal audio playback (ff506e6f). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "dda0c2464fb4d15836f4413e06ded4f49f9720de",
+      "summary": "Confirmed WAV RIFF integrity regression Browser QA 40690117420 SUCCESS and static QA 40690117422 SUCCESS. Added exhaustive Chrome integration coverage generating every one of 46 catalogue blobs, checking nonempty data, matching .png/.glb/.wav filenames, MIME and file signatures. New CI pending; no actual GDevelop GUI import or physical device claim; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "9aebe7eba633bff93b6fcac0cd1fa2dac6fbe634",
+      "summary": "Verified all GLB mesh and WAV PCM structural tests Browser QA 40691686142 SUCCESS and static QA 40691686228 SUCCESS (commit 1616f2ae). Added browser decoding of all 36 PNG assets with real Image.decode and strict 160x160 sprite / 1024x576 map dimensions (9aebe7eb). New CI pending; GDevelop GUI, physical mobile and peer tests NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "21422c6aa97255a7539d7e4113afc055f2fc5930",
+      "summary": "Previous 36-PNG decode browser run 40692311960 reached and passed library preview step; overall workflow still running FUN-09 at last observation. Added pixel alpha assertions for all 25 sprite/item PNG transparent corners and 11 maps opaque center, in addition to 36 PNG decode and dimensions. CI pending; 54/59 unchanged; GDevelop GUI/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M06-05",
+      "commit": "8b958dac9ad80c52033ff2efa7a737947d1b79a0",
+      "summary": "Added practical GDevelop import guide for 36 PNG, 5 WAV, 5 GLB with student evidence, save/reopen checklist, 2D vs 3D limitations and explicit manual NOT_RUN. PNG alpha Browser QA 40692649696 and 40692663836 still running at last check; static QA succeeded. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "268a226edbfbd3b9f570ead93c6547f2c5ef5b5f",
+      "summary": "Investigated slow Browser QA: 40692649696 and 40692837359 still in progress during library preview; PNG/WAV codec and E2E earlier steps passed, static QA succeeded. Optimized exhaustive 46-asset signature, 36-PNG pixel and 10-media structure checks to run once at 390px instead of redundantly at 390/1280; both viewport interaction tests retained. New CI pending, no manual GDevelop/mobile/peer pass; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "13d896b514bc5d968381ee421b9cb329589945c5",
+      "summary": "Expanded library 46→49 original procedural assets: owl 160x160 PNG, glowgarden 1024x576 PNG, hourglass 160x160 PNG; added RPG/puzzle discovery, real previews and full-catalogue tests (commits 84f6a39, 600f02c); guide updated and license limitation documented (6331494, e90ab28). Static QA 40694559980 SUCCESS, Browser QA 40694560079 SUCCESS (49 previews, PNG/GLB/WAV, UI-08, simulated chat/auth/roster/evidence/privacy); 54/59 unchanged, no manual GDevelop/physical mobile/peer tests."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "9e8297c9afa337711a9e00babf3589731427c471",
+      "summary": "Verified 49-asset Browser QA 40694836172 and static QA 40694836248 SUCCESS. Added real Chrome download smoke tests through UI for PNG explorer, GLB crystal and WAV collection with suggested filename and completed download assertions; corrected actual WAV id. New CI pending. GDevelop GUI, physical mobile and peer playtest NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "37d647ab4ebbc6fbcb2515d925ea76728cf53808",
+      "summary": "Inspected 49-asset browser QA runs 40696042014 and 40696213113: both reached library preview stage and remained in progress; static QA succeeded. Added actual disk byte verification for UI-downloaded PNG, GLB and WAV including signatures and GLB/RIFF declared length. New CI pending. No manual GDevelop/mobile/peer pass; 54/59 unchanged."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+'use strict';
+/* ART-05 — Verified-only achievement and low-stimulus cinematic constraints. */
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const context={window:{}};vm.runInNewContext(fs.readFileSync('v3/final-achievement.js','utf8'),context,{timeout:1000});
+const award=context.window.PIT_FINAL_ACHIEVEMENT;
+const ten=Array.from({length:10},(_,i)=>i+1);
+assert.equal(award.eligible(ten),true,'all ten actual approvals earn award');
+assert.equal(award.eligible(ten,true),false,'preview cannot earn award');
+assert.equal(award.eligible(ten.slice(0,9)),false,'nine approvals insufficient');
+assert.equal(award.eligible([1,1,2,3,4,5,6,7,8,9]),false,'duplicates do not earn award');
+assert.equal(award.eligible([...ten,11,0,-1]),true,'invalid IDs do not create extra progress');
+const earned=award.render(ten,false),preview=award.render(ten,true),pending=award.render(ten.slice(0,9),false);
+assert(earned.includes('data-award-state="earned"')&&earned.includes('role="status"'),'earned award semantic state');
+assert(earned.includes('10 / 10')&&earned.includes('CONQUISTA VALIDADA'),'verified progress shown');
+assert(preview.includes('data-award-state="preview"')&&!preview.includes('data-award-state="earned"'),'preview never grants award');
+assert(pending.includes('data-award-state="pending"')&&!pending.includes('CONQUISTA VALIDADA'),'pending no false celebration');
+const gallery=fs.readFileSync('v3/arcade-gallery.js','utf8');
+const theme=fs.readFileSync('v3/diablo-theme.css','utf8');
+const css=fs.readFileSync('v3/final-achievement.css','utf8');
+assert(gallery.includes('window.navigator?.connection?.saveData'),'data saver considered');
+assert(gallery.includes('root.classList.toggle(\'pit-low-stimulus\',lowStimulus)'),'low-stimulus class set');
+assert(gallery.includes('if(lowStimulus)return'),'pointer parallax disabled');
+assert(theme.includes('.pit-arcade.pit-low-stimulus')&&theme.includes('animation:none!important'),'low-stimulus CSS');
+assert(css.includes('prefers-reduced-motion:no-preference')&&css.includes('animation:pit-verified-reveal .65s ease-out 1 both'),'one-shot award animation only');
+const sizes=ten.map(n=>fs.statSync('v3/assets/missions/missao-'+String(n).padStart(2,'0')+'.webp').size);
+assert(sizes.reduce((a,b)=>a+b,0)<900000,'all 10 WebP posters stay below 900KB combined');
+console.log('PASS ART-05: verified-only award, preview safety, data-saver motion and 10-poster budget');

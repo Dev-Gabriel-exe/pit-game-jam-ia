@@ -34,6 +34,9 @@ module.exports=async function handler(req,res){
   if(req.method==='POST'&&action==='heartbeat'){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
+   const released=await classroom();
+   if(!released)return err(res,503,'Sala não inicializada.');
+   if(n>released.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
    await pool.query('UPDATE pit_students SET last_seen_at=NOW(),active_stage=$2 WHERE id=$1',[me.id,n]);
    return res.json({ok:true,stage:n});
   }
@@ -49,10 +52,13 @@ module.exports=async function handler(req,res){
    const query='INSERT INTO pit_student_stages(student_id,stage,route,status,evidence,feedback,updated_at,reviewed_at) '+
      "VALUES($1,$2,$3,$4,$5,'',NOW(),NULL) "+
      'ON CONFLICT(student_id,stage) DO UPDATE SET route=EXCLUDED.route,status=EXCLUDED.status,evidence=EXCLUDED.evidence,'+
-     "feedback=CASE WHEN pit_student_stages.status IN ('approved','revision') THEN pit_student_stages.feedback ELSE '' END,"+
-     "updated_at=NOW(),reviewed_at=CASE WHEN pit_student_stages.status='approved' THEN pit_student_stages.reviewed_at ELSE NULL END "+
+     "feedback=CASE WHEN pit_student_stages.status='revision' THEN pit_student_stages.feedback ELSE '' END,"+
+     "updated_at=NOW(),reviewed_at=NULL "+
+     // Atomic guard: students cannot overwrite an evidence pending review or already approved.
+     "WHERE pit_student_stages.status NOT IN ('submitted','approved') "+
      'RETURNING stage,route,status,evidence,feedback,updated_at,reviewed_at';
    const out=await pool.query(query,[me.id,n,route,status,evidence]);
+   if(!out.rowCount)return err(res,409,'Esta entrega já foi enviada ou aprovada. Aguarde a revisão do professor.');
    return res.json({ok:true,progress:out.rows[0]});
   }
   if(req.method==='GET'&&action==='roster'){
@@ -81,9 +87,11 @@ module.exports=async function handler(req,res){
    const status=clean(req.body?.status,15);
    if(!['approved','revision'].includes(status))return err(res,400,'Validação inválida.');
    const feedback=clean(req.body?.feedback,550);
+   if(status==='revision'&&feedback.length<8)return err(res,400,'Explique a revisão em pelo menos 8 caracteres, indicando o teste a corrigir.');
    const r=await pool.query(
-     "UPDATE pit_student_stages SET status=$1,feedback=$2,reviewed_at=NOW(),updated_at=NOW() WHERE student_id=$3 AND stage=$4 AND status IN ('submitted','approved','revision') RETURNING stage,status,feedback",
-     [status,feedback,id,stage]);
+     "UPDATE pit_student_stages SET status=$1,feedback=$2,reviewed_at=NOW(),updated_at=NOW() WHERE student_id=$3 AND stage=$4 AND status='submitted' "+
+     "AND EXISTS (SELECT 1 FROM pit_students s WHERE s.id=$3 AND s.room_code=$5) RETURNING stage,status,feedback",
+     [status,feedback,id,stage,ROOM]);
    if(!r.rowCount)return err(res,409,'Não há entrega pendente para validar.');
    return res.json({ok:true,progress:r.rows[0]});
   }

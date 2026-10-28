@@ -1,0 +1,50 @@
+/* Guia GDevelop incorporado na aula — capturas da interface + didática em PT-BR. */
+.tm-guide{margin:22px 0 5px;border:1px solid #9e7453;background:linear-gradient(140deg,#242021,#111619);box-shadow:0 12px 38px #0008;min-width:0;overflow:hidden}
+.tm-guide-heading{padding:24px 24px 16px;background:radial-gradient(circle at top right,#8d472d42,transparent 65%)}
+.tm-guide-heading h3{font:700 clamp(25px,2.5vw,34px)/1.14 Georgia,serif;color:#ffe5c7;margin:9px 0 10px}
+.tm-guide-heading p{color:#dcc8b4;font-size:15px;line-height:1.58;margin:0;max-width:900px}
+.tm-guide-toolbar{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin;background:#0e1114;border-top:1px solid #5f4939;border-bottom:1px solid #8c5e40;padding:5px}
+.tm-guide-toolbar button{flex:1 0 auto;border:1px solid #594438;background:#251e1c;color:#c4ad97;padding:12px 12px;min-height:46px;font-size:11px;letter-spacing:.045em;font-weight:900;cursor:pointer;white-space:nowrap}
+.tm-guide-toolbar button[aria-selected="true"]{background:linear-gradient(#75432e,#35231d);border-color:#e4aa74;color:#ffe8c9;box-shadow:inset 0 -2px #e9b17b}
+.tm-guide-toolbar button:hover{border-color:#dca271;color:#fff0d6}
+.tm-guide-screen{min-width:0;outline-offset:-3px}
+.tm-guide-panel{display:grid;grid-template-columns:minmax(0,1.13fr) minmax(265px,.87fr);gap:0;align-items:stretch}
+.tm-guide-panel-in{animation:tm-guide-enter .45s cubic-bezier(.2,.7,.2,1) both}
+.tm-guide-image{min-width:0;border-right:1px solid #674c39;background:#16191f;display:flex;flex-direction:column;justify-content:start}
+.tm-guide-image-head{display:flex;justify-content:space-between;gap:12px;padding:11px 13px;background:#2b2a31;color:#d8b084;font-size:10px;font-weight:900;letter-spacing:.085em}
+.tm-guide-image-head strong{color:#e5d8c4}
+.tm-guide-image img{width:100%;height:auto;max-height:410px;min-height:250px;display:block;object-fit:contain;background:#252730;align-self:center}
+.tm-guide-explanation{padding:20px 22px;min-width:0;background:linear-gradient(140deg,#211b1b,#121517)}
+.tm-guide-part{color:#e6aa6e;font-size:11px;letter-spacing:.14em;font-weight:900}
+.tm-guide-explanation h4{font:700 clamp(22px,2vw,29px)/1.2 Georgia,serif;color:#ffe4c4;margin:10px 0}
+.tm-guide-lead{color:#d3c4b3;font-size:15px;line-height:1.55;margin:8px 0 15px}
+.tm-guide-item{display:flex;align-items:start;gap:11px;border-top:1px solid #534337;padding:10px 0}
+.tm-guide-step{flex:0 0 30px;height:30px;display:grid;place-items:center;background:#4b3023;border:1px solid #aa7952;color:#efc498;font:700 14px Georgia,serif}
+.tm-guide-item>div{min-width:0}
+.tm-guide-item strong{font-size:11px;font-weight:900;letter-spacing:.07em;color:#e9b27c}
+.tm-guide-item p{color:#d4c2b1;font-size:13px;line-height:1.48;margin:5px 0 0}
+.tm-guide-alert{padding:13px 15px;background:#332318;border-left:3px solid #e5a76d;margin-top:14px}
+.tm-guide-alert span{color:#f0bd84;font-size:10px;font-weight:900;letter-spacing:.13em}
+.tm-guide-alert p{font-size:13px;color:#f0d9bf;line-height:1.5;margin:7px 0 0}
+.tm-guide-panel-actions{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #6b4a37;background:#161416;padding:13px 20px}
+.tm-guide-panel-actions span{color:#caa178;font-size:12px;letter-spacing:.13em}
+.tm-guide-panel-actions button{background:#37241c;color:#f4d0a9;border:1px solid #a97853;cursor:pointer;padding:10px 17px;font-size:12px;font-weight:900}
+.tm-guide-panel-actions button:hover:not(:disabled){background:#603825;border-color:#e4b381}
+.tm-guide-panel-actions button:disabled{opacity:.4;cursor:not-allowed}
+.tm-guide-footer{padding:14px 20px;border-top:1px solid #594538;background:#161719}
+.tm-guide-footer span{display:block;color:#c69e78;line-height:1.4;font-size:10px;letter-spacing:.07em;font-weight:900}
+.tm-guide-footer p{font-size:12px;line-height:1.5;color:#aa9d91;margin:7px 0 0}
+@keyframes tm-guide-enter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:none}}
+@media(max-width:1200px){.tm-guide-panel{grid-template-columns:1fr}.tm-guide-image{border-right:0;border-bottom:1px solid #674c39}.tm-guide-image img{max-height:390px}.tm-guide-explanation{padding:18px 20px}}
+@media(max-width:700px){.tm-guide-heading{padding:18px 14px 13px}.tm-guide-heading h3{font-size:26px}.tm-guide-toolbar{scroll-snap-type:x mandatory}.tm-guide-toolbar button{min-width:150px;scroll-snap-align:start}.tm-guide-image img{min-height:145px;max-height:280px}.tm-guide-explanation{padding:17px 13px}.tm-guide-panel-actions{padding:10px;gap:7px}.tm-guide-panel-actions button{padding:10px 8px;font-size:10px}.tm-guide-footer{padding:12px}}
+@media(prefers-reduced-motion:reduce){.tm-guide-panel-in{animation:none!important}.tm-guide-toolbar{scroll-snap-type:none}}
+
+.tm-pro-guide-direction{display:inline-flex;align-items:center;justify-content:center;white-space:normal;line-height:1.35;flex:none;max-width:200px;padding:11px;border:1px solid #e0af76;background:#493021;color:#ffddb5;font-size:11px;letter-spacing:.07em;text-align:center;font-weight:900}
+.tm-pro-guide-fallback{padding:17px;border:1px solid #91694d;color:#f2d4b4;background:#241a18}
+@media(max-width:850px){.tm-pro-guide-direction{max-width:none;width:100%}}
+
+/* Traduções integradas sobre as capturas oficiais, com a imagem preservada. */
+.tm-guide-image-shot{position:relative;isolation:isolate}
+.tm-guide-image-translations{position:absolute;z-index:2;left:10px;right:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:7px;pointer-events:none}
+.tm-guide-image-translations span{font-size:11px;letter-spacing:.02em;font-weight:850;padding:7px 10px;border:1px solid #dcb17a;color:#ffe7c4;background:#221b1ded;box-shadow:0 3px 12px #0009}
+@media(max-width:700px){.tm-guide-image-translations{bottom:5px;left:5px;right:5px;gap:4px}.tm-guide-image-translations span{font-size:9px;padding:5px 6px}}

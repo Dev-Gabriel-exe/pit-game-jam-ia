@@ -1,0 +1,34 @@
+/* UI-08 — Correções transversais sem alterar conteúdo aprovado M01–M03. */
+:where(a,button,input,select,textarea,[tabindex="0"]):focus-visible{
+ outline:3px solid var(--pit-focus,#d7ffa7);outline-offset:3px;
+}
+:where(button,input,select,textarea){touch-action:manipulation}
+:where(.resource-card,.start-card,.gate-card,.chat-window,.gallery-card,.arcade-card){
+ overflow-wrap:anywhere;
+}
+:where(.resource-card,.start-card,.gate-card) a:focus-visible{
+ border-radius:4px;
+}
+@media(max-width:600px){
+ :where(.chat-window,.chat-messages,.chat-compose,.chat-threads){min-width:0}
+ :where(.chat-window .chat-header){flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+ *,*::before,*::after{
+  scroll-behavior:auto!important;
+  animation-duration:.01ms!important;
+  animation-iteration-count:1!important;
+  transition-duration:.01ms!important;
+ }
+}
+
+/* UI-08: 701–1024 px previously overflowed due to an unwrapped V3 navigation row. */
+@media(min-width:701px) and (max-width:1024px){
+ .topnav{gap:2px;padding:4px 9px;min-width:0}
+ .topnav .navbrand{display:none}
+ .topnav a,.topnav button{font-size:12px;padding:7px 6px;white-space:nowrap}
+ .topnav .navspacer{flex:1 1 0;min-width:0}
+ .topnav #currentUser{max-width:116px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .topnav .role-tag{font-size:10px;padding:6px 8px;white-space:nowrap}
+}

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="690" viewBox="0 0 1280 690" role="img" aria-labelledby="t d">
+<title id="t">Esquema didático do editor de eventos do GDevelop, com condições e ações em português</title>
+<desc id="d">Uma janela de editor mostra a aba Cena 1 e a aba Eventos, duas colunas: à esquerda condições e à direita ações. O primeiro evento verifica colisão de Jogador com Cristal e aumenta a variável cristais; o segundo verifica Jogador colidir com Porta e variável cristais maior ou igual a 3 e exibe a cena de vitória.</desc>
+<defs>
+<linearGradient id="bg" x2="0" y2="1"><stop stop-color="#1c1d26"/><stop offset="1" stop-color="#13151b"/></linearGradient>
+<linearGradient id="gold" x2="1" y2="1"><stop stop-color="#f7cd8c"/><stop offset="1" stop-color="#be7544"/></linearGradient>
+<filter id="s"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity=".48"/></filter>
+</defs>
+<rect width="1280" height="690" fill="#090b0e"/>
+<rect x="15" y="13" width="1250" height="657" rx="11" fill="url(#bg)" stroke="#8f674c" stroke-width="2" filter="url(#s)"/>
+<rect x="16" y="14" width="1248" height="56" rx="10" fill="#232630"/>
+<rect x="17" y="60" width="1246" height="10" fill="#232630"/>
+<circle cx="42" cy="41" r="6" fill="#d8735d"/><circle cx="61" cy="41" r="6" fill="#e6b56a"/><circle cx="80" cy="41" r="6" fill="#76ad83"/>
+<text x="106" y="46" font-family="Arial,sans-serif" font-weight="bold" font-size="16" fill="#dbd6d1">PROJETO · CASTELO DOS CRISTAIS</text>
+<rect x="421" y="23" width="145" height="38" rx="4" fill="#353744"/>
+<text x="441" y="47" font-family="Arial,sans-serif" font-size="17" fill="#c8cad6">Cena 1</text>
+<rect x="572" y="23" width="191" height="38" rx="4" fill="#573326" stroke="#dda06c"/>
+<text x="591" y="47" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#ffe3b6">Cena 1 (Eventos)</text>
+<rect x="15" y="70" width="1250" height="64" fill="#292a33"/>
+<rect x="39" y="86" width="167" height="33" rx="5" fill="#5b3828" stroke="#dcb27b"/>
+<text x="52" y="108" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#ffe1b7">＋ Adicionar evento</text>
+<rect x="217" y="86" width="192" height="33" rx="4" fill="#353540" stroke="#615e64"/>
+<text x="231" y="108" font-family="Arial,sans-serif" font-size="15" fill="#d0c5be">＋ Adicionar subevento</text>
+<text x="1089" y="109" font-family="Arial,sans-serif" font-size="16" fill="#d8cdbe">▶ Prévia</text>
+<rect x="40" y="161" width="1201" height="61" rx="4" fill="#322c2a" stroke="#82624b"/>
+<rect x="40" y="162" width="569" height="59" rx="3" fill="#443126"/>
+<rect x="609" y="162" width="631" height="59" rx="3" fill="#2c3832"/>
+<text x="66" y="184" font-family="Arial,sans-serif" font-size="13" font-weight="bold" letter-spacing="2" fill="#f1b777">COLUNA 1</text>
+<text x="66" y="208" font-family="Arial,sans-serif" font-size="23" font-weight="bold" fill="#ffe2b8">SE · CONDIÇÕES</text>
+<text x="637" y="184" font-family="Arial,sans-serif" font-size="13" font-weight="bold" letter-spacing="2" fill="#a9cfb0">COLUNA 2</text>
+<text x="637" y="208" font-family="Arial,sans-serif" font-size="23" font-weight="bold" fill="#e4ffe8">ENTÃO · AÇÕES</text>
+<!-- event 1 -->
+<rect x="40" y="236" width="1201" height="159" rx="6" fill="#21232c" stroke="#976d50"/>
+<rect x="40" y="236" width="1201" height="35" rx="5" fill="#423026"/>
+<text x="59" y="259" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#f7d7aa">EVENTO 01 · COLETA DO CRISTAL</text>
+<line x1="608" y1="272" x2="608" y2="394" stroke="#624d40" stroke-width="2"/>
+<rect x="58" y="287" width="533" height="89" rx="5" fill="#323039" stroke="#706071"/>
+<rect x="72" y="302" width="88" height="25" rx="3" fill="#453c50"/><text x="85" y="320" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#dec9f1">Colisão</text>
+<text x="176" y="321" font-family="Arial,sans-serif" font-size="18" fill="#ece3db">Jogador toca Cristal</text>
+<text x="76" y="357" font-family="Arial,sans-serif" font-size="15" fill="#baaeb5">Seleciona somente o Cristal tocado</text>
+<rect x="625" y="284" width="596" height="42" rx="4" fill="#283c36" stroke="#56816a"/>
+<text x="646" y="311" font-family="Arial,sans-serif" font-size="18" fill="#e1f5d9">Excluir a instância selecionada de Cristal</text>
+<rect x="625" y="334" width="596" height="42" rx="4" fill="#283c36" stroke="#56816a"/>
+<text x="646" y="361" font-family="Arial,sans-serif" font-size="18" fill="#e1f5d9">Somar +1 à variável de cena cristais</text>
+<!-- event 2 -->
+<rect x="40" y="411" width="1201" height="174" rx="6" fill="#21232c" stroke="#976d50"/>
+<rect x="40" y="411" width="1201" height="35" rx="5" fill="#423026"/>
+<text x="59" y="434" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#f7d7aa">EVENTO 02 · ABERTURA DA PORTA</text>
+<line x1="608" y1="447" x2="608" y2="583" stroke="#624d40" stroke-width="2"/>
+<rect x="58" y="462" width="533" height="47" rx="4" fill="#323039" stroke="#706071"/>
+<text x="75" y="492" font-family="Arial,sans-serif" font-size="17" fill="#ece3db">Jogador toca Porta</text>
+<rect x="58" y="517" width="533" height="48" rx="4" fill="#323039" stroke="#706071"/>
+<text x="75" y="546" font-family="Arial,sans-serif" font-size="17" fill="#ece3db">Variável de cena cristais ≥ 3</text>
+<rect x="625" y="462" width="596" height="103" rx="4" fill="#283c36" stroke="#56816a"/>
+<text x="645" y="500" font-family="Arial,sans-serif" font-size="18" fill="#e1f5d9">Executar efeito de conclusão</text>
+<text x="645" y="533" font-family="Arial,sans-serif" font-size="16" fill="#c7ddc4">Ex.: alterar a cena ou mostrar vitória</text>
+<rect x="40" y="602" width="1201" height="46" rx="4" fill="#35261d" stroke="#9a673e"/>
+<text x="58" y="631" font-family="Arial,sans-serif" font-size="16" fill="#f7d6ad">✓ A condição precisa ser verdadeira para as ações daquele evento acontecerem.</text>
+<text x="1101" y="631" font-family="Arial,sans-serif" font-size="13" fill="#c8a98a">ILUSTRAÇÃO DIDÁTICA</text>
+</svg>

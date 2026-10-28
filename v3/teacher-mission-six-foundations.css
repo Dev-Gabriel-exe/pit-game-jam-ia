@@ -1,0 +1,55 @@
+/* PIT Game Jam IA — Missão 06: Forja de IA / professor */
+.f6-root{color:#eddbc4;background:#101418;font-family:Arial,sans-serif;min-width:0;overflow:hidden}
+.f6-root *{box-sizing:border-box}.f6-root h2,.f6-root h3,.f6-root h4{font-family:Georgia,serif;color:#ffe5c3}
+.f6-head{padding:24px clamp(14px,3vw,38px);background:linear-gradient(95deg,#0c1016f3,#181219c9),url("./assets/missions/missao-06.webp") center/cover;border-bottom:1px solid #b18250}
+.f6-head>span,.f6-banner small{color:#f1bb89;font-size:11px;font-weight:900;letter-spacing:.14em}
+.f6-banner{display:flex;align-items:center;gap:19px;margin:15px 0}
+.f6-seal{display:grid;place-items:center;flex:0 0 77px;height:89px;background:#65412c;border:2px ridge #e4b47e;color:#ffdfba;font:700 34px Georgia,serif;clip-path:polygon(10% 0,90% 0,100% 20%,100% 75%,50% 100%,0 75%,0 20%)}
+.f6-banner h2{font-size:clamp(26px,3vw,41px);margin:9px 0}.f6-banner p{color:#e1c4a6;line-height:1.6;font-size:15px}
+.f6-time{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:22px}
+.f6-time span{padding:12px;background:#2e211c;border:1px solid #856043;color:#e1c8ae;font-size:11px}
+.f6-time span.current{background:#62402a;border-color:#e3b17b}.f6-time b{display:block;color:#f7c28c;font:700 18px Georgia,serif;margin-bottom:4px}
+.f6-body{padding:23px clamp(14px,3vw,38px) 35px;background:radial-gradient(circle at 80% 0,#86522a26,transparent 49%),#111519}
+.f6-lead{max-width:990px}.f6-lead small,.f6-catalog-title small,.f6-decision small{font-size:10px;font-weight:900;letter-spacing:.15em;color:#eab17c}
+.f6-lead h3{font-size:clamp(24px,2.5vw,36px);line-height:1.2;margin:11px 0}
+.f6-lead p,.f6-catalog-title p,.f6-decision p{line-height:1.62;color:#dfc7b2;font-size:14px}
+.f6-lead strong{color:#f5bd85}
+.f6-pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-top:19px}
+.f6-pipeline article{background:linear-gradient(#33251d,#1a1d1e);border:1px solid #916744;padding:14px;min-width:0}
+.f6-pipeline article>span{display:grid;place-items:center;width:40px;height:38px;background:#6e442b;border:1px solid #cb9d62;color:#ffe5b9;font:700 18px Georgia,serif;margin-bottom:13px}
+.f6-pipeline strong{font-size:11px;color:#f1b984;letter-spacing:.1em}.f6-pipeline p{font-size:12px;color:#dbc4ac;line-height:1.52}
+.f6-scope{background:#39291d;border-left:3px solid #e8ad75;padding:15px 17px;margin:17px 0}
+.f6-scope strong,.f6-ethics>strong,.f6-end>strong{font-size:11px;letter-spacing:.1em;color:#edb77c}
+.f6-scope p{font-size:13px;color:#f0d5b9;line-height:1.6}
+.f6-catalog-title{margin:22px 0 15px}.f6-catalog-title h3{font-size:29px;margin:10px 0}
+.f6-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.f6-card{padding:17px;border:1px solid #8c6142;background:linear-gradient(140deg,#2b201e,#13191d);min-width:0}
+.f6-cardhead{display:flex;gap:13px;align-items:center}.f6-cardhead>span{font-size:33px;color:#fac68f}
+.f6-cardhead small{font-size:10px;color:#e5ab77;letter-spacing:.1em}.f6-cardhead h4{font-size:21px;margin:5px 0}
+.f6-format{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#4b3022;border:1px solid #a87954;padding:11px;margin:15px 0}
+.f6-format>b{color:#ffdfb7;font-size:12px}.f6-format small{font-size:11px;color:#e0bc97}
+.f6-card>p,.f6-tag span,.f6-outcome p,.f6-risk p{font-size:13px;line-height:1.55;color:#dcc6b0}
+.f6-tag,.f6-outcome,.f6-risk{padding:11px;margin:10px 0;background:#191c1f;border:1px solid #6b5440}
+.f6-tag{display:grid;gap:7px}.f6-card b{font-size:11px;color:#eeb883;letter-spacing:.08em}
+.f6-outcome{background:#253126;border-color:#68835e}.f6-outcome b{color:#b8dda7}.f6-risk{background:#31241e}
+.f6-card>a{display:inline-block;color:#eec090;font-size:12px;text-decoration:underline;padding:8px 0}
+.f6-decision{display:grid;grid-template-columns:minmax(200px,.7fr) minmax(0,1.3fr);gap:20px;border:1px solid #ad7b4d;padding:20px;margin-top:19px;background:linear-gradient(#34251d,#191a1c)}
+.f6-decision h3{font-size:clamp(24px,2.5vw,31px);margin:9px 0}.f6-choice{display:grid;gap:10px}
+.f6-choice>label{font-size:12px;font-weight:900;color:#f4c491}
+.f6-choice select{background:#151b1f;color:#f7dfc5;padding:11px;border:1px solid #ae7f55;font-size:13px;width:100%}
+.f6-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.f6-buttons button{cursor:pointer;min-height:44px;padding:9px;background:#473022;border:1px solid #ae7d54;color:#ffdfbd;font-size:11px;font-weight:900}
+.f6-buttons button[aria-pressed=true],.f6-buttons button:hover{background:#7b4a2c;border-color:#efbd86}
+.f6-answer{border:1px solid #896346;background:#151a1d;color:#dfc5ac;line-height:1.55;font-size:13px;padding:13px}
+.f6-answer[data-result=correct]{border-color:#7d9a68;background:#283122;color:#cbe0b8}
+.f6-answer[data-result=retry]{border-color:#c18b57;color:#f3c498}
+.f6-ethics{padding:20px;border:1px solid #aa7e57;margin-top:19px;background:#28211f}
+.f6-ethics>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}
+.f6-ethics article{background:#161a1d;border:1px solid #65513d;padding:12px}
+.f6-ethics b{color:#f0b880;font-size:11px}.f6-ethics p,.f6-end p{color:#ddc8b0;font-size:13px;line-height:1.6}
+.f6-end{border-left:3px solid #db9b68;margin-top:19px;padding:17px;background:#32261d}
+.f6-root button:focus-visible,.f6-root a:focus-visible,.f6-root select:focus-visible{outline:2px solid #ffd092;outline-offset:3px}
+@media(max-width:1000px){.f6-pipeline{grid-template-columns:repeat(3,minmax(0,1fr))}.f6-ethics>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.f6-cards,.f6-decision{grid-template-columns:1fr}.f6-pipeline{grid-template-columns:repeat(2,minmax(0,1fr))}.f6-time{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.f6-head,.f6-body{padding:15px 11px}.f6-banner{gap:11px}.f6-seal{flex-basis:47px;height:60px;font-size:25px}.f6-banner h2{font-size:26px}.f6-pipeline,.f6-ethics>div,.f6-buttons{grid-template-columns:1fr}.f6-card{padding:13px}}
+@media(prefers-reduced-motion:reduce){.f6-root *{animation:none!important;transition:none!important}}

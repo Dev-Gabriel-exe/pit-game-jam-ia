@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "environment": "isolated-test",
+  "project": "PIT Game Jam IA V3",
+  "executed_at": null,
+  "reviewer": null,
+  "checks": [
+    {"id":"M06-05","status":"NOT_RUN","evidence":[],"notes":"","issues":[]},
+    {"id":"M08-04","status":"NOT_RUN","evidence":[],"notes":"","issues":[]},
+    {"id":"M09-03","status":"NOT_RUN","evidence":[],"notes":"","issues":[]},
+    {"id":"REL-01","status":"NOT_RUN","evidence":[],"notes":"","issues":[]},
+    {"id":"REL-03","status":"NOT_RUN","evidence":[],"notes":"","issues":[]}
+  ],
+  "production_deploy_authorized": false,
+  "main_merge_authorized": false
+}

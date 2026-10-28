@@ -1,0 +1,20 @@
+/* M06-02 · Matriz de ferramentas e direitos. */
+.f6m-root{color:#eadac4;background:#0e141b;font:15px/1.6 Arial,sans-serif;padding:clamp(14px,3vw,34px);border:1px solid #805a40}
+.f6m-root *{box-sizing:border-box}.f6m-root h2,.f6m-root h3,.f6m-root h4{font-family:Georgia,serif;color:#ffdfb4}
+.f6m-hero{padding:25px 24px;background:linear-gradient(120deg,#261c20,#182531);border:1px solid #8b6543}
+.f6m-hero small,.f6m-card header small{color:#e9b983;font-weight:800;letter-spacing:.12em}
+.f6m-hero h2{font-size:clamp(25px,3vw,38px);line-height:1.15;margin:12px 0}.f6m-hero p{max-width:850px}
+.f6m-selector{margin:20px 0;padding:17px;background:#1d2730;border:1px solid #745d47}
+.f6m-selector label{display:block;font-weight:bold;margin-bottom:7px}
+.f6m-selector select{width:100%;max-width:650px;background:#101820;color:#fff2df;border:1px solid #bb9166;padding:12px;font-size:15px}
+.f6m-selector p{margin:10px 0 0;color:#e7c5a2}
+.f6m-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px}
+.f6m-card{min-width:0;background:#19222b;border:1px solid #6b5545;padding:18px;box-shadow:inset 0 0 24px #0b1015}
+.f6m-card[hidden]{display:none}.f6m-card header{border-bottom:1px solid #5c4a40;padding-bottom:10px}
+.f6m-card h4{font-size:24px;margin:5px 0}.f6m-card p{overflow-wrap:anywhere}
+.f6m-info b,.f6m-fallback b{display:block;color:#f4c58f;font-size:11px;letter-spacing:.09em}
+.f6m-info p{margin:3px 0 12px}.f6m-fallback{padding:12px;background:#22382e;border-left:3px solid #7dc8a1}
+.f6m-warning{color:#ffccad}.f6m-card a{display:block;color:#9cdaf4;margin-top:9px;text-decoration:underline}
+.f6m-root a:focus-visible,.f6m-root select:focus-visible{outline:3px solid #ffdf85;outline-offset:3px}
+.f6m-footer{margin-top:18px;padding:16px;border-top:1px solid #8b6543}.f6m-footer h3{margin:0}
+@media(max-width:600px){.f6m-hero{padding:16px}.f6m-grid{grid-template-columns:1fr}}

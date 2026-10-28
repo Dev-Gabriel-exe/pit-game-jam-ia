@@ -1,0 +1,35 @@
+/* PIT Game Jam IA V3 — M06-02. Fontes oficiais revisadas em 28/10/2026.
+ * Matriz consultiva: limites e direitos mudam. Nenhuma ferramenta é requisito.
+ * Não coleta dados, não gera arquivos nem consome créditos.
+ */
+(function(){
+'use strict';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tracks=[
+{id:'image',name:'Imagem 2D',need:'Personagem, ícone, item ou cenário',tool:'Gemini (imagem)',format:'PNG; conferir transparência e recorte',free:'Gemini oferece geração de imagem sem assinatura, sujeita a login, idade, país e cotas variáveis; download até 1K sem plano AI. Não prometer quantidade.',license:'Confirmar os termos da conta e os direitos sobre referências enviadas; não presumir exclusividade.',fallback:'Desenho próprio em editor local ou asset gratuito com licença identificada; exportar PNG.',source:'https://support.google.com/gemini/answer/14286560',priority:'PRIMEIRA ESCOLHA PARA 2D',caution:'Se o fundo não for transparente, remover localmente antes de importar.'},
+{id:'video',name:'Vídeo curto',need:'Cutscene ou abertura opcional',tool:'Google Flow',format:'MP4 H.264/AAC compatível com navegador; verificar arquivo exportado',free:'Documentação oficial: 50 créditos Flow/dia sem assinatura; o custo varia por modelo e geração. Em horários de pico, geração gratuita pode ficar indisponível.',license:'Verificar termos e marcas-d’água antes de distribuir; não assumir uso comercial irrestrito.',fallback:'Criar sequência estática de 2–3 telas com texto e transições no próprio GDevelop.',source:'https://support.google.com/flow/answer/16526234',priority:'OPCIONAL',caution:'Não usar vídeo como requisito para concluir a missão.'},
+{id:'music',name:'Música',need:'Trilha de fundo de cena',tool:'Suno',format:'Áudio compatível com GDevelop; confirmar se o plano permite baixar',free:'Plano gratuito: 50 créditos diários; até 7 downloads de teste vitalícios para uso pessoal/não comercial, conforme ajuda oficial de 09/09/2026.',license:'Plano gratuito: uso pessoal e não comercial. Não usar em lançamento comercial.',fallback:'Criar uma sequência musical simples autoral em editor local, ou escolher faixa com licença reutilizável comprovada.',source:'https://help.suno.com/en/articles/13926209',rightsSource:'https://help.suno.com/en/articles/9601601',priority:'SOMENTE SE HOUVER LICENÇA',caution:'Gerar música não garante poder exportá-la; o plano grátis não dá licença comercial.'},
+{id:'voice',name:'Voz e efeitos',need:'Narrador, fala curta ou som de interação',tool:'ElevenLabs',format:'Áudio baixável conforme recurso/plano; testar codec no GDevelop',free:'Plano Free oficial: 10.000 créditos/mês compartilhados entre recursos; saída e consumo dependem do modelo e do saldo.',license:'Conteúdo do plano gratuito: uso não comercial com atribuição à ElevenLabs.',fallback:'Gravar a própria voz com consentimento, ou criar efeito simples localmente; não clonar voz de terceiros.',source:'https://elevenlabs.io/pricing',rightsSource:'https://elevenlabs.io/docs/overview/administration/billing',priority:'OPCIONAL',caution:'Não publicar voz de outra pessoa sem autorização explícita.'},
+{id:'model',name:'Modelo 3D',need:'Prop low-poly, objeto de cenário',tool:'Meshy',format:'GLB; verificar textura, escala e colisão separadamente',free:'100 créditos/mês; até 10 downloads/mês apenas de modelos Meshy 6 Lite sem textura. Outros modelos/texturas podem exigir plano pago.',license:'Plano gratuito: CC BY 4.0, inclusive uso comercial com atribuição.',fallback:'Modelar objeto simples no Blender ou usar um GLB gratuito cuja licença esteja documentada.',source:'https://help.meshy.ai/en/articles/15696428-what-is-included-on-the-free-plan',rightsSource:'https://help.meshy.ai/en/articles/10137554-what-is-the-ownership-of-the-generated-models',priority:'SÓ PARA PROJETO 3D',caution:'Créditos de geração não garantem download; não escolher modelo com textura que bloqueie exportação.'}
+];
+function renderCard(t){
+return '<article class="f6m-card" data-f6m-card="'+t.id+'"><header><small>'+esc(t.priority)+'</small><h4>'+esc(t.name)+'</h4><p>'+esc(t.need)+'</p></header>'+
+'<div class="f6m-info"><b>FERRAMENTA</b><p>'+esc(t.tool)+'</p><b>ACESSO GRATUITO VERIFICADO</b><p>'+esc(t.free)+'</p><b>EXPORTAÇÃO / IMPORTAÇÃO</b><p>'+esc(t.format)+'</p><b>DIREITOS</b><p>'+esc(t.license)+'</p></div>'+
+'<div class="f6m-fallback"><b>PLANO B SEM CUSTO</b><p>'+esc(t.fallback)+'</p></div><p class="f6m-warning">⚠ '+esc(t.caution)+'</p>'+
+'<a href="'+t.source+'" target="_blank" rel="noopener noreferrer">Fonte oficial de limites ↗</a>'+
+(t.rightsSource?'<a href="'+t.rightsSource+'" target="_blank" rel="noopener noreferrer">Fonte oficial de licença ↗</a>':'')+'</article>';
+}
+function render(){
+return '<section class="f6m-root" id="f6Matrix" aria-label="Matriz de ferramentas de IA para assets">'+
+'<header class="f6m-hero"><small>MISSÃO 06 · PROFESSOR · DEMONSTRAÇÃO DE 5 MINUTOS</small><h2>Uma necessidade. Uma ferramenta. Um recurso utilizável.</h2><p>Selecione o tipo de asset que falta no projeto. As cinco rotas são alternativas, não etapas obrigatórias. Nenhum serviço será acessado automaticamente.</p></header>'+
+'<div class="f6m-selector"><label for="f6mNeed">Qual recurso falta ao jogo?</label><select id="f6mNeed"><option value="all">Comparar todas as opções</option>'+tracks.map(t=>'<option value="'+t.id+'">'+esc(t.name)+' — '+esc(t.need)+'</option>').join('')+'</select><p id="f6mResult" aria-live="polite">Escolha uma necessidade para ver o caminho e o plano B.</p></div>'+
+'<div class="f6m-grid" id="f6mCards">'+tracks.map(renderCard).join('')+'</div>'+
+'<footer class="f6m-footer"><h3>Antes de importar, confirme quatro itens</h3><p><b>01</b> Arquivo exportável no plano atual · <b>02</b> Licença e atribuição · <b>03</b> Formato compatível · <b>04</b> Resultado no Preview sem quebrar a regra da Missão 05.</p><p>Limites revisados em 28/10/2026 em páginas oficiais. A disponibilidade depende da conta, região e alterações dos serviços. Se faltar download, licença ou internet, use o plano B — sem pagar e sem criar contas alternativas para contornar cotas.</p></footer></section>';
+}
+function choose(id){return tracks.find(t=>t.id===id)||null}
+function mount(root=document.querySelector('#f6Matrix')){
+if(!root)return;const select=root.querySelector('#f6mNeed'),out=root.querySelector('#f6mResult'),cards=[...root.querySelectorAll('[data-f6m-card]')];
+if(!select||!out)return;const update=()=>{const selected=choose(select.value);cards.forEach(c=>{c.hidden=!!selected&&c.dataset.f6mCard!==selected.id});out.textContent=selected?'Rota selecionada: '+selected.tool+'. Plano B: '+selected.fallback:'Cinco rotas alternativas. Selecione apenas uma necessidade para sua produção.'};select.addEventListener('change',update);update();
+}
+window.PIT_TEACHER_MISSION_SIX_MATRIX={render,mount,tracks,choose};
+})();

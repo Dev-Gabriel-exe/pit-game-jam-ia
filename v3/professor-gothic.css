@@ -1,0 +1,219 @@
+/* PIT GAME JAM V3 — Professor · Master of the Journey
+   Conteúdo legível na projeção, inspirado na estética da jornada do aluno.
+   Aplicado APENAS ao professor. Sem notas de condução. */
+body[data-role="teacher"]{
+ --tm-gold:var(--pit-gold-muted);--tm-paper:#f2e7d7;--tm-soft:#cbb8a6;
+ background:#080a0e url("./abyss-bg.svg") center/cover fixed no-repeat;color:var(--tm-paper);
+}
+body[data-role="teacher"] .hero{
+ background:linear-gradient(90deg,#08090cf0 0%,#090a0dc3 65%,#090a0dc9),url("./abyss-bg.svg") center 44%/cover;
+ border-bottom:1px solid #866041;box-shadow:inset 0 0 66px #0009;
+}
+body[data-role="teacher"] .hero:before{background:linear-gradient(90deg,#07090bcd,#0b0d1066)}
+body[data-role="teacher"] .brand-title{font-family:Georgia,serif;letter-spacing:.075em;font-size:clamp(29px,3.25vw,48px)}
+body[data-role="teacher"] .brand-title strong,body[data-role="teacher"] .brand-title em{
+ background:linear-gradient(#ffe7c2,#dcac72 61%,#915c39);background-clip:text;color:transparent;
+}
+body[data-role="teacher"] .brand-sub{color:#d9b18a;font-size:10px;letter-spacing:.12em}
+body[data-role="teacher"] .hero-slogan{color:#e1bf97;font-family:Georgia,serif}
+body[data-role="teacher"] .topnav{background:linear-gradient(#171416,#0a0c0e);border-bottom:1px solid #856046;box-shadow:0 5px 22px #000c}
+body[data-role="teacher"] .topnav .navbrand{color:#f0c18b;font:700 16px Georgia,serif}
+body[data-role="teacher"] .topnav .active{background:#3a2119;box-shadow:inset 0 0 8px #8d4825,0 0 10px #a8643b33;border:1px solid #b98555;color:#ffe1be}
+body[data-role="teacher"] .role-tag{background:linear-gradient(#eec183,#a86a3d);color:#1b100b}
+body[data-role="teacher"] .dashboard{grid-template-columns:minmax(190px,215px) minmax(0,1fr);gap:10px;padding:9px 10px}
+body[data-role="teacher"] .dashboard>.side{display:none}
+body[data-role="teacher"] .dashboard>.panel:first-child{
+ border:1px solid #604836;background:linear-gradient(160deg,#1d1819,#090c0f 85%);
+}
+body[data-role="teacher"] .panel-heading{font:700 17px Georgia,serif;color:#edc48d;text-shadow:none;border-color:#6d4f38}
+body[data-role="teacher"] .stage-btn{height:82px;min-height:82px;background:linear-gradient(95deg,#201c1b,#0e1115);border:1px solid #69513c;border-radius:2px}
+body[data-role="teacher"] .stage-btn.current{border-color:#d99c5e;box-shadow:inset 0 0 18px #bb693328,0 0 12px #d28c4a2e;background:#34231c}
+body[data-role="teacher"] .stage-btn:hover{background:#382720;border-color:#e1ac7b}
+body[data-role="teacher"] .stage-poster{min-width:72px;width:72px;height:65px;background:#080a0d;border:1px solid #a2714a;border-radius:0}
+body[data-role="teacher"] .stage-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.78)}
+body[data-role="teacher"] .stage-poster:before{display:none}
+body[data-role="teacher"] .stage-emoji{z-index:1;font-size:22px;filter:drop-shadow(0 2px 8px #000)}
+body[data-role="teacher"] .stage-cover-index{background:#3c2118;border-color:#c69460;color:#ffe8bc}
+body[data-role="teacher"] .stage-main strong{font:700 14px/1.12 Georgia,serif;color:#f1d1ab}
+body[data-role="teacher"] .stage-main small{color:#c3afa4;font-size:11px}
+body[data-role="teacher"] .stage-state{color:#e1a468;font-size:9px}
+body[data-role="teacher"] .main-pane{border:1px solid #75523b;background:#0e1012;box-shadow:0 0 0 2px #08090b,0 9px 32px #000b}
+body[data-role="teacher"] .main-pane:before{background:linear-gradient(90deg,transparent,#e4ac73);box-shadow:0 0 11px #d18d4a5c;opacity:.6}
+body[data-role="teacher"] .mainhead{padding:8px 19px;min-height:0;background:linear-gradient(90deg,#101216f0,#18110ecc),url("./abyss-bg.svg") center/cover;border-bottom:1px solid #62442f}
+body[data-role="teacher"] .mainhead:before{background:linear-gradient(90deg,#0b0c0dce,#13101599)}
+body[data-role="teacher"] .mainhead h1{font:700 21px Georgia,serif;color:#e9c290;margin:2px 0}
+body[data-role="teacher"] .mainhead .subline{font-size:12px;color:#b9a897}
+body[data-role="teacher"] .eyebrow,body[data-role="teacher"] .state-pill{color:#e1b182}
+body[data-role="teacher"] .phasebar{padding:6px 8px;background:#130f11;gap:6px;border-bottom:1px solid #5e4231}
+body[data-role="teacher"] .phasebar button{background:#201819;border:1px solid #5a473e;color:#d0b29b;border-radius:2px;font:700 13px Georgia,serif;padding:9px 7px}
+body[data-role="teacher"] .phasebar button.active{background:linear-gradient(#71412b,#2b1c18);border-color:#e4ab6c;color:#ffe4c3;box-shadow:inset 0 -2px #d99154}
+body[data-role="teacher"] .phasebar button:hover{border-color:#e6b78f}
+body[data-role="teacher"] .phasebar .step-count{color:#e2ac75}
+body[data-role="teacher"] .main-content{padding:0;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#805239 #0a0d0f}
+body[data-role="teacher"] .mission-actions{background:linear-gradient(#1e1716,#100f11);border-top:1px solid #684934;padding:9px 13px}
+body[data-role="teacher"] .mission-actions .action{background:linear-gradient(#eebc7d,#ac6842);border-color:#ffd29f;color:#23150e;font-weight:800}
+body[data-role="teacher"] .mission-actions .outline{border-color:#896043;background:#201614;color:#f0cda8}
+body[data-role="teacher"] .footer{background:#0a0b0d;border-color:#62412b;color:#a88b73}
+body[data-role="teacher"] .widget-actions .floating-btn{background:linear-gradient(#69402a,#2b1c19);border-color:#bb8253;color:#fff0d4}
+body[data-role="teacher"] .auth{background:linear-gradient(#211719,#0a0c0f);border-color:#ae7d52}
+/* Lecture module */
+.tm1-root{font-family:"Segoe UI",Arial,sans-serif;color:#ecdac4;min-height:100%}
+.tm1-root *{box-sizing:border-box}
+.tm1-chapter{position:relative;background:linear-gradient(90deg,#0a0c0ff2 5%,#0b0c0dc7 63%,#07080b88),url("./assets/missions/missao-01.webp") 79% 31%/cover;border-bottom:1px solid #755139;padding:20px clamp(17px,2.8vw,40px) 15px}
+.tm1-crest{font-weight:900;font-size:10px;letter-spacing:.18em;color:#d59b68}
+.tm1-headline{display:flex;align-items:center;gap:21px;margin-top:13px}
+.tm1-numeral{flex:0 0 57px;height:74px;display:grid;place-items:center;background:linear-gradient(125deg,#68402b,#171217);border:2px ridge #c89e6b;color:#f4d2a4;font:700 39px Georgia,serif;clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);text-shadow:0 3px 5px #000}
+.tm1-headline>div{min-width:0}
+.tm1-headline>div>span{font-size:11px;letter-spacing:.2em;color:#e3a973}
+.tm1-headline h2{margin:5px 0;font:700 clamp(25px,2.75vw,39px)/1.12 Georgia,serif;color:#ffecd6;text-shadow:0 3px 12px #000}
+.tm1-headline p{color:#dac6b2;font-size:15px;line-height:1.4;margin:5px 0}
+.tm1-cadence{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-width:730px;margin-top:16px}
+.tm1-cadence>div{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #6a4c35;background:#151316dd;min-width:0}
+.tm1-cadence>div.active{border-color:#e6ad75;background:#5a3222dc;box-shadow:inset 0 -2px #da9e58}
+.tm1-cadence strong{font:700 17px Georgia,serif;color:#f6c488;white-space:nowrap}
+.tm1-cadence span{font-size:10px;color:#d3bca8;font-weight:800;letter-spacing:.06em}
+.tm1-section{padding:18px clamp(16px,2.8vw,40px) 26px;background:radial-gradient(ellipse at top right,#59362123,transparent 53%),#0d0f11}
+.tm1-section-heading{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #654532;padding-bottom:10px;margin-bottom:18px;color:#dca575;font-size:11px;letter-spacing:.18em;font-weight:900}
+.tm1-hero-line{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,.7fr);gap:20px;align-items:center;margin:0 0 16px}
+.tm1-hero-line small{color:#e0b075;font-size:11px;font-weight:900;letter-spacing:.09em}
+.tm1-hero-line h3,.tm1-lead h3{font:700 clamp(25px,2.4vw,33px)/1.16 Georgia,serif;color:#f6e5d1;margin:9px 0 12px}
+.tm1-hero-line p,.tm1-lead p{font-size:16px;line-height:1.55;color:#d5c7b7}
+.tm1-cover{min-height:175px;background:linear-gradient(0deg,#0e101273,transparent),url("./assets/missions/missao-01.webp") center 42%/cover;border:2px ridge #a56d47;box-shadow:0 8px 18px #0009}
+.tm1-concepts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.tm1-concept{display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;padding:17px;background:linear-gradient(#211a1a,#111416);border:1px solid #664a3a;box-shadow:inset 0 0 20px #0004}
+.tm1-concept-num{background:#41261b;border:1px solid #a8794f;display:grid;place-items:center;font:700 18px Georgia,serif;color:#edbd87;height:37px}
+.tm1-concept h3{margin:2px 0 10px;font:700 21px Georgia,serif;color:#f5d7b5}
+.tm1-concept p{font-size:15px;line-height:1.55;color:#ddcebd;margin:8px 0}
+.tm1-case{padding:12px 13px;background:#312019;border-left:3px solid #d89359;margin-top:14px}
+.tm1-case strong{font-size:10px;letter-spacing:.1em;color:#edb478}
+.tm1-concept .tm1-case p{margin:6px 0 0;font-size:14px;color:#f0d9c4}
+.tm1-concept .tm1-precision{border-top:1px solid #554236;padding-top:10px;color:#bca89a;font-size:14px}
+.tm1-key{margin-top:16px;padding:17px 20px;background:#2a2118;border:1px solid #b7834c}
+.tm1-key strong{color:#f2bf78;font-size:12px;letter-spacing:.1em}
+.tm1-key p{font-size:16px;line-height:1.52;color:#edd8bc;margin:8px 0 0}
+.tm1-key em{color:#ffe5ac}
+.tm1-lead{max-width:990px}
+.tm1-simulator{display:grid;grid-template-columns:minmax(230px,.9fr) minmax(300px,1.1fr);gap:14px;margin:19px 0}
+.tm1-world{padding:13px;background:linear-gradient(#1b171a,#090e12);border:2px ridge #986e4f}
+.tm1-world-name{display:block;text-align:center;color:#e7ac75;font-size:11px;font-weight:800;letter-spacing:.09em;margin-bottom:7px}
+.tm1-world-scene{height:235px;display:flex;align-items:flex-end;justify-content:space-around;padding:10px 18px 34px;background:linear-gradient(0deg,#120f12a8,#080b0c38),url("./assets/missions/missao-01.webp") center 42%/cover;position:relative;overflow:hidden}
+.tm1-world-scene:after{content:"";position:absolute;bottom:22px;left:0;right:0;border-bottom:3px solid #c57b3f44}
+.tm1-avatar,.tm1-gem,.tm1-gate{font-size:63px;position:relative;z-index:1;text-shadow:0 0 19px #f9b15c}
+.tm1-gem{color:#f5d391;animation:tm1-glow 2.8s ease-in-out infinite alternate}
+.tm1-gate{color:#6d6d69;transition:color .25s,filter .25s}
+.tm1-gate.unlocked{color:#e9aa61;filter:drop-shadow(0 0 13px #ffbc75)}
+.tm1-gate.won{color:#ffe5a4;filter:drop-shadow(0 0 23px #ffd78a)}
+.tm1-hud{display:flex;justify-content:space-around;gap:9px;padding:13px 0 3px}
+.tm1-hud>div{font-size:12px;color:#af9e8d;display:grid;justify-items:center;gap:5px}
+.tm1-hud strong{font:700 20px Georgia,serif;color:#f5d1a3}
+.tm1-control{border:1px solid #765037;background:#191617;padding:19px;display:grid;gap:14px;align-content:start}
+.tm1-logic{font-size:11px;color:#a99688;display:grid;gap:5px}
+.tm1-logic strong{font:700 21px Georgia,serif;color:#f9dfba}
+.tm1-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tm1-actions button{flex:1 1 auto;cursor:pointer;border:1px solid #b5804f;border-radius:1px;background:linear-gradient(#573021,#2a1b19);padding:12px 13px;color:#f4d2af;font-weight:800;font-size:12px}
+.tm1-actions button:hover{background:#7c4126;border-color:#edbd87}
+.tm1-feedback{background:#3c281c;border-left:3px solid #efab6f;color:#fee2be;padding:14px 12px;font-size:15px;line-height:1.5;min-height:70px}
+.tm1-event{padding:12px;background:#101417;border:1px solid #6b5445}
+.tm1-event span{display:block;color:#d19c6c;font-size:10px;letter-spacing:.15em;font-weight:900;margin-bottom:7px}
+.tm1-event code{color:#e5d6c4;white-space:normal;font:13px/1.8 Consolas,monospace}
+.tm1-loop{display:flex;align-items:stretch;justify-content:space-between;gap:5px;margin:15px 0}
+.tm1-loop>div{flex:1;display:grid;justify-items:center;gap:5px;text-align:center;padding:15px 7px;border:1px solid #775840;background:#211c19}
+.tm1-loop>div span{color:#b68c69;font-size:11px}
+.tm1-loop>div strong{color:#e8ba85;font:700 13px Georgia,serif}
+.tm1-loop>div small{font-size:12px;color:#c8b6a4}
+.tm1-loop>b{display:flex;align-items:center;color:#d2945e}
+.tm1-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:13px}
+.tm1-two article{border:1px solid #6a4e3a;background:#1b181a;padding:17px 19px}
+.tm1-two h4{color:#efc38f;font:700 21px Georgia,serif;margin:0 0 13px}
+.tm1-two p{color:#d3c4b4;font-size:15px;line-height:1.48;margin:10px 0}
+.tm1-two a{color:#ffd097;text-decoration:underline}
+.tm1-planning{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.2fr);gap:18px}
+.tm1-paper{background:linear-gradient(#30241f,#181719);border:2px ridge #b38a65;padding:20px 24px;align-self:start}
+.tm1-paper span{color:#eab77a;font-size:11px;letter-spacing:.13em;font-weight:900}
+.tm1-paper h3{font:700 32px Georgia,serif;color:#fff1d9;margin:14px 0 18px}
+.tm1-paper p{font-size:17px;color:#eddac5;line-height:1.65}
+.tm1-paper b{color:#f6c68d}
+.tm1-workfields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tm1-field{padding:12px 14px;background:#1c1718;border:1px solid #6b503f;display:grid;gap:6px}
+.tm1-field span{color:#d9a570;font-size:11px;letter-spacing:.065em;font-weight:800}
+.tm1-field strong{color:#f4e0c9;font:700 18px Georgia,serif}
+.tm1-field p{margin:1px 0 0;font-size:13px;line-height:1.4;color:#bba99b}
+.tm1-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}
+.tm1-three article{padding:16px;border:1px solid #6b4e39;background:#26201b}
+.tm1-three strong{color:#f0bd82;font-size:12px;letter-spacing:.075em}
+.tm1-three p{font-size:14px;line-height:1.55;color:#decbb5;margin:8px 0 0}
+.tm1-checklist{display:grid;gap:9px;margin:13px 0}
+.tm1-checklist>div{display:flex;gap:13px;align-items:start;background:#201b19;border:1px solid #70543b;padding:17px}
+.tm1-check{border:1px solid #e4b177;width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;color:#efc68d;font-size:18px}
+.tm1-checklist p{display:grid;gap:7px;font-size:16px;color:#d6c7b5;margin:0;line-height:1.43}
+.tm1-checklist strong{color:#f2c58d;font-size:14px}
+.tm1-footer{padding:12px;text-align:center;color:#a58972;font-size:10px;letter-spacing:.1em;background:#090b0d;border-top:1px solid #463627}
+body[data-role="teacher"] .tm1-root button:focus-visible{outline:2px solid #fbd097;outline-offset:3px}
+/* Professor gallery: same ten artworks as student, and mission access remains unchanged. */
+body[data-role="teacher"] .gallery-overlay{background:#08090beb}
+body[data-role="teacher"] .gallery-inner{background:linear-gradient(#1d1719,#0e1012);border:2px ridge #9c754f;border-radius:3px;box-shadow:0 0 55px #000;padding:22px}
+body[data-role="teacher"] .gallery-title{border-bottom-color:#76513b}
+body[data-role="teacher"] .gallery-title small{color:#e7af79}
+body[data-role="teacher"] .gallery-title h2{font-family:Georgia,serif;color:#ffead3}
+body[data-role="teacher"] .gallery-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+body[data-role="teacher"] .gallery-card{border:1px solid #73563f;background:#1b1718;border-radius:2px;box-shadow:0 8px 14px #0009}
+body[data-role="teacher"] .gallery-card:hover,body[data-role="teacher"] .gallery-card.selected{border-color:#edb37c;box-shadow:0 0 16px #c57436}
+body[data-role="teacher"] .gallery-photo{height:185px;background:linear-gradient(0deg,#0c0c10e5,transparent 58%);position:relative;overflow:hidden}
+body[data-role="teacher"] .gallery-photo .tm1-gallery-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+body[data-role="teacher"] .gallery-photo:before{z-index:1;background:linear-gradient(0deg,#0008,transparent 50%);mix-blend-mode:normal}
+body[data-role="teacher"] .gallery-photo>span{z-index:2}
+body[data-role="teacher"] .gallery-card-content strong{font-family:Georgia,serif;color:#f4dfc4}
+body[data-role="teacher"] .gallery-card-content small{color:#f0b17c}
+body[data-role="teacher"] .gallery-card-content em{color:#bda897}
+body[data-role="teacher"].pit-v3-visual-preview #chatButton,
+body[data-role="teacher"].pit-v3-visual-preview #rosterButton,
+body[data-role="teacher"].pit-v3-visual-preview #changeUser{display:none!important}
+body[data-role="teacher"].pit-v3-visual-preview #roomState{color:#f0ba8e}
+@keyframes tm1-glow{from{filter:drop-shadow(0 0 3px #ffc383)}to{filter:drop-shadow(0 0 18px #ffbe71)}}
+@media(max-width:1180px){
+ body[data-role="teacher"] .dashboard{grid-template-columns:190px minmax(0,1fr)}
+ .tm1-concepts{grid-template-columns:1fr}
+}
+@media(max-width:800px){
+ .tm1-hero-line,.tm1-simulator,.tm1-planning,.tm1-two{grid-template-columns:1fr}
+ .tm1-workfields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tm1-three{grid-template-columns:1fr}
+ body[data-role="teacher"] .gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ body[data-role="teacher"] .dashboard{display:flex;flex-direction:column;height:auto}
+ body[data-role="teacher"] .dashboard>.panel:first-child{max-height:175px}
+ body[data-role="teacher"] .journey-list{height:130px;max-height:130px}
+ body[data-role="teacher"] .stage-btn{min-width:210px;min-height:105px}
+ body[data-role="teacher"] .main-pane{height:auto;min-height:0;max-height:none}
+ body[data-role="teacher"] .main-content{overflow:visible;padding:0}
+ body[data-role="teacher"] .hero{min-height:90px;flex-basis:90px}
+ body[data-role="teacher"] .brand-title{font-size:28px}
+ .tm1-chapter{padding:15px}
+ .tm1-headline{gap:11px}
+ .tm1-numeral{flex-basis:39px;height:53px;font-size:28px}
+ .tm1-headline h2{font-size:26px}
+ .tm1-headline p{font-size:13px}
+ .tm1-cadence{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tm1-section{padding:17px 13px 24px}
+ .tm1-concepts{grid-template-columns:1fr}
+ .tm1-cover{min-height:180px}
+ .tm1-concept{grid-template-columns:31px minmax(0,1fr);padding:13px;gap:9px}
+ .tm1-concept h3{font-size:19px}
+ .tm1-loop{flex-wrap:wrap}
+ .tm1-loop>div{flex:1 0 38%;min-width:95px}
+ .tm1-loop>b{display:none}
+ .tm1-workfields{grid-template-columns:1fr}
+ body[data-role="teacher"] .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body[data-role="teacher"] .gallery-photo{height:155px}
+}
+@media(prefers-reduced-motion:reduce){.tm1-gem{animation:none!important}.tm1-gate{transition:none!important}}
+
+.tm1-sources{border-top:1px solid #6e4d34;margin-top:18px;padding:14px 0 3px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tm1-sources span{color:#bf956d;font-size:10px;font-weight:900;letter-spacing:.1em;margin-right:5px}
+.tm1-sources a{font-size:12px;text-decoration:none;color:#f4d0a1;border:1px solid #78553d;background:#271b18;padding:8px 11px;border-radius:2px}
+.tm1-sources a:hover,.tm1-sources a:focus-visible{border-color:#efb57c;text-decoration:underline}
+
+/* UI-04: selected roster filters are visually and semantically explicit. */
+body[data-role="teacher"] .drawer-controls button[aria-pressed="true"]{border-color:#f2c38a;background:#4b3025;color:#ffe5c2;box-shadow:inset 0 -2px #d99b61}
+body[data-role="teacher"] .drawer-controls button:focus-visible{outline:3px solid #f3d39f;outline-offset:3px}

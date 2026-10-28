@@ -1,0 +1,54 @@
+/* M05-02 — Professor / GDevelop / roteiro visual de eventos */
+.m5g-root{min-width:0;color:#efd9bd;font-family:"Segoe UI",Arial,sans-serif;background:#101417;border:1px solid #a87952;overflow:hidden;margin:0;box-shadow:0 12px 28px #0007}
+.m5g-root *{box-sizing:border-box}
+.m5g-root h2,.m5g-root h3{font-family:Georgia,"Times New Roman",serif}
+.m5g-head{padding:22px clamp(14px,3vw,36px);background:linear-gradient(100deg,#111116f4,#161318db),url("./assets/missions/missao-05.webp") center/cover;border-bottom:1px solid #a57a4c}
+.m5g-head>span{color:#f3b980;font-size:11px;font-weight:900;letter-spacing:.14em}
+.m5g-head h2{color:#ffe4bd;font:700 clamp(26px,3vw,39px)/1.2 Georgia,serif;margin:10px 0}
+.m5g-head>p{color:#dfc8ae;line-height:1.55;font-size:14px;max-width:930px;margin:8px 0}
+.m5g-clock{color:#eac59c;background:#34261eaa;border:1px solid #956b4b;padding:11px 13px;font-size:12px;line-height:1.65;margin-top:17px}
+.m5g-clock b{color:#f3b77f;padding:0 5px}
+.m5g-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#0e1115;padding:8px;gap:7px;border-bottom:1px solid #976f4b}
+.m5g-tabs button{display:grid;align-content:center;text-align:left;gap:5px;padding:11px 12px;min-height:57px;cursor:pointer;background:#251e1d;border:1px solid #785640;color:#f1cba2}
+.m5g-tabs button[aria-selected=true],.m5g-tabs button:hover{background:#64422c;border-color:#e6b47e}
+.m5g-tabs b{font-size:11px;letter-spacing:.08em}
+.m5g-tabs small{color:#d5bca1;font-size:11px}
+.m5g-context{padding:13px 19px;display:grid;gap:6px;background:#33251f;border-bottom:1px solid #7a5b43}
+.m5g-context>span{font-size:10px;color:#ebb47b;font-weight:900;letter-spacing:.12em}
+.m5g-context strong{font:700 21px Georgia,serif;color:#ffddb2}
+.m5g-context p{font-size:13px;color:#e7c9ab;line-height:1.55;margin:0}
+.m5g-step{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(285px,.88fr);min-width:0}
+.m5g-picture{min-width:0;display:flex;flex-direction:column;background:#151c21;border-right:1px solid #72583e}
+.m5g-picture-top{background:#2c292a;padding:12px 13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.m5g-picture-top strong{color:#f4c08a;letter-spacing:.04em;font-size:11px}
+.m5g-picture-top small{color:#ead2b8;white-space:nowrap;font-size:12px}
+.m5g-picture img{display:block;width:100%;height:350px;max-height:440px;object-fit:contain;background:#232a30}
+.m5g-photo-foot{margin-top:auto;padding:11px 14px;color:#b3ad9f;font-size:11px;line-height:1.5}
+.m5g-photo-foot a,.m5g-footer a{color:#f3c18c}
+.m5g-guide{min-width:0;background:linear-gradient(#28211e,#141719);padding:21px clamp(14px,2.5vw,26px)}
+.m5g-guide>small{font-size:10px;color:#eab278;font-weight:900;letter-spacing:.12em}
+.m5g-guide h3{font:700 clamp(21px,2.3vw,29px)/1.18 Georgia,serif;color:#ffe3c0;margin:12px 0 18px}
+.m5g-instruction{border:1px solid #735543;padding:11px 13px;margin:9px 0;background:#16191d}
+.m5g-instruction.emph{background:#36261f;border-color:#a57c56}
+.m5g-instruction strong{font-size:11px;color:#edb47d;letter-spacing:.1em}
+.m5g-instruction p,.m5g-expect p{font-size:13px;color:#e7d1bc;line-height:1.6;margin:7px 0 0}
+.m5g-expect{border-left:3px solid #d5a16d;background:#3d2b20;padding:11px 13px;margin-top:13px}
+.m5g-expect b{font-size:10px;color:#f6c590;letter-spacing:.1em}
+.m5g-guide details{border-top:1px solid #76553f;margin-top:15px;padding-top:13px}
+.m5g-guide details summary{cursor:pointer;color:#e9b784;font-size:12px;font-weight:900}
+.m5g-guide details p{color:#cbbcac;line-height:1.55;font-size:12px}
+.m5g-controls{display:flex;align-items:center;justify-content:space-between;gap:9px;background:#17191d;border-top:1px solid #9a714e;padding:11px 14px}
+.m5g-controls button{cursor:pointer;background:#624029;border:1px solid #c18f5e;color:#ffe0b3;min-height:45px;padding:12px;font-weight:900;font-size:11px}
+.m5g-controls button:disabled{opacity:.42;cursor:not-allowed}
+.m5g-controls button:hover:not(:disabled){background:#865333}
+.m5g-controls span{font-size:12px;color:#dcc4aa;text-align:center}
+.m5g-check{border-top:1px solid #956f4d;padding:16px 20px;background:linear-gradient(100deg,#382d22,#211d1b)}
+.m5g-check b,.m5g-footer strong{font-size:11px;color:#f4bd83;letter-spacing:.11em}
+.m5g-check p{font-size:13px;line-height:1.55;color:#f0d5b3}
+.m5g-check small{color:#c1b09b;line-height:1.45;font-size:11px}
+.m5g-footer{padding:15px 19px;font-size:12px;line-height:1.7;color:#cbb5a0;background:#11161a}
+.m5g-footer p{font-size:12px;line-height:1.55;color:#b8a998;margin:7px 0}
+.m5g-root button:focus-visible,.m5g-root a:focus-visible,.m5g-root summary:focus-visible{outline:2px solid #ffd099;outline-offset:3px}
+@media(max-width:900px){.m5g-step{grid-template-columns:1fr}.m5g-picture{border-right:0;border-bottom:1px solid #73563f}.m5g-picture img{height:auto;max-height:350px;min-height:160px}}
+@media(max-width:600px){.m5g-head{padding:16px 12px}.m5g-tabs{grid-template-columns:1fr}.m5g-tabs button{min-height:45px}.m5g-guide{padding:15px 12px}.m5g-picture-top{padding:10px}.m5g-controls{padding:9px 7px;gap:5px}.m5g-controls button{padding:9px 6px;font-size:10px;min-height:42px}.m5g-controls span{font-size:10px}.m5g-context{padding:12px}.m5g-picture img{min-height:120px}}
+@media(prefers-reduced-motion:reduce){.m5g-root *{animation:none!important;transition:none!important}}

@@ -12,6 +12,68 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check JavaScript syntax
         run: node --check biblioteca.js
+      - name: Verify final automated evidence ledger and manual sign-off boundaries
+        run: node qa/v3-release-evidence-ledger.cjs
+      - name: Regression test dynamic release evidence ledger
+        run: node qa/v3-release-ledger-selftest.cjs
+      - name: Validate manual sign-off schema without claiming human tests
+        run: node qa/v3-human-signoff-gate.cjs
+      - name: Verify human sign-off negative cases
+        run: node qa/v3-human-signoff-selftest.cjs
+      - name: Verify unified animated mission gallery
+        run: node qa/v3-motion-unification.cjs
+      - name: Audit V3 360-minute mission matrix
+        run: node qa/v3-audit-matrix.cjs
+      - name: Verify M08-04 before-after evidence, isolation and UX rubric
+        run: node qa/v3-m08-acceptance.cjs
+      - name: Audit V3 teacher/student alignment
+        run: node qa/v3-audit-alignment.cjs
+      - name: Audit V3 GDevelop tutorials
+        run: node qa/v3-audit-guides.cjs
+      - name: Audit V3 AI tools and free licenses
+        run: node qa/v3-audit-tools.cjs
+      - name: Audit UI routes and local dependencies
+        run: node qa/v3-ui-route-inventory.cjs
+      - name: Audit V3 library genre and format filters
+        run: node qa/v3-library-filters.cjs
+      - name: Test UI-06 quick kits ZIP, binary signatures and metadata
+        run: |
+          node --check v3/quick-kits.js
+          node qa/v3-quick-kits.cjs
+      - name: Verify ART-01 semantic design tokens
+        run: node qa/v3-design-tokens.cjs
+      - name: Verify ART-02 original SVGs and integrations
+        run: python3 qa/v3-art-assets.py
+      - name: Verify ART-03 mission and asset icon variants
+        run: node qa/v3-art-variants.cjs
+      - name: Verify ART-04 WebP optimization and offline fallback
+        run: |
+          node --check v3/media-fallback.js
+          node qa/v3-media-fallback.cjs
+      - name: Verify ART-05 cinematic motion and earned-only award
+        run: |
+          node --check v3/arcade-gallery.js
+          node --check v3/final-achievement.js
+          node qa/v3-art-motion.cjs
+      - name: Verify FUN-01 hosting and origin policy (offline)
+        run: |
+          node --check v3/hosting-policy.js
+          node qa/v3-hosting-audit.cjs
+      - name: Verify FUN-02 isolated registration, token and student progress handlers
+        run: |
+          node --check qa/v3-isolated-backend.cjs
+          node qa/v3-isolated-backend.cjs
+      - name: Verify FUN-10 security, accessibility and provenance guards
+        run: node qa/v3-security-audit.cjs
+      - name: Verify native GDevelop evidence gate with synthetic negative cases
+        run: |
+          node --check qa/v3-gdevelop-native-results.cjs
+          node --check qa/v3-gdevelop-native-validator-regression.cjs
+          node qa/v3-gdevelop-native-validator-regression.cjs
+      - name: Audit REL-01 release gate (diagnostic, no deployment)
+        run: |
+          node qa/v3-release-gate.cjs
+          node qa/v3-release-gate-selftest.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
@@ -35,9 +97,9 @@ jobs:
           assert (root/'qa/v2-e2e.cjs').stat().st_size > 5000
           assert "glb-bau" in js and "mapa-cidade" in js and "wav-coleta" in js
           ids=re.findall(r"\{id:'([^']+)'", js)
-          assert len(ids)==28 and len(set(ids))==28, (len(ids),len(set(ids)))
+          assert len(ids)>=28 and len(set(ids))==len(ids), (len(ids),len(set(ids)))
           assert (root/"cover.jpg").read_bytes()[:3] == b'\xff\xd8\xff'
-          print("PASS: V2 10 missions, 28 resources, functioning generators")
+          print(f"PASS: V3 10 missions, {len(ids)} unique resources, functioning generators")
           PY
       - name: Test GLB, WAV and SVG resource generators
         run: |

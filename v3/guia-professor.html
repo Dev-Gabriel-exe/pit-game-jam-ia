@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Guia operacional do professor para a oficina PIT Game Jam IA V3.">
+<title>Guia operacional · Professor · PIT Game Jam IA</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#0b0d18;color:#f2edf9}
+*{box-sizing:border-box}body{margin:0;line-height:1.65}a{color:#8be7f5}a:focus-visible,summary:focus-visible{outline:3px solid #ffdc82;outline-offset:4px}
+.skip{position:absolute;left:-9999px;top:8px;background:#fff;color:#111;padding:10px}.skip:focus{left:12px}
+header{background:linear-gradient(120deg,#21122d,#121a32 70%,#142d37);border-bottom:1px solid #67537b;padding:32px max(20px,calc((100vw - 1050px)/2))}
+header small{color:#f8c783;font-weight:800;letter-spacing:.13em}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.13;margin:.5rem 0}header p{max-width:700px;color:#cbd5e5}
+nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}nav a{border:1px solid #5a6278;padding:8px 14px;border-radius:8px;text-decoration:none;background:#171e30}
+main{max-width:1050px;margin:auto;padding:20px 20px 70px}.intro{border-left:4px solid #e9b46c;padding:12px 18px;background:#1a1b2d;border-radius:0 8px 8px 0}
+section{padding:20px 0;border-bottom:1px solid #343a50}h2{font-size:1.45rem;color:#f8d79b;margin:0 0 12px}h3{color:#9fe6f4}p,li{max-width:90ch}ol,ul{padding-left:25px}li{margin:8px 0}
+.step{background:#171d30;border:1px solid #36465d;padding:16px 20px;border-radius:12px;margin:14px 0}
+.step strong{color:#a5f3e4}.tag{display:inline-block;background:#293148;border:1px solid #66718c;padding:3px 10px;border-radius:99px;font-size:.83rem}
+table{border-collapse:collapse;width:100%;font-size:.95rem}th,td{border-bottom:1px solid #3b4357;padding:10px;text-align:left;vertical-align:top}th{color:#f7dca7}
+details{background:#181e31;border:1px solid #3d4d67;border-radius:9px;margin:10px 0;padding:12px 16px}summary{cursor:pointer;font-weight:700}
+footer{padding:24px;background:#121727;color:#aebbd0;text-align:center}
+@media(max-width:600px){table{display:block;overflow-x:auto}header{padding:24px 20px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{:root{color-scheme:light;background:white;color:#111}header,footer{background:white;color:#111}nav{display:none}a{color:#124a6d}.step,details,.intro{background:white;color:#111;border-color:#888}h2,h3{color:#111}}
+</style></head><body>
+<a class="skip" href="#conteudo">Ir para o guia</a>
+<header><small>PIT GAME JAM IA · MISSÃO CONTROLE</small><h1>Guia operacional do professor</h1><p>Entrada, liberação, acompanhamento, devolutivas e contingências. O material didático das dez missões está no próprio caderno do professor; este guia trata apenas da operação da oficina.</p>
+<nav aria-label="Atalhos"><a href="../professor-v3.html">Painel do professor</a><a href="../aluno-v3.html?preview=1">Prévia do aluno</a><a href="../index.html#recursos">Biblioteca de assets</a><a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">Editor GDevelop</a></nav></header>
+<main id="conteudo"><p class="intro"><strong>Importante:</strong> a prévia com <code>?preview=1</code> serve para explorar as telas sem alterar a turma. Ela não comprova envio, aprovação nem conexão com o backend. Para uma aula real, confirme a hospedagem e o acesso à API antes de receber estudantes.</p>
+<section id="preparar"><h2>01 · Preparar a oficina</h2>
+<ol><li>Abra o <a href="../professor-v3.html">caderno do professor</a> na hospedagem autorizada e autentique-se com o PIN fornecido pela coordenação. Não registre o PIN em apresentações, mensagens ou capturas de tela.</li>
+<li>Confirme que o painel mostra o estado da turma e não apenas <em>Prévia visual</em>. A conexão deve estar operacional antes de liberar uma etapa.</li>
+<li>Abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">GDevelop gratuito</a> e a <a href="../index.html#recursos">biblioteca</a> em outra aba. O projeto autoral é criado pelo aluno, não por este portal.</li>
+<li>Os alunos entram pelo portal e recebem uma sessão individual. O código da sala deve ser fornecido pelo canal institucional da turma; não exponha credenciais de professor.</li></ol></section>
+<section id="liberar"><h2>02 · Liberar uma missão e sua fase</h2>
+<div class="step"><span class="tag">Painel do professor</span><ol><li>Escolha a missão 01–10 na jornada lateral ou no carrossel.</li><li>Selecione a fase: <strong>Entender</strong>, <strong>Assistir</strong>, <strong>Criar</strong> ou <strong>Comprovar</strong>.</li><li>Use o botão de atualizar/iniciar a etapa para registrar a liberação na turma. Apenas navegar entre telas é uma prévia; não libera a missão.</li><li>Confirme o indicador <strong>TURMA · ETAPA XX</strong> e a fase publicada. No aluno, a nova missão fica disponível após sincronizar/atualizar a página.</li></ol></div>
+<p>A missão futura permanece bloqueada para o aluno até liberação. O professor pode consultar antecipadamente outras missões sem mudar a turma. Rascunhos locais do aluno devem ser preservados; em falha de conexão, não prometa sincronização até conferir o retorno do servidor.</p></section>
+<section id="acompanhar"><h2>03 · Acompanhar cada estudante</h2>
+<p>Abra <strong>👥 Acompanhamento</strong>. O painel apresenta estudantes inscritos, última atividade, missão ativa, entregas e mensagens não lidas. Use os filtros Todos, Ativos, Aguardando validação e Com dúvida.</p>
+<table><thead><tr><th>Estado</th><th>Significado</th><th>Ação operacional</th></tr></thead><tbody>
+<tr><td>Em atividade</td><td>Rascunho ou produção em andamento</td><td>Verifique se a missão está liberada; não marque como concluída</td></tr>
+<tr><td>Aguardando validação</td><td>O aluno enviou evidência para revisão</td><td>Abrir ficha individual, conferir descrição e teste observável</td></tr>
+<tr><td>Revisar entrega</td><td>Professor solicitou correção</td><td>Aguardar nova submissão; a versão antiga não pode ser aprovada diretamente</td></tr>
+<tr><td>Concluída</td><td>Entrega aprovada pelo professor</td><td>Confirmar progresso registrado no painel</td></tr>
+</tbody></table>
+<p>O marcador de atividade indica comunicação recente com o servidor, não comprova que o jogo está funcionando. A qualidade da entrega depende de observar o Preview e os critérios da missão.</p></section>
+<section id="avaliar"><h2>04 · Solicitar revisão ou aprovar</h2>
+<ol><li>Em Acompanhamento, abra o estudante e localize a missão com estado <strong>Aguardando validação</strong>.</li>
+<li>Confira o que foi produzido, qual condição foi testada, o resultado esperado, o resultado observado e um teste negativo.</li>
+<li>Se faltar evidência, escreva uma devolutiva específica (pelo menos oito caracteres) e escolha <strong>Pedir revisão</strong>. O estudante deve editar a ficha e reenviar.</li>
+<li>Depois de novo envio, verifique a correção e selecione <strong>Aprovar</strong>. Não confunda texto gerado por IA com demonstração real de mecânica no jogo.</li></ol>
+<p>As Missões 01–10 têm atividades próprias, personalizáveis por gênero. O professor não precisa dominar todas as engines ou gêneros, mas deve verificar a relação entre regra, ação, feedback e resultado no projeto do estudante.</p></section>
+<section id="chat"><h2>05 · Dúvidas e comunicação</h2>
+<p>Abra <strong>💬 Dúvidas da turma</strong>, selecione a conversa individual e responda. O indicador de não lidas acompanha mensagens recebidas. A conversa de um aluno não deve aparecer para outro.</p>
+<p>Se o chat exibir erro, mantenha o texto digitado, use <strong>Tentar novamente</strong> e confirme a mensagem no histórico antes de considerá-la enviada. Não compartilhe tokens, PINs, dados médicos ou informações pessoais sensíveis no chat da oficina.</p></section>
+<section id="recursos"><h2>06 · Assets, starters e contingência gratuita</h2>
+<p>A biblioteca gera PNG para sprites/cenários, GLB para objetos 3D e WAV para sons. Os kits ZIP incluem assets e instruções, mas <strong>não</strong> são projetos GDevelop prontos. Os starters editáveis são exemplos externos oficiais, sujeitos à disponibilidade da internet.</p>
+<ol><li>PNG: importar em um objeto Sprite; cenário desenhado não cria colisão automaticamente.</li><li>GLB: importar em um objeto 3D Model; configurar câmera, movimento e física separadamente.</li><li>WAV: adicionar uma ação de reprodução de som na folha de eventos.</li><li>Se uma ferramenta de IA gratuita estiver indisponível, usar os recursos procedurais locais ou objetos simples; a entrega avalia a mecânica, não a dependência de serviço pago.</li></ol></section>
+<section id="problemas"><h2>07 · Diagnóstico e recuperação</h2>
+<details><summary>A missão não liberou no aluno</summary><p>Confirme o indicador de etapa/fase no professor, verifique se a ação de atualização retornou sucesso e peça para atualizar a página do aluno. Não confunda carrossel de prévia com liberação.</p></details>
+<details><summary>O aluno perdeu conexão</summary><p>O estudante pode continuar trabalhando no GDevelop e manter seus arquivos locais. O envio no portal só é válido após resposta do servidor; ao recuperar a rede, conferir o estado da entrega antes de reenviar. Não criar cadastros duplicados como tentativa de reparo.</p></details>
+<details><summary>A entrega aparece como bloqueada</summary><p>Verifique se a fase Criar/Comprovar está liberada. Evidências em análise ou aprovadas não podem ser sobrescritas; uma revisão deve ser solicitada pelo professor antes de editar uma entrega pendente.</p></details>
+<details><summary>O GDevelop ou um recurso externo falhou</summary><p>Use objetos simples, os assets locais ou um starter gratuito alternativo. Registre a indisponibilidade e não exija pagamento nem credenciais pessoais adicionais.</p></details>
+<details><summary>Preciso reiniciar o painel</summary><p>Atualize a página e confira o estado da turma antes de clicar em liberar novamente. A troca de PIN encerra a sessão local de professor. Não apague dados do navegador dos estudantes sem antes verificar se há rascunhos.</p></details>
+</section>
+<section id="fechar"><h2>08 · Encerrar e registrar resultados</h2><p>Confira o acompanhamento por aluno, as evidências aprovadas e as pendências de revisão. A conclusão das dez missões não substitui a avaliação pedagógica nem garante publicação do jogo. Preserve os arquivos editáveis dos estudantes em local institucional autorizado, com atenção à privacidade.</p><p>Esta V3 ainda possui pendências técnicas de homologação do editor GDevelop e backend isolado. Não use a prévia estática como prova de funcionamento de uma turma real.</p></section></main>
+<footer>PIT GAME JAM IA V3 · Guia operacional estático e imprimível · Sem notas de fala</footer></body></html>

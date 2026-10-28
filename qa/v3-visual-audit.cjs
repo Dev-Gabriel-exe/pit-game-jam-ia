@@ -1,0 +1,82 @@
+'use strict';
+/* UI-08 automated visual regression: geometry, keyboard, reduced motion and
+ * 12 viewport/route combinations. Screenshots are diagnostic, not human review.
+ */
+const {chromium}=require('playwright'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+(async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
+ const base='http://127.0.0.1:8899/';
+ const routes=[
+  {name:'portal',url:'index.html'},
+  {name:'selecao',url:'fase1.html'},
+  {name:'aluno',url:'aluno-v3.html?preview=1'},
+  {name:'professor',url:'professor-v3.html?preview=1'}
+ ];
+ const sizes=[390,768,1440],report=[],dir='qa/ui-08-artifacts';
+ let screenshots=0;
+
+ fs.mkdirSync(dir,{recursive:true});
+ for(const width of sizes){
+  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
+  for(const route of routes){
+   const page=await context.newPage(),errors=[];
+   page.on('pageerror',e=>errors.push(e.message));
+   // Keep visual QA offline/deterministic; use local/system font fallback.
+   await page.route('https://fonts.googleapis.com/**',request=>request.abort());
+   await page.route('https://fonts.gstatic.com/**',request=>request.abort());
+   await page.goto(base+route.url,{waitUntil:'domcontentloaded',timeout:20000});
+   if(route.name==='aluno'||route.name==='professor'){
+    await page.locator('#workspace:visible').waitFor({timeout:12000});
+    if(await page.locator('#missionGallery.open').count()){
+     if(route.name==='aluno')assert.equal(await page.locator('#missionGallery').evaluate(el=>el.classList.contains('pit-low-stimulus')),true,'ART-05 reduced-motion gallery is low-stimulus');
+     await page.locator('#missionGalleryClose').click();
+     await page.locator('#missionGallery.open').waitFor({state:'hidden'});
+    }
+   }
+   const metrics=await page.evaluate(()=>{
+    const html=document.documentElement;
+    const overflow=html.scrollWidth>innerWidth+4;
+    const offenders=overflow?[...document.querySelectorAll('body *')].map(el=>({el,r:el.getBoundingClientRect()})).filter(x=>x.r.width>0&&x.r.right>innerWidth+5).slice(0,12).map(x=>({tag:x.el.tagName,id:x.el.id,cls:String(x.el.className).slice(0,70),right:Math.round(x.r.right),width:Math.round(x.r.width)})):[];
+    return {scroll:html.scrollWidth,viewport:innerWidth,behavior:getComputedStyle(html).scrollBehavior,offenders,
+      missing:[...document.images].filter(i=>i.loading!=='lazy'&&i.complete&&i.naturalWidth===0&&i.currentSrc.startsWith(location.origin)).map(i=>i.currentSrc)};
+   });
+   assert(metrics.scroll<=metrics.viewport+4,route.name+' '+width+' horizontal overflow: '+JSON.stringify(metrics));
+   assert.equal(metrics.behavior,'auto',route.name+' reduced-motion scroll behavior');
+   assert.equal(metrics.missing.length,0,route.name+' missing local images');
+   if(route.name==='aluno'&&width===390){
+    const poster=page.locator('.stage-art[data-pit-fallback]').first();
+    assert.equal(await poster.count(),1,'ART-04 student poster opt-in');
+    const original=await poster.getAttribute('src');
+    await poster.evaluate(el=>{el.src='./v3/assets/missions/art04-missing.webp'});
+    await page.locator('.stage-art[data-pit-fallback-state="fallback"]').first().waitFor({timeout:6000});
+    assert((await poster.getAttribute('src')).endsWith('poster-fallback.svg'),'ART-04 actual browser image fallback');
+    await poster.evaluate((el,src)=>{el.removeAttribute('data-pit-fallback-state');el.hidden=false;el.src=src},original);
+   }
+   await page.keyboard.press('Tab');
+   const focused=await page.evaluate(()=>({tag:document.activeElement?.tagName,outline:getComputedStyle(document.activeElement).outlineStyle}));
+   assert(focused.tag&&focused.tag!=='BODY',route.name+' '+width+' has a keyboard focus target');
+   assert.notEqual(focused.outline,'none',route.name+' '+width+' focus indicator visible');
+   if(route.name==='aluno'&&width===390&&await page.locator('#chatButton').isVisible()){
+    await page.locator('#chatButton').click();
+    await page.locator('#chatWindow.open').waitFor();
+    const rect=await page.locator('#chatWindow').evaluate(el=>{const r=el.getBoundingClientRect();return{left:r.left,right:r.right,viewport:innerWidth}});
+    assert(rect.left>=0&&rect.right<=rect.viewport+2,'mobile chat must fit viewport '+JSON.stringify(rect));
+    await page.locator('#chatClose').click();
+    assert.equal(await page.locator('#chatWindow').getAttribute('aria-hidden'),'true','mobile chat accessible close');
+   }
+   if(route.name==='aluno'&&width===390)console.log('Chat mobile viewport requires authenticated fixture; preview may hide chat controls.');
+   assert.deepEqual(errors,[],route.name+' '+width+' JavaScript page errors');
+   await page.screenshot({path:path.join(dir,route.name+'-'+width+'.png'),animations:'disabled',timeout:8000});screenshots++;
+   report.push({route:route.name,width,scroll:metrics.scroll,focus:focused.tag,missingImages:metrics.missing.length});
+   console.log('AUDIT UI-08 '+route.name+' '+width+'px: geometry, focus, reduced motion PASS');
+   await page.close();
+  }
+  await context.close();
+ }
+ fs.writeFileSync(path.join(dir,'metrics.json'),JSON.stringify(report,null,2)+'\n');
+ assert.equal(screenshots,12,'All twelve diagnostic screenshots captured');
+
+ console.log('PASS UI-08: 12 Chrome route/viewport checks, reduced motion, focus, no horizontal overflow and 12 screenshots');
+ await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

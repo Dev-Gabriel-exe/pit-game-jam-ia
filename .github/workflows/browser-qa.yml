@@ -21,12 +21,46 @@ jobs:
         run: google-chrome --version
       - name: Start local static site
         run: python3 -m http.server 8899 --bind 127.0.0.1 > /tmp/pit-site.log 2>&1 &
+      - name: Decode generated WAV and PNG with actual Chrome media codecs
+        run: |
+          node --check qa/v3-asset-browser-decode.cjs
+          node qa/v3-asset-browser-decode.cjs
       - name: Run browser end-to-end test
         run: |
           node --check v2/missions.js
           node --check v2/app.js
           node --check chat-api/api/classroom.js
-          node qa/v2-e2e.cjs
-          node --check v3/teacher-content.js
           node --check v3/app.js
+          node --check v3/teacher-content.js
           node qa/v3-e2e.cjs
+      - name: Validate real PNG, GLB and WAV library previews in Chrome
+        run: |
+          node --check v3/library-preview.js
+          node qa/v3-library-preview-browser.cjs
+      - name: Run UI-08 viewport, focus and reduced-motion audit
+        run: node qa/v3-visual-audit.cjs
+      - name: Verify UI-08 authenticated student chat at 320/390/768px
+        run: |
+          node --check qa/v3-ui08-chat-mobile.cjs
+          node qa/v3-ui08-chat-mobile.cjs
+      - name: Verify FUN-01 static mirror cannot use live credentials
+        run: node qa/v3-hosting-browser.cjs
+      - name: Verify FUN-02 fictional student sessions and invalid tokens
+        run: node qa/v3-session-browser.cjs
+      - name: Verify FUN-03 teacher PIN and roster permissions in Chrome
+        run: node qa/v3-teacher-browser.cjs
+      - name: Verify FUN-04 stage locks and draft preservation in Chrome
+        run: node qa/v3-release-browser.cjs
+      - name: Verify FUN-09 three fictional students and teacher in Chrome
+        run: node qa/v3-multi-student-browser.cjs
+      - name: Verify REL-02 teacher guide desktop/mobile in Chrome
+        run: node qa/v3-teacher-guide-browser.cjs
+      - name: Verify REL-01 shared-device fallback draft privacy in Chrome
+        run: node qa/v3-shared-device-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-08-visual-audit
+          path: qa/ui-08-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7

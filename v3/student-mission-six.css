@@ -1,0 +1,21 @@
+/* M06-04 · aluno · Forja de um único asset */
+.m6s-root{color:#f2ddc1;background:#111a24;font:15px/1.6 Arial,sans-serif;border:1px solid #7b5d46}
+.m6s-root *{box-sizing:border-box}.m6s-root h2,.m6s-root h3{font-family:Georgia,serif;color:#ffe0b7}
+.m6s-head{padding:24px clamp(14px,3vw,35px);background:linear-gradient(105deg,#151b25e8,#302029e6),url("./assets/missions/missao-06.webp") center/cover;border-bottom:1px solid #bd8c5d}
+.m6s-head small{color:#f4c18e;letter-spacing:.1em;font-weight:800}.m6s-head h2{font-size:clamp(25px,3vw,40px);margin:12px 0}
+.m6s-brief,.m6s-practice,.m6s-review{padding:clamp(14px,3vw,28px)}
+.m6s-brief{max-width:840px}.m6s-brief li{margin:10px 0}
+.m6s-root button{background:#795331;border:1px solid #edc08d;color:#fff5e7;padding:12px 18px;font-weight:bold;cursor:pointer}
+.m6s-root button:disabled{opacity:.48;cursor:not-allowed}
+.m6s-time{display:flex;flex-wrap:wrap;gap:15px;padding:13px;background:#293540;border-left:3px solid #dfa968;margin-bottom:18px}
+.m6s-log{margin-top:20px;padding:clamp(14px,3vw,24px);border:1px solid #8d6b50;background:#1b2731}
+.m6s-field{display:block;margin:15px 0}.m6s-field b{display:block;margin-bottom:5px}
+.m6s-field textarea,.m6s-review textarea{display:block;width:100%;background:#0f1b25;color:#fff4e2;border:1px solid #a47b56;padding:12px;font:inherit;resize:vertical}
+.m6s-checks{display:grid;gap:10px;padding:15px;background:#24372f;border:1px solid #7f9c80}
+.m6s-checks label{display:flex;gap:10px;align-items:flex-start}.m6s-checks input{margin-top:6px;accent-color:#e9b66e}
+.m6s-alert{padding:12px;background:#422c2a;color:#ffe1cb;border-left:3px solid #eea37f}
+.m6s-summary{padding:15px;background:#1c2b35;border:1px solid #775b48;margin:14px 0}
+.m6s-summary p{border-bottom:1px solid #43505a;padding-bottom:8px}.m6s-summary b{display:block;color:#f3c38b}
+.m6s-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px}
+.m6s-root :is(button,textarea,input,select):focus-visible{outline:3px solid #ffe08b;outline-offset:3px}
+@media(max-width:600px){.m6s-head{padding:16px}.m6s-practice{padding:10px}}

@@ -1,0 +1,38 @@
+name: PIT Game Jam — GDevelop editor sandbox QA
+on:
+  push:
+    paths:
+      - 'qa/v3-gdevelop-editor-smoke.cjs'
+      - 'qa/v3-gltf-validator.cjs'
+      - '.github/workflows/gdevelop-editor-sandbox-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gdevelop-sandbox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser test dependency
+        run: npm install --no-save --ignore-scripts playwright@1.58.2 gltf-validator@2.0.0-dev.3.10
+      - name: Validate generated GLB models (independent of GDevelop)
+        run: node qa/v3-gltf-validator.cjs
+      - name: Verify browser and test syntax
+        run: |
+          google-chrome --version
+          node --check qa/v3-gdevelop-editor-smoke.cjs
+      - name: Open real GDevelop web editor and Preview (2D and 3D, no login)
+        run: node qa/v3-gdevelop-editor-smoke.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gdevelop-sandbox-evidence
+          path: |
+            qa/gdevelop-editor-artifacts/
+            qa/gltf-validator-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7

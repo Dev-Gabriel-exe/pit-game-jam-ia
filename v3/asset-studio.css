@@ -1,0 +1,41 @@
+/* M03: ateliê mínimo sem desviar da criação do primeiro projeto */
+.ast3-min-root{background:#161719;border:1px solid #a67a50;margin:18px 0;min-width:0;overflow:hidden;box-shadow:0 10px 28px #0008}
+.ast3-min-root *{box-sizing:border-box}
+.ast3-min-title{padding:20px;background:radial-gradient(circle at 90% 10%,#c7783a33,transparent 50%),linear-gradient(95deg,#39271f,#1b191b)}
+.ast3-min-title>span{color:#e9af77;font-size:11px;font-weight:900;letter-spacing:.12em}
+.ast3-min-title h3{font:700 clamp(24px,2.5vw,33px)/1.16 Georgia,serif;color:#ffe4bf;margin:8px 0}
+.ast3-min-title p{color:#d7c3af;font-size:14px;line-height:1.55;max-width:920px}
+.ast3-min-title b{color:#f4c68b}
+.ast3-min-tabs{display:flex;gap:6px;padding:7px;background:#111318;border-top:1px solid #79563b;border-bottom:1px solid #74543b}
+.ast3-min-tabs button{flex:1;border:1px solid #76553c;background:#2b201d;padding:13px 10px;color:#dcc3a7;font-size:12px;font-weight:900;cursor:pointer;min-height:46px}
+.ast3-min-tabs button[aria-selected=true],.ast3-min-tabs button:hover{background:#654028;color:#ffe2b4;border-color:#eabb83}
+.ast3-min-panel{padding:19px 21px;background:#1b191b;animation:ast3-min-enter .4s both}
+.ast3-min-head>small{color:#e2a875;font-size:11px;font-weight:900;letter-spacing:.1em}
+.ast3-min-head h4{font:700 clamp(20px,2vw,27px) Georgia,serif;color:#ffe3bc;margin:9px 0}
+.ast3-min-panel ol{list-style:none;counter-reset:ast3;display:grid;gap:8px;margin:15px 0;padding:0}
+.ast3-min-panel li{counter-increment:ast3;display:grid;grid-template-columns:31px 1fr;gap:9px;align-items:start;border:1px solid #624e40;background:#14181a;padding:12px}
+.ast3-min-panel li:before{content:counter(ast3,decimal-leading-zero);display:grid;place-items:center;background:#543422;border:1px solid #af7a51;color:#f7c28b;font:700 13px Georgia,serif;width:30px;height:29px;grid-row:1/3}
+.ast3-min-panel li>strong{font-size:11px;letter-spacing:.11em;color:#efbb82}
+.ast3-min-panel li p{grid-column:2;font-size:13px;line-height:1.5;color:#e6d0b8;margin:0}
+.ast3-min-prompt{margin-top:13px;border:1px solid #956744;background:#10171a}
+.ast3-min-prompt>div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;background:#3b281e}
+.ast3-min-prompt b{font-size:10px;letter-spacing:.1em;color:#edb47b}
+.ast3-min-prompt button{cursor:pointer;border:1px solid #e4b177;background:#4f3023;color:#fbe0bd;padding:9px 12px;font-size:11px;font-weight:900}
+.ast3-min-prompt>p{font-size:13px;line-height:1.6;color:#e3d2bc;padding:14px;margin:0;overflow-wrap:anywhere}
+.ast3-min-caution{border-left:3px solid #dfaa79;background:#3a281f;color:#efd6b7;padding:12px;margin-top:13px;font-size:13px;line-height:1.55}
+.ast3-min-link{display:inline-block;text-decoration:none;border:1px solid #dbab75;color:#ffe0b7;background:#473022;padding:11px 14px;margin-top:13px;font-size:11px;font-weight:900}
+.ast3-min-link:hover{text-decoration:underline}
+.ast3-min-bottom{padding:13px 19px;background:#302219;border-top:1px solid #895a3c;display:grid;gap:6px}
+.ast3-min-bottom>b{font-size:11px;color:#ebad70;letter-spacing:.12em}
+.ast3-min-bottom span{font-size:13px;line-height:1.5;color:#edd5b8}
+.m3-asset-bridge,.tm3-asset-inset{background:linear-gradient(100deg,#46301e,#1b181a);border-left:4px solid #dca26b;padding:15px 19px;margin-top:15px}
+.m3-asset-bridge strong,.tm3-asset-inset strong{font-size:11px;color:#f1bf88;letter-spacing:.1em}
+.m3-asset-bridge p,.tm3-asset-inset p{color:#e6cab0;font-size:14px;line-height:1.55;margin:8px 0 0}
+.m3-time-plan,.tm3-practical-timing{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.m3-time-plan span,.tm3-practical-timing span{padding:12px;border:1px solid #8a6548;background:#2e201d;color:#f3d6b8;font-size:12px;line-height:1.4;text-align:center}
+.m3-time-plan b{color:#f7bd7e;font-size:17px}
+.tm3-practical-timing{margin-bottom:13px}
+.tm3-practical-timing span{font-weight:900;color:#f5c790}
+@keyframes ast3-min-enter{from{opacity:.2;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:700px){.ast3-min-title{padding:15px}.ast3-min-panel{padding:12px}.ast3-min-tabs button{font-size:10px;padding:9px}.m3-time-plan,.tm3-practical-timing{grid-template-columns:1fr;gap:5px}.m3-time-plan span,.tm3-practical-timing span{padding:8px}}
+@media(prefers-reduced-motion:reduce){.ast3-min-root *{animation:none!important;transition:none!important}}

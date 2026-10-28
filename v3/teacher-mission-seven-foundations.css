@@ -1,0 +1,20 @@
+/* M07-01 · fundamentos professor */
+.t7f-root{color:#f1ddc5;background:#0f171e;font:15px/1.6 Arial,sans-serif;border:1px solid #865f42}
+.t7f-root *{box-sizing:border-box}.t7f-root h2,.t7f-root h3,.t7f-root h4{font-family:Georgia,serif;color:#ffe0b7}
+.t7f-root header{padding:clamp(17px,3vw,32px);background:linear-gradient(105deg,#14131aee,#2d2029d9),url("./assets/missions/missao-07.webp") center/cover}
+.t7f-root header small{color:#f4bb81;letter-spacing:.1em;font-weight:800}.t7f-root h2{font-size:clamp(27px,3vw,40px);line-height:1.15;margin:10px 0}
+.t7f-clock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:18px}.t7f-clock span{padding:10px;background:#32252a;border:1px solid #9c6e4a;font-size:11px}.t7f-clock b{display:block;font-size:19px;color:#f5bd86}
+.t7f-concepts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:20px}
+.t7f-concepts article{background:#1b2932;border:1px solid #80634e;padding:16px}.t7f-concepts small{color:#e9b782;font-weight:900}.t7f-concepts p{margin:8px 0 0}
+.t7f-flow{padding:20px;background:#282631;border-top:1px solid #89674c;border-bottom:1px solid #89674c;text-align:center}
+.t7f-flow div{display:inline-block;border:1px solid #b38a65;padding:10px;margin:5px;background:#1b252d;font-weight:bold}
+.t7f-flow span{color:#a6d8c7}.t7f-sim{padding:20px;background:#17232d}.t7f-sim>small{color:#e8b17c;letter-spacing:.1em;font-weight:bold}
+.t7f-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.t7f-stats>div{padding:12px;border:1px solid #a27b55;background:#29242b}.t7f-stats small{display:block;font-size:11px}.t7f-stats b{font-size:22px;color:#ffddaa}
+.t7f-actions{display:flex;gap:9px;flex-wrap:wrap}.t7f-actions button{padding:12px;background:#68462e;color:#fff5e3;border:1px solid #dfaf77;cursor:pointer}
+.t7f-sim ol{min-height:100px;padding:15px 15px 15px 35px;background:#101820;border:1px solid #6b5545}
+.t7f-genres{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:20px}.t7f-genres h3{grid-column:1/-1}.t7f-genres article{padding:15px;background:#202e35;border:1px solid #735b48}
+.t7f-genres h4{margin:0}.t7f-root footer{padding:20px;border-top:1px solid #86664b}
+.t7f-root button:focus-visible{outline:3px solid #ffe29b;outline-offset:3px}
+@media(max-width:760px){.t7f-clock,.t7f-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.t7f-concepts,.t7f-genres{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.t7f-root *{animation:none!important;transition:none!important}}

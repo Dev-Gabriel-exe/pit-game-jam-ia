@@ -1,0 +1,26 @@
+/* PIT GAME JAM IA V3 · M07-04 · espelho professor/aluno.
+ * Critérios não são notas de fala nem ações automáticas no backend.
+ */
+(function(){'use strict';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rubric=[
+{title:'INÍCIO JOGÁVEL',question:'O jogo inicia com controle e objetivo reconhecíveis?',accept:'A cena abre, a movimentação da Missão 04 e o asset da Missão 06 continuam disponíveis.'},
+{title:'DESAFIO REAL',question:'A condição de conclusão existe no Events?',accept:'Há condição SE com objetos, variável e interação concreta do jogo; não basta texto de intenção.'},
+{title:'NÃO VENCE CEDO',question:'A tentativa prematura deixa o jogo em andamento?',accept:'Sem requisito, a cena Final não aparece. No 3D, verificar Physics 3D e estado, não Collision 2D.'},
+{title:'CONCLUSÃO VISÍVEL',question:'O final aparece somente quando a condição é satisfeita?',accept:'O Preview mostra vitória/derrota ou cena final, com feedback claro e sem execução repetida por frame.'},
+{title:'REPETIÇÃO / RESET',question:'O jogador consegue reiniciar ou permanecer em estado terminal?',accept:'Ações após vitória/derrota não produzem novas recompensas; reinício volta ao estado esperado.'},
+{title:'PROJETO SALVO',question:'A versão editável está recuperável?',accept:'O mesmo projeto permanece salvo, com início, desafio e final prontos para a Missão 08.'}
+];
+function header(phase){return '<header><small>MISSÃO 07 · PROFESSOR · '+(phase==='practice'?'OFICINA · 36 MINUTOS':'RESULTADOS · 3 MINUTOS')+'</small><h2>'+(phase==='practice'?'Uma condição de conclusão. Não dez fases.':'A conclusão só vale se puder ser reproduzida.')+'</h2><p>O aluno conserva o jogo autoral e demonstra início, desafio e resultado. A ficha de evidência não executa o GDevelop.</p></header>'}
+function practice(){return '<div class="t7v-work">'+[
+['10 MIN · CONDIÇÃO','Na aba Events, criar ou adaptar a condição SE que verifica o objetivo original. No 2D, usar colisão/clique e variável; no 3D, a condição de Physics 3D já funcional e a variável do jogo.','A saída permanece bloqueada quando o requisito não existe.'],
+['14 MIN · RESULTADO','Adicionar ação que muda para a cena Final ou exibe texto de vitória/derrota na própria cena. Usar estado/Trigger once para evitar repetir o final a cada quadro.','O jogador vê a conclusão somente após cumprir a condição.'],
+['12 MIN · TESTES','No Preview, registrar início funcional, tentativa prematura, conclusão válida, repetição/reinício e local do projeto editável.','Os três testes manuais do aluno são declarações que o professor pode verificar.']
+].map(([title,body,accept],i)=>'<article><small>ETAPA 0'+(i+1)+'</small><h3>'+esc(title)+'</h3><p>'+esc(body)+'</p><strong>ACEITE</strong><p>'+esc(accept)+'</p></article>').join('')+'</div><div class="t7v-note"><b>FALLBACK SEM NOVA CENA</b><p>Se criar Final consumir tempo, mantenha a cena atual e exiba um Text de conclusão quando EstadoJogo indicar vitória ou derrota. O teste negativo continua obrigatório.</p></div>'}
+function review(){return '<div class="t7v-rubric">'+rubric.map((x,i)=>'<article><span>0'+(i+1)+'</span><div><small>'+esc(x.title)+'</small><h3>'+esc(x.question)+'</h3><p>'+esc(x.accept)+'</p></div></article>').join('')+'</div>'+
+'<div class="t7v-decisions"><article><h3>✓ APROVAR APÓS CONFERIR</h3><p>Condição, início, final e testes são demonstráveis no Preview; a versão editável está salva. A aprovação é registrada no painel real pelo professor.</p></article><article><h3>↺ SOLICITAR REVISÃO</h3><p>Final aparece cedo, estado não muda, colisão 3D incorreta, repetição gera bug ou o projeto não abre. Registrar qual teste falhou e como reproduzir.</p></article></div>'+
+'<div class="t7v-note"><b>ACOMPANHAMENTO · MISSÃO 07</b><p>Confronte as linhas Início, Desafio, SE, ENTÃO, Negativo, Repetição e Projeto salvo. Não trate checkbox nem texto plausível como prova automática de execução. A revisão real exige autorização de acesso ao ambiente de testes.</p></div>'}
+function render(phase='review'){return '<section class="t7v-root" id="t7vRoot" data-t7v-phase="'+esc(phase)+'">'+header(phase)+(phase==='practice'?practice():review())+'</section>'}
+function mount(){return !!document.querySelector('#t7vRoot')}
+window.PIT_TEACHER_MISSION_SEVEN_VALIDATION={render,mount,rubric};
+})();
