@@ -6,7 +6,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
  assert(html.includes('lang="pt-BR"')&&html.includes('prefers-reduced-motion'),'accessible Portuguese standalone guide');
  for(const id of ['preparar','liberar','acompanhar','avaliar','chat','recursos','problemas','fechar'])assert(html.includes('id="'+id+'"'),'guide section '+id);
  assert(fs.readFileSync('professor-v3.html','utf8').includes('./v3/guia-professor.html'),'teacher panel links guide');
- assert(!/diga aos alunos|fale para a turma|notas de fala/i.test(html),'operational guide is not a speaking script');
+ assert(!/diga aos alunos|fale para a turma|leia em voz alta/i.test(html),'operational guide is not a speaking script');
  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
  for(const width of [1280,390]){
   const context=await browser.newContext({viewport:{width,height:850},isMobile:width===390});
