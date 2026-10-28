@@ -48,15 +48,15 @@ const {chromium}=require('playwright');
     }
     if(i===5){
       const toggle=page.locator('[data-pit-timer-action="toggle"]');
-      assert.equal(await page.locator('[data-pit-timer]').innerText(),'06:00','Timer must initialize at six minutes');
+      assert.equal(await page.locator('[data-pit-timer]').innerText(),'08:00','Timer must initialize at eight minutes');
       await toggle.click();
       await page.waitForTimeout(1200);
-      assert.notEqual(await page.locator('[data-pit-timer]').innerText(),'06:00','Timer must actually count down');
+      assert.notEqual(await page.locator('[data-pit-timer]').innerText(),'08:00','Timer must actually count down');
       await toggle.click();
       await page.locator('[data-pit-task]').first().check();
       assert.match(await page.locator('.pit-ws-progress').innerText(),/1 de 3/);
       await page.locator('[data-pit-timer-action="reset"]').click();
-      assert.equal(await page.locator('[data-pit-timer]').innerText(),'06:00','Reset should work');
+      assert.equal(await page.locator('[data-pit-timer]').innerText(),'08:00','Reset should work');
     }
     const dims=await page.locator('#pitProjectorContent').evaluate(el=>{
       const deck=el.querySelector('.pit-workshop-deck');
@@ -86,9 +86,9 @@ const {chromium}=require('playwright');
   await ref.locator('#pitProjectorClose').click();
   await ref.locator('.stage-btn[data-stage="2"]').click();
   await ref.locator('#pitProjectorLaunch').click();
-  assert(Number((await ref.locator('#pitProjectorCount').innerText()).split('/')[1])>=12,'Other missions unchanged');
+  assert.equal((await ref.locator('#pitProjectorCount').innerText()).trim(),'1 / 7','M02 must have the matching short pedagogical format');
   await ref.close();
-  console.log('PASS: M01 practical 7-slide lesson with concepts, original interactive simulation, depth, timer, old full deck and unchanged M02');
+  console.log('PASS: M01 practical 7-slide lesson with concepts, original interactive simulation, depth, timer, old full deck and aligned M02');
   console.log(JSON.stringify(report,null,2));
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

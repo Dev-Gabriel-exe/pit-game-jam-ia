@@ -47,11 +47,11 @@ function guideContent(){
  return '<div class="pit-ws-guide-list">'+stages.map((g,i)=>'<article><div class="pit-ws-guide-art"><img src="'+esc(g.img)+'" alt="'+esc(g.alt)+'" loading="lazy"></div><div><small>ETAPA '+(i+1)+' / '+stages.length+'</small><h3>'+esc(g.title)+'</h3><p>'+esc(g.lead)+'</p><ol>'+(g.steps||[]).map(s=>'<li><strong>'+esc(s[0])+'</strong> · '+esc(s[1])+'</li>').join('')+'</ol><p class="pit-ws-guide-note">'+esc(g.note)+'</p></div></article>').join('')+'</div>';
 }
 deeper.guide={title:'GDevelop — tutorial visual por etapas',body:guideContent()};
-const clock={seconds:6*60,started:false,tick:null,until:0};
+const clock={seconds:8*60,started:false,tick:null,until:0};
 const stopClock=()=>{if(clock.tick){clearInterval(clock.tick);clock.tick=null;} if(clock.started){clock.seconds=Math.max(0,Math.ceil((clock.until-performance.now())/1000));clock.started=false;}};
 function build(){
  if(new URLSearchParams(location.search).get('m01')==='detalhado')return previous.build();
- stopClock();clock.seconds=6*60;
+ stopClock();clock.seconds=8*60;
  const slides=[];
  slides.push(shot('ABERTURA · 1 MIN','Missão 01 — o chamado',
   cap('CAPÍTULO I · O CHAMADO · DA IDEIA À PRIMEIRA REGRA')+
@@ -62,7 +62,7 @@ function build(){
   '<video class="pit-cinema-film" src="./v3/assets/missions/missao-01-motion.mp4" poster="./v3/assets/missions/missao-01.webp" muted loop playsinline preload="metadata" aria-hidden="true"></video>'+
   '<div class="pit-m01-cinema-shade"></div><div class="pit-m01-cinema-runes"><span>✧</span><span>✦</span><span>✧</span></div>'+
   '<div class="pit-m01-cinema-legend"><span>MISSÃO 01 / 10</span><strong>O CHAMADO</strong></div></div></div>'));
- slides.push(shot('CONCEITOS · 3 MIN','O que transforma uma ideia em jogo?',
+ slides.push(shot('CONCEITOS · 2 MIN','O que transforma uma ideia em jogo?',
   cap('FUNDAMENTOS · JOGADOR, OBJETIVO, REGRA E FEEDBACK')+
   '<p class="pit-ws-lead">Um jogo digital é um sistema interativo: o jogador realiza ações, as regras determinam o que acontece e a interface mostra o resultado. Sem uma ação e uma resposta, há uma história — mas não necessariamente uma jogabilidade.</p>'+
   cards([
@@ -72,7 +72,7 @@ function build(){
    ['04 · O QUE MUDA','Feedback','O contador mostra 1/3, 2/3 e 3/3; a porta reage conforme a regra.']
   ])+
   '<div class="pit-ws-bottom"><strong>Em qualquer gênero:</strong> escolha o que o jogador faz, o que precisa conseguir e como saberá que conseguiu.'+deep('design','Game design')+'</div>',{deepId:'design'}));
- slides.push(shot('CONCEITOS · 3 MIN','Como o jogo reage a uma ação?',
+ slides.push(shot('CONCEITOS · 2 MIN','Como o jogo reage a uma ação?',
   cap('SISTEMA INTERATIVO · DO COMANDO À RESPOSTA')+
   '<p class="pit-ws-lead">A cada interação, o jogo verifica uma condição, modifica informações armazenadas e mostra uma resposta. Depois, o jogador decide o que fazer novamente.</p>'+
   '<div class="pit-ws-flow" aria-label="Entrada, condição, estado e feedback">'+
@@ -81,30 +81,30 @@ function build(){
  const d=document.createElement('template');d.innerHTML=M.render('demo');
  const stage=d.content.querySelector('.tm-pro-stage')?.outerHTML||'';
  const debug=d.content.querySelector('.tm-pro-debugger')?.outerHTML||'';
- slides.push(shot('EXEMPLO VIVO · 4 MIN','Experimente a regra dos três cristais',
+ slides.push(shot('EXEMPLO VIVO · 3 MIN','Experimente a regra dos três cristais',
   cap('SIMULADOR INTERATIVO · TENTE FALHAR ANTES DE VENCER')+
   '<p class="pit-ws-lead pit-ws-compact-lead">Primeiro tente abrir a porta com <strong>0 cristais</strong>. Depois colete três e tente de novo. Observe como a mesma ação gera resultados diferentes conforme o estado do jogo.</p>'+
   '<div class="pit-m01-runtime pit-m01-sim pit-ws-simulator"><div class="pit-m01-sim-grid">'+stage+debug+'</div></div>',
   {interactive:true,simulator:true}));
- slides.push(shot('DO CONCEITO AO EDITOR · 2 MIN','Como fazer isso no GDevelop?',
-  cap('FERRAMENTA · CENAS, OBJETOS, EVENTOS E VARIÁVEIS')+
-  '<p class="pit-ws-lead">O GDevelop permite programar regras sem escrever código: cada evento tem uma <strong>condição</strong> (SE) e uma <strong>ação</strong> (ENTÃO). Assim, as decisões da Missão 1 poderão virar um jogo jogável.</p>'+
+ slides.push(shot('LEITURA E EXPLORAÇÃO · 3 MIN','Leia, explore e escolha sua ideia',
+  cap('CADERNO DO ALUNO · 3 MINUTOS PARA LER E EXPLORAR')+
+  '<p class="pit-ws-lead">Nesta primeira missão você <strong>não precisa abrir o GDevelop</strong>. Leia o desafio, explore exemplos de gêneros e imagine a mecânica que sua própria criação terá.</p>'+
   cards([
-   ['1 · CENA','Onde acontece','Uma cena reúne o cenário e os objetos da partida.'],
-   ['2 · OBJETOS','Quem participa','Jogador, cristais, porta e textos do HUD.'],
-   ['3 · EVENTOS','O que acontece','Se tocar no cristal, some 1 ao contador; se tiver 3 e interagir, a porta abre.'],
-   ['4 · PREVIEW','Como conferir','Execute o jogo e compare o comportamento com o resultado esperado.']
+   ['1 · ENTENDER','Leia o desafio','No Caderno do Aluno, descubra o que significa uma ideia jogável.'],
+   ['2 · EXPLORAR','Escolha um gênero','RPG, puzzle, terror, plataforma, corrida ou outro estilo de sua autoria.'],
+   ['3 · EXPERIMENTAR','Use a IA como apoio','Peça ideias ou variações, mas escolha e adapte a história e as regras.'],
+   ['4 · REGISTRAR','Abra sua ficha','Escreva o que o jogador fará, seu objetivo e o que significa vencer.']
   ],'pit-ws-concepts pit-ws-engine')+
-  '<div class="pit-ws-bottom"><strong>Não vamos programar tudo agora:</strong> esta missão define a regra; as seguintes implementam o protótipo.'+deep('engine','Editor de eventos')+
-  '<button type="button" class="pit-ws-quiet" data-pit-depth="guide" aria-haspopup="dialog">◈ Tutorial visual do GDevelop</button></div>',
+  '<div class="pit-ws-bottom"><strong>ENTREGA DESTA MISSÃO:</strong> uma ficha da ideia do jogo. Programação e Preview começam nas próximas missões.'+deep('design','Planejar o jogo')+
+  '<button type="button" class="pit-ws-quiet" data-pit-depth="engine" aria-haspopup="dialog">◈ Como a ideia vira jogo (opcional)</button></div>',
   {deepId:'engine'}));
  const fields=[['Gênero','RPG, puzzle, terror, plataforma...'],['Título','Nome provisório do jogo'],['Protagonista','Quem o jogador controla'],['Ação principal','O que ele faz? Use um verbo'],['Objetivo','O que precisa alcançar?'],['Condição de vitória','Como saber que terminou?'],['Feedback','Como o jogo mostra o resultado?']];
- slides.push(shot('MODO OFICINA · 6 MIN','Agora é a sua vez: crie a primeira ficha',
+ slides.push(shot('MODO OFICINA · 8 MIN','Monte a ideia do seu jogo — sem programar',
   cap('MOMENTO DE CRIAÇÃO · CADERNO DO ALUNO · MISSÃO 01')+
   '<div class="pit-ws-practice"><div class="pit-ws-worksheet"><h3>Os sete campos do seu jogo</h3><div class="pit-ws-fields">'+fields.map((x,i)=>'<div><b>'+String(i+1).padStart(2,'0')+'</b><span><strong>'+x[0]+'</strong><small>'+x[1]+'</small></span></div>').join('')+'</div></div>'+
-  '<aside class="pit-ws-task"><div class="pit-ws-task-top">⏳ SEU TEMPO DE CRIAÇÃO</div><div class="pit-ws-timer" data-pit-timer role="timer" aria-label="Tempo restante de oficina">06:00</div>'+
+  '<aside class="pit-ws-task"><div class="pit-ws-task-top">⏳ TEMPO PARA CONCEBER A IDEIA</div><div class="pit-ws-timer" data-pit-timer role="timer" aria-label="Tempo restante de oficina">08:00</div>'+
   '<div class="pit-ws-timer-controls"><button type="button" data-pit-timer-action="toggle">▶ Iniciar</button><button type="button" data-pit-timer-action="reset">↺ Reiniciar</button></div>'+
-  '<p><strong>Abra o Caderno do Aluno</strong> → Missão 01 → “Começar a criar”. Preencha a ficha do seu próprio jogo.</p>'+
+  '<p><strong>Leia e explore o Caderno do Aluno</strong> → Missão 01 → “Começar a criar”. A tarefa é conceber a ideia, não programar.</p>'+
   '<label class="pit-ws-check"><input type="checkbox" data-pit-task="1"> Tenho uma ação principal</label>'+
   '<label class="pit-ws-check"><input type="checkbox" data-pit-task="2"> Minha vitória pode ser testada</label>'+
   '<label class="pit-ws-check"><input type="checkbox" data-pit-task="3"> Descrevi como o jogo responde</label>'+
@@ -128,7 +128,7 @@ function mountClock(root){
  const redraw=()=>{
   const sec=Math.max(0,clock.seconds);
   timer.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
-  toggle.textContent=clock.started?'Ⅱ Pausar':'▶ '+(clock.seconds<360?'Retomar':'Iniciar');
+  toggle.textContent=clock.started?'Ⅱ Pausar':'▶ '+(clock.seconds<480?'Retomar':'Iniciar');
   timer.classList.toggle('pit-ws-time-over',sec===0);
  };
  function update(){
@@ -140,7 +140,7 @@ function mountClock(root){
   if(clock.started){stopClock()}else if(clock.seconds){clock.until=performance.now()+clock.seconds*1000;clock.started=true;clock.tick=setInterval(update,250)}
   redraw();
  });
- reset.addEventListener('click',()=>{stopClock();clock.seconds=360;redraw()});
+ reset.addEventListener('click',()=>{stopClock();clock.seconds=480;redraw()});
  root.querySelectorAll('[data-pit-task]').forEach(x=>x.addEventListener('change',()=>{
   root.querySelector('.pit-ws-progress').textContent=root.querySelectorAll('[data-pit-task]:checked').length+' de 3 verificações';
  }));
