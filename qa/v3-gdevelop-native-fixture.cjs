@@ -128,7 +128,8 @@ async function build(){
     "harness.assert(won()===true,'Victory activates after the condition is satisfied');",
     "harness.setSceneVariable('PIT_Ready',false);",
     "await harness.stepFrames(3);",
-    "harness.assert(won()===true,'Earned victory persists after readiness resets');"
+    "harness.assert(won()===true,'Earned victory persists after readiness resets');",
+    "await harness.takeScreenshot('pit-victory-after-earned');"
    ]
   });
   project.tests.push({
