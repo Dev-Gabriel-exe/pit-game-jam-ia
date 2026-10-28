@@ -57,6 +57,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await portal.locator('#assetGrid .resource-card').count(),3,'racing audio filter has three samples');
  await portal.locator('#assetGenre').selectOption('todos');
  await portal.locator('#assetFormat').selectOption('todos');
+ const browserMime=await portal.evaluate(async()=>{
+  const api=window.PIT_LIBRARY_API,ids=['explorador','glb-cristal','wav-coleta'],result=[];
+  for(const id of ids){const blob=await api.assetBlob(api.assets.find(a=>a.id===id));result.push([id,blob.type,blob.size]);}
+  return result;
+ });
+ assert.deepEqual(browserMime.map(x=>x[1]),['image/png','model/gltf-binary','audio/wav'],'actual Chrome asset MIME types');
+ assert(browserMime.every(x=>x[2]>100),'real Chrome-generated assets are nonempty');
  for(const [id,file,magic] of [['explorador','explorador.png','PNG'],['glb-cristal','cristal_3d.glb','glTF'],['wav-coleta','coleta.wav','RIFF']]){
   const promise=portal.waitForEvent('download',{timeout:15000});
   await portal.locator('#assetGrid [data-asset="'+id+'"]').click();
