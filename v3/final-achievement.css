@@ -1,1 +1,10 @@
 .final-award{display:flex;gap:22px;align-items:center;margin:22px 0;padding:clamp(18px,3vw,32px);background:linear-gradient(115deg,#171e32,#2a233d);border:1px solid #997d68;color:#f5e8d8}.final-award.is-earned{border-color:#e8c68c;box-shadow:inset 0 0 35px #c49b4633}.final-award-symbol{font:70px Georgia,serif;color:#e7c58e;line-height:1}.final-award-content{min-width:0;flex:1}.final-award small{color:#d5b7ef;letter-spacing:.1em;font-weight:800}.final-award h3{font:700 clamp(20px,3vw,29px) Georgia,serif;color:#ffe2b3;margin:8px 0}.final-award p{line-height:1.55}.final-award-progress{display:flex;align-items:center;gap:14px}.final-award-progress strong{font-size:20px}.final-award-rail{height:12px;flex:1;background:#12192b;border:1px solid #8e7898;border-radius:20px;overflow:hidden}.final-award-rail i{display:block;height:100%;background:linear-gradient(90deg,#a77dbd,#edca85)}.final-award-verified{color:#c8ebc5}.final-award-pending{color:#e7b9a5}@media(max-width:600px){.final-award{flex-direction:column;align-items:flex-start}.final-award-symbol{font-size:50px}}@media(prefers-reduced-motion:reduce){.final-award *{animation:none!important;transition:none!important}}
+/* ART-05 · One-time celebration only for ten verified approvals. */
+@keyframes pit-verified-reveal{from{opacity:.65;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:no-preference){
+ .final-award[data-award-state="earned"] .final-award-symbol{
+  animation:pit-verified-reveal .65s ease-out 1 both;
+ }
+}
+.final-award[data-award-state="earned"]{border-color:var(--pit-gold,#f6c781)}
+.final-award[data-award-state="pending"],.final-award[data-award-state="preview"]{box-shadow:none}
