@@ -205,6 +205,8 @@ function stopClock(c){
  clearInterval(c.tick);c.tick=null;c.running=false;
 }
 function mount(root,slide){
+ // The projector replaces slide HTML on navigation; stop any clock tied to the previous slide.
+ Object.values(clocks).forEach(stopClock);
  if(!root.querySelector('.pit-ws-all'))return base.mount(root,slide);
  const m=Number(root.querySelector('.pit-ws-all').dataset.wsMission);
  const data=M[m];if(!data)return;
@@ -251,5 +253,11 @@ function details(root,data,mode,source){
  document.addEventListener('keydown',escape,true);
  modal.querySelector('[data-pit-depth-close]').focus();
 }
+document.addEventListener('click',event=>{
+ if(event.target?.closest?.('#pitProjectorClose'))Object.values(clocks).forEach(stopClock);
+});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden)Object.values(clocks).forEach(stopClock);
+});
 window.PIT_PROJECTOR_UNIVERSAL={...base,build,mount,originalBuild:base.build,workshopMissions:M};
 })();
