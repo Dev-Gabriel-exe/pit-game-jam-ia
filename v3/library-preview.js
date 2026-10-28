@@ -105,6 +105,10 @@ async function open(id,trigger){
   if(a.cat==='som'){
    help.textContent=a.desc+' Reproduza o WAV original gerado localmente; o som só começa após sua ação.';
    const blob=await api.assetBlob(a);if(token!==runId)return;
+   if(!blob.size||!['audio/wav','audio/wave','audio/x-wav'].includes(blob.type))throw Error('Áudio WAV inválido');
+   const header=new Uint8Array(await blob.slice(0,12).arrayBuffer());if(token!==runId)return;
+   const ascii=(start,end)=>String.fromCharCode(...header.slice(start,end));
+   if(header.length!==12||ascii(0,4)!=='RIFF'||ascii(8,12)!=='WAVE')throw Error('Arquivo WAV sem cabeçalho RIFF/WAVE');
    objectUrl=URL.createObjectURL(blob);
    const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=objectUrl;audio.setAttribute('aria-label','Ouvir '+a.name);
    const error=document.createElement('p');error.className='pit-preview-error';error.setAttribute('role','alert');error.hidden=true;
