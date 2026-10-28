@@ -20,7 +20,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    body={ok:true,state:{current_stage:2,phase:'practice'},roster:[
     {id:'00000000-0000-4000-8000-000000000001',display_name:'Aluno QA Isolado',approved:2,unread_chat:0,active_stage:2,stages:[{stage:1,status:'approved'},{stage:2,status:'approved'}],joined_at:now,last_seen_at:now},
     {id:'00000000-0000-4000-8000-000000000002',display_name:'Aluno QA Pendente',approved:0,unread_chat:0,active_stage:2,stages:[{stage:2,status:'submitted',route:'2d',evidence:'Teste ficticio de colisao e resultado observavel'}],joined_at:old,last_seen_at:old},
-    {id:'00000000-0000-4000-8000-000000000003',display_name:'Aluno QA Duvida',approved:1,unread_chat:1,active_stage:1,stages:[{stage:1,status:'approved'}],joined_at:now,last_seen_at:now}
+    {id:'00000000-0000-4000-8000-000000000003',display_name:'Aluno QA Duvida',approved:1,unread_chat:1,active_stage:2,stages:[{stage:1,status:'approved'},{stage:2,status:'revision',route:'2d',feedback:'Repetir teste negativo antes de reenviar',evidence:'Versao inicial'}],joined_at:now,last_seen_at:now}
    ]};
   }
   else if(action==='unread')body={ok:true,unread:0};
@@ -53,6 +53,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.locator('#filterHelp').click();
  assert.equal(await page.locator('#rosterContent tr[data-student]').count(),1,'help filter includes only unread chat');
  assert.match(await page.locator('#rosterContent').innerText(),/Aluno QA Duvida/);
+ await page.locator('#rosterContent tr[data-student="00000000-0000-4000-8000-000000000003"]').click();
+ assert.equal(await page.locator('#rosterContent [data-review]').count(),0,'revision requires student resubmission before teacher can approve');
+ await page.locator('#rosterBack').click();
  await page.locator('#filterOnline').click();
  assert.equal(await page.locator('#rosterContent tr[data-student]').count(),2,'online filter excludes old heartbeat');
  await page.locator('#filterAll').click();
