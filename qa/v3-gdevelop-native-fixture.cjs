@@ -154,7 +154,7 @@ async function build(){
   // The fixture must survive a second serialization without changing resource
   // references, scene objects, tests, or generated asset bytes.
   const canonical=JSON.stringify(saved);
-  fs.writeFileSync(jsonPath,JSON.stringify(saved,null,2)+'\\n');
+  fs.writeFileSync(jsonPath,JSON.stringify(saved,null,2)+'\n');
   const reopened=JSON.parse(fs.readFileSync(jsonPath,'utf8'));
   assert.equal(JSON.stringify(reopened),canonical,'project JSON roundtrip preserves structure');
   for(const resource of resources){
