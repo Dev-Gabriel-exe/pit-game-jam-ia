@@ -32,14 +32,14 @@ function caption(text,size=65){
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false}));
  sp.scale.set(2.6,.66,1);return sp;
 }
-function equipment(group,klass,metal,glow){
+function equipment(group,weaponType,klass,metal,glow){
  const arm=put(group,geo('CylinderGeometry',.12,.16,1.0,8),metal,.5,1.47,0);
  arm.rotation.z=-.25;
  let weapon;
- if(klass==='mage'){
+ if(weaponType==='staff'){
   weapon=put(group,geo('CylinderGeometry',.045,.07,1.7,8),MATERIAL.gold,.7,1.5,.3);weapon.rotation.z=.25;
   put(group,geo('OctahedronGeometry',.24,0),glow,.91,2.32,.36);
- }else if(klass==='hunter'){
+ }else if(weaponType==='bow'){
   weapon=put(group,geo('TorusGeometry',.52,.055,6,24,Math.PI),MATERIAL.gold,.74,1.45,.17);weapon.rotation.y=Math.PI/2;
   put(group,geo('CylinderGeometry',.014,.014,.91,5),MATERIAL.bone,.79,1.45,.1);
  }else{
@@ -79,7 +79,7 @@ function heroMesh(build,scale=1){
   cape=put(actor,mesh,material,0,1.3,-.36);
   cape.rotation.x=.13;
  }
- const equipmentParts=equipment(actor,build.klass,armor,glow);
+ const equipmentParts=equipment(actor,build.appearance.weapon,build.klass,armor,glow);
  const circle=put(root,geo('TorusGeometry',.69,.035,5,28),mat(palette,.4,.5),0,.11,0);circle.rotation.x=Math.PI/2;
  root.scale.setScalar(scale);
  return {root,actor,arms,legs,cape,circle,...equipmentParts,baseY:0};
@@ -144,8 +144,8 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  arenaScenery(scene,root);
  const individuals=new Map(),effects=[],labels=new Map();
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
- let particles=0;
- function clearHeroes(){for(const x of individuals.values()){root.remove(x.mesh.root);x.mesh.root.traverse(o=>{if(o.geometry&&o.geometry!==MATERIAL.floor)o.geometry.dispose?.();});labels.delete(x.id)}individuals.clear();}
+ let accumulator=0;const shots=new Map();
+ function clearHeroes(){for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();for(const x of individuals.values()){root.remove(x.mesh.root);x.mesh.root.traverse(o=>{if(o.geometry&&o.geometry!==MATERIAL.floor)o.geometry.dispose?.();});labels.delete(x.id)}individuals.clear();}
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
@@ -166,7 +166,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   simulation=CORE.battle(normalized,{seed,limit:165});
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
   camera.position.set(0,26,37);controls.target.set(0,.2,0);controls.update();
-  elapsed=0;playing=false;
+  elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
  function resume(){if(simulation&&!simulation.finished)playing=true}
@@ -199,8 +199,10 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   const dt=Math.min(.045,Math.max(0,(t-previous)/1000||0));previous=t;
   frame++;elapsed+=dt;
   if(playing&&simulation){
-   // Fixed-step physics prevents frame-rate-dependent combat results.
-   for(let n=0;n<Math.min(9,Math.ceil(speed));n++){
+   // A fixed 50 ms step produces the same combat on fast and slow devices.
+   accumulator+=dt*speed;
+   for(let n=0;n<9&&accumulator>=.05;n++){
+    accumulator-=.05;
     const result=simulation.update(.05);
     for(const ev of result.events){
      if(ev.type==='hit'||ev.type==='special'){const unit=individuals.get(ev.target||ev.hero);if(unit)burst(unit.mesh.root.position.x,unit.mesh.root.position.z,ev.type==='special'?0xb98ef1:0xf4ae7e,ev.type==='special'?17:5)}
@@ -209,6 +211,16 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
     for(const f of simulation.fighters)sync(f);
     if(result.finished){playing=false;break}
    }
+  }
+  if(simulation){
+    const active=new Set();
+    for(let i=0;i<simulation.projectiles.length;i++){
+      const p=simulation.projectiles[i],k=p.from+':'+p.to+':'+i;active.add(k);
+      let mesh=shots.get(k);
+      if(!mesh){mesh=put(root,geo('OctahedronGeometry',.16,0),new THREE.MeshBasicMaterial({color:p.kind==='multishot'?0x9ed6ab:0xdbacfa}),p.x,1.4,p.z);shots.set(k,mesh)}
+      mesh.position.set(p.x,p.y+.14*Math.sin(p.age*9),p.z);mesh.rotation.y+=dt*4;
+    }
+    for(const [key,m] of shots)if(!active.has(key)){root.remove(m);m.geometry.dispose();m.material.dispose();shots.delete(key)}
   }
   for(const [id,u] of individuals){
    const a=u.mesh.actor,active=!u.dead;
@@ -238,7 +250,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
   clearHeroes();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
-  for(const value of Object.values(MATERIAL))value.dispose();
+  // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
  return {preview,fighters,resume,pause,setSpeed,dispose,resize,get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
