@@ -20,6 +20,9 @@ const fs=require('node:fs'),path=require('node:path');
   for(const route of routes){
    const page=await context.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));
+   // Keep visual QA offline/deterministic; use local/system font fallback.
+   await page.route('https://fonts.googleapis.com/**',request=>request.abort());
+   await page.route('https://fonts.gstatic.com/**',request=>request.abort());
    await page.goto(base+route.url,{waitUntil:'domcontentloaded',timeout:20000});
    if(route.name==='aluno'||route.name==='professor'){
     await page.locator('#workspace:visible').waitFor({timeout:12000});
