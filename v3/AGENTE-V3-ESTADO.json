@@ -2125,6 +2125,12 @@
       "task": "REL-01",
       "commit": "f80f7050ae8d79e25afc44d810da7512dee0ca4b",
       "summary": "Added accessible WAV preview playback error fallback preserving download; static QA for prior GLB hardening 40679660907 SUCCESS; Browser QA 40679660911 in_progress at observation; new CI pending; manual GDevelop NOT_RUN, 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "5408ee7fa3f974ea00622e0fe81d470bf5cb1cde",
+      "summary": "Verified static and Browser QA 40679787168/40679787236 SUCCESS for WAV fallback and prior GLB hardening. Hardened 3D GLB preview against bufferView overread, non-triangle indices, out-of-range mesh indices and excessive geometry. CI for new change pending; manual GDevelop/mobile/peer NOT_RUN. 54/59 unchanged."
     }
   ]
 }
