@@ -56,8 +56,8 @@ jobs:
       - name: Verify native GDevelop evidence gate with synthetic negative cases
         run: |
           node --check qa/v3-gdevelop-native-results.cjs
-          node --check qa/v3-gdevelop-native-results-selftest.cjs
-          node qa/v3-gdevelop-native-results-selftest.cjs
+          node --check qa/v3-gdevelop-native-validator-regression.cjs
+          node qa/v3-gdevelop-native-validator-regression.cjs
       - name: Audit REL-01 release gate (diagnostic, no deployment)
         run: |
           node qa/v3-release-gate.cjs
