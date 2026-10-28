@@ -24,6 +24,12 @@ O checkpoint `v3/AGENTE-V3-ESTADO.json` registra **52 de 59 metas como `done`** 
 | Postgres 16 descartável | [Postgres QA 40637833387](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637833387) | Handlers reais e transações com 3 alunos fictícios; não Neon/produção |
 | Segurança/regressão | [Static QA FUN-10](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637308970) | Auditoria estática; não é pentest |
 
+### Prova adicional no GDevelop nativo (28/10/2026)
+
+A [execução isolada 40656932457](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40656932457) usou **GDevelop Linux 5.6.285**, projeto oficial GDevelop-examples fixado no commit `0648e82703e81f12f33b65ef4777e1fd02d7666b`, e dois projetos descartáveis gerados por `qa/v3-gdevelop-native-fixture.cjs`. O motor executou **6/6 testes de jogabilidade**, incluindo carregamento de PNG original do PIT no 2D e GLB original no 3D. O validador `qa/v3-gdevelop-native-results.cjs` confirmou resultados e screenshots reais; as duas imagens foram inspecionadas visualmente nesta auditoria, com o sprite 2D e o cristal 3D aparecendo na cena. A [Browser QA 40656562279](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40656562279) confirmou decodificação efetiva de **5 WAV** (Web Audio) e **4 PNG** (Image/canvas) no Chrome.
+
+**Limites:** a inserção nos projetos foi programática, não por interface de importação do editor; WAV não foi reproduzido no GDevelop; não houve salvar/reabrir projeto manual, dispositivo físico ou playtest humano. Esses critérios continuam bloqueados. Os screenshots e JUnit estão no artifact da execução, com retenção temporária.
+
 ### Hospedagem e URLs
 
 - [Portal GitHub Pages](https://dev-gabriel-exe.github.io/pit-game-jam-ia/): GET HTTP 200 em probe somente leitura [40635164103](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40635164103). O Pages publica a branch `main`; não representa esta V3 em desenvolvimento.
