@@ -1,0 +1,53 @@
+name: LTX Game Jam — Generate Remaining Mission Videos
+on:
+  push:
+    branches: [experiment/ltx-missions-01-10]
+    paths:
+      - 'scripts/ltx-missions-queue.py'
+      - '.github/workflows/ltx-missions-queue.yml'
+      - 'ops/ltx-hourly-trigger.txt'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ltx-missions-01-10
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install free public Gradio API client (no paid hosting)
+        run: python -m pip install --disable-pip-version-check -q "gradio_client>=1.10,<3"
+      - name: Try all remaining missions until public GPU becomes unavailable
+        id: generate
+        continue-on-error: true
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+        run: python scripts/ltx-missions-queue.py --batch-max 9
+      - name: Commit every completed video and manifest even if GPU quota stops the batch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v3/assets/missions/missao-*-motion.mp4 v3/motion-manifest.js ops/ltx-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "feat(test): add verified LTX cinematic mission footage [skip ci]"
+            git pull --rebase origin experiment/ltx-missions-01-10
+            git push origin HEAD:experiment/ltx-missions-01-10
+          fi
+      - name: Explain status
+        if: always()
+        run: |
+          cat ops/ltx-status.json || true
+          if grep -q '"waiting_public_gpu"' ops/ltx-status.json; then
+            echo "::warning::Free public LTX GPU unavailable; completed videos saved. The hourly agent may retry later."
+          fi

@@ -75,7 +75,7 @@ function poster(m){
  const color=palettes[m.n-1],status=stateOf(m);
  return '<article class="arcade-card" data-index="'+(m.n-1)+'" data-state="'+status[1]+'" style="--accent:'+color[0]+';--halo:'+color[1]+'">'+
  '<button type="button" class="arcade-card-button" data-pick="'+(m.n-1)+'" aria-label="Selecionar missão '+pad(m.n)+': '+esc(m.title)+'">'+
- '<span class="arcade-poster"><img class="arcade-mission-photo" alt="" loading="lazy" decoding="async" src="./v3/assets/missions/missao-'+pad(m.n)+'.webp" onerror="this.hidden=true">'+(window.PIT_GOTHIC_ART?window.PIT_GOTHIC_ART(m):scene(m))+(m.n===1?'<video class="arcade-mission-motion-video" muted loop playsinline preload="none" poster="./v3/assets/missions/missao-01.webp" aria-hidden="true"><source src="./v3/assets/missions/missao-01-motion.mp4" type="video/mp4"></video>':'')+'</span>'+
+ '<span class="arcade-poster"><img class="arcade-mission-photo" alt="" loading="lazy" decoding="async" src="./v3/assets/missions/missao-'+pad(m.n)+'.webp" onerror="this.hidden=true">'+(window.PIT_GOTHIC_ART?window.PIT_GOTHIC_ART(m):scene(m))+((window.PIT_MOTION_READY||[1]).includes(m.n)?'<video class="arcade-mission-motion-video" muted loop playsinline preload="none" poster="./v3/assets/missions/missao-'+pad(m.n)+'.webp" aria-hidden="true"><source src="./v3/assets/missions/missao-'+pad(m.n)+'-motion.mp4" type="video/mp4"></video>':'')+'</span>'+
  '<span class="arcade-poster-top"><span class="arcade-number-shield">'+pad(m.n)+'</span></span>'+
  '<span class="arcade-poster-status '+status[1]+'">'+(status[1]==='locked'?'◆ ':status[1]==='complete'?'★ ':'')+status[0]+'</span>'+
  '<span class="arcade-card-bottom"><span class="arcade-chapter">CAPÍTULO '+pad(m.n)+' / 10</span>'+
