@@ -112,11 +112,13 @@ async function open(id,trigger){
    if(playing)tick();
    help.textContent=a.desc+' A visualização é calculada a partir dos vértices e triângulos do próprio GLB, sem modelo substituto.';
   }else{
-   const img=grid.querySelector('[data-preview="'+id+'"]')?.closest('.resource-card')?.querySelector('.asset-picture img');
-   if(!img?.src)throw Error('Prévia do recurso indisponível');
-   const large=document.createElement('img');large.src=img.src;large.alt='Visualização ampliada de '+a.name;large.decoding='async';
+   // Display the exact PNG bytes produced by the download generator, not a separate SVG stand-in.
+   const blob=await api.assetBlob(a);if(token!==runId)return;
+   if(blob.type!=='image/png'||!blob.size)throw Error('PNG inválido para prévia');
+   objectUrl=URL.createObjectURL(blob);
+   const large=document.createElement('img');large.src=objectUrl;large.alt='PNG original ampliado de '+a.name;large.decoding='async';
    stage.appendChild(large);
-   help.textContent=a.desc+' Esta arte vetorial é a mesma que a biblioteca converte em PNG no download.';
+   help.textContent=a.desc+' Prévia ampliada gerada dos mesmos bytes PNG disponibilizados para download.';
   }
  }catch(error){
   if(token!==runId)return;
