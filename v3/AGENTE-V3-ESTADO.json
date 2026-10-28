@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:47:28.512Z",
+  "last_completed_at": "2026-10-28T02:49:08.782Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M06-04",
+  "priority": "M06-05",
   "current_phase": "MISSOES",
-  "last_task": "M06-03",
-  "completed_count": 11,
+  "last_task": "M06-04",
+  "completed_count": 12,
   "total_tasks": 59,
   "tasks": [
     {
@@ -220,10 +220,14 @@
       "description": "Aluno escolhe somente UMA trilha de criação, importa asset no GDevelop, testa no Preview e registra procedência/licença; não exigir créditos pagos",
       "group": "M06",
       "position": 12,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:49:08.782Z",
+      "commit": "ec6f830d92aa3178fd4565bbe63dac7bc316c3b2",
+      "tests": [
+        "20/20 V8 assertions executed with fictitious sessions; syntax, validation, evidence parsing, hydration, HTML, app integration, responsive CSS",
+        "Worst-case 732-character evidence within 750-char limit; all fields preserved",
+        "qa/v3-m06-student.cjs committed, not executed in Node"
+      ],
       "blocker": null
     },
     {
@@ -953,6 +957,21 @@
       ],
       "tests": "15/15 V8 assertions executed; browser/GDevelop not executed",
       "notes": "Five optional tutorials with editable project-specific prompts, copy fallback, export/import steps and no-credit alternatives."
+    },
+    {
+      "id": "M06-04",
+      "completed_at": "2026-10-28T02:49:08.782Z",
+      "commit": "ec6f830d92aa3178fd4565bbe63dac7bc316c3b2",
+      "files": [
+        "v3/student-mission-six.js",
+        "v3/student-mission-six.css",
+        "aluno-v3.html",
+        "v3/app.js",
+        "qa/v3-m06-student.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "20/20 V8 checks with fictitious sessions; real browser/API/GDevelop not executed",
+      "notes": "Student chooses one asset route; manual import, provenance, license and Preview evidence required before submission."
     }
   ]
 }
