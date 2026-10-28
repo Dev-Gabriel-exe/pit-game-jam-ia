@@ -76,3 +76,16 @@
  #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-practice{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){#pitProjector.pit-projector-m01 .pit-ws-choice{transition:none!important}}
+
+/* Portrait review mode: top-align the lesson instead of leaving two giant black bands.
+   Projector landscape remains full-height, with no scrolling or nested frame. */
+@media (max-width:900px) and (orientation:portrait){
+ #pitProjector.pit-projector-m01 #pitProjectorContent{display:block;overflow-y:auto;align-items:flex-start;justify-content:flex-start;overscroll-behavior:contain}
+ #pitProjector.pit-projector-m01 #pitProjectorContent>.pit-projector-card{display:block;flex:none;max-height:none;height:auto;overflow:visible;margin:0 auto}
+ #pitProjector.pit-projector-m01 #pitProjectorContent .pit-workshop-deck{height:auto;max-height:none;min-height:0;justify-content:flex-start;padding:4px 0 22px}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-read-grid,
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-concepts,
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-flow,
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-final-checks{flex:none}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover .pit-u-cinema-panel{max-height:275px}
+}
