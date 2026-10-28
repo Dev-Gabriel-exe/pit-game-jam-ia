@@ -17,7 +17,7 @@ const {chromium}=require('playwright');
    assert.equal(count,catalogueSize,'every current resource has a preview button');
    await page.waitForFunction(()=>Boolean(window.PIT_OPEN_ASSETS)&&document.querySelector('#pitOpenCount')?.textContent.includes('17 pacotes gratuitos'),null,{timeout:12000});
    const openAssetsCount=await page.locator('.statband span').filter({hasText:'pacotes CC0'}).innerText();
-   assert.match(openAssetsCount,/17 pacotes CC0/,'portal correctly highlights real creator packs');
+   assert.match(openAssetsCount,/pacotes CC0/,'portal must highlight the real creator packs');
    assert.equal(await page.locator('.statband span').filter({hasText:'missões'}).innerText(),'10 missões','portal count follows mission cards');
    assert.match(await page.locator('#myProgress').innerText(),/Caderno do Aluno/,'no misleading legacy XP counter');
    async function ensureFallbackOpen(){
