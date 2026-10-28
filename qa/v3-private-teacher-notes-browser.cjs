@@ -30,6 +30,7 @@ const assert=require('node:assert/strict');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('http://127.0.0.1:8899/index.html');
   await page.setContent('<!doctype html><html lang="pt-BR"><head><link rel="stylesheet" href="/v3/teacher-private-notes.css"></head><body style="background:#10151c"><main id="mount"></main></body></html>');
+  await page.addScriptTag({url:'http://127.0.0.1:8899/v3/teacher-private-notes-guard.js'});
   for(const [file,global,phase='practice',label='Abrir roteiro privado do professor'] of modules){
    await page.addScriptTag({url:'http://127.0.0.1:8899/v3/'+file+'.js'});
    await page.evaluate(({name,phase})=>{document.querySelector('#mount').innerHTML=window[name].render(phase)},{name:global,phase});
@@ -47,6 +48,23 @@ const assert=require('node:assert/strict');
    await page.keyboard.press('Enter');
    assert.equal(await notes.evaluate(el=>el.open),false,file+' keyboard Enter closes private notes');
   }
+  // Actual projection guard: notes must close on Escape, stage navigation and page exit.
+  await page.evaluate(()=>{
+   document.querySelector('#mount').innerHTML=window.PIT_TEACHER_MISSION_TEN_VALIDATION.render('practice');
+   document.body.insertAdjacentHTML('beforeend','<button id="qaStageNav" type="button" data-stage="9">Mudar missão</button>');
+  });
+  const guarded=page.locator('details.pit-private-teacher-notes');
+  await guarded.locator('summary').click();
+  assert.equal(await guarded.evaluate(el=>el.open),true,'private note opens only after explicit action');
+  await page.keyboard.press('Escape');
+  assert.equal(await guarded.evaluate(el=>el.open),false,'Escape closes exposed private note');
+  await guarded.locator('summary').click();
+  await page.locator('#qaStageNav').click();
+  assert.equal(await guarded.evaluate(el=>el.open),false,'real data-stage navigation closes exposed note');
+  await guarded.locator('summary').click();
+  await page.evaluate(()=>window.dispatchEvent(new Event('pagehide')));
+  assert.equal(await guarded.evaluate(el=>el.open),false,'pagehide closes exposed note');
+  await page.locator('#qaStageNav').evaluate(el=>el.remove());
   // Student M09 must not pretend a defect or correction before a peer playtest.
   await page.addScriptTag({url:'http://127.0.0.1:8899/v3/student-mission-nine.js'});
   const student=await page.evaluate(width=>{
@@ -88,5 +106,5 @@ const assert=require('node:assert/strict');
   await context.close();
  }
  await browser.close();
- console.log('PASS V4 private teacher notes: M01-M10 practice and M04-M10 review; M09 neutral form and M10 student editor handoff in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
+ console.log('PASS V4 private teacher notes: M01-M10 practice and M04-M10 review; M09 neutral form and M10 student editor handoff in Chrome 390/1280px, default closed, discreet icon, keyboard open/close, Escape/stage navigation/pagehide guard');
 })().catch(e=>{console.error(e);process.exit(1)});
