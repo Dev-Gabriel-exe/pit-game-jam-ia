@@ -56,6 +56,17 @@ const {chromium}=require('playwright');
     assert(a.size>500,'nonempty PNG '+a.id);
     assert.equal(a.magic,'137,80,78,71,13,10,26,10','PNG signature '+a.id);
    }
+   // A failed PNG decode must show an explicit fallback, never an apparently valid preview.
+   await page.evaluate(()=>{
+    const api=window.PIT_LIBRARY_API,original=api.assetBlob;
+    api.assetBlob=async a=>a.id==='explorador'?new Blob(['not-a-png'],{type:'image/png'}):original(a);
+   });
+   await open('explorador');
+   await page.locator('#pitPreviewStage .pit-preview-error').waitFor({state:'visible'});
+   assert.match(await page.locator('#pitPreviewStage .pit-preview-error').innerText(),/Não foi possível gerar a prévia/,'invalid PNG shows explicit error');
+   await page.locator('.pit-preview-close').click();
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
    await open('glb-cristal');
    await page.locator('#pitPreviewStage canvas').waitFor();
    const mesh=await page.evaluate(()=>{
@@ -77,7 +88,7 @@ const {chromium}=require('playwright');
    assert.equal(audio.paused,true,'audio does not autoplay');
    await page.locator('.pit-preview-close').click();
    assert.deepEqual(errors,[],'no JS page errors at '+width);
-   console.log('PASS LIBRARY PREVIEW '+width+'px: 38 buttons, ten added PNG downloads, sprite/map decode, GLB mesh, WAV audio, focus and Escape');
+   console.log('PASS LIBRARY PREVIEW '+width+'px: 46 buttons, ten verified PNG downloads, sprite/map decode, GLB mesh, WAV audio, focus and Escape');
    await page.close();
   }
  }finally{await browser.close()}
