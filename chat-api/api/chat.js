@@ -124,9 +124,8 @@ module.exports = async function handler(req, res) {
       const messageId=String(req.query?.messageId||'');
       if(!/^[1-9][0-9]{0,17}$/.test(messageId))return sendError(res,400,'Imagem inválida.');
       await ensureImages();
-      const data=await db.query('SELECT i.mime,i.bytes,m.student_id FROM pit_chat_images i JOIN pit_chat_messages m ON m.id=i.message_id WHERE i.message_id=$1 AND m.room_code=$2',[messageId,ROOM]);
-      if(!data.rowCount)return sendError(res,404,'Imagem não encontrada.');
-      if(!teacher&&String(data.rows[0].student_id)!==String(me.id))return sendError(res,403,'Imagem de outra conversa.');
+      const data=await db.query('SELECT i.mime,i.bytes FROM pit_chat_images i JOIN pit_chat_messages m ON m.id=i.message_id WHERE i.message_id=$1 AND m.room_code=$2 AND ($3::boolean OR m.student_id=$4::uuid)',[messageId,ROOM,teacher,teacher?null:me.id]);
+      if(!data.rowCount)return sendError(res,404,'Imagem não encontrada ou sem acesso.');
       res.setHeader('Content-Type',data.rows[0].mime);
       res.setHeader('Content-Disposition','inline; filename="print.'+IMAGE_TYPES[data.rows[0].mime]+'"');
       return res.status(200).end(data.rows[0].bytes);
@@ -167,6 +166,7 @@ module.exports = async function handler(req, res) {
         id=me.id;
       }
       const body=clean(req.body?.body,MAX_BODY);
+      if(body==='[Imagem]')return sendError(res,400,'Use o anexo para enviar imagens.');
       if(body.length<2) return sendError(res,400,'Escreva pelo menos dois caracteres.');
       const author=teacher?'teacher':'student';
       const count=await db.query(
