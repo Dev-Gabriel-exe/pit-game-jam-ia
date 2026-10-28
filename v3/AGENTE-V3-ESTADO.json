@@ -2221,6 +2221,12 @@
       "task": "REL-01",
       "commit": "dda0c2464fb4d15836f4413e06ded4f49f9720de",
       "summary": "Confirmed WAV RIFF integrity regression Browser QA 40690117420 SUCCESS and static QA 40690117422 SUCCESS. Added exhaustive Chrome integration coverage generating every one of 46 catalogue blobs, checking nonempty data, matching .png/.glb/.wav filenames, MIME and file signatures. New CI pending; no actual GDevelop GUI import or physical device claim; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "9aebe7eba633bff93b6fcac0cd1fa2dac6fbe634",
+      "summary": "Verified all GLB mesh and WAV PCM structural tests Browser QA 40691686142 SUCCESS and static QA 40691686228 SUCCESS (commit 1616f2ae). Added browser decoding of all 36 PNG assets with real Image.decode and strict 160x160 sprite / 1024x576 map dimensions (9aebe7eb). New CI pending; GDevelop GUI, physical mobile and peer tests NOT_RUN; 54/59 unchanged."
     }
   ]
 }
