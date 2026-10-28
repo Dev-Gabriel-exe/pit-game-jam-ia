@@ -145,7 +145,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   assert.equal(await button.isDisabled(),false,'Fixture-unlocked stage '+stage+' should be navigable');
   await button.click();await closeArcade(sp);
   for(const phase of ['briefing','practice','review']){
-   await sp.locator('#phasebar [data-phase="'+phase+'"]').click();
+   await sp.locator(stage===1?'[data-q-tab="'+phase+'"]':'#phasebar [data-phase="'+phase+'"]').click();
    const content=await sp.locator('#mainContent').innerText();
    assert(content.trim().length>70,'Student M'+stage+' '+phase+' has meaningful visible content');
    missionAudit.push('student:'+stage+':'+phase);
