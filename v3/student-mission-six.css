@@ -9,6 +9,9 @@
 .m6s-root button:disabled{opacity:.48;cursor:not-allowed}
 .m6s-time{display:flex;flex-wrap:wrap;gap:15px;padding:13px;background:#293540;border-left:3px solid #dfa968;margin-bottom:18px}
 .m6s-log{margin-top:20px;padding:clamp(14px,3vw,24px);border:1px solid #8d6b50;background:#1b2731}
+.m6s-log a{color:#ffe0a8;text-decoration:underline;text-underline-offset:3px;font-weight:700;overflow-wrap:anywhere}
+.m6s-log a:hover{color:#fff3d6}
+.m6s-log a:focus-visible{outline:3px solid #ffe08b;outline-offset:3px}
 .m6s-field{display:block;margin:15px 0}.m6s-field b{display:block;margin-bottom:5px}
 .m6s-field textarea,.m6s-review textarea{display:block;width:100%;background:#0f1b25;color:#fff4e2;border:1px solid #a47b56;padding:12px;font:inherit;resize:vertical}
 .m6s-checks{display:grid;gap:10px;padding:15px;background:#24372f;border:1px solid #7f9c80}
