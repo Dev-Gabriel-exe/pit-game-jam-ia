@@ -34,7 +34,9 @@ const fs=require('node:fs'),path=require('node:path');
    }
    const metrics=await page.evaluate(()=>{
     const html=document.documentElement;
-    return {scroll:html.scrollWidth,viewport:innerWidth,behavior:getComputedStyle(html).scrollBehavior,
+    const overflow=html.scrollWidth>innerWidth+4;
+    const offenders=overflow?[...document.querySelectorAll('body *')].map(el=>({el,r:el.getBoundingClientRect()})).filter(x=>x.r.width>0&&x.r.right>innerWidth+5).slice(0,12).map(x=>({tag:x.el.tagName,id:x.el.id,cls:String(x.el.className).slice(0,70),right:Math.round(x.r.right),width:Math.round(x.r.width)})):[];
+    return {scroll:html.scrollWidth,viewport:innerWidth,behavior:getComputedStyle(html).scrollBehavior,offenders,
       missing:[...document.images].filter(i=>i.loading!=='lazy'&&i.complete&&i.naturalWidth===0&&i.currentSrc.startsWith(location.origin)).map(i=>i.currentSrc)};
    });
    assert(metrics.scroll<=metrics.viewport+4,route.name+' '+width+' horizontal overflow: '+JSON.stringify(metrics));
