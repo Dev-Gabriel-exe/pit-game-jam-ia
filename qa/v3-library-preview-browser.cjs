@@ -11,8 +11,10 @@ const {chromium}=require('playwright');
    await page.goto('http://127.0.0.1:8899/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW),{timeout:10000});
    const count=await page.locator('[data-preview]').count();
-   assert.equal(count,46,'every current resource has a preview button');
-   assert.equal(await page.locator('.statband span').filter({hasText:'recursos para download'}).innerText(),'46 recursos para download','portal count follows actual catalogue');
+   const catalogueSize=await page.evaluate(()=>window.PIT_LIBRARY_API.assets.length);
+   assert(catalogueSize>=49,'expanded catalogue has at least 49 resources');
+   assert.equal(count,catalogueSize,'every current resource has a preview button');
+   assert.equal(await page.locator('.statband span').filter({hasText:'recursos para download'}).innerText(),catalogueSize+' recursos para download','portal count follows actual catalogue');
    assert.equal(await page.locator('.statband span').filter({hasText:'missões'}).innerText(),'10 missões','portal count follows mission cards');
    assert.match(await page.locator('#myProgress').innerText(),/Caderno do Aluno/,'no misleading legacy XP counter');
    async function open(id){
@@ -31,7 +33,7 @@ const {chromium}=require('playwright');
    await open('mapa-floresta');
    assert.equal(await page.locator('#pitPreviewStage img').evaluate(async img=>{await img.decode();return img.complete&&img.naturalWidth===1024&&img.naturalHeight===576}),true,'actual 1024x576 map');
    await page.locator('.pit-preview-close').click();
-   for(const id of ['sentinela','arqueiro','mapa-arquipelago','mapa-fortaleza','bussola','reliquia','grifo','druida','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
+   for(const id of ['coruja-mecanica','mapa-jardim-luz','ampulheta','sentinela','arqueiro','mapa-arquipelago','mapa-fortaleza','bussola','reliquia','grifo','druida','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
     await open(id);
     const actual=await page.locator('#pitPreviewStage img').evaluate(async img=>{
      await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,complete:img.complete};
@@ -89,7 +91,7 @@ const {chromium}=require('playwright');
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
    // Exhaustive asset generation is viewport-independent: run once, not twice.
    if(width===390){
-   // Verify the actual downloaded bytes, filenames and MIME for all 46 resources.
+   // Verify the actual downloaded bytes, filenames and MIME for the entire catalogue.
    const downloads=await page.evaluate(async()=>{
     const api=window.PIT_LIBRARY_API,rows=[];
     for(const asset of api.assets){
@@ -101,7 +103,7 @@ const {chromium}=require('playwright');
     }
     return rows;
    });
-   assert.equal(downloads.length,46,'all catalogue entries yield downloadable bytes');
+   assert.equal(downloads.length,catalogueSize,'all catalogue entries yield downloadable bytes');
    for(const item of downloads){
     assert(item.file.endsWith('.'+item.expected),'correct filename extension '+item.id);
     assert(item.size>100,'nonempty download '+item.id);
@@ -132,12 +134,16 @@ const {chromium}=require('playwright');
     }
     return results;
    });
-   assert.equal(decoded.length,36,'all 36 PNG resources decode');
+   assert.equal(decoded.length,catalogueSize-10,'all PNG resources decode');
    for(const asset of decoded){
     assert.equal(asset.width,asset.kind==='mapa'?1024:160,'decoded PNG width '+asset.id);
     assert.equal(asset.height,asset.kind==='mapa'?576:160,'decoded PNG height '+asset.id);
     if(asset.kind!=='mapa')assert.equal(asset.cornerAlpha,0,'sprite/object transparent corner '+asset.id);
     else assert.equal(asset.centerAlpha,255,'map center fully opaque '+asset.id);
+   }
+   for(const id of ['coruja-mecanica','ampulheta']){
+    const sample=decoded.find(a=>a.id===id);
+    assert(sample&&sample.centerAlpha>0,'new original sprite has visible center pixels '+id);
    }
    // Parse every GLB and WAV header, not only the file signatures.
    const internals=await page.evaluate(async()=>{
@@ -210,7 +216,7 @@ const {chromium}=require('playwright');
    assert.equal(audio.paused,true,'audio does not autoplay');
    await page.locator('.pit-preview-close').click();
    assert.deepEqual(errors,[],'no JS page errors at '+width);
-   console.log('PASS LIBRARY PREVIEW '+width+'px: 46 buttons, ten verified PNG downloads, sprite/map decode, GLB mesh, WAV audio, focus and Escape');
+   console.log('PASS LIBRARY PREVIEW '+width+'px: '+count+' preview buttons, full catalogue binary checks, PNG decode, GLB mesh, WAV audio, focus and Escape');
    await page.close();
   }
  }finally{await browser.close()}
