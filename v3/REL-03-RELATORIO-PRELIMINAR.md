@@ -19,7 +19,7 @@ O checkpoint `v3/AGENTE-V3-ESTADO.json` registra **52 de 59 metas como `done`** 
 | Evidências 01–10 | [Static QA FUN-05](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636673696) | Handler real com SQL descartável, não editor GDevelop |
 | Roster e heartbeat | [Static QA FUN-06](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636760085) e [Browser QA](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636789133) | Três alunos fictícios |
 | Chat bidirecional | [Static QA FUN-07](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636877700) | Falha de rede simulada |
-| Downloads | [Static QA FUN-08](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636997100) | 28 MIME/assinaturas; importação no GDevelop não executada |
+| Downloads e GLB | [Static QA FUN-08](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636997100); [Khronos GLB QA 40649579075](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649579075) | 28 MIME/assinaturas e 5 GLBs validados semanticamente (0 erros, 0 avisos); importação no GDevelop não executada |
 | E2E três alunos | [Browser QA FUN-09](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637186741) | 2D/3D via fixture HTTP, não jogos reais |
 | Postgres 16 descartável | [Postgres QA 40637833387](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637833387) | Handlers reais e transações com 3 alunos fictícios; não Neon/produção |
 | Segurança/regressão | [Static QA FUN-10](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637308970) | Auditoria estática; não é pentest |
@@ -42,6 +42,12 @@ Em `experiment/ltx-missions-01-10`, o status `ops/ltx-status.json` e `v3/motion-
 - Testes de MIME/GLB/WAV/ZIP, três sessões fictícias e falha HTTP simulada adicionados.
 - Guia operacional do professor incluído como página estática com atalho no painel.
 - Corrigida a exposição cruzada de rascunhos/checklists do formulário genérico quando dois alunos fictícios compartilham um navegador; agora as chaves são isoladas por identificador. Acrescentada ação de sair/trocar na navegação de aluno/professor e rolagem contida em 768px. [Static QA 40643089008](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40643089008) e [Browser QA 40643089001](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40643089001) passaram. Chaves legadas sem proprietário continuam armazenadas, mas não são exibidas nem migradas automaticamente.
+
+### Teste isolado de editor e robustez do chat (28/10/2026)
+
+O teste `qa/v3-gdevelop-editor-smoke.cjs` tentou abrir os starters oficiais 2D e 3D no editor web real, sem criar conta. A [execução 40649114129](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649114129) recebeu HTTP 200, porém mostrou a página de entrada (“Log in”, “Sign up”, “Start for free”), sem disponibilizar o botão Preview; portanto **o Preview e a importação continuam NÃO EXECUTADOS**. Capturas e diagnóstico foram preservados no artifact do workflow. Nenhum cadastro foi criado e nenhum serviço pago foi utilizado.
+
+A consulta do histórico do chat do professor passou a usar o helper autenticado compartilhado, com timeout, proteção de prévia e tratamento uniforme de erros; o E2E verifica `studentId` da conversa. [Browser QA 40649326459](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649326459) e [Static QA 40649326394](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649326394) passaram.
 
 ## Bloqueios e próxima decisão
 
