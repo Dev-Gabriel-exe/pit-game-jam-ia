@@ -154,7 +154,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  const individuals=new Map(),effects=[],labels=new Map();
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();
- function clearHeroes(){for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();for(const x of individuals.values()){root.remove(x.mesh.root);x.mesh.root.traverse(o=>{if(o.geometry&&o.geometry!==MATERIAL.floor)o.geometry.dispose?.();});labels.delete(x.id)}individuals.clear();}
+ function clearHeroes(){for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();for(const x of individuals.values()){root.remove(x.mesh.root);x.mesh.root.traverse(o=>{o.geometry?.dispose?.();const mats=Array.isArray(o.material)?o.material:[o.material];for(const material of mats)if(material&&!Object.values(MATERIAL).includes(material)){material.map?.dispose?.();material.dispose?.()}});labels.delete(x.id)}individuals.clear();}
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
