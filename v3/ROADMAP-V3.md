@@ -115,3 +115,13 @@ Missão 01 — O Chamado implementada na branch V3 com interface de fantasia gó
 ### Revisão de qualidade pedagógica — Caderno do Professor (27/10/2026)
 
 A versão inicial da Missão 01 do professor foi reprovada por superficialidade técnica, estilo de texto semelhante a notas e ausência de animações. Foi substituída por `teacher-mission-one-pro.js` e `teacher-depth.css`, incluindo teoria mais precisa, código e condições verificáveis, animação de entrada de cards, comparação de gêneros, simulador com log de eventos e três casos de teste. O novo padrão é o mínimo exigido para as missões 02–10. Ainda falta homologação visual no navegador e teste presencial; **a Fase 3 continua pendente**.
+
+## Fase 3 — Missão 02: MVP em Foco (27/10/2026)
+
+**Implementada nos dois ambientes, homologação pendente.** A Missão 01 está editorialmente aprovada pelo responsável; os testes E2E de autenticação/entrega em uma turma de demonstração seguem pendentes.
+
+- **Professor (30 min):** fundamentos técnicos de MVP/protótipo/vertical slice, escopo, requisitos, priorização e dependências; simulador interativo de corte de funcionalidades com pontuação heurística; animações de cards, exemplos RPG/Corrida/Puzzle.
+- **Aluno:** documento curto de escopo herdando gênero, título, ação e objetivo da Missão 01; quatro decisões de MVP; backlog opcional; ficha em tempo real; rascunho individual; evidência estruturada persistida na API atual; revisão e aprovação reais.
+- **Limite didático:** não abrir o GDevelop nesta missão. A criação no editor inicia na Missão 03, com prints/tutorial incorporado na própria tela.
+- **Arquivos novos:** `teacher-mission-two.js`, `student-mission-two.js`, `mission-two.css`.
+- **Mais informações e testes:** [FASE3-MISSAO2.md](./FASE3-MISSAO2.md).
