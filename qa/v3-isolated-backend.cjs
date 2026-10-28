@@ -46,7 +46,7 @@ class MockPool{
   }
   if(q.startsWith('update pit_student_stages set status=')){
    const [status,feedback,id,stage]=params;
-   const row=stages.find(s=>s.student_id===id&&s.stage===stage&&['submitted','approved','revision'].includes(s.status));
+   const row=stages.find(s=>s.student_id===id&&s.stage===stage&&s.status==='submitted');
    if(!row)return result([]);
    row.status=status;row.feedback=feedback;row.reviewed_at=state.updated_at;
    return result([{stage,status,feedback}]);
@@ -216,11 +216,16 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
    assert.equal(revision.statusCode,200,'revision M'+n+' issued');
    const reviewed=await call(classroom,'GET','state',{},cToken);
    assert.equal(reviewed.body.progress.find(p=>p.stage===n)?.status,'revision','student receives revision M'+n);
+   const premature=await call(classroom,'POST','review',{studentId:cId,stage:n,status:'approved'},'',origin,pin);
+   assert.equal(premature.statusCode,409,'revision M'+n+' cannot be approved before resubmission');
    const resubmit=await call(classroom,'POST','progress',{stage:n,route,status:'submitted',evidence:evidence+' Corrigido.'},cToken);
    assert.equal(resubmit.statusCode,200,'revised M'+n+' resubmitted');
+   assert.match(resubmit.body.progress.evidence,/Corrigido\./,'revised evidence actually changed');
   }
   const approve=await call(classroom,'POST','review',{studentId:cId,stage:n,status:'approved',feedback:'Criterios de teste atendidos.'},'',origin,pin);
   assert.equal(approve.statusCode,200,'teacher approves M'+n);
+  const duplicateApproval=await call(classroom,'POST','review',{studentId:cId,stage:n,status:'approved'},'',origin,pin);
+  assert.equal(duplicateApproval.statusCode,409,'approved M'+n+' cannot be silently re-reviewed');
   const locked=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'nao alterar'},cToken);
   assert.equal(locked.statusCode,409,'approved M'+n+' cannot be overwritten');
  }
