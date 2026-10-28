@@ -7,7 +7,7 @@
 - **40/40** combinações missão × fase projetaram ao menos um slide, sem erros JavaScript observados na auditoria.
 - **196 slides** no conjunto, incluindo teoria, exemplos, prática e revisão.
 - **21/40 fases** contêm algum texto abaixo de **18 px** (muitas etiquetas e textos secundários).
-- **11/40 fases** contêm ao menos um slide com rolagem vertical, num total de 12? A contagem segura é de fases, não slides; preferir `11` até auditoria detalhada.
+- **11/40 fases** contêm ao menos um slide com rolagem vertical (**15 slides** com rolagem no total).
 - **0** fases com transbordamento horizontal detectado no contêiner de apresentação (1600×900).
 - **9/40 fases** projetaram menos de 40% dos caracteres da tela original. A métrica inclui conteúdo auxiliar e pode subestimar cobertura útil; é um sinal de investigação, não prova de perda proporcional.
 - **22/40 fases** têm controles na tela-fonte; em apenas **2/40** restaram controles nos slides gerados. Como o projetor usa `outerHTML`, eventos JS ligados aos nós originais não são transferidos; um botão desenhado no slide não comprova que o simulador funcione.
