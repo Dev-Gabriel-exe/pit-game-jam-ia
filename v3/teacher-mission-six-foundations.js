@@ -49,6 +49,10 @@ function render(){
  '<select id="f6Situation">'+quiz.map((q,i)=>'<option value="'+i+'">'+esc(q.text)+'</option>').join('')+'</select>'+
  '<div class="f6-buttons">'+assets.map(a=>'<button type="button" data-f6-answer="'+a.id+'">'+esc(a.format)+'</button>').join('')+'</div>'+
  '<div id="f6Answer" class="f6-answer" aria-live="polite">Escolha um formato para conferir a recomendação e seu motivo.</div></div></div>'+
+ '<section class="f6-scope" aria-label="Diagnóstico de importação de recursos"><strong>SE NÃO APARECER NO PREVIEW · DIAGNÓSTICO EM 3 PASSOS</strong>'+
+ '<p><b>1 · ARQUIVO:</b> confirme que o recurso foi baixado e que sua extensão corresponde ao tipo escolhido: PNG para Sprite, WAV para efeito, GLB para modelo 3D. Não basta colar um link da IA.</p>'+
+ '<p><b>2 · OBJETO E CENA:</b> no GDevelop, confira se o recurso foi associado ao objeto correto e se uma instância do objeto foi colocada na cena. Para som, verifique se existe um evento que executa Play a sound após interação.</p>'+
+ '<p><b>3 · TESTE ISOLADO:</b> execute Preview, verifique posição, escala e evento; se falhar, reverta apenas o novo recurso e confirme que o jogo da Missão 05 continua funcional. Registre o erro e use um asset local como plano B.</p></section>'+
  '<div class="f6-ethics"><strong>QUATRO VERIFICAÇÕES DE USO RESPONSÁVEL</strong>'+
  '<div>'+[
  ['AUTORIA','Registrar a origem e o prompt/alterações autorais. IA não substitui decisão artística.'],
