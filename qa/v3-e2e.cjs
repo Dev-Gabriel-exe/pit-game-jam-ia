@@ -137,7 +137,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await tp.locator('#chatWindow.open').waitFor();
  await tp.locator('#chatInput').fill('Bom trabalho na etapa 1.');
  await tp.locator('#chatForm button[type="submit"]').click();
- await tp.waitForFunction(()=>document.querySelector('#chatInput')?.value==='',{timeout:6500});
+ await tp.waitForFunction(()=>document.querySelector('#chatInput')?.value==='',null,{timeout:6500});
  assert.equal(store.messages.at(-1)?.author,'teacher','mock chat send completed before checking store');
  await sp.locator('#chatButton').click();
  await sp.locator('#chatWindow.open').waitFor();
