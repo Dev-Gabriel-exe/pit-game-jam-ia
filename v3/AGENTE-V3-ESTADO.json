@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T01:34:54.929Z",
+  "last_completed_at": "2026-10-28T01:45:01.176Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M04-02",
+  "priority": "M04-03",
   "current_phase": "MISSOES",
-  "last_task": "M04-01",
-  "completed_count": 1,
+  "last_task": "M04-02",
+  "completed_count": 2,
   "total_tasks": 59,
   "tasks": [
     {
@@ -43,10 +43,16 @@
       "description": "Tutorial ilustrado real de GDevelop para adicionar controles e limites; botões em português, screenshots verificados e fallback",
       "group": "M04",
       "position": 2,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T01:45:01.176Z",
+      "commit": "cdc3f6085e1c5fea0742a400f04ed8efdc4be43d",
+      "tests": [
+        "37/37 deterministic checks passed: syntax, CSS, SVG labeling, screenshot origins, role/phase isolation",
+        "Four GDevelop paths × four steps: Top-down, Platformer, Puzzle/Click, 3D starter with physics",
+        "Client-side control mocks: next/back, keyboard, ARIA route selection, scroll and image fallback",
+        "Official wiki pages and free MIT 3D starter verified via live source lookup",
+        "Pending: manual browser screenshot visual QA, real GDevelop procedure check, API classroom E2E"
+      ],
       "blocker": null
     },
     {
@@ -747,6 +753,21 @@
       ],
       "tests": "30/30 checks passed",
       "notes": "Teacher foundations done: inputs, behaviors, Δt, collision response, camera; four interactive 2D/3D route examples. No browser or live API test."
+    },
+    {
+      "id": "M04-02",
+      "completed_at": "2026-10-28T01:45:01.176Z",
+      "commit": "cdc3f6085e1c5fea0742a400f04ed8efdc4be43d",
+      "files": [
+        "v3/gdevelop-mission-four-guide.js",
+        "v3/gdevelop-mission-four-guide.css",
+        "v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg",
+        "professor-v3.html",
+        "v3/app.js",
+        "v3/FASE3-MISSAO4.md"
+      ],
+      "tests": "37/37 checks passed",
+      "notes": "Verified official GDevelop screenshot URLs from docs; actual browser visual QA and GDevelop engine operation not yet tested. 4 route tabs, 16 steps, offline illustration fallback, official MIT 3D starter."
     }
   ]
 }
