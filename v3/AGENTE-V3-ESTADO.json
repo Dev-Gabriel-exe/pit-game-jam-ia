@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:23:00Z",
+  "last_completed_at": "2026-10-28T05:36:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-09",
+  "priority": "FUN-10",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-08",
-  "completed_count": 49,
+  "last_task": "FUN-09",
+  "completed_count": 50,
   "total_tasks": 59,
   "tasks": [
     {
@@ -886,10 +886,13 @@
       "description": "Testes E2E com professor e pelo menos três alunos fictícios; 2D/3D, desktop/móvel e falhas de conexão",
       "group": "FUN",
       "position": 55,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:36:00Z",
+      "commit": "7f88e2428ac4fbb059a6d0bcac3660584fba0ee8",
+      "tests": [
+        "Browser QA 40637186741 success: 1 teacher + 3 fictional students in isolated Chrome contexts, 2D/3D evidence via fake API, review/revision/approval, M05 release, mobile draft persistence, simulated HTTP 503 recovery",
+        "Static QA 40637186779 success: existing isolated backend and asset regression suite"
+      ],
       "blocker": null
     },
     {
@@ -1722,6 +1725,18 @@
       ],
       "tests": "Static QA 40636997100 success: 28 generated asset MIME/signatures, GLB v2 mesh/chunks, WAV PCM headers, 4 ZIP CRC/manifest; Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint",
       "notes": "GDevelop editor import of PNG/GLB/WAV and starter project opening/saving was not executed; MIME/byte validation is not equivalent to real import. Requires isolated editor test."
+    },
+    {
+      "id": "FUN-09",
+      "completed_at": "2026-10-28T05:36:00Z",
+      "commit": "7f88e2428ac4fbb059a6d0bcac3660584fba0ee8",
+      "files": [
+        "qa/v3-multi-student-browser.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/TESTES-FUN-09.md"
+      ],
+      "tests": "Browser QA 40637186741 success: 1 teacher + 3 fictional students in isolated Chrome contexts, 2D/3D evidence via fake API, review/revision/approval, M05 release, mobile draft persistence, simulated HTTP 503 recovery; Static QA 40637186779 success: existing isolated backend and asset regression suite",
+      "notes": "All HTTP backend responses were mocked, and 2D/3D evidence was posted via page fetch, not actual GDevelop projects. No real DB, students or production writes."
     }
   ]
 }
