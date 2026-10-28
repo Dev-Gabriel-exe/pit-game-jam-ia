@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="670" viewBox="0 0 1200 670" role="img" aria-labelledby="title desc">
+<title id="title">Mapa visual do editor GDevelop em português</title><desc id="desc">Interface esquemática com gerenciador de projeto, aba Cena, painel Objetos, área de trabalho, botão Preview e Salvar. As posições são ilustrativas e podem mudar.</desc>
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#252735"/><stop offset="1" stop-color="#161820"/></linearGradient><linearGradient id="warm" x2="1" y2="1"><stop stop-color="#dfab71"/><stop offset="1" stop-color="#834c2c"/></linearGradient></defs>
+<rect width="1200" height="670" fill="#0a0d12"/><rect x="18" y="18" width="1164" height="627" rx="12" fill="url(#bg)" stroke="#b78658" stroke-width="3"/>
+<rect x="20" y="20" width="1160" height="61" rx="10" fill="#2d2931"/><text x="47" y="58" fill="#ffdfa8" font-size="23" font-family="Arial" font-weight="bold">GDEVELOP · MAPA DO EDITOR</text>
+<rect x="388" y="31" width="178" height="37" rx="4" fill="#513022" stroke="#e4b17b"/><text x="412" y="56" fill="#ffe6c5" font-family="Arial" font-size="18">1 · ABA CENA</text>
+<rect x="588" y="31" width="142" height="37" rx="4" fill="#303440"/><text x="602" y="56" fill="#e1d6c7" font-family="Arial" font-size="16">Eventos</text>
+<rect x="792" y="31" width="159" height="37" rx="4" fill="#3a523b" stroke="#8fbd94"/><text x="813" y="56" fill="#e5ffdc" font-family="Arial" font-size="18" font-weight="bold">4 · PREVIEW ▶</text>
+<rect x="969" y="31" width="169" height="37" rx="4" fill="#4a3525" stroke="#e0bd82"/><text x="1000" y="56" fill="#ffdfad" font-family="Arial" font-size="18" font-weight="bold">5 · SALVAR</text>
+<rect x="39" y="104" width="220" height="502" rx="5" fill="#181e26" stroke="#6f6b70"/>
+<text x="60" y="138" font-family="Arial" font-size="18" font-weight="bold" fill="#cfae85">GERENCIADOR</text>
+<rect x="57" y="155" width="183" height="49" rx="4" fill="#342923" stroke="#8f674c"/><text x="69" y="185" font-family="Arial" font-size="17" fill="#f4d1aa">2 · CENAS +</text>
+<text x="68" y="236" font-family="Arial" font-size="15" fill="#d1c5ba">▸ CenaPrincipal</text>
+<text x="68" y="273" font-family="Arial" font-size="15" fill="#c3b7ac">▸ Recursos</text>
+<text x="68" y="309" font-family="Arial" font-size="15" fill="#c3b7ac">▸ Variáveis</text>
+<text x="68" y="345" font-family="Arial" font-size="15" fill="#c3b7ac">▸ Extensões</text>
+<rect x="280" y="103" width="621" height="503" rx="5" fill="#131820" stroke="#696363"/>
+<rect x="301" y="129" width="579" height="352" fill="#232a37" stroke="#516577" stroke-dasharray="6 5" stroke-width="2"/>
+<text x="317" y="160" font-size="17" font-family="Arial" fill="#aaa3a1">ÁREA DA CENA</text>
+<rect x="520" y="240" width="111" height="114" rx="15" fill="url(#warm)" stroke="#f2cf9c" stroke-width="3"/>
+<circle cx="556" cy="284" r="9" fill="#161a20"/><circle cx="598" cy="284" r="9" fill="#161a20"/><path d="M555 319 Q576 337 598 319" stroke="#161a20" stroke-width="5" fill="none"/>
+<text x="505" y="384" font-size="17" font-family="Arial" font-weight="bold" fill="#e8bd88">INSTÂNCIA NA CENA</text>
+<text x="316" y="522" font-size="17" font-family="Arial" fill="#d7bda6">Arraste um objeto da lista para cá.</text>
+<rect x="923" y="103" width="235" height="503" rx="5" fill="#191e27" stroke="#6a5b51"/>
+<text x="944" y="138" font-family="Arial" font-size="19" font-weight="bold" fill="#e7bd86">3 · OBJETOS</text>
+<rect x="938" y="160" width="204" height="52" rx="5" fill="#483021" stroke="#dfaf75"/>
+<text x="964" y="193" font-family="Arial" font-size="20" font-weight="bold" fill="#ffe9c9">＋ Adicionar</text>
+<rect x="943" y="234" width="191" height="43" fill="#343741"/><text x="961" y="262" fill="#e5d5c3" font-family="Arial" font-size="17">Objeto: Personagem</text>
+<text x="60" y="629" font-family="Arial" font-size="15" fill="#c7a98b">ESQUEMA AUTORAL · NÃO É UMA CAPTURA LITERAL DA INTERFACE · BOTÕES PODEM MUDAR DE POSIÇÃO</text>
+</svg>
