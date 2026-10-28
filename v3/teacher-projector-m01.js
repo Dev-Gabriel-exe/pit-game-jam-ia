@@ -13,11 +13,11 @@ function build(){
  const unique=cards.filter(node=>!cards.some(parent=>parent!==node&&parent.contains(node)));
  const usable=unique.filter(node=>node.textContent.trim().length>=25||node.querySelector('img,canvas,video,svg'));
  const blocks=usable.length?usable:[...root.querySelectorAll('section,article,.tm1-root > *, .tm2-content > *, .tm3-body > *')].filter(node=>node.textContent.trim().length>=35&&!node.querySelector('.pit-private-teacher-notes'));
- return blocks.map((node,n)=>({title:node.querySelector('h2,h3,h4,strong')?.textContent?.trim().slice(0,95)||heading,html:node.outerHTML,number:n+1}));
+ return blocks.map((node,n)=>{const copy=node.cloneNode(true);copy.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').forEach(privateNode=>privateNode.remove());return {title:copy.querySelector('h2,h3,h4,strong')?.textContent?.trim().slice(0,95)||heading,html:copy.outerHTML,number:n+1};});
 }
 function render(){
  if(!overlay)return;
- const slide=slides[index];$('pitProjectorContent').innerHTML=slide.html;
+ const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';content.classList.add('pit-projector-enter');
  $('pitProjectorCount').textContent=(index+1)+' / '+slides.length;
  $('pitProjectorTitle').textContent=slide.title;
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;
