@@ -150,6 +150,21 @@ async function build(){
   assert(saved.resources.resources.some(r=>r.name===item.resource.name));
   assert(saved.layouts.find(x=>x.name==='Game Scene').objects.some(o=>o.name===item.objectName));
   assert(saved.tests.some(t=>t.name.startsWith('PIT QA')));
+  // Simulate a clean project file save/reopen on disk (NOT the editor GUI).
+  // The fixture must survive a second serialization without changing resource
+  // references, scene objects, tests, or generated asset bytes.
+  const canonical=JSON.stringify(saved);
+  fs.writeFileSync(jsonPath,JSON.stringify(saved,null,2)+'\\n');
+  const reopened=JSON.parse(fs.readFileSync(jsonPath,'utf8'));
+  assert.equal(JSON.stringify(reopened),canonical,'project JSON roundtrip preserves structure');
+  for(const resource of resources){
+   const filePath=path.join(dst,resource.file);
+   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex'),
+    crypto.createHash('sha256').update(resource.bytes).digest('hex'),
+    'generated resource unchanged after project file roundtrip: '+resource.file);
+   assert(reopened.resources.resources.some(x=>x.name===resource.name),
+    'resource reference preserved after reopen: '+resource.name);
+  }
   paths.push('examples/'+item.target+'/'+item.slug+'.json');
   console.log('FIXTURE OK',item.type,item.objectName,'tests='+saved.tests.length);
  }
