@@ -260,7 +260,6 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  // the resubmission. This checks the real classroom handlers, NOT the editor UI.
  const m7Practice=await call(classroom,'POST','stage',{stage:7,phase:'practice'},'',origin,pin);
  assert.equal(m7Practice.statusCode,200);
- assert.equal(m7Stage.statusCode,200);
  const m7Evidence='Missão 07 autoral fictícia: início, desafio, condição PIT_Ready, vitória e captura antes/depois no GDevelop 2D. Projeto salvo localmente.';
  const m7Draft=await call(classroom,'POST','progress',{stage:7,route:'2d',status:'working',evidence:m7Evidence},a.body.token);
  assert.equal(m7Draft.statusCode,200);
