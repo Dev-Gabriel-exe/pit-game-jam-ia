@@ -25,7 +25,8 @@ for(const file of ['aluno-v3.html','professor-v3.html']){
  const html=fs.readFileSync(path.join(root,file),'utf8');
  assert.match(html,/v3\/app\.js/,file+' V3 app');
  assert.match(html,/v2\/missions\.js/,file+' mission registry');
- assert.match(html,/v3\/arcade-gallery\.js/,file+' cinematic gallery');
+ assert.match(html,/id=["']missionGallery["']/,file+' mission gallery container');
+ if(file==='aluno-v3.html')assert.match(html,/v3\/arcade-gallery\.js/,file+' cinematic carousel module');
  assert.match(html,/data-role=["'](?:student|teacher)["']/,file+' role');
 }
 assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/biblioteca\.js/,'public asset library');
