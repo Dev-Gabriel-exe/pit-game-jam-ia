@@ -2332,62 +2332,63 @@
       "task": "V4-M09",
       "commit": "d45041ef6346d88f999c535b325e95452d1d2136",
       "summary": "M09 two-face pedagogical audit: aligned 3+3+16+3=25min and 2x8min real peer-test protocol; added student GDevelop editor/manual recovery/offline fallback; removed fictitious preselected defect and backlog, added no-change outcome for passed test; moved private teacher review into default-closed accessible paper notes; updated static and Chrome 390/1280 tests. M08 prior static/browser SUCCESS. M09 static QA 40770462560 SUCCESS on 673794c; browser 40770462553 IN_PROGRESS. Original roadmap 54/59 unchanged. Human GDevelop GUI, physical mobile and peer playtest NOT_RUN."
+    },
+    {
+      "at": "2026-10-28T22:17:00Z",
+      "task": "V4-M10",
+      "commit": "5e17df1bbd7650b535102e3b0fb2aca5643b6204",
+      "summary": "M10 two-face audit: student GDevelop editor handoff/manual M09 recovery/offline fallback, neutral shared GDevelop tutorial, concealed private teacher review workflow, projector-safe rubric, static and Chrome regression expanded to M10. M09 Browser QA 40770462553 SUCCESS. M10 static QA 40778720769 SUCCESS on 228f03f0; Browser QA 40778720790 IN_PROGRESS at checkpoint. Manual GDevelop GUI, physical mobile and human playtest NOT_RUN; original 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09",
+    "task": "V4-M10",
     "status": "in_progress",
-    "updated_at": "2026-10-28T21:16:16.759Z",
+    "updated_at": "2026-10-28T22:17:00Z",
     "code_commits": [
-      "2046fe459d77e18c3b294c8524ce25e104a4b0dc",
-      "ceb7892773b6ace1b200b27e8273a390e9b22a42",
-      "2948d20c5b8bc1b792d0650c29fbf78645f6cfa3",
-      "861ea8f62da39a5b1486ac24d3d9ec75301ffb61",
-      "af893c78a666eb48c7ed2656d2baf266b90ddd10",
-      "d590e5b1c47950f4086099e10fbd01ecb838b109",
-      "8e8d3c6883433bc2cf0e36a0fce2d6b1593c0e4e",
-      "a404cc7174bac8e016adece43654a812ac4b996a",
-      "fb40f5dbbf2398183f958580a614e156f0c38d0e",
-      "f54ec7a3e0cdce8480a7a0eceb11530a5d4c5be7",
-      "673794cfdda0532646e6e473bc79b73263aae6f9"
+      "ab88bf82c46c5d38004816cf346f5e1f1bf15ada",
+      "21ced8c4c1a3b83f5d3737644348c381ce8a435a",
+      "f68340d5f51355b266ce8fdc44120cded5e05f57",
+      "9b28bd3f2740c7817715eda400c8b80e881caa31",
+      "077f0c064d14a765491b2d6fb20140ddf6bfb989",
+      "228f03f0eed8a6b20847dd950905f564aa3f1c7a"
     ],
-    "audit_commit": "d45041ef6346d88f999c535b325e95452d1d2136",
+    "audit_commit": "5e17df1bbd7650b535102e3b0fb2aca5643b6204",
     "tests": [
       {
-        "name": "M08 static QA",
-        "run_id": 40761874034,
-        "result": "SUCCESS",
-        "sha": "e2c174c07b98"
-      },
-      {
-        "name": "M08 Browser QA",
-        "run_id": 40761874285,
-        "result": "SUCCESS",
-        "sha": "e2c174c07b98"
-      },
-      {
-        "name": "M09 static QA (including alignment and neutral form)",
-        "run_id": 40770462560,
-        "result": "SUCCESS",
-        "sha": "673794cfdda0"
-      },
-      {
-        "name": "M09 Browser QA (includes teacher private notes and neutral student form)",
+        "name": "M09 Browser QA",
         "run_id": 40770462553,
-        "result": "IN_PROGRESS",
+        "result": "SUCCESS",
         "sha": "673794cfdda0"
       },
       {
-        "name": "M09 documentation static QA",
-        "run_id": 40770495053,
+        "name": "M09 final Browser QA",
+        "run_id": 40770549613,
+        "result": "SUCCESS",
+        "sha": "ff65e73d81"
+      },
+      {
+        "name": "M10 static QA with regression",
+        "run_id": 40778720769,
+        "result": "SUCCESS",
+        "sha": "228f03f0"
+      },
+      {
+        "name": "M10 Browser QA with regression",
+        "run_id": 40778720790,
         "result": "IN_PROGRESS",
-        "sha": "d45041ef6346"
+        "sha": "228f03f0"
+      },
+      {
+        "name": "M10 audit documentation static QA",
+        "run_id": 40778788395,
+        "result": "IN_PROGRESS",
+        "sha": "5e17df1b"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
-    "next_task": "V4-M09-BROWSER-QA then V4-M10",
-    "blocker": "Browser QA do último código e da documentação pendente; GUI GDevelop manual, celular físico e playtest humano NOT_RUN"
+    "next_task": "V4-M10-BROWSER-QA then cross-mission projector-safety audit and student workflow",
+    "blocker": "Browser QA do novo código M10 e documentação pendentes; GDevelop GUI manual, celular físico e playtest humano NOT_RUN"
   }
 }
