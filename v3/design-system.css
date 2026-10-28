@@ -112,3 +112,11 @@ body[data-role="teacher"]>.shell>.hero{
 .resource-card[data-asset-format="glb"] .res-inner>small:first-child::before{background-position:33.333% 50%}
 .resource-card[data-asset-format="wav"] .res-inner>small:first-child::before{background-position:66.667% 50%}
 [data-quick-kit]::before{background-position:100% 50%}
+
+/* ART-04 · Optional poster images never carry essential mission information. */
+.stage-art,.tm1-gallery-art{object-fit:cover}
+@media(prefers-reduced-motion:reduce){
+ .stage-art,.tm1-gallery-art,.arcade-mission-photo{
+  animation:none!important;transition:none!important;transform:none!important;
+ }
+}
