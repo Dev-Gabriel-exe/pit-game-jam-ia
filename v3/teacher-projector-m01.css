@@ -12,3 +12,22 @@ body.pit-projecting{overflow:hidden!important}
 .pit-projector-slide img{max-width:100%;max-height:45vh;object-fit:contain}
 .pit-projector-footer{padding:16px 4vw;display:flex;align-items:center;justify-content:space-between;gap:25px;border-top:1px solid #70513b}.pit-projector-meter{flex:1;text-align:center;font:700 15px system-ui}.pit-projector-meter>div{margin-top:9px;height:5px;background:#49392d;border-radius:8px;overflow:hidden}.pit-projector-meter i{display:block;height:100%;background:#e9b474;transition:width .25s}
 @media(max-width:700px){.pit-projector-top{padding:12px}.pit-projector-slide{padding:15px}.pit-projector-footer{padding:10px;gap:5px}.pit-projector-slide .tm1-concept{grid-template-columns:1fr}.pit-projector-top h1{font-size:24px}#pitProjector button{font-size:12px;padding:9px}}
+
+/* Universal mission projection: cinematic entrances, readable cards, motion accessibility. */
+#pitProjector{background:radial-gradient(ellipse at 82% 18%,#50271d55,transparent 48%),radial-gradient(ellipse at 12% 82%,#302a4c55,transparent 52%),#08090f}
+#pitProjector::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(120deg,transparent 0 90px,#b48b4910 92px 94px);opacity:.32}
+.pit-projector-top,.pit-projector-footer,.pit-projector-slide{position:relative;z-index:1}
+.pit-projector-slide .pit-projector-card{width:min(1320px,100%);max-width:100%;box-sizing:border-box;min-width:0;font-size:clamp(20px,2vw,30px);line-height:1.5;overflow-wrap:anywhere}
+.pit-projector-slide .pit-projector-card>article,.pit-projector-slide .pit-projector-card>section,.pit-projector-slide .pit-projector-card>div{width:100%;max-width:100%;box-sizing:border-box}
+.pit-projector-slide .pit-projector-card h2,.pit-projector-slide .pit-projector-card h3{font-size:clamp(30px,3vw,52px);line-height:1.17}
+.pit-projector-slide .pit-projector-card p,.pit-projector-slide .pit-projector-card li{font-size:clamp(19px,1.75vw,29px);line-height:1.5}
+.pit-projector-slide .pit-projector-card img{max-width:100%;height:auto;max-height:45vh;object-fit:contain}
+.pit-projector-slide .pit-projector-card *{max-width:100%;box-sizing:border-box}
+.pit-projector-slide.pit-projector-enter .pit-projector-card{animation:pitCardEnter .58s cubic-bezier(.18,.84,.25,1) both}
+.pit-projector-slide.pit-projector-enter .pit-projector-card h2,.pit-projector-slide.pit-projector-enter .pit-projector-card h3{animation:pitTextRise .7s .08s both}
+.pit-projector-slide.pit-projector-enter .pit-projector-card p{animation:pitTextRise .65s .18s both}
+.pit-projector-slide.pit-projector-enter .pit-projector-card img{animation:pitImageReveal .85s .1s both}
+@keyframes pitCardEnter{from{opacity:0;transform:translate3d(55px,18px,0) scale(.965);filter:blur(7px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes pitTextRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pitImageReveal{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){#pitProjector *,#pitProjector *::before,#pitProjector *::after{animation:none!important;transition:none!important}}
