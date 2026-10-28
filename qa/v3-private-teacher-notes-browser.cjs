@@ -1,0 +1,41 @@
+'use strict';
+/* V4 projection safety: real Chrome verifies that practice notes are closed until
+ * the teacher deliberately opens the paper icon after disconnecting HDMI. */
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
+ const modules=[
+  ['teacher-mission-one-pro','PIT_TEACHER_MISSION_ONE'],
+  ['teacher-mission-two','PIT_TEACHER_MISSION_TWO'],
+  ['teacher-mission-three','PIT_TEACHER_MISSION_THREE']
+ ];
+ for(const width of [390,1280]){
+  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
+  const page=await context.newPage();
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('http://127.0.0.1:8899/index.html');
+  await page.setContent('<!doctype html><html lang="pt-BR"><head><link rel="stylesheet" href="/v3/teacher-private-notes.css"></head><body style="background:#10151c"><main id="mount"></main></body></html>');
+  for(const [file,global] of modules){
+   await page.addScriptTag({url:'http://127.0.0.1:8899/v3/'+file+'.js'});
+   await page.evaluate(name=>{document.querySelector('#mount').innerHTML=window[name].render('practice')},global);
+   const notes=page.locator('details.pit-private-teacher-notes');
+   assert.equal(await notes.count(),1,file+' contains exactly one private practice note');
+   assert.equal(await notes.evaluate(el=>el.open),false,file+' defaults closed');
+   const summary=notes.locator('summary');
+   assert.equal(await summary.getAttribute('aria-label'),'Abrir roteiro privado do professor');
+   const size=await summary.evaluate(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}));
+   assert(size.width<=30&&size.height<=30,file+' paper icon remains discreet '+JSON.stringify(size));
+   assert.equal(await notes.locator('.pit-private-teacher-notes-body').isVisible(),false,file+' notes hidden during projection');
+   await summary.focus();await page.keyboard.press('Enter');
+   assert.equal(await notes.evaluate(el=>el.open),true,file+' keyboard Enter opens private notes');
+   assert.equal(await notes.locator('.pit-private-teacher-notes-body').isVisible(),true,file+' content visible on demand');
+   await page.keyboard.press('Enter');
+   assert.equal(await notes.evaluate(el=>el.open),false,file+' keyboard Enter closes private notes');
+  }
+  assert.deepEqual(errors,[],width+'px no JavaScript errors');
+  await context.close();
+ }
+ await browser.close();
+ console.log('PASS V4 private teacher notes: M01-M03 Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
+})().catch(e=>{console.error(e);process.exit(1)});
