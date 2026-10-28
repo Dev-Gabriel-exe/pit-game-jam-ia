@@ -13,7 +13,7 @@ for(const [n,module] of [[1,'teacher-mission-one-pro'],[2,'teacher-mission-two']
 }
 assert(app.includes('teacherMissionNineDemo?window.PIT_TEACHER_MISSION_NINE_FOUNDATIONS.renderDemo()'),'M09 demo not legacy speaking notes');
 const expected=[
- ['v3/student-mission-three.js',['4 min</b> · projeto','7 min</b> · um asset','5 min</b> · Preview']],
+ ['v3/student-mission-three.js',['4 min</b> · projeto','8 min</b> · um asset','6 min</b> · Preview']],
  ['v3/student-mission-four.js',['36 MIN DE PRÁTICA']],
  ['v3/student-mission-five.js',['OFICINA · 24 MINUTOS']],
  ['v3/student-mission-six.js',['32 MINUTOS DE PRODUÇÃO']],
@@ -30,4 +30,16 @@ for(const n of [4,5,6,7,8,9,10]){
  assert(app.includes('teacherMission'+word+'Briefing'),'teacher concepts '+n);
 }
 assert(app.includes('teacherMissionTenValidation?'),'M10 real review');
-console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; M09 custom demo; no fallback in audited routes.');
+// Teacher-only facilitation notes must never appear expanded on the projected slides.
+const teacherNotes=['v3/teacher-mission-one-pro.js','v3/teacher-mission-two.js','v3/teacher-mission-three.js'];
+for(const file of teacherNotes){
+ const source=read(file);
+ assert(source.includes('<details class="pit-private-teacher-notes">'),file+' must conceal the teacher notes');
+ assert(source.includes('aria-label="Abrir roteiro privado do professor">▤</summary>'),file+' needs discreet accessible paper control');
+ assert(!source.includes('<details class="pit-private-teacher-notes" open'),file+' must default to closed');
+}
+assert(teacher.includes('./v3/teacher-private-notes.css'),'teacher-only stylesheet loaded');
+assert(!student.includes('teacher-private-notes.css'),'student should not load teacher-only stylesheet');
+assert(read('v3/student-mission-three.js').includes('https://editor.gdevelop.io/'),'student M03 must have real editor handoff');
+assert(read('v3/student-mission-three.js').includes('não abre nem cria o jogo automaticamente'),'student M03 should not imply automatic GDevelop launch');
+console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
