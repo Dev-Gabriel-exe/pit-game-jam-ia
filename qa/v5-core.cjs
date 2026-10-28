@@ -1,0 +1,46 @@
+'use strict';
+const assert=require('node:assert/strict');
+const c=require('../v5/hero-core.js'),backend=require('../chat-api/lib/v5-hero-core.js');
+assert.equal(c.VERSION,5);
+assert.deepEqual(Object.keys(c.CLASS),['warrior','mage','hunter','guardian']);
+assert.deepEqual(Object.keys(c.STATS),['power','agility','spirit','vitality']);
+assert.equal(c.exp(2,10).total,230);
+assert.equal(c.exp(12,15).total,1030);
+assert.equal(c.exp(0,null).total,0);
+assert.equal(c.budgets(0).attributes,6);
+assert.equal(c.budgets(500).attributes,16);
+assert.equal(c.budgets(500).talents,2);
+assert.deepEqual(backend.budgets(500),c.budgets(500),'Client/backend budget rules must match');
+const hero=c.seedBuild('Ana da Silva','mage');hero.attributes={power:2,agility:1,spirit:6,vitality:7};
+let b=c.canonical(hero,'Nome conferido pelo servidor',500);
+assert.equal(b.name,'Nome conferido pelo servidor','No client name changes allowed');
+assert.equal(b.remainingAttributes,0);
+assert.throws(()=>c.canonical(hero,'Ana da Silva',0),/Atributos excedem/);
+hero.attributes={power:0,agility:0,spirit:1,vitality:0};
+hero.talents={chain:1};
+assert.throws(()=>c.canonical(hero,'Ana da Silva',500),/requer/);
+hero.talents={rune:1,chain:1};
+assert.equal(c.canonical(hero,'Ana da Silva',500).remainingTalents,0);
+hero.talents={rune:2,chain:1};
+assert.throws(()=>c.canonical(hero,'Ana da Silva',500),/Talentos excedem/);
+function heroWith(id,klass,xp){
+ const b=c.seedBuild('Aluno '+id,klass),max=c.budgets(xp).attributes;
+ b.attributes.power=Math.min(6,max);b.attributes.vitality=max-b.attributes.power;
+ return {id,name:b.name,build:c.canonical(b,b.name,xp),xp};
+}
+const fighters=[heroWith('01','warrior',600),heroWith('02','mage',400),heroWith('03','hunter',700),heroWith('04','guardian',500)];
+const m1=c.battle(fighters,{seed:1001,limit:120});
+const result1=m1.run(4000),result2=c.battle(fighters,{seed:1001,limit:120}).run(4000);
+assert.equal(result1.finished,true,'Arena must finish');
+assert.equal(result1.standings.length,4);
+assert.deepEqual(result1.winner,result2.winner,'Battle must be reproducible with same seed');
+assert.deepEqual(result1.events,result2.events,'Battle event stream must be deterministic');
+assert(result1.events.some(e=>e.type==='hit'),'Battle needs collision/damage');
+assert(result1.events.some(e=>e.type==='special'),'Battle needs abilities');
+assert(result1.events.some(e=>e.type==='end'),'Battle must record championship');
+assert(result1.time<=120.01);
+for(const e of result1.events){assert(e.time>=0);assert(!Number.isNaN(e.time))}
+assert.throws(()=>c.battle([fighters[0],fighters[0]]),/duplicado/);
+const stat=c.derived(fighters[0].build);assert(stat.hp>100&&stat.attack>14);
+console.log('PASS: V5 4 classes, trusted XP budgets, talent prerequisites, student names, deterministic physics auto-battle, same backend/frontend rules');
+console.log(JSON.stringify({winner:result1.winner,duration:result1.time,events:result1.events.length,standings:result1.standings},null,2));
