@@ -44,7 +44,7 @@ const {chromium}=require('playwright');
    await page.locator('[data-pit-tab="modelos"]').click();
    assert.equal(await page.locator('#pitGlbGrid .pit-real-card').count(),17);
    assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),0);
-   await page.locator('[data-pit-tab="audio"]').click();
+   await page.locator('[data-pit-tab="sons"]').click();
    assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),4);
    await page.locator('[data-pit-tab="2d"]').click();
    assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),2);
