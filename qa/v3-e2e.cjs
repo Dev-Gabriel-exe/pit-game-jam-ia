@@ -195,6 +195,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.match(await sp.locator('#missionTitle').innerText(),/O CHAMADO/,'student may review prior stage');
  await tp.locator('#chatButton').click();
  await tp.locator('#chatWindow.open').waitFor();
+ assert.equal(await tp.locator('#chatWindow').getAttribute('aria-hidden'),'false','teacher chat is exposed to assistive tech');
+ await tp.locator('#chatMessages .chat-empty').waitFor({timeout:6500});
+ assert.match(await tp.locator('#chatMessages').innerText(),/Nenhuma mensagem/,'chat empty state explains what to do');
  await tp.locator('#chatInput').fill('Bom trabalho na etapa 1.');
  await tp.locator('#chatForm button[type="submit"]').click();
  await tp.waitForFunction(()=>document.querySelector('#chatInput')?.value==='',null,{timeout:6500});
@@ -203,6 +206,23 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.locator('#chatWindow.open').waitFor();
  await sp.locator('#chatMessages .msg').filter({hasText:'Bom trabalho na etapa 1.'}).waitFor({timeout:6500});
  assert.match(await sp.locator('#chatMessages').innerText(),/Bom trabalho/);
+ assert.equal(await sp.locator('#chatMessages').getAttribute('role'),'log','chat is a live message log');
+ assert.equal(await sp.locator('label[for="chatInput"]').count(),1,'chat input has an explicit label');
+ await sp.locator('#chatClose').click();
+ assert.equal(await sp.locator('#chatWindow').getAttribute('aria-hidden'),'true','closed chat hidden from assistive tech');
+ assert.equal(await sp.evaluate(()=>document.activeElement?.id),'chatButton','chat focus returns to opener');
+ const failMessages=async route=>route.fulfill({status:503,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({error:'Indisponibilidade simulada'})});
+ await sp.route(/\\/api\\/chat\\?action=messages(?:&|$)/,failMessages);
+ await sp.locator('#chatButton').click();
+ await sp.locator('#chatStatus[data-kind="error"]').waitFor({timeout:6500});
+ assert.match(await sp.locator('#chatStatus').innerText(),/Indisponibilidade simulada/,'network error is visible');
+ await sp.locator('#chatInput').fill('Rascunho preservado');
+ await sp.unroute(/\\/api\\/chat\\?action=messages(?:&|$)/,failMessages);
+ await sp.locator('#chatRetry').click();
+ await sp.locator('#chatStatus[data-kind="success"]').waitFor({timeout:6500});
+ assert.equal(await sp.locator('#chatInput').inputValue(),'Rascunho preservado','draft survives retry');
+ assert.match(await sp.locator('#chatMessages').innerText(),/Bom trabalho/,'messages recover after retry');
+ console.log('PASS UI-07: empty state, network error, retry, focus restoration, live log and draft persistence');
 
  // AUD-05: traverse all ten real mission pages in both roles with isolated fixture data.
  // This is browser rendering coverage, not a claim of GDevelop execution or student approval.
