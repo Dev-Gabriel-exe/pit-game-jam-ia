@@ -75,7 +75,7 @@ explore:['Leia as opções de ferramentas gratuitas no Caderno do Aluno.','Explo
 work:['Escolher apenas um asset necessário ao seu jogo.','Registrar arquivo, formato, origem e licença/autoria.','Importar e fazer o recurso aparecer ou funcionar no Preview.','Registrar antes, depois, incompatibilidade testada e projeto salvo.'],
 verify:['Um asset adequado foi obtido com origem/licença.','O recurso integra o jogo e aparece no Preview.','Antes/depois, falha testada e projeto salvos documentados.'],
 deliver:'Registro de um único asset integrado, sua procedência e testes observáveis.',depth:'Uma imagem pode precisar de fundo transparente; um modelo 3D normalmente precisa de GLB no GDevelop; sons precisam de formato compatível. Use o gerador de IA ou a biblioteca aberta respeitando licença e restrições.',hint:'Não acumule recursos: um arquivo que funciona é melhor que dez downloads sem integração.'},
-7:{time:[1,3,4,6,9,24,3],intro:'Ter objetos e controles não basta: o jogo precisa permitir começar, enfrentar um desafio e terminar.',concepts:[
+7:{time:[1,3,4,6,9,24,3],intro:'Todo jogo precisa de começo, desafio e final.',concepts:[
 ['Estado inicial','Condição em que a partida começa, com jogador e objetivos preparados.'],
 ['Desafio','Obstáculo ou meta que exige ação real do jogador.'],
 ['Vitória','Condição verificável que conclui a partida.'],
@@ -88,7 +88,7 @@ explore:['Leia o material de começo, desafio e condição de final.','Explore o
 work:['Definir estado inicial e desafio principal.','Implementar evento que permite concluir a partida.','Mostrar feedback ou cena final no Preview.','Testar vitória antecipada, repetição e salvar projeto editável.'],
 verify:['O jogo começa num estado coerente.','Um desafio e uma condição real levam à vitória.','Testes negativo/reinício e projeto salvo registrados.'],
 deliver:'Protótipo demonstrável com começo, desafio e fim, incluindo testes.',depth:'Uma máquina de estados simples possui início, jogando e concluído. Eventos devem preservar transições coerentes e impedir vitória antecipada. O objetivo é completar o núcleo do jogo, não aumentar sua complexidade.',hint:'Comprove que o jogo termina sem que o professor precise editar o projeto.'},
-8:{time:[1,3,4,5,7,17,3],intro:'Polimento é tornar a experiência compreensível para quem nunca viu seu jogo.',concepts:[
+8:{time:[1,3,4,5,7,17,3],intro:'Polimento é fazer o jogador compreender e reagir.',concepts:[
 ['UX','Experiência de quem joga: entender controles, objetivos e resultados.'],
 ['HUD','Informações visíveis, como vida, pontuação, objetivo ou indicador.'],
 ['Feedback','Resposta visual/sonora que informa o efeito de uma ação.'],
