@@ -28,8 +28,9 @@ jobs:
         run: |
           mv v3/assets/missions/portal-planeswalker-307687.mp4 /tmp/planeswalker-original.mp4
           ffmpeg -hide_banner -loglevel error -y -i /tmp/planeswalker-original.mp4 -vf "scale='min(1920,iw)':-2" -an -c:v libx264 -pix_fmt yuv420p -preset fast -crf 24 -movflags +faststart v3/assets/missions/portal-planeswalker-307687.mp4
+          ffmpeg -hide_banner -loglevel error -y -ss 2 -i v3/assets/missions/portal-planeswalker-307687.mp4 -frames:v 1 -vf "scale=1280:-2" -q:v 3 v3/assets/missions/portal-planeswalker-307687.jpg
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add v3/assets/missions/portal-planeswalker-307687.mp4
+          git add v3/assets/missions/portal-planeswalker-307687.mp4 v3/assets/missions/portal-planeswalker-307687.jpg
           git commit -m "asset(portal): add approved Planeswalker 1080p video"
           git push origin HEAD:feature/portal-planeswalker-video-20261028
