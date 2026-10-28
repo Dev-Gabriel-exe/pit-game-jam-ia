@@ -13,3 +13,13 @@
 **Pendências:** teste no editor GDevelop e navegador real; tutorial 2D/3D será implementado na M07-02.
 
 **Próxima meta:** M07-02 — tutorial progressivo no GDevelop: início → interação → resultado em 2D e 3D.
+
+## M07-02 — Tutorial ilustrado de conclusão 2D/3D — CONCLUÍDO
+
+**Código:** `v3/gdevelop-mission-seven-guide.js` e CSS, integrados ao `demo` do professor. Duas rotas com quatro passos: preservar cena jogável, criar cena Final, adicionar evento de conclusão e testar início/negativo/vitória. A rota 3D reutiliza Physics 3D e estado da Missão 05; não troca colisão física por condição 2D.
+
+**Imagens:** três URLs de capturas publicadas pela documentação oficial do GDevelop foram abertas e conferidas em 27/10/2026. Elas mostram editor/cenas, evento e variável; são referências de interface, não capturas da execução do projeto da turma. Falha de imagem aciona diagrama autoral local identificado. Fontes: [interface](https://wiki.gdevelop.io/gdevelop5/interface/), [eventos](https://wiki.gdevelop.io/gdevelop5/interface/events-editor/), [troca de cena](https://wiki.gdevelop.io/gdevelop5/tutorials/geometry-monster/12-main-menu/), [física 3D](https://wiki.gdevelop.io/gdevelop5/behaviors/physics3d/) e [debugger](https://wiki.gdevelop.io/gdevelop5/interface/debugger/).
+
+**Verificações executadas:** 16/16 V8, incluindo sintaxe, duas rotas, condições de vitória, navegação por etapas, mudança de rota em DOM simulado, links, integração e CSS responsivo. Teste repetível registrado em `qa/v3-m07-guide.cjs` (não executado no Node nesta rodada).
+
+**Pendências:** não houve teste real de clique no GDevelop ou Preview 2D/3D; validar em homologação com projetos fictícios. **Próxima meta:** M07-03 — aluno cria condição autoral de conclusão, teste negativo e evidência.
