@@ -2258,6 +2258,12 @@
       "task": "REL-01",
       "commit": "9e8297c9afa337711a9e00babf3589731427c471",
       "summary": "Verified 49-asset Browser QA 40694836172 and static QA 40694836248 SUCCESS. Added real Chrome download smoke tests through UI for PNG explorer, GLB crystal and WAV collection with suggested filename and completed download assertions; corrected actual WAV id. New CI pending. GDevelop GUI, physical mobile and peer playtest NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "37d647ab4ebbc6fbcb2515d925ea76728cf53808",
+      "summary": "Inspected 49-asset browser QA runs 40696042014 and 40696213113: both reached library preview stage and remained in progress; static QA succeeded. Added actual disk byte verification for UI-downloaded PNG, GLB and WAV including signatures and GLB/RIFF declared length. New CI pending. No manual GDevelop/mobile/peer pass; 54/59 unchanged."
     }
   ]
 }
