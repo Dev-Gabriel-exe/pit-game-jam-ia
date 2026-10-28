@@ -2143,6 +2143,12 @@
       "task": "REL-01",
       "commit": "c081835c4363db0c5b05c9ddc6a6cbfb3c9abe3e",
       "summary": "Added two distinct original procedural PNG character sprites (sentinela and arqueiro), with dedicated SVG artwork, generated PNG previews/downloads and GDevelop usage descriptions; library 38→40. Static QA for prior WAV signature guard 40683045809 SUCCESS; Browser QA 40683045194 still in_progress when checked; new CI pending. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "77a9e0a9766fe02e556167205c0f1ca54a2d159c",
+      "summary": "Detected real static QA 40683185509 and Browser QA 40683185604 failures after adding two sprites (40 resources): static test hardcoded 38/28 and Browser QA preview regression failed; updated static regression for 40/30 and 12 unique additions. Browser QA root cause not yet confirmed; new CI pending. Manual tests NOT_RUN; 54/59 unchanged."
     }
   ]
 }
