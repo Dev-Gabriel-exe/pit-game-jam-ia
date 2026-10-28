@@ -130,7 +130,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await tp.locator('.stage-btn[data-stage="'+stage+'"]').click();
   await closeArcade(tp);
   for(const phase of ['briefing','demo','practice','review']){
-   await tp.locator('[data-phase="'+phase+'"]').click();
+   await tp.locator('#phasebar [data-phase="'+phase+'"]').click();
    const content=await tp.locator('#mainContent').innerText();
    assert(content.trim().length>70,'Teacher M'+stage+' '+phase+' has meaningful visible content');
    assert.equal(await tp.locator('#missionNumber').innerText().then(x=>x.includes('MISSÃO '+String(stage).padStart(2,'0'))),true,'Teacher stage label '+stage);
@@ -145,7 +145,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   assert.equal(await button.isDisabled(),false,'Fixture-unlocked stage '+stage+' should be navigable');
   await button.click();await closeArcade(sp);
   for(const phase of ['briefing','practice','review']){
-   await sp.locator('[data-phase="'+phase+'"]').click();
+   await sp.locator('#phasebar [data-phase="'+phase+'"]').click();
    const content=await sp.locator('#mainContent').innerText();
    assert(content.trim().length>70,'Student M'+stage+' '+phase+' has meaningful visible content');
    missionAudit.push('student:'+stage+':'+phase);
