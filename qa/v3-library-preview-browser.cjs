@@ -121,7 +121,11 @@ const {chromium}=require('playwright');
      const blob=await api.assetBlob(asset),url=URL.createObjectURL(blob);
      try{
       const img=new Image();img.src=url;await img.decode();
-      results.push({id:asset.id,kind:asset.cat,width:img.naturalWidth,height:img.naturalHeight});
+      const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+      const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+      const cornerAlpha=ctx.getImageData(0,0,1,1).data[3];
+      const centerAlpha=ctx.getImageData(Math.floor(canvas.width/2),Math.floor(canvas.height/2),1,1).data[3];
+      results.push({id:asset.id,kind:asset.cat,width:img.naturalWidth,height:img.naturalHeight,cornerAlpha,centerAlpha});
      }finally{URL.revokeObjectURL(url);}
     }
     return results;
@@ -130,6 +134,8 @@ const {chromium}=require('playwright');
    for(const asset of decoded){
     assert.equal(asset.width,asset.kind==='mapa'?1024:160,'decoded PNG width '+asset.id);
     assert.equal(asset.height,asset.kind==='mapa'?576:160,'decoded PNG height '+asset.id);
+    if(asset.kind!=='mapa')assert.equal(asset.cornerAlpha,0,'sprite/object transparent corner '+asset.id);
+    else assert.equal(asset.centerAlpha,255,'map center fully opaque '+asset.id);
    }
    // Parse every GLB and WAV header, not only the file signatures.
    const internals=await page.evaluate(async()=>{
