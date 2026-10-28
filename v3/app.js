@@ -931,19 +931,38 @@ function prepareChatImage(file){
   const remove=document.createElement('button');remove.type='button';remove.textContent='Remover imagem';remove.onclick=clearChatImageDraft;
   preview.replaceChildren(img,label,remove);preview.hidden=false;
  }
- setChatStatus('Imagem preparada apenas neste aparelho. O envio de imagens aguarda suporte seguro do servidor.','info');
+ setChatStatus('Imagem pronta para enviar na conversa privada.','info');
 }
 $('chatImageInput')?.addEventListener('change',e=>prepareChatImage(e.target.files?.[0]));
 $('chatInput')?.addEventListener('paste',e=>{
  const file=Array.from(e.clipboardData?.files||[]).find(f=>f.type.startsWith('image/'));
  if(file){e.preventDefault();prepareChatImage(file)}
 });
+async function openChatImage(id,button){
+ if(!/^[1-9][0-9]{0,17}$/.test(String(id)))return;
+ button.disabled=true;
+ try{
+  const url=new URL(BASE+'chat.js');url.pathname='/api/chat';url.searchParams.set('action','image');url.searchParams.set('messageId',id);
+  const headers={};
+  if(TEACHER&&teacherPin)headers['X-PIT-Teacher-Pin']=teacherPin;
+  if(!TEACHER&&studentSession?.token)headers['X-PIT-Student-Token']=studentSession.token;
+  const response=await fetch(url,{headers,cache:'no-store',signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error('Acesso à imagem indisponível.');
+  const blob=await response.blob();
+  if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||blob.size>2*1024*1024)throw Error('Arquivo de imagem inválido.');
+  const objectURL=URL.createObjectURL(blob),img=document.createElement('img');
+  img.src=objectURL;img.alt='Imagem compartilhada na conversa';img.style.cssText='max-width:100%;max-height:340px;object-fit:contain;border-radius:8px';
+  img.onload=()=>URL.revokeObjectURL(objectURL);
+  button.replaceWith(img);
+ }catch(error){setChatStatus(error.message,'error');button.disabled=false}
+}
 function renderChat(messages){
  const el=$('chatMessages'),prevBottom=el.scrollHeight-el.scrollTop-el.clientHeight;
  el.innerHTML=(messages||[]).map(m=>{
   const mine=(TEACHER&&m.author==='teacher')||(!TEACHER&&m.author==='student');
-  return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+esc(m.body)+'</div>'
+  return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+(m.body==='[Imagem]'?'<button type="button" data-image-id="'+Number(m.id)+'">🖼️ Abrir imagem privada</button>':esc(m.body))+'</div>'
  }).join('')||'<div class="chat-empty"><strong>Nenhuma mensagem ainda</strong>'+(TEACHER?'Selecione uma conversa e envie uma orientação.':'Descreva em qual missão e passo você precisa de ajuda.')+'</div>';
+ el.querySelectorAll('[data-image-id]').forEach(button=>button.onclick=()=>openChatImage(button.dataset.imageId,button));
  if(prevBottom<120)el.scrollTop=el.scrollHeight;
 }
 $('chatForm').onsubmit=async e=>{
@@ -953,7 +972,12 @@ $('chatForm').onsubmit=async e=>{
  if(TEACHER&&!selectedThread)return setChatStatus('Escolha um aluno antes de responder.','error');
  chatSending=true;setChatEnabled(true);setChatStatus('Enviando mensagem…');
  try{
-  await call('chat','send','POST',{body:text,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
+  if(chatImageDraft){
+   const file=chatImageDraft.file;
+   const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('Falha ao ler imagem.'));reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');reader.readAsDataURL(file)});
+   await call('chat','send-image','POST',{image,mime:file.type,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
+   clearChatImageDraft();
+  }else await call('chat','send','POST',{body:text,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
   field.value='';await loadChat();setToast('Mensagem enviada ✓');
  }catch(err){setChatStatus('Falha no envio: '+err.message+'. A mensagem continua no campo.','error');setToast(err.message,true)}
  finally{chatSending=false;setChatEnabled(!TEACHER||!!selectedThread)}
