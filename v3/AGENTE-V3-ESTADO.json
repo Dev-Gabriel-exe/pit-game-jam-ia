@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:41:00Z",
+  "last_completed_at": "2026-10-28T06:00:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "REL-02",
+  "priority": "REL-01",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "REL-03",
-  "completed_count": 51,
+  "last_task": "REL-02",
+  "completed_count": 52,
   "total_tasks": 59,
   "tasks": [
     {
@@ -932,13 +932,14 @@
       "description": "Produzir guia operacional em português para professor leigo: entrar, liberar, acompanhar, revisar, contingências, sem notas de fala nos materiais de aula",
       "group": "REL",
       "position": 58,
-      "status": "in_progress",
-      "updated_at": "2026-10-28T05:55:00Z",
+      "status": "done",
+      "updated_at": "2026-10-28T06:00:00Z",
       "commit": "d67258d893713b976e2fadf034749e459ab8388a",
       "tests": [
-        "Static QA 40637577293 success; Chrome guide test added, first run 40637577018 failed on overly broad test regex (fixed), new Browser QA 40637691150 pending"
+        "Browser QA 40637691150 success: operational guide eight sections, keyboard skip link, FAQ, mobile 390px and desktop 1280px",
+        "Static QA 40637691076 success: full static regression after guide and test correction"
       ],
-      "blocker": "Aguardar conclusão do Chrome desktop/mobile da página guia operacional; correção do teste já commitada."
+      "blocker": null
     },
     {
       "id": "REL-03",
@@ -1784,6 +1785,19 @@
       ],
       "tests": "Static QA 40637632552 success on preliminary report branch; Release gate 40637450547 diagnostic success, explicitly NOT READY",
       "notes": "Final audit/READY_FOR_FINAL_REVIEW requires 59/59 done; 5 pedagogical/functional GDevelop and peer-test blockers plus REL-01 unresolved. Preliminary report exists but is not final."
+    },
+    {
+      "id": "REL-02",
+      "completed_at": "2026-10-28T06:00:00Z",
+      "commit": "d67258d893713b976e2fadf034749e459ab8388a",
+      "files": [
+        "v3/guia-professor.html",
+        "professor-v3.html",
+        "qa/v3-teacher-guide-browser.cjs",
+        ".github/workflows/browser-qa.yml"
+      ],
+      "tests": "Browser QA 40637691150 success: operational guide eight sections, keyboard skip link, FAQ, mobile 390px and desktop 1280px; Static QA 40637691076 success: full static regression after guide and test correction",
+      "notes": "Standalone offline Portuguese operational guide linked from teacher panel; no speaking notes. Chrome used local static server, not production."
     }
   ]
 }
