@@ -19,7 +19,7 @@ assert(fs.existsSync(path.join(sourceRoot,'examples','starting-first-person','st
 assert(fs.existsSync(path.join(sourceRoot,'examples','starting-3d-tile-placement','starting-3d-tile-placement.json')));
 
 const context={
- document:{querySelectorAll:()=>[],getElementById:()=>null},
+ document:{querySelector:()=>null,querySelectorAll:()=>[],getElementById:()=>null},
  window:{addEventListener:()=>{}},localStorage:{getItem:()=>null},
  console,Blob,TextEncoder,ArrayBuffer,DataView,Uint8Array,Float32Array,Uint16Array,Math,
  URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}},setTimeout:()=>{}
