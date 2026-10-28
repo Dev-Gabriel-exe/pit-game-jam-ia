@@ -329,7 +329,11 @@ async function teacherAdvance(stage,phase){
 // Galeria cinematográfica de missões, independente da rolagem do caderno.
 function showMissionGallery(){
  if(!TEACHER&&window.PIT_ARCADE){
-  window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,studentName:visualPreview?'VISITANTE · PRÉVIA':studentSession?.name||'AVENTUREIRO',onEnter:n=>selectStage(n)});
+  const g=genreContext(1);
+   window.PIT_ARCADE.open({activeStage,currentStage:state.current_stage,progress,
+    studentName:visualPreview?'VISITANTE · PRÉVIA':studentSession?.name||'AVENTUREIRO',
+    genre:g?.genre||'',projectTitle:g?.title||'',preview:visualPreview,
+    onEnter:n=>selectStage(n)});
   return;
  }
  const modal=$('missionGallery');if(!modal)return;
