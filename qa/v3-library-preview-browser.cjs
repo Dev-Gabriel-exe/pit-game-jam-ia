@@ -23,6 +23,17 @@ const {chromium}=require('playwright');
     await page.locator('#pitAssetPreview:not([hidden])').waitFor();
     assert.equal(await page.locator('#pitPreviewTitle').innerText().then(Boolean),true,'title exists');
    }
+   // Verify real browser downloads from the visible library buttons, not only Blob APIs.
+   if(width===390){
+    for(const id of ['explorador','glb-cristal','som-moeda']){
+     const asset=await page.evaluate(id=>window.PIT_LIBRARY_API.assets.find(a=>a.id===id),id);
+     assert(asset,'download smoke test asset exists '+id);
+     const button=page.locator('[data-asset="'+id+'"]');
+     const [download]=await Promise.all([page.waitForEvent('download',{timeout:30000}),button.click()]);
+     assert.equal(download.suggestedFilename(),asset.file,'browser download filename '+id);
+     assert.equal(await download.failure(),null,'browser download completed '+id);
+    }
+   }
    await open('explorador');
    await page.locator('#pitPreviewStage img').waitFor({state:'visible'});
    assert.equal(await page.locator('#pitPreviewStage img').count(),1,'sprite has real image');
