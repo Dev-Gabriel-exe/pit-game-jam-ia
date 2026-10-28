@@ -1,6 +1,6 @@
 /* UI-07 — Chat individual: identidade dark fantasy, estados acessíveis e mobile. */
 .chat-window{
- --chat-gold:#f2c58b;--chat-ink:#f7e9d5;
+ --chat-gold:var(--pit-chat-gold);--chat-ink:var(--pit-chat-paper);
  background:linear-gradient(155deg,#191621 0%,#0b1321 58%,#101b25 100%);
  border:1px solid #9e7852;border-radius:15px;
  box-shadow:0 20px 70px #000d,0 0 0 1px #e1a96d22 inset;
