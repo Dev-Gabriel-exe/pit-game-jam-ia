@@ -16,7 +16,7 @@
   ],
   "priority": "M08-04",
   "current_phase": "MISSOES",
-  "last_task": "M07-04",
+  "last_task": "M08-04",
   "completed_count": 53,
   "total_tasks": 59,
   "tasks": [
@@ -373,13 +373,14 @@
       "position": 21,
       "status": "blocked",
       "updated_at": "2026-10-28T05:46:00Z",
-      "commit": "0d7d8e1aa3a20cbe0a26b876abb308933ae9b596",
+      "commit": "ad784b99dc41c16843213d585a3f6788f53d47b3",
       "tests": [
         "12/12 V8 static integration checks executed on fetched files: teacher rubric, student validation, accessibility styles, responsive rules and wiring",
         "Browser E2E run 40626036851 launched in GitHub Actions; outcome not yet confirmed at checkpoint",
-        "No actual GDevelop Preview, measured FPS or real mobile device inspection"
+        "No actual GDevelop Preview, measured FPS or real mobile device inspection",
+        "2026-10-28: qa/v3-m08-acceptance.cjs added and wired into static CI: checks distinct before/after, negative case, evidence persistence/isolation, teacher mobile/accessibility/performance rubric; CI run 40661631619 pending. Does not substitute physical mobile or GDevelop Preview."
       ],
-      "blocker": "Browser QA passed viewport, focus and reduced-motion coverage; still missing before/after visual confirmation in actual GDevelop Preview and physical mobile performance check."
+      "blocker": "M08 evidence/rubric automated regression added; still requires real GDevelop Preview before/after and physical mobile performance check. CI outcome pending."
     },
     {
       "id": "M09-01",
