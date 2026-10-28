@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:12:00Z",
+  "last_completed_at": "2026-10-28T05:15:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-05",
+  "priority": "FUN-06",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-04",
-  "completed_count": 46,
+  "last_task": "FUN-05",
+  "completed_count": 47,
   "total_tasks": 59,
   "tasks": [
     {
@@ -826,10 +826,13 @@
       "description": "Teste real de evidências 01–10, rascunhos, limite, envio, revisão solicitada, edição e aprovação",
       "group": "FUN",
       "position": 51,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:15:00Z",
+      "commit": "f0b6460d71df17a294ccb2f40057ac827f9fb825",
+      "tests": [
+        "Static QA 40636673696 success: actual classroom handlers with disposable SQL, 10 missions, 3 fictional students, 2D/3D, drafts, short/long evidence, revision, edit, resubmit, approval and immutability",
+        "Regression fix: revision cannot be approved before a new submitted evidence (409)"
+      ],
       "blocker": null
     },
     {
@@ -1662,6 +1665,18 @@
       ],
       "tests": "Browser QA 40635953139 success: Chrome fake API teacher stage/phase release, future lock and M01 draft persistence; Static QA 40635953113 success: actual classroom handler with disposable SQL verifies future stage/briefing rejection, practice release, previous evidence persistence",
       "notes": "Confirmed existing committed FUN-04 code at branch HEAD and successful actual GitHub Actions runs; Chrome used fake API and fictional student, SQL disposable mock; no live classroom DB tested."
+    },
+    {
+      "id": "FUN-05",
+      "completed_at": "2026-10-28T05:15:00Z",
+      "commit": "f0b6460d71df17a294ccb2f40057ac827f9fb825",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "chat-api/api/classroom.js",
+        "v3/TESTES-FUN-05.md"
+      ],
+      "tests": "Static QA 40636673696 success: actual classroom handlers with disposable SQL, 10 missions, 3 fictional students, 2D/3D, drafts, short/long evidence, revision, edit, resubmit, approval and immutability; Regression fix: revision cannot be approved before a new submitted evidence (409)",
+      "notes": "Real handler tests executed in disposable in-memory SQL, not live Postgres or full browser UI; those remain FUN-09."
     }
   ]
 }
