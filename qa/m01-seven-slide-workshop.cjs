@@ -86,9 +86,9 @@ const {chromium}=require('playwright');
   await ref.locator('#pitProjectorClose').click();
   await ref.locator('.stage-btn[data-stage="2"]').click();
   await ref.locator('#pitProjectorLaunch').click();
-  assert(Number((await ref.locator('#pitProjectorCount').innerText()).split('/')[1])>=12,'Other missions unchanged');
+  assert.equal((await ref.locator('#pitProjectorCount').innerText()).trim(),'1 / 7','M02 must have the matching short pedagogical format');
   await ref.close();
-  console.log('PASS: M01 practical 7-slide lesson with concepts, original interactive simulation, depth, timer, old full deck and unchanged M02');
+  console.log('PASS: M01 practical 7-slide lesson with concepts, original interactive simulation, depth, timer, old full deck and aligned M02');
   console.log(JSON.stringify(report,null,2));
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
