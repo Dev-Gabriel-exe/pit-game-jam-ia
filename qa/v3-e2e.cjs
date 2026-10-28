@@ -65,7 +65,33 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   assert(bytes.length>100,'download contains real bytes: '+id);
   assert.equal(magic==='PNG'?bytes.toString('ascii',1,4):bytes.toString('ascii',0,4),magic,'valid file signature '+id);
  }
- console.log('PASS UI-05: 3 real browser downloads (PNG/GLB/WAV) and genre/format filters');
+  console.log('PASS UI-05: 3 real browser downloads (PNG/GLB/WAV) and genre/format filters');
+ for(const [id,file] of [['rpg','pit-kit-exploracao-2d.zip'],['plataforma','pit-kit-plataforma-2d.zip'],['puzzle3d','pit-kit-puzzle-3d.zip'],['corrida3d','pit-kit-corrida-3d.zip']]){
+  const pending=portal.waitForEvent('download',{timeout:30000});
+  await portal.locator('[data-quick-kit="'+id+'"]').click();
+  const dl=await pending;
+  assert.equal(dl.suggestedFilename(),file,'quick kit filename '+id);
+  const zip=require('node:fs').readFileSync(await dl.path());
+  const end=zip.length-22;
+  assert.equal(zip.readUInt32LE(end),0x06054b50,'ZIP central directory '+id);
+  const count=zip.readUInt16LE(end+10);
+  assert(count>=6,'ZIP contains multiple assets and instructions '+id);
+  let off=zip.readUInt32LE(end+16),png=0,glb=0,wav=0;
+  for(let n=0;n<count;n++){
+   assert.equal(zip.readUInt32LE(off),0x02014b50,'ZIP central record '+id);
+   const nameLen=zip.readUInt16LE(off+28),extraLen=zip.readUInt16LE(off+30),commentLen=zip.readUInt16LE(off+32);
+   const name=zip.toString('utf8',off+46,off+46+nameLen),local=zip.readUInt32LE(off+42);
+   const dataStart=local+30+zip.readUInt16LE(local+26)+zip.readUInt16LE(local+28);
+   const data=zip.subarray(dataStart,dataStart+zip.readUInt32LE(off+20));
+   if(name.endsWith('.png')){assert.equal(data.subarray(0,8).toString('hex'),'89504e470d0a1a0a','actual browser PNG');assert(data.readUInt32BE(16)>=160,'real canvas dimensions');png++}
+   if(name.endsWith('.glb')){assert.equal(data.toString('ascii',0,4),'glTF');glb++}
+   if(name.endsWith('.wav')){assert.equal(data.toString('ascii',0,4),'RIFF');wav++}
+   off+=46+nameLen+extraLen+commentLen;
+  }
+  assert(png+glb+wav>=4,'kit has real binary assets '+id);
+  assert.match(await portal.locator('#quickKitStatus').innerText(),/preparado com/,'download status '+id);
+ }
+ console.log('PASS UI-06: four real Chrome ZIP downloads with PNG dimensions, GLB and WAV signatures');
  await portal.close();
  console.log('PASS UI-02: portal V3 routes, keyboard skip link and cinematic artwork in Chrome');
  await tp.goto(base+'professor-v3.html');
