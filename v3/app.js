@@ -913,7 +913,7 @@ function clearChatImageDraft(){
  chatImageDraft=null;
  const input=$('chatImageInput'),preview=$('chatImagePreview');
  if(input)input.value='';
- if(preview){preview.hidden=true;preview.replaceChildren()}
+ if(preview){preview.hidden=true;preview.style.display='none';preview.replaceChildren()}
 }
 function prepareChatImage(file){
  if(!file)return;
@@ -927,8 +927,9 @@ function prepareChatImage(file){
  const preview=$('chatImagePreview');
  if(preview){
   const img=document.createElement('img');img.src=url;img.alt='Prévia local do print';img.style.cssText='max-width:150px;max-height:100px;object-fit:contain;border-radius:8px';
-  const label=document.createElement('span');label.textContent=file.name+' · pronto para envio';
+  const label=document.createElement('span');label.textContent=(file.name.length>46?file.name.slice(0,30)+'…'+file.name.slice(-12):file.name)+' · pronto para envio';label.title=file.name;label.style.cssText='display:block;min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word;font-size:12px;line-height:1.4';
   const remove=document.createElement('button');remove.type='button';remove.textContent='Remover imagem';remove.onclick=clearChatImageDraft;
+  preview.style.cssText='display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0;overflow:hidden;padding:8px 0';
   preview.replaceChildren(img,label,remove);preview.hidden=false;
  }
  setChatStatus('Imagem pronta para enviar na conversa privada.','info');
