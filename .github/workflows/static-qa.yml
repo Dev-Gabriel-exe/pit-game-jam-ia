@@ -51,6 +51,8 @@ jobs:
         run: |
           node --check qa/v3-isolated-backend.cjs
           node qa/v3-isolated-backend.cjs
+      - name: Verify FUN-10 security, accessibility and provenance guards
+        run: node qa/v3-security-audit.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
