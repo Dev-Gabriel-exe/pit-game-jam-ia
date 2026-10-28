@@ -112,13 +112,18 @@
    if(desc)desc.textContent=current.intro;
    frame.innerHTML=body(r,step);
    const shot=frame.querySelector('[data-g4-image]');
-   if(shot)shot.addEventListener('error',()=>{
-    if(shot.dataset.g4Fallback)return;
-    shot.dataset.g4Fallback='true';shot.src=fallback;
-    shot.alt='Diagrama didático em português de movimento e colisões (não é captura literal do editor)';
-    const label=frame.querySelector('.g4-picture-label span');
-    if(label)label.textContent='DIAGRAMA AUTORAL · CAPTURA EXTERNA INDISPONÍVEL';
-   });
+   if(shot){
+    const showFallback=()=>{
+     if(shot.dataset.g4Fallback)return;
+     shot.dataset.g4Fallback='true';shot.src=fallback;
+     shot.alt='Diagrama didático em português de movimento e colisões (não é captura literal do editor)';
+     const label=frame.querySelector('.g4-picture-label span');
+     if(label)label.textContent='DIAGRAMA AUTORAL · CAPTURA EXTERNA INDISPONÍVEL';
+    };
+    shot.addEventListener('error',showFallback);
+    // A screenshot cached as broken can finish before the listener is attached.
+    if(shot.complete&&shot.naturalWidth===0)showFallback();
+   }
    frame.querySelector('[data-g4-prev]')?.addEventListener('click',()=>changeStep(step-1));
    frame.querySelector('[data-g4-next]')?.addEventListener('click',()=>changeStep(step+1));
    if(focus)buttons[r]?.focus();
