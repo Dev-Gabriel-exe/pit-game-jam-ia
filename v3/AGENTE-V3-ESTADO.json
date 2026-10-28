@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T04:54:10.160Z",
+  "last_completed_at": "2026-10-28T04:57:48.816Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-01",
+  "priority": "FUN-02",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "ART-05",
-  "completed_count": 42,
+  "last_task": "FUN-01",
+  "completed_count": 43,
   "total_tasks": 59,
   "tasks": [
     {
@@ -765,10 +765,14 @@
       "description": "Verificar versão final de hospedagem, GitHub Pages, Vercel e CORS; nunca presumir que raw.githack possui API",
       "group": "FUN",
       "position": 47,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T04:57:48.816Z",
+      "commit": "b63e6aef4e6568a06e3667255613fcae04fb896c",
+      "tests": [
+        "Static QA 40635164256 success: Pages main-only, Vercel config, CORS allowlist, origin policy",
+        "Read-only live hosting probe 40635164103 success: API OPTIONS/health GET and Pages GET; no credentials or writes",
+        "Browser QA 40635127839 success: fake API E2E and static mirror login blocked/preview allowed, zero real API calls"
+      ],
       "blocker": null
     },
     {
@@ -1590,6 +1594,26 @@
       ],
       "tests": "Static QA 40634818278 success; Browser QA 40634818191 success (Chrome 12 viewports and reduced-stimulus assertion)",
       "notes": "One-shot earned animation only with 10 approved backend stages; no real production approval tested. Save-Data branch statically audited, not emulated in browser."
+    },
+    {
+      "id": "FUN-01",
+      "completed_at": "2026-10-28T04:57:48.816Z",
+      "commit": "b63e6aef4e6568a06e3667255613fcae04fb896c",
+      "files": [
+        "v3/hosting-policy.js",
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "index.html",
+        "qa/v3-hosting-audit.cjs",
+        "qa/v3-hosting-browser.cjs",
+        ".github/workflows/hosting-readonly-qa.yml",
+        ".github/workflows/static-qa.yml",
+        ".github/workflows/browser-qa.yml",
+        "v3/HOSPEDAGEM-FUN-01.md"
+      ],
+      "tests": "Static QA 40635164256 success; read-only live hosting 40635164103 success; Browser QA 40635127839 success (untrusted mirror + fake API)",
+      "notes": "Feature V3 not deployed to main; Pages HTTP 200 does not prove feature is live. No production writes or real students used."
     }
   ]
 }
