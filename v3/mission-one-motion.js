@@ -7,15 +7,18 @@
 const root=document.getElementById("missionGallery");
 if(!root)return;
 const reduce=window.matchMedia("(prefers-reduced-motion: reduce)");
-const disabled=new URLSearchParams(location.search).get("motion")==="off";
+const motionMode=new URLSearchParams(location.search).get("motion");
+const disabled=motionMode==="off";
+const forced=motionMode==="on";
 const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
 const videos=()=>Array.from(root.querySelectorAll(".arcade-mission-motion-video"));
-const eligible=()=>!disabled&&!reduce.matches&&!connection?.saveData&&!document.hidden;
+const eligible=()=>!disabled&&(forced||(!reduce.matches&&!connection?.saveData))&&!document.hidden;
 function bind(){
   for(const v of videos()){
     if(v.dataset.motionBound)continue;
     v.dataset.motionBound="1";
     v.addEventListener("playing",()=>{if(!v.paused)v.classList.add("ready");});
+    v.addEventListener("loadeddata",()=>{if(!v.paused)v.classList.add("ready");});
     v.addEventListener("error",()=>{v.dataset.motionFailed="1";v.classList.remove("ready");});
     v.querySelector("source")?.addEventListener("error",()=>{v.dataset.motionFailed="1";v.classList.remove("ready");});
   }
