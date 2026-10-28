@@ -315,6 +315,7 @@ function renderMain(){
  const teacherMissionFiveDemo=TEACHER&&m.n===5&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M05_GUIDE;
  const teacherMissionFiveBriefing=TEACHER&&m.n===5&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS;
  const teacherMissionFiveValidation=TEACHER&&m.n===5&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_FIVE_VALIDATION;
+ const teacherMissionTenValidation=TEACHER&&m.n===10&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_TEN_VALIDATION;
  const teacherMissionTenDemo=TEACHER&&m.n===10&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M10_GUIDE;
  const teacherMissionTenBriefing=TEACHER&&m.n===10&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS;
  const teacherMissionNineValidation=TEACHER&&m.n===9&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_NINE_VALIDATION;
@@ -349,7 +350,8 @@ function renderMain(){
  if(missionEight)window.PIT_STUDENT_MISSION_EIGHT.hydrate(missionEightContext().session,e?.evidence,e?.status);
  if(missionNine)window.PIT_STUDENT_MISSION_NINE.hydrate(missionNineContext().session,e?.evidence,e?.status);
  if(missionTen)window.PIT_STUDENT_MISSION_TEN.hydrate(missionTenContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=teacherMissionTenDemo?window.PIT_GDEVELOP_M10_GUIDE.render():
+ $('mainContent').innerHTML=teacherMissionTenValidation?window.PIT_TEACHER_MISSION_TEN_VALIDATION.render(activePhase):
+  teacherMissionTenDemo?window.PIT_GDEVELOP_M10_GUIDE.render():
   teacherMissionTenBriefing?window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.render():
   teacherMissionNineValidation?window.PIT_TEACHER_MISSION_NINE_VALIDATION.render(activePhase):
   teacherMissionNineBriefing?window.PIT_TEACHER_MISSION_NINE_FOUNDATIONS.render():
@@ -425,6 +427,7 @@ function renderMain(){
  if(teacherMissionNineValidation)window.PIT_TEACHER_MISSION_NINE_VALIDATION.mount();
  if(teacherMissionTenBriefing)window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.mount();
  if(teacherMissionTenDemo)window.PIT_GDEVELOP_M10_GUIDE.mount();
+ if(teacherMissionTenValidation)window.PIT_TEACHER_MISSION_TEN_VALIDATION.mount();
  if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
  if(missionTen)window.PIT_STUDENT_MISSION_TEN.mount({
   ...missionTenContext(),
