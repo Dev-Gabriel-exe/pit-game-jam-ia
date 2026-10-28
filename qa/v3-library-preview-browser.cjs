@@ -114,6 +114,33 @@ const {chromium}=require('playwright');
      assert.deepEqual(item.signature,[82,73,70,70],'RIFF magic '+item.id);
     }
    }
+   // Parse every GLB and WAV header, not only the file signatures.
+   const internals=await page.evaluate(async()=>{
+    const api=window.PIT_LIBRARY_API,rows=[];
+    for(const asset of api.assets.filter(a=>a.cat==='modelo'||a.cat==='som')){
+     const blob=await api.assetBlob(asset),buffer=await blob.arrayBuffer(),v=new DataView(buffer);
+     if(asset.cat==='modelo'){
+      const mesh=window.PIT_LIBRARY_PREVIEW.readGlb(buffer);
+      rows.push({id:asset.id,kind:'glb',length:v.getUint32(8,true),bytes:buffer.byteLength,vertices:mesh.vertices.length,triangles:mesh.triangles.length});
+     }else{
+      rows.push({id:asset.id,kind:'wav',riffSize:v.getUint32(4,true),bytes:buffer.byteLength,channels:v.getUint16(22,true),sampleRate:v.getUint32(24,true),bits:v.getUint16(34,true),dataSize:v.getUint32(40,true)});
+     }
+    }
+    return rows;
+   });
+   assert.equal(internals.length,10,'five GLB and five WAV assets inspected');
+   for(const a of internals){
+    if(a.kind==='glb'){
+     assert.equal(a.length,a.bytes,'GLB declared length '+a.id);
+     assert(a.vertices>=3&&a.triangles>=1,'GLB mesh has geometry '+a.id);
+    }else{
+     assert.equal(a.riffSize+8,a.bytes,'RIFF declared length '+a.id);
+     assert.equal(a.dataSize+44,a.bytes,'WAV PCM data length '+a.id);
+     assert.equal(a.channels,1,'WAV mono '+a.id);
+     assert.equal(a.sampleRate,22050,'WAV sample rate '+a.id);
+     assert.equal(a.bits,16,'WAV PCM depth '+a.id);
+    }
+   }
    await open('glb-cristal');
    await page.locator('#pitPreviewStage canvas').waitFor();
    const mesh=await page.evaluate(()=>{
