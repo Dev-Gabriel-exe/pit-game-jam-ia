@@ -6,6 +6,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const store={stage:1,phase:'briefing',progress:[],teacherMessages:[],studentMessages:[],messages:[],lastSeen:new Date().toISOString()};
  const id='11111111-1111-4111-8111-111111111111',token='a'.repeat(64);
  const error=[];
+ const closeArcade=async page=>{
+  const overlay=page.locator('#missionGallery');
+  if(await overlay.count()&&await overlay.evaluate(el=>el.classList.contains('open'))){
+   await page.locator('#missionGalleryClose').click();
+   await page.locator('#missionGallery.open').waitFor({state:'hidden'});
+  }
+ };
  const fixture=async(route)=>{
   const req=route.request(),url=new URL(req.url()),action=url.searchParams.get('action'),service=url.pathname.endsWith('/chat')?'chat':'classroom';
   const headers=req.headers(),teacher=!!headers['x-pit-teacher-pin'],posted=req.postData()?JSON.parse(req.postData()):{};
@@ -56,6 +63,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.locator('#authCode').fill('PITGAME26');
  await sp.locator('#authSubmit').click();
  await sp.locator('#workspace:visible').waitFor();
+ await closeArcade(sp);
  assert.equal(await sp.locator('.stage-btn').count(),10,'10 ordered stages for students');
  assert.equal(await sp.locator('.tm-pro-card').count(),0,'no professor technical cards in student');
  assert.equal(await sp.locator('[data-phase="demo"]').count(),0,'student only sees briefing, build and delivery');
@@ -72,6 +80,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.phase,'practice','professor releases practice for the whole class');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
+ await closeArcade(sp);
  if(await sp.locator('#missionGallery').evaluate(el=>el.classList.contains('open'))){await sp.locator('#missionGalleryClose').click();await sp.locator('#missionGallery.open').waitFor({state:'hidden'});}
  await sp.locator('[data-q-tab="practice"]').click();
  assert.equal(await sp.locator('#qo-genre').isEnabled(),true,'student can edit project idea after release');
@@ -90,6 +99,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.progress[0].status,'approved','teacher approves submitted work');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
+ await closeArcade(sp);
  assert.match(await sp.locator('.stage-btn[data-stage="1"]').innerText(),/CONCLUÍDA/i);
  await tp.locator('#rosterClose').click();
  await tp.locator('#navSecondary').click();
@@ -97,6 +107,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.phase,'briefing');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
+ await closeArcade(sp);
  assert.match(await sp.locator('#missionTitle').innerText(),/MVP EM FOCO/);
  assert.equal(await sp.locator('.stage-btn[data-stage="2"]').isDisabled(),false);
  await sp.locator('.stage-btn[data-stage="1"]').click();
@@ -125,6 +136,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await mobile.locator('#authCode').fill('PITGAME26');
  await mobile.locator('#authSubmit').click();
  await mobile.locator('#workspace:visible').waitFor();
+ await closeArcade(mobile);
  assert.equal(await mobile.locator('.stage-btn').count(),10,'all missions accessible on mobile');
  const width=await mobile.evaluate(()=>({s:document.documentElement.scrollWidth,w:window.innerWidth}));
  assert(width.s<=width.w+4,'mobile has no sideways overflow: '+JSON.stringify(width));
