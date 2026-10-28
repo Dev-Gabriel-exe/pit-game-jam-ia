@@ -62,7 +62,7 @@ function build(){
   '<video class="pit-cinema-film" src="./v3/assets/missions/missao-01-motion.mp4" poster="./v3/assets/missions/missao-01.webp" muted loop playsinline preload="metadata" aria-hidden="true"></video>'+
   '<div class="pit-m01-cinema-shade"></div><div class="pit-m01-cinema-runes"><span>✧</span><span>✦</span><span>✧</span></div>'+
   '<div class="pit-m01-cinema-legend"><span>MISSÃO 01 / 10</span><strong>O CHAMADO</strong></div></div></div>'));
- slides.push(shot('CONCEITOS · 3 MIN','O que transforma uma ideia em jogo?',
+ slides.push(shot('CONCEITOS · 2 MIN','O que transforma uma ideia em jogo?',
   cap('FUNDAMENTOS · JOGADOR, OBJETIVO, REGRA E FEEDBACK')+
   '<p class="pit-ws-lead">Um jogo digital é um sistema interativo: o jogador realiza ações, as regras determinam o que acontece e a interface mostra o resultado. Sem uma ação e uma resposta, há uma história — mas não necessariamente uma jogabilidade.</p>'+
   cards([
@@ -72,7 +72,7 @@ function build(){
    ['04 · O QUE MUDA','Feedback','O contador mostra 1/3, 2/3 e 3/3; a porta reage conforme a regra.']
   ])+
   '<div class="pit-ws-bottom"><strong>Em qualquer gênero:</strong> escolha o que o jogador faz, o que precisa conseguir e como saberá que conseguiu.'+deep('design','Game design')+'</div>',{deepId:'design'}));
- slides.push(shot('CONCEITOS · 3 MIN','Como o jogo reage a uma ação?',
+ slides.push(shot('CONCEITOS · 2 MIN','Como o jogo reage a uma ação?',
   cap('SISTEMA INTERATIVO · DO COMANDO À RESPOSTA')+
   '<p class="pit-ws-lead">A cada interação, o jogo verifica uma condição, modifica informações armazenadas e mostra uma resposta. Depois, o jogador decide o que fazer novamente.</p>'+
   '<div class="pit-ws-flow" aria-label="Entrada, condição, estado e feedback">'+
@@ -81,12 +81,12 @@ function build(){
  const d=document.createElement('template');d.innerHTML=M.render('demo');
  const stage=d.content.querySelector('.tm-pro-stage')?.outerHTML||'';
  const debug=d.content.querySelector('.tm-pro-debugger')?.outerHTML||'';
- slides.push(shot('EXEMPLO VIVO · 4 MIN','Experimente a regra dos três cristais',
+ slides.push(shot('EXEMPLO VIVO · 2 MIN','Experimente a regra dos três cristais',
   cap('SIMULADOR INTERATIVO · TENTE FALHAR ANTES DE VENCER')+
   '<p class="pit-ws-lead pit-ws-compact-lead">Primeiro tente abrir a porta com <strong>0 cristais</strong>. Depois colete três e tente de novo. Observe como a mesma ação gera resultados diferentes conforme o estado do jogo.</p>'+
   '<div class="pit-m01-runtime pit-m01-sim pit-ws-simulator"><div class="pit-m01-sim-grid">'+stage+debug+'</div></div>',
   {interactive:true,simulator:true}));
- slides.push(shot('DO CONCEITO AO EDITOR · 2 MIN','Como fazer isso no GDevelop?',
+ slides.push(shot('DO CONCEITO AO EDITOR · 1 MIN','Como fazer isso no GDevelop?',
   cap('FERRAMENTA · CENAS, OBJETOS, EVENTOS E VARIÁVEIS')+
   '<p class="pit-ws-lead">O GDevelop permite programar regras sem escrever código: cada evento tem uma <strong>condição</strong> (SE) e uma <strong>ação</strong> (ENTÃO). Assim, as decisões da Missão 1 poderão virar um jogo jogável.</p>'+
   cards([
