@@ -1,0 +1,66 @@
+{
+  "schema": "pit-native-evidence-v1",
+  "date_utc": "2026-10-28",
+  "branch": "feature/pit-gamejam-v3-arcade",
+  "source_commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+  "run_id": 40657474661,
+  "run_url": "https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40657474661",
+  "gdevelop_version": "5.6.285",
+  "gdevelop_examples_commit": "0648e82703e81f12f33b65ef4777e1fd02d7666b",
+  "source": "PIT biblioteca.js procedural PNG/WAV/GLB generators; isolated official starter fixtures",
+  "assets": [
+    {
+      "name": "pit_explorador.png",
+      "bytes": 8309,
+      "sha256": "e7e4f06649bc367033a9e7c7cb45e0fea6aca261921202c15d15323c803d83e2"
+    },
+    {
+      "name": "pit_coleta.wav",
+      "bytes": 30912,
+      "sha256": "9db2ead835006b54f7b09c110d4f23d2c912445917d4f4db7a05b7a0dadf5d25"
+    },
+    {
+      "name": "pit_cristal.glb",
+      "bytes": 1028,
+      "sha256": "9a803042361e397cd649fbccd7ef4db0e6636ac942db588f533156626bf1d52b"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "2d",
+      "project": "examples/pit-qa-top-down/starting-top-down.json",
+      "gameplay_tests": 4,
+      "passed": 4,
+      "pit_asset": "PNG Sprite",
+      "pit_victory_assertions": 3,
+      "screenshot": "PIT_QA_2D_generated_asset_in_GDevelop-frame-13-pit-2d-import.jpg",
+      "screenshot_bytes": 16952,
+      "screenshot_sha256": "83b9f1cfd1cd2063bb4355a7acd33de0f6284888976ed57a052704da2191873b",
+      "visual_review": "PIT original cyan sprite visible in the 2D scene"
+    },
+    {
+      "id": "3d",
+      "project": "examples/pit-qa-first-person/starting-first-person.json",
+      "gameplay_tests": 4,
+      "passed": 4,
+      "pit_asset": "GLB 3D Model",
+      "pit_victory_assertions": 3,
+      "screenshot": "PIT_QA_3D_generated_asset_in_GDevelop-frame-13-pit-3d-import.jpg",
+      "screenshot_bytes": 22306,
+      "screenshot_sha256": "1fef8979269f1137f06ea162966937e495d9a154fe118acced45dd2202903784",
+      "visual_review": "PIT original turquoise crystal visibly rendered in the first-person corridor"
+    }
+  ],
+  "audio_event": "PIT WAV PlaySound action invoked by real GDevelop conditional-victory event; no sound errors observed in logs, audibility not measured",
+  "browser_codec_run": "https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40656562279",
+  "browser_codec_result": "5 WAV files decoded via Web Audio and 4 PNG files decoded/pixel inspected in Chrome",
+  "limitations": [
+    "No GDevelop GUI drag-and-drop import performed",
+    "No GDevelop project manual save/reopen",
+    "No physical mobile hardware testing",
+    "No observed human peer playtest",
+    "No actual authorial mission victory screen or evidence submission in GDevelop",
+    "No audible listening confirmation of WAV playback",
+    "No production/main changes"
+  ]
+}
