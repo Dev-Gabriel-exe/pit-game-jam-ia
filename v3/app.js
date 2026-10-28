@@ -16,10 +16,11 @@ let selectedThread=null,selectedRoster=null,chatOpen=false,chatTimer=null,roster
 let lastUnread=0,rosterFilter='all',requestInFlight=false,chatRequest=0,chatSending=false;
 function stamp(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 function setToast(message,bad=false){const el=$('toast');el.textContent=message;el.hidden=false;el.style.borderColor=bad?'#fa7285':'#53dcb7';clearTimeout(setToast.timer);setToast.timer=setTimeout(()=>el.hidden=true,5300)}
-async function call(service,action,method='GET',data=null){
+async function call(service,action,method='GET',data=null,query=null){
  if(visualPreview)throw Error('Modo demonstração: nenhuma informação é enviada ao servidor.');
  if(window.PIT_HOSTING_POLICY?.mode(location.origin,false)==='static-only')throw Error('Esta cópia é uma prévia estática. Use ?preview=1; nenhum dado da turma deve ser enviado aqui.');
  const u=new URL(BASE+service+'.js');u.pathname='/api/'+service;u.searchParams.set('action',action);
+ if(query)for(const [key,value] of Object.entries(query))u.searchParams.set(key,String(value));
  const headers={'Content-Type':'application/json'};
  if(TEACHER&&teacherPin)headers['X-PIT-Teacher-Pin']=teacherPin;
  if(!TEACHER&&studentSession?.token)headers['X-PIT-Student-Token']=studentSession.token;
@@ -876,9 +877,8 @@ async function loadChat(){
    }
    setChatEnabled(true);
    const student=threads.find(t=>t.id===selectedThread);
-   const uri=new URL(BASE+'chat');uri.searchParams.set('action','messages');uri.searchParams.set('studentId',selectedThread);
-   const response2=await fetch(uri,{headers:{'X-PIT-Teacher-Pin':teacherPin},cache:'no-store'});
-   const read=await response2.json();if(!response2.ok)throw Error(read.error||'Erro ao ler conversa.');
+   // Consistent 15-second timeout, preview guard and HTTP error handling.
+   const read=await call('chat','messages','GET',null,{studentId:selectedThread});
    if(!chatOpen||request!==chatRequest)return;
    renderChat(read.messages);
    setChatStatus('Conversa individual com '+(student?.display_name||'aluno')+'.','success');
