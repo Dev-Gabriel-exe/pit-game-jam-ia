@@ -258,11 +258,14 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  // M07 acceptance: fictional author submits a genuine native-fixture-derived
  // victory test description; teacher requests revision and approves only after
  // the resubmission. This checks the real classroom handlers, NOT the editor UI.
- const m7Stage=await call(classroom,'POST','stage',{stage:7,phase:'review'},'',origin,pin);
+ const m7Practice=await call(classroom,'POST','stage',{stage:7,phase:'practice'},'',origin,pin);
+ assert.equal(m7Practice.statusCode,200);
  assert.equal(m7Stage.statusCode,200);
  const m7Evidence='Missão 07 autoral fictícia: início, desafio, condição PIT_Ready, vitória e captura antes/depois no GDevelop 2D. Projeto salvo localmente.';
  const m7Draft=await call(classroom,'POST','progress',{stage:7,route:'2d',status:'working',evidence:m7Evidence},a.body.token);
  assert.equal(m7Draft.statusCode,200);
+ const m7Stage=await call(classroom,'POST','stage',{stage:7,phase:'review'},'',origin,pin);
+ assert.equal(m7Stage.statusCode,200);
  const m7Submit=await call(classroom,'POST','progress',{stage:7,route:'2d',status:'submitted',evidence:m7Evidence},a.body.token);
  assert.equal(m7Submit.statusCode,200);
  const m7Revision=await call(classroom,'POST','review',{studentId:a.body.studentId,stage:7,status:'revision',feedback:'Inclua teste negativo e captura do estado antes da vitória.'},'',origin,pin);
