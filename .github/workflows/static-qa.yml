@@ -53,6 +53,8 @@ jobs:
           node qa/v3-isolated-backend.cjs
       - name: Verify FUN-10 security, accessibility and provenance guards
         run: node qa/v3-security-audit.cjs
+      - name: Audit REL-01 release gate (diagnostic, no deployment)
+        run: node qa/v3-release-gate.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
