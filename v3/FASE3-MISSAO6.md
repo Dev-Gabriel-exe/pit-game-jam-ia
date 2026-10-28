@@ -35,3 +35,20 @@ Quatro situações selecionáveis com botões de resposta, estados ARIA e explic
 - [Gerenciamento de recursos](https://wiki.gdevelop.io/gdevelop5/interface/project-manager/resources/)
 
 **Próxima meta:** M06-02 — verificar as alternativas de IA para geração rápida de imagem, música, voz, vídeo e 3D, com condições atuais de uso gratuito/limites/licenças e fallback local sem custo.
+
+## M06-02 — Matriz de ferramentas e direitos — CONCLUÍDO
+
+**Código:** `v3/teacher-mission-six-matrix.js` e `v3/teacher-mission-six-matrix.css`; integrado à etapa `demo` do professor em `v3/app.js` e `professor-v3.html`. Cinco rotas opcionais: Gemini/imagem, Flow/vídeo, Suno/música, ElevenLabs/voz e Meshy/3D. O seletor filtra cartões e mostra plano B sem créditos. Não há chamada externa automática nem coleta de dados.
+
+**Condições verificadas em páginas oficiais em 27/10/2026:**
+- Gemini: imagem disponível em contas elegíveis; limites variam e o download depende da interface; verificar privacidade e direitos de referência.
+- Google Flow: 50 créditos/dia sem assinatura, custo por geração variável e restrições em horário de pico. Vídeo é opcional.
+- Suno: 50 créditos diários no gratuito, mas licença não comercial; downloads de teste limitados e não garantidos a contas novas.
+- ElevenLabs: TTS gratuito anuncia 10 mil créditos/mês; uso gratuito não comercial com atribuição.
+- Meshy: 100 créditos/mês; 10 downloads/mês somente Meshy 6 Lite sem textura; CC BY 4.0 exige atribuição.
+
+**Fontes primárias:** [Gemini](https://support.google.com/gemini/answer/14286560), [Flow](https://support.google.com/flow/answer/16526234), [Suno downloads](https://help.suno.com/en/articles/13926209), [Suno direitos](https://help.suno.com/en/articles/9601601), [ElevenLabs TTS](https://elevenlabs.io/text-to-speech), [ElevenLabs direitos](https://elevenlabs.io/docs/overview/administration/billing), [Meshy gratuito](https://help.meshy.ai/pt-BR/articles/15696428-what-is-included-on-the-free-plan).
+
+**Verificações executadas:** 13/13 testes de compilação JavaScript via V8, contratos, fontes, renderização, integração estática, filtragem e reset em DOM simulado. Teste reproduzível adicionado em `qa/v3-m06-matrix.cjs` (ainda não executado pelo Node nesta rodada). **Pendências:** visual em navegador real, contas/limites individuais e importação real no GDevelop. Não substituir esses testes por simulações.
+
+**Próxima meta:** M06-03 — tutoriais por necessidade com prompts personalizados e fallback de exportação.
