@@ -1,0 +1,146 @@
+/* PIT GAME JAM IA — Portal cinematic v1 · licensed original LTX footage
+ * Only atmosphere moves. Buttons, lessons, assets and navigation remain functional.
+ * No dependency on WebGL, premium effects, franchise footage, or an API.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700;800&display=swap');
+:root{
+ --pit-portal-paper:#f5e6d4;--pit-portal-gold:#e9b77b;--pit-portal-copper:#ae653e;
+ --pit-portal-ink:#09090c;--pit-portal-border:#74503c;
+ --pit-portal-gothic:"Cinzel Decorative","Cinzel",Georgia,serif;
+ --pit-portal-chapter:"Cinzel",Georgia,serif;
+ --pit-portal-readable:"Source Sans 3","Segoe UI",Arial,sans-serif;
+ --pit-parallax-x:0px;--pit-parallax-y:0px;--pit-hero-x:0px;--pit-hero-y:0px;
+}
+html{background:#09090c}
+body.pit-portal-gothic{position:relative;isolation:isolate;background:transparent;color:var(--pit-portal-paper);font-family:var(--pit-portal-readable)}
+.pit-ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#09090c;contain:strict}
+.pit-ambient::before{content:"";position:absolute;inset:-6%;background:
+ radial-gradient(ellipse 70% 45% at 73% 19%,#572a252a,transparent 77%),
+ radial-gradient(ellipse 55% 46% at 8% 67%,#48211b2c,transparent 76%),
+ linear-gradient(165deg,#0b0a0f,#110d11 48%,#090a0e)}
+.pit-ambient-grid{position:absolute;inset:-5%;opacity:.16;background-image:
+ repeating-linear-gradient(90deg,transparent 0 115px,#e3a86716 116px 117px,transparent 118px 236px),
+ repeating-linear-gradient(0deg,transparent 0 115px,#e3a86712 116px 117px,transparent 118px 236px);
+ mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+ transform:translate3d(calc(var(--pit-parallax-x)*.12),calc(var(--pit-parallax-y)*.12),0);
+ will-change:transform}
+.pit-ambient-halo{position:absolute;width:min(70vw,780px);aspect-ratio:1;right:-18vw;top:15vh;border-radius:50%;border:1px solid #d5975229;
+ box-shadow:0 0 0 34px #b5804212,0 0 0 85px #ab68350c,0 0 130px #8b472120,inset 0 0 60px #a968371c;
+ transform:translate3d(calc(var(--pit-parallax-x)*-.25),calc(var(--pit-parallax-y)*-.25),0);
+ will-change:transform}
+.pit-ambient-halo::before,.pit-ambient-halo::after{content:"";position:absolute;inset:12%;border:1px dashed #c08e5451;transform:rotate(37deg)}
+.pit-ambient-halo::after{inset:28%;border:1px solid #e0af6d47;border-radius:50%;transform:none}
+.pit-ambient-runes{position:absolute;inset:0;opacity:.36;background-image:
+ radial-gradient(circle at 7% 13%,#edb36b 0 1px,transparent 2px),
+ radial-gradient(circle at 82% 24%,#f8d397 0 1px,transparent 2px),
+ radial-gradient(circle at 38% 56%,#e89150 0 1px,transparent 2px),
+ radial-gradient(circle at 71% 79%,#db8559 0 1px,transparent 2px);
+ background-size:281px 305px,377px 415px,467px 321px,353px 289px;
+ transform:translate3d(calc(var(--pit-parallax-x)*.4),calc(var(--pit-parallax-y)*.4),0);
+ will-change:transform}
+.pit-portal-gothic nav{background:#09080bdc;border-bottom:1px solid #98704b88;box-shadow:0 8px 40px #0009;backdrop-filter:blur(16px)}
+.pit-portal-gothic .logo{font:800 clamp(14px,1.25vw,19px)/1.1 var(--pit-portal-chapter);letter-spacing:.015em;color:#f6e1c1;text-shadow:0 2px 9px #000}
+.pit-portal-gothic .logo strong{color:#ecc08b}
+.pit-portal-gothic .nav-links a{font:700 12px/1.4 var(--pit-portal-readable);letter-spacing:.045em;color:#f1d9c0}
+.pit-portal-gothic .nav-links a:hover{color:#ffd89b}
+.pit-portal-gothic .hero{min-height:clamp(580px,79vh,820px);background:#0b0b10;isolation:isolate;border-bottom:1px solid #8555397a;overflow:hidden}
+.pit-portal-gothic .hero::before{z-index:-1;background:url("./assets/missions/missao-01.webp") center 42%/cover no-repeat}
+.pit-portal-gothic .hero::after{position:absolute;z-index:1;inset:0;pointer-events:none;content:"";background:
+ linear-gradient(90deg,#07070bed 0%,#08080de0 27%,#0b0b11ad 51%,#09080c4c 78%,#09080bd0 100%),
+ linear-gradient(180deg,#100b1166 0%,transparent 38%,#09090ded 98%),
+ radial-gradient(circle at 83% 43%,transparent 8%,#110a103b 61%)}
+.pit-hero-media{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#111015 url("./assets/missions/missao-01.webp") 62% 46%/cover no-repeat}
+.pit-hero-media video{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;object-position:65% 45%;opacity:0;
+ filter:brightness(.76) saturate(.8) contrast(1.12);transform:translate3d(calc(var(--pit-hero-x)*-.45),calc(var(--pit-hero-y)*-.45),0) scale(1.08);
+ transition:opacity 1.15s ease;will-change:opacity,transform}
+.pit-hero-media.pit-video-playing video{opacity:.86}
+.pit-hero-media::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 50% 75% at 79% 46%,#d69b6422,transparent 73%);mix-blend-mode:screen}
+.pit-hero-mark{position:absolute;right:clamp(12px,7vw,125px);top:50%;width:clamp(140px,23vw,320px);aspect-ratio:1;
+ border:1px solid #e5bb8050;border-radius:50%;box-shadow:0 0 0 19px #b9823620,0 0 0 44px #bb955913,inset 0 0 48px #bd783c25;
+ transform:translate3d(calc(var(--pit-hero-x)*-.8),calc(-50% + var(--pit-hero-y)*-.8),0);
+ opacity:.62}
+.pit-hero-mark::before{content:"✧";position:absolute;inset:17%;display:grid;place-items:center;border:1px solid #e7b67a65;
+ transform:rotate(45deg);font:900 clamp(60px,8vw,140px) var(--pit-portal-gothic);color:#ead0a076;text-shadow:0 0 35px #d7a36666}
+.pit-hero-mark::after{content:"";position:absolute;inset:-26%;border:1px dashed #a8775166;border-radius:50%}
+.pit-hero-sparks{position:absolute;inset:0;background-image:
+ radial-gradient(circle at 15% 43%,#f4bd7b 0 1px,transparent 2px),
+ radial-gradient(circle at 37% 19%,#f6d69b 0 1px,transparent 2px),
+ radial-gradient(circle at 89% 74%,#f9af63 0 2px,transparent 3px),
+ radial-gradient(circle at 73% 31%,#f4c28c 0 1px,transparent 2px);
+ background-size:310px 300px,450px 275px,365px 410px,480px 380px;opacity:.42;
+ transform:translate3d(calc(var(--pit-hero-x)*.38),calc(var(--pit-hero-y)*.38),0)}
+.pit-portal-gothic .hero>.container{position:relative;z-index:2;padding-top:clamp(62px,9vh,130px);padding-bottom:clamp(75px,10vh,115px);max-width:1190px}
+.pit-portal-gothic .hero .kicker{font:800 12px/1.5 var(--pit-portal-chapter);letter-spacing:.13em;color:#dfac75}
+.pit-portal-gothic .hero h1{font:800 clamp(44px,6.3vw,90px)/1.075 var(--pit-portal-gothic);letter-spacing:-.01em;
+ max-width:790px;margin:23px 0 25px;color:#f6e6cb;text-shadow:0 5px 20px #000d;word-break:normal;text-wrap:balance}
+.pit-portal-gothic .hero h1 .gradient{background:linear-gradient(145deg,#fbe6c6,#d49b69 72%,#a66749);background-clip:text;color:transparent}
+.pit-portal-gothic .hero p{max-width:610px;font:500 clamp(17px,1.5vw,21px)/1.6 var(--pit-portal-readable);color:#f2dfd0;text-shadow:0 3px 9px #000}
+.pit-portal-gothic .hero .btns{gap:12px;margin-top:34px}
+.pit-portal-gothic .hero .btn{min-height:50px;border-radius:7px;box-shadow:0 6px 25px #0009;font:800 14px var(--pit-portal-readable)}
+.pit-portal-gothic .hero .btn:hover{box-shadow:0 0 0 1px #efbd86,0 7px 28px #bd713751}
+.pit-portal-gothic .statband span{background:#1d1519cc;border:1px solid #aa784d78;box-shadow:inset 0 1px #ffdb9820}
+.pit-portal-gothic #myProgress{background:#241a1bcc;border-color:#926042;color:#f8dda9}
+.pit-hero-motion{position:absolute;right:clamp(14px,3.5vw,58px);bottom:clamp(12px,2.4vw,27px);z-index:3;
+ border:1px solid #b28c66a6;background:#0b0b11c9;color:#f2dab6;backdrop-filter:blur(12px);
+ border-radius:999px;padding:9px 14px;font:700 12px var(--pit-portal-readable);cursor:pointer;transition:background .2s}
+.pit-hero-motion:hover,.pit-hero-motion:focus-visible{background:#34221f}
+.pit-hero-motion[hidden]{display:none}
+.pit-portal-gothic .section{position:relative;isolation:isolate;background:transparent;border-color:#76513c65}
+.pit-portal-gothic .campaign{background:linear-gradient(175deg,#1a1319c9 0%,#0c0a10a3 100%);border-top:1px solid #c5985652;border-bottom:1px solid #78513c52}
+.pit-portal-gothic .resources{background:linear-gradient(180deg,#090b10d4,#161017d4)}
+.pit-portal-gothic .section h2{font:750 clamp(31px,3.9vw,53px)/1.13 var(--pit-portal-chapter);letter-spacing:-.015em;text-wrap:balance;color:#f5e4ce;text-shadow:0 3px 14px #0009}
+.pit-portal-gothic .section .eyebrow{color:#e2a66f;font:800 12px var(--pit-portal-chapter);letter-spacing:.085em}
+.pit-portal-gothic .section-head p{font:500 clamp(16px,1.28vw,19px)/1.52 var(--pit-portal-readable);color:#ddc9b9}
+.pit-portal-gothic .gate-card,.pit-portal-gothic .mission-card,.pit-portal-gothic .resource-card,.pit-portal-gothic .start-card{
+ background:linear-gradient(148deg,#281d20e9,#120f13ee);border:1px solid #79513d;
+ box-shadow:inset 0 1px 0 #f6c18c12,0 16px 34px #0009;transition:transform .27s ease,border-color .27s ease,box-shadow .27s ease}
+.pit-portal-gothic .gate-card:hover,.pit-portal-gothic .mission-card:hover,.pit-portal-gothic .resource-card:hover,.pit-portal-gothic .start-card:hover{
+ border-color:#d6a269;box-shadow:inset 0 1px #ffdaab25,0 15px 40px #000d,0 0 18px #c4783834;transform:translateY(-4px)}
+.pit-portal-gothic .gate-card h3,.pit-portal-gothic .mission-card h3,.pit-portal-gothic .start-card h3{font-family:var(--pit-portal-chapter);letter-spacing:0;line-height:1.22}
+.pit-portal-gothic .mission-card .num{font:700 36px var(--pit-portal-chapter);color:#e8af72}
+.pit-portal-gothic .gate-card .symbol{filter:drop-shadow(0 5px 12px #da91483d)}
+.pit-portal-gothic .tip,.pit-portal-gothic .notice{background:#24181ac9;border-color:#9c6e495c}
+.pit-portal-gothic .catalogue-panel{background:#191519ec;border-color:#a2744e99;box-shadow:0 15px 45px #0009}
+.pit-portal-gothic .faq article{background:#21191de6;border:1px solid #75513d}
+.pit-portal-gothic footer{background:#0b0a0edb;border-top:1px solid #8c644c77}
+body.pit-portal-gothic.pit-motion-enabled .pit-ambient-runes{animation:pit-ambient-drift 23s ease-in-out infinite alternate}
+body.pit-portal-gothic.pit-motion-enabled .pit-hero-sparks{animation:pit-ember-drift 17s ease-in-out infinite alternate}
+body.pit-portal-gothic.pit-motion-enabled .pit-hero-mark::before{animation:pit-rune-pulse 7s ease-in-out infinite alternate}
+@keyframes pit-ambient-drift{from{opacity:.26;background-position:0 0,0 0,0 0,0 0}to{opacity:.44;background-position:12px -26px,-19px 27px,17px -32px,-24px 11px}}
+@keyframes pit-ember-drift{from{opacity:.28;background-position:0 0,0 0,0 0,0 0}to{opacity:.63;background-position:0 -51px,0 -25px,0 -62px,0 -43px}}
+@keyframes pit-rune-pulse{from{opacity:.53;filter:brightness(.8)}to{opacity:1;filter:brightness(1.4)}}
+body.pit-portal-gothic.pit-motion-paused *,body.pit-portal-gothic.pit-motion-paused *::before,body.pit-portal-gothic.pit-motion-paused *::after{animation-play-state:paused!important}
+@media(max-width:920px){
+ .pit-portal-gothic .hero{min-height:575px}
+ .pit-portal-gothic .hero>.container{padding-top:75px}
+ .pit-portal-gothic .hero h1{max-width:650px}
+ .pit-hero-mark{right:-18px;opacity:.34}
+ .pit-portal-gothic .hero::after{background:linear-gradient(90deg,#07070bec 0%,#07070be6 43%,#09070d75 100%),linear-gradient(180deg,#100b1166,transparent 45%,#09090df4 100%)}
+}
+@media(max-width:620px){
+ .pit-portal-gothic nav{backdrop-filter:blur(8px)}
+ .pit-portal-gothic .logo{font-size:16px}
+ .pit-portal-gothic .nav-links a{font-size:11px}
+ .pit-portal-gothic .hero{min-height:630px}
+ .pit-portal-gothic .hero>.container{padding-top:78px;padding-bottom:90px}
+ .pit-portal-gothic .hero .kicker{font-size:10px}
+ .pit-portal-gothic .hero h1{font-size:clamp(36px,9.2vw,58px);line-height:1.13;max-width:550px}
+ .pit-portal-gothic .hero p{font-size:17px;line-height:1.45;max-width:94%}
+ .pit-hero-media{background-position:65% 40%}
+ .pit-hero-media video{object-position:72% 42%;filter:brightness(.64) contrast(1.13) saturate(.76)}
+ .pit-portal-gothic .hero::after{background:linear-gradient(90deg,#08070be9 0%,#09080bd4 52%,#09080c8c 100%),linear-gradient(180deg,#09080c75 0%,transparent 35%,#09090de8 100%)}
+ .pit-hero-mark{right:-90px;top:40%;opacity:.3;width:220px}
+ .pit-ambient-halo{width:460px;right:-280px;opacity:.7}
+ .pit-portal-gothic .hero .btns{margin-top:25px}
+ .pit-portal-gothic .hero .btn{min-height:45px;padding:11px 13px;font-size:13px}
+ .pit-hero-motion{font-size:11px;bottom:12px;right:12px;padding:8px 10px}
+ .pit-portal-gothic .section{padding:47px 0}
+ .pit-portal-gothic .section h2{font-size:clamp(29px,7.4vw,41px)}
+ .pit-portal-gothic .section-head p{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){
+ .pit-portal-gothic .pit-hero-media video{display:none!important}
+ .pit-portal-gothic .pit-ambient-grid,.pit-portal-gothic .pit-ambient-halo,.pit-portal-gothic .pit-ambient-runes,.pit-portal-gothic .pit-hero-mark,.pit-portal-gothic .pit-hero-sparks{transform:none!important;animation:none!important;will-change:auto!important}
+ .pit-portal-gothic .pit-hero-motion{display:none}
+}
+@media print{.pit-portal-gothic .pit-ambient,.pit-portal-gothic .pit-hero-media video,.pit-portal-gothic .pit-hero-motion{display:none!important}}
