@@ -2113,6 +2113,12 @@
       "task": "REL-01",
       "commit": "49450dab5605c2f2da5eedde04f6a8785818b04c",
       "summary": "Verified fix 57ca0e84 and checkpoint 49450dab: static QA 40678411153 and 40678431018 SUCCESS; Browser QA 40678411209 and 40678431100 SUCCESS. Prior 40677106597 failed; regression recovered. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "8ad5e9a3c389e7a4aaf63798ab61199230d8a455",
+      "summary": "Hardened actual GLB 3D preview parser against truncated headers, malformed chunk lengths and out-of-bounds accessors; new CI pending, manual GDevelop NOT_RUN. 54/59 unchanged."
     }
   ]
 }
