@@ -39,6 +39,8 @@ jobs:
         run: node qa/v3-teacher-browser.cjs
       - name: Verify FUN-04 stage locks and draft preservation in Chrome
         run: node qa/v3-release-browser.cjs
+      - name: Verify FUN-09 three fictional students and teacher in Chrome
+        run: node qa/v3-multi-student-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
