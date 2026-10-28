@@ -1,0 +1,12 @@
+/* Private teacher notes: never opened automatically, discreet during HDMI mirroring. */
+.pit-private-teacher-notes{position:relative;display:inline-block;vertical-align:top;margin:4px 0 8px;max-width:100%;font-family:system-ui,sans-serif}
+.pit-private-teacher-notes>summary{display:grid;place-items:center;width:26px;height:26px;border:1px solid #765f4a88;border-radius:6px;background:#151720;color:#a18e78;cursor:pointer;font-size:15px;line-height:1;list-style:none;opacity:.58;transition:opacity .2s,border-color .2s}
+.pit-private-teacher-notes>summary::-webkit-details-marker{display:none}
+.pit-private-teacher-notes>summary:hover,.pit-private-teacher-notes>summary:focus-visible{opacity:1;border-color:#e2bd83;color:#f4d8aa}
+.pit-private-teacher-notes[open]{display:block;width:min(760px,100%);margin:12px 0}
+.pit-private-teacher-notes[open]>summary{opacity:1;margin-bottom:10px}
+.pit-private-teacher-notes-body{padding:18px 20px;background:#131a23;border:1px solid #a27b50;border-radius:10px;box-shadow:0 10px 30px #0008;color:#f0e4d5;font-size:15px;line-height:1.65}
+.pit-private-teacher-notes-body>small{display:block;color:#e7b980;font-weight:700;letter-spacing:.07em;margin-bottom:10px}
+.pit-private-teacher-notes-body h4,.pit-private-teacher-notes-body strong{color:#f7d7a8}
+.pit-private-teacher-notes-body p{margin:8px 0}
+@media print{.pit-private-teacher-notes{display:none!important}}
