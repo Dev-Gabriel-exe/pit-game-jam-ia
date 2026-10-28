@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "REL-01",
+  "priority": "REL-02",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-10",
+  "last_task": "REL-01",
   "completed_count": 51,
   "total_tasks": 59,
   "tasks": [
@@ -237,14 +237,14 @@
       "group": "M06",
       "position": 13,
       "status": "blocked",
-      "updated_at": "2026-10-28T02:50:22.246Z",
+      "updated_at": "2026-10-28T05:46:00Z",
       "commit": "5e10e9748482045fd11ff7413de5f80be4ef94c1",
       "tests": [
         "18/18 V8 assertions executed: module syntax, professor/student fields, phase integration, offline fallback, static responsive CSS, evidence roundtrip",
         "qa/v3-m06-integration.cjs added, not run in Node",
         "Real GDevelop import and mobile browser tests NOT executed"
       ],
-      "blocker": "Aceite integral depende de executar importação PNG/WAV/GLB/MP4 em projeto GDevelop fictício e verificar layout em navegador móvel real; nenhum editor/navegador com esse ambiente foi acessado nesta rodada. API/turma reais não utilizados."
+      "blocker": "Node/Chrome asset downloads and mobile emulation now tested; still missing real GDevelop PNG/WAV/GLB/MP4 import and preview in a disposable project, plus physical mobile device verification."
     },
     {
       "id": "M07-01",
@@ -299,14 +299,14 @@
       "group": "M07",
       "position": 17,
       "status": "blocked",
-      "updated_at": "2026-10-28T02:55:15.219Z",
+      "updated_at": "2026-10-28T05:46:00Z",
       "commit": "312571d99045600f417185ca68257652f1afccbc",
       "tests": [
         "20/20 V8 assertions executed: teacher/student rubric, state machine, negative and victory cases, evidence, integration and responsive CSS",
         "qa/v3-m07-integration.cjs committed, not executed in Node",
         "Real GDevelop and isolated backend submission/review tests NOT executed"
       ],
-      "blocker": "Aceite integral exige executar login fictício, rascunho, envio, revisão e aprovação em backend isolado e Preview GDevelop 2D/3D; ambientes não acessados nesta rodada. Não usar turma real."
+      "blocker": "Isolated handler and Chrome fake-API student/teacher submission, revision and approval now tested (FUN-05/FUN-09); still missing actual GDevelop 2D/3D Preview and real Postgres disposable integration."
     },
     {
       "id": "M08-01",
@@ -361,14 +361,14 @@
       "group": "M08",
       "position": 21,
       "status": "blocked",
-      "updated_at": "2026-10-28T03:19:56.018Z",
+      "updated_at": "2026-10-28T05:46:00Z",
       "commit": "0d7d8e1aa3a20cbe0a26b876abb308933ae9b596",
       "tests": [
         "12/12 V8 static integration checks executed on fetched files: teacher rubric, student validation, accessibility styles, responsive rules and wiring",
         "Browser E2E run 40626036851 launched in GitHub Actions; outcome not yet confirmed at checkpoint",
         "No actual GDevelop Preview, measured FPS or real mobile device inspection"
       ],
-      "blocker": "Full acceptance requires GDevelop Preview before/after and mobile accessibility/performance checks; GitHub Actions browser QA was failing on obsolete M01 selectors and has been updated, but the new CI run is still pending. No real student data used."
+      "blocker": "Browser QA passed viewport, focus and reduced-motion coverage; still missing before/after visual confirmation in actual GDevelop Preview and physical mobile performance check."
     },
     {
       "id": "M09-01",
@@ -407,14 +407,14 @@
       "group": "M09",
       "position": 24,
       "status": "blocked",
-      "updated_at": "2026-10-28T03:24:16.218Z",
+      "updated_at": "2026-10-28T05:46:00Z",
       "commit": "86697c3a435f553edb4a667b9bb509b61d08df7a",
       "tests": [
         "12/12 V8 source/integration checks executed: student resolution fixed/backlog, evidence roundtrip, teacher review rubric, module wiring",
         "GitHub Actions static QA passes on recent feature commits; browser E2E under repair (obsolete selectors updated, latest run pending)",
         "No actual peer playtest, GDevelop retest or backend review performed"
       ],
-      "blocker": "Full acceptance requires real peer test in isolated classroom and professor observing correction/backlog and backend review; current environment has no authorized test classroom/GDevelop session. Browser CI is being repaired, not evidence of peer testing."
+      "blocker": "Fake-API Chrome and isolated SQL review/revision flows now passed; real peer test observation with fictional participants in an isolated classroom has not been executed."
     },
     {
       "id": "M10-01",
@@ -916,11 +916,15 @@
       "description": "Consolidar bugs P0/P1/P2 e corrigir os impeditivos; executar novamente o conjunto completo de testes",
       "group": "REL",
       "position": 57,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "blocked",
+      "updated_at": "2026-10-28T05:46:00Z",
+      "commit": "6d2bd941eefe655f975732eb6aed65e02c0bcab2",
+      "tests": [
+        "Static QA 40637308970 success: full static regression suite including FUN-10",
+        "Browser QA 40637186741 success: Chrome E2E 3 fictional students, teacher and simulated 503",
+        "Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint"
+      ],
+      "blocker": "P1 acceptance blockers remain: real GDevelop import/Preview, disposable Postgres E2E and observed peer test. Cannot certify release or strict gate until these are resolved."
     },
     {
       "id": "REL-02",
@@ -1752,6 +1756,19 @@
       ],
       "tests": "Static QA 40637308970 success: security/accessibility/provenance audit, handler guards, downloads, regressions; Browser QA 40637186741 success: 3 fictional students, mobile/desktop, stage/review, simulated outage; prior UI-08 viewport/focus/reduced motion browser checks",
       "notes": "Audit completed with P1/P2 risk register and unexecuted backup/rollback plan. No production pentest, live dependency scan, real DB or GDevelop import. Not release approval."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "6d2bd941eefe655f975732eb6aed65e02c0bcab2",
+      "files": [
+        "qa/v3-release-gate.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Static QA 40637308970 success: full static regression suite including FUN-10; Browser QA 40637186741 success: Chrome E2E 3 fictional students, teacher and simulated 503; Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint",
+      "notes": "P1 acceptance blockers remain: real GDevelop import/Preview, disposable Postgres E2E and observed peer test. Cannot certify release or strict gate until these are resolved."
     }
   ]
 }
