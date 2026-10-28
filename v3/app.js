@@ -621,7 +621,7 @@ async function sendWork(status){
   if(!v.ok){activePhase='practice';renderMain();scrollMissionToStart();setToast(v.label,true);$('mainContent').querySelector(v.field==='checks'?'[data-m10s-check]':'#m10s-'+v.field)?.focus();return;}
   if(status==='submitted'&&!q.canSubmit)return setToast('O professor ainda não liberou a prática.',true);
   evidence=window.PIT_STUDENT_MISSION_TEN.evidence(q.session);
-  route=q.playtest?.route==='3d'?'3d':'2d';
+  route=q.polish?.route==='3d'?'3d':'2d';
   if(visualPreview)return setToast('Prévia: lançamento registrado, sem envio à turma real.');
  }else{
   if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
