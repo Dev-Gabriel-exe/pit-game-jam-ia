@@ -23,6 +23,8 @@ assert(chat.includes("if(count.rows[0].n>=12)"),'chat rate limit');
 assert(chat.includes("if(recently.rows[0].n>=15)"),'join rate limit');
 assert(chat.includes("if(count.rows[0].n>=160)"),'classroom capacity bound');
 assert(/\besc\s*=\s*s\s*=>/.test(app)||app.includes('function esc('),'HTML escaping helper');
+assert(app.includes("call('chat','messages','GET',null,{studentId:selectedThread})"),'teacher chat history uses guarded API with timeout and preview restriction');
+assert(!app.includes('const response2=await fetch(uri,'),'no direct teacher chat fetch bypass');
 assert(app.includes('sessionStorage.setItem(\'pit_teacher_pin\''),'PIN uses sessionStorage rather than persistent localStorage');
 assert(!app.includes("localStorage.setItem('pit_teacher_pin'"),'teacher PIN never written to persistent localStorage');
 for(const f of ['index.html','aluno-v3.html','professor-v3.html']){
