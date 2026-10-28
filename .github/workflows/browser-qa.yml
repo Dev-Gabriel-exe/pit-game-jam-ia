@@ -33,6 +33,8 @@ jobs:
         run: node qa/v3-visual-audit.cjs
       - name: Verify FUN-01 static mirror cannot use live credentials
         run: node qa/v3-hosting-browser.cjs
+      - name: Verify FUN-02 fictional student sessions and invalid tokens
+        run: node qa/v3-session-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
