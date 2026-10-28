@@ -114,6 +114,23 @@ const {chromium}=require('playwright');
      assert.deepEqual(item.signature,[82,73,70,70],'RIFF magic '+item.id);
     }
    }
+   // Decode every PNG in Chrome and confirm its real pixel dimensions.
+   const decoded=await page.evaluate(async()=>{
+    const api=window.PIT_LIBRARY_API,results=[];
+    for(const asset of api.assets.filter(a=>a.cat!=='modelo'&&a.cat!=='som')){
+     const blob=await api.assetBlob(asset),url=URL.createObjectURL(blob);
+     try{
+      const img=new Image();img.src=url;await img.decode();
+      results.push({id:asset.id,kind:asset.cat,width:img.naturalWidth,height:img.naturalHeight});
+     }finally{URL.revokeObjectURL(url);}
+    }
+    return results;
+   });
+   assert.equal(decoded.length,36,'all 36 PNG resources decode');
+   for(const asset of decoded){
+    assert.equal(asset.width,asset.kind==='mapa'?1024:160,'decoded PNG width '+asset.id);
+    assert.equal(asset.height,asset.kind==='mapa'?576:160,'decoded PNG height '+asset.id);
+   }
    // Parse every GLB and WAV header, not only the file signatures.
    const internals=await page.evaluate(async()=>{
     const api=window.PIT_LIBRARY_API,rows=[];
