@@ -23,6 +23,7 @@ jobs:
           node --check chat-api/api/arena.js
           node --check qa/v5-core.cjs
           node qa/v5-core.cjs
+          node qa/v5-api-guards.cjs
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 15
