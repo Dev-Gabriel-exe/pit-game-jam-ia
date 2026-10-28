@@ -10,6 +10,7 @@ const reduce=window.matchMedia("(prefers-reduced-motion: reduce)");
 const motionMode=new URLSearchParams(location.search).get("motion");
 const disabled=motionMode==="off";
 const forced=motionMode==="on";
+if(forced)root.classList.add("pit-force-motion");
 const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
 const videos=()=>Array.from(root.querySelectorAll(".arcade-mission-motion-video"));
 const eligible=()=>!disabled&&(forced||(!reduce.matches&&!connection?.saveData))&&!document.hidden;
