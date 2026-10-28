@@ -168,11 +168,11 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   camera.position.set(7.5,5.5,10);controls.target.set(0,1.4,0);controls.update();
   return item;
  }
- function fighters(list,{seed=48211}={}){
+ function fighters(list,{seed=48211,limit=70}={}){
   clearHeroes();const normalized=list.map((entry,i)=>({
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
-  simulation=CORE.battle(normalized,{seed,limit:165});
+  simulation=CORE.battle(normalized,{seed,limit});
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
   camera.position.set(0,26,37);controls.target.set(0,.2,0);controls.update();
   elapsed=0;accumulator=0;playing=false;
