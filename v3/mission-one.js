@@ -72,7 +72,7 @@ function heading(step,icon,title,description){
 }
 function field(id,label,hint,d,placeholder,disabled){
  const f=FIELDS.find(x=>x.id===id);
- const example=chosenExample(d),sample=example&&example[id]?example[id]:placeholder;
+ const example=chosenExample(d),sample=example&&example[id]?example[id]:String(placeholder).replace(/^Ex\.:\s*/,'');
  return '<label class="qo-input-wrap" for="qo-'+id+'"><span>'+label+'</span><input id="qo-'+id+'" data-q-field="'+id+'" type="text" maxlength="'+f.max+'" value="'+escapeHTML(d[id])+'" placeholder="'+escapeHTML('Ex.: '+sample)+'" autocomplete="off" '+(disabled?'disabled':'')+'><small>'+hint+'</small></label>';
 }
 function genre(d,disabled){
