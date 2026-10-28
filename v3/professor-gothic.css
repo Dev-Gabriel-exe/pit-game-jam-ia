@@ -2,7 +2,7 @@
    Conteúdo legível na projeção, inspirado na estética da jornada do aluno.
    Aplicado APENAS ao professor. Sem notas de condução. */
 body[data-role="teacher"]{
- --tm-gold:#e9bb83;--tm-paper:#f2e7d7;--tm-soft:#cbb8a6;
+ --tm-gold:var(--pit-gold-muted);--tm-paper:#f2e7d7;--tm-soft:#cbb8a6;
  background:#080a0e url("./abyss-bg.svg") center/cover fixed no-repeat;color:var(--tm-paper);
 }
 body[data-role="teacher"] .hero{
