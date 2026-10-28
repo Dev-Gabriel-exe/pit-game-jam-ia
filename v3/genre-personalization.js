@@ -151,7 +151,8 @@
     support:'Um jogo pequeno que funcione é melhor que uma demo grande inacabada.'
    }
   };
-  return {...(stages[n]||stages[1]),genre:p.genre,title,hero,selected:!!draft.genre,profile:p};
+  const result=stages[n]||stages[1];
+  return {...result,focus:result.focus.includes(title)?result.focus:'No projeto '+title+': '+result.focus,genre:p.genre,title,hero,selected:!!draft.genre,profile:p};
  }
  window.PIT_GENRE_CONTEXT={profile,stage,genres,norm};
 })();
