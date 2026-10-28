@@ -7,11 +7,15 @@ const assets=[
 {id:'monstro',cat:'personagem',name:'Monstro da estação',desc:'Inimigo simples, para terror ou aventura.',file:'monstro.png',shape:'monster',tint:'#f887b4'},
 {id:'piloto',cat:'personagem',name:'Piloto de corrida',desc:'Avatar para carros e corridas.',file:'piloto.png',shape:'hero',tint:'#ffce72'},
 {id:'fantasma',cat:'personagem',name:'Fantasma da mansão',desc:'Inimigo para puzzle ou terror 2D.',file:'fantasma.png',shape:'ghost',tint:'#cad9ff'},
+{id:'feiticeira',cat:'personagem',name:'Feiticeira das runas',desc:'Sprite original 160×160 com capa, cajado e runas. Use como NPC ou personagem jogável.',file:'feiticeira_runas.png',shape:'mage',tint:'#bf8cff'},
+{id:'golem',cat:'personagem',name:'Guardião de pedra',desc:'Sprite original de inimigo ou guardião com armadura de rocha e núcleo luminoso.',file:'guardiao_pedra.png',shape:'golem',tint:'#f4b66b'},
 {id:'mapa-floresta',cat:'mapa',name:'Mapa — Floresta top-down',desc:'Fundo 2D 1024×576. Adicione colisores no GDevelop.',file:'mapa_floresta.png',shape:'forest',tint:'#79ed91'},
 {id:'mapa-cidade',cat:'mapa',name:'Mapa — Cidade neon',desc:'Cenário visto de cima para RPG ou perseguição.',file:'mapa_cidade.png',shape:'city',tint:'#66e0fa'},
 {id:'mapa-plataforma',cat:'mapa',name:'Mapa — Plataforma espacial',desc:'Imagem de cenário; o chão jogável requer Platform behavior.',file:'mapa_plataforma.png',shape:'platform',tint:'#9d96ff'},
 {id:'mapa-caverna',cat:'mapa',name:'Mapa — Caverna e labirinto',desc:'Cenário escuro para exploração/puzzle.',file:'mapa_caverna.png',shape:'cave',tint:'#c7abff'},
 {id:'mapa-corrida',cat:'mapa',name:'Mapa — Pista futurista',desc:'Arte 2D de pista; física/controles usam starter.',file:'mapa_corrida.png',shape:'track',tint:'#ffe58a'},
+{id:'mapa-ruinas',cat:'mapa',name:'Mapa — Ruínas do santuário',desc:'Cenário top-down 1024×576 com pátio, colunas e altar. Colisores devem ser adicionados no GDevelop.',file:'mapa_ruinas.png',shape:'ruins',tint:'#efc487'},
+{id:'mapa-pantano',cat:'mapa',name:'Mapa — Pântano das lanternas',desc:'Cenário top-down 1024×576 com trilha e poças. Defina limites e colisões no editor.',file:'mapa_pantano.png',shape:'swamp',tint:'#91dfbb'},
 {id:'chave',cat:'item',name:'Chave dourada',desc:'Item para liberar porta através de variável.',file:'chave.png',shape:'key',tint:'#ffd56b'},
 {id:'moeda',cat:'item',name:'Moeda XP',desc:'Coletável para Score e feedback.',file:'moeda.png',shape:'coin',tint:'#ffd56b'},
 {id:'cristal',cat:'item',name:'Cristal de energia',desc:'Recurso para puzzle, coleta ou missão.',file:'cristal.png',shape:'crystal',tint:'#6bfbf2'},
@@ -19,6 +23,8 @@ const assets=[
 {id:'coracao',cat:'item',name:'Coração / vida',desc:'Ícone para HUD da vida.',file:'coracao.png',shape:'heart',tint:'#ff6c99'},
 {id:'pocao',cat:'item',name:'Poção de vida',desc:'Item coletável de recuperação.',file:'pocao.png',shape:'potion',tint:'#8cf3b6'},
 {id:'checkpoint',cat:'item',name:'Bandeira checkpoint',desc:'Ponto para salvar estágio da missão.',file:'checkpoint.png',shape:'flag',tint:'#e5dc76'},
+{id:'lanterna',cat:'item',name:'Lanterna arcana',desc:'Sprite 160×160 para iluminação ou objetivo de coleta; a luz exige eventos no GDevelop.',file:'lanterna_arcana.png',shape:'lantern',tint:'#ffcd77'},
+{id:'escudo',cat:'item',name:'Escudo de proteção',desc:'Sprite 160×160 para item defensivo ou HUD; o efeito de defesa exige lógica de eventos.',file:'escudo_protecao.png',shape:'shield',tint:'#8fd5f8'},
 {id:'glb-cristal',cat:'modelo',name:'Cristal 3D low-poly',desc:'GLB leve de contingência. GDevelop → 3D Model.',file:'cristal_3d.glb',shape:'crystal',tint:'#58f6df'},
 {id:'glb-totem',cat:'modelo',name:'Totem 3D low-poly',desc:'Prop para puzzle, monumento ou objetivo.',file:'totem_3d.glb',shape:'totem',tint:'#98d8ff'},
 {id:'glb-bau',cat:'modelo',name:'Baú 3D low-poly',desc:'Prop de recompensa, loot ou missão.',file:'bau_3d.glb',shape:'box',tint:'#dca66f'},
@@ -42,6 +48,17 @@ function svgAsset(a){
    if(a.shape==='platform'){p='<rect width="1024" height="576" fill="#142044"/><circle cx="820" cy="100" r="65" fill="#a5afff" opacity=".65"/>';for(let i=0;i<13;i++){let x=i*82,y=480-(i%5)*74;p+='<rect x="'+x+'" y="'+y+'" width="125" height="34" rx="4" fill="#4b5e9b" stroke="#8de4ff" stroke-width="3"/>';}}
    if(a.shape==='cave'){p='<rect width="1024" height="576" fill="#12152a"/>';for(let i=0;i<20;i++){let x=(i*157)%1000,y=(i*103)%530;p+='<path d="M'+x+' '+(y+60)+'l40 -90 90 110Z" fill="#3b3a5c" stroke="#816eaf" stroke-width="5"/>';}}
    if(a.shape==='track'){p='<rect width="1024" height="576" fill="#13263c"/><path d="M150 100 H790 Q950 130 890 310 Q880 470 620 445 H220 Q90 390 150 100" stroke="#424958" stroke-width="115" fill="none"/><path d="M150 100 H790 Q950 130 890 310 Q880 470 620 445 H220 Q90 390 150 100" stroke="#e2cf88" stroke-width="4" stroke-dasharray="16 17" fill="none"/>';}
+   if(a.shape==='ruins'){
+    p='<rect width="1024" height="576" fill="#252334"/><path d="M0 0H1024V576H0Z" fill="#413b45" opacity=".4"/><path d="M90 80H934V496H90Z" fill="#766c63" stroke="#c0a782" stroke-width="18"/><path d="M125 110H899V466H125Z" fill="#544b4c" stroke="#a38c73" stroke-width="5"/><path d="M512 88V480M110 288H914" stroke="#d3b58b" stroke-opacity=".24" stroke-width="13" stroke-dasharray="25 14"/><circle cx="512" cy="288" r="115" fill="#373544" stroke="#c2a67e" stroke-width="16"/><circle cx="512" cy="288" r="85" fill="none" stroke="#d9b98c" stroke-width="4" stroke-dasharray="12 10"/><path d="M512 213L579 288L512 363L445 288Z" fill="#6e6476" stroke="#f0d19e" stroke-width="8"/><circle cx="512" cy="288" r="22" fill="#f3c984"/>';
+    for(let i=0;i<12;i++){const x=174+(i%6)*135,y=i<6?140:435;p+='<rect x="'+(x-25)+'" y="'+(y-22)+'" width="50" height="44" rx="7" fill="#b6a18a" stroke="#3b353b" stroke-width="7"/><rect x="'+(x-13)+'" y="'+(y-11)+'" width="26" height="22" fill="#6a6064"/>';}
+    for(let i=0;i<30;i++){const x=45+(i*137)%930,y=38+(i*193)%502;p+='<path d="M'+x+' '+y+'l17 5 -7 12 -16 -3Z" fill="#c5b397" opacity=".55"/>';}
+   }
+   if(a.shape==='swamp'){
+    p='<rect width="1024" height="576" fill="#152c32"/><path d="M0 70Q160 -20 310 110T640 80T1024 95V576H0Z" fill="#1b4445"/><path d="M0 380Q170 280 300 410T620 370T1024 405V576H0Z" fill="#1b3839"/><path d="M-50 325Q170 170 365 288T720 280T1080 225" stroke="#8b8062" stroke-width="90" fill="none" stroke-linecap="round"/><path d="M-50 325Q170 170 365 288T720 280T1080 225" stroke="#d0b78a" stroke-width="59" fill="none" stroke-linecap="round" stroke-dasharray="12 9"/>';
+    for(let i=0;i<34;i++){const x=30+(i*173)%975,y=30+(i*139)%520,r=18+i%4*6;p+='<ellipse cx="'+x+'" cy="'+y+'" rx="'+(r*1.8)+'" ry="'+r+'" fill="#235b60" stroke="#55a9a2" stroke-width="3"/><path d="M'+(x-r)+' '+y+'q'+r+' -15 '+(r*2)+' 0" fill="none" stroke="#b4e6bf" stroke-opacity=".3" stroke-width="3"/>';}
+    for(let i=0;i<30;i++){const x=22+(i*211)%980,y=25+(i*127)%526;p+='<path d="M'+x+' '+(y+15)+'l-7 -31m7 31l9 -36m-9 36l2 -42" fill="none" stroke="#80b28b" stroke-width="4" stroke-linecap="round"/>';}
+    for(let i=0;i<8;i++){const x=75+i*121,y=150+(i%3)*107;p+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#f3d68c"/><circle cx="'+x+'" cy="'+y+'" r="22" fill="#f3d68c" opacity=".13"/>';}
+   }
    art=p+'<rect x="15" y="15" width="994" height="546" fill="none" rx="18" stroke="'+t+'" stroke-opacity=".45" stroke-width="4"/>';
  }else{
   let core='';
@@ -57,6 +74,10 @@ function svgAsset(a){
   if(a.shape==='potion'){core='<rect x="65" y="18" width="30" height="38" rx="5" fill="#abdef1"/><rect x="50" y="48" width="60" height="91" rx="22" fill="url(#g)" stroke="#d2fff1" stroke-width="7"/><path d="M56 100Q82 74 105 94" stroke="#efffff" stroke-width="7" fill="none"/>';}
   if(a.shape==='flag'){core='<path d="M55 143V24" stroke="#d2f5ff" stroke-width="9"/><path d="M61 23L130 42L66 79Z" fill="url(#g)" stroke="#f4fdff" stroke-width="5"/>';}
   if(a.shape==='box' || a.shape==='totem'){core='<rect x="30" y="30" width="100" height="100" fill="url(#g)" stroke="#c4f3ff" stroke-width="8"/><path d="M30 30L80 8L130 30M130 130L80 153L30 130" fill="none" stroke="'+t+'" stroke-width="7"/>';}
+  if(a.shape==='mage'){core='<path d="M31 145L43 73Q50 45 80 46Q112 45 118 75L133 145Z" fill="#45315e" stroke="'+t+'" stroke-width="5"/><path d="M55 89L80 63L106 89L98 142H62Z" fill="url(#g)"/><path d="M50 44Q80 -5 110 44L126 60H34Z" fill="#292342" stroke="'+t+'" stroke-width="5"/><ellipse cx="80" cy="57" rx="20" ry="22" fill="#d7b4a4"/><path d="M62 53Q80 35 98 53" stroke="#392b55" stroke-width="11" fill="none"/><circle cx="73" cy="59" r="3" fill="#281e35"/><circle cx="88" cy="59" r="3" fill="#281e35"/><path d="M127 140L135 25" stroke="#d7b789" stroke-width="6"/><path d="M135 12l13 15 -13 17 -12 -17Z" fill="#a6e6ff" stroke="#f6d7ff" stroke-width="3"/><path d="M70 106l10 -13 10 13 -10 14Z" fill="#f3d9ff"/><path d="M45 125l-13 -9m85 9l13 -9" stroke="#c3a5ff" stroke-width="5"/>';}
+  if(a.shape==='golem'){core='<path d="M47 43L59 19H104L117 45L106 80H55Z" fill="#78767a" stroke="'+t+'" stroke-width="6"/><path d="M44 83L20 69L9 105L28 126L52 108M115 83L140 69L153 106L132 126L109 108" fill="#77716f" stroke="#d4b897" stroke-width="6"/><path d="M47 81H113L124 133L95 147H65L36 133Z" fill="#4b505c" stroke="'+t+'" stroke-width="6"/><path d="M52 134L47 156M108 134L114 156" stroke="#8d8682" stroke-width="18"/><path d="M60 57h17m8 0h17" stroke="#ffdd9b" stroke-width="7"/><path d="M80 90L99 109L80 130L61 109Z" fill="#ffd486" stroke="#fff3bf" stroke-width="4"/><path d="M40 96l-9 13M117 96l10 13" stroke="#302c35" stroke-width="5"/>';}
+  if(a.shape==='lantern'){core='<path d="M62 26V15H99V26M80 14V5" fill="none" stroke="#e8d7a9" stroke-width="7"/><path d="M48 50L64 30H96L113 50L104 126H57Z" fill="#4c4550" stroke="#ffe0a2" stroke-width="7"/><path d="M63 56H98L94 112H67Z" fill="#ffe29b" stroke="#fff7d3" stroke-width="4"/><path d="M80 65Q96 82 80 104Q65 91 80 65Z" fill="#ff9b45"/><path d="M43 130H117V145H43Z" fill="#8a7360" stroke="#ffe0a2" stroke-width="5"/><path d="M50 50H110M53 120H107" stroke="#e6d0a2" stroke-width="6"/><circle cx="80" cy="84" r="61" fill="#ffce70" opacity=".08"/>';}
+  if(a.shape==='shield'){core='<path d="M80 11L135 33V83Q131 123 80 151Q29 123 25 83V33Z" fill="#273d57" stroke="#c2e6ff" stroke-width="8"/><path d="M80 25L119 41V84Q114 111 80 134Q46 111 41 84V41Z" fill="url(#g)" stroke="#f7dcad" stroke-width="4"/><path d="M80 39V121M52 78H108" stroke="#eafaff" stroke-width="11"/><circle cx="80" cy="78" r="13" fill="#ffe4a1" stroke="#fff8d6" stroke-width="4"/><path d="M35 43L49 49M111 49L125 43" stroke="#ffffff" stroke-opacity=".7" stroke-width="4"/>';}
   art='<circle cx="80" cy="80" r="70" fill="'+t+'" opacity=".10" filter="url(#gl)"/>'+core;
  }
  return '<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+style+art+'</svg>';
@@ -95,9 +116,9 @@ function audioBlob(a){
 function audioDownload(a){downloadBlob(audioBlob(a),a.file);}
 /* Suggested genres are discovery aids, not technical compatibility or licenses. */
 const genreExamples={
- rpg:['explorador','heroina','robo','monstro','mapa-floresta','mapa-cidade','mapa-caverna','chave','moeda','cristal','porta','coracao','pocao','checkpoint','glb-cristal','glb-totem','glb-bau','glb-portal','wav-coleta','wav-vitoria','wav-dano','wav-portal','wav-menu'],
- plataforma:['explorador','heroina','robo','monstro','fantasma','mapa-plataforma','mapa-caverna','moeda','cristal','coracao','pocao','checkpoint','glb-obstaculo','wav-coleta','wav-vitoria','wav-dano'],
- puzzle:['heroina','robo','monstro','fantasma','mapa-floresta','mapa-caverna','chave','cristal','porta','pocao','glb-cristal','glb-totem','glb-bau','glb-portal','wav-portal','wav-menu','wav-vitoria'],
+ rpg:['explorador','heroina','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','robo','monstro','mapa-floresta','mapa-cidade','mapa-caverna','chave','moeda','cristal','porta','coracao','pocao','checkpoint','glb-cristal','glb-totem','glb-bau','glb-portal','wav-coleta','wav-vitoria','wav-dano','wav-portal','wav-menu'],
+ plataforma:['explorador','heroina','golem','escudo','robo','monstro','fantasma','mapa-plataforma','mapa-caverna','moeda','cristal','coracao','pocao','checkpoint','glb-obstaculo','wav-coleta','wav-vitoria','wav-dano'],
+ puzzle:['heroina','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','robo','monstro','fantasma','mapa-floresta','mapa-caverna','chave','cristal','porta','pocao','glb-cristal','glb-totem','glb-bau','glb-portal','wav-portal','wav-menu','wav-vitoria'],
  corrida:['piloto','mapa-corrida','glb-obstaculo','wav-menu','wav-dano','wav-vitoria']
 };
 function assetMatches(a,{cat='todos',search='',genre='todos',format='todos'}={}){
