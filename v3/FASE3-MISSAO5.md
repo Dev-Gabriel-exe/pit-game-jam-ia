@@ -56,3 +56,26 @@ O rascunho esquemático inicial foi substituído pelo módulo `v3/gdevelop-missi
 **Verificações nesta rodada:** 38/38 checagens sintáticas, de conteúdo, integração e interações simuladas; o arquivo de regressão persistente `qa/v3-m05-guide.cjs` executou **25/25 asserções** num runtime JavaScript com módulos Node simulados. A execução local em Node, o navegador real, a renderização efetiva de cada imagem, o editor GDevelop e o fluxo com API/Neon **ainda precisam de ensaio separado**. Links oficiais foram verificados como referências na documentação; isso não comprova que a interface esteja idêntica em todas as versões.
 
 **Próxima meta M05-03:** o aluno implementa uma regra original no jogo que já estava criando, faz um teste positivo e um negativo, registra feedback e diagnóstico, e mantém a evidência por sessão sem recorrer a respostas prontas.
+
+## M05-03 — Caderno do aluno — IMPLEMENTADO
+
+**Arquivos:** `v3/student-mission-five.js`, `v3/student-mission-five.css`, inclusão do tutorial `v3/gdevelop-mission-five-guide.js` e CSS, integração em `aluno-v3.html` e `v3/app.js`. A oficina prática preserva o briefing existente do professor e não altera as Missões 01–04.
+
+### Jornada do aluno
+
+- **Briefing:** reaproveita título e gênero da Missão 01, mecânica da 02, projeto/cena/objeto da 03 e comando/limite testados na 04. Não cria um novo projeto.
+- **Prática:** 24 minutos (8 condição+evento, 8 variável+feedback, 8 casos de teste+salvar). Mostra o tutorial oficial da Missão 05 com uma única rota sugerida: coleta/pontuação, clique/narrativa ou porta 3D. A escolha pode mudar, com rascunho preservado e placeholders adaptados ao caminho.
+- **Prova de autoria:** campo de condição SE, ação ENTÃO, variável de estado, resultados observados em testes positivo e negativo, feedback no Preview e destino do projeto editável; diagnóstico opcional. Confirma separadamente teste positivo, negativo e repetição.
+- **Revisão:** monta evidência textual estruturada (máximo 750 caracteres) e permite envio apenas quando liberado pelo professor, obedecendo a API existente. Estados enviado/aprovado bloqueiam edição; revisão solicitada preserva novas correções locais. O status de aprovação não é criado localmente.
+- **Segurança:** `?preview=1` simula a entrega e não usa o backend. Campos escapam HTML de respostas; rascunhos são armazenados por ID de aluno no navegador. O caderno não tem como verificar uma execução real do GDevelop: os três checkboxes registram declaração e podem ser auditados pelo professor.
+
+### Evidências dos testes de desenvolvimento
+
+- **48/48** verificações de sintaxe, CSS, estrutura de três fases, personalização, restauração de campos, limite de API, preservação dos materiais anteriores e submissão.
+- **19/19** cenários simulados de interface: seleção de rota, ajuda 3D dinâmica, troca de placeholders, salvamento de respostas, preview textual, validação, bloqueio de revisão incompleta e navegação prática/revisão.
+- **33/33** asserções executadas com `qa/v3-m05-student.cjs` sobre código real recuperado do GitHub e módulos Node simulados. Com o repositório local, executar `node qa/v3-m05-student.cjs` para repetir os testes no Node. Evidência com todos os campos no tamanho máximo: **728 caracteres**, sem corte silencioso.
+- **Não realizados:** QA visual em navegador, integração com banco Neon real, autenticação e submissão de turma real/fictícia, execução de todas as rotas no editor GDevelop. Esses itens permanecem pendentes para M05-04 e homologação final.
+
+### Próxima meta
+
+**M05-04 — Auditoria de alinhamento:** comparar professor/aluno, critérios da regra, proteção contra duplicação, três testes de aceitação, persistência e revisão. Não declarar a oficina homologada sem ensaios reais.
