@@ -30,7 +30,7 @@ O repositório não apresenta arquivo de licença explícito nesta branch. Por i
 ## Verificação e limitações
 
 - `node qa/v3-library-filters.cjs`: 38 IDs, categorias, gêneros, formatos, descrições e SVGs novos.
-- `node qa/v3-library-preview-browser.cjs`: Chrome em 390px e 1280px, preview e decodificação PNG dos seis novos itens, GLB, WAV e foco.
+- `node qa/v3-library-preview-browser.cjs`: Chrome em 390px e 1280px, preview e decodificação PNG dos dez recursos das duas expansões, GLB, WAV e foco.
 - `node qa/v3-quick-kits.cjs`: gera os 38 arquivos com assinaturas válidas, mas utiliza stub de PNG; decodificação PNG real é verificada no navegador.
 - Testes automatizados **não** substituem importação e execução manual no editor GDevelop, teste físico de celular, auditoria artística ou licença formal.
 
