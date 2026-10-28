@@ -135,6 +135,11 @@ assert(m09Student.includes('Rodada A: 1 min hipótese/tarefa + 5 min teste + 2 m
 assert(m09Student.includes('Rodada B: inverter os papéis e repetir os mesmos 8 min'),'M09 student second round 8 min');
 assert(m09Foundations.includes('Rodada A (8 min)'),'M09 teacher round A 8 min');
 assert(m09Foundations.includes('Rodada B (8 min)'),'M09 teacher round B 8 min');
+assert(m09Student.includes("outcome:'',resolution:''"),'M09 must not preselect a fictitious issue or resolution');
+assert(m09Student.includes("x.outcome=outcomes.includes(d.outcome)?d.outcome:''"),'M09 save must not inject issue by default');
+assert(m09Student.includes("const resolutions=['fixed','backlog','nochange']"),'M09 allows honest no-defect playtest');
+assert(m09Student.includes("d.outcome==='passed'&&d.resolution==='fixed'"),'M09 rejects fictitious correction of no-defect test');
+assert(m09Student.includes("d.outcome==='issue'&&d.resolution==='nochange'"),'M09 requires backlog or fix for observed defect');
 assert(m09Student.includes('https://editor.gdevelop.io/'),'M09 student GDevelop editor handoff');
 assert(m09Student.includes('não abre nem importa seu jogo automaticamente'),'M09 editor handoff must be honest');
 assert(m09Student.includes('aplicativo GDevelop já instalado'),'M09 student offline fallback');
