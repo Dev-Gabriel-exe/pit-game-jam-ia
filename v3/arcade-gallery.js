@@ -85,6 +85,7 @@ function poster(m){
 }
 function build(){
  track.innerHTML=M.map(poster).join('');
+ window.PIT_ONE_MOTION?.bind();
  track.querySelectorAll('[data-pick]').forEach(btn=>btn.addEventListener('click',()=>{
   const n=Number(btn.dataset.pick);
   if(n!==active)choose(n);
@@ -134,6 +135,7 @@ function choose(index,initial){
  const selected=track.querySelector('.arcade-card.current');
  if(selected&&selected.scrollIntoView)selected.scrollIntoView({behavior:initial||lowStimulus?'auto':'smooth',block:'nearest',inline:'center'});
  if(!initial&&!lowStimulus&&selected){selected.classList.remove('arcade-pop');void selected.offsetWidth;selected.classList.add('arcade-pop');}
+ window.PIT_ONE_MOTION?.sync();
 }
 function enter(){
  if(!opened||launching)return;
@@ -171,6 +173,7 @@ function close(){
  $('arcadeCinematic').hidden=true;$('arcadeCinematic').setAttribute('aria-hidden','true');
  root.classList.remove('launching','open','pit-low-stimulus');root.hidden=true;
  document.body.classList.remove('pit-arcade-open');
+ window.PIT_ONE_MOTION?.sync();
  if(previousFocus&&previousFocus.isConnected)previousFocus.focus();
 }
 $('arcadePrev').addEventListener('click',()=>choose(active-1));
