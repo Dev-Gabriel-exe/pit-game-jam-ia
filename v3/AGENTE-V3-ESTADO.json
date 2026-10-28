@@ -16,7 +16,7 @@
   ],
   "priority": "REL-01",
   "current_phase": "MISSOES",
-  "last_task": "UI-05",
+  "last_task": "REL-01",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -944,8 +944,8 @@
       "group": "REL",
       "position": 57,
       "status": "blocked",
-      "updated_at": "2026-10-28T08:37:00Z",
-      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
+      "updated_at": "2026-10-28T14:22:00Z",
+      "commit": "a087b001ce56c1f44b77cc01686219592e95dd80",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -980,9 +980,11 @@
         "2026-10-28: checkpoint d63599ca validated: static QA 40671846999 SUCCESS; Browser QA 40671846818 SUCCESS; manual criteria NOT_RUN.",
         "Actual PNG preview code committed 9b72e3ab; GitHub CI pending; no browser or GDevelop validation claimed.",
         "Browser QA 40677106597 FAIL: async preview test race at 1280px (sprite has real image, 0!==1). Test wait/decode fix committed 57ca0e8; new CI result pending.",
-        "2026-10-28 confirmed: corrected PNG async preview regression Browser QA 40678411209 SUCCESS, static 40678411153 SUCCESS; checkpoint Browser QA 40678431100 SUCCESS, static 40678431018 SUCCESS. Manual tests NOT_RUN."
+        "2026-10-28 confirmed: corrected PNG async preview regression Browser QA 40678411209 SUCCESS, static 40678411153 SUCCESS; checkpoint Browser QA 40678431100 SUCCESS, static 40678431018 SUCCESS. Manual tests NOT_RUN.",
+        "2026-10-28: library expanded from 49 to 51 original procedural assets (Raposa autômata 160x160 PNG and Laboratório das máquinas 1024x576 PNG); SVG generator, RPG/puzzle filters, Chrome preview regression, static exact format count 41 PNG / 5 GLB / 5 WAV and GDevelop import guide updated in commits 7d7e9e69, 0ec82371, 9a8c5341, a087b001.",
+        "Static QA run 40705145816 SUCCESS on 9a8c5341 (includes updated 51-resource assertions); Browser QA run 40705145819 IN_PROGRESS when observed. Latest guide commit a087b001 static/browser runs 40705223297/40705223412 IN_PROGRESS; results not yet claimed."
       ],
-      "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
+      "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New 51-asset browser run is pending at checkpoint."
     },
     {
       "id": "REL-02",
@@ -2270,6 +2272,12 @@
       "task": "M06-05",
       "commit": "e5fc5c2ed38fd92cef8867935e6d83485ea8b1c0",
       "summary": "Published standalone offline-friendly HTML GDevelop guide for 39 PNG, 5 WAV, 5 GLB, linked prominently from portal library, with accessible manual checklist and evidence instructions. Added static QA assertions for guide link/content/back navigation. Prior 49-asset Browser QA 40696516959 and static QA 40696516920 succeeded; new CI pending. Manual import, mobile physical and peer playtest NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "a087b001ce56c1f44b77cc01686219592e95dd80",
+      "summary": "Added original fox sprite and machinery-laboratory map with actual procedural PNG generation and previews, 49→51 assets; updated RPG/puzzle filters, 41-PNG GDevelop guide, static/browser QA. Static 40705145816 SUCCESS; Browser QA 40705145819 and latest 40705223412 still in progress; manual GDevelop/mobile/peer NOT_RUN. 54/59 unchanged."
     }
   ]
 }
