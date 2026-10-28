@@ -1,0 +1,40 @@
+name: Cinematic LTX stage browser QA
+on:
+  push:
+    branches:
+      - feature/ltx-cinematic-slides-v3-20261028
+  pull_request:
+    paths:
+      - 'v3/teacher-projector*'
+      - 'v3/teacher-cinematic-stage.css'
+      - 'professor-v3.html'
+      - 'qa/v3-ltx-cinematic-stage.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cinematic-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Verify cinematic projection and reduced motion
+        run: |
+          node --check v3/teacher-projector-m01.js
+          node --check v3/teacher-projector-m01-deck.js
+          node --check v3/teacher-projector-universal.js
+          node --check qa/v3-ltx-cinematic-stage.cjs
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-cinema.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v3-ltx-cinematic-stage.cjs
