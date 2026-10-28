@@ -91,6 +91,8 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  assert.equal(own.statusCode,200,'owner can fetch own image');
  assert(Buffer.isBuffer(own.binary)&&own.binary.equals(png),'binary image bytes preserved');
  assert.equal(own.headers['Content-Type'],'image/png');
+ assert.equal(own.headers['Cache-Control'],'private, no-store, max-age=0','private image must never be cached');
+ assert.equal(own.headers['X-Content-Type-Options'],'nosniff','private image must disable MIME sniffing');
  const other=await call(chat,'GET','image',{},users[1].token,'',{messageId:imageId});
  assert.equal(other.statusCode,404,'student B cannot read student A image');
  const teacherImage=await call(chat,'GET','image',{},'',pin,{messageId:imageId});
