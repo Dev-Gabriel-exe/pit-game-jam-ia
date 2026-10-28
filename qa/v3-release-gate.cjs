@@ -15,6 +15,16 @@ for(const t of done){
  assert(Array.isArray(t.tests)&&t.tests.length>0,'done task has test evidence '+t.id);
 }
 for(const t of remaining)assert(['blocked','in_progress','todo'].includes(t.status),'known status '+t.id);
+// A final-review state must never be accepted while a task remains blocked.
+if(s.status==='READY_FOR_FINAL_REVIEW'||s.status==='READY_FOR_FINAL'){
+ assert.equal(remaining.length,0,'final-review state requires all 59 tasks done');
+}
+// A task is not verifiable merely because it has a commit: evidence must
+// contain at least one executed check, not only a NOT_RUN/pending claim.
+for(const t of done){
+ assert(t.tests.some(v=>!/(?:NOT_RUN|not executed|not run|pending|not yet confirmed)/i.test(String(v))),
+  'done task must have at least one non-pending verification '+t.id);
+}
 const gate={ready:remaining.length===0,done:done.length,total:s.total_tasks,remaining:remaining.map(t=>({id:t.id,status:t.status,blocker:t.blocker||null}))};
 console.log('REL-01 RELEASE GATE:',JSON.stringify(gate,null,2));
 if(!gate.ready)console.log('NOT READY: keep branch isolated; do not merge main or publish.');
