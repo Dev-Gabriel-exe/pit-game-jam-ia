@@ -5,9 +5,9 @@
 #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-bottom .pit-ws-depth-trigger{flex-shrink:0}
 #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-concept h3{font-size:clamp(20px,1.72vw,28px)!important}
 #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-concept p{font-size:clamp(17px,1.32vw,21px)!important}
-#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover .pit-u-cinema-panel{width:100%;height:clamp(240px,44vh,460px);max-height:54vh;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover .pit-u-cinema-panel{width:100%;height:clamp(225px,38vh,390px);max-height:45vh;min-height:0}
 #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover{grid-template-columns:minmax(0,1fr) minmax(0,.9fr)}
-#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover h2{font-size:clamp(35px,4vw,62px);margin:0 0 16px}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover h2{font-size:clamp(30px,3.3vw,52px);margin:0 0 14px}
 #pitProjector.pit-projector-m01 .pit-ws-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;flex:1;min-height:0}
 #pitProjector.pit-projector-m01 .pit-ws-choice{display:flex;flex-direction:column;justify-content:center;gap:20px;align-items:flex-start;border:2px solid #846048;border-radius:14px;background:linear-gradient(155deg,#2c2020,#161920);color:#fae5ce;cursor:pointer;text-align:left;padding:clamp(20px,2vw,35px);transition:border-color .17s,box-shadow .17s}
 #pitProjector.pit-projector-m01 .pit-ws-choice span{font:800 clamp(14px,1.1vw,18px) var(--pit-font-reading,"Segoe UI",sans-serif);color:#dfa770;letter-spacing:.08em}
