@@ -431,6 +431,19 @@ async function sendWork(status){
   const draft=window.PIT_STUDENT_MISSION_FOUR.load(q.session);
   route=window.PIT_STUDENT_MISSION_FOUR.routeServerType(window.PIT_STUDENT_MISSION_FOUR.activeRoute(q,draft));
   if(visualPreview)return setToast('Prévia: testes registrados, sem envio para a turma real.');
+ }else if(pilotFive){
+  const q=missionFiveContext(),v=window.PIT_STUDENT_MISSION_FIVE.validate(q.session);
+  if(!v.ok){
+   activePhase='practice';renderMain();scrollMissionToStart();setToast(v.label,true);
+   if(v.field==='checks')$('mainContent').querySelector('[data-m5s-check]')?.focus();
+   else $('m5s-'+v.field)?.focus();
+   return;
+  }
+  if(status==='submitted'&&!q.canSubmit)return setToast('O professor ainda não liberou a prática.',true);
+  evidence=window.PIT_STUDENT_MISSION_FIVE.evidence(q.session,q);
+  const d=window.PIT_STUDENT_MISSION_FIVE.load(q.session);
+  route=window.PIT_STUDENT_MISSION_FIVE.routeType(window.PIT_STUDENT_MISSION_FIVE.activeRoute(q,d));
+  if(visualPreview)return setToast('Prévia: regra registrada, sem envio para a turma real.');
  }else{
   if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
   if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
