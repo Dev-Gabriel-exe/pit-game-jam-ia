@@ -107,8 +107,8 @@ function render(){
  '<small>Conceitos e exemplos estão explicados nesta página; links são fontes opcionais, não etapas necessárias para ministrar a aula.</small></footer>'+
  '</div></section>';
 }
-function mount(){
- const root=document.querySelector('.tm4f-root');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.tm4f-root');if(!root)return;
  const routes=[...root.querySelectorAll('[data-tm4f-route]')],panel=root.querySelector('#tm4fRoutePanel');
  function select(index,focus){
   if(index<0||index>=pathways.length||!panel)return;

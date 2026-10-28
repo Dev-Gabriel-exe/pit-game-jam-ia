@@ -8,6 +8,7 @@ const $=id=>document.getElementById(id);
 function eligible(){return document.body.dataset.role==='teacher'&&missionNumber()>=1&&missionNumber()<=10&&!$('workspace')?.hidden;}
 function build(){
  if(missionNumber()===1&&window.PIT_M01_PROJECTOR?.build)return window.PIT_M01_PROJECTOR.build();
+ if(missionNumber()>=2&&window.PIT_PROJECTOR_UNIVERSAL?.build)return window.PIT_PROJECTOR_UNIVERSAL.build(missionNumber());
  const root=$('mainContent');if(!root)return [];
  const heading=$('missionTitle')?.textContent||'PIT GAME JAM IA';
  const cards=[...root.querySelectorAll(CARD_SELECTOR)].filter(node=>!node.closest('.pit-private-teacher-notes,[data-private-note],.teacher-private-note')&&!node.matches('.tm1-root,.tm2-root,.tm3-root'));
@@ -18,11 +19,12 @@ function build(){
 }
 function render(){
  if(!overlay)return;
- const slide=slides[index];const content=$('pitProjectorContent');const isM01=Boolean(slide.section&&missionNumber()===1);
+ const slide=slides[index];const content=$('pitProjectorContent');const isM01=Boolean(slide.section&&missionNumber()>=1&&missionNumber()<=10);
  overlay.classList.toggle('pit-projector-m01',isM01);
  content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';content.scrollTop=0;content.classList.add('pit-projector-enter');
- if(isM01&&window.PIT_M01_PROJECTOR?.mount)window.PIT_M01_PROJECTOR.mount(content,slide);
- $('pitProjectorMission').textContent=isM01?'01 · '+slide.section:String(missionNumber()).padStart(2,'0');
+ if(isM01&&missionNumber()===1&&window.PIT_M01_PROJECTOR?.mount)window.PIT_M01_PROJECTOR.mount(content,slide);
+ if(isM01&&missionNumber()>1&&window.PIT_PROJECTOR_UNIVERSAL?.mount)window.PIT_PROJECTOR_UNIVERSAL.mount(content,slide);
+ $('pitProjectorMission').textContent=isM01?String(missionNumber()).padStart(2,'0')+' · '+slide.section:String(missionNumber()).padStart(2,'0');
  $('pitProjectorCount').textContent=(index+1)+' / '+slides.length;
  $('pitProjectorTitle').textContent=slide.title;
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;

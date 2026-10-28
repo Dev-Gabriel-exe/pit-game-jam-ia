@@ -81,8 +81,8 @@ function review(){
  '<div class="tm2-requirement" data-reveal><span>TRANSIÇÃO · MISSÃO 03</span><strong>O MVP está especificado. Agora vamos abrir o GDevelop.</strong><p>Na próxima etapa, a cena e os objetos do documento serão criados no editor, e o Preview confirmará que o projeto está pronto para receber regras.</p></div>');
 }
 function render(phase){return phase==='demo'?simulator():phase==='practice'?practice():phase==='review'?review():concepts()}
-function mount(){
- const root=document.querySelector('.tm2-root');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.tm2-root');if(!root)return;
  const reduced=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
  const reveal=[...root.querySelectorAll('[data-reveal]')];
  if(!reduced&&typeof IntersectionObserver!=='undefined'){

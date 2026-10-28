@@ -66,8 +66,8 @@ function results(){
  );
 }
 function render(phase){return phase==='review'?results():practice()}
-function mount(){
- const root=document.querySelector('.t5v-root');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.t5v-root');if(!root)return;
  const tabs=[...root.querySelectorAll('[data-t5v-tab]')],panel=root.querySelector('#t5vPanel');
  if(panel&&tabs.length){
   function change(i,focus){

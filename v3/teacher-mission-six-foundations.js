@@ -59,8 +59,8 @@ function render(){
  '<footer class="f6-end"><strong>PRÓXIMA ETAPA DO PROFESSOR</strong><p>Na demonstração de 5 minutos: importar um arquivo real e executar Preview. Na prática de 32 minutos: cada aluno escolhe uma modalidade, gera ou encontra um recurso, importa, testa e identifica a origem. Na avaliação de 3 minutos: comprovar que a regra anterior segue funcionando.</p>'+
  '<p>Os serviços de IA, seus limites gratuitos e alternativas serão verificados especificamente na M06-02, pois preços e cotas mudam.</p></footer></div></section>';
 }
-function mount(){
- const root=document.querySelector('#f6Foundations');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('#f6Foundations');if(!root)return;
  const select=root.querySelector('#f6Situation'),out=root.querySelector('#f6Answer'),buttons=[...root.querySelectorAll('[data-f6-answer]')];if(!select||!out)return;
  const update=answer=>{
   const index=Math.max(0,Math.min(quiz.length-1,Number(select.value)||0)),q=quiz[index];
