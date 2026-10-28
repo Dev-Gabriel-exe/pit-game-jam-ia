@@ -22,7 +22,7 @@ assert(chat.includes("const MAX_BODY = 1200"),'chat body bound');
 assert(chat.includes("if(count.rows[0].n>=12)"),'chat rate limit');
 assert(chat.includes("if(recently.rows[0].n>=15)"),'join rate limit');
 assert(chat.includes("if(count.rows[0].n>=160)"),'classroom capacity bound');
-assert(/\\besc\\s*=\\s*s\\s*=>/.test(app)||app.includes('function esc('),'HTML escaping helper');
+assert(/\besc\s*=\s*s\s*=>/.test(app)||app.includes('function esc('),'HTML escaping helper');
 assert(app.includes('sessionStorage.setItem(\'pit_teacher_pin\''),'PIN uses sessionStorage rather than persistent localStorage');
 assert(!app.includes("localStorage.setItem('pit_teacher_pin'"),'teacher PIN never written to persistent localStorage');
 for(const f of ['index.html','aluno-v3.html','professor-v3.html']){
