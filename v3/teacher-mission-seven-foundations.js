@@ -21,7 +21,7 @@ const cases=[
 {title:'PUZZLE / NARRATIVA',start:'Apresentar pergunta ou objetivo da cena.',challenge:'Registrar escolhas válidas em variável.',win:'Somente resposta correta e estado válido liberam conclusão.'},
 {title:'TERROR / 3D',start:'Câmera e controles 3D funcionam antes do desafio.',challenge:'Encontrar item sem atravessar obstáculos.',win:'Porta/saída reage à condição 3D e mostra resultado final.'}
 ];
-function render(){return '<section class="t7f-root" id="t7Foundations"><header><small>✦ PIT GAME JAM IA · PROFESSOR · CAPÍTULO VII</small><h2>Uma partida precisa de começo, desafio e conclusão.</h2><p>Estados de jogo, transições, condição de vitória/derrota e feedback — sem transformar o protótipo em dez fases.</p><div class="t7f-clock">'+[8,6,33,3].map((n,i)=>'<span><b>'+n+' min</b> '+['CONCEITOS','DEMONSTRAÇÃO','CONSTRUÇÃO','REVISÃO'][i]+'</span>').join('')+'</div></header>'+
+function render(){return '<section class="t7f-root" id="t7Foundations"><header><small>✦ PIT GAME JAM IA · PROFESSOR · CAPÍTULO VII</small><h2>Uma partida precisa de começo, desafio e conclusão.</h2><p>Estados de jogo, transições, condição de vitória/derrota e feedback — sem transformar o protótipo em dez fases.</p><div class="t7f-clock">'+[7,4,36,3].map((n,i)=>'<span><b>'+n+' min</b> '+['CONCEITOS','DEMONSTRAÇÃO','CONSTRUÇÃO','REVISÃO'][i]+'</span>').join('')+'</div></header>'+
 '<div class="t7f-concepts">'+[
 ['ESTADO','Menu, Jogando, Vitória e Derrota são estados distintos. A variável EstadoJogo impede ações fora da fase correta.'],
 ['TRANSIÇÃO','Uma condição válida muda o estado: SE TemChave=1 E tocar na porta, ENTÃO EstadoJogo=Vitoria.'],
