@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "UI-02",
+  "priority": "UI-03",
   "current_phase": "MISSOES",
-  "last_task": "AUD-05",
-  "completed_count": 30,
+  "last_task": "UI-02",
+  "completed_count": 31,
   "total_tasks": 59,
   "tasks": [
     {
@@ -579,14 +579,15 @@
       "description": "Portal público/cadastro/entrada: integrar identidade RPG, acessibilidade, navegação fluida e coerência com a turma",
       "group": "UI",
       "position": 35,
-      "status": "in_progress",
-      "updated_at": "2026-10-28T03:49:00Z",
-      "commit": "c7ca7696a3180cc8c9514a6f813db808a16244af",
+      "status": "done",
+      "updated_at": "2026-10-28T03:51:00Z",
+      "commit": "bf0ac14b77c5868751c52e4ffcec41ef50555f7c",
       "tests": [
-        "Static QA run 40628644876 success for V3 portal routing and semantic skip link",
-        "Browser portal keyboard focus/hero/links smoke test committed; CI run 40628708881 queued, result pending"
+        "GitHub Actions static QA run 40628745840 completed success on 96d3162f",
+        "Browser QA run 40628745770 completed success: portal V3 routes, first keyboard Tab skip link, hero artwork, 390px no overflow",
+        "All 70 teacher/student mission phase pages and fake classroom flows remained green in same browser run"
       ],
-      "blocker": "Need browser CI confirmation and visual inspection of Gothic portal at mobile/tablet before final UI-02 acceptance."
+      "blocker": null
     },
     {
       "id": "UI-03",
@@ -1368,6 +1369,19 @@
       ],
       "tests": "70 mission/role/phase Playwright checks PASS, run 40628604617; fake classroom submission/approval/chat/mobile PASS",
       "notes": "GDevelop, real peer test and real backend remain explicitly unverified; no live student data."
+    },
+    {
+      "id": "UI-02",
+      "completed_at": "2026-10-28T03:51:00Z",
+      "commit": "bf0ac14b77c5868751c52e4ffcec41ef50555f7c",
+      "files": [
+        "index.html",
+        "qa/v3-ui-route-inventory.cjs",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-PORTAL-UI-02.md"
+      ],
+      "tests": "GitHub Actions static QA 40628745840 and Browser QA 40628745770 both success; portal keyboard/mobile/V3 routing",
+      "notes": "Replaced 6 legacy links, added skip link and Gothic hero. No live deployment, screen reader or human visual approval."
     }
   ]
 }
