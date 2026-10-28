@@ -52,6 +52,9 @@ if(process.argv.includes('--live')){
   console.log('PASS FUN-01 live read-only GET: chat health, no identities or writes');
   const site=await fetch('https://dev-gabriel-exe.github.io/pit-game-jam-ia/',{signal:AbortSignal.timeout(15000)});
   assert.equal(site.status,200,'GitHub Pages landing reachable');
-  console.log('PASS FUN-01 live read-only GET: GitHub Pages landing HTTP 200 (version not inferred)');
+  const html=await site.text();
+  const v3Links=html.includes('aluno-v3.html')&&html.includes('professor-v3.html');
+  console.log('PASS FUN-01 live read-only GET: GitHub Pages landing HTTP 200; V3 links '+(v3Links?'present':'absent (feature remains unpublished)'));
+  if(!v3Links)console.log('NOTE FUN-01: live Pages is not proof that the feature V3 is deployed.');
  })().catch(err=>{console.error('FUN-01 LIVE READ-ONLY FAILED:',err.message);process.exitCode=1});
 }
