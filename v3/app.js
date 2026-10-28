@@ -63,7 +63,7 @@ function renderRight(){
   return '<div class="badge-item '+(isDone?'done':'')+'"><span class="dot"></span><span>'+m.icon+' '+esc(m.title)+(isActive&&!isDone?' · em curso':'')+'</span></div>'
  }).join('');
  $('roleSubtitle').textContent=TEACHER?'MISSION CONTROL · CONTROLE DIDÁTICO':'CREATOR MODE · MINHA JORNADA';
- $('roomState').textContent='TURMA · ETAPA '+String(state.current_stage).padStart(2,'0')+' · '+phaseNames[state.phase].toUpperCase();
+ $('roomState').textContent=visualPreview?'PRÉVIA VISUAL · 10 MISSÕES LIBERADAS PARA TESTE · SEM ENVIO':'TURMA · ETAPA '+String(state.current_stage).padStart(2,'0')+' · '+phaseNames[state.phase].toUpperCase();
 }
 // A tela do aluno usa scroll interno no desktop, mas scroll da página no celular.
 // Ao trocar de etapa, reposicionamos no início do capítulo, nunca no meio da etapa nova.
@@ -133,30 +133,52 @@ function instructorResults(m){
  m.checks.map((x,i)=>'<div class="result-criterion"><span>0'+(i+1)+'</span><strong>'+esc(x)+'</strong></div>').join('')+
  '<div class="practice-outcome"><strong>APRESENTAÇÃO DE RESULTADOS</strong><p>O projeto e sua execução no Preview comprovam o resultado. As evidências enviadas ficam disponíveis em 👥 Acompanhamento, onde é possível aprovar ou solicitar revisão individual.</p></div>';
 }
+// Gênero e escolhas do aluno vêm da Missão 01. Recupera a ficha oficial
+// enviada ao servidor caso o aluno abra a oficina em outro navegador.
+function genreContext(n){
+ if(TEACHER||!window.PIT_GENRE_CONTEXT||!window.PIT_MISSION_ONE)return null;
+ const session=visualPreview?'preview':studentSession?.studentId||'student-unverified';
+ const official=entry(1);
+ if(official?.evidence)window.PIT_MISSION_ONE.hydrate(session,official.evidence,official.status);
+ const draft=window.PIT_MISSION_ONE.load(session);
+ if(!draft.genre)return null;
+ return window.PIT_GENRE_CONTEXT.stage(n,draft.genre,draft);
+}
+function studentGenreFocus(m){
+ const g=genreContext(m.n);
+ if(!g)return '';
+ return '<aside class="pit-genre-focus" aria-label="Exemplo adaptado ao gênero escolhido">'+
+  '<div class="pit-genre-focus-kicker"><span>✦ EXEMPLO PARA '+esc(g.genre.toUpperCase())+'</span><small>PROJETO · '+esc(g.title)+'</small></div>'+
+  '<p>'+esc(g.focus)+'</p><small>Referência opcional: adapte à mecânica real do seu jogo.</small></aside>';
+}
 function savedChecks(n){try{const v=JSON.parse(localStorage.getItem('pit_v3_checks_'+n)||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function studentTasks(m){
  const checked=savedChecks(m.n);
- return '<div class="build-steps">'+m.steps.map((step,i)=>'<label class="build-step '+(checked.includes(i)?'checked':'')+'"><span class="build-index">'+String(i+1).padStart(2,'0')+'</span><span class="build-text"><strong>'+esc(['PREPARAR','CONSTRUIR','TESTAR'][i]||'PRATICAR')+'</strong><span>'+esc(step)+'</span><small>Resultado observado: '+esc(m.checks[i]||m.deliver)+'</small></span><input type="checkbox" data-step-check="'+i+'" '+(checked.includes(i)?'checked':'')+' aria-label="Concluí o passo '+(i+1)+'"></label>').join('')+'</div>';
+ const g=genreContext(m.n);
+ return '<div class="build-steps">'+m.steps.map((step,i)=>'<label class="build-step '+(checked.includes(i)?'checked':'')+'"><span class="build-index">'+String(i+1).padStart(2,'0')+'</span><span class="build-text"><strong>'+esc(['PREPARAR','CONSTRUIR','TESTAR'][i]||'PRATICAR')+'</strong><span>'+esc(step)+'</span>'+
+ (g&&g.steps[i]?'<small class="pit-genre-step">✧ No seu gênero: '+esc(g.steps[i])+'</small>':'')+
+ '<small>Resultado observado: '+esc(m.checks[i]||m.deliver)+'</small></span><input type="checkbox" data-step-check="'+i+'" '+(checked.includes(i)?'checked':'')+' aria-label="Concluí o passo '+(i+1)+'"></label>').join('')+'</div>';
 }
 function studentBrief(m){
  const isReleased=m.n<=state.current_stage;
  return '<div class="stage-story"><span class="stage-story-kicker">MISSÃO '+String(m.n).padStart(2,'0')+' · '+m.minutes+' MINUTOS</span><h2>'+esc(m.title.toUpperCase())+'</h2><p>'+esc(m.subtitle)+'</p><div class="story-objective"><strong>🎯 SEU OBJETIVO</strong>'+esc(m.goal)+'</div>'+
- '<div class="story-reward"><span>🏆 MISSÃO CONCLUÍDA QUANDO</span><strong>'+esc(m.deliver)+'</strong></div>'+
+ '<div class="story-reward"><span>🏆 MISSÃO CONCLUÍDA QUANDO</span><strong>'+esc(m.deliver)+'</strong></div>'+studentGenreFocus(m)+
  '<p class="story-wait">'+(isReleased?'Prepare seu projeto. Siga para CONSTRUIR quando chegar a hora da prática.':'🔒 Aguarde a liberação desta missão pelo professor.')+'</p></div>';
 }
 function studentBuild(m){
  const canWork=m.n<=state.current_stage&& (m.n!==state.current_stage||['practice','review'].includes(state.phase));
  return '<div class="quest-kicker">MISSÃO '+String(m.n).padStart(2,'0')+' · OFICINA</div>'+
- '<h2 class="quest-title">Agora é sua vez de criar.</h2><p class="lesson-lead">'+esc(m.goal)+'</p>'+
+ '<h2 class="quest-title">Agora é sua vez de criar.</h2><p class="lesson-lead">'+esc(m.goal)+'</p>'+studentGenreFocus(m)+
  (!canWork?'<div class="notice gold">⏳ A prática ainda não foi liberada. Os passos estão disponíveis para você conhecer o objetivo; o envio só abre quando o professor autorizar.</div>':'')+
  studentTasks(m)+
  '<div class="quest-resource"><strong>◈ NO GDEVELOP / RECURSOS</strong><p>'+esc(m.route)+'</p><div class="buttonrow">'+m.tools.map(([label,href])=>'<a class="tool-link" href="'+esc(href)+'" target="_blank" rel="noopener">'+esc(label)+' ↗</a>').join('')+'</div></div>'+
- '<div class="quest-fallback"><strong>TRAVOU?</strong><p>'+esc(m.help)+'</p></div>'+
+ '<div class="quest-fallback"><strong>TRAVOU?</strong><p>'+esc(m.help)+'</p>'+
+ (genreContext(m.n)?'<p class="pit-genre-support">✧ Para seu gênero: '+esc(genreContext(m.n).support)+'</p>':'')+'</div>'+
  '<div class="quest-evidence">'+studentWorkForm(m)+'</div>';
 }
 function studentDeliver(m){
  return '<div class="quest-kicker">MISSÃO '+String(m.n).padStart(2,'0')+' · VALIDAÇÃO</div><h2 class="quest-title">Conclua o que você começou.</h2>'+
- '<p class="lesson-lead">A entrega usa os mesmos três passos da oficina. Não existe uma segunda lista de perguntas: registre o resultado real do seu projeto.</p>'+
+ '<p class="lesson-lead">A entrega usa os mesmos três passos da oficina. Não existe uma segunda lista de perguntas: registre o resultado real do seu projeto.</p>'+studentGenreFocus(m)+
  studentTasks(m)+'<div class="quest-evidence">'+studentWorkForm(m)+'</div>';
 }
 function phaseBody(m){
@@ -169,12 +191,13 @@ function studentWorkForm(m){
  const e=entry(m.n)||{};
  const draft=localStorage.getItem('pit_v2_draft_'+m.n),evidence=draft!==null?draft:(e.evidence||'');
  const locked=m.n>state.current_stage||(m.n===state.current_stage&&!['practice','review'].includes(state.phase));
- const approved=e.status==='approved';
+ const approved=e.status==='approved',genre=genreContext(m.n);
  const done=savedChecks(m.n).length,ready=done>=m.steps.length;
  return '<section class="mission-submission"><div class="submission-head"><span>◈ REGISTRO DE MISSÃO</span><span class="state-pill '+esc(e.status||'')+'">'+esc(statusLabel(m.n))+'</span></div>'+
   '<h3>Seu jogo é a evidência.</h3><p>Faça os três passos acima e descreva o resultado que realmente funcionou. É esta mesma prática que o professor vai avaliar.</p>'+
   '<div class="submission-progress"><strong>'+done+' / '+m.steps.length+' passos realizados</strong><div class="mini-progress"><span style="width:'+Math.round(done/m.steps.length*100)+'%"></span></div></div>'+
-  '<div class="formline"><label for="evidenceInput">O que você conseguiu construir ou testar?</label><textarea id="evidenceInput" maxlength="750" '+(approved?'disabled':'')+' placeholder="'+esc(m.deliver)+'">'+esc(evidence)+'</textarea></div>'+
+  '<div class="formline"><label for="evidenceInput">O que você conseguiu construir ou testar?</label><textarea id="evidenceInput" maxlength="750" '+(approved?'disabled':'')+' placeholder="'+esc(genre?.evidence||m.deliver)+'">'+esc(evidence)+'</textarea>'+
+ (genre?'<small class="pit-genre-evidence-hint">✧ Exemplo de estrutura para '+esc(genre.genre)+'. Registre somente o que você realmente fez, mesmo que seja diferente do exemplo.</small>':'')+'</div>'+
   (m.n>=4?'<div class="formline"><label for="routeSelect">Meu jogo será</label><select id="routeSelect" '+(approved?'disabled':'')+'><option value="2d" '+((e.route||'2d')==='2d'?'selected':'')+'>🎮 2D</option><option value="3d" '+(e.route==='3d'?'selected':'')+'>🧊 3D</option></select></div>':'')+
   '<div class="buttonrow"><button type="button" class="outline" id="startWork" '+(locked||approved?'disabled':'')+'>Salvar andamento</button><button type="button" class="action" id="submitWork" '+(locked||approved||!ready?'disabled':'')+'>🏆 Entregar missão para avaliação</button></div>'+
   (!ready?'<p class="submission-warning">Marque os passos que realmente realizou para ativar a entrega.</p>':'')+
@@ -519,7 +542,7 @@ function startVisualPreview(){
  if(TEACHER||!window.PIT_ARCADE){setToast('Prévia indisponível nesta página.',true);return;}
  visualPreview=true;
  document.body.classList.add('pit-v3-visual-preview');
- progress=[];state={current_stage:1,phase:'practice',updated_at:null};activeStage=1;activePhase='briefing';
+ progress=[];state={current_stage:10,phase:'practice',updated_at:null};activeStage=1;activePhase='briefing';
  $('auth').hidden=true;$('loading').hidden=true;$('workspace').hidden=false;
  $('currentUser').textContent='VISITANTE · DEMONSTRAÇÃO';
  $('lastSync').textContent='Prévia local, sem conexão nem cadastro';
