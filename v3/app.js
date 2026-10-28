@@ -37,6 +37,15 @@ function missionOneContext(){
   canSubmit:state.current_stage>1||(state.current_stage===1&&['practice','review'].includes(state.phase))
  };
 }
+function missionTwoContext(){
+ const session=visualPreview?'preview':studentSession?.studentId||'student-unverified';
+ if(!TEACHER&&window.PIT_MISSION_ONE){
+  const e=entry(1);if(e?.evidence)window.PIT_MISSION_ONE.hydrate(session,e.evidence,e.status);
+ }
+ return {session,idea:!TEACHER&&window.PIT_MISSION_ONE?window.PIT_MISSION_ONE.load(session):{},
+  phase:activePhase,status:entry(2)?.status||'',feedback:entry(2)?.feedback||'',preview:visualPreview,
+  canSubmit:state.current_stage>2||(state.current_stage===2&&['practice','review'].includes(state.phase))};
+}
 function statusLabel(n){return stageStatuses[entry(n)?.status]||'Não iniciada'}
 function renderJourney(){
  const list=$('journey');
@@ -213,10 +222,17 @@ function renderMain(){
  $('missionTitle').textContent=m.icon+' '+m.title.toUpperCase();
  $('missionSubtitle').textContent=m.subtitle;
  const missionOne=!TEACHER&&m.n===1&&!!window.PIT_MISSION_ONE;
+ const missionTwo=!TEACHER&&m.n===2&&!!window.PIT_STUDENT_MISSION_TWO;
  const teacherMissionOne=TEACHER&&m.n===1&&!!window.PIT_TEACHER_MISSION_ONE;
+ const teacherMissionTwo=TEACHER&&m.n===2&&!!window.PIT_TEACHER_MISSION_TWO;
  document.body.classList.toggle('pit-mission-one',missionOne);
+ document.body.classList.toggle('pit-mission-two',missionTwo);
  if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
+ if(missionTwo)window.PIT_STUDENT_MISSION_TWO.hydrate(missionTwoContext().session,e?.evidence,e?.status);
+ $('mainContent').innerHTML=teacherMissionTwo?window.PIT_TEACHER_MISSION_TWO.render(activePhase):
+  teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):
+  missionTwo?window.PIT_STUDENT_MISSION_TWO.render(missionTwoContext()):
+  missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
  phaseButtons();
  if(TEACHER){
   // Pré-visualizar é diferente de liberar: o botão azul compartilha a etapa/fase com a turma.
@@ -229,7 +245,7 @@ function renderMain(){
  }else{
   $('missionStatus').textContent=statusLabel(m.n);
   $('missionStatus').className='state-pill '+(e?.status||'');
-  $('navPrimary').textContent=activePhase==='review'?(missionOne?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
+  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='← Passo anterior';
   $('navSecondary').disabled=activePhase==='briefing';
@@ -239,6 +255,12 @@ function renderMain(){
  if($('startWork'))$('startWork').onclick=()=>sendWork('working');
  if($('submitWork'))$('submitWork').onclick=()=>sendWork('submitted');
  if(teacherMissionOne)window.PIT_TEACHER_MISSION_ONE.mount();
+ if(teacherMissionTwo)window.PIT_TEACHER_MISSION_TWO.mount();
+ if(missionTwo)window.PIT_STUDENT_MISSION_TWO.mount({
+  ...missionTwoContext(),
+  onPhase:phase=>{activePhase=phase;renderMain();scrollMissionToStart();},
+  onMessage:message=>setToast(message,true)
+ });
  if(missionOne)window.PIT_MISSION_ONE.mount({
   ...missionOneContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
@@ -290,6 +312,7 @@ function selectStage(n,fromServer=false){
 }
 async function sendWork(status){
  const pilot=!TEACHER&&activeStage===1&&!!window.PIT_MISSION_ONE;
+ const pilotTwo=!TEACHER&&activeStage===2&&!!window.PIT_STUDENT_MISSION_TWO;
  let evidence=$('evidenceInput')?.value||'';
  const route=$('routeSelect')?.value||'2d';
  if(pilot){
@@ -298,6 +321,12 @@ async function sendWork(status){
   evidence=window.PIT_MISSION_ONE.evidence(q.session);
   if(status==='submitted'&&!q.canSubmit)return setToast('O professor ainda não liberou a prática.',true);
   if(visualPreview)return setToast('Simulação concluída: ficha preparada, mas nenhum dado foi enviado ao professor.');
+ }else if(pilotTwo){
+  const q=missionTwoContext(),validation=window.PIT_STUDENT_MISSION_TWO.validate(q.session);
+  if(!validation.ok){activePhase='practice';renderMain();scrollMissionToStart();setToast(validation.label,true);$('m2-'+validation.field)?.focus();return}
+  if(status==='submitted'&&!q.canSubmit)return setToast('O professor ainda não liberou a prática.',true);
+  evidence=window.PIT_STUDENT_MISSION_TWO.evidence(q.session,q.idea);
+  if(visualPreview)return setToast('Simulação do MVP concluída. Nenhum dado foi enviado ao professor.');
  }else{
   if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
   if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
@@ -356,7 +385,7 @@ $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage,activePhase);
  const idx=phaseList.indexOf(activePhase);
  if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();scrollMissionToStart();}
- else {if(!TEACHER&&activeStage===1&&window.PIT_MISSION_ONE){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é criada automaticamente a partir das escolhas.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
+ else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10){selectStage(activeStage+1);teacherAdvance(activeStage,'briefing')}return}
