@@ -284,7 +284,8 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(finalC.body.progress.filter(p=>p.route==='2d').length,5);
  assert.equal(finalC.body.progress.filter(p=>p.route==='3d').length,5);
  const isolationA=await call(classroom,'GET','state',{},a.body.token);
- assert.equal(isolationA.body.progress.length,1,'student A sees none of C missions');
+ assert.equal(isolationA.body.progress.length,2,'student A retains own M01 and M07');
+ assert(!isolationA.body.progress.some(p=>p.stage===10),'student A sees none of C missions');
  const oversized=await call(classroom,'POST','progress',{stage:10,route:'3d',status:'submitted',evidence:'X'.repeat(900)},b.body.token);
  assert.equal(oversized.statusCode,200,'long evidence is accepted after server-side sanitization');
  assert.equal(oversized.body.progress.evidence.length,750,'evidence truncated at 750 characters');
