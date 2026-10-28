@@ -782,6 +782,11 @@ async function loadRoster(){
  catch(e){$('rosterContent').textContent=e.message}
 }
 function renderRoster(){
+ for(const [id,filter] of [['filterAll','all'],['filterPending','pending'],['filterOnline','online'],['filterHelp','help']]){
+  const button=$(id);if(!button)continue;
+  button.setAttribute('aria-pressed',String(rosterFilter===filter));
+  button.classList.toggle('active',rosterFilter===filter);
+ }
  const active=roster.filter(s=>Date.now()-new Date(s.last_seen_at).getTime()<90000).length;
  const pend=roster.filter(s=>s.stages?.some(p=>p.status==='submitted')).length;
  const needsHelp=roster.filter(s=>Number(s.unread_chat)>0).length;
