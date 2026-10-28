@@ -6,7 +6,7 @@ const validator=path.join(__dirname,'v3-gdevelop-native-results.cjs');
 const projects=['examples/pit-qa-top-down/starting-top-down.json','examples/pit-qa-first-person/starting-first-person.json'];
 const png=Buffer.alloc(80);Buffer.from([137,80,78,71,13,10,26,10]).copy(png);png.write('IHDR',12,'ascii');png.writeUInt32BE(640,16);png.writeUInt32BE(360,20);
 const report={status:'FIXTURE_ONLY_NOT_NATIVE_PASS',projects,assets:['a.png','b.wav','c.glb'].map(name=>({name,bytes:100,sha256:'a'.repeat(64)}))};
-function folder(project){return path.join(root,project.replace(/\\/g,'__').replace(/\\.json$/,''))}
+function folder(project){return path.join(root,project.split('/').join('__').slice(0,-5))}
 function write(project,opts={}){
  const dir=folder(project);fs.mkdirSync(dir,{recursive:true});
  const shots=['pit-victory-before-earned.png','pit-victory-after-earned.png','pit-asset.png'];
