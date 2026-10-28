@@ -97,6 +97,34 @@ async function build(){
   obj.name=item.objectName;obj.persistentUuid=newId();
   instance.name=item.objectName;instance.persistentUuid=newId();
   scene.objects.push(obj);scene.instances.push(instance);
+  // A genuine GDevelop event, not a JS-only simulation: the win flag may
+  // change only after the readiness condition becomes true in the scene.
+  for(const name of ['PIT_Ready','PIT_Victory']){
+   assert(!scene.variables.some(v=>v.name===name),'QA variable name collision');
+   scene.variables.push({name,persistentUuid:newId(),type:'boolean',value:false});
+  }
+  scene.events.push({
+   type:'BuiltinCommonInstructions::Standard',
+   conditions:[{type:{value:'BooleanVariable'},parameters:['PIT_Ready','True','']}],
+   actions:[{type:{value:'SetBooleanVariable'},parameters:['PIT_Victory','True','']}]
+  });
+  project.tests.push({
+   name:'PIT WIN — victory gated by a real GDevelop event',
+   description:'Negative, positive and persistence cases for a conditional scene victory variable.',
+   type:'gameplay',
+   source:[
+    "await harness.goToScene('Game Scene');",
+    "await harness.stepFrames(6);",
+    "const won=()=>harness.getSceneVariable('PIT_Victory').value;",
+    "harness.assert(won()===false,'No premature victory before the condition');",
+    "harness.setSceneVariable('PIT_Ready',true);",
+    "await harness.stepFrames(3);",
+    "harness.assert(won()===true,'Victory activates after the condition is satisfied');",
+    "harness.setSceneVariable('PIT_Ready',false);",
+    "await harness.stepFrames(3);",
+    "harness.assert(won()===true,'Earned victory persists after readiness resets');"
+   ]
+  });
   project.tests.push({
    name:'PIT QA — '+item.type+' generated asset in GDevelop',
    description:'Disposable fixture: the real GDevelop runtime loads the PIT-generated '+item.resource.file+'.',
