@@ -8,8 +8,8 @@ function build(){
  const root=$('mainContent');if(!root)return [];
  const chapter=root.querySelector('.tm1-root');if(!chapter)return [];
  const heading=$('missionTitle')?.textContent||'O CHAMADO';
- const items=[...chapter.querySelectorAll('.tm1-hero-line,.tm1-concept,.tm1-key,.tm1-section > :not(.tm1-section-heading),.tm1-section > .tm1-concepts > *')];
- const unique=items.filter(e=>!items.some(parent=>parent!==e&&parent.contains(e)));
+ const items=[...chapter.querySelectorAll('.tm1-hero-line,.tm1-concept,.tm1-key,.tm1-section > :not(.tm1-section-heading):not(.tm1-concepts),.tm1-section > .tm1-concepts > *')];
+ const unique=items.filter(e=>!items.some(child=>child!==e&&e.contains(child)));
  return unique.map((node,n)=>({title:node.querySelector('h3,h2')?.textContent||heading,html:node.outerHTML,number:n+1}));
 }
 function render(){
