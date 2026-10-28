@@ -24,7 +24,7 @@ Os quatro cartões técnicos são material de consulta para o professor. Não é
 - `SE colidir com Cristal E Cristal existir → Score +1; remover Cristal` coleta uma vez por instância, mesmo com contato prolongado.
 - `TemChave=0` mantém a porta fechada; `TemChave=1` permite abri-la.
 - O simulador possui reinício, registro de eventos e escolhas de gênero, **sem ler dados dos alunos, sem enviar requisições nem marcar entregas automaticamente**.
-- O recurso é uma analogia didática, não um editor ou Preview real do GDevelop. O tutorial com prints reais do editor será construído na **M05-02**.
+- O recurso é uma analogia didática, não um editor ou Preview real do GDevelop. O tutorial com capturas oficiais do editor foi incorporado à **M05-02**; ainda falta ensaio no editor real.
 
 ### Testes
 - 34 verificações estáticas e lógicas foram executadas durante o desenvolvimento.
@@ -36,4 +36,23 @@ Os quatro cartões técnicos são material de consulta para o professor. Não é
 - [Event loop e Trigger once](https://wiki.gdevelop.io/gdevelop5/tutorials/how-to-debug-poor-performance/)
 - [Tipos de variável e pontuação](https://wiki.gdevelop.io/gdevelop5/tutorials/platform-game/5-add-coins-and-number-of-collected-coins/)
 
-**Próxima meta do agente:** `M05-02`, tutorial ilustrado de Events no GDevelop com condição, ação, variável e feedback, incluindo alternativas para jogos 2D e 3D.
+**A meta M05-02 está concluída no código.** A próxima meta é `M05-03`, oficina autoral do aluno.
+
+## M05-02 — Tutorial ilustrado de eventos — CONCLUÍDO NA BRANCH
+
+O rascunho esquemático inicial foi substituído pelo módulo `v3/gdevelop-mission-five-guide.js`, com estilos `v3/gdevelop-mission-five-guide.css`. As capturas foram extraídas das URLs publicadas na documentação oficial do GDevelop e possuem identificação e link de atribuição na interface; **não** foram capturadas de uma execução da engine nos computadores da turma.
+
+**Fluxo da demonstração (5 minutos, 1 minuto por tela):**
+1. Abrir a aba **Events** do mesmo projeto criado nas Missões 03 e 04.
+2. Criar **Add event**, com áreas Add condition e Add action.
+3. Definir uma **condição** observável.
+4. Alterar uma **variável de cena** e executar uma ação.
+5. Fornecer **feedback visual**, executar Preview e testar o caso verdadeiro e falso.
+
+**Apenas uma rota por aluno:** (a) RPG/plataforma 2D: coletar um cristal e aumentar `Score` uma vez; (b) puzzle/narrativa: clicar em uma resposta válida, marcar `Acertou` e atualizar texto; (c) terror/3D: porta física condicionada a `TemChave=1` e `PortaAberta=0`. O guia identifica explicitamente que screenshots de ações/variáveis vêm de projetos-exemplo 2D mesmo quando a rota selecionada é 3D. Eventos de colisão 3D usam Physics 3D, e a condição comum de distância considera X/Y, não Z.
+
+**Pedagogia e usabilidade:** três abas acessíveis ao teclado com ARIA, telas Próxima/Anterior, rótulos exatos de onde clicar, resultado esperado, diagnóstico e caso negativo. Fotos externas têm fallback para `v3/assets/guide/gdevelop-eventos-pt.svg`, marcado como **diagrama autoral** e nunca como captura literal. A apresentação continua com seu briefing técnico M05-01 (8 min) e as fases práticas/resultados existentes; módulos 01–04 não foram alterados.
+
+**Verificações nesta rodada:** 38/38 checagens sintáticas, de conteúdo, integração e interações simuladas; o arquivo de regressão persistente `qa/v3-m05-guide.cjs` executou **25/25 asserções** num runtime JavaScript com módulos Node simulados. A execução local em Node, o navegador real, a renderização efetiva de cada imagem, o editor GDevelop e o fluxo com API/Neon **ainda precisam de ensaio separado**. Links oficiais foram verificados como referências na documentação; isso não comprova que a interface esteja idêntica em todas as versões.
+
+**Próxima meta M05-03:** o aluno implementa uma regra original no jogo que já estava criando, faz um teste positivo e um negativo, registra feedback e diagnóstico, e mantém a evidência por sessão sem recorrer a respostas prontas.
