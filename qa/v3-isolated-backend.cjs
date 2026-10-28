@@ -68,7 +68,8 @@ class MockPool{
    const row=students.find(s=>s.id===params[0]);if(row){row.active_stage=params[1];row.last_seen_at='2026-10-28T00:10:00Z'}return result([]);
   }
   if(q.startsWith('update pit_classroom_state set current_stage=')){
-   state.current_stage=params[0];state.phase=params[1];return result([state]);
+   if(params[0]>state.current_stage+1)return result([]);
+   state.current_stage=Math.max(state.current_stage,params[0]);state.phase='practice';return result([state]);
   }
   if(q.startsWith('update pit_student_stages set status=')){
    const [status,feedback,id,stage]=params;
@@ -180,34 +181,30 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  console.log('PASS FUN-03: real PIN checks, teacher-only roster/stage/review/chat and student isolation');
  const lockedStage=await call(classroom,'POST','progress',{stage:3,route:'2d',status:'working',evidence:''},b.body.token);
  assert.equal(lockedStage.statusCode,403,'future mission locked by server');
- const briefingBlocked=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'working',evidence:''},b.body.token);
- assert.equal(briefingBlocked.statusCode,403,'current mission briefing does not permit submission');
- const invalidPhase=await call(classroom,'POST','stage',{stage:2,phase:'invalid'},'',origin,pin);
- assert.equal(invalidPhase.statusCode,400,'invalid phase rejected');
- const releasePractice=await call(classroom,'POST','stage',{stage:2,phase:'practice'},'',origin,pin);
- assert.equal(releasePractice.statusCode,200);
+ // A missão atual foi liberada, mesmo que um cliente antigo envie phase=briefing.
+ const briefingAllowed=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'working',evidence:''},b.body.token);
+ assert.equal(briefingAllowed.statusCode,200,'released mission accepts draft regardless of legacy phase');
+ const noRevoke=await call(classroom,'POST','stage',{stage:1,phase:'briefing'},'',origin,pin);
+ assert.equal(noRevoke.statusCode,200);
+ assert.equal(noRevoke.body.state.current_stage,2,'cannot revoke an already-released mission');
+ const skip=await call(classroom,'POST','stage',{stage:5},'',origin,pin);
+ assert.equal(skip.statusCode,409,'cannot skip mission release order');
  const draftB=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'working',evidence:'Rascunho ficticio'},b.body.token);
- assert.equal(draftB.statusCode,200,'released practice accepts student draft');
- const releaseReview=await call(classroom,'POST','stage',{stage:2,phase:'review'},'',origin,pin);
- assert.equal(releaseReview.statusCode,200);
+ assert.equal(draftB.statusCode,200,'released mission accepts student draft');
  const submitB=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'submitted',evidence:'Jogo de teste: movimento e condicao de vitoria visiveis.'},b.body.token);
- assert.equal(submitB.statusCode,200,'review phase accepts submission');
- const advance=await call(classroom,'POST','stage',{stage:3,phase:'briefing'},'',origin,pin);
+ assert.equal(submitB.statusCode,200,'released mission accepts submission without a phase change');
+ const advance=await call(classroom,'POST','stage',{stage:3},'',origin,pin);
  assert.equal(advance.statusCode,200);
  const preserved=await call(classroom,'GET','state',{},b.body.token);
  assert.equal(preserved.body.progress.find(x=>x.stage===2)?.status,'submitted','previous mission evidence survives release');
- const blockedNew=await call(classroom,'POST','progress',{stage:3,route:'3d',status:'working',evidence:''},b.body.token);
- assert.equal(blockedNew.statusCode,403,'new mission locked during briefing');
- const allowNew=await call(classroom,'POST','stage',{stage:3,phase:'practice'},'',origin,pin);
- assert.equal(allowNew.statusCode,200);
  const newDraft=await call(classroom,'POST','progress',{stage:3,route:'3d',status:'working',evidence:'Rascunho da proxima etapa'},b.body.token);
- assert.equal(newDraft.statusCode,200);
+ assert.equal(newDraft.statusCode,200,'new mission immediately permits practice');
  const allB=await call(classroom,'GET','state',{},b.body.token);
  assert.equal(allB.body.progress.length,2,'old and new stage drafts persist per user');
  const allA=await call(classroom,'GET','state',{},a.body.token);
  assert.equal(allA.body.progress.length,1,'other student never sees B stages');
 
- console.log('PASS FUN-04: actual handler blocks future/briefing phases, teacher releases practice and old evidence persists');
+ console.log('PASS FUN-04: mission-only release, no phase locks, future gate and evidence persistence');
 
  // FUN-05 — ten real handler submission/review cycles, with isolated SQL and
  // a third fictional student. No production credentials, API or student data.
