@@ -121,6 +121,37 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.locator('#chatWindow.open').waitFor();
  await sp.locator('#chatMessages .msg').filter({hasText:'Bom trabalho na etapa 1.'}).waitFor({timeout:6500});
  assert.match(await sp.locator('#chatMessages').innerText(),/Bom trabalho/);
+
+ // AUD-05: traverse all ten real mission pages in both roles with isolated fixture data.
+ // This is browser rendering coverage, not a claim of GDevelop execution or student approval.
+ const missionAudit=[];
+ for(let stage=1;stage<=10;stage++){
+  await tp.locator('.stage-btn[data-stage="'+stage+'"]').click();
+  await closeArcade(tp);
+  for(const phase of ['briefing','demo','practice','review']){
+   await tp.locator('[data-phase="'+phase+'"]').click();
+   const content=await tp.locator('#mainContent').innerText();
+   assert(content.trim().length>70,'Teacher M'+stage+' '+phase+' has meaningful visible content');
+   assert.equal(await tp.locator('#missionNumber').innerText().then(x=>x.includes('MISSÃO '+String(stage).padStart(2,'0'))),true,'Teacher stage label '+stage);
+   missionAudit.push('teacher:'+stage+':'+phase);
+  }
+ }
+ // Raise only the fake backend stage in this Playwright fixture. No classroom API is changed.
+ store.stage=10;store.phase='practice';
+ await sp.reload();await sp.locator('#workspace:visible').waitFor();await closeArcade(sp);
+ for(let stage=1;stage<=10;stage++){
+  const button=sp.locator('.stage-btn[data-stage="'+stage+'"]');
+  assert.equal(await button.isDisabled(),false,'Fixture-unlocked stage '+stage+' should be navigable');
+  await button.click();await closeArcade(sp);
+  for(const phase of ['briefing','practice','review']){
+   await sp.locator('[data-phase="'+phase+'"]').click();
+   const content=await sp.locator('#mainContent').innerText();
+   assert(content.trim().length>70,'Student M'+stage+' '+phase+' has meaningful visible content');
+   missionAudit.push('student:'+stage+':'+phase);
+  }
+ }
+ assert.equal(missionAudit.length,70,'All 10 teacher x4 and student x3 mission pages rendered');
+ console.log('PASS AUD-05: 70 mission/role/phase browser page checks with fake API fixture');
  const geometry=await tp.evaluate(()=>{
    const b=document.querySelector('#mainPane').getBoundingClientRect();
    return {bottom:b.bottom,vh:window.innerHeight,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth};
