@@ -28,6 +28,8 @@ O checkpoint `v3/AGENTE-V3-ESTADO.json` registra **52 de 59 metas como `done`** 
 
 A [execução isolada 40657474661](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40657474661) usou **GDevelop Linux 5.6.285**, projeto oficial GDevelop-examples fixado no commit `0648e82703e81f12f33b65ef4777e1fd02d7666b`, e dois projetos descartáveis gerados por `qa/v3-gdevelop-native-fixture.cjs`. O motor executou **8/8 testes de jogabilidade**, incluindo carregamento de PNG original do PIT no 2D, GLB original no 3D e **condição de vitória negativa/positiva/persistente em eventos reais do GDevelop** em ambos os projetos. A condição também dispara uma ação nativa `PlaySound` usando o WAV do PIT; o log não registrou erro de áudio, mas não houve escuta nem medição de saída sonora. O validador `qa/v3-gdevelop-native-results.cjs` confirmou resultados e screenshots reais; as duas imagens foram inspecionadas visualmente nesta auditoria, com o sprite 2D e o cristal 3D aparecendo na cena. A [Browser QA 40656562279](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40656562279) confirmou decodificação efetiva de **5 WAV** (Web Audio) e **4 PNG** (Image/canvas) no Chrome.
 
+O [manifesto de evidências SHA-256](../qa/evidence/native-gdevelop-2026-10-28.json) preserva os hashes dos arquivos e capturas da execução 40657474661.
+
 **Limites:** a inserção nos projetos foi programática, não por interface de importação do editor; WAV foi acionado por evento GDevelop, mas sem teste de audibilidade; não houve salvar/reabrir projeto manual, dispositivo físico ou playtest humano. Esses critérios continuam bloqueados. Os screenshots e JUnit estão no artifact da execução, com retenção temporária.
 
 ### Hospedagem e URLs
