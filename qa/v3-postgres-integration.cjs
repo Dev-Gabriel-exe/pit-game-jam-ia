@@ -8,6 +8,7 @@ const url=new URL(process.env.DATABASE_URL||'postgres://invalid/invalid');
 if(!['localhost','127.0.0.1'].includes(url.hostname)||url.pathname!=='/pit_test'){
  console.error('Refusing to run against a non-disposable local database');process.exit(2);
 }
+if(!process.env.PIT_TEACHER_PIN)process.env.PIT_TEACHER_PIN='0123456789abcdef';
 if(process.env.PIT_TEACHER_PIN!=='0123456789abcdef')throw Error('Use only the known fake test PIN');
 const {Pool}=require('../chat-api/node_modules/pg');
 const pool=new Pool({connectionString:process.env.DATABASE_URL});
