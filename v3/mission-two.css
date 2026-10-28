@@ -208,3 +208,10 @@
  .tm2-reveal-enabled [data-reveal],.tm2-reveal-enabled [data-reveal].tm2-visible{animation:none!important;opacity:1!important;transform:none!important;filter:none!important}
  .tm2-root *,.m2-root *{animation:none!important;transition:none!important}
 }
+/* Refinamento do campo de escopo e critério de aceitação */
+.m2-field-counter{display:block;margin-top:2px;padding:8px 11px;background:#32231e;border:1px solid #98633e;color:#e8ba89!important;font-size:12px!important;font-weight:800}
+.m2-field-counter.m2-counter-complete{background:#2d2a20;border-color:#b9a06a;color:#f9dca9!important}
+.m2-acceptance-guide{display:grid;gap:7px;background:#241b18;border-left:3px solid #daa06b;padding:13px 14px;margin-top:3px}
+.m2-acceptance-guide b{font-size:10px;font-weight:900;letter-spacing:.13em;color:#eab07a}
+.m2-acceptance-guide span{font-size:13px;line-height:1.58;color:#edd5bb}
+.m2-field [aria-invalid="true"]{border-color:#e3a271;box-shadow:0 0 0 1px #ca825c88}
