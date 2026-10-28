@@ -238,13 +238,15 @@ function renderMain(){
  const teacherMissionTwo=TEACHER&&m.n===2&&!!window.PIT_TEACHER_MISSION_TWO;
  const teacherMissionThree=TEACHER&&m.n===3&&!!window.PIT_TEACHER_MISSION_THREE;
  const teacherMissionFourBriefing=TEACHER&&m.n===4&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS;
+ const teacherMissionFourDemo=TEACHER&&m.n===4&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M04_GUIDE;
  document.body.classList.toggle('pit-mission-one',missionOne);
  document.body.classList.toggle('pit-mission-two',missionTwo);
  document.body.classList.toggle('pit-mission-three',missionThree);
  if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
  if(missionTwo)window.PIT_STUDENT_MISSION_TWO.hydrate(missionTwoContext().session,e?.evidence,e?.status);
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.hydrate(missionThreeContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=teacherMissionFourBriefing?window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS.render():
+ $('mainContent').innerHTML=teacherMissionFourDemo?window.PIT_GDEVELOP_M04_GUIDE.render():
+  teacherMissionFourBriefing?window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS.render():
   teacherMissionThree?window.PIT_TEACHER_MISSION_THREE.render(activePhase):
   teacherMissionTwo?window.PIT_TEACHER_MISSION_TWO.render(activePhase):
   teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):
@@ -276,6 +278,7 @@ function renderMain(){
  if(teacherMissionTwo)window.PIT_TEACHER_MISSION_TWO.mount();
  if(teacherMissionThree)window.PIT_TEACHER_MISSION_THREE.mount();
  if(teacherMissionFourBriefing)window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS.mount();
+ if(teacherMissionFourDemo)window.PIT_GDEVELOP_M04_GUIDE.mount();
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.mount({
   ...missionThreeContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
