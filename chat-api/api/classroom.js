@@ -44,7 +44,7 @@ module.exports=async function handler(req,res){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
    const state=await classroom();if(n>state.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
-   if(n===state.current_stage&&!['practice','review'].includes(state.phase))return err(res,403,'A prática desta etapa ainda não foi liberada pelo professor.');
+   // A missão liberada permite prática e entrega, independente do quadrante exibido pelo professor.
    const status=clean(req.body?.status,20),route=clean(req.body?.route,10);
    if(!['working','submitted'].includes(status)||!['2d','3d'].includes(route))return err(res,400,'Progresso inválido.');
    const evidence=clean(req.body?.evidence,750);
@@ -75,9 +75,15 @@ module.exports=async function handler(req,res){
   }
   if(req.method==='POST'&&action==='stage'){
    if(!isTeacher)return err(res,403,'Apenas o professor controla a turma.');
-   const stage=stageOf(req.body?.stage),phase=clean(req.body?.phase,20);
-   if(!stage||!['briefing','demo','practice','review'].includes(phase))return err(res,400,'Etapa ou fase inválida.');
-   const r=await pool.query('UPDATE pit_classroom_state SET current_stage=$1,phase=$2,updated_at=NOW() WHERE room_code=$3 RETURNING current_stage,phase,updated_at',[stage,phase,ROOM]);
+   const stage=stageOf(req.body?.stage);
+   if(!stage)return err(res,400,'Missão inválida.');
+   // A coluna legada "phase" é preservada para compatibilidade com turmas anteriores.
+   // Nunca bloqueie o envio pela fase do projetor: a liberação é somente por missão.
+   // GREATEST impede revogar acidentalmente acesso e o limite +1 exige progressão sequencial.
+   const r=await pool.query(
+    "UPDATE pit_classroom_state SET current_stage=GREATEST(current_stage,$1),phase='practice',updated_at=NOW() WHERE room_code=$2 AND $1<=current_stage+1 RETURNING current_stage,phase,updated_at",
+    [stage,ROOM]);
+   if(!r.rowCount)return err(res,409,'Libere uma missão por vez, sem pular etapas.');
    return res.json({ok:true,state:r.rows[0]});
   }
   if(req.method==='POST'&&action==='review'){
