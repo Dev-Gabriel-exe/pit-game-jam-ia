@@ -39,6 +39,12 @@ for(const project of manifest.projects){
   const ext=path.extname(screenshotPath).toLowerCase();
   const png=ext==='.png'&&image.subarray(0,8).toString('hex')==='89504e470d0a1a0a';
   const jpeg=['.jpg','.jpeg'].includes(ext)&&image.length>4&&image[0]===255&&image[1]===216&&image[2]===255;
+  // A PNG signature alone is insufficient: reject tiny/placeholder captures.
+  if(png){
+   assert(image.length>=24&&image.toString('ascii',12,16)==='IHDR','valid PNG IHDR');
+   const width=image.readUInt32BE(16),height=image.readUInt32BE(20);
+   assert(width>=320&&height>=180,'native gameplay screenshot must have useful dimensions');
+  }
   assert(image.length>50&&(png||jpeg),
    'GDevelop screenshot must be nonempty PNG or JPEG with matching extension: '+shot.file);
  }
