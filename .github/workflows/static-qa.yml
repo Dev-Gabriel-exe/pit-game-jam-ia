@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check JavaScript syntax
         run: node --check biblioteca.js
+      - name: Audit V3 360-minute mission matrix
+        run: node qa/v3-audit-matrix.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
