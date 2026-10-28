@@ -111,7 +111,7 @@ function render(initialRoute=0){
  '<a href="'+docs.variables+'" target="_blank" rel="noopener noreferrer">Variáveis</a> · '+
  '<a href="'+docs.trigger+'" target="_blank" rel="noopener noreferrer">Trigger once</a> · '+
  '<a href="'+docs.collision+'" target="_blank" rel="noopener noreferrer">Colisões 2D/3D</a>'+
- '<p>Rota de 3D: colisões físicas são diferentes das condições padrão 2D. A condição de distância comum mede X/Y e ignora Z. Não é necessário desenvolver as três rotas.</p></footer></section>';
+ '<p>Rota de 3D: as capturas de ações e variáveis mostram um projeto-exemplo 2D apenas para ensinar a interface. Para colisões físicas 3D use o behavior correspondente; a condição comum de distância mede X/Y e ignora Z. Não é necessário desenvolver as três rotas.</p></footer></section>';
 }
 function mount(scope,opts={}){
  const root=scope||document.querySelector('#m5Guide');if(!root)return;
