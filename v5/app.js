@@ -178,7 +178,7 @@ function arenaHeroes(){
 }
 function runRound(group,title){
  const seed=C.hash(group.map(x=>x.id).join('|')+'-v5');
- state.battle=state.stage.fighters(group,{seed});
+ state.battle=state.stage.fighters(group,{seed,limit:state.tournament?.phase==='heat'?28:65});
  $('v5BattleTitle').textContent=title;
  $('v5Winner').hidden=true;$('v5BattleLog').replaceChildren();
  $('v5StartBattle').disabled=false;$('v5StartBattle').textContent='▶ Começar batalha';
