@@ -1,1 +1,1 @@
-2026-10-28T00:14:22-03:00 hourly-agent-run-3: resume missing LTX missions 05-10; single public GPU attempt; no quota bypass
+2026-10-28T00:42:09-03:00 hourly-agent-run-3b: resume missing LTX missions 08-10; single public GPU attempt; respect quota; no bypass
