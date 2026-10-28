@@ -75,7 +75,7 @@ function poster(m){
  const color=palettes[m.n-1],status=stateOf(m);
  return '<article class="arcade-card" data-index="'+(m.n-1)+'" data-state="'+status[1]+'" style="--accent:'+color[0]+';--halo:'+color[1]+'">'+
  '<button type="button" class="arcade-card-button" data-pick="'+(m.n-1)+'" aria-label="Selecionar missão '+pad(m.n)+': '+esc(m.title)+'">'+
- '<span class="arcade-poster"><img class="arcade-mission-photo" alt="" loading="lazy" decoding="async" src="./v3/assets/missions/missao-'+pad(m.n)+'.webp" onerror="this.hidden=true">'+(window.PIT_GOTHIC_ART?window.PIT_GOTHIC_ART(m):scene(m))+'</span>'+
+ '<span class="arcade-poster"><img class="arcade-mission-photo" alt="" loading="lazy" decoding="async" src="./v3/assets/missions/missao-'+pad(m.n)+'.webp" onerror="this.hidden=true">'+(window.PIT_GOTHIC_ART?window.PIT_GOTHIC_ART(m):scene(m))+(m.n===1?'<video class="arcade-mission-motion-video" muted loop playsinline preload="none" poster="./v3/assets/missions/missao-01.webp" aria-hidden="true"><source src="./v3/assets/missions/missao-01-motion.mp4" type="video/mp4"></video>':'')+'</span>'+
  '<span class="arcade-poster-top"><span class="arcade-number-shield">'+pad(m.n)+'</span></span>'+
  '<span class="arcade-poster-status '+status[1]+'">'+(status[1]==='locked'?'◆ ':status[1]==='complete'?'★ ':'')+status[0]+'</span>'+
  '<span class="arcade-card-bottom"><span class="arcade-chapter">CAPÍTULO '+pad(m.n)+' / 10</span>'+
@@ -91,6 +91,7 @@ function build(){
  }));
  steps.innerHTML=M.map((m,i)=>'<button type="button" class="arcade-chapter-dot" data-step="'+i+'" aria-label="Ver missão '+pad(m.n)+'"><span>'+pad(m.n)+'</span></button>').join('');
  steps.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>choose(Number(b.dataset.step))));
+ if(window.PIT_ONE_MOTION)window.PIT_ONE_MOTION.bind();
  choose(active,true);
 }
 function choose(index,initial){
@@ -130,6 +131,7 @@ function choose(index,initial){
   dot.classList.toggle('locked',isLocked(M[i]));
   dot.setAttribute('aria-current',String(i===active));
  });
+ if(window.PIT_ONE_MOTION)window.PIT_ONE_MOTION.sync();
  const selected=track.querySelector('.arcade-card.current');
  if(selected&&selected.scrollIntoView)selected.scrollIntoView({behavior:initial||reduced?'auto':'smooth',block:'nearest',inline:'center'});
  if(!initial&&!reduced&&selected){selected.classList.remove('arcade-pop');void selected.offsetWidth;selected.classList.add('arcade-pop');}
@@ -169,6 +171,7 @@ function close(){
  clearTimeout(transitionTimer);transitionTimer=null;launching=false;opened=false;
  $('arcadeCinematic').hidden=true;$('arcadeCinematic').setAttribute('aria-hidden','true');
  root.classList.remove('launching','open');root.hidden=true;
+ if(window.PIT_ONE_MOTION)window.PIT_ONE_MOTION.sync();
  document.body.classList.remove('pit-arcade-open');
  if(previousFocus&&previousFocus.isConnected)previousFocus.focus();
 }
