@@ -53,7 +53,7 @@ function render(){
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;
  $('pitProjectorProgress').style.width=((index+1)/slides.length*100)+'%';
 }
-function close(){if(!overlay)return;overlay.remove();overlay=null;document.body.classList.remove('pit-projecting');origin?.focus();}
+function close(){if(!overlay)return;window.PIT_WORKSHOP_CURRICULUM?.stopAll?.();overlay.remove();overlay=null;document.body.classList.remove('pit-projecting');origin?.focus();}
 function move(step){index=Math.max(0,Math.min(slides.length-1,index+step));render();}
 function open(){
  if(!eligible())return;
