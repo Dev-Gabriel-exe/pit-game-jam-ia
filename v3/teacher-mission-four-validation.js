@@ -65,7 +65,8 @@ function results(){
  '<div class="t4v-decisions"><div><strong>✓ APROVAR</strong><p>O comando produz resposta, o limite é observado, o reteste foi realizado e o projeto está recuperável.</p></div>'+
  '<div><strong>↺ SOLICITAR REVISÃO</strong><p>Um dos testes não ocorreu, a barreira falhou, o aluno apenas descreveu código sem executar ou o projeto não foi salvo. Informar qual teste deve ser repetido.</p></div></div>'+
  '<div class="t4v-verification"><strong>COMO A AVALIAÇÃO É REGISTRADA</strong>'+
- '<p>Em <b>👥 Acompanhamento</b>, selecione o aluno e a entrega da Missão 04. Leia <b>Comando, Resposta, Limite, Repetição, Salvo em</b>; depois use Aprovar ou Solicitar revisão. O status deve ser registrado pelo servidor, não pelo preenchimento da ficha.</p>'+
+ '<p>O painel de acompanhamento registra a decisão de avaliação. O formulário do aluno não comprova execução automaticamente.</p>'+
+ '<details class="pit-private-teacher-notes"><summary aria-label="Orientações reservadas ao professor — abrir somente sem espelhamento">▤</summary><div><strong>Após retirar o espelhamento HDMI</strong><p>Em 👥 Acompanhamento, selecione o aluno e a entrega da Missão 04. Confira Comando, Resposta, Limite, Repetição e Salvo em; solicite demonstração no Preview se necessário. Use Aprovar ou Solicitar revisão conforme a evidência observada. Feche este painel antes de projetar novamente.</p></div></details>'+
  '<p class="t4v-caution">Se não for possível ver a demonstração no momento, o registro escrito permanece uma declaração do aluno. A ausência de validação automática deve ser apresentada com clareza.</p></div>'
  );
 }
