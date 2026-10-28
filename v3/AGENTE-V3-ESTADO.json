@@ -939,7 +939,7 @@
       "position": 57,
       "status": "blocked",
       "updated_at": "2026-10-28T08:37:00Z",
-      "commit": "1ef62d41346dde039ead5046318fee01a1184dfb",
+      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -965,7 +965,8 @@
         "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN.",
         "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN.",
         "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN.",
-        "2026-10-28: browser QA 40662326867 SUCCESS; triage register v3/TRIAGEM-DEFEITOS.md commit 20d667ac with explicit P0/P1/P2 and NOT_RUN distinction, linked from pre-delivery report commit 1ef62d41. Human verification pending."
+        "2026-10-28: browser QA 40662326867 SUCCESS; triage register v3/TRIAGEM-DEFEITOS.md commit 20d667ac with explicit P0/P1/P2 and NOT_RUN distinction, linked from pre-delivery report commit 1ef62d41. Human verification pending.",
+        "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -992,13 +993,14 @@
       "position": 59,
       "status": "blocked",
       "updated_at": "2026-10-28T07:22:56.983Z",
-      "commit": "16ebef235437ac338ecc4c42dec113d18beedcfb",
+      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
       "tests": [
         "Static QA 40637632552 success on preliminary report branch",
         "Release gate 40637450547 diagnostic success, explicitly NOT READY",
         "Preliminary report updated with verified GLB QA 40649579075, Chrome/Static chat QA 40649326459/40649326394 and failed anonymous GDevelop editor attempt 40649114129",
         "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN.",
-        "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN."
+        "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN.",
+        "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending."
       ],
       "blocker": "Final 59/59 and READY_FOR_FINAL_REVIEW remain blocked by M06-05, M07-04, M08-04, M09-03, FUN-08 and REL-01. Preliminary report updated, but not a final homologation."
     }
@@ -2020,6 +2022,12 @@
       "task": "REL-01",
       "commit": "1ef62d41346dde039ead5046318fee01a1184dfb",
       "summary": "Browser QA PASS; P0/P1/P2 triage and unrun-test ledger prepared. No human execution claimed."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
+      "summary": "Hardened release readiness against unsigned 59/59; repaired isolated test fixture, awaiting full CI."
     }
   ]
 }
