@@ -100,6 +100,28 @@ const {chromium}=require('playwright');
    assert.equal(mesh.buttons,3,'3D has pause and rotation controls');
    await page.getByRole('button',{name:'Girar ↷'}).click();
    await page.locator('.pit-preview-close').click();
+   // A valid RIFF signature with a forged chunk length must fail before playback.
+   await page.evaluate(()=>{
+    const NativeBlob=window.Blob;
+    window.Blob=function(parts,opts){
+     if(opts?.type==='audio/wav'){
+      const bytes=parts[0];
+      if(bytes instanceof ArrayBuffer){
+       const broken=bytes.slice(0);
+       new DataView(broken).setUint32(4,0,true);
+       return new NativeBlob([broken],opts);
+      }
+     }
+     return new NativeBlob(parts,opts);
+    };
+    window.Blob.prototype=NativeBlob.prototype;
+   });
+   await open('wav-vitoria');
+   await page.locator('#pitPreviewStage .pit-preview-error').waitFor({state:'visible'});
+   assert.match(await page.locator('#pitPreviewStage .pit-preview-error').innerText(),/Tamanho RIFF incompatível/,'corrupted RIFF length rejected');
+   await page.locator('.pit-preview-close').click();
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
    await open('wav-vitoria');
    await page.locator('#pitPreviewStage audio').waitFor({state:'visible'});
    const audio=await page.locator('#pitPreviewStage audio').evaluate(a=>({src:a.src,type:a.canPlayType('audio/wav'),paused:a.paused}));
