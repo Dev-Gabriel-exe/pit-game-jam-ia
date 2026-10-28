@@ -155,29 +155,29 @@ function build(m){
  };
  start();
  const deck=[];
- deck.push(yes('ABERTURA · 1 MIN','Missão '+format+' — '+l.name,
+ deck.push(yes('ABERTURA · GUIA DA MISSÃO','Missão '+format+' — '+l.name,
   key('CAPÍTULO '+format+' / 10 · OFICINA · '+minutes+' MINUTOS')+
   '<div class="pit-u-cover pit-ws-new-cover"><div><h2>'+esc(l.tagline)+'</h2><p>'+esc(l.goal)+'</p>'+
-  '<div class="pit-m01-chips"><span>'+minutes+' MIN</span><span>ENTENDER</span><span>EXPLORAR</span><span>CRIAR</span></div></div>'+
+  '<div class="pit-m01-chips"><span>'+minutes+' MIN TOTAL</span><span>'+time[1]+' MIN · CONCEITOS E DEMONSTRAÇÃO</span><span>'+estimate+' MIN · CADERNO E CRIAÇÃO</span></div></div>'+
   '<div class="pit-u-cinema-panel" aria-hidden="true"><img class="pit-cinema-poster" src="./v3/assets/missions/missao-'+format+'.webp" alt="" loading="eager"><video class="pit-cinema-film" muted loop playsinline preload="metadata" src="./v3/assets/missions/missao-'+format+'-motion.mp4" poster="./v3/assets/missions/missao-'+format+'.webp"></video><div class="pit-u-cinema-glaze"></div><div class="pit-u-cinema-label"><span>CAPÍTULO '+format+'</span><strong>'+esc(l.name)+'</strong></div></div></div>'));
- deck.push(yes('CONCEITOS · 2 MIN','Entenda antes de construir',
+ deck.push(yes('CONCEITOS','Entenda antes de construir',
   key('VOCABULÁRIO · O QUE VOCÊ PRECISA SABER')+
   '<p class="pit-ws-lead">Aprenda o significado destes quatro conceitos e reconheça como aparecem no projeto que você está desenvolvendo.</p>'+
   cards(l.terms)+
   '<div class="pit-ws-bottom"><strong>Conceito ≠ clicar no editor.</strong> Cada decisão técnica tem uma finalidade no jogo.'+btn('concepts','Aprofundar')+'</div>'));
- deck.push(yes('CONCEITOS · 2 MIN','Do conceito à ação',
+ deck.push(yes('CONCEITOS','Do conceito à ação',
   key('MAPA MENTAL · O QUE ENTRA, O QUE MUDA, O QUE SAI')+
   '<p class="pit-ws-lead">O trabalho desta missão segue uma sequência. O professor demonstra uma vez, e você repete com o seu próprio projeto.</p>'+
   '<div class="pit-ws-flow">'+l.cycle.map((x,i)=>'<div class="pit-ws-flow-node"><span>'+x[0].split(' · ')[0]+'</span><h3>'+esc(x[0].split(' · ')[1]||x[0])+'</h3><p>'+esc(x[1])+'</p></div>'+(i<3?'<b aria-hidden="true">›</b>':'')).join('')+'</div>'+
   '<div class="pit-ws-bottom"><strong>Resultado esperado:</strong> '+esc(l.goal)+'</div>'));
- deck.push(yes('EXEMPLO EM AÇÃO · 2 MIN','Veja a ideia funcionando',
+ deck.push(yes('EXEMPLO EM AÇÃO','Veja a ideia funcionando',
   key('DEMONSTRAÇÃO · EXEMPLO NÃO É ENTREGA')+
   '<p class="pit-ws-lead pit-ws-compact-lead">'+esc(l.demo)+'</p>'+
   (sim?'<div class="pit-ws-live-stage">'+sim.html+'</div>':
     '<div class="pit-ws-explainer">'+cards(l.cycle.slice(0,3))+'</div>')+
   '<div class="pit-ws-example-foot">Experimente e observe o resultado; depois adapte a lógica ao seu próprio jogo.</div>',
   sim?{interactive:true,mountModule:sim.mountModule,phase:sim.phase}:{interactive:false}));
- deck.push(yes('TUTORIAL · 1 MIN','Como explorar o material do aluno',
+ deck.push(yes('TUTORIAL','Como explorar o material do aluno',
   key('NÃO PULE A LEITURA NEM O TUTORIAL')+
   '<div class="pit-ws-reading-guide">'+l.tutorial.map((x,i)=>'<article><b>'+String(i+1).padStart(2,'0')+'</b><p>'+esc(x)+'</p></article>').join('')+'</div>'+
   '<div class="pit-ws-bottom"><strong>Liberdade com direção:</strong> use os exemplos como referência, sem copiar como se fossem resultados já obtidos.'+btn('guide','Consultar roteiro completo')+'</div>'));
@@ -195,7 +195,7 @@ function build(m){
   '<p><strong>Entrega real desta missão:</strong> '+esc(l.proof)+'</p>'+
   '<p class="pit-ws-notice">O cronômetro e as marcações são locais à projeção. Não substituem a atividade nem a entrega do aluno.</p></aside></div>',
   {workshop:true,mission:m}));
- deck.push(yes('VALIDAÇÃO · 1 MIN','Checklist de entrega — Missão '+format,
+ deck.push(yes('VALIDAÇÃO','Checklist de entrega — Missão '+format,
   key('CONFERIR ANTES DE AVANÇAR · NÃO É NOTA AUTOMÁTICA')+
   '<p class="pit-ws-lead">Confira os resultados efetivamente obtidos no jogo ou no caderno. Marque somente o que os alunos realmente realizaram.</p>'+
   '<div class="pit-ws-evidence-list">'+l.check.map((x,i)=>'<label><input type="checkbox" data-ws-check="'+i+'" '+(stateFor(m).marks.has(i)?'checked':'')+'><span><b>'+String(i+1).padStart(2,'0')+'</b>'+esc(x)+'</span></label>').join('')+'</div>'+
