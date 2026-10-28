@@ -35,6 +35,8 @@ jobs:
         run: node qa/v3-hosting-browser.cjs
       - name: Verify FUN-02 fictional student sessions and invalid tokens
         run: node qa/v3-session-browser.cjs
+      - name: Verify FUN-03 teacher PIN and roster permissions in Chrome
+        run: node qa/v3-teacher-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
