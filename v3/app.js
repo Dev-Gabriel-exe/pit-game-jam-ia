@@ -962,7 +962,7 @@ function renderChat(messages){
  const el=$('chatMessages'),prevBottom=el.scrollHeight-el.scrollTop-el.clientHeight;
  el.innerHTML=(messages||[]).map(m=>{
   const mine=(TEACHER&&m.author==='teacher')||(!TEACHER&&m.author==='student');
-  return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+(m.body==='[Imagem]'||m.body?.startsWith('[Imagem]\\n')?'<button type="button" data-image-id="'+Number(m.id)+'">🖼️ Abrir imagem privada</button>'+(m.body.length>8?'<p style="overflow-wrap:anywhere;white-space:pre-wrap;margin:8px 0 0">'+esc(m.body.slice(9))+'</p>':''):esc(m.body))+'</div>'
+  return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+(m.body==='[Imagem]'||m.body?.startsWith('[Imagem]\n')?'<button type="button" data-image-id="'+Number(m.id)+'">🖼️ Abrir imagem privada</button>'+(m.body.length>8?'<p style="overflow-wrap:anywhere;white-space:pre-wrap;margin:8px 0 0">'+esc(m.body.slice(9))+'</p>':''):esc(m.body))+'</div>'
  }).join('')||'<div class="chat-empty"><strong>Nenhuma mensagem ainda</strong>'+(TEACHER?'Selecione uma conversa e envie uma orientação.':'Descreva em qual missão e passo você precisa de ajuda.')+'</div>';
  el.querySelectorAll('[data-image-id]').forEach(button=>button.onclick=()=>openChatImage(button.dataset.imageId,button));
  if(prevBottom<120)el.scrollTop=el.scrollHeight;
