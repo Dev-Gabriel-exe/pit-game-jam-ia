@@ -16,7 +16,7 @@
   ],
   "priority": "REL-02",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "REL-01",
+  "last_task": "REL-03",
   "completed_count": 51,
   "total_tasks": 59,
   "tasks": [
@@ -932,11 +932,13 @@
       "description": "Produzir guia operacional em português para professor leigo: entrar, liberar, acompanhar, revisar, contingências, sem notas de fala nos materiais de aula",
       "group": "REL",
       "position": 58,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "in_progress",
+      "updated_at": "2026-10-28T05:55:00Z",
+      "commit": "d67258d893713b976e2fadf034749e459ab8388a",
+      "tests": [
+        "Static QA 40637577293 success; Chrome guide test added, first run 40637577018 failed on overly broad test regex (fixed), new Browser QA 40637691150 pending"
+      ],
+      "blocker": "Aguardar conclusão do Chrome desktop/mobile da página guia operacional; correção do teste já commitada."
     },
     {
       "id": "REL-03",
@@ -944,11 +946,14 @@
       "description": "Gerar relatório final com commits, URLs testadas, status da API, recursos que realmente funcionaram, pendências e decisão de publicação sem efetuar merge em main sem aprovação",
       "group": "REL",
       "position": 59,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "blocked",
+      "updated_at": "2026-10-28T05:55:00Z",
+      "commit": "b8ef0c6ced4aeee211cf36c90abb75a718b7b0b4",
+      "tests": [
+        "Static QA 40637632552 success on preliminary report branch",
+        "Release gate 40637450547 diagnostic success, explicitly NOT READY"
+      ],
+      "blocker": "Final audit/READY_FOR_FINAL_REVIEW requires 59/59 done; 5 pedagogical/functional GDevelop and peer-test blockers plus REL-01 unresolved. Preliminary report exists but is not final."
     }
   ],
   "history": [
@@ -1769,6 +1774,16 @@
       ],
       "tests": "Static QA 40637308970 success: full static regression suite including FUN-10; Browser QA 40637186741 success: Chrome E2E 3 fictional students, teacher and simulated 503; Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint",
       "notes": "P1 acceptance blockers remain: real GDevelop import/Preview, disposable Postgres E2E and observed peer test. Cannot certify release or strict gate until these are resolved."
+    },
+    {
+      "id": "REL-03",
+      "completed_at": null,
+      "commit": "b8ef0c6ced4aeee211cf36c90abb75a718b7b0b4",
+      "files": [
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "Static QA 40637632552 success on preliminary report branch; Release gate 40637450547 diagnostic success, explicitly NOT READY",
+      "notes": "Final audit/READY_FOR_FINAL_REVIEW requires 59/59 done; 5 pedagogical/functional GDevelop and peer-test blockers plus REL-01 unresolved. Preliminary report exists but is not final."
     }
   ]
 }
