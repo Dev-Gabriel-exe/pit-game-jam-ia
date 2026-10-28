@@ -8,6 +8,7 @@ const root=path.resolve(process.argv[2]||'qa/gdevelop-native-artifacts');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'fixture-report.json'),'utf8'));
 assert.equal(manifest.status,'FIXTURE_ONLY_NOT_NATIVE_PASS');
 assert.equal(manifest.projects.length,2);
+assert(manifest.assets.every(a=>a.bytes>30),'generated assets have nonempty bytes');
 for(const ext of ['.png','.wav','.glb']){
  const a=manifest.assets.find(x=>x.name.endsWith(ext));
  assert(a&&a.bytes>30&&/^[a-f0-9]{64}$/.test(a.sha256),'real PIT '+ext+' bytes and SHA256');
