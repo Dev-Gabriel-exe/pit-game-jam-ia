@@ -979,6 +979,9 @@ $('chatForm').onsubmit=async e=>{
    const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('Falha ao ler imagem.'));reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');reader.readAsDataURL(file)});
    await call('chat','send-image','POST',{image,mime:file.type,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
    clearChatImageDraft();
+   if(text.length>=2){
+    await call('chat','send','POST',{body:text,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
+   }
   }else await call('chat','send','POST',{body:text,studentId:TEACHER?selectedThread:undefined,mission:activeStage});
   field.value='';await loadChat();setToast('Mensagem enviada ✓');
  }catch(err){setChatStatus('Falha no envio: '+err.message+'. A mensagem continua no campo.','error');setToast(err.message,true)}
