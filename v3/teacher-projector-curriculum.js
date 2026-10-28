@@ -118,7 +118,7 @@ const btn=(kind,title)=>'<button type="button" data-pit-ws-more="'+kind+'" class
 const timing=l=>'<span>'+l+' MIN · OFICINA</span>';
 const state=new Map();
 function stateFor(m){
- if(!state.has(m))state.set(m,{sec:TIME[m][2]+TIME[m][3]+TIME[m][4]+TIME[m][5],running:false,ends:0,timer:null,marks:new Set()});
+ if(!state.has(m))state.set(m,{sec:(TIME[m][2]+TIME[m][3]+TIME[m][4]+TIME[m][5])*60,running:false,ends:0,timer:null,marks:new Set()});
  return state.get(m);
 }
 const displayClock=v=>String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0');
