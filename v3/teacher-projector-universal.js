@@ -46,7 +46,7 @@ function cover(m,p,minutes){
  heading('MISSÃO '+String(m).padStart(2,'0')+' / 10 · '+TITLES[m])+
  '<div class="pit-u-cover"><div><h2>'+esc(title)+'</h2><p>'+sub+'</p>'+
  '<div class="pit-m01-chips"><span>'+minutes[p]+' MINUTOS</span><span>'+esc(TITLES[m])+'</span></div></div>'+
- '<div class="pit-u-insignia" aria-hidden="true">✦<span>'+String(m).padStart(2,'0')+'</span></div></div>');
+ '<div class="pit-u-cinema-panel" aria-hidden="true"><img class="pit-cinema-poster" src="./v3/assets/missions/missao-'+String(m).padStart(2,'0')+'.webp" alt="" loading="eager"><video class="pit-cinema-film" muted loop playsinline preload="metadata" src="./v3/assets/missions/missao-'+String(m).padStart(2,'0')+'-motion.mp4" poster="./v3/assets/missions/missao-'+String(m).padStart(2,'0')+'.webp"></video><div class="pit-u-cinema-glaze"></div><div class="pit-u-cinema-label"><span>CAPÍTULO '+String(m).padStart(2,'0')+'</span><strong>'+esc(TITLES[m])+'</strong></div></div></div>');
 }
 function mins(m){
  const a=window[WHOLE[m]||MAP[m][0][0]];
