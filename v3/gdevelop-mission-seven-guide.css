@@ -1,0 +1,20 @@
+/* M07-02 · tutorial ilustrado professor */
+.g7-root{background:#101923;color:#f0dec8;font:15px/1.6 Arial,sans-serif;padding:clamp(14px,3vw,28px);border:1px solid #9c7754}
+.g7-root *{box-sizing:border-box}.g7-root h2,.g7-root h3{font-family:Georgia,serif;color:#ffe2bb}
+.g7-root header{padding:20px;background:linear-gradient(105deg,#2c2028,#192c35);border-left:4px solid #d9a269}
+.g7-root header small{color:#f4bb85;font-weight:bold;letter-spacing:.12em}.g7-root h2{font-size:clamp(26px,3vw,39px);margin:9px 0}
+.g7-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:18px 0}
+.g7-root button{background:#3a2a29;color:#fbe6cb;border:1px solid #a57b54;padding:12px;cursor:pointer}
+.g7-tabs button[aria-selected=true]{background:#785035;border-color:#e8b77e}
+.g7-card{padding:20px;background:#1b2933;border:1px solid #7b604c}.g7-card>small{color:#eeb780;letter-spacing:.1em;font-weight:bold}
+.g7-card h3{font-size:clamp(22px,2.4vw,30px);margin:10px 0}
+.g7-card figure{margin:12px 0;background:#0d141b;border:1px solid #795f4d;padding:10px}
+.g7-card img{width:100%;max-height:340px;object-fit:contain;display:block}
+.g7-card figcaption{font-size:11px;margin-top:8px;color:#c6b4a0}
+.g7-card dl{display:grid;grid-template-columns:minmax(120px,180px) 1fr;gap:10px}
+.g7-card dt{font-weight:900;color:#f3be86;font-size:12px}.g7-card dd{margin:0;border-bottom:1px solid #40515a;padding-bottom:9px}
+.g7-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0}.g7-nav button:disabled{opacity:.4;cursor:not-allowed}
+.g7-root footer{padding:14px;border-top:1px solid #80664f}.g7-root a{color:#a3dafa}
+.g7-root button:focus-visible,.g7-root a:focus-visible{outline:3px solid #ffdd86;outline-offset:3px}
+@media(max-width:700px){.g7-card dl{grid-template-columns:1fr}.g7-tabs{grid-template-columns:1fr}.g7-nav button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.g7-root *{animation:none!important;transition:none!important}}
