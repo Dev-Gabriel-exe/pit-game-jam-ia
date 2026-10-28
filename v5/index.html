@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100c14"><meta name="description" content="PIT Game Jam V5 — heróis 3D personalizáveis, classes, talentos e Arena dos Criadores">
+<title>V5 — A Forja dos Heróis | PIT Game Jam IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css?v=5a">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script src="./hero-core.js?v=5a"></script><script src="./app.js?v=5a" defer></script>
+</head><body>
+<div class="v5-background" aria-hidden="true"><span class="v5-sigil"></span></div>
+<header class="v5-top"><a href="../index.html" class="v5-logo">PIT <span>GAME JAM</span> <small>V5</small></a><div class="v5-top-center">✦ A FORJA DOS HERÓIS ✦ <span>UMA CAMPANHA DE CRIAÇÃO</span></div><nav><a href="../aluno-v3.html">Caderno</a><a href="../professor-v3.html">Mission Control</a></nav></header>
+<main id="app" class="v5-app" aria-live="off">
+<section class="v5-intro"><div><span class="v5-eyebrow">CAPÍTULO V · ARENA DOS CRIADORES</span><h1>Seu jogo evolui.<br><em>Seu herói também.</em></h1><p>Desenvolva o próprio jogo, conquiste XP nas missões aprovadas e transforme seu aventureiro em um combatente único. A batalha final acontece automaticamente.</p></div><div class="v5-status" id="v5Connection" role="status">Conectando à oficina...</div></section>
+<section id="v5Notice" class="v5-notice" hidden role="status"></section>
+<div id="v5Auth" class="v5-auth"><strong>Verificando a sessão da oficina...</strong><p>Use o mesmo cadastro do Caderno do Aluno. A V5 não solicita nome nem senha novos.</p><a class="v5-link-button" href="../aluno-v3.html">Abrir meu caderno</a><a id="v5DemoLink" href="./index.html?preview=1" class="v5-ghost-link">Experimentar sem cadastro (demonstração)</a></div>
+<section id="v5Main" class="v5-columns" hidden>
+<aside class="v5-panel v5-identity">
+ <div class="v5-panel-title"><span class="v5-eyebrow">01 · IDENTIDADE DO HERÓI</span><h2>Meu Aventureiro</h2></div>
+ <div class="v5-identity-head"><div class="v5-crest">✥</div><div><small>NOME DO CADASTRO</small><h3 id="v5HeroName">—</h3><p id="v5HeroSubtitle">Escolha uma classe para começar</p></div></div>
+ <div class="v5-xp-line"><strong id="v5Level">NÍVEL 1</strong><span id="v5Xp">0 XP</span></div>
+ <div class="v5-xp-track"><span id="v5XpFill"></span></div>
+ <div class="v5-mini-legend" id="v5XpBreakdown">100 XP por missão aprovada</div>
+ <h3 class="v5-mini-title">ESCOLHA UMA CLASSE</h3><div id="v5Classes" class="v5-classes"></div>
+ <h3 class="v5-mini-title">APARÊNCIA</h3>
+ <div class="v5-field"><label for="v5Palette">Cor da armadura</label><select id="v5Palette"><option value="ember">Bronze infernal</option><option value="amethyst">Ametista</option><option value="jade">Esmeralda</option><option value="azure">Safira</option><option value="ashen">Aço noturno</option><option value="golden">Ouro antigo</option></select></div>
+ <div class="v5-field"><label for="v5Helmet">Capacete</label><select id="v5Helmet"><option value="0">Sem capacete</option><option value="1">Elmo clássico</option><option value="2">Elmo pesado</option><option value="3">Elmo místico</option></select></div>
+ <div class="v5-field"><label for="v5Weapon">Arma</label><select id="v5Weapon"><option value="blade">Espada</option><option value="staff">Cajado</option><option value="bow">Arco</option><option value="axe">Machado</option></select></div>
+ <label class="v5-toggle"><input id="v5Cape" type="checkbox" checked> Manto animado</label>
+</aside>
+<section class="v5-middle">
+ <div class="v5-theater"><div class="v5-theater-hud"><span id="v5TheaterLabel">✦ FORJA / CÂMARA DO HERÓI</span><span class="v5-webgl-badge">WEBGL 2 · THREE.JS</span></div>
+ <div id="v5Stage" class="v5-stage"><div class="v5-loader">✦<span>Invocando a arena tridimensional...</span></div></div>
+ <div class="v5-theater-bottom"><span id="v5StageNote">Arraste para girar a câmera · role para aproximar</span><button id="v5Sound" type="button" class="v5-mini-button" aria-pressed="false">♫ Ativar efeitos sonoros</button></div></div>
+ <div class="v5-lore"><div><span class="v5-eyebrow">✧ ÁRVORE DO DESTINO</span><h2>Não existe build perfeita.</h2></div><p>Força, agilidade, espírito e vitalidade alteram a forma como seu personagem luta. Os talentos desbloqueiam estratégias novas. Cada criação é única — e a arena respeita suas escolhas.</p></div>
+ <div class="v5-actions"><button id="v5Save" class="v5-btn v5-btn-primary" type="button">✦ Salvar meu herói</button><button id="v5Practice" class="v5-btn" type="button">⚔ Simular batalha contra heróis de treino</button><button id="v5Back" class="v5-btn v5-btn-quiet" type="button" hidden>↩ Voltar à personalização</button></div>
+</section>
+<aside class="v5-panel v5-build">
+ <div class="v5-panel-title"><span class="v5-eyebrow">02 · HABILIDADES DO DESTINO</span><h2>Sua Build</h2><p>Distribua pontos para moldar seu estilo de combate.</p></div>
+ <div class="v5-resource-label"><strong>ATRIBUTOS</strong><span id="v5Points">6 pontos disponíveis</span></div>
+ <div id="v5Stats" class="v5-stat-grid"></div>
+ <div id="v5Derived" class="v5-derived"></div>
+ <div class="v5-resource-label"><strong>TALENTOS DE CLASSE</strong><span id="v5TalentPoints">0 pontos</span></div>
+ <div id="v5Talents" class="v5-talents"></div>
+ <button id="v5Reset" class="v5-reset" type="button">↺ Reorganizar pontos e talentos</button>
+</aside>
+</section>
+<section id="v5Battle" class="v5-battle" hidden>
+ <div class="v5-battle-heading"><div><span class="v5-eyebrow">⚔ CONFRONTO FINAL · SIMULAÇÃO AUTOMÁTICA</span><h2 id="v5BattleTitle">Arena dos Criadores</h2><p>Todos os heróis entram com atributos derivados do XP e dos talentos. O combate roda localmente, sem apostar dinheiro nem modificar notas.</p></div><div class="v5-battle-buttons"><button id="v5StartBattle" class="v5-btn v5-btn-primary" type="button">▶ Começar batalha</button><button id="v5PauseBattle" class="v5-btn" type="button">Ⅱ Pausar</button><button id="v5Speed" class="v5-btn" type="button">Velocidade ×1</button></div></div>
+ <div class="v5-battle-body"><section><h3>Heróis na arena</h3><div id="v5Fighters" class="v5-fighters"></div></section><section><h3>Aconteceu na batalha</h3><div id="v5BattleLog" class="v5-battle-log" role="log" aria-live="polite"></div></section></div>
+ <div id="v5Winner" class="v5-winner" hidden aria-live="polite"></div>
+</section>
+<section id="v5Reviews" class="v5-reviews" hidden>
+ <span class="v5-eyebrow">MISSÃO 09 · PLAYTEST CRUZADO</span><h2>Avalie o jogo de um colega</h2>
+ <p>Faça a avaliação depois de jogar de verdade. Cada ponto de 0 a 10 vale 3 XP extras para o colega, até 30 XP. Uma avaliação por aluno. O professor pode invalidar avaliações indevidas.</p>
+ <form id="v5ReviewForm"><label>Escolha o colega que você testou<select id="v5Peer" required><option value="">Selecione um colega</option></select></label>
+ <label>Nota de 0 a 10<input id="v5ReviewScore" type="number" min="0" max="10" step="1" value="8" required></label>
+ <label>O que funcionou e o que pode melhorar?<textarea id="v5ReviewComment" minlength="15" maxlength="500" rows="2" required placeholder="Descreva um comportamento real observado no jogo..."></textarea></label>
+ <button type="submit" class="v5-btn v5-btn-primary">Enviar avaliação do playtest</button></form>
+ <div id="v5ReviewStatus" role="status"></div>
+</section>
+<footer class="v5-footer">PIT GAME JAM IA V5 · PROTÓTIPO ISOLADO DA OFICINA · COMBATE AUTOMÁTICO SEM NOTA ESCOLAR · <a href="../index.html">VOLTAR AO PORTAL</a></footer>
+</main>
+</body></html>

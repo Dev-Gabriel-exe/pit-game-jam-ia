@@ -1,0 +1,51 @@
+name: V5 RPG and Three.js game QA
+on:
+  push:
+    branches: [feature/pit-gamejam-v5-arena-rpg]
+  pull_request:
+    paths: ['v5/**','chat-api/api/arena.js','chat-api/lib/v5-hero-core.js','qa/v5-*.cjs']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Deterministic core, code syntax and security rules
+        run: |
+          node --check v5/hero-core.js
+          node --check v5/app.js
+          node --check v5/arena-three.js
+          node --check chat-api/api/arena.js
+          node --check qa/v5-core.cjs
+          node qa/v5-core.cjs
+          node qa/v5-api-guards.cjs
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Run mobile and desktop Three.js UI tests
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-v5.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v5-preview-screens
+          path: qa/v5-screen-*.png
+          retention-days: 7
+          if-no-files-found: ignore

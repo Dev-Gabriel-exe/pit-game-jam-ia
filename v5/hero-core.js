@@ -1,0 +1,211 @@
+/* PIT GAME JAM V5 — game rules (UMD for browsers and Node CI).
+ * No database, canvas, DOM or API dependencies: deterministic and testable.
+ * All awarded XP must be provided by trusted server data in production.
+ */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.PIT_V5_CORE=api})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const VERSION=5;
+const CLASS={
+ warrior:{label:'Guerreiro',icon:'⚔',color:'#e4a266',hp:115,speed:3.5,range:1.9,attack:14,defense:7,magic:0,ability:'Golpe sísmico'},
+ mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:78,speed:3.6,range:9.1,attack:14,defense:2,magic:7,ability:'Explosão arcana'},
+ hunter:{label:'Caçador',icon:'➶',color:'#98d4a1',hp:88,speed:4.6,range:10.3,attack:13,defense:3,magic:1,ability:'Flecha múltipla'},
+ guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:135,speed:3.1,range:2.0,attack:11,defense:10,magic:2,ability:'Fortaleza'}
+};
+const STATS={power:'Força',agility:'Agilidade',spirit:'Espírito',vitality:'Vitalidade'};
+const TALENTS={
+ warrior:[
+  {id:'fury',name:'Fúria',desc:'+12% de ataque por ponto',max:3,requires:[]},
+  {id:'guardbreak',name:'Quebra-escudo',desc:'Ignores 2 de armadura por ponto',max:3,requires:['fury']},
+  {id:'leech',name:'Sede de batalha',desc:'Recupera vida ao acertar',max:2,requires:['fury']},
+  {id:'shout',name:'Grito de guerra',desc:'Golpe especial mais frequente',max:2,requires:['guardbreak']},
+  {id:'stamina',name:'Resistência',desc:'Vida máxima ampliada',max:3,requires:[]},
+  {id:'berserk',name:'Berserker',desc:'Ataque acelera quando ferido',max:2,requires:['leech']}
+ ],
+ mage:[
+  {id:'rune',name:'Runas',desc:'+12% de dano mágico',max:3,requires:[]},
+  {id:'chain',name:'Corrente arcana',desc:'Projéteis ricocheteiam em alvos',max:2,requires:['rune']},
+  {id:'nova',name:'Nova',desc:'Área do especial aumentada',max:2,requires:['rune']},
+  {id:'ward',name:'Barreira',desc:'Escudo temporário após golpe especial',max:3,requires:[]},
+  {id:'focus',name:'Concentração',desc:'Especial recarrega mais rápido',max:2,requires:['ward']},
+  {id:'meteor',name:'Meteoro',desc:'Explosão adicional',max:1,requires:['chain','nova']}
+ ],
+ hunter:[
+  {id:'precision',name:'Precisão',desc:'Aumenta a chance de crítico',max:3,requires:[]},
+  {id:'dash',name:'Passo fantasma',desc:'Movimento acelerado',max:3,requires:[]},
+  {id:'multishot',name:'Rajada',desc:'Mais projéteis no especial',max:2,requires:['precision']},
+  {id:'trap',name:'Armadilha',desc:'Reduz movimento dos inimigos',max:2,requires:['dash']},
+  {id:'vamp',name:'Sobrevivente',desc:'Vida recuperada em acertos',max:2,requires:['trap']},
+  {id:'eagle',name:'Olho de águia',desc:'Alcance extra',max:2,requires:['multishot']}
+ ],
+ guardian:[
+  {id:'bulwark',name:'Bastião',desc:'Aumenta a armadura',max:3,requires:[]},
+  {id:'heal',name:'Regeneração',desc:'Recupera vida a cada segundo',max:3,requires:[]},
+  {id:'taunt',name:'Provocação',desc:'Ataque especial em área',max:2,requires:['bulwark']},
+  {id:'thorn',name:'Espinhos',desc:'Reflete parte do dano',max:2,requires:['bulwark']},
+  {id:'aegis',name:'Égide',desc:'Escudo adicional',max:2,requires:['heal']},
+  {id:'last',name:'Último bastião',desc:'Defesa cresce com vida baixa',max:2,requires:['aegis']}
+ ]
+};
+const COLORS=['ember','amethyst','jade','azure','ashen','golden'];
+const WEAPONS=['blade','staff','bow','axe'];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number.isFinite(Number(v))?Number(v):a));
+function int(v,a,b){return Math.trunc(clamp(v,a,b))}
+function exp(approved=0,reviewScore=null){
+ const done=int(approved,0,10);
+ const review=reviewScore==null?null:int(reviewScore,0,10);
+ return {missions:done,approvedXp:done*100,reviewXp:review==null?0:review*3,total:done*100+(review==null?0:review*3),review};
+}
+function level(xp){return Math.min(11,1+Math.floor(clamp(xp,0,1030)/100))}
+function budgets(xp){const lvl=level(xp);return {level:lvl,attributes:6+2*(lvl-1),talents:Math.floor((lvl-1)/2),xp:int(xp,0,1030)}}
+function seedBuild(name='Aventureiro',klass='warrior'){return {
+ name:String(name||'Aventureiro').trim().slice(0,56),klass:CLASS[klass]?klass:'warrior',
+ appearance:{palette:'ember',helmet:1,cape:true,weapon:'blade'},
+ attributes:{power:0,agility:0,spirit:0,vitality:0},talents:{}
+}}
+function canonical(input,serverName,awardedXp){
+ const p=input&&typeof input==='object'?input:{},c=CLASS[p.klass]?p.klass:'warrior';
+ const b=seedBuild(serverName,c);
+ const src=p.appearance||{};b.appearance={
+  palette:COLORS.includes(src.palette)?src.palette:'ember',
+  helmet:int(src.helmet,0,3),cape:src.cape!==false,
+  weapon:WEAPONS.includes(src.weapon)?src.weapon:({mage:'staff',hunter:'bow',guardian:'axe'}[c]||'blade')
+ };
+ const available=budgets(awardedXp);
+ for(const k of Object.keys(STATS))b.attributes[k]=int(p.attributes?.[k],0,available.attributes);
+ const spent=Object.values(b.attributes).reduce((a,x)=>a+x,0);
+ if(spent>available.attributes)throw Error('Atributos excedem os pontos disponíveis.');
+ const parsed={};for(const t of TALENTS[c])parsed[t.id]=int(p.talents?.[t.id],0,t.max);
+ let n=0;
+ for(const t of TALENTS[c]){const v=parsed[t.id];n+=v;if(v&&t.requires.some(x=>!parsed[x]))throw Error('Talento requer habilidade anterior: '+t.name);}
+ if(n>available.talents)throw Error('Talentos excedem o nível atual.');
+ b.talents=parsed;
+ return {...b,spentAttributes:spent,spentTalents:n,xp:available.xp,level:available.level,
+  remainingAttributes:available.attributes-spent,remainingTalents:available.talents-n};
+}
+function derived(b){
+ const c=CLASS[b.klass]||CLASS.warrior,a=b.attributes||{},t=b.talents||{};
+ const s=k=>int(a[k],0,30),r=k=>int(t[k],0,3);
+ let hp=c.hp+s('vitality')*11+(r('stamina')*15)+(r('aegis')*11);
+ let speed=c.speed+s('agility')*.09+r('dash')*.22;
+ let atk=c.attack+s('power')*1.4+s('spirit')*.65+(c.magic*s('spirit')*.22);
+ atk*=1+r('fury')*.12+r('rune')*.12;
+ const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5;
+ const range=c.range+r('eagle')*.8;
+ const crit=clamp(.06+s('agility')*.011+r('precision')*.06,0,.42);
+ const cooldown=Math.max(3.2,8-r('focus')*.8-r('shout')*.8);
+ return {hp:Math.round(hp),speed,attack:atk,defense,range,crit,cooldown,special:c.ability};
+}
+function mulberry(seed){let v=(seed|0)>>>0;return ()=>{v+=0x6D2B79F5;let t=v;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
+function hash(s){let h=2166136261;for(const char of String(s)){h^=char.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function battle(source,{seed=486,dt=.05,limit=180}={}){
+ const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
+ const fighters=heroes.map((input,i)=>{
+  const name=String(input.name||'Aventureiro').slice(0,56),id=String(input.id||('hero-'+i)).slice(0,80);
+  if(used.has(id))throw Error('Personagem duplicado.');used.add(id);
+  // Trusted caller must canonicalize player build using server-awarded XP.
+  const b=canonical(input,name,clamp(input.xp,0,1030)),stats=derived(b);
+  const theta=i*2.3999632297,rad=5.2+Math.sqrt(i)*1.03;
+  return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
+   vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
+   basic:0,special:2+(i%3)*.85,slow:0,animation:'idle'};
+ });
+ let time=0,seq=0,winner=null,finished=false;
+ const events=[];
+ const log=(type,f,payload={})=>{const e={seq:++seq,time:+time.toFixed(2),type,hero:f?.id||null,...payload};events.push(e);return e};
+ const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}];
+ const projectiles=[];
+ const areaHit=(f,radius,damage,except=null)=>{
+  for(const o of fighters)if(o.alive&&o!==f&&o!==except&&Math.hypot(o.x-f.x,o.z-f.z)<radius)hit(f,o,damage,'special');
+ };
+ function hit(f,o,dmg,kind){
+  if(!o.alive||!f.alive)return;
+  let amount=Math.max(1,dmg-o.stats.defense*.43);
+  if(rnd()<f.stats.crit){amount*=1.6;log('critical',f,{target:o.id})}
+  if(o.build.talents.last&&o.hp<o.stats.hp*.3)amount*=Math.max(.4,1-o.build.talents.last*.15);
+  const shieldAbsorbed=Math.min(o.shield,amount);o.shield-=shieldAbsorbed;amount-=shieldAbsorbed;
+  o.hp=Math.max(0,o.hp-amount);f.damage+=amount;f.attacks++;
+  log('hit',f,{target:o.id,amount:+amount.toFixed(1),kind,x:o.x,z:o.z});
+  if(f.build.talents.leech||f.build.talents.vamp)f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
+  if(o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
+  if(o.hp<=0){o.alive=false;f.kills++;o.animation='defeated';log('knockout',f,{target:o.id,by:f.name})}
+  if(f.hp<=0){f.alive=false;f.animation='defeated';log('knockout',o,{target:f.id,by:o.name})}
+ }
+ function blocked(f,x,z){
+  for(const o of obstacles){const dx=x-o.x,dz=z-o.z,d=Math.hypot(dx,dz),min=o.r+.56;
+   if(d<min){const angle=Math.atan2(dz,dx);return {x:o.x+Math.cos(angle)*min,z:o.z+Math.sin(angle)*min}}}
+  return {x,z};
+ }
+ function update(rawDt=dt){
+  if(finished)return {finished,winner,events:[]};
+  const step=Math.min(.09,Math.max(.001,Number(rawDt)||dt));
+  time+=step;const start=events.length;
+  const radius=Math.max(3.2,18-Math.max(0,time-18)*.13);
+  for(const f of fighters){
+   if(!f.alive)continue;
+   f.basic=Math.max(0,f.basic-step);f.special=Math.max(0,f.special-step);
+   f.slow=Math.max(0,f.slow-step);
+   if(f.build.talents.heal)f.hp=Math.min(f.stats.hp,f.hp+step*f.build.talents.heal*.45);
+   const enemies=fighters.filter(e=>e.alive&&e!==f);if(!enemies.length)continue;
+   enemies.sort((a,b)=>Math.hypot(a.x-f.x,a.z-f.z)-Math.hypot(b.x-f.x,b.z-f.z));
+   const target=enemies[0],dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
+   f.face=Math.atan2(dx,dz);
+   let dir=d>Math.max(1.15,f.stats.range*.82)?1:-.4;
+   if(f.build.klass==='hunter'&&d<5)dir=-1;
+   const mv=f.stats.speed*(f.slow?0.55:1)*dir*step;
+   const move=blocked(f,f.x+dx/d*mv,f.z+dz/d*mv);
+   f.x=move.x;f.z=move.z;f.animation='run';
+   // Arena ring is a soft physical boundary, followed by damage outside the storm.
+   const cd=Math.hypot(f.x,f.z);
+   if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
+   if(d<=f.stats.range&&f.basic<=0){
+    f.basic=1.0+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
+    f.animation='attack';
+    if(f.stats.range>3){
+     projectiles.push({x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack,kind:'ranged',age:0});
+     log('launch',f,{target:target.id});
+    }else hit(f,target,f.stats.attack,'melee');
+   }
+   if(f.special<=0){
+    f.special=f.stats.cooldown+1.4*rnd();f.animation='cast';
+    log('special',f,{ability:f.stats.special,x:f.x,z:f.z});
+    if(f.build.klass==='mage'){
+      areaHit(f,4.2+f.build.talents.nova*.75,f.stats.attack*1.4);
+      if(f.build.talents.ward)f.shield+=8*f.build.talents.ward;
+      if(f.build.talents.meteor)areaHit(f,5.5,f.stats.attack*.5);
+    }else if(f.build.klass==='warrior')areaHit(f,3,f.stats.attack*1.8);
+    else if(f.build.klass==='guardian'){
+      f.shield+=15+f.build.talents.aegis*10;
+      areaHit(f,3+f.build.talents.taunt*.6,f.stats.attack*.7);
+    }else{
+      for(let n=0;n<2+f.build.talents.multishot;n++){
+       const chosen=enemies[n%enemies.length];
+       projectiles.push({x:f.x,y:1.65,z:f.z,from:f.id,to:chosen.id,speed:20,damage:f.stats.attack*1.15,kind:'multishot',age:0});
+      }
+      if(f.build.talents.trap)target.slow=2+f.build.talents.trap;
+    }
+   }
+  }
+  for(let i=projectiles.length-1;i>=0;i--){
+   const p=projectiles[i],target=fighters.find(x=>x.id===p.to);
+   if(!target?.alive){projectiles.splice(i,1);continue}
+   const dx=target.x-p.x,dz=target.z-p.z,d=Math.max(.00001,Math.hypot(dx,dz));
+   const v=p.speed*step;p.x+=dx/d*v;p.z+=dz/d*v;p.age+=step;
+   if(d<=v+.7){const from=fighters.find(x=>x.id===p.from);if(from?.alive)hit(from,target,p.damage,p.kind);projectiles.splice(i,1)}
+   else if(p.age>3)projectiles.splice(i,1);
+  }
+  const left=fighters.filter(x=>x.alive);
+  if(left.length<=1||time>=limit){
+   finished=true;
+   winner=(left.length===1?left[0]:left.slice().sort((a,b)=>b.hp-a.hp||b.kills-a.kills||a.id.localeCompare(b.id))[0])||null;
+   log('end',winner,{winner:winner?.id||null,reason:left.length===1?'last-hero':'time-limit'});
+  }
+  return {finished,winner,events:events.slice(start),time,radius,fighters,projectiles};
+ }
+ function run(maxSteps=8000){for(let k=0;k<maxSteps&&!finished;k++)update();return result()}
+ function result(){return {seed,time:+time.toFixed(1),winner:winner&&{id:winner.id,name:winner.name,klass:winner.build.klass},finished,
+   standings:fighters.slice().sort((a,b)=>Number(b.alive)-Number(a.alive)||b.kills-a.kills||b.damage-a.damage).map(f=>({id:f.id,name:f.name,klass:f.build.klass,hp:+f.hp.toFixed(1),kills:f.kills,damage:+f.damage.toFixed(1),alive:f.alive})),
+   events};}
+ return {fighters,obstacles,projectiles,events,update,run,result,get time(){return time},get finished(){return finished},get winner(){return winner}};
+}
+return Object.freeze({VERSION,CLASS,STATS,TALENTS,COLORS,WEAPONS,exp,level,budgets,seedBuild,canonical,derived,battle,mulberry,hash});
+});
