@@ -71,6 +71,16 @@ function missionFourContext(){
   canSubmit:state.current_stage>4||(state.current_stage===4&&['practice','review'].includes(state.phase))
  };
 }
+function missionFiveContext(){
+ const previous=missionFourContext(),session=previous.session,e=entry(4);
+ if(!TEACHER&&e?.evidence&&window.PIT_STUDENT_MISSION_FOUR)
+  window.PIT_STUDENT_MISSION_FOUR.hydrate(session,e.evidence,e.status);
+ return {...previous,
+  playable:!TEACHER&&window.PIT_STUDENT_MISSION_FOUR?window.PIT_STUDENT_MISSION_FOUR.load(session):{},
+  phase:activePhase,status:entry(5)?.status||'',feedback:entry(5)?.feedback||'',
+  canSubmit:state.current_stage>5||(state.current_stage===5&&['practice','review'].includes(state.phase))
+ };
+}
 function statusLabel(n){return stageStatuses[entry(n)?.status]||'Não iniciada'}
 function renderJourney(){
  const list=$('journey');
@@ -250,6 +260,7 @@ function renderMain(){
  const missionTwo=!TEACHER&&m.n===2&&!!window.PIT_STUDENT_MISSION_TWO;
  const missionThree=!TEACHER&&m.n===3&&!!window.PIT_STUDENT_MISSION_THREE;
  const missionFour=!TEACHER&&m.n===4&&!!window.PIT_STUDENT_MISSION_FOUR;
+ const missionFive=!TEACHER&&m.n===5&&!!window.PIT_STUDENT_MISSION_FIVE;
  const teacherMissionOne=TEACHER&&m.n===1&&!!window.PIT_TEACHER_MISSION_ONE;
  const teacherMissionTwo=TEACHER&&m.n===2&&!!window.PIT_TEACHER_MISSION_TWO;
  const teacherMissionThree=TEACHER&&m.n===3&&!!window.PIT_TEACHER_MISSION_THREE;
@@ -262,10 +273,12 @@ function renderMain(){
  document.body.classList.toggle('pit-mission-two',missionTwo);
  document.body.classList.toggle('pit-mission-three',missionThree);
  document.body.classList.toggle('pit-mission-four',missionFour);
+ document.body.classList.toggle('pit-mission-five',missionFive);
  if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
  if(missionTwo)window.PIT_STUDENT_MISSION_TWO.hydrate(missionTwoContext().session,e?.evidence,e?.status);
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.hydrate(missionThreeContext().session,e?.evidence,e?.status);
  if(missionFour)window.PIT_STUDENT_MISSION_FOUR.hydrate(missionFourContext().session,e?.evidence,e?.status);
+ if(missionFive)window.PIT_STUDENT_MISSION_FIVE.hydrate(missionFiveContext().session,e?.evidence,e?.status);
  $('mainContent').innerHTML=teacherMissionFiveBriefing?window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.render():
   teacherMissionFiveDemo?window.PIT_GDEVELOP_M05_GUIDE.render():
   teacherMissionFourValidation?window.PIT_TEACHER_MISSION_FOUR_VALIDATION.render(activePhase):
@@ -274,7 +287,8 @@ function renderMain(){
   teacherMissionThree?window.PIT_TEACHER_MISSION_THREE.render(activePhase):
   teacherMissionTwo?window.PIT_TEACHER_MISSION_TWO.render(activePhase):
   teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):
-  missionFour?window.PIT_STUDENT_MISSION_FOUR.render(missionFourContext()):
+  missionFive?window.PIT_STUDENT_MISSION_FIVE.render(missionFiveContext()):
+   missionFour?window.PIT_STUDENT_MISSION_FOUR.render(missionFourContext()):
   missionThree?window.PIT_STUDENT_MISSION_THREE.render(missionThreeContext()):
   missionTwo?window.PIT_STUDENT_MISSION_TWO.render(missionTwoContext()):
   missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
@@ -290,7 +304,7 @@ function renderMain(){
  }else{
   $('missionStatus').textContent=statusLabel(m.n);
   $('missionStatus').className='state-pill '+(e?.status||'');
-  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree||missionFour)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
+  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree||missionFour||missionFive)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='← Passo anterior';
   $('navSecondary').disabled=activePhase==='briefing';
