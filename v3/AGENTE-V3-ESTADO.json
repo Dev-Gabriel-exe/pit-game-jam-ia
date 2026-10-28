@@ -924,8 +924,8 @@
       "group": "REL",
       "position": 57,
       "status": "blocked",
-      "updated_at": "2026-10-28T08:36:00Z",
-      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+      "updated_at": "2026-10-28T08:37:00Z",
+      "commit": "99c490a00a2a720e546fc1c6f558a1a4614a0f31",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -940,7 +940,8 @@
         "2026-10-28: release gate executed in isolated V8 against actual checkpoint: NOT READY (52/59), 7 blocked; Node/CI execution of updated gate not performed",
         "Added qa/v3-release-gate-selftest.cjs with four synthetic Node regression cases; wired into static-qa.yml. CI run 40656964777 queued at checkpoint; outcome not claimed.",
         "Native GDevelop 40657143854 SUCCESS: 8/8 real 2D/3D gameplay tests including conditional victory; screenshots of original PIT sprite and crystal inspected. Browser QA 40656562279 SUCCESS: WAV/PNG media decoding. Static QA 40657155850 SUCCESS: evidence-gate synthetic negative cases.",
-        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "QA evidence manifest qa/evidence/native-gdevelop-2026-10-28.json committed at 99c490a00a2a720e546fc1c6f558a1a4614a0f31; contains verified 8/8 native GDevelop results, source asset and screenshot SHA-256, with manual limitations explicit."
       ],
       "blocker": "Seven IDs remain blocked. Native runtime partially clears prior GDevelop access obstacle, but manual editor import/save/reopen, actual authorial final screen, peer observation, physical mobile, final rollback/licensing remain unverified."
     },
@@ -1891,6 +1892,12 @@
       "task": "REL-01",
       "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
       "summary": "GDevelop native 40657474661 SUCCESS: 8/8 real 2D/3D gameplay tests with conditional victory and PlaySound WAV action; sound audibility and manual editor import still NOT_RUN."
+    },
+    {
+      "at": "2026-10-28T08:37:00Z",
+      "task": "REL-01",
+      "commit": "99c490a00a2a720e546fc1c6f558a1a4614a0f31",
+      "summary": "Persisted native GDevelop 8/8 results, SHA-256 hashes and visual evidence descriptions without claiming GUI import or human playtest."
     }
   ]
 }
