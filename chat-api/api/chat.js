@@ -128,7 +128,7 @@ module.exports = async function handler(req, res) {
       if(!data.rowCount)return sendError(res,404,'Imagem não encontrada.');
       if(!teacher&&String(data.rows[0].student_id)!==String(me.id))return sendError(res,403,'Imagem de outra conversa.');
       res.setHeader('Content-Type',data.rows[0].mime);
-      res.setHeader('Content-Disposition','inline; filename="print."'+IMAGE_TYPES[data.rows[0].mime]);
+      res.setHeader('Content-Disposition','inline; filename="print.'+IMAGE_TYPES[data.rows[0].mime]+'"');
       return res.status(200).end(data.rows[0].bytes);
     }
     if(req.method==='POST' && action==='send-image') {
