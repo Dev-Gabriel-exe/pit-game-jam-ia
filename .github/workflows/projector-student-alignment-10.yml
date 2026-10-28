@@ -1,0 +1,37 @@
+name: PIT 10 student-aligned workshop presentations
+on:
+  push:
+    branches: [feature/apresentacao-oficina-aluno-alinhada-20261028]
+  pull_request:
+    paths:
+      - 'v3/teacher-projector-universal-workshop.*'
+      - 'v3/teacher-projector-m01-workshop.js'
+      - 'professor-v3.html'
+      - 'qa/projector-student-alignment-10.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ten-missions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Validate ten student-aligned presentations
+        run: |
+          node --check v3/teacher-projector-universal-workshop.js
+          node --check v3/teacher-projector-m01-workshop.js
+          node --check qa/projector-student-alignment-10.cjs
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-teacher-workshop.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/projector-student-alignment-10.cjs
