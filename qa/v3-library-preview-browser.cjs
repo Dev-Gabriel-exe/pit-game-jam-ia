@@ -11,8 +11,8 @@ const {chromium}=require('playwright');
    await page.goto('http://127.0.0.1:8899/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW),{timeout:10000});
    const count=await page.locator('[data-preview]').count();
-   assert.equal(count,38,'every current resource has a preview button');
-   assert.equal(await page.locator('.statband span').filter({hasText:'recursos para download'}).innerText(),'38 recursos para download','portal count follows actual catalogue');
+   assert.equal(count,40,'every current resource has a preview button');
+   assert.equal(await page.locator('.statband span').filter({hasText:'recursos para download'}).innerText(),'40 recursos para download','portal count follows actual catalogue');
    assert.equal(await page.locator('.statband span').filter({hasText:'missões'}).innerText(),'10 missões','portal count follows mission cards');
    assert.match(await page.locator('#myProgress').innerText(),/Caderno do Aluno/,'no misleading legacy XP counter');
    async function open(id){
@@ -31,7 +31,7 @@ const {chromium}=require('playwright');
    await open('mapa-floresta');
    assert.equal(await page.locator('#pitPreviewStage img').evaluate(async img=>{await img.decode();return img.complete&&img.naturalWidth===1024&&img.naturalHeight===576}),true,'actual 1024x576 map');
    await page.locator('.pit-preview-close').click();
-   for(const id of ['feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
+   for(const id of ['sentinela','arqueiro','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
     await open(id);
     const actual=await page.locator('#pitPreviewStage img').evaluate(async img=>{
      await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,complete:img.complete};
