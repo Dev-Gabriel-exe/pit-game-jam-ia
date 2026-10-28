@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T19:17:53Z",
+  "last_completed_at": "2026-10-28T20:16:58.263Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-M06-CI",
+  "priority": "V4-M08-BROWSER-QA",
   "current_phase": "MISSOES",
-  "last_task": "V4-M07",
+  "last_task": "V4-M08",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2320,66 +2320,58 @@
       "task": "V4-M07",
       "commit": "46fcbf39776f0208ebfaa5c8a4418cd5f9ca702c",
       "summary": "M07 two-face audit: moved projected teacher assessment workflow into default-closed accessible paper note; shared GDevelop tutorial neutralized for student and professor; added real editor handoff and offline fallback; reconciled 7+4+36+3=50 minute teacher schedule; added M07 static CI tests and 390/1280px Chrome regression. Static QA 40753287660 and 40753323670 SUCCESS; Browser QA 40753323613 IN_PROGRESS. Confirmed M06 previous browser/static QA success. 54/59 unchanged; human GDevelop GUI, physical mobile, peer playtest NOT_RUN."
+    },
+    {
+      "at": "2026-10-28T20:16:58.263Z",
+      "task": "V4-M08",
+      "commit": "88eefa95c1d24b3029454f5df59291469d536b61",
+      "summary": "M08 two-face pedagogical audit: aligned teacher 5+4+28+3=40min to student 28min practice; neutralized shared GDevelop guide heading to 4min; added real editor handoff, explicit manual project recovery, offline fallback, accessible CSS; added default-closed accessible private teacher assessment note while keeping projected UX rubric; extended static alignment and Chrome 390/1280px tests. Static QA 40761794394 SUCCESS on 7a185b0; Browser QA 40761794108 IN_PROGRESS. M07 prior static/browser both SUCCESS. 54/59 unchanged. Manual GDevelop/mobile/peer NOT_RUN."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M07",
+    "task": "V4-M08",
     "status": "in_progress",
-    "updated_at": "2026-10-28T19:17:53Z",
+    "updated_at": "2026-10-28T20:16:58.263Z",
     "code_commits": [
-      "91caab7d8bf998c04da385a701b07c3b6468960e",
-      "ee67e97fb57aa14a7803e96dcb026c2c8a464794",
-      "8cfe6277607e71e17674aa6e22fd7fc149ec1c8a",
-      "e3ab52b7c0255dc829fff98b63f8fb6d6b78bf06",
-      "f992c4113f18574bf2d70358bb3732c7d493b330",
-      "9eb975db1de3725ba8d505587e2c31f9878a0ea6",
-      "401efc35b0e33a06157bb89aef17f8a5dabaa1a6",
-      "ef3b99d01dd2ae1b77472ff3ebb790f84752baa9",
-      "abca90c926b9b88d320254784db749720422e989"
+      "504bcfc4988a4d971c00f0092a538e50c91b86cd",
+      "ac542138b05ce1b42a28621498ef9c905e9aca51",
+      "16a43d2ee9b266084561a9a7518ebbcacd3b73d7",
+      "e6bac03ccddce5198af76b59dd3984745d1a8beb",
+      "6dc91712306c92452b2b772b475665765c838994",
+      "47a3c6613cd944ef1baccf399174ac224a48354e",
+      "7a185b0580c71df41ca95cd7e55ffe992e2d9edf"
     ],
-    "audit_commit": "46fcbf39776f0208ebfaa5c8a4418cd5f9ca702c",
+    "audit_commit": "88eefa95c1d24b3029454f5df59291469d536b61",
     "tests": [
       {
-        "name": "M06 Browser QA regression",
-        "run_id": 40744441330,
+        "name": "M07 static QA",
+        "run_id": 40753404122,
         "result": "SUCCESS",
-        "sha": "f18bba6fac30"
-      },
-      {
-        "name": "M06 static QA latest CSS",
-        "run_id": 40744487399,
-        "result": "SUCCESS",
-        "sha": "de0d05877df7"
-      },
-      {
-        "name": "M06 Browser QA latest CSS",
-        "run_id": 40744487524,
-        "result": "SUCCESS",
-        "sha": "de0d05877df7"
-      },
-      {
-        "name": "M07 static QA with integration tests",
-        "run_id": 40753287660,
-        "result": "SUCCESS",
-        "sha": "ef3b99d01"
-      },
-      {
-        "name": "M07 static QA with audit alignment",
-        "run_id": 40753323670,
-        "result": "SUCCESS",
-        "sha": "abca90c92"
+        "sha": "9df8c4691"
       },
       {
         "name": "M07 Browser QA",
-        "run_id": 40753323613,
+        "run_id": 40753404077,
+        "result": "SUCCESS",
+        "sha": "9df8c4691"
+      },
+      {
+        "name": "M08 static QA (includes alignment)",
+        "run_id": 40761794394,
+        "result": "SUCCESS",
+        "sha": "7a185b058"
+      },
+      {
+        "name": "M08 Browser QA (includes private teacher panels)",
+        "run_id": 40761794108,
         "result": "IN_PROGRESS",
-        "sha": "abca90c92"
+        "sha": "7a185b058"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
-    "next_task": "V4-M07-BROWSER-QA then V4-M08",
-    "blocker": "Chrome private notes regression pending; human GDevelop/mobile/peer tests not run"
+    "next_task": "V4-M08-BROWSER-QA then V4-M09",
+    "blocker": "M08 Browser QA pending; GDevelop GUI, physical mobile and peer playtest NOT_RUN"
   }
 }
