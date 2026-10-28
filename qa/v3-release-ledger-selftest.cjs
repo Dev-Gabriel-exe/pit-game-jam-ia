@@ -7,6 +7,7 @@ const state=JSON.parse(fs.readFileSync(path.join(root,'v3/AGENTE-V3-ESTADO.json'
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'pit-ledger-'));
 try{
  fs.mkdirSync(path.join(dir,'v3'));
+ fs.copyFileSync(path.join(root,'v3/HOMOLOGACAO-RESULTADOS.template.json'),path.join(dir,'v3/HOMOLOGACAO-RESULTADOS.template.json'));
  const run=s=>{fs.writeFileSync(path.join(dir,'v3/AGENTE-V3-ESTADO.json'),JSON.stringify(s));const output=path.join(dir,'ledger.json');const r=cp.spawnSync(process.execPath,[script,output],{cwd:dir,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return JSON.parse(fs.readFileSync(output,'utf8'))};
  let ledger=run(state);
  assert.equal(ledger.automatedTasksComplete,54);
