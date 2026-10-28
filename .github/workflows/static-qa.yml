@@ -14,6 +14,8 @@ jobs:
         run: node --check biblioteca.js
       - name: Audit V3 360-minute mission matrix
         run: node qa/v3-audit-matrix.cjs
+      - name: Audit V3 teacher/student alignment
+        run: node qa/v3-audit-alignment.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
