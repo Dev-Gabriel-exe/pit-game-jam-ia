@@ -872,13 +872,14 @@
       "group": "FUN",
       "position": 54,
       "status": "blocked",
-      "updated_at": "2026-10-28T05:27:00Z",
+      "updated_at": "2026-10-28T07:22:56.983Z",
       "commit": "afd4c525b020945ef97a25c8a5b71c307af781c4",
       "tests": [
         "Static QA 40636997100 success: 28 generated asset MIME/signatures, GLB v2 mesh/chunks, WAV PCM headers, 4 ZIP CRC/manifest",
-        "Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint"
+        "Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint",
+        "Khronos GLB QA 40649579075 SUCCESS: 5/5 procedural models validated with 0 errors/0 warnings; import into GDevelop remains NOT_RUN"
       ],
-      "blocker": "GDevelop editor import of PNG/GLB/WAV and starter project opening/saving was not executed; MIME/byte validation is not equivalent to real import. Requires isolated editor test."
+      "blocker": "Khronos glTF 2.0 validator confirms all five generated GLBs (0 errors, 0 warnings); PNG/WAV/GLB import and starter open/save/Preview in actual GDevelop still NOT_RUN. Anonymous web editor showed login/onboarding in run 40649114129."
     },
     {
       "id": "FUN-09",
@@ -917,16 +918,21 @@
       "group": "REL",
       "position": 57,
       "status": "blocked",
-      "updated_at": "2026-10-28T06:20:00Z",
-      "commit": "8da3aa47f4703ad14b58d7c3881640295022515c",
+      "updated_at": "2026-10-28T07:22:56.983Z",
+      "commit": "0add8b4d7d36b28424ac3b3c892c8def34a258ec",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
         "Browser QA 40643089001 success: Chrome E2E, 12 viewport audit, two fictional students sharing one browser, fallback M05 draft/checklist isolation, student/teacher sign-out",
         "Postgres QA 40637833387 success (previous unchanged handlers; disposable PostgreSQL 16)",
-        "Release gate remains diagnostic only: 7 blocked IDs; strict gate must not pass"
+        "Static QA 40649326394 SUCCESS: syntax/security regression for guarded teacher chat requests",
+        "Browser QA 40649326459 SUCCESS: Chrome E2E including teacher chat history scoped by studentId, UI and regressions",
+        "Khronos GLB QA 40649579075 SUCCESS: five procedural GLBs, 0 glTF 2.0 errors and 0 warnings",
+        "GDevelop editor sandbox QA 40649114129 FAILED (expected limitation): official 2D/3D editor URLs return HTTP 200 but land on Log in/Sign up page, no Preview observed; NOT_RUN for real editor acceptance",
+        "Postgres QA 40637833387 previously SUCCESS, backend handlers unchanged",
+        "Strict release gate NOT PASSED; 7 acceptance IDs remain blocked"
       ],
-      "blocker": "Remaining P1 acceptance blockers: real GDevelop PNG/WAV/GLB/starter import and 2D/3D Preview, physical mobile confirmation, observed peer playtest; licensing/rollback checks before publication. Shared-browser draft privacy and accessible sign-out fixed and verified in Chrome."
+      "blocker": "Still blocked: real GDevelop PNG/WAV/GLB/starter import and 2D/3D Preview (anonymous web editor redirected to login/onboarding), physical mobile confirmation, observed peer playtest, licensing and rollback verification. Five GLBs passed Khronos semantic validation but this is not editor import."
     },
     {
       "id": "REL-02",
@@ -950,13 +956,14 @@
       "group": "REL",
       "position": 59,
       "status": "blocked",
-      "updated_at": "2026-10-28T05:55:00Z",
+      "updated_at": "2026-10-28T07:22:56.983Z",
       "commit": "b8ef0c6ced4aeee211cf36c90abb75a718b7b0b4",
       "tests": [
         "Static QA 40637632552 success on preliminary report branch",
-        "Release gate 40637450547 diagnostic success, explicitly NOT READY"
+        "Release gate 40637450547 diagnostic success, explicitly NOT READY",
+        "Preliminary report updated with verified GLB QA 40649579075, Chrome/Static chat QA 40649326459/40649326394 and failed anonymous GDevelop editor attempt 40649114129"
       ],
-      "blocker": "Final audit/READY_FOR_FINAL_REVIEW requires 59/59 done; 5 pedagogical/functional GDevelop and peer-test blockers plus REL-01 unresolved. Preliminary report exists but is not final."
+      "blocker": "Final 59/59 and READY_FOR_FINAL_REVIEW remain blocked by M06-05, M07-04, M08-04, M09-03, FUN-08 and REL-01. Preliminary report updated, but not a final homologation."
     }
   ],
   "history": [
@@ -1832,6 +1839,24 @@
       ],
       "tests": "V8 helper 6/6 PASS; Static QA 40643089008 success; Browser QA 40643089001 success; PostgreSQL 40637833387 previously passed, backend unchanged",
       "notes": "Fixed cross-account leakage of fallback drafts/checklists on shared devices, exposed teacher/student sign-out, fixed tablet nav overflow; manual GDevelop/peer acceptance still NOT_RUN. No production, main, real students or paid services."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "0add8b4d7d36b28424ac3b3c892c8def34a258ec",
+      "files": [
+        "v3/app.js",
+        "qa/v3-e2e.cjs",
+        "qa/v3-security-audit.cjs",
+        "qa/v3-gltf-validator.cjs",
+        "qa/v3-gdevelop-editor-smoke.cjs",
+        ".github/workflows/gdevelop-editor-sandbox-qa.yml",
+        ".github/workflows/gltf-validator-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "Static QA 40649326394 success; Browser QA 40649326459 success; Khronos GLB QA 40649579075 success (5/5, zero errors/warnings); GDevelop web-editor attempt 40649114129 failed on login/onboarding, no Preview; Postgres QA 40637833387 prior success",
+      "notes": "Teacher chat history now uses guarded request helper with timeout and studentId; independent Khronos validation of all generated GLBs. No account created, no GDevelop import/Preview claimed. 52/59; 7 blocked. No production/main/real class/paid services."
     }
   ]
 }
