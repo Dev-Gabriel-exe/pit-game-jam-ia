@@ -70,6 +70,24 @@ assert(read('v3/gdevelop-mission-five-guide.js').includes('TUTORIAL DE EVENTOS �
 assert(!read('v3/gdevelop-mission-five-guide.js').includes('PROFESSOR · DEMONSTRAÇÃO'),'M05 student tutorial must not show teacher-only heading');
 for(const time of ['8 min','8 min','8 min'])assert(m05Student.includes(time),'M05 student 24min split');
 for(const time of ['8 MIN'])assert(m05Teacher.includes(time),'M05 teacher 24min split');
+// M06: editor handoff and projector-safe teacher foundations/assessment.
+const m06Student=read('v3/student-mission-six.js');
+const m06Foundations=read('v3/teacher-mission-six-foundations.js');
+const m06Validation=read('v3/teacher-mission-six-validation.js');
+assert(m06Student.includes('https://editor.gdevelop.io/'),'M06 student links real GDevelop editor');
+assert(m06Student.includes('não abre nem importa seu projeto automaticamente'),'M06 editor link cannot imply automatic import');
+assert(m06Student.includes('aplicativo GDevelop já instalado'),'M06 offline fallback exists');
+assert(m06Student.includes('tutorial a seguir'),'M06 tutorial order matches screen');
+assert(!m06Student.includes('pit-private-teacher-notes'),'M06 student has no private teacher notes');
+for(const [name,source] of [['foundations',m06Foundations],['validation',m06Validation]]){
+ assert(source.includes('<details class="pit-private-teacher-notes">'),'M06 '+name+' has private guidance');
+ assert(source.includes('<summary aria-label="Abrir roteiro privado da Missão 06">▤</summary>')||source.includes('aria-label="Abrir roteiro privado da Missão 06">▤</summary>'),'M06 '+name+' accessible paper control');
+ assert(source.includes('class="pit-private-teacher-notes-body"'),'M06 '+name+' shared private note style');
+ assert(!source.includes('<details class="pit-private-teacher-notes" open'),'M06 '+name+' private notes default closed');
+}
+assert(!m06Foundations.includes('PRÓXIMA ETAPA DO PROFESSOR'),'M06 foundations projected footer has no teacher facilitation');
+assert(m06Validation.indexOf('Acompanhamento → aluno → Missão 06')<m06Validation.indexOf('</details>'),'M06 assessment navigation remains inside private notes');
+for(const t of ['5 min escolha','12 min criação','8 min importação','7 min Preview'])assert(m06Student.includes(t),'M06 student timing '+t);
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
