@@ -166,3 +166,7 @@ body{background:#020915;background-image:radial-gradient(ellipse 140% 90% at 30%
 .logic-actions{margin:17px 0}.logic-actions button{flex:1;min-width:115px}
 .logic-output{background:#041126;border-left:3px solid #f0ce79;padding:14px;border-radius:6px;font-size:17px;color:#f0f5ff;line-height:1.4;min-height:74px}
 @media(max-width:700px){.logic-states{grid-template-columns:1fr 1fr}}
+
+/* REL-01: the teacher's longer navigation plus visible sign-out must not widen 768px layouts. */
+.topnav{max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin}
+.topnav>a,.topnav>button,.topnav>.role-tag,.topnav>.navbrand{flex-shrink:0}
