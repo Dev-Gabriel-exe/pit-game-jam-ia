@@ -29,9 +29,6 @@ NEG='low quality, geometry, vector, flat graphics, slideshow, fake camera pan, s
 attempts=[
  ('LTX-2.5 official ZeroGPU','Lightricks/LTX-2.5','/run',[
    PROMPT, handle_file(str(SOURCE)),768,512,2.0,1234,'conv',False,False,False
-  ]),
- ('LTX distilled official ZeroGPU','Lightricks/ltx-video-distilled','/image_to_video',[
-   PROMPT,NEG,handle_file(str(SOURCE)),None,640,384,'image-to-video',3.0,9,1234,False,1.0,False
   ])
 ]
 for label,space,api_name,args in attempts:
@@ -52,7 +49,10 @@ for label,space,api_name,args in attempts:
     raise RuntimeError('Generated video unexpectedly small')
   shutil.copyfile(path,DEST)
   print('SUCCESS',label,'BYTES',DEST.stat().st_size,flush=True)
-  subprocess.run(['ffprobe','-v','error','-select_streams','v:0','-show_entries','stream=width,height,codec_name','-show_entries','format=duration,size','-of','json',str(DEST)],check=True)
+  if shutil.which('ffprobe'):
+    subprocess.run(['ffprobe','-v','error','-select_streams','v:0','-show_entries','stream=width,height,codec_name','-show_entries','format=duration,size','-of','json',str(DEST)],check=True)
+  else:
+    print('ffprobe not installed; MP4 confirmed non-empty. Continuing without probe.',flush=True)
   sys.exit(0)
  except Exception as exc:
   print('FAILED',label,type(exc).__name__,str(exc)[:1000],flush=True)
