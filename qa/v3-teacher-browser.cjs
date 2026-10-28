@@ -26,7 +26,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.goto('http://127.0.0.1:8899/professor-v3.html',{waitUntil:'domcontentloaded',timeout:20000});
  await page.locator('#authPin').fill('wrong-pin');
  await page.locator('#authSubmit').click();
- await page.locator('#authError').getByText(/PIN inválido/).waitFor({timeout:10000});
+ await page.locator('#authError').filter({hasText:/PIN inválido/}).waitFor({timeout:10000});
  assert.equal(await page.evaluate(()=>sessionStorage.getItem('pit_teacher_pin')),null,'wrong PIN never persisted');
  assert.equal(await page.locator('#workspace').isVisible(),false,'wrong PIN cannot access workspace');
  await page.locator('#authPin').fill(pin);await page.locator('#authSubmit').click();
