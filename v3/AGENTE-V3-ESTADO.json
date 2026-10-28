@@ -925,7 +925,7 @@
       "position": 57,
       "status": "blocked",
       "updated_at": "2026-10-28T08:37:00Z",
-      "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6",
+      "commit": "de55f8048ec3b283ef755c42893c5e08a6d6b9d5",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -943,7 +943,8 @@
         "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
         "QA evidence manifest qa/evidence/native-gdevelop-2026-10-28.json committed at 99c490a00a2a720e546fc1c6f558a1a4614a0f31; contains verified 8/8 native GDevelop results, source asset and screenshot SHA-256, with manual limitations explicit.",
         "2026-10-28: GDevelop fixture extended with project JSON save/reopen structural roundtrip and SHA-256 resource integrity assertions. V8 syntax parse PASS; native CI execution pending.",
-        "2026-10-28: native GDevelop run 40658610737 fixture preparation SUCCESS; gameplay/result verification still in_progress when checked. Added validator assertion that all generated asset entries have nonempty byte sizes; CI outcome pending."
+        "2026-10-28: native GDevelop run 40658610737 fixture preparation SUCCESS; gameplay/result verification still in_progress when checked. Added validator assertion that all generated asset entries have nonempty byte sizes; CI outcome pending.",
+        "2026-10-28: Added PNG IHDR and minimum 320x180 screenshot dimension checks in native GDevelop results validator. V8 syntax PASS; CI native gameplay 40658610737 and 40658856014 still in_progress when checked; new checks NOT_RUN in CI."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -1912,6 +1913,12 @@
       "task": "REL-01",
       "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6",
       "summary": "Strengthened native GDevelop asset validator; tracked running gameplay QA without claiming completion."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "de55f8048ec3b283ef755c42893c5e08a6d6b9d5",
+      "summary": "Native screenshot evidence hardened against tiny PNG placeholders; V8 syntax passed, native CI pending."
     }
   ]
 }
