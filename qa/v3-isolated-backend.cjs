@@ -3,7 +3,7 @@
  * SQL adapter. Zero production DB, no HTTP, no real users or secrets.
  */
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const ROOM='PITGAME26',students=[],stages=[];
+const ROOM='PITGAME26',students=[],stages=[],messages=[];
 const state={current_stage:1,phase:'practice',updated_at:'2026-10-28T00:00:00Z'};
 function result(rows){return {rows,rowCount:rows.length}}
 class MockPool{
@@ -33,13 +33,36 @@ class MockPool{
    if(previous)Object.assign(previous,row);else stages.push(row);
    const {student_id:omit,...publicRow}=row;return result([publicRow]);
   }
-  if(q.startsWith('select id,author,mission,body,created_at,read_at from pit_chat_messages'))return result([]);
+  if(q.startsWith('select id,author,mission,body,created_at,read_at from pit_chat_messages')){
+   return result(messages.filter(m=>m.student_id===params[0]).sort((a,b)=>b.id-a.id).slice(0,100).map(({id,author,mission,body,created_at,read_at})=>({id,author,mission,body,created_at,read_at})));
+  }
+  if(q.startsWith('select count(*)::int as n from pit_chat_messages where student_id=')){
+   return result([{n:messages.filter(m=>m.student_id===params[0]&&m.author===params[1]).length}]);
+  }
+  if(q.startsWith('select count(*)::int as unread from pit_chat_messages where room_code=')){
+   const author=q.includes("author='student'")?'student':'teacher';
+   return result([{unread:messages.filter(m=>m.author===author&&m.read_at===null&&(!params[1]||m.student_id===params[1])).length}]);
+  }
+  if(q.startsWith('insert into pit_chat_messages(')){
+   const id=messages.length+1;
+   messages.push({id,room_code:params[0],student_id:params[1],author:params[2],mission:params[3],body:params[4],created_at:new Date(Date.parse(state.updated_at)+id*1000).toISOString(),read_at:null});
+   return result([{id}]);
+  }
+  if(q.startsWith('update pit_chat_messages set read_at=')){
+   messages.filter(m=>m.student_id===params[0]&&m.author===params[2]&&m.read_at===null).forEach(m=>{m.read_at=state.updated_at});
+   return result([]);
+  }
 
   if(q.startsWith('select s.id,s.display_name,s.joined_at,s.last_seen_at,s.active_stage')){
-   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:s.joined_at,last_seen_at:s.last_seen_at,active_stage:s.active_stage,highest_stage:Math.max(0,...stages.filter(p=>p.student_id===s.id).map(p=>p.stage)),approved:stages.filter(p=>p.student_id===s.id&&p.status==='approved').length,unread_chat:0,stages:stages.filter(p=>p.student_id===s.id).map(p=>({stage:p.stage,status:p.status,route:p.route,evidence:p.evidence,feedback:p.feedback,updated_at:p.updated_at,reviewed_at:p.reviewed_at}))})));
+   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:s.joined_at,last_seen_at:s.last_seen_at,active_stage:s.active_stage,highest_stage:Math.max(0,...stages.filter(p=>p.student_id===s.id).map(p=>p.stage)),approved:stages.filter(p=>p.student_id===s.id&&p.status==='approved').length,unread_chat:messages.filter(m=>m.student_id===s.id&&m.author==='student'&&m.read_at===null).length,stages:stages.filter(p=>p.student_id===s.id).map(p=>({stage:p.stage,status:p.status,route:p.route,evidence:p.evidence,feedback:p.feedback,updated_at:p.updated_at,reviewed_at:p.reviewed_at}))})));
   }
   if(q.startsWith('select s.id,s.display_name,s.joined_at,')){
-   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:state.updated_at,last_body:null,last_at:null,unread:0})));
+   const rows=students.map(s=>{
+    const thread=messages.filter(m=>m.student_id===s.id),last=thread[thread.length-1];
+    return {id:s.id,display_name:s.display_name,joined_at:s.joined_at,last_body:last?.body||null,last_at:last?.created_at||null,unread:thread.filter(m=>m.author==='student'&&m.read_at===null).length};
+   });
+   rows.sort((a,b)=>b.unread-a.unread||String(b.last_at||'').localeCompare(String(a.last_at||'')));
+   return result(rows);
   }
   if(q.startsWith('update pit_students set last_seen_at=')){
    const row=students.find(s=>s.id===params[0]);if(row){row.active_stage=params[1];row.last_seen_at='2026-10-28T00:10:00Z'}return result([]);
@@ -274,6 +297,57 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(bRow.stages.length,3,'B has three own stage records');
  assert(!JSON.stringify(teacherRoster.body).includes(cToken),'roster never leaks raw student tokens');
  console.log('PASS FUN-06: actual roster and heartbeat handlers, three fictional students, per-stage status, approved totals, activity, teacher-only access, future-stage heartbeat blocked');
+
+ // FUN-07 — chat message order, unread counters, isolation, read receipts and rate limit.
+ const fakeSend=await call(chat,'POST','send',{body:'Mensagem sem token'},'f'.repeat(64));
+ assert.equal(fakeSend.statusCode,401,'forged student token cannot send chat');
+ const msgC1=await call(chat,'POST','send',{body:'Pergunta C primeira',mission:10},cToken);
+ const msgC2=await call(chat,'POST','send',{body:'Pergunta C segunda',mission:10},cToken);
+ const msgB=await call(chat,'POST','send',{body:'Pergunta B individual',mission:2},b.body.token);
+ assert.equal(msgC1.statusCode,201);assert.equal(msgC2.statusCode,201);assert.equal(msgB.statusCode,201);
+ const teacherUnread=await call(chat,'GET','unread',{},'',origin,pin);
+ assert.equal(teacherUnread.body.unread,3,'teacher sees three unread student messages');
+ const teacherThreads=await call(chat,'GET','threads',{},'',origin,pin);
+ assert.equal(teacherThreads.body.threads[0].id,cId,'thread with most unread appears first');
+ assert.equal(teacherThreads.body.threads[0].unread,2);
+ const cMessages=await call(chat,'GET','messages',{},cToken);
+ assert.equal(cMessages.body.messages.length,2,'student C sees own messages');
+ assert(cMessages.body.messages[0].id<cMessages.body.messages[1].id,'messages sorted ascending for reading');
+ const bMessages=await call(chat,'GET','messages',{},b.body.token);
+ assert.equal(bMessages.body.messages.length,1,'student B sees no C messages');
+ const badTeacherTarget=await call(chat,'POST','send',{studentId:'invalid',body:'Ola'},'',origin,pin);
+ assert.equal(badTeacherTarget.statusCode,400,'teacher cannot send to invalid student ID');
+ const teacherReply=await call(chat,'POST','send',{studentId:cId,body:'Resposta do professor ao C',mission:10},'',origin,pin);
+ assert.equal(teacherReply.statusCode,201,'teacher replies to a specific student');
+ const cUnread=await call(chat,'GET','unread',{},cToken);
+ const bUnread=await call(chat,'GET','unread',{},b.body.token);
+ assert.equal(cUnread.body.unread,1,'student C has one unread teacher reply');
+ assert.equal(bUnread.body.unread,0,'student B cannot see teacher reply to C');
+ const cAfterReply=await call(chat,'GET','messages',{},cToken);
+ assert.equal(cAfterReply.body.messages.length,3);
+ assert.equal(cAfterReply.body.messages[2].author,'teacher');
+ const readCByTeacher=await call(chat,'POST','read',{studentId:cId},'',origin,pin);
+ assert.equal(readCByTeacher.statusCode,200);
+ const teacherAfterRead=await call(chat,'GET','unread',{},'',origin,pin);
+ assert.equal(teacherAfterRead.body.unread,1,'B unread remains after reading C');
+ const studentRead=await call(chat,'POST','read',{},cToken);
+ assert.equal(studentRead.statusCode,200);
+ const cAfterRead=await call(chat,'GET','unread',{},cToken);
+ assert.equal(cAfterRead.body.unread,0,'student read receipt clears own counter');
+ const longMessage=await call(chat,'POST','send',{body:'Z'.repeat(1400),mission:10},cToken);
+ assert.equal(longMessage.statusCode,201);
+ const cAfterLong=await call(chat,'GET','messages',{},cToken);
+ assert.equal(cAfterLong.body.messages.at(-1).body.length,1200,'server enforces chat length cap');
+ for(let n=0;n<9;n++){
+  const extra=await call(chat,'POST','send',{body:'Mensagem de limite '+n},cToken);
+  assert.equal(extra.statusCode,201,'within chat rate limit');
+ }
+ const rateLimited=await call(chat,'POST','send',{body:'Mensagem extra bloqueada'},cToken);
+ assert.equal(rateLimited.statusCode,429,'thirteenth student message in minute rejected');
+ const finalB=await call(chat,'GET','messages',{},b.body.token);
+ assert.equal(finalB.body.messages.length,1,'rate-limit testing cannot leak C chat to B');
+ console.log('PASS FUN-07: real chat handlers, two-way messages, order, unread/read receipts, per-student isolation, length and rate limit');
+
 
 
 })().catch(e=>{console.error(e);process.exitCode=1});
