@@ -178,8 +178,9 @@ function mount(rootOverride){
   for(const [field,value] of Object.entries(data))root.querySelectorAll('[data-tm-genrefield="'+field+'"]').forEach(el=>el.textContent=value);
   const box=root.querySelector('.tm-pro-example-switch');if(box&&!reduced){box.classList.remove('tm-pro-flash');void box.offsetWidth;box.classList.add('tm-pro-flash')}
  }));
- const count=root.querySelector('#tm1Gems'),door=root.querySelector('#tm1Door'),step=root.querySelector('#tm1Step'),feedback=root.querySelector('#tm1Feedback'),gate=root.querySelector('#tm1Gate');
- if(!count||!door||!step||!feedback||!gate)return;
+ const count=root.querySelector('#tm1Gems'),door=root.querySelector('#tm1Door'),step=root.querySelector('#tm1Step')||{textContent:''},feedback=root.querySelector('#tm1Feedback')||{textContent:''},gate=root.querySelector('#tm1Gate');
+ // The acceptance-test slide intentionally has no debugger panel; its simulator remains live.
+ if(!count||!door||!gate)return;
  const stateLabel=root.querySelector('#tm1GameState'),bar=root.querySelector('#tm1Bar'),crystal=root.querySelector('#tm1Crystal'),victory=root.querySelector('#tm1Victory'),trace=root.querySelector('#tm1Trace');
  let gems=0,won=false;
  const append=msg=>{
