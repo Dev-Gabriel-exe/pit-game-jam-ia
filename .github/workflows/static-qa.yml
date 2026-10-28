@@ -43,6 +43,10 @@ jobs:
           node --check v3/arcade-gallery.js
           node --check v3/final-achievement.js
           node qa/v3-art-motion.cjs
+      - name: Verify FUN-01 hosting and origin policy (offline)
+        run: |
+          node --check v3/hosting-policy.js
+          node qa/v3-hosting-audit.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
