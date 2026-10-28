@@ -119,7 +119,8 @@ function renderAssets(){
  box.innerHTML=filtered.map(function(a){
  const image='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgAsset(a));
  const tag={personagem:'PNG · SPRITE',mapa:'PNG · CENÁRIO',item:'PNG · OBJETO',modelo:'GLB · MODELO 3D',som:'WAV · ÁUDIO'}[a.cat];
- return '<article class="resource-card"><div class="asset-picture"><img src="'+image+'" loading="lazy" alt="Prévia de '+a.name+'"></div><div class="res-inner"><small>'+tag+'</small><h3>'+a.name+'</h3><p>'+a.desc+'</p><small title="Recurso procedural original do projeto, não extraído de jogo comercial">Gerado localmente · uso didático</small><button type="button" class="download" data-asset="'+a.id+'">↓ Baixar '+a.file+'</button></div></article>';
+ const format=a.cat==='modelo'?'glb':a.cat==='som'?'wav':'png';
+ return '<article class="resource-card" data-asset-format="'+format+'"><div class="asset-picture"><img src="'+image+'" loading="lazy" alt="Prévia de '+a.name+'"></div><div class="res-inner"><small>'+tag+'</small><h3>'+a.name+'</h3><p>'+a.desc+'</p><small title="Recurso procedural original do projeto, não extraído de jogo comercial">Gerado localmente · uso didático</small><button type="button" class="download" data-asset="'+a.id+'">↓ Baixar '+a.file+'</button></div></article>';
  }).join('')||'<p>Sem resultados. Experimente outra categoria.</p>';
  box.querySelectorAll('[data-asset]').forEach(b=>b.addEventListener('click',async function(){const a=assets.find(x=>x.id===b.dataset.asset);b.disabled=true;const old=b.textContent;b.textContent='Preparando arquivo…';try{if(a.cat==='modelo')modelDownload(a);else if(a.cat==='som')audioDownload(a);else await pngDownload(a);}catch(e){alert('Não foi possível baixar. Tente Chrome/Edge atualizado. '+e.message)}finally{b.disabled=false;b.textContent=old}}));
  const n=document.getElementById('resultCount');if(n)n.textContent=filtered.length+' recursos nesta seleção';
