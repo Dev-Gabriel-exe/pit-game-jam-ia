@@ -17,7 +17,7 @@
 - **M07-04 (P1):** o fluxo de backend fictício, aprovação e revisão agora possui cobertura automatizada; ainda falta Preview real de GDevelop 2D/3D.
 - **M08-04 (P1):** a cobertura de navegador móvel, foco e movimento reduzido já passou em CI; falta comparação antes/depois dentro do Preview GDevelop.
 - **M09-03 (P1):** o fluxo de revisão fictício passou em testes automatizados; falta observação real de teste por pares em ambiente isolado.
-- **Ambiente de banco (P1):** SQL em memória não é Postgres; testar transações em banco descartável, sem turma real, antes da homologação.
+- **Banco isolado — verificação concluída:** [Postgres QA 40637833387](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637833387) passou com Postgres 16 descartável, handlers reais, três alunos fictícios, aprovação, revisão, heartbeat e chat. Não representa o Neon/produção nem substitui ensaio de backup.
 - **Segurança/licenças (P2):** ver `v3/SEGURANCA-ROLLBACK-FUN-10.md`, inclusive PIN, token local, auditoria de dependências e termos dos vídeos LTX experimentais.
 
 Não foi confirmado P0 nos cenários cobertos pelos testes automatizados. Isso **não** equivale a ausência de P0 em produção.
