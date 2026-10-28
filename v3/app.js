@@ -118,6 +118,7 @@ function missionTenContext(){
  if(!TEACHER&&e?.evidence&&window.PIT_STUDENT_MISSION_NINE)window.PIT_STUDENT_MISSION_NINE.hydrate(session,e.evidence,e.status);
  return {...previous,playtest:!TEACHER&&window.PIT_STUDENT_MISSION_NINE?window.PIT_STUDENT_MISSION_NINE.load(session):{},
   phase:activePhase,status:entry(10)?.status||'',feedback:entry(10)?.feedback||'',preview:visualPreview,
+  approvedStages:progress.filter(p=>p.status==='approved').map(p=>Number(p.stage)),
   canSubmit:state.current_stage>=10&&['practice','review'].includes(state.phase)};
 }
 function statusLabel(n){return stageStatuses[entry(n)?.status]||'Não iniciada'}
