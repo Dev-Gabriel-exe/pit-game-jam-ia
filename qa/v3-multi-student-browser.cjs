@@ -126,7 +126,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await pages[2].locator('#qo-title').inputValue(),'Projeto Mobile QA Persistente','mobile draft survives teacher stage release');
  const width=await pages[2].evaluate(()=>({page:document.documentElement.scrollWidth,screen:innerWidth}));
  assert(width.page<=width.screen+4,'mobile no horizontal overflow: '+JSON.stringify(width));
- const fail=async route=>route.fulfill({status:503,headers,contentType:'application/json',body:JSON.stringify({ok:false,error:'Falha de rede simulada'})});
+ const fail=async route=>{blockedCalls++;await route.fulfill({status:503,headers,contentType:'application/json',body:JSON.stringify({ok:false,error:'Falha de rede simulada'})})};
  const match=url=>url.pathname.endsWith('/api/classroom')&&url.searchParams.get('action')==='state';
  await pages[1].route(match,fail);
  const unavailable=await pages[1].evaluate(async token=>{const r=await fetch('https://pit-game-jam-chat.vercel.app/api/classroom?action=state',{headers:{'X-PIT-Student-Token':token}});return r.status},tokens[1]);
