@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T03:33:53.920Z",
+  "last_completed_at": "2026-10-28T03:37:15.746Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "AUD-03",
+  "priority": "AUD-04",
   "current_phase": "MISSOES",
-  "last_task": "AUD-02",
-  "completed_count": 26,
+  "last_task": "AUD-03",
+  "completed_count": 27,
   "total_tasks": 59,
   "tasks": [
     {
@@ -515,10 +515,15 @@
       "description": "Checar TODOS os tutoriais GDevelop: imagens reais versus ilustrações, ordem dos cliques, nomes do editor, links, resultados e fallback",
       "group": "AUD",
       "position": 31,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:37:15.746Z",
+      "commit": "8d866ff27b79ff5c00a9181283b9d37f26e7ae8b",
+      "tests": [
+        "GitHub Actions run 40627702889: 'Audit V3 GDevelop tutorials' step completed success; all prior audit/static steps success",
+        "Manual web inspection 2026-10-28: 21 original image URLs examined, 20 loaded, one inaccessible replaced with verified official screenshot",
+        "Seven route-based guides, local SVG fallbacks and M06/M10 diagrams checked",
+        "No actual GDevelop editor session, export or mobile browser test performed"
+      ],
       "blocker": null
     },
     {
@@ -1295,6 +1300,24 @@
       ],
       "tests": "9/9 V8 checks; GitHub Actions static QA run 40627380065 success",
       "notes": "M03/M07/M08 practical time aligned; M09 teacher demo replaced legacy notes; 10 modules checked."
+    },
+    {
+      "id": "AUD-03",
+      "completed_at": "2026-10-28T03:37:15.746Z",
+      "commit": "8d866ff27b79ff5c00a9181283b9d37f26e7ae8b",
+      "files": [
+        "v3/gdevelop-first-run.js",
+        "v3/gdevelop-mission-four-guide.js",
+        "v3/gdevelop-mission-eight-guide.js",
+        "v3/teacher-gdevelop-guide.js",
+        "v3/asset-forge-tutorial.js",
+        "v3/asset-forge-tutorial.css",
+        "qa/v3-audit-guides.cjs",
+        "v3/AUDITORIA-GDEVELOP-TUTORIAIS.md",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "GitHub Actions AUD-03 step success run 40627702889; 21 image URLs manually inspected; GDevelop not run",
+      "notes": "Accurate screenshot labels, offline fallbacks, replaced one inaccessible image, M06 schematic."
     }
   ]
 }
