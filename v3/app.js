@@ -687,7 +687,14 @@ function showMissionGallery(){
  gallery.querySelectorAll('[data-gallery-stage]').forEach(b=>b.onclick=()=>{selectStage(Number(b.dataset.galleryStage));closeGallery()});
  $('missionGalleryClose').focus();
 }
-function closeGallery(){if(!TEACHER&&window.PIT_ARCADE){window.PIT_ARCADE.close();return;}const x=$('missionGallery');if(x){x.hidden=true;x.classList.remove('open')}}
+function closeGallery(){
+ const x=$('missionGallery');
+ // Escape also closes chat/roster. Do not refocus the gallery launcher when
+ // the gallery is already closed: that steals focus from the chat trigger.
+ if(!x||!x.classList.contains('open'))return;
+ if(!TEACHER&&window.PIT_ARCADE){window.PIT_ARCADE.close();return;}
+ x.hidden=true;x.classList.remove('open');
+}
 if($('openGallery'))$('openGallery').onclick=showMissionGallery;
 if($('missionGalleryClose'))$('missionGalleryClose').onclick=closeGallery;
 if($('missionGallery'))$('missionGallery').addEventListener('click',e=>{if(e.target===$('missionGallery'))closeGallery()});
