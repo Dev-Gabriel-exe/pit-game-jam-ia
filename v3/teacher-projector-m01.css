@@ -1,0 +1,14 @@
+/* Teacher-only Mission 01 projector prototype */
+#pitProjectorLaunch{margin:9px 0 0;background:#533522;color:#ffe1a6;border:1px solid #c89155;border-radius:9px;padding:10px 16px;font-weight:800;cursor:pointer}
+#pitProjectorLaunch[hidden]{display:none!important}
+body.pit-projecting{overflow:hidden!important}
+#pitProjector{position:fixed;inset:0;z-index:2147483000;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:radial-gradient(circle at 82% 18%,#33231d 0%,transparent 45%),#0b0c11;color:#f8e8d0;font-family:Georgia,serif}
+.pit-projector-top{padding:18px 4vw;border-bottom:1px solid #a8764b;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pit-projector-top small{font:700 13px system-ui;letter-spacing:.15em;color:#d5a36b}.pit-projector-top h1{font-size:clamp(26px,3vw,52px);margin:5px 0}
+#pitProjector button{border:1px solid #bc8750;border-radius:10px;background:#2e211d;color:#ffe6c2;padding:13px 20px;cursor:pointer;font:700 16px system-ui}#pitProjector button:disabled{opacity:.35;cursor:default}
+.pit-projector-slide{overflow:auto;padding:4vh 7vw;display:flex;align-items:center;justify-content:center;min-height:0}
+.pit-projector-slide>.tm1-concept,.pit-projector-slide>.tm1-hero-line,.pit-projector-slide>.tm1-key{width:min(1250px,100%);max-width:100%;font-size:clamp(20px,2vw,32px);line-height:1.5;box-sizing:border-box}
+.pit-projector-slide h3{font-size:clamp(30px,3.3vw,58px);line-height:1.12}.pit-projector-slide p{font-size:clamp(19px,1.8vw,29px);line-height:1.48}.pit-projector-slide .tm1-concept{display:grid;grid-template-columns:80px minmax(0,1fr);gap:30px}.pit-projector-slide .tm1-case{margin-top:22px;padding:20px 28px}
+.pit-projector-slide img{max-width:100%;max-height:45vh;object-fit:contain}
+.pit-projector-footer{padding:16px 4vw;display:flex;align-items:center;justify-content:space-between;gap:25px;border-top:1px solid #70513b}.pit-projector-meter{flex:1;text-align:center;font:700 15px system-ui}.pit-projector-meter>div{margin-top:9px;height:5px;background:#49392d;border-radius:8px;overflow:hidden}.pit-projector-meter i{display:block;height:100%;background:#e9b474;transition:width .25s}
+@media(max-width:700px){.pit-projector-top{padding:12px}.pit-projector-slide{padding:15px}.pit-projector-footer{padding:10px;gap:5px}.pit-projector-slide .tm1-concept{grid-template-columns:1fr}.pit-projector-top h1{font-size:24px}#pitProjector button{font-size:12px;padding:9px}}
