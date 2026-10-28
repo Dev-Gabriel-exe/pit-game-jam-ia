@@ -925,7 +925,7 @@
       "position": 57,
       "status": "blocked",
       "updated_at": "2026-10-28T08:37:00Z",
-      "commit": "2bec35c6cf928149f1449c0274c0f8568112f8c9",
+      "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -942,7 +942,8 @@
         "Native GDevelop 40657143854 SUCCESS: 8/8 real 2D/3D gameplay tests including conditional victory; screenshots of original PIT sprite and crystal inspected. Browser QA 40656562279 SUCCESS: WAV/PNG media decoding. Static QA 40657155850 SUCCESS: evidence-gate synthetic negative cases.",
         "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
         "QA evidence manifest qa/evidence/native-gdevelop-2026-10-28.json committed at 99c490a00a2a720e546fc1c6f558a1a4614a0f31; contains verified 8/8 native GDevelop results, source asset and screenshot SHA-256, with manual limitations explicit.",
-        "2026-10-28: GDevelop fixture extended with project JSON save/reopen structural roundtrip and SHA-256 resource integrity assertions. V8 syntax parse PASS; native CI execution pending."
+        "2026-10-28: GDevelop fixture extended with project JSON save/reopen structural roundtrip and SHA-256 resource integrity assertions. V8 syntax parse PASS; native CI execution pending.",
+        "2026-10-28: native GDevelop run 40658610737 fixture preparation SUCCESS; gameplay/result verification still in_progress when checked. Added validator assertion that all generated asset entries have nonempty byte sizes; CI outcome pending."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -1905,6 +1906,12 @@
       "task": "REL-01",
       "commit": "2bec35c6cf928149f1449c0274c0f8568112f8c9",
       "summary": "Added disk roundtrip and asset integrity assertions to native GDevelop fixtures; V8 syntax pass, CI pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6",
+      "summary": "Strengthened native GDevelop asset validator; tracked running gameplay QA without claiming completion."
     }
   ]
 }
