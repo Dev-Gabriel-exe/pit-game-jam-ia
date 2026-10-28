@@ -6,13 +6,14 @@ const FIELDS=[
  {key:'project',max:70,min:3,label:'Nome real do projeto no GDevelop',hint:'Nome que aparece na lista de projetos; deve permitir reencontrar o arquivo.'},
  {key:'scene',max:65,min:3,label:'Nome da cena inicial',hint:'Confira o nome da cena aberta no gerenciador.'},
  {key:'object',max:65,min:2,label:'Nome do primeiro objeto',hint:'O nome que você deu no painel Objects, não apenas o nome da imagem.'},
+ {key:'source',max:75,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Meshy + GLB, GDevelop Asset Store ou desenho próprio. Informe a origem verdadeira.'},
  {key:'preview',max:180,min:15,label:'O que apareceu quando abriu o Preview?',hint:'Descreva o que você viu na execução, inclusive se precisou corrigir algo.'},
  {key:'saved',max:105,min:6,label:'Onde o projeto foi salvo?',hint:'Informe se foi em arquivo/pasta local ou na nuvem, com nome ou caminho que consiga localizar.'},
  {key:'fix',max:105,min:0,label:'Qual problema apareceu e como resolveu? (opcional)',hint:'Se não houve falha, deixe em branco ou explique uma escolha que fez.'}
 ];
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clean=s=>String(s??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
-const blank=()=>({project:'',scene:'',object:'',preview:'',saved:'',fix:'',objectType:'2D Sprite',checks:[]});
+const blank=()=>({project:'',scene:'',object:'',source:'',preview:'',saved:'',fix:'',objectType:'2D Sprite',checks:[]});
 const key=id=>'pit_v3_missao03_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
 function load(id){
  try{const o=JSON.parse(localStorage.getItem(key(id))||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key].slice(0,f.max);
@@ -28,7 +29,7 @@ function parseEvidence(raw){
  const find=p=>{const l=lines.find(s=>s.startsWith(p));return l?l.slice(p.length).trim():''};
  const d=blank();d.project=find('Projeto: ');d.scene=find('Cena: ');d.object=find('Objeto: ');
  const type=find('Tipo: ');if(['2D Sprite','3D Box/Modelo'].includes(type))d.objectType=type;
- d.preview=find('Preview: ');d.saved=find('Salvo em: ');d.fix=find('Diagnóstico: ');
+ d.source=find('Recurso: ');d.preview=find('Preview: ');d.saved=find('Salvo em: ');d.fix=find('Diagnóstico: ');
  d.checks=[0,1,2];return d;
 }
 function hydrate(id,raw,status){
@@ -49,15 +50,18 @@ function validate(id){
 }
 function evidence(id,idea={}){
  const d=load(id);
+ // Safe field budgets: preserve complete lines and recovery even at maximum input length.
+ const cut=(text,max)=>clean(text).slice(0,max);
  const entries=[
   'MISSÃO 03 — LIGAR O MOTOR',
-  'Jogo: '+clean(idea.title||'Sem título informado'),
-  'Gênero: '+clean(idea.genre||'Não definido'),
-  'Projeto: '+clean(d.project),'Cena: '+clean(d.scene),'Objeto: '+clean(d.object),
-  'Tipo: '+d.objectType,'Preview: '+clean(d.preview),'Salvo em: '+clean(d.saved),
-  'Diagnóstico: '+clean(d.fix||'Nenhum problema relatado')
+  'Jogo: '+cut(idea.title||'Sem título informado',55),
+  'Gênero: '+cut(idea.genre||'Não definido',25),
+  'Projeto: '+cut(d.project,60),'Cena: '+cut(d.scene,53),'Objeto: '+cut(d.object,53),
+  'Tipo: '+d.objectType,'Recurso: '+cut(d.source,69),
+  'Preview: '+cut(d.preview,140),'Salvo em: '+cut(d.saved,85),
+  'Diagnóstico: '+cut(d.fix||'Nenhum problema relatado',75)
  ];
- return entries.join('\n').slice(0,750);
+ return entries.join('\n');
 }
 function ideaOf(ctx){
  const d=ctx.idea||{},m=ctx.mvp||{};
@@ -86,7 +90,7 @@ function intro(ctx){
  ].map(([n,a,b])=>'<article><span>'+n+' · '+a+'</span><p>'+b+'</p></article>').join('')+'</div></div>';
 }
 function field(f,d,idea,locked){
- const hint={project:idea.title,scene:idea.scene,object:idea.item,preview:'No Preview apareceu uma personagem no centro da cena, sem movimento.',saved:'Projeto salvo na pasta Jogos/MeuProjeto ou em GDevelop Cloud',fix:'O objeto não aparecia; arrastei uma instância para a cena.'};
+ const hint={project:idea.title,scene:idea.scene,object:idea.item,source:'Gemini + PNG (ou GDevelop Asset Store / Kenney)',preview:'No Preview apareceu uma personagem no centro da cena, sem movimento.',saved:'Projeto salvo na pasta Jogos/MeuProjeto ou em GDevelop Cloud',fix:'O objeto não aparecia; arrastei uma instância para a cena.'};
  const placeholder='Ex.: '+hint[f.key];
  const attr='id="m3-'+f.key+'" data-m3-field="'+f.key+'" maxlength="'+f.max+'" placeholder="'+esc(placeholder)+'" '+(locked?'disabled':'')+' autocomplete="off"';
  const control=['preview','saved','fix'].includes(f.key)?'<textarea rows="'+(f.key==='preview'?3:2)+'" '+attr+'>'+esc(d[f.key])+'</textarea>':
@@ -105,20 +109,22 @@ function checklist(d,locked){
 }
 function counter(d){
  const total=validity(d).filter(Boolean).length;
- return '<div class="m3-progress"><div><strong><span id="m3Progress">'+total+'</span>/6</strong><small>Verificações e registros completos</small></div>'+
- '<div class="m3-progress-track"><i id="m3ProgressRail" style="width:'+(total/6*100)+'%"></i></div></div>';
+ return '<div class="m3-progress"><div><strong><span id="m3Progress">'+total+'</span>/7</strong><small>Verificações e registros completos</small></div>'+
+ '<div class="m3-progress-track"><i id="m3ProgressRail" style="width:'+(total/7*100)+'%"></i></div></div>';
 }
 function practice(ctx){
  const i=ideaOf(ctx),d=load(ctx.session),locked=['approved','submitted'].includes(ctx.status);
  const tags=[
  ['01','PROJETO E CENA','Crie um projeto vazio. Use a cena planejada na Missão 02.','project','scene'],
- ['02','PRIMEIRO OBJETO','Escolha um Sprite 2D ou objeto 3D, nomeie e coloque uma instância na área da cena.','object'],
+ ['02','PRIMEIRO OBJETO E ASSET','Crie ou obtenha um recurso com IA ou biblioteca gratuita, importe-o como Sprite/objeto 3D e posicione a instância na cena.','object','source'],
  ['03','PREVIEW E SALVAR','Execute o jogo, observe o resultado e salve o projeto editável.','preview','saved','fix']
  ];
  return '<div class="m3-page m3-work"><div class="m3-lead"><span>◈ PRIMEIRO PROJETO REAL</span><h3>Construa o começo do seu jogo.</h3>'+
  '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo nesta missão é verificar a estrutura e o Preview, não ter um personagem andando.</p></div>'+
  (locked?'<div class="m3-notice">Esta entrega está '+(ctx.status==='approved'?'aprovada':'em análise')+'. O registro permanece disponível para leitura.</div>':'')+
  (window.PIT_GDEVELOP_FIRST_RUN?window.PIT_GDEVELOP_FIRST_RUN.render('student'):'<p>Projeto vazio → cena → objeto → Preview → salvar.</p>')+
+ '<div class="m3-asset-bridge"><strong>✦ UM ASSET VISUAL, SEIS CAMINHOS POSSÍVEIS</strong><p>Crie um personagem ou objeto com IA — ou utilize uma biblioteca se o tempo acabar. Música, narração e vídeos são opções para continuar o desenvolvimento. O primeiro recurso deve aparecer no Preview desta missão.</p></div>'+
+ (window.PIT_ASSET_STUDIO?window.PIT_ASSET_STUDIO.render({...ctx.idea,scene:i.scene},'student'):'')+
  '<div class="m3-work-layout"><div class="m3-work-fields">'+tags.map(([num,title,desc,...keys])=>
  '<section class="m3-chapter"><span>✦ FRAGMENTO '+num+' / 03</span><h4>'+title+'</h4><p>'+desc+'</p>'+
  (num==='02'?'<div class="m3-type-select"><span>TIPO DO SEU PRIMEIRO OBJETO</span><div>'+
@@ -144,7 +150,7 @@ function review(ctx){
  '<div class="m3-review-layout"><div><div class="m3-review-badge">'+status+'</div>'+
  (ctx.feedback?'<div class="m3-notice"><strong>RETORNO DO PROFESSOR</strong><p>'+esc(ctx.feedback)+'</p></div>':'')+
  '<div class="m3-review-report"><strong>✦ DOCUMENTO DA MISSÃO 03</strong><h4>'+esc(i.title)+'</h4>'+
- '<div class="m3-review-grid">'+[['PROJETO',d.project],['CENA',d.scene],['OBJETO',d.object],['TIPO',d.objectType],['PREVIEW',d.preview],['SALVAMENTO',d.saved],['DIAGNÓSTICO',d.fix||'Nenhum problema relatado']].map(([label,v])=>
+ '<div class="m3-review-grid">'+[['PROJETO',d.project],['CENA',d.scene],['OBJETO',d.object],['RECURSO / ORIGEM',d.source],['TIPO',d.objectType],['PREVIEW',d.preview],['SALVAMENTO',d.saved],['DIAGNÓSTICO',d.fix||'Nenhum problema relatado']].map(([label,v])=>
  '<div><span>'+label+'</span><p>'+esc(v||'Não informado')+'</p></div>').join('')+'</div>'+
  '<label for="evidenceInput">Evidência enviada para avaliação</label><textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx.idea))+'</textarea>'+
  '<small>O professor receberá somente os dados declarados aqui. O site não consegue verificar automaticamente seu Preview.</small></div>'+
@@ -161,17 +167,18 @@ function render(ctx){return '<div class="m3-root" id="m3Root">'+header(ctx.phase
 function mount(ctx){
  const root=document.querySelector('#m3Root');if(!root)return;
  window.PIT_GDEVELOP_FIRST_RUN?.mount(root.querySelector('.gd3-root'));
+ window.PIT_ASSET_STUDIO?.mount(root.querySelector('.ast3-root'),{...ctx.idea,scene:ideaOf(ctx).scene});
  let d=load(ctx.session);
  function update(){
   const result=validity(d),filled=result.filter(Boolean).length;
   const n=root.querySelector('#m3Progress'),rail=root.querySelector('#m3ProgressRail');
   if(n)n.textContent=String(filled);
-  if(rail)rail.style.width=(filled/6*100)+'%';
+  if(rail)rail.style.width=(filled/7*100)+'%';
   root.querySelectorAll('[data-m3-preview]').forEach(el=>{
    const name=el.dataset.m3Preview;el.textContent=d[name]||'Ainda não registrado';
   });
   const type=root.querySelector('#m3SelectedType');if(type)type.textContent=d.objectType;
-  const note=root.querySelector('#m3Notice');if(note)note.textContent=filled+'/6 registros e verificações · rascunho salvo neste navegador';
+  const note=root.querySelector('#m3Notice');if(note)note.textContent=filled+'/7 registros e verificações · rascunho salvo neste navegador';
  }
  root.querySelectorAll('[data-m3-field]').forEach(el=>el.addEventListener('input',()=>{
   d[el.dataset.m3Field]=el.value;save(ctx.session,d);update();
