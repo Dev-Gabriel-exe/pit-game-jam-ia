@@ -2119,6 +2119,12 @@
       "task": "REL-01",
       "commit": "8ad5e9a3c389e7a4aaf63798ab61199230d8a455",
       "summary": "Hardened actual GLB 3D preview parser against truncated headers, malformed chunk lengths and out-of-bounds accessors; new CI pending, manual GDevelop NOT_RUN. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "f80f7050ae8d79e25afc44d810da7512dee0ca4b",
+      "summary": "Added accessible WAV preview playback error fallback preserving download; static QA for prior GLB hardening 40679660907 SUCCESS; Browser QA 40679660911 in_progress at observation; new CI pending; manual GDevelop NOT_RUN, 54/59 unchanged."
     }
   ]
 }
