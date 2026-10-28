@@ -68,6 +68,25 @@ const {chromium}=require('playwright');
    await page.locator('.pit-preview-close').click();
    await page.reload({waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
+   // A GLB with an invalid MIME type must not be presented as a working 3D model.
+   await page.evaluate(()=>{
+    const original=Blob.prototype.arrayBuffer;
+    Blob.prototype.arrayBuffer=function(){return original.call(this);};
+    const create=window.PIT_LIBRARY_PREVIEW.open;
+    // Corrupt only the generated GLB MIME by wrapping the Blob constructor.
+    const NativeBlob=window.Blob;
+    window.Blob=function(parts,opts){
+     const options=opts?.type==='model/gltf-binary'?{...opts,type:'text/plain'}:opts;
+     return new NativeBlob(parts,options);
+    };
+    window.Blob.prototype=NativeBlob.prototype;
+   });
+   await open('glb-cristal');
+   await page.locator('#pitPreviewStage .pit-preview-error').waitFor({state:'visible'});
+   assert.match(await page.locator('#pitPreviewStage .pit-preview-error').innerText(),/Tipo de arquivo GLB inválido/,'wrong GLB MIME rejected');
+   await page.locator('.pit-preview-close').click();
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW));
    await open('glb-cristal');
    await page.locator('#pitPreviewStage canvas').waitFor();
    const mesh=await page.evaluate(()=>{
