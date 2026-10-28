@@ -2161,6 +2161,12 @@
       "task": "REL-01",
       "commit": "4aa0fb4e9c900cc6f951fb2ae0fd56fdfdec285f",
       "summary": "Three consecutive work rounds: (1) verified static QA 40683894216 and Browser QA 40683894329 SUCCESS for 40 assets; (2) added original archipelago and eclipse fortress 1024x576 procedural PNG maps with RPG/puzzle filters (3b332c0e), catalogue 40→42; (3) updated static and Chrome preview tests for 42 resources and new map previews (b7e46235, 4aa0fb4e). New CI pending; pre-test static QA for feature commit failed as expected due hardcoded old count. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "51bcd26fa4af12129f4fd81290d3b0131c03785a",
+      "summary": "Four consecutive rounds: 1 verified static QA 40684456875 and Browser QA 40684456895 SUCCESS for 42 resources; 2 added two original 160x160 procedural item sprites (astral compass and eclipse relic) with RPG/puzzle genre filters, library 42→44 (0fbc7825); 3 updated static library QA for 44 assets, 34 2D and 16 original additions (87a505cc); 4 updated Chrome preview QA for 44 preview buttons, portal count and new PNG dimensions (51bcd26f). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
     }
   ]
 }
