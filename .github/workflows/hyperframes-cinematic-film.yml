@@ -1,0 +1,58 @@
+name: HyperFrames Gothic Film Footage
+on:
+  push:
+    branches: [experiment/missao-01-cinematic-footage]
+    paths:
+      - 'experiments/hyperframes-missao-01/compositions/portal.html'
+      - '.github/workflows/hyperframes-cinematic-film.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download the free-licensed source footage
+        run: |
+          mkdir -p experiments/hyperframes-missao-01/assets
+          curl -L --fail --retry 2 --silent --show-error \
+            https://assets.mixkit.co/videos/33866/33866-720.mp4 -o /tmp/stock-video.mp4
+          ffprobe -v error -show_entries format=duration,size -of json /tmp/stock-video.mp4
+      - name: Compose a seamless six-second portrait loop
+        run: |
+          ffmpeg -y -loglevel error -i /tmp/stock-video.mp4 -filter_complex \
+            "[0:v]fps=24,scale=480:960:force_original_aspect_ratio=increase,crop=480:960,setsar=1,trim=duration=7,setpts=PTS-STARTPTS,split=2[main][intro];[main]trim=start=1:duration=6,setpts=PTS-STARTPTS[body];[intro]trim=start=0:duration=1,setpts=PTS-STARTPTS[return];[body][return]xfade=transition=fade:duration=1:offset=5,format=yuv420p[v]" \
+            -map "[v]" -an -c:v libx264 -preset medium -crf 24 -movflags +faststart \
+            experiments/hyperframes-missao-01/assets/licensed-film-loop.mp4
+          ffprobe -v error -show_entries format=duration,size -of json experiments/hyperframes-missao-01/assets/licensed-film-loop.mp4
+      - name: Lint official HyperFrames project
+        working-directory: experiments/hyperframes-missao-01
+        env: {CI: 'true', HYPERFRAMES_NO_UPDATE_CHECK: '1'}
+        run: npx --yes hyperframes@0.8.86 lint
+      - name: Render cinematic film with official HyperFrames
+        working-directory: experiments/hyperframes-missao-01
+        env: {CI: 'true', HYPERFRAMES_NO_UPDATE_CHECK: '1'}
+        run: npx --yes hyperframes@0.8.86 render --quality draft --fps 24 --output ../../v3/assets/missions/missao-01-motion.mp4
+      - name: Validate final video
+        run: |
+          test -s v3/assets/missions/missao-01-motion.mp4
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,nb_frames -show_entries format=duration,size -of json v3/assets/missions/missao-01-motion.mp4
+      - name: Commit only the edited cinematic MP4
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v3/assets/missions/missao-01-motion.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(cinematic): HyperFrames edit of licensed live-action gothic footage [skip ci]"
+            git push
+          fi
