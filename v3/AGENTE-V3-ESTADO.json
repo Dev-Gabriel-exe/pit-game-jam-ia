@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:43:52.600Z",
+  "last_completed_at": "2026-10-28T02:46:00.491Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M06-02",
+  "priority": "M06-03",
   "current_phase": "MISSOES",
-  "last_task": "M06-01",
-  "completed_count": 9,
+  "last_task": "M06-02",
+  "completed_count": 10,
   "total_tasks": 59,
   "tasks": [
     {
@@ -189,10 +189,14 @@
       "description": "Matriz de escolhas: imagem (Gemini e fallback local), vídeo curto/cutscene (Google Flow quando viável), música (Suno), voz/efeitos (ElevenLabs), 3D (Meshy); verificar limites reais e termos atuais",
       "group": "M06",
       "position": 10,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:46:00.491Z",
+      "commit": "10c15024feeee8796d8b4dc9913d5dc2eb9c3895",
+      "tests": [
+        "13/13 V8 assertions executed: syntax, five routes, source links, licensing, fallback, rendering, app wiring, DOM-simulated filter/reset",
+        "qa/v3-m06-matrix.cjs committed but not executed in Node",
+        "Official Gemini/Flow/Suno/ElevenLabs/Meshy documentation checked 2026-10-27"
+      ],
       "blocker": null
     },
     {
@@ -916,6 +920,21 @@
       ],
       "tests": "27/27 deterministic JS+CSS integration and simulated decision-quiz checks",
       "notes": "Five-minute pipeline: one AI/fallback asset only. PNG sprite, WAV/AAC audio, MP4 H.264/AAC cutscene optional, GLB low-poly. Provenance/license/privacy/fallback checked. No real editor/browser E2E."
+    },
+    {
+      "id": "M06-02",
+      "completed_at": "2026-10-28T02:46:00.491Z",
+      "commit": "10c15024feeee8796d8b4dc9913d5dc2eb9c3895",
+      "files": [
+        "v3/teacher-mission-six-matrix.js",
+        "v3/teacher-mission-six-matrix.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m06-matrix.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "13/13 V8 runtime/static assertions executed; Node/browser/GDevelop E2E pending",
+      "notes": "Source-backed choice matrix; Suno/ElevenLabs noncommercial caveats; Meshy export restrictions; Flow daily credit limits; five zero-cost fallbacks."
     }
   ]
 }
