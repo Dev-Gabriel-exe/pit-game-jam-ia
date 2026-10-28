@@ -18,6 +18,9 @@
 | REL-01 | bloqueado | Homologação, triagem P0/P1 e regressão final |
 | REL-03 | bloqueado | Relatório definitivo e decisão de publicação após REL-01 |
 
+## Triagem de problemas
+As seis verificações presenciais pendentes estão registradas em [TRIAGEM-DEFEITOS.md](./TRIAGEM-DEFEITOS.md), com critérios P0/P1/P2. Ausência de teste não é um bug confirmado. O resultado assinado é registrado em [HOMOLOGACAO-RESULTADOS.template.json](./HOMOLOGACAO-RESULTADOS.template.json); o template permanece NOT_RUN até execução.
+
 ## Próxima sessão com o responsável
 Executar [HOMOLOGACAO-PRESENCIAL.md](./HOMOLOGACAO-PRESENCIAL.md) e preencher **PASSOU / FALHOU / NÃO EXECUTADO**. A homologação não é automaticamente aprovada pelo preenchimento de campos. Registrar capturas e problemas sem dados pessoais. Bugs encontrados devem ser corrigidos na branch e revalidados antes da decisão de publicar.
 
