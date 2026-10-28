@@ -29,3 +29,12 @@ jobs:
           node --check v3/app.js
           node --check v3/teacher-content.js
           node qa/v3-e2e.cjs
+      - name: Run UI-08 viewport, focus and reduced-motion audit
+        run: node qa/v3-visual-audit.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-08-visual-audit
+          path: qa/ui-08-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
