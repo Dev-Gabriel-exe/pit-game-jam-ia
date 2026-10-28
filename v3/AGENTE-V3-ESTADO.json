@@ -2137,6 +2137,12 @@
       "task": "REL-01",
       "commit": "93de1c646e756f1c73ee9668631418175c22c542",
       "summary": "Confirmed GLB mesh hardening static QA 40680196993 and Browser QA 40680197894 SUCCESS. WAV preview now verifies nonempty audio MIME and real RIFF/WAVE signature before playback, with async token cancellation; new CI pending. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "c081835c4363db0c5b05c9ddc6a6cbfb3c9abe3e",
+      "summary": "Added two distinct original procedural PNG character sprites (sentinela and arqueiro), with dedicated SVG artwork, generated PNG previews/downloads and GDevelop usage descriptions; library 38→40. Static QA for prior WAV signature guard 40683045809 SUCCESS; Browser QA 40683045194 still in_progress when checked; new CI pending. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
     }
   ]
 }
