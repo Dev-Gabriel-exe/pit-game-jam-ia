@@ -1,0 +1,39 @@
+/* UI-07 — Chat individual: identidade dark fantasy, estados acessíveis e mobile. */
+.chat-window{
+ --chat-gold:#f2c58b;--chat-ink:#f7e9d5;
+ background:linear-gradient(155deg,#191621 0%,#0b1321 58%,#101b25 100%);
+ border:1px solid #9e7852;border-radius:15px;
+ box-shadow:0 20px 70px #000d,0 0 0 1px #e1a96d22 inset;
+ color:var(--chat-ink);width:min(445px,calc(100vw - 24px));
+}
+.chat-header{background:linear-gradient(100deg,#332326,#1a2431);border-bottom:1px solid #a97e55;color:#ffe1ad;gap:12px}
+.chat-header strong{font-size:1rem;letter-spacing:.02em}
+.chat-header button{min-height:38px}
+.chat-threads{background:#211c26;border-bottom:1px solid #735940;gap:6px;padding:9px}
+.chat-threads button{background:#332734;border-color:#86674e;color:#ffe5bd;min-height:38px;padding:8px 12px;transition:background-color .15s}
+.chat-threads button.active,.chat-threads button[aria-pressed="true"]{background:#5b3a2d;border-color:#f2c58b;color:#fff2d6}
+.chat-threads button:focus-visible,.chat-retry:focus-visible,.chat-compose :focus-visible,.chat-header button:focus-visible{outline:3px solid #c7f4aa;outline-offset:3px}
+.chat-status{font-size:12px;color:#d4c3a9;background:#1b1a25;padding:7px 12px;border-bottom:1px solid #564439;min-height:30px}
+.chat-status[data-kind="error"]{color:#ffe2e5;background:#48242f;border-color:#d87c88}
+.chat-status[data-kind="success"]{color:#c5f9df}
+.chat-retry{align-self:flex-start;margin:8px 12px;background:#51302b;color:#ffe4b7;border:1px solid #c29a65;border-radius:8px;padding:8px 12px}
+.chat-messages{background:radial-gradient(circle at 50% 0%,#5a3a2626,transparent 65%);overscroll-behavior:contain}
+.chat-messages .msg{background:#282637;border-color:#6b5263;border-radius:10px 10px 10px 3px;color:#f4e8d6}
+.chat-messages .msg.mine{background:#243e39;border-color:#6d9e83;border-radius:10px 10px 3px 10px}
+.chat-messages .msg small{color:#dcc4a6;font-size:11px;margin-bottom:3px}
+.chat-empty{padding:20px 14px;text-align:center;border:1px dashed #826349;border-radius:12px;color:#e9d3b4;line-height:1.55}
+.chat-empty strong{display:block;color:#ffe4af;margin-bottom:6px}
+.chat-compose{background:#171b25;border-top:1px solid #8b694c}
+.chat-compose label{color:#e8c9a2;font-size:12px;font-weight:750}
+.chat-compose textarea{background:#0f1822;border-color:#947357;color:#fff2e0;min-height:80px}
+.chat-compose textarea::placeholder{color:#b2a597}
+.chat-compose button{min-height:42px}
+.chat-compose button:disabled,.chat-compose textarea:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:600px){
+ .chat-window{left:8px;right:8px;bottom:64px;width:auto;max-width:none;height:min(670px,calc(100dvh - 82px));border-radius:12px}
+ .chat-threads{max-height:102px}
+ .chat-messages{padding:10px}
+ .chat-compose{padding:9px}
+ .chat-compose textarea{min-height:65px}
+}
+@media(prefers-reduced-motion:reduce){.chat-window *{transition:none!important;animation:none!important}}
