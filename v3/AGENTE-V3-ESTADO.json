@@ -2167,6 +2167,12 @@
       "task": "REL-01",
       "commit": "51bcd26fa4af12129f4fd81290d3b0131c03785a",
       "summary": "Four consecutive rounds: 1 verified static QA 40684456875 and Browser QA 40684456895 SUCCESS for 42 resources; 2 added two original 160x160 procedural item sprites (astral compass and eclipse relic) with RPG/puzzle genre filters, library 42→44 (0fbc7825); 3 updated static library QA for 44 assets, 34 2D and 16 original additions (87a505cc); 4 updated Chrome preview QA for 44 preview buttons, portal count and new PNG dimensions (51bcd26f). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "e9e6c38a8b4a8ab1bdaad5f895dd866af8fa68d0",
+      "summary": "Four consecutive rounds: (1) verified static QA 40685828053 and Browser QA 40685828077 SUCCESS for 44 resources; (2) added original griffin and druid 160x160 character sprites with RPG/platform/puzzle genre mappings, 44→46 assets (7db6c98e); (3) updated static library tests for 46 resources, 36 2D and 18 additions (9252521e); (4) updated Chrome preview tests for 46 preview buttons and new character PNGs (e9e6c38a). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
     }
   ]
 }
