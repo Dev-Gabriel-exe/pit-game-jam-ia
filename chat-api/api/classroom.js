@@ -34,6 +34,9 @@ module.exports=async function handler(req,res){
   if(req.method==='POST'&&action==='heartbeat'){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
+   const released=await classroom();
+   if(!released)return err(res,503,'Sala não inicializada.');
+   if(n>released.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
    await pool.query('UPDATE pit_students SET last_seen_at=NOW(),active_stage=$2 WHERE id=$1',[me.id,n]);
    return res.json({ok:true,stage:n});
   }
