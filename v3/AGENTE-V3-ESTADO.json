@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T01:45:01.176Z",
+  "last_completed_at": "2026-10-28T01:55:01.980Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M04-03",
+  "priority": "M04-04",
   "current_phase": "MISSOES",
-  "last_task": "M04-02",
-  "completed_count": 2,
+  "last_task": "M04-03",
+  "completed_count": 3,
   "total_tasks": 59,
   "tasks": [
     {
@@ -61,10 +61,16 @@
       "description": "Aluno: prática autoral com rascunho, checklist de teste no Preview, personalização por gênero e continuidade do projeto da Missão 03",
       "group": "M04",
       "position": 3,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T01:55:01.980Z",
+      "commit": "07f762a1dfbf34c7c41d238ce27018ac08d00c6f",
+      "tests": [
+        "41/41 static and functional checks: M04 student JS, CSS, 3-phase rendering, genres 2D/3D, prior mission data, submissions and 750-char budget",
+        "18/18 interaction mocks: tutorial route persistence, edited responses and live preview, manual checkboxes, phase navigation, student isolation",
+        "Maximum submitted evidence 723 characters; complete text of all fields within the displayed input limits",
+        "Teacher retains original tutorial default while student guide preselects a genre-appropriate route",
+        "Pending: real-browser visual QA, actual GDevelop editor operation, authenticated classroom API E2E"
+      ],
       "blocker": null
     },
     {
@@ -768,6 +774,21 @@
       ],
       "tests": "37/37 checks passed",
       "notes": "Verified official GDevelop screenshot URLs from docs; actual browser visual QA and GDevelop engine operation not yet tested. 4 route tabs, 16 steps, offline illustration fallback, official MIT 3D starter."
+    },
+    {
+      "id": "M04-03",
+      "completed_at": "2026-10-28T01:55:01.980Z",
+      "commit": "07f762a1dfbf34c7c41d238ce27018ac08d00c6f",
+      "files": [
+        "v3/student-mission-four.js",
+        "v3/student-mission-four.css",
+        "v3/gdevelop-mission-four-guide.js",
+        "aluno-v3.html",
+        "v3/app.js",
+        "v3/FASE3-MISSAO4.md"
+      ],
+      "tests": "59/59 static/functional and simulated UI checks passed",
+      "notes": "Student reuses M01–M03 data and existing GDevelop project; one control and one limit; 2D/3D route choice, three honest Preview tests, persistent evidence under 750 chars, safe preview mode. No real browser/API tests yet."
     }
   ]
 }
