@@ -213,3 +213,7 @@ body[data-role="teacher"].pit-v3-visual-preview #roomState{color:#f0ba8e}
 .tm1-sources span{color:#bf956d;font-size:10px;font-weight:900;letter-spacing:.1em;margin-right:5px}
 .tm1-sources a{font-size:12px;text-decoration:none;color:#f4d0a1;border:1px solid #78553d;background:#271b18;padding:8px 11px;border-radius:2px}
 .tm1-sources a:hover,.tm1-sources a:focus-visible{border-color:#efb57c;text-decoration:underline}
+
+/* UI-04: selected roster filters are visually and semantically explicit. */
+body[data-role="teacher"] .drawer-controls button[aria-pressed="true"]{border-color:#f2c38a;background:#4b3025;color:#ffe5c2;box-shadow:inset 0 -2px #d99b61}
+body[data-role="teacher"] .drawer-controls button:focus-visible{outline:3px solid #f3d39f;outline-offset:3px}
