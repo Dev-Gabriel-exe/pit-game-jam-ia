@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-M05-CI",
+  "priority": "V4-M06-CI",
   "current_phase": "MISSOES",
-  "last_task": "V4-M05-QA",
+  "last_task": "V4-M06",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2302,47 +2302,70 @@
       "task": "V4-M05-QA",
       "commit": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee",
       "summary": "M05 shared GDevelop guide title fixed for student/teacher, static regression added. Concurrent security(chat) SQL ownership hardening at 95b816e31 broke stale source-assertion in chat-image selftest; updated test to assert room+owner bound in SQL (186d9b3). GitHub static QA 40735202626 chat-image step passed, full workflow still IN_PROGRESS. Browser QA 40735202267 IN_PROGRESS. No GDevelop GUI/mobile/peer tests."
+    },
+    {
+      "at": "2026-10-28T18:22:48.305Z",
+      "task": "V4-M05-CI",
+      "commit": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee",
+      "summary": "Confirmed previous M05 static QA 40735202626 SUCCESS and Browser QA 40735202267 SUCCESS on exact SHA 186d9b3. No human GDevelop/mobile/peer tests."
+    },
+    {
+      "at": "2026-10-28T18:22:48.305Z",
+      "task": "V4-M06",
+      "commit": "0b5d895db46af5fd4ec88012b826523f048e2b46",
+      "summary": "M06 two-face audit: student real GDevelop editor handoff with no-auto-import and offline fallback; corrected tutorial order and link contrast; teacher foundations facilitation moved to default-closed accessible paper notes; teacher assessment navigation moved inside private notes; static QA and Chrome regression extended to M06. Static QA 40744441245 SUCCESS on f18bba6; browser QA 40744441330 IN_PROGRESS; latest CSS run 40744487399 IN_PROGRESS. Manual GDevelop GUI/physical mobile/peer NOT_RUN. Original roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M05",
+    "task": "V4-M06",
     "status": "in_progress",
-    "updated_at": "2026-10-28T17:24:00Z",
+    "updated_at": "2026-10-28T18:22:48.305Z",
     "code_commits": [
-      "4901b555b04db691d6fc0d36eabcd8dcbd9031cd",
-      "cc16a7534de29904b9e4cf8406c1d86446afdaa2",
-      "5c0ae78159e8706d97d2101fb0912ff2b4e425eb",
-      "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b",
-      "3698e94717d7f85e5eeee23a073311bd7f70dfa7",
-      "e367127fe5c621e91c6f3f04b5c22dd481293a7c",
-      "186d9b3b87cca5fc318294216d97fc0c05a6c8ee"
+      "621e0f98d5e5b72d6b524ec1a610f8aab7fb18f0",
+      "d608680f379010bedef30e7d5e00be4dac35e555",
+      "bff0d5b89d62ff25d9755ddc1218ad9208d32069",
+      "9f4af889eb2fdba4d28a5323cf6460414c6c7231",
+      "c78b39d82e17b424791aa781d0d098dbaf2f590a",
+      "f18bba6fac3030b82adeb4162480afa7f38e81c8",
+      "de0d05877df71b2e4c050ae460632dfb32f6a5f8"
     ],
-    "audit_commit": "f914b3e74efba0645af94d8eeaad7b20b64c7f68",
+    "audit_commit": "0b5d895db46af5fd4ec88012b826523f048e2b46",
     "tests": [
       {
-        "name": "GitHub Actions static QA (M05 prior commit)",
-        "run_id": 40734962746,
-        "result": "SUCCESS",
-        "sha": "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b"
-      },
-      {
-        "name": "GitHub Actions static QA (latest)",
+        "name": "GitHub Actions static QA (M05 previous)",
         "run_id": 40735202626,
-        "result": "IN_PROGRESS",
-        "sha": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee",
-        "detail": "chat-image contract step SUCCESS; whole job not yet completed"
+        "result": "SUCCESS",
+        "sha": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee"
       },
       {
-        "name": "GitHub Actions Browser QA (latest)",
+        "name": "GitHub Actions Browser QA (M05 previous)",
         "run_id": 40735202267,
-        "result": "IN_PROGRESS",
+        "result": "SUCCESS",
         "sha": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee"
+      },
+      {
+        "name": "GitHub Actions static QA (M06 regression)",
+        "run_id": 40744441245,
+        "result": "SUCCESS",
+        "sha": "f18bba6fac3030b82adeb4162480afa7f38e81c8"
+      },
+      {
+        "name": "GitHub Actions Browser QA (M06 regression)",
+        "run_id": 40744441330,
+        "result": "IN_PROGRESS",
+        "sha": "f18bba6fac3030b82adeb4162480afa7f38e81c8"
+      },
+      {
+        "name": "GitHub Actions static QA (M06 latest CSS)",
+        "run_id": 40744487399,
+        "result": "IN_PROGRESS",
+        "sha": "de0d05877df71b2e4c050ae460632dfb32f6a5f8"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
-    "next_task": "V4-M05-CI then V4-M06",
-    "blocker": "Full latest static/browser CI pending; human GDevelop GUI/mobile/peer NOT_RUN"
+    "next_task": "V4-M06-CI then V4-M07",
+    "blocker": "M06 browser and latest CSS CI pending; GDevelop GUI/physical mobile/peer playtest not run"
   }
 }
