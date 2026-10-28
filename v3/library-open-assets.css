@@ -58,3 +58,9 @@
 @media(max-width:770px){.pit-real-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pit-open-head{align-items:start;flex-direction:column}.pit-open-count{width:100%;text-align:left}.pit-open-subhead{display:block}.pit-open-subhead p{margin-top:9px}}
 @media(max-width:540px){#pitOpenAssets{padding:14px;border-radius:10px}.pit-open-filters{grid-template-columns:1fr;padding:10px}.pit-open-tabs{grid-column:1}.pit-real-grid{grid-template-columns:1fr}.pit-real-model-art{aspect-ratio:16/7}.pit-real-pack-art{aspect-ratio:16/7}.pit-real-card-body p{min-height:0}.pit-real-modal-top span{font-size:10px}.pit-real-stage{min-height:255px}.pit-real-modal-footer button{width:100%}}
 @media(prefers-reduced-motion:reduce){.pit-real-card,.pit-real-pack-art img{transition:none!important}.pit-real-card:hover{transform:none}}
+
+/* Procedural fallback should no longer look like the featured catalogue. */
+.pit-local-title{margin:0 0 18px;padding:0 0 16px;border-bottom:1px solid #906a4c64}
+.pit-local-title .eyebrow{font:850 11px/1.4 "Cinzel",Georgia,serif;color:#dba368;letter-spacing:.09em}
+.pit-local-title h3{font:750 clamp(23px,2.5vw,34px)/1.2 "Cinzel",Georgia,serif;color:#f7d9ae;margin:9px 0}
+.pit-local-title p{font:500 clamp(14px,1.12vw,17px)/1.5 "Source Sans 3",sans-serif;color:#cfbca8;margin:0}
