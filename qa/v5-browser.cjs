@@ -66,6 +66,17 @@ const {chromium}=require('playwright');
  await teacher.locator('#v5Practice').click();
  assert.equal(await teacher.locator('#v5Fighters .v5-fighter').count(),8,'Teacher battle must load eight simulated players');
  assert.match(await teacher.locator('#v5Connection').innerText(),/DEMONSTRAÇÃO/);
+ await teacher.locator('#v5Back').click();
+ await teacher.evaluate(()=>{
+  const app=window.PIT_V5_APP,base=app.demoRoster();
+  app.state.roster=Array.from({length:35},(_,i)=>({
+   ...base[i%base.length],id:'preview-hero-'+i,name:'Hero de teste '+(i+1)
+  }));
+ });
+ await teacher.locator('#v5Practice').click();
+ const tournament=await teacher.evaluate(()=>window.PIT_V5_APP.state.tournament);
+ assert(tournament&&tournament.heats.length===3,'35 students require three automatic qualifying heats');
+ assert.equal(await teacher.locator('#v5Fighters .v5-fighter').count(),16,'Each qualifying heat must render at most sixteen 3D heroes');
  await teacher.close();
  console.log('PASS: V5 authenticated-ready hero builder, WebGL Three.js, XP/attributes, auto-battle, demo review and teacher preview');
  console.log(JSON.stringify(all,null,2));
