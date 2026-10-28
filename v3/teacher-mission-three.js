@@ -48,6 +48,7 @@ function briefing(){
  '<div class="tm3-comparison" data-tm3-reveal><div><span>DEFINIÇÃO</span><strong>Objeto</strong><p>“Personagem” na lista Objects, com imagem e propriedades.</p></div>'+
  '<div><span>OCORRÊNCIA</span><strong>Instância</strong><p>“Personagem” colocado na posição (X, Y) dentro da cena.</p></div>'+
  '<div><span>EXECUÇÃO</span><strong>Preview</strong><p>A cena carregada no motor mostra o que realmente foi configurado.</p></div></div>'+
+ '<div class="tm3-principle" data-tm3-reveal><strong>PRÉ-REQUISITOS DO LABORATÓRIO</strong><p>GDevelop acessível no computador ou navegador; permissões para abrir o Preview; salvamento local ou em nuvem disponível. Com a internet instável, o Asset Store pode falhar: um Sprite com imagem local ou um 3D Box nativo permite concluir a missão sem aguardar uma geração de IA.</p></div>'+
  '<div class="tm3-principle" data-tm3-reveal><strong>✓ O QUE JÁ DEVE FUNCIONAR AO FINAL</strong><p>Um projeto vazio criado, uma cena aberta e nomeada, um objeto visível na cena e no Preview, e o projeto salvo em um destino identificável. <b>O personagem ainda não precisa se mover.</b></p></div>');
 }
 function demo(){
