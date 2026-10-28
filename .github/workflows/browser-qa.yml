@@ -39,6 +39,10 @@ jobs:
           node qa/v3-library-preview-browser.cjs
       - name: Run UI-08 viewport, focus and reduced-motion audit
         run: node qa/v3-visual-audit.cjs
+      - name: Verify UI-08 authenticated student chat at 320/390/768px
+        run: |
+          node --check qa/v3-ui08-chat-mobile.cjs
+          node qa/v3-ui08-chat-mobile.cjs
       - name: Verify FUN-01 static mirror cannot use live credentials
         run: node qa/v3-hosting-browser.cjs
       - name: Verify FUN-02 fictional student sessions and invalid tokens
