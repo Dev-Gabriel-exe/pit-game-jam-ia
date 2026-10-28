@@ -2,6 +2,12 @@
 
 **Situação:** roteiro preparado, **NÃO EXECUTADO** no editor GDevelop. Não autoriza publicação. Branch de teste: `feature/pit-gamejam-v3-arcade`. Não usar contas, turmas ou dados reais; não conectar a API de produção.
 
+## Cobertura automatizada já realizada (sem substituir a interface do editor)
+
+Em 28/10/2026, a [GDevelop Native QA 40657143854](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40657143854) executou **8/8 testes de jogabilidade** com o **GDevelop 5.6.285 real** em Linux, usando dois projetos descartáveis baseados nos starters oficiais. Foram gerados PNG, GLB e WAV procedurais da biblioteca PIT, com sprite 2D e cristal 3D visíveis nas capturas, e verificados os estados **não venceu / venceu / vitória persistiu** por eventos GDevelop. A [Browser QA 40656562279](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40656562279) decodificou 5 WAV e 4 PNG no Chrome. Há JUnit, JSON e screenshots nos artifacts dos workflows (retenção temporária).
+
+**Não repetir esses resultados como se fossem testes manuais:** a inserção foi programática em JSON, não pelo menu de importação do editor. Permanecem `NOT_RUN`: importação pela interface, reprodução de WAV no projeto GDevelop com confirmação audível, salvar/reabrir starter, tela de vitória do jogo autoral, comparação de HUD real, playtest observado e aparelho móvel físico. Priorizar esses casos abaixo, sem inventar evidências.
+
 ## Ambiente descartável
 
 1. Anotar data, versão exata do GDevelop, sistema operacional, navegador e resolução de tela. Criar um projeto **novo** com nome `PIT-QA-DESCARTAVEL`, fora de pastas de clientes/alunos.
