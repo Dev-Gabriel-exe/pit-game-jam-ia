@@ -34,6 +34,27 @@ class MockPool{
    const {student_id:omit,...publicRow}=row;return result([publicRow]);
   }
   if(q.startsWith('select id,author,mission,body,created_at,read_at from pit_chat_messages'))return result([]);
+
+  if(q.startsWith('select s.id,s.display_name,s.joined_at,s.last_seen_at,s.active_stage')){
+   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:state.updated_at,last_seen_at:state.updated_at,active_stage:1,highest_stage:1,approved:stages.filter(p=>p.student_id===s.id&&p.status==='approved').length,unread_chat:0,stages:stages.filter(p=>p.student_id===s.id)})));
+  }
+  if(q.startsWith('select s.id,s.display_name,s.joined_at,')){
+   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:state.updated_at,last_body:null,last_at:null,unread:0})));
+  }
+  if(q.startsWith('update pit_classroom_state set current_stage=')){
+   state.current_stage=params[0];state.phase=params[1];return result([state]);
+  }
+  if(q.startsWith('update pit_student_stages set status=')){
+   const [status,feedback,id,stage]=params;
+   const row=stages.find(s=>s.student_id===id&&s.stage===stage&&['submitted','approved','revision'].includes(s.status));
+   if(!row)return result([]);
+   row.status=status;row.feedback=feedback;row.reviewed_at=state.updated_at;
+   return result([{stage,status,feedback}]);
+  }
+  if(q.startsWith('select 1 from pit_students where id=')){
+   return result(students.some(s=>s.id===params[0]&&s.room_code===ROOM)?[{one:1}]:[]);
+  }
+
   throw Error('UNMOCKED SQL: '+q.slice(0,125));
  }
 }
@@ -46,9 +67,10 @@ function load(file){
  return module.exports;
 }
 const chat=load('chat-api/api/chat.js'),classroom=load('chat-api/api/classroom.js');
-async function call(handler,method,action,body={},token='',origin='https://dev-gabriel-exe.github.io'){
- const req={method,query:{action},body,headers:{origin}};
+async function call(handler,method,action,body={},token='',origin='https://dev-gabriel-exe.github.io',pin='',query={}){
+ const req={method,query:{action,...query},body,headers:{origin}};
  if(token)req.headers['x-pit-student-token']=token;
+ if(pin)req.headers['x-pit-teacher-pin']=pin;
  const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;return this},
   status(n){this.statusCode=n;return this},json(data){this.body=data;return this},end(){this.ended=true;return this}};
  await handler(req,res);return res;
