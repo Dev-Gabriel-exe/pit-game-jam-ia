@@ -182,4 +182,58 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(allA.body.progress.length,1,'other student never sees B stages');
 
  console.log('PASS FUN-04: actual handler blocks future/briefing phases, teacher releases practice and old evidence persists');
+
+ // FUN-05 — ten real handler submission/review cycles, with isolated SQL and
+ // a third fictional student. No production credentials, API or student data.
+ const third=await call(chat,'POST','join',{name:'Aluno Ficticio C',code:ROOM});
+ assert.equal(third.statusCode,201);
+ const cToken=third.body.token,cId=third.body.studentId;
+ const tooShort=await call(classroom,'POST','progress',{stage:1,route:'2d',status:'submitted',evidence:'curto'},cToken);
+ assert.equal(tooShort.statusCode,400,'submission requires a meaningful evidence description');
+ const badRoute=await call(classroom,'POST','progress',{stage:1,route:'vr',status:'working',evidence:'rascunho'},cToken);
+ assert.equal(badRoute.statusCode,400,'invalid 2D/3D route rejected');
+ const invalidStage=await call(classroom,'POST','progress',{stage:11,route:'2d',status:'working',evidence:'rascunho'},cToken);
+ assert.equal(invalidStage.statusCode,400,'stage beyond 10 rejected');
+ for(let n=1;n<=10;n++){
+  const route=n%2?'2d':'3d';
+  const phase=await call(classroom,'POST','stage',{stage:n,phase:'practice'},'',origin,pin);
+  assert.equal(phase.statusCode,200,'teacher opens practice for M'+n);
+  const evidence='Projeto ficticio M'+n+': regra de jogo testada no Preview; antes/depois e caso negativo registrados.';
+  const draft=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'Rascunho '+n},cToken);
+  assert.equal(draft.statusCode,200,'draft M'+n+' persisted');
+  const before=await call(classroom,'GET','state',{},cToken);
+  assert.equal(before.body.progress.find(p=>p.stage===n)?.status,'working','draft visible M'+n);
+  const release=await call(classroom,'POST','stage',{stage:n,phase:'review'},'',origin,pin);
+  assert.equal(release.statusCode,200,'teacher opens review M'+n);
+  const sent=await call(classroom,'POST','progress',{stage:n,route,status:'submitted',evidence},cToken);
+  assert.equal(sent.statusCode,200,'submitted M'+n);
+  const overwrite=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'tentativa'},cToken);
+  assert.equal(overwrite.statusCode,409,'pending M'+n+' cannot be overwritten');
+  if(n%2===0){
+   const insufficient=await call(classroom,'POST','review',{studentId:cId,stage:n,status:'revision',feedback:'curto'},'',origin,pin);
+   assert.equal(insufficient.statusCode,400,'revision requires actionable feedback');
+   const revision=await call(classroom,'POST','review',{studentId:cId,stage:n,status:'revision',feedback:'Corrigir o teste negativo e reenviar a evidencia.'},'',origin,pin);
+   assert.equal(revision.statusCode,200,'revision M'+n+' issued');
+   const reviewed=await call(classroom,'GET','state',{},cToken);
+   assert.equal(reviewed.body.progress.find(p=>p.stage===n)?.status,'revision','student receives revision M'+n);
+   const resubmit=await call(classroom,'POST','progress',{stage:n,route,status:'submitted',evidence:evidence+' Corrigido.'},cToken);
+   assert.equal(resubmit.statusCode,200,'revised M'+n+' resubmitted');
+  }
+  const approve=await call(classroom,'POST','review',{studentId:cId,stage:n,status:'approved',feedback:'Criterios de teste atendidos.'},'',origin,pin);
+  assert.equal(approve.statusCode,200,'teacher approves M'+n);
+  const locked=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'nao alterar'},cToken);
+  assert.equal(locked.statusCode,409,'approved M'+n+' cannot be overwritten');
+ }
+ const finalC=await call(classroom,'GET','state',{},cToken);
+ assert.equal(finalC.body.progress.length,10,'all ten missions persisted for fictional student C');
+ assert(finalC.body.progress.every(p=>p.status==='approved'),'all ten stages approved');
+ assert.equal(finalC.body.progress.filter(p=>p.route==='2d').length,5);
+ assert.equal(finalC.body.progress.filter(p=>p.route==='3d').length,5);
+ const isolationA=await call(classroom,'GET','state',{},a.body.token);
+ assert.equal(isolationA.body.progress.length,1,'student A sees none of C missions');
+ const oversized=await call(classroom,'POST','progress',{stage:10,route:'3d',status:'submitted',evidence:'X'.repeat(900)},b.body.token);
+ assert.equal(oversized.statusCode,200,'long evidence is accepted after server-side sanitization');
+ assert.equal(oversized.body.progress.evidence.length,750,'evidence truncated at 750 characters');
+ console.log('PASS FUN-05: ten real handler stage cycles, drafts, 2D/3D, invalid inputs, revision/resubmission, approval, lock, 750-char limit, 3 fictional students isolated');
+
 })().catch(e=>{console.error(e);process.exitCode=1});
