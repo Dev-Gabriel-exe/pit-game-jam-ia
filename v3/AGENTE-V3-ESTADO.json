@@ -919,7 +919,7 @@
       "position": 57,
       "status": "blocked",
       "updated_at": "2026-10-28T07:22:56.983Z",
-      "commit": "81eba6da21b2646fd561353962d188d7755fb7b8",
+      "commit": "8df392aa58a0bbeea3e141672374c68c37b42c16",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -931,7 +931,8 @@
         "GDevelop editor sandbox QA 40649114129 FAILED (expected limitation): official 2D/3D editor URLs return HTTP 200 but land on Log in/Sign up page, no Preview observed; NOT_RUN for real editor acceptance",
         "Postgres QA 40637833387 previously SUCCESS, backend handlers unchanged",
         "Strict release gate NOT PASSED; 7 acceptance IDs remain blocked",
-        "2026-10-28: release gate executed in isolated V8 against actual checkpoint: NOT READY (52/59), 7 blocked; Node/CI execution of updated gate not performed"
+        "2026-10-28: release gate executed in isolated V8 against actual checkpoint: NOT READY (52/59), 7 blocked; Node/CI execution of updated gate not performed",
+        "Added qa/v3-release-gate-selftest.cjs with four synthetic Node regression cases; wired into static-qa.yml. CI run 40656964777 queued at checkpoint; outcome not claimed."
       ],
       "blocker": "Seven acceptance IDs remain blocked by actual GDevelop import/Preview, physical mobile, observed peer playtest and final homologation. Release gate now rejects premature READY status and done entries without any non-pending verification."
     },
@@ -1864,6 +1865,12 @@
       "task": "REL-01",
       "commit": "81eba6da21b2646fd561353962d188d7755fb7b8",
       "summary": "Hardened release gate; isolated V8 diagnostic passed, still NOT READY."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "8df392aa58a0bbeea3e141672374c68c37b42c16",
+      "summary": "Added real Node release-gate selftests to static CI; waiting for Actions confirmation."
     }
   ]
 }
