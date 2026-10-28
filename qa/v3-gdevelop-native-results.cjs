@@ -27,7 +27,9 @@ for(const project of manifest.projects){
  assert.equal(win.length,1,'exactly one real GDevelop conditional-victory test in '+project);
  assert(Array.isArray(win[0].assertions)&&win[0].assertions.length>=3&&win[0].assertions.every(a=>a.passed),
   'native victory test must record three passing GDevelop assertions: '+project);
- const screenshots=pit[0].screenshots||[];
+ const victoryShots=win[0].screenshots||[];
+ assert(victoryShots.length>=1,'native screenshot missing after earned victory: '+project);
+ const screenshots=[...(pit[0].screenshots||[]),...victoryShots];
  assert(screenshots.length>=1,'GDevelop screenshot missing for '+project);
  for(const shot of screenshots){
   assert(shot.file,'native screenshot path missing');
