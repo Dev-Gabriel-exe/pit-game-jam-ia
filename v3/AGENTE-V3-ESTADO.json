@@ -919,7 +919,7 @@
       "position": 57,
       "status": "blocked",
       "updated_at": "2026-10-28T07:22:56.983Z",
-      "commit": "0add8b4d7d36b28424ac3b3c892c8def34a258ec",
+      "commit": "81eba6da21b2646fd561353962d188d7755fb7b8",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -930,9 +930,10 @@
         "Khronos GLB QA 40649579075 SUCCESS: five procedural GLBs, 0 glTF 2.0 errors and 0 warnings",
         "GDevelop editor sandbox QA 40649114129 FAILED (expected limitation): official 2D/3D editor URLs return HTTP 200 but land on Log in/Sign up page, no Preview observed; NOT_RUN for real editor acceptance",
         "Postgres QA 40637833387 previously SUCCESS, backend handlers unchanged",
-        "Strict release gate NOT PASSED; 7 acceptance IDs remain blocked"
+        "Strict release gate NOT PASSED; 7 acceptance IDs remain blocked",
+        "2026-10-28: release gate executed in isolated V8 against actual checkpoint: NOT READY (52/59), 7 blocked; Node/CI execution of updated gate not performed"
       ],
-      "blocker": "Still blocked: real GDevelop PNG/WAV/GLB/starter import and 2D/3D Preview (anonymous web editor redirected to login/onboarding), physical mobile confirmation, observed peer playtest, licensing and rollback verification. Five GLBs passed Khronos semantic validation but this is not editor import."
+      "blocker": "Seven acceptance IDs remain blocked by actual GDevelop import/Preview, physical mobile, observed peer playtest and final homologation. Release gate now rejects premature READY status and done entries without any non-pending verification."
     },
     {
       "id": "REL-02",
@@ -1857,6 +1858,12 @@
       ],
       "tests": "Static QA 40649326394 success; Browser QA 40649326459 success; Khronos GLB QA 40649579075 success (5/5, zero errors/warnings); GDevelop web-editor attempt 40649114129 failed on login/onboarding, no Preview; Postgres QA 40637833387 prior success",
       "notes": "Teacher chat history now uses guarded request helper with timeout and studentId; independent Khronos validation of all generated GLBs. No account created, no GDevelop import/Preview claimed. 52/59; 7 blocked. No production/main/real class/paid services."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "81eba6da21b2646fd561353962d188d7755fb7b8",
+      "summary": "Hardened release gate; isolated V8 diagnostic passed, still NOT READY."
     }
   ]
 }
