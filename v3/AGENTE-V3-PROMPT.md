@@ -23,4 +23,4 @@ Você é o agente executor do projeto PIT Game Jam IA V3. Continue o desenvolvim
 
 ## Observação sobre agenda
 
-O usuário pediu execução **a cada 30 minutos**. A agenda nativa do ChatGPT **não permite menos que uma hora entre execuções**. Portanto este documento **não afirma haver automação criada**; o prompt deve ser usado apenas se houver agendamento realmente habilitado, ou por execução manual/um agente externo autorizado. Cada meta foi desenhada para um **bloco de aproximadamente 30 minutos** de desenvolvimento, mas esse é um plano de trabalho, não a frequência garantida de disparo.
+O usuário autorizou e ativou o agendamento nativo **a cada 1 hora** (Agente Game Jam V3). A primeira rodada foi iniciada manualmente em 27/10/2026. Não criar nova automação, não reiniciar o roadmap nem assumir que a execução do agendador já produziu commits: conferir o checkpoint a cada rodada. Os objetivos são incrementais e seus resultados só podem ser declarados quando efetivamente executados e testados.
