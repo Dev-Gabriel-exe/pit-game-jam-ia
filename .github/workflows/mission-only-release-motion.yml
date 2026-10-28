@@ -1,0 +1,46 @@
+name: Mission-only release and cinematic QA
+on:
+  push:
+    branches:
+      - feature/liberacao-missoes-motion-20261028
+  pull_request:
+    paths:
+      - 'chat-api/api/classroom.js'
+      - 'v3/app.js'
+      - 'v3/teacher-projector-m01.js'
+      - 'v3/teacher-mission-cinema.js'
+      - 'v3/teacher-cinematic-motion.css'
+      - 'professor-v3.html'
+      - 'qa/v3-isolated-backend.cjs'
+      - 'qa/v3-mission-release-motion.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mission-control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run actual classroom handler regression against mocked SQL
+        run: |
+          node --check v3/app.js
+          node --check chat-api/api/classroom.js
+          node --check v3/teacher-mission-cinema.js
+          node qa/v3-isolated-backend.cjs
+      - name: Validate teacher + projection in Chrome without changing a live class
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-missions.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v3-mission-release-motion.cjs
