@@ -206,6 +206,8 @@
    '<h3>Implemente um controle. Teste um limite.</h3><p>Continue o projeto <strong>'+esc(i.project)+'</strong>, salve a versão atualizada e descreva apenas o que realmente funcionou. O tutorial apresenta quatro rotas; <b>você precisa executar somente uma.</b></p>'+
    (locked?'<div class="m4s-locked">Entrega '+(ctx.status==='approved'?'aprovada':'enviada')+'; campos preservados para consulta.</div>':'')+
    '<div class="m4s-timebox"><span><b>12 min</b> · controle/entrada</span><span><b>15 min</b> · obstáculo ou restrição</span><span><b>9 min</b> · três testes e salvar</span></div></div>'+
+   '<div class="m4s-3d-hint" id="m4s3DHint" '+(r===3?'':'hidden')+'>'+
+   '<strong>ROTA 3D · CONSERVE A AUTORIA</strong><p>Se o projeto da Missão 03 tem só uma 3D Box, você pode partir do starter oficial já jogável. Transfira ou recrie no starter o seu objeto/cenário e mantenha nome e objetivo do seu jogo. Salve como uma nova versão do MESMO projeto autoral. Não entregue o starter sem adaptação como se fosse seu jogo pronto.</p></div>'+
    '<div class="m4s-continue"><span>DO SEU PROJETO ANTERIOR</span><div>'+
    '<strong>'+esc(i.project)+'</strong><small>'+esc(i.scene)+'</small><small>Objeto: '+esc(i.object)+'</small><small>Mecânica: '+esc(i.mechanic)+'</small>'+
    '</div><p>Se perdeu o arquivo, recupere-o de <b>'+esc(i.previousSave)+'</b>. Caso não consiga recuperar, registre o impedimento no caderno sem declarar testes que não fez.</p></div>'+
@@ -269,6 +271,7 @@
     if(locked)return;
     d.route=index;save(ctx.session,d);
     const label=root.querySelector('#m4sRouteLabel');if(label)label.textContent=names[index];
+    const hint3D=root.querySelector('#m4s3DHint');if(hint3D)hint3D.hidden=index!==3;
     for(const key of ['command','response','boundary','retest']){
      const el=root.querySelector('#m4s-'+key);
      if(el)el.placeholder='Ex.: '+routeHints(ctx,index)[key];
