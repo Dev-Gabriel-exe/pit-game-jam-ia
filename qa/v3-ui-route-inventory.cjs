@@ -33,6 +33,9 @@ assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/biblioteca\.j
 const portal=fs.readFileSync(path.join(root,'index.html'),'utf8');
 assert.match(portal,/\.\/aluno-v3\.html/,'portal must link V3 student notebook');
 assert.match(portal,/\.\/professor-v3\.html/,'portal must link V3 teacher notebook');
+assert.match(portal,/class=["']skip-link["'] href=["']#conteudo["']/,'keyboard skip link');
+assert.match(portal,/<main id=["']conteudo["'] tabindex=["']-1["']>/,'focusable main landmark');
+assert.match(portal,/<nav aria-label=["']Navegação principal["']>/,'labeled primary navigation');
 assert(!/\.\/(?:aluno|professor)\.html#pit-(?:creator-missions|mission-control)/.test(portal),'portal must not route primary calls to legacy V2 notebooks');
 console.log('PASS UI-01: '+pages.length+' HTML routes, '+total+' referenced links/assets and 10 mission posters');
 report.forEach(line=>console.log('  '+line));
