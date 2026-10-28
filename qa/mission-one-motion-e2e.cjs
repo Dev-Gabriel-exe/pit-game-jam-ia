@@ -19,7 +19,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     return v && !v.paused && v.readyState>=2 && v.classList.contains("ready");
   },selector,{timeout:16000});
   const initial=await page.locator(selector).evaluate(v=>({duration:v.duration,muted:v.muted,loop:v.loop,paused:v.paused}));
-  assert.ok(initial.duration>=4.9&&initial.duration<=5.1,"loop duration is 5 seconds");
+  assert.ok(initial.duration>=5.9&&initial.duration<=6.1,"loop duration is 6 seconds");
   assert.ok(initial.muted&&initial.loop&&!initial.paused,"video must be a silent loop");
   await page.locator("#arcadeNext").click();
   await page.waitForFunction(sel=>document.querySelector(sel)?.paused,selector);
@@ -41,6 +41,6 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   await sleep(350);
   assert.equal(await reducedPage.locator(selector).evaluate(v=>v.paused),true,"reduced-motion should stay paused");
   await reduced.close();
-  console.log("PASS: 5s MP4 playback, one-card isolation, pause on deselect, motion=off, reduced motion");
+  console.log("PASS: 6s HyperFrames MP4 playback, one-card isolation, pause on deselect, motion=off, reduced motion");
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
