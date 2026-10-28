@@ -4,9 +4,9 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": null,
-  "status": "READY_FOR_EXECUTION",
-  "cadence_requested_minutes": 30,
+  "last_completed_at": "2026-10-28T01:34:54.929Z",
+  "status": "RUNNING",
+  "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
   "execution_policy": "One validated incremental objective per cycle; never imply 30-minute automatic schedule was created.",
   "content_approved": [
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M04-01",
+  "priority": "M04-02",
   "current_phase": "MISSOES",
-  "last_task": null,
-  "completed_count": 0,
+  "last_task": "M04-01",
+  "completed_count": 1,
   "total_tasks": 59,
   "tasks": [
     {
@@ -26,10 +26,15 @@
       "description": "Professor: conceitos essenciais de entrada, comportamento, atualização por frame, colisão e câmera; exemplos 2D/3D, conteúdo autossuficiente",
       "group": "M04",
       "position": 1,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T01:34:54.929Z",
+      "commit": "ab88e33206d903edfc5b180b947107fb58c687b7",
+      "tests": [
+        "30/30 automated checks passed: JS/CSS syntax and balance, academic definitions, 2D/3D genre routes, responsive/animated slides",
+        "Interactive tabs: click, keyboard End and ArrowRight, ARIA selection changes confirmed in controlled mocks",
+        "GDevelop technical claims cross-checked against official behaviors, platformer and collisions documentation",
+        "Teacher-only M04 briefing integrated; M04 demo/practice/results remain on existing generic content until later tasks"
+      ],
       "blocker": null
     },
     {
@@ -727,6 +732,21 @@
       "commit": null,
       "tests": [],
       "blocker": null
+    }
+  ],
+  "history": [
+    {
+      "id": "M04-01",
+      "completed_at": "2026-10-28T01:34:54.929Z",
+      "commit": "ab88e33206d903edfc5b180b947107fb58c687b7",
+      "files": [
+        "v3/teacher-mission-four-foundations.js",
+        "v3/teacher-mission-four-foundations.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "30/30 checks passed",
+      "notes": "Teacher foundations done: inputs, behaviors, Δt, collision response, camera; four interactive 2D/3D route examples. No browser or live API test."
     }
   ]
 }
