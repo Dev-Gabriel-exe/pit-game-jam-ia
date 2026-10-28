@@ -1,0 +1,39 @@
+name: M01 continuous projector QA
+on:
+  push:
+    branches:
+      - feature/m01-projecao-continua-20261028
+  pull_request:
+    paths:
+      - 'v3/teacher-projector-m01*'
+      - 'v3/teacher-mission-one-pro.js'
+      - 'v3/teacher-gdevelop-guide.js'
+      - 'professor-v3.html'
+      - 'qa/m01-projector-continuous.cjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m01-projection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser harness
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify all phases and simulation (no live class data)
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-m01-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/m01-projector-continuous.cjs
