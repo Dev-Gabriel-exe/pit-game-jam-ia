@@ -49,10 +49,13 @@ module.exports=async function handler(req,res){
    const query='INSERT INTO pit_student_stages(student_id,stage,route,status,evidence,feedback,updated_at,reviewed_at) '+
      "VALUES($1,$2,$3,$4,$5,'',NOW(),NULL) "+
      'ON CONFLICT(student_id,stage) DO UPDATE SET route=EXCLUDED.route,status=EXCLUDED.status,evidence=EXCLUDED.evidence,'+
-     "feedback=CASE WHEN pit_student_stages.status IN ('approved','revision') THEN pit_student_stages.feedback ELSE '' END,"+
-     "updated_at=NOW(),reviewed_at=CASE WHEN pit_student_stages.status='approved' THEN pit_student_stages.reviewed_at ELSE NULL END "+
+     "feedback=CASE WHEN pit_student_stages.status='revision' THEN pit_student_stages.feedback ELSE '' END,"+
+     "updated_at=NOW(),reviewed_at=NULL "+
+     // Atomic guard: students cannot overwrite an evidence pending review or already approved.
+     "WHERE pit_student_stages.status NOT IN ('submitted','approved') "+
      'RETURNING stage,route,status,evidence,feedback,updated_at,reviewed_at';
    const out=await pool.query(query,[me.id,n,route,status,evidence]);
+   if(!out.rowCount)return err(res,409,'Esta entrega já foi enviada ou aprovada. Aguarde a revisão do professor.');
    return res.json({ok:true,progress:out.rows[0]});
   }
   if(req.method==='GET'&&action==='roster'){
