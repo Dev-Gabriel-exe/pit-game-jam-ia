@@ -18,7 +18,7 @@ const {chromium}=require('playwright');
    await page.locator('#pitProjector.pit-projector-m01').waitFor();
    const count=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]);
    assert(count>=12,'Missão '+mission+' tem apenas '+count+' slides; aula incompleta');
-   const sections=[],titles=[],interactives=[],clipped=[];let badOverflow=0;
+   const sections=[],titles=[],interactives=[],clipped=[],realControls=[];let badOverflow=0;
    for(let i=0;i<count;i++){
     const title=await page.locator('#pitProjectorTitle').innerText(),text=await page.locator('#pitProjectorContent').innerText();
     titles.push(title);
@@ -27,6 +27,27 @@ const {chromium}=require('playwright');
     sections.push(header);
     assert(header.startsWith(String(mission).padStart(2,'0')+' · '),'Troca de missão inesperada no projetor');
     const pane=page.locator('#pitProjectorContent');
+    if(mission===5 && await pane.locator('[data-tm5-action="touch"]').count() && await pane.locator('[data-tm5-score]').count()){
+     await pane.locator('[data-tm5-action="touch"]').click();
+     assert.equal((await pane.locator('[data-tm5-score]').innerText()).trim(),'1','M05 sim did not update Score');
+     realControls.push('M05:score');
+    }
+    if(mission===6 && await pane.locator('[data-f6-answer]').count() && await pane.locator('#f6Answer').count()){
+     const prior=(await pane.locator('#f6Answer').innerText()).trim();
+     await pane.locator('[data-f6-answer]').first().click();
+     assert.notEqual((await pane.locator('#f6Answer').innerText()).trim(),prior,'M06 format simulator did not respond');
+     realControls.push('M06:format');
+    }
+    if(mission===7 && await pane.locator('[data-t7f-action="start"]').count() && await pane.locator('#t7fPhase').count()){
+     await pane.locator('[data-t7f-action="start"]').click();
+     assert.match(await pane.locator('#t7fPhase').innerText(),/JOGANDO/,'M07 state machine did not start');
+     realControls.push('M07:state');
+    }
+    if(mission===8 && await pane.locator('[name="t8fMode"][value="polished"]').count() && await pane.locator('#t8fObjective').count()){
+     await pane.locator('[name="t8fMode"][value="polished"]').check();
+     assert.match(await pane.locator('#t8fObjective').innerText(),/coletar cristal/,'M08 before/after comparison did not update');
+     realControls.push('M08:feedback');
+    }
     if(await pane.locator('.pit-u-live').count()){
      const buttons=pane.locator('.pit-u-live button:visible');
      const n=await buttons.count();
@@ -45,12 +66,13 @@ const {chromium}=require('playwright');
    for(const name of ['CONCEITOS','EXEMPLO EM AÇÃO','OFICINA LIBERADA','RESULTADOS']){
     assert(sections.some(s=>s.includes(name)), 'M'+mission+' lacks '+name);
    }
-   assert(interactives.length>0,'M'+mission+' no working interactive controls');
+   assert(interactives.length>0,'M'+mission+' no interactive controls');
+   if([5,6,7,8].includes(mission))assert(realControls.length>0,'M'+mission+' simulation has no observable state change');
    assert(/Missão concluída|Missão \d\d/.test(titles[count-1]),'M'+mission+' does not close with conclusion');
    await page.locator('#pitProjectorClose').click();
    const preserved=await page.locator('#phasebar [data-phase="review"]').getAttribute('aria-current');
    assert(preserved==='true','Phase changed after projection M'+mission);
-   report.push({mission,slides:count,interactiveSlides:interactives.length,contentScrollWarnings:badOverflow,clipped:clipped.slice(0,30),clippedTotal:clipped.length});
+   report.push({mission,slides:count,interactiveSlides:interactives.length,stateTests:realControls,contentScrollWarnings:badOverflow,clipped:clipped.slice(0,30),clippedTotal:clipped.length});
   }
   assert.deepEqual(errors,[],'Browser JS errors: '+errors.join(' / '));
   console.log('PASS: nine continuous complete presentations with working controls and unchanged classroom phases');
