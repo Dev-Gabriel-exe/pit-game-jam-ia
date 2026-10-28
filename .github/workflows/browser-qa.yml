@@ -37,6 +37,8 @@ jobs:
         run: node qa/v3-session-browser.cjs
       - name: Verify FUN-03 teacher PIN and roster permissions in Chrome
         run: node qa/v3-teacher-browser.cjs
+      - name: Verify FUN-04 stage locks and draft preservation in Chrome
+        run: node qa/v3-release-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
