@@ -154,9 +154,9 @@ function review(){
  '<div class="tm-pro-engine" data-reveal><div><span>TRANSIÇÃO PARA O MVP</span><h4>Missão 02 · MVP em Foco</h4><p>O objetivo definido será limitado a uma cena, um comportamento principal, um evento e uma condição de conclusão. Esse recorte é o protótipo que será construído ao longo da oficina.</p></div></div>');
 }
 function render(phase){return phase==='demo'?demo():phase==='practice'?practice():phase==='review'?review():concepts()}
-function mount(){
- const root=document.querySelector('.tm1-root');if(!root)return;
- if(window.PIT_TEACHER_GDEVELOP_GUIDE)window.PIT_TEACHER_GDEVELOP_GUIDE.mount();
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.tm1-root');if(!root)return;
+ if(!rootOverride&&window.PIT_TEACHER_GDEVELOP_GUIDE)window.PIT_TEACHER_GDEVELOP_GUIDE.mount();
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const reveal=[...root.querySelectorAll('[data-reveal]')];
  if(!reduced&&typeof IntersectionObserver!=='undefined'){
@@ -178,8 +178,9 @@ function mount(){
   for(const [field,value] of Object.entries(data))root.querySelectorAll('[data-tm-genrefield="'+field+'"]').forEach(el=>el.textContent=value);
   const box=root.querySelector('.tm-pro-example-switch');if(box&&!reduced){box.classList.remove('tm-pro-flash');void box.offsetWidth;box.classList.add('tm-pro-flash')}
  }));
- const count=root.querySelector('#tm1Gems'),door=root.querySelector('#tm1Door'),step=root.querySelector('#tm1Step'),feedback=root.querySelector('#tm1Feedback'),gate=root.querySelector('#tm1Gate');
- if(!count||!door||!step||!feedback||!gate)return;
+ const count=root.querySelector('#tm1Gems'),door=root.querySelector('#tm1Door'),step=root.querySelector('#tm1Step')||{textContent:''},feedback=root.querySelector('#tm1Feedback')||{textContent:''},gate=root.querySelector('#tm1Gate');
+ // The acceptance-test slide intentionally has no debugger panel; its simulator remains live.
+ if(!count||!door||!gate)return;
  const stateLabel=root.querySelector('#tm1GameState'),bar=root.querySelector('#tm1Bar'),crystal=root.querySelector('#tm1Crystal'),victory=root.querySelector('#tm1Victory'),trace=root.querySelector('#tm1Trace');
  let gems=0,won=false;
  const append=msg=>{
