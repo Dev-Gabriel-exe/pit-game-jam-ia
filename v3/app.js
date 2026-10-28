@@ -321,6 +321,11 @@ function renderMain(){
  if(teacherMissionFourValidation)window.PIT_TEACHER_MISSION_FOUR_VALIDATION.mount();
  if(teacherMissionFiveBriefing)window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.mount();
  if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
+ if(missionFive)window.PIT_STUDENT_MISSION_FIVE.mount({
+  ...missionFiveContext(),
+  onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
+  onMessage:message=>setToast(message,true)
+ });
  if(missionFour)window.PIT_STUDENT_MISSION_FOUR.mount({
   ...missionFourContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
@@ -390,6 +395,7 @@ async function sendWork(status){
  const pilotTwo=!TEACHER&&activeStage===2&&!!window.PIT_STUDENT_MISSION_TWO;
  const pilotThree=!TEACHER&&activeStage===3&&!!window.PIT_STUDENT_MISSION_THREE;
  const pilotFour=!TEACHER&&activeStage===4&&!!window.PIT_STUDENT_MISSION_FOUR;
+ const pilotFive=!TEACHER&&activeStage===5&&!!window.PIT_STUDENT_MISSION_FIVE;
  let evidence=$('evidenceInput')?.value||'';
  let route=$('routeSelect')?.value||'2d';
  if(pilot){
@@ -483,7 +489,7 @@ $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage,activePhase);
  const idx=phaseList.indexOf(activePhase);
  if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();scrollMissionToStart();}
- else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE)||(activeStage===4&&window.PIT_STUDENT_MISSION_FOUR))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
+ else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE)||(activeStage===4&&window.PIT_STUDENT_MISSION_FOUR)||(activeStage===5&&window.PIT_STUDENT_MISSION_FIVE))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10){selectStage(activeStage+1);teacherAdvance(activeStage,'briefing')}return}
