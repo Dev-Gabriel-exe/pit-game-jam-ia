@@ -53,6 +53,10 @@ jobs:
         run: node qa/v3-release-browser.cjs
       - name: Verify FUN-09 three fictional students and teacher in Chrome
         run: node qa/v3-multi-student-browser.cjs
+      - name: Verify V4 private teacher notes are closed during HDMI projection
+        run: |
+          node --check qa/v3-private-teacher-notes-browser.cjs
+          node qa/v3-private-teacher-notes-browser.cjs
       - name: Verify REL-02 teacher guide desktop/mobile in Chrome
         run: node qa/v3-teacher-guide-browser.cjs
       - name: Verify REL-01 shared-device fallback draft privacy in Chrome
