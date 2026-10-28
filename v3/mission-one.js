@@ -65,13 +65,15 @@ function evidence(session){
   'Feedback da conquista: '+clean(d.feedback)
  ].join('\n').slice(0,750);
 }
+function chosenExample(d){return window.PIT_GENRE_CONTEXT?.profile(d.genre)||null}
 function heading(step,icon,title,description){
  return '<div class="qo-section-kicker"><span class="qo-step-icon" aria-hidden="true">'+icon+'</span><span>FRAGMENTO '+step+' / 03</span></div>'+
  '<h3>'+title+'</h3><p class="qo-section-desc">'+description+'</p>';
 }
 function field(id,label,hint,d,placeholder,disabled){
  const f=FIELDS.find(x=>x.id===id);
- return '<label class="qo-input-wrap" for="qo-'+id+'"><span>'+label+'</span><input id="qo-'+id+'" data-q-field="'+id+'" type="text" maxlength="'+f.max+'" value="'+escapeHTML(d[id])+'" placeholder="'+escapeHTML(placeholder)+'" autocomplete="off" '+(disabled?'disabled':'')+'><small>'+hint+'</small></label>';
+ const example=chosenExample(d),sample=example&&example[id]?example[id]:placeholder;
+ return '<label class="qo-input-wrap" for="qo-'+id+'"><span>'+label+'</span><input id="qo-'+id+'" data-q-field="'+id+'" type="text" maxlength="'+f.max+'" value="'+escapeHTML(d[id])+'" placeholder="'+escapeHTML('Ex.: '+sample)+'" autocomplete="off" '+(disabled?'disabled':'')+'><small>'+hint+'</small></label>';
 }
 function genre(d,disabled){
  return '<label class="qo-input-wrap" for="qo-genre"><span>Universo que você quer criar</span><select id="qo-genre" data-q-field="genre" '+(disabled?'disabled':'')+'>'+
@@ -109,12 +111,13 @@ function progressMarkup(d){
  steps.map((yes,i)=>'<div class="qo-fragment '+(yes?'complete':'')+'"><span>'+(yes?'✦':'0'+(i+1))+'</span><small>'+['IDENTIDADE','MECÂNICA','CONCLUSÃO'][i]+'</small></div>').join('')+
  '</div><div class="qo-save-notice" id="qoSaveNotice" aria-live="polite">✧ '+done+'/3 fragmentos definidos · rascunho salvo neste navegador</div>';
 }
-function intro(){
+function intro(d){
+ const idea=chosenExample(d),personal=d.genre&&idea?'<div class="qo-genre-intro">✧ SEU UNIVERSO: '+escapeHTML(d.genre.toUpperCase())+' · '+escapeHTML(idea.intro)+'</div>':'';
  return '<div class="qo-page qo-intro">'+
  '<div class="qo-intro-hero"><div class="qo-intro-portrait" role="img" aria-label="Castelo gótico com um portal mágico brilhante"></div>'+
  '<div class="qo-intro-copy"><span class="qo-crest">✦ PRIMEIRO CAPÍTULO · 20 MINUTOS</span>'+
  '<h3>Antes da primeira linha de código,<br><em>existe uma escolha.</em></h3>'+
- '<p>Todo jogo nasce de uma pergunta: <strong>o que a pessoa poderá fazer aqui?</strong> Sua missão é imaginar uma experiência pequena o suficiente para ganhar vida nesta oficina.</p>'+
+ '<p>Todo jogo nasce de uma pergunta: <strong>o que a pessoa poderá fazer aqui?</strong> Sua missão é imaginar uma experiência pequena o suficiente para ganhar vida nesta oficina.</p>'+personal+
  '<div class="qo-objective"><span aria-hidden="true">⚔</span><div><strong>SEU DESAFIO</strong><p>Escolher um gênero, definir uma ação principal e decidir como o jogador saberá que chegou ao objetivo.</p></div></div>'+
  '<button class="qo-action" type="button" data-q-action="begin">✦ COMEÇAR A CRIAR <span aria-hidden="true">›</span></button></div></div>'+
  '<div class="qo-brief-bottom"><article><span>01 · IMAGINAR</span><p>Um jogo de terror, corrida, exploração ou qualquer universo seu.</p></article>'+
@@ -122,7 +125,7 @@ function intro(){
  '<article><span>03 · CONQUISTAR</span><p>Uma condição clara para terminar a experiência.</p></article></div></div>';
 }
 function building(session,status,preview){
- const d=load(session),disabled=status==='approved'||status==='submitted';
+ const d=load(session),disabled=status==='approved'||status==='submitted',idea=chosenExample(d);
  return '<div class="qo-page qo-build"><div class="qo-lead"><span class="qo-crest">✦ O CHAMADO · SUA OFICINA</span>'+
  '<h3>Escreva o destino do <em>seu universo.</em></h3><p>As escolhas abaixo serão o primeiro registro do seu jogo. Não é preciso programar nesta missão.</p>'+
  (disabled?'<div class="qo-lock-note">Sua entrega já foi '+(status==='approved'?'aprovada':'enviada para avaliação')+'. O registro permanece visível, sem novas edições.</div>':'')+
@@ -139,7 +142,7 @@ function building(session,status,preview){
  '<div class="qo-builder-bottom">'+progressMarkup(d)+
  '<button class="qo-action" type="button" data-q-action="review">VER MINHA FICHA DE MISSÃO <span aria-hidden="true">›</span></button></div>'+
  '</div><div class="qo-preview-column">'+worldPreview(d)+designFlow(d)+
- '<div class="qo-tip"><span>✧ EXEMPLO DE INSPIRAÇÃO</span><p>Em um jogo de exploração, a personagem coleta três itens para abrir uma saída. Você pode criar uma aventura completamente diferente.</p></div>'+
+ '<div class="qo-tip"><span id="qoGenreLabel">✧ EXEMPLO DE '+escapeHTML((d.genre||'AVENTURA').toUpperCase())+'</span><p id="qoGenreExample">'+escapeHTML(idea?idea.intro:'Em um jogo de aventura, uma personagem pode coletar itens para abrir uma saída.')+'</p><p class="qo-inspiration-note">Exemplo de referência, não uma resposta pronta. Você pode criar outra mecânica.</p></div>'+
  '<div class="qo-tip qo-tip-ai"><span>✦ A IA É SUA ALIADA</span><p>Peça sugestões, compare ideias e escolha o que combina com o jogo que <strong>você</strong> quer criar. Não é preciso copiar um roteiro pronto.</p><button type="button" data-q-action="copy-prompt" class="qo-secondary">COPIAR PROMPT DE IDEIAS</button></div></div></div></div>';
 }
 function delivery(session,status,feedback,preview,canSubmit){
@@ -166,7 +169,7 @@ function delivery(session,status,feedback,preview,canSubmit){
  '<div class="qo-tip"><span>◈ ANTES DE SEGUIR</span><p>Uma ideia simples com ação e objetivo claros é o ponto de partida de um jogo de verdade.</p></div></aside></div></div>';
 }
 function render(ctx){
- const d=load(ctx.session),phase=ctx.phase,body=phase==='briefing'?intro():phase==='practice'?building(ctx.session,ctx.status,ctx.preview):delivery(ctx.session,ctx.status,ctx.feedback,ctx.preview,ctx.canSubmit);
+ const d=load(ctx.session),phase=ctx.phase,body=phase==='briefing'?intro(d):phase==='practice'?building(ctx.session,ctx.status,ctx.preview):delivery(ctx.session,ctx.status,ctx.feedback,ctx.preview,ctx.canSubmit);
  const p=stepProgress(d).filter(Boolean).length;
  return '<div id="qOne" class="qo-root" data-phase="'+escapeHTML(phase)+'">'+
  '<div class="qo-banner"><div class="qo-banner-image"></div><div class="qo-banner-content"><div class="qo-breadcrumb">PIT GAME JAM <span> / </span> JORNADA DO CRIADOR <span> / </span> MISSÃO 01</div>'+
@@ -177,7 +180,13 @@ function render(ctx){
  body+'<div class="qo-fineprint">PIT GAME JAM IA <span>✦</span> VOCÊ CRIA. A IA APOIA. O JOGO É SEU. <span>✦</span> MISSÃO 01 / 10</div></div>';
 }
 function update(root,session){
- const d=load(session);
+ const d=load(session),idea=chosenExample(d);
+ root.querySelectorAll('input[data-q-field]').forEach(input=>{
+  if(idea&&Object.prototype.hasOwnProperty.call(idea,input.dataset.qField))input.placeholder='Ex.: '+idea[input.dataset.qField];
+ });
+ const label=root.querySelector('#qoGenreLabel'),example=root.querySelector('#qoGenreExample');
+ if(label)label.textContent='✧ EXEMPLO DE '+(d.genre||'AVENTURA').toUpperCase();
+ if(example)example.textContent=idea?idea.intro:'Crie uma ação principal e uma condição de término.';
  const val=(id,text)=>root.querySelectorAll('[data-q-preview="'+id+'"]').forEach(n=>n.textContent=text);
  val('genre',d.genre||'GÊNERO A DEFINIR');val('title',d.title||'O NOME DA SUA LENDA');
  val('hero',d.hero||'Quem será controlado?');
@@ -209,7 +218,8 @@ function mount(ctx){
   if(action==='begin'||action==='back')ctx.onPhase('practice');
   if(action==='review')ctx.onPhase('review');
   if(action==='copy-prompt'){
-   const prompt='Estou criando um jogo na oficina PIT Game Jam. Sugira 3 ideias pequenas e originais, que possam ser prototipadas em 6 horas no GDevelop. Para cada uma: gênero, protagonista, verbo de ação, objetivo e condição de vitória. Não gere meu jogo inteiro; quero escolher e adaptar.';
+   const draft=load(ctx.session);
+   const prompt='Estou criando um jogo do gênero '+(draft.genre||'a escolher')+' na oficina PIT Game Jam. O título provisório é '+(draft.title||'a definir')+'. A ação que considero é '+(draft.action||'a definir')+'. Sugira 3 variações pequenas e originais que possam ser prototipadas em seis horas no GDevelop. Compare protagonista, ação central, objetivo, condição de vitória e viabilidade. Não escreva nem gere meu jogo inteiro: quero decidir e adaptar as opções.';
    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(prompt).then(()=>ctx.onToast('Prompt copiado. Adapte as ideias à sua criação.')).catch(()=>ctx.onToast('Não foi possível copiar. Tente novamente.'));
    else ctx.onToast('Seu navegador não liberou a cópia automática.');
   }
