@@ -18,6 +18,7 @@ function stamp(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',mi
 function setToast(message,bad=false){const el=$('toast');el.textContent=message;el.hidden=false;el.style.borderColor=bad?'#fa7285':'#53dcb7';clearTimeout(setToast.timer);setToast.timer=setTimeout(()=>el.hidden=true,5300)}
 async function call(service,action,method='GET',data=null){
  if(visualPreview)throw Error('Modo demonstração: nenhuma informação é enviada ao servidor.');
+ if(window.PIT_HOSTING_POLICY?.mode(location.origin,false)==='static-only')throw Error('Esta cópia é uma prévia estática. Use ?preview=1; nenhum dado da turma deve ser enviado aqui.');
  const u=new URL(BASE+service+'.js');u.pathname='/api/'+service;u.searchParams.set('action',action);
  const headers={'Content-Type':'application/json'};
  if(TEACHER&&teacherPin)headers['X-PIT-Teacher-Pin']=teacherPin;
@@ -943,6 +944,19 @@ $('changeUser').onclick=()=>{if(TEACHER){sessionStorage.removeItem('pit_teacher_
    if(TEACHER)startTeacherPreview();else startVisualPreview();
    return;
   }
+ if(window.PIT_HOSTING_POLICY?.mode(location.origin,false)==='static-only'){
+  authenticate();
+  $('authTitle').textContent='PRÉVIA ESTÁTICA · SEM ACESSO À TURMA';
+  $('authMessage').textContent='Esta origem não está autorizada para o serviço de turma. A prévia local não exige cadastro, PIN nem token.';
+  const previewLink=document.createElement('a');
+  previewLink.href='?preview=1';previewLink.textContent='Abrir prévia segura (sem conexão)';
+  previewLink.className='visual-preview-button';
+  $('authMessage').appendChild(document.createTextNode(' '));
+  $('authMessage').appendChild(previewLink);
+  $('authForm').hidden=true;$('authForm').style.display='none';
+  $('loading').hidden=true;
+  return;
+ }
  if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token)){
   try{await startApp();if($('workspace').hidden)await authenticate()}
   catch{await authenticate()}
