@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T04:51:34.040Z",
+  "last_completed_at": "2026-10-28T04:54:10.160Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "ART-05",
-  "current_phase": "ARTE",
-  "last_task": "ART-04",
-  "completed_count": 41,
+  "priority": "FUN-01",
+  "current_phase": "FUNCIONALIDADES",
+  "last_task": "ART-05",
+  "completed_count": 42,
   "total_tasks": 59,
   "tasks": [
     {
@@ -750,10 +750,13 @@
       "description": "Polir transições cinematográficas, feedbacks e conquistas baseadas em dados reais; verificar performance e redução de estímulo",
       "group": "ART",
       "position": 46,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T04:54:10.160Z",
+      "commit": "41dadd8533e40f4d6cbd30349aff1e552241eba4",
+      "tests": [
+        "Static QA 40634818278: success; earned-only award, preview guard, saveData/reduced motion, WebP budget",
+        "Browser QA 40634818191: success; fake API E2E and 12 Chrome visual/keyboard/reduced-motion/fallback checks"
+      ],
       "blocker": null
     },
     {
@@ -1570,6 +1573,23 @@
       ],
       "tests": "Static QA 40634595614 success; Browser QA 40634595591 success including actual Chrome fallback and 12 viewport checks",
       "notes": "10 existing WebP posters below 120KB each; no AVIF generated. Fallback is local SVG. GDevelop and real backend remain pending."
+    },
+    {
+      "id": "ART-05",
+      "completed_at": "2026-10-28T04:54:10.160Z",
+      "commit": "41dadd8533e40f4d6cbd30349aff1e552241eba4",
+      "files": [
+        "v3/arcade-gallery.js",
+        "v3/diablo-theme.css",
+        "v3/final-achievement.js",
+        "v3/final-achievement.css",
+        "qa/v3-art-motion.cjs",
+        "qa/v3-visual-audit.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/ART-AUDITORIA.md"
+      ],
+      "tests": "Static QA 40634818278 success; Browser QA 40634818191 success (Chrome 12 viewports and reduced-stimulus assertion)",
+      "notes": "One-shot earned animation only with 10 approved backend stages; no real production approval tested. Save-Data branch statically audited, not emulated in browser."
     }
   ]
 }
