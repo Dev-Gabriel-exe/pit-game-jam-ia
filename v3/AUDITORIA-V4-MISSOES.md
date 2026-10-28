@@ -5,7 +5,7 @@
 | Missão | Arquivos-base professor | Arquivos-base aluno | Auditoria pedagógica |
 |---|---|---|---|
 | M01 | `teacher-content.js`, `teacher-mission-one.js`, `teacher-mission-one-pro.js` | `mission-one.js` | Correção pedagógica inicial implementada; QA e revisão integral pendentes |
-| M02 | `teacher-mission-two.js` | `student-mission-two.js` | Pendente |
+| M02 | `teacher-mission-two.js` | `student-mission-two.js` | Orientações operacionais corrigidas; QA/homologação pendentes |
 | M03 | `teacher-mission-three.js` | `student-mission-three.js` | Pendente |
 | M04 | `teacher-mission-four-foundations.js`, `teacher-mission-four-validation.js` | `student-mission-four.js` | Pendente |
 | M05 | `teacher-mission-five-foundations.js`, `teacher-mission-five-validation.js` | `student-mission-five.js` | Pendente |
@@ -36,3 +36,9 @@
 - **Aluno:** o formulário já tinha sete campos, prévia dinâmica, validação, rascunho local e envio. Faltava uma explicação operacional completa e concentrada: onde preencher, ordem dos campos, como conferir os três fragmentos e a distinção entre rascunho e entrega. Adicionado bloco de orientação diretamente à tela de construção em `mission-one.js` (commit `0496f8369e0983c8501fb3ec5e6d9fb4c0ce5865`).
 - **Professor:** a versão universitária já continha conceitos de game design, exemplos, simulador e critérios. Faltava espelhar o percurso exato do aluno e os problemas típicos de envio. Adicionado guia operacional integrado à prática em `teacher-mission-one-pro.js` (commit `01df255b772877046dae22ca44902c2a2f0a0306`).
 - **Ainda não concluído:** testar renderização das duas faces no navegador, conferir o fluxo real de envio/liberação e auditar os demais conteúdos da M01. Não marcar a missão como totalmente homologada.
+
+## M02 — Correção operacional inicial
+
+- Aluno: fluxo MVP com cena, mecânica, exatamente três elementos, teste Dado/Quando/Então e backlog opcional já existia, mas faltava roteiro concentrado com local, passos, conferência e envio. Acrescentado na prática (`student-mission-two.js`, `05ada5b8fd485fc9943096e1c73935d9d559cbc9`).
+- Professor: conceitos de MVP, MoSCoW, vertical slice e simulador já existiam, mas a prática não espelhava explicitamente os botões e o procedimento do aluno. Incluído guia de execução, avaliação e recuperação de erros (`teacher-mission-two.js`, `3ed4026ab2813c6f0588424343827b7b4b1fa772`).
+- Próximo: testar ambas as telas em navegador, submissão/liberação e avançar à M03. Não homologado manualmente.
