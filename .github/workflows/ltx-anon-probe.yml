@@ -1,0 +1,48 @@
+name: Probe Anonymous LTX GPU
+on:
+  push:
+    branches: [experiment/missao-01-ltx-anon]
+    paths: ['.github/workflows/ltx-anon-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-anonymous:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check public Gradio LTX Spaces without tokens
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+        run: |
+          python -m pip install --quiet "gradio_client>=1.10,<3" requests
+          python - <<'PY'
+          import requests,json,time
+          spaces = {
+            'LTX-Distilled':'https://lightricks-ltx-video-distilled.hf.space',
+            'LTX-2.5':'https://lightricks-ltx-2-5.hf.space',
+            'LTX-2.3-first-last':'https://linoyts-ltx-2-3-first-last-frame.hf.space',
+          }
+          for name,root in spaces.items():
+            print('\nSPACE',name,root,flush=True)
+            for suffix in ['/config','/gradio_api/info']:
+              try:
+                r=requests.get(root+suffix,timeout=17)
+                print('ENDPOINT',suffix,'HTTP',r.status_code,'LEN',len(r.content),flush=True)
+                if r.ok:
+                  d=r.json()
+                  if suffix.endswith('info'):
+                    for k,v in d.get('named_endpoints',{}).items():
+                      print('API',k,json.dumps(v,ensure_ascii=False)[:4500],flush=True)
+                  else:
+                    deps=d.get('dependencies') or []
+                    for dep in deps:
+                      if 'video' in str(dep.get('api_name','')).lower() or dep.get('api_name') in ('generate','run'):
+                        print('DEP',json.dumps(dep,ensure_ascii=False)[:1800],flush=True)
+                else: print('HTTP_ERROR',r.text[:600],flush=True)
+              except Exception as e: print('EXCEPTION',type(e).__name__,str(e)[:750],flush=True)
+          PY
