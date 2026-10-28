@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const html=fs.readFileSync('professor-v3.html','utf8');
+const css=fs.readFileSync('v3/teacher-chat-layout.css','utf8');
+const js=fs.readFileSync('v3/app.js','utf8');
+assert(html.includes('href="./v3/teacher-chat-layout.css"'),'teacher chat CSS loaded');
+assert(/class="teacher-chat-layout"[^>]*><nav class="chat-threads" id="chatThreads"/.test(html),'student sidebar is semantic navigation');
+assert(html.includes('class="teacher-chat-conversation"'),'conversation pane exists');
+for(const id of ['chatWindow','chatThreads','chatStatus','chatRetry','chatMessages','chatForm','chatInput','chatClose'])assert(html.includes('id="'+id+'"'),'preserve chat control '+id);
+assert(css.includes('grid-template-columns:minmax(210px,280px) minmax(0,1fr)'),'desktop sidebar and conversation columns');
+assert(css.includes('@media(max-width:650px)'),'mobile layout exists');
+assert(css.includes("font-family:Inter,'Segoe UI',system-ui"),'modern readable chat font');
+assert(js.includes("call('chat','send'"),'chat sending preserved');
+assert(js.includes("call('chat','threads'"),'teacher thread loading preserved');
+console.log('Teacher chat layout structure, mobile styling and chat API wiring: OK');
