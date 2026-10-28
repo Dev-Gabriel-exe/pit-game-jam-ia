@@ -61,7 +61,7 @@ function practice(){
  '<div class="tm3-lab-overview" data-tm3-reveal><div><span>ENTRADA</span><strong>Ficha do MVP</strong><small>Nome, cena e mecânica</small></div><b>→</b>'+
  '<div><span>CONSTRUÇÃO</span><strong>GDevelop</strong><small>Projeto, objeto e instância</small></div><b>→</b>'+
  '<div><span>SAÍDA</span><strong>Preview + fonte salva</strong><small>Resultado visível e recuperável</small></div></div>'+
- '<div class="tm3-practical-timing" data-tm3-reveal><span>04 MIN · PROJETO + CENA</span><span>08 MIN · ASSET + INSTÂNCIA</span><span>06 MIN · PREVIEW + SALVAR</span></div>'+ '<div class="tm3-labcards">'
+ '<div class="tm3-practical-timing" data-tm3-reveal><span>04 MIN · PROJETO + CENA</span><span>08 MIN · ASSET + INSTÂNCIA</span><span>06 MIN · PREVIEW + SALVAR</span></div>'+ '<div class="tm3-labcards">'+
  [
   ['01','PROJETO E CENA','Criar projeto vazio e abrir uma cena.','Create/New project → Empty game. No Project manager, use a cena existente ou adicione uma nova; renomeie com nome significativo.','Projeto editável com uma cena inicial nomeada.','Se estiver vendo um template que já joga sozinho, abra um projeto vazio.'],
   ['02','ASSET, OBJETO E INSTÂNCIA','Obter um visual original, registrando sua origem.','Escolha um recurso do Asset Store ou tente gerar uma única imagem PNG no Gemini por até 2 minutos. Para 3D use 3D Box pronto. Em Objects → + crie Sprite/3D Box e posicione uma instância na cena.','Arquivo visual obtido; origem anotada; objeto e instância no editor.','Se a imagem demorar mais de 2 minutos, use imediatamente Asset Store/3D Box. Não aguarde vídeo, áudio ou geração 3D.'],
