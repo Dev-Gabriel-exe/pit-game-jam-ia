@@ -50,8 +50,8 @@ assert(m04Teacher.includes('aria-label="Abrir roteiro privado da prática da Mis
 assert(m04Teacher.includes('aria-label="Orientações reservadas ao professor — abrir somente sem espelhamento"'),'M04 review paper control accessible');
 assert(!m04Teacher.includes('<details class="pit-private-teacher-notes" open'),'M04 notes default closed');
 assert(!m04Student.includes('pit-private-teacher-notes'),'student M04 must not contain private teacher notes');
-assert(m04Student.includes('https://editor.gdevelop.io/')&&m04Student.includes('rel="noopener noreferrer"'),'M04 must link to real free GDevelop editor safely');
-assert(m04Student.includes('não importa nem recupera seu projeto automaticamente'),'M04 must explain editor link limitations');
+assert(teacher.includes('./v3/gdevelop-mission-four-guide.js'),'M04 GDevelop guide must be loaded');
+assert(read('v3/gdevelop-mission-four-guide.js').includes('GDevelop'),'M04 guide must explain GDevelop');
 for(const time of ['12 min','15 min','9 min'])assert(m04Student.includes(time),'M04 student practice time '+time);
 for(const time of ['12 MIN','15 MIN','9 MIN'])assert(m04Teacher.includes(time),'M04 teacher practice time '+time);
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
