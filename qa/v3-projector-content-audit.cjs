@@ -4,7 +4,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
 (async()=>{
  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
  const rows=[],errors=[],phaseNames=['briefing','demo','practice','review'];
- const page=await browser.newPage({viewport:{width:1600,height:900},reducedMotion:'reduce'});
+ const width=Number(process.env.PIT_AUDIT_WIDTH||1600),height=Number(process.env.PIT_AUDIT_HEIGHT||900);
+ const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://fonts.googleapis.com/**',route=>route.abort());
  await page.route('https://fonts.gstatic.com/**',route=>route.abort());
@@ -54,7 +55,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  fs.mkdirSync('qa/projector-audit-artifacts',{recursive:true});
  fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors},null,2));
  const fail=rows.filter(x=>x.error||!x.slides||x.retainedRatio<.4||x.slidesWithOverflowX).map(x=>({mission:x.mission,phase:x.phase,error:x.error||'coverage_or_overflow',ratio:x.retainedRatio}));
- console.log('PROJECTOR_SUMMARY '+JSON.stringify({phases:rows.length,errors,fail,smallText:rows.filter(x=>x.smallFontSlides>0).length,scroll:rows.filter(x=>x.slidesWithScroll>0).length}));
+ console.log('PROJECTOR_SUMMARY '+JSON.stringify({viewport:width+'x'+height,phases:rows.length,errors,fail,smallText:rows.filter(x=>x.smallFontSlides>0).length,scroll:rows.filter(x=>x.slidesWithScroll>0).length,totalScrollSlides:rows.reduce((n,x)=>n+x.slidesWithScroll,0)}));
  await browser.close();
  if(errors.length)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exit(1)});
