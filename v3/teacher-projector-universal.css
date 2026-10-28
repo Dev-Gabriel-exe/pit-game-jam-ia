@@ -1,0 +1,52 @@
+/* PIT Game Jam IA · Projector M02–M10: same classroom typography as approved M01. */
+#pitProjector.pit-projector-m01 .pit-u-deck{font-family:"Segoe UI",Arial,sans-serif;max-width:1360px;margin:auto}
+#pitProjector.pit-projector-m01 .pit-u-deck .pit-m01-kicker{flex-shrink:0}
+#pitProjector.pit-projector-m01 .pit-u-cover{display:grid;grid-template-columns:1fr 280px;gap:50px;align-items:center}
+#pitProjector.pit-projector-m01 .pit-u-cover h2{font:800 clamp(51px,5.4vw,82px)/1.02 Georgia,serif;color:#ffdfab}
+#pitProjector.pit-projector-m01 .pit-u-cover p{font:500 clamp(25px,2.15vw,34px)/1.4 "Segoe UI",sans-serif;max-width:910px;margin-top:24px}
+#pitProjector.pit-projector-m01 .pit-u-insignia{height:265px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid #8d603e;border-radius:26px;background:radial-gradient(circle,#563828,#19131a 72%);font:95px Georgia,serif;color:#f2bd74;box-shadow:0 0 45px #ac662522}
+#pitProjector.pit-projector-m01 .pit-u-insignia span{font:800 56px/1.2 Georgia,serif;letter-spacing:.1em}
+#pitProjector.pit-projector-m01 .pit-u-explainer{display:grid;gap:clamp(12px,2vh,23px);align-content:center;min-height:0}
+#pitProjector.pit-projector-m01 .pit-u-explainer .pit-u-point{border:1px solid #695646;background:linear-gradient(125deg,#1c1f23,#201a19);padding:clamp(15px,2vw,28px) clamp(19px,2.5vw,36px);border-radius:12px;color:#f8eadd}
+#pitProjector.pit-projector-m01 .pit-u-explainer .pit-u-point p,
+#pitProjector.pit-projector-m01 .pit-u-explainer .pit-u-point{font:500 clamp(23px,1.92vw,31px)/1.42 "Segoe UI",Arial,sans-serif}
+#pitProjector.pit-projector-m01 .pit-u-explainer .pit-u-point strong{color:#ffe1a6}
+#pitProjector.pit-projector-m01 .pit-u-explainer .pit-u-point code{font-size:.88em;background:#151c21;padding:1px 7px;border-radius:6px;color:#c8f1e7}
+#pitProjector.pit-projector-m01 .pit-u-bullet{color:#f1ba73;margin-right:14px;font-size:.75em}
+#pitProjector.pit-projector-m01 .pit-u-illustration{border:1px solid #6b5946;border-radius:12px;padding:10px;background:#10141b;text-align:center;max-height:46vh}
+#pitProjector.pit-projector-m01 .pit-u-illustration img{max-height:42vh;max-width:100%;object-fit:contain}
+#pitProjector.pit-projector-m01 .pit-u-live{min-height:0;max-height:63vh;display:flex;align-items:stretch;justify-content:center;padding:12px 14px;border:1px solid #95724d;border-radius:12px;background:#14171b}
+#pitProjector.pit-projector-m01 .pit-u-component{width:100%;min-height:0;max-height:100%;overflow:auto;scrollbar-color:#956f46 #201d1c}
+#pitProjector.pit-projector-m01 .pit-u-component>:first-child{max-width:100%!important;margin:0 auto!important}
+#pitProjector.pit-projector-m01 .pit-u-component p,#pitProjector.pit-projector-m01 .pit-u-component li{font:500 clamp(18px,1.4vw,23px)/1.32 "Segoe UI",sans-serif!important}
+#pitProjector.pit-projector-m01 .pit-u-component h3,#pitProjector.pit-projector-m01 .pit-u-component h4{font-family:"Segoe UI",sans-serif!important;font-size:clamp(23px,1.85vw,30px)!important}
+#pitProjector.pit-projector-m01 .pit-u-component button,#pitProjector.pit-projector-m01 .pit-u-component input,#pitProjector.pit-projector-m01 .pit-u-component select,#pitProjector.pit-projector-m01 .pit-u-component textarea{font:750 clamp(16px,1.13vw,20px)/1.3 "Segoe UI",sans-serif!important}
+#pitProjector.pit-projector-m01 .pit-u-component button{min-height:42px}
+#pitProjector.pit-projector-m01 .pit-u-prompt{font:600 clamp(16px,1.1vw,19px)/1.25 "Segoe UI",sans-serif!important;color:#d8b995!important;min-height:0}
+#pitProjector.pit-projector-m01 .pit-u-tutorial{display:grid;grid-template-columns:1fr;min-height:0}
+#pitProjector.pit-projector-m01 .pit-u-instruction{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#pitProjector.pit-projector-m01 .pit-u-instruction>div{border:1px solid #795b41;border-radius:11px;background:#1c2024;padding:clamp(17px,1.75vw,27px);min-height:120px}
+#pitProjector.pit-projector-m01 .pit-u-instruction>div:nth-child(3){border-color:#537a6c;background:#172521}
+#pitProjector.pit-projector-m01 .pit-u-instruction>div:nth-child(4){border-color:#95694f;background:#2a201f}
+#pitProjector.pit-projector-m01 .pit-u-instruction span{display:block;font:850 clamp(16px,1.17vw,20px)/1.2 "Segoe UI",sans-serif;letter-spacing:.07em;color:#f5b86f;margin-bottom:12px}
+#pitProjector.pit-projector-m01 .pit-u-instruction p{font:450 clamp(19px,1.45vw,24px)/1.38 "Segoe UI",sans-serif!important;overflow-wrap:anywhere}
+#pitProjector.pit-projector-m01 .pit-u-finale{text-align:center;max-width:1000px;margin:auto}
+#pitProjector.pit-projector-m01 .pit-u-finale>div{font:84px Georgia,serif;color:#ebac5e}
+#pitProjector.pit-projector-m01 .pit-u-finale h2{margin:18px 0 25px}
+#pitProjector.pit-projector-m01 .pit-u-finale p{font:500 clamp(24px,1.9vw,31px)/1.45 "Segoe UI",sans-serif}
+@media(max-height:780px) and (min-width:900px){
+ #pitProjector.pit-projector-m01 .pit-u-deck{gap:9px}
+ #pitProjector.pit-projector-m01 .pit-u-instruction{gap:8px}
+ #pitProjector.pit-projector-m01 .pit-u-instruction>div{padding:10px 17px;min-height:80px}
+ #pitProjector.pit-projector-m01 .pit-u-instruction span{margin-bottom:6px}
+ #pitProjector.pit-projector-m01 .pit-u-explainer{gap:9px}
+ #pitProjector.pit-projector-m01 .pit-u-explainer .pit-u-point{padding:12px 20px}
+ #pitProjector.pit-projector-m01 .pit-u-live{max-height:65vh}
+}
+@media(max-width:900px){
+ #pitProjector.pit-projector-m01 .pit-u-cover{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-u-insignia{height:150px;font-size:65px}
+ #pitProjector.pit-projector-m01 .pit-u-instruction{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-u-live{max-height:none}
+}
+@media(prefers-reduced-motion:reduce){#pitProjector.pit-projector-m01 .pit-u-deck *{animation:none!important;transition:none!important}}
