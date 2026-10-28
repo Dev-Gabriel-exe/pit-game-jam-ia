@@ -72,7 +72,7 @@ function render(){
  const modelGrid=host.querySelector('#pitGlbGrid'),packGrid=host.querySelector('#pitPackGrid');
  const counts=host.querySelector('#pitOpenCount');
  counts.textContent=individual.length+' modelos GLB individuais · '+curated.length+' pacotes gratuitos';
- const stat=[...document.querySelectorAll('.statband span')].find(x=>/recursos para download|arquivos individuais/i.test(x.textContent));
+ const stat=[...document.querySelectorAll('.statband span')].find(x=>/recursos para download|arquivos individuais|pacotes CC0/i.test(x.textContent));
  if(stat){const locals=window.PIT_LIBRARY_API?.assets?.length||0;stat.textContent=(locals+models.length)+' arquivos individuais · '+packs.length+' pacotes CC0';}
  modelGrid.innerHTML=individual.map(a=>'<article class="pit-real-card pit-real-model" data-kind="glb" data-id="'+a.id+'">'+
   '<div class="pit-real-model-art"><span class="pit-real-emblem" aria-hidden="true">'+a.icon+'</span><span class="pit-real-format">GLB REAL · '+a.size+'</span></div>'+
