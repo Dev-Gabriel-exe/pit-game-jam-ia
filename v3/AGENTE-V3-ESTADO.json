@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:20:00Z",
+  "last_completed_at": "2026-10-28T05:23:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-07",
+  "priority": "FUN-08",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-06",
-  "completed_count": 48,
+  "last_task": "FUN-07",
+  "completed_count": 49,
   "total_tasks": 59,
   "tasks": [
     {
@@ -856,10 +856,13 @@
       "description": "Teste do chat bidirecional, mensagens não lidas, ordenação, isolação por aluno e erro de rede",
       "group": "FUN",
       "position": 53,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:23:00Z",
+      "commit": "2b312b720a959f4fd1e23f439e65f6da56d62ab7",
+      "tests": [
+        "Static QA 40636877700 success: real chat handlers with disposable SQL, 3 fictional students, bidirectional send, thread order, read/unread, isolation, 1200-character and 12/minute caps",
+        "Browser QA 40636789133 success: existing Chrome E2E chat teacher-to-student, 503 fake network error, retry and draft preservation"
+      ],
       "blocker": null
     },
     {
@@ -1693,6 +1696,17 @@
       ],
       "tests": "Static QA 40636760085 success: actual roster and heartbeat handlers with 3 fictional students and disposable SQL; verified approved count, per-stage progress, activity, future stage rejection; Browser QA 40636789133 success: Chrome teacher panel with 3 fictional students; stats, pending/online/help filters, detail/back navigation",
       "notes": "Real handlers with in-memory SQL and Chrome with fake API only; no real database or student data. Heartbeat spoofed future stage now returns 403."
+    },
+    {
+      "id": "FUN-07",
+      "completed_at": "2026-10-28T05:23:00Z",
+      "commit": "2b312b720a959f4fd1e23f439e65f6da56d62ab7",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "v3/TESTES-FUN-07.md"
+      ],
+      "tests": "Static QA 40636877700 success: real chat handlers with disposable SQL, 3 fictional students, bidirectional send, thread order, read/unread, isolation, 1200-character and 12/minute caps; Browser QA 40636789133 success: existing Chrome E2E chat teacher-to-student, 503 fake network error, retry and draft preservation",
+      "notes": "Actual handlers with disposable in-memory SQL; Chrome uses fake HTTP backend, network error simulated. No live chat or real student data."
     }
   ]
 }
