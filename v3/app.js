@@ -298,6 +298,7 @@ function renderMain(){
  const teacherMissionFiveDemo=TEACHER&&m.n===5&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M05_GUIDE;
  const teacherMissionFiveBriefing=TEACHER&&m.n===5&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS;
  const teacherMissionFiveValidation=TEACHER&&m.n===5&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_FIVE_VALIDATION;
+ const teacherMissionEightValidation=TEACHER&&m.n===8&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_EIGHT_VALIDATION;
  const teacherMissionEightDemo=TEACHER&&m.n===8&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M08_GUIDE;
  const teacherMissionEightBriefing=TEACHER&&m.n===8&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_EIGHT_FOUNDATIONS;
  const teacherMissionSevenValidation=TEACHER&&m.n===7&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_SEVEN_VALIDATION;
@@ -323,7 +324,8 @@ function renderMain(){
  if(missionSix)window.PIT_STUDENT_MISSION_SIX.hydrate(missionSixContext().session,e?.evidence,e?.status);
  if(missionSeven)window.PIT_STUDENT_MISSION_SEVEN.hydrate(missionSevenContext().session,e?.evidence,e?.status);
  if(missionEight)window.PIT_STUDENT_MISSION_EIGHT.hydrate(missionEightContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=teacherMissionEightDemo?window.PIT_GDEVELOP_M08_GUIDE.render():
+ $('mainContent').innerHTML=teacherMissionEightValidation?window.PIT_TEACHER_MISSION_EIGHT_VALIDATION.render(activePhase):
+  teacherMissionEightDemo?window.PIT_GDEVELOP_M08_GUIDE.render():
   teacherMissionEightBriefing?window.PIT_TEACHER_MISSION_EIGHT_FOUNDATIONS.render():
   teacherMissionSevenValidation?window.PIT_TEACHER_MISSION_SEVEN_VALIDATION.render(activePhase):
   teacherMissionSevenDemo?window.PIT_GDEVELOP_M07_GUIDE.render():
@@ -387,6 +389,7 @@ function renderMain(){
  if(teacherMissionSevenValidation)window.PIT_TEACHER_MISSION_SEVEN_VALIDATION.mount();
  if(teacherMissionEightBriefing)window.PIT_TEACHER_MISSION_EIGHT_FOUNDATIONS.mount();
  if(teacherMissionEightDemo)window.PIT_GDEVELOP_M08_GUIDE.mount();
+ if(teacherMissionEightValidation)window.PIT_TEACHER_MISSION_EIGHT_VALIDATION.mount();
  if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
  if(missionEight)window.PIT_STUDENT_MISSION_EIGHT.mount({
   ...missionEightContext(),
