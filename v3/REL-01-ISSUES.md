@@ -10,6 +10,9 @@
 | P1 (integridade) | Era possível aprovar evidência em revisão sem novo envio | `chat-api/api/classroom.js` só permite revisão/aprovação em status `submitted`; UI não oferece aprovação durante `revision` | [Static QA 40636877700](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636877700), [Browser QA 40637090312](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637090312) |
 | P2 (integridade do painel) | Heartbeat podia declarar missão ainda bloqueada | API agora valida `n <= current_stage` | [Static QA 40636760085](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636760085) |
 | P2 (teste) | Auditoria estática não reconhecia o helper de escape como arrow function | Expressão de detecção corrigida e Static QA verde | [Static QA 40637308970](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637308970) |
+| P1 (privacidade em dispositivo compartilhado) | O formulário genérico mantinha rascunho e checklist em chaves globais `pit_v2_draft_N` e `pit_v3_checks_N`; ao trocar de aluno no mesmo navegador, podia exibir registros de outra pessoa | `v3/app.js` agora usa chaves por `studentId` e separa prévia; teste Chrome `qa/v3-shared-device-browser.cjs` força fallback M05 e alterna dois alunos fictícios no mesmo perfil | [Correção 1cfb08c](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/1cfb08c05eb6dd487c3259098d9a50382e189e95); [Static QA 40642505103](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40642505103) passou; Browser QA 40642505841 em execução no momento deste registro |
+
+**Compatibilidade de dados:** as chaves antigas sem identificação não foram lidas, migradas nem apagadas, pois não há maneira segura de atribuir seu conteúdo ao aluno correto. O formulário genérico passa a criar novos rascunhos identificados; os módulos autorais das Missões 01–10 não foram alterados.
 
 ## Impedimentos ainda abertos
 
