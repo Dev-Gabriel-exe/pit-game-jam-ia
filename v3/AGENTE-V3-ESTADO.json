@@ -2191,6 +2191,12 @@
       "task": "REL-01",
       "commit": "66fdef5a71ab6622b6160ee63126506e842749cd",
       "summary": "Verified final fix in GitHub Actions: static QA 40686880529 SUCCESS and Browser QA 40686880632 SUCCESS. The Browser QA ran UI-08 12 viewport/route checks and new authenticated chat tests at 320/390/768px; both dedicated steps SUCCESS. Regression fixed Escape focus theft from #chatButton to #openGallery (66fdef5a). Manual GDevelop GUI, physical mobile and peer tests still NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "39bffe2c6908eb08890e6707ac716aec029c6718",
+      "summary": "Verified static QA 40687173789 and Browser QA 40687173773 SUCCESS on prior V3. Hardened real PNG preview to await decode and validate map 1024x576 / sprite 160x160 before claiming successful display (6b9c2447). Added Chrome negative regression that replaces one PNG with malformed bytes, requires visible fallback error, then reloads before GLB/WAV checks (39bffe2c). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
     }
   ]
 }
