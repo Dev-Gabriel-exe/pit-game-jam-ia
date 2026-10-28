@@ -52,3 +52,13 @@ Quatro situações selecionáveis com botões de resposta, estados ARIA e explic
 **Verificações executadas:** 13/13 testes de compilação JavaScript via V8, contratos, fontes, renderização, integração estática, filtragem e reset em DOM simulado. Teste reproduzível adicionado em `qa/v3-m06-matrix.cjs` (ainda não executado pelo Node nesta rodada). **Pendências:** visual em navegador real, contas/limites individuais e importação real no GDevelop. Não substituir esses testes por simulações.
 
 **Próxima meta:** M06-03 — tutoriais por necessidade com prompts personalizados e fallback de exportação.
+
+## M06-03 — Tutoriais por necessidade e prompts autorais — CONCLUÍDO
+
+**Código:** `v3/asset-forge-tutorial.js` e `v3/asset-forge-tutorial.css`, com integração à fase `practice` do professor em `v3/app.js` e `professor-v3.html`. Módulo reutilizável preparado para a prática do aluno na M06-04.
+
+**Interação real:** o usuário informa título, gênero, personagem/objeto e necessidade do jogo. O módulo constrói localmente um prompt editável por modalidade (imagem, vídeo, música, voz, 3D), oferece botão de cópia com fallback de seleção manual, passos de uso da ferramenta, exportação/importação no GDevelop, teste no Preview e alternativa sem créditos. Não cria mídia, não chama APIs e não afirma que um asset foi produzido.
+
+**Verificações executadas:** 15/15 verificações V8 de sintaxe, prompts personalizados, limpeza de entradas, escape de HTML, integração, renderização, troca de rota e edição de campos em DOM simulado. Teste repetível registrado em `qa/v3-m06-tutorial.cjs` (não executado no Node nesta rodada). **Pendências:** validar botões e instruções em navegador real e executar importação no editor GDevelop; nomes dos menus variam por versão.
+
+**Próxima meta:** M06-04 — aluno escolhe uma trilha, importa e testa apenas um asset, registra procedência e evidência sem resultado fictício.
