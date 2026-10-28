@@ -118,7 +118,7 @@ function build(){
    ['02 · MECÂNICA','Ação verificável','Uma ação concreta do jogador, como coletar, saltar ou conversar.'],
    ['03 · CONDIÇÃO','Final observável','Uma regra que permite saber se o jogador venceu ou falhou.']
   ],'pit-ws-concepts pit-ws-review')+
-  '<div class="pit-ws-bottom"><strong>Checklist real da Missão 01:</strong> gênero, título, protagonista, ação e objetivo; condição final observável; feedback explicado. Revise a ficha e selecione “Enviar ao professor”. O GDevelop começa na Missão 03.'+
+  '<div class="pit-ws-bottom"><strong>Checklist real da Missão 01:</strong> Gênero, Título, Protagonista, Ação principal, Objetivo, Condição de vitória e Feedback. Todos precisam estar descritos e permitir um jogo testável. Revise a ficha e selecione “Enviar ao professor”. O GDevelop começa na Missão 03.'+
   deep('test','Testes de aceitação')+'</div>',{deepId:'test'}));
  return slides;
 }
