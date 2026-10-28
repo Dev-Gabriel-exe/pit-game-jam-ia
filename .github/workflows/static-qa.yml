@@ -20,6 +20,8 @@ jobs:
         run: node qa/v3-audit-guides.cjs
       - name: Audit V3 AI tools and free licenses
         run: node qa/v3-audit-tools.cjs
+      - name: Audit UI routes and local dependencies
+        run: node qa/v3-ui-route-inventory.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
