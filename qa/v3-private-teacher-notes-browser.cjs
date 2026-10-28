@@ -10,7 +10,9 @@ const assert=require('node:assert/strict');
   ['teacher-mission-two','PIT_TEACHER_MISSION_TWO'],
   ['teacher-mission-three','PIT_TEACHER_MISSION_THREE'],
   ['teacher-mission-four-validation','PIT_TEACHER_MISSION_FOUR_VALIDATION','practice','Abrir roteiro privado da prática da Missão 04'],
-  ['teacher-mission-four-validation','PIT_TEACHER_MISSION_FOUR_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 04']
+  ['teacher-mission-four-validation','PIT_TEACHER_MISSION_FOUR_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 04'],
+   ['teacher-mission-five-validation','PIT_TEACHER_MISSION_FIVE_VALIDATION','practice','Abrir roteiro privado da Missão 05'],
+   ['teacher-mission-five-validation','PIT_TEACHER_MISSION_FIVE_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 05']
  ];
  for(const width of [390,1280]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
@@ -39,5 +41,5 @@ const assert=require('node:assert/strict');
   await context.close();
  }
  await browser.close();
- console.log('PASS V4 private teacher notes: M01-M04 practice and M04 review in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
+ console.log('PASS V4 private teacher notes: M01-M05 practice and M04-M05 review in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
 })().catch(e=>{console.error(e);process.exit(1)});
