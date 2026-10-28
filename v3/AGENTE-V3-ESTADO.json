@@ -16,7 +16,7 @@
   ],
   "priority": "V4-M05-CI",
   "current_phase": "MISSOES",
-  "last_task": "V4-M05",
+  "last_task": "V4-M05-QA",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2296,37 +2296,53 @@
       "task": "V4-M05",
       "commit": "ccd0c33618b022ea0988c94a3e476c3274831878",
       "summary": "M05 pedagogical two-face audit: corrected chapter IV→V, concealed private teacher review workflow in default-closed accessible details, added student GDevelop editor handoff/offline fallback; expanded static and real Chrome private-notes regression. Static QA 40734962746 SUCCESS on e33fc8f16; Browser QA 40734962627 IN_PROGRESS at checkpoint. GDevelop GUI/physical mobile/peer NOT_RUN. Original 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28T17:24:00Z",
+      "task": "V4-M05-QA",
+      "commit": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee",
+      "summary": "M05 shared GDevelop guide title fixed for student/teacher, static regression added. Concurrent security(chat) SQL ownership hardening at 95b816e31 broke stale source-assertion in chat-image selftest; updated test to assert room+owner bound in SQL (186d9b3). GitHub static QA 40735202626 chat-image step passed, full workflow still IN_PROGRESS. Browser QA 40735202267 IN_PROGRESS. No GDevelop GUI/mobile/peer tests."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-M05",
     "status": "in_progress",
-    "updated_at": "2026-10-28T17:22:00Z",
+    "updated_at": "2026-10-28T17:24:00Z",
     "code_commits": [
       "4901b555b04db691d6fc0d36eabcd8dcbd9031cd",
       "cc16a7534de29904b9e4cf8406c1d86446afdaa2",
       "5c0ae78159e8706d97d2101fb0912ff2b4e425eb",
-      "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b"
+      "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b",
+      "3698e94717d7f85e5eeee23a073311bd7f70dfa7",
+      "e367127fe5c621e91c6f3f04b5c22dd481293a7c",
+      "186d9b3b87cca5fc318294216d97fc0c05a6c8ee"
     ],
-    "audit_commit": "ccd0c33618b022ea0988c94a3e476c3274831878",
+    "audit_commit": "f914b3e74efba0645af94d8eeaad7b20b64c7f68",
     "tests": [
       {
-        "name": "GitHub Actions static QA",
+        "name": "GitHub Actions static QA (M05 prior commit)",
         "run_id": 40734962746,
-        "sha": "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b",
-        "result": "SUCCESS"
+        "result": "SUCCESS",
+        "sha": "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b"
       },
       {
-        "name": "GitHub Actions Browser QA",
-        "run_id": 40734962627,
-        "sha": "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b",
-        "result": "IN_PROGRESS"
+        "name": "GitHub Actions static QA (latest)",
+        "run_id": 40735202626,
+        "result": "IN_PROGRESS",
+        "sha": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee",
+        "detail": "chat-image contract step SUCCESS; whole job not yet completed"
+      },
+      {
+        "name": "GitHub Actions Browser QA (latest)",
+        "run_id": 40735202267,
+        "result": "IN_PROGRESS",
+        "sha": "186d9b3b87cca5fc318294216d97fc0c05a6c8ee"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "next_task": "V4-M05-CI then V4-M06",
-    "blocker": "Browser QA pending and human GDevelop/mobile/peer not run"
+    "blocker": "Full latest static/browser CI pending; human GDevelop GUI/mobile/peer NOT_RUN"
   }
 }
