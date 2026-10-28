@@ -73,3 +73,8 @@
 @media(max-width:760px){.t4v-route-parts,.t4v-rubric,.t4v-decisions{grid-template-columns:1fr}.t4v-tabs,.t4v-cadence{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.t4v-head{padding:16px 13px}.t4v-content{padding:15px 11px 25px}.t4v-top{gap:9px}.t4v-top>strong{flex-basis:43px;height:61px;font-size:25px}.t4v-top h2{font-size:26px}.t4v-route-detail{padding:11px}.t4v-tabs button{font-size:10px;padding:8px}}
 @media(prefers-reduced-motion:reduce){.t4v-root *{animation:none!important;transition:none!important}.t4v-animate [data-t4v-reveal]{opacity:1!important;transform:none!important;filter:none!important}}
+
+/* Acompanhamento: linhas da evidência estruturada permanecem legíveis na avaliação. */
+.roster-evidence{border:1px solid #916c4d;background:#161b1e;padding:12px;margin:13px 0;min-width:0}
+.roster-evidence>b{font-size:11px;color:#e8b279;letter-spacing:.11em}
+.roster-evidence pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;margin:10px 0 0;font:13px/1.65 "Segoe UI",Arial,sans-serif;color:#f0dbc4}
