@@ -152,6 +152,24 @@ assert(!m09Validation.includes('<details class="pit-private-teacher-notes" open'
 assert(m09Validation.indexOf('Depois de retirar o espelhamento')>m09Validation.indexOf('function review()'),'M09 review workflow is concealed');
 assert(m09Student.includes('só declare')===false || m09Student.includes('após modificar'),'M09 cannot claim unobserved correction');
 
+// M10: self-guided launch, neutral shared tutorial, projector-safe teacher review.
+const m10Student=read('v3/student-mission-ten.js');
+const m10Guide=read('v3/gdevelop-mission-ten-guide.js');
+const m10Teacher=read('v3/teacher-mission-ten-validation.js');
+const m10Css=read('v3/student-mission-ten.css');
+assert(m10Student.includes('https://editor.gdevelop.io/'),'M10 student has real editor handoff');
+assert(m10Student.includes('não abre nem importa seu jogo automaticamente'),'M10 does not imply automatic project import');
+assert(m10Student.includes('aplicativo GDevelop já instalado'),'M10 offline fallback exists');
+assert(m10Css.includes('.m10s-editor-handoff a:focus-visible'),'M10 editor link keyboard focus');
+assert(!m10Student.includes('pit-private-teacher-notes'),'M10 student must not receive teacher-only notes');
+assert(m10Guide.includes('MISSÃO 10 · TUTORIAL DE ENTREGA · 3 MIN'),'M10 shared guide neutral heading');
+assert(!m10Guide.includes('PROFESSOR · DEMONSTRAÇÃO'),'M10 shared guide cannot label student as teacher');
+assert.equal((m10Teacher.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M10 teacher practice and review notes concealed');
+assert.equal((m10Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M10 notes use shared CSS');
+assert(m10Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 10"'),'M10 review icon accessible');
+assert(!m10Teacher.includes('<details class="pit-private-teacher-notes" open'),'M10 private notes default closed');
+assert(m10Teacher.includes('Depois de retirar o espelhamento HDMI'),'M10 assessment workflow kept private');
+
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
