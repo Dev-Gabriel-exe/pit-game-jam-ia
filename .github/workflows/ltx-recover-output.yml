@@ -1,0 +1,55 @@
+name: Recover previously generated anonymous LTX result
+on:
+  push:
+    branches: [experiment/missao-01-ltx-anon]
+    paths: ['.github/workflows/ltx-recover-output.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Recover output via Gradio file endpoint (no GPU generation)
+        run: |
+          python - <<'PY'
+          import requests,os,sys
+          base='https://lightricks-ltx-2-5.hf.space'
+          base_old='https://lightricks-ltx-video-distilled.hf.space'
+          candidates=[
+            base+'/gradio_api/file=/tmp/tmp72aq7tgk.mp4',
+            base+'/gradio_api/file=/tmp/gradio/d71eae57cae24776924c2432d121f28f3bda06c2900ec3768fe517974c9853ad/tmp72aq7tgk.mp4',
+            base+'/file=/tmp/tmp72aq7tgk.mp4',
+            base_old+'/gradio_api/file=/tmp/output_67767.mp4',
+            base_old+'/gradio_api/file=/tmp/gradio/ff6a5c5a4ab5610b80d352c48d64cc2e56d3b36d154b5f813aed0c2e107e11dd/output_67767.mp4',
+          ]
+          output='v3/assets/missions/missao-01-motion.mp4'
+          for url in candidates:
+            print('TRY',url,flush=True)
+            try:
+              r=requests.get(url,timeout=12,allow_redirects=True)
+              b=r.content
+              print('HTTP',r.status_code,'CTYPE',r.headers.get('content-type'),'BYTES',len(b), 'HEAD',b[:12],flush=True)
+              if r.status_code==200 and len(b)>16000 and b'ftyp' in b[:32]:
+                with open(output,'wb') as f:f.write(b)
+                print('RECOVERED_REAL_LTX_MP4',url,'SIZE',len(b),flush=True)
+                break
+            except Exception as e:
+              print('RECOVERY_ERROR',type(e).__name__,str(e)[:400],flush=True)
+          else:
+            print('No stored output available from the public server, without GPU',flush=True)
+            sys.exit(3)
+          PY
+      - name: Commit recovered LTX MP4 to experimental branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v3/assets/missions/missao-01-motion.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m "feat(test): recover genuine anonymous LTX video [skip ci]"
+            git push
+          fi
