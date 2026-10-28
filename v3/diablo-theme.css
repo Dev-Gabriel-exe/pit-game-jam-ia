@@ -2,7 +2,7 @@
    No proprietary game assets. Original vector backdrop and responsive CSS.
    Loaded AFTER arcade-gallery.css, only inside the student mission gallery. */
 .pit-arcade.gallery-overlay {
- --abyss:#090b0e; --iron:#25282b; --steel:#72716d; --bronze:#ac7050; --gold:#f6c781; --ember:#ff662b; --parchment:#f1e4cf;
+ --abyss:var(--pit-abyss); --iron:var(--pit-iron); --steel:var(--pit-steel); --bronze:var(--pit-bronze); --gold:var(--pit-gold); --ember:var(--pit-ember); --parchment:var(--pit-paper);
  color:var(--parchment); background:#090c10;
  font-family:"Segoe UI",Arial,sans-serif;
 }
