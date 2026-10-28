@@ -16,7 +16,7 @@
   ],
   "priority": "REL-01",
   "current_phase": "MISSOES",
-  "last_task": "REL-01",
+  "last_task": "REL-03",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -939,7 +939,7 @@
       "position": 57,
       "status": "blocked",
       "updated_at": "2026-10-28T08:37:00Z",
-      "commit": "4ee9fbf6ee9fb8ab293483a0d89657fbb02f8fb6",
+      "commit": "5209fc4ce7875ff8239166c96b092c8d96502f09",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -962,7 +962,8 @@
         "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
         "2026-10-28: Added real GDevelop gameplay harness screenshot after conditional victory, plus fail-closed requirement for screenshot artifact. V8 syntax PASS on both changed JS files; native CI pending, authorial final victory screen still unverified.",
         "2026-10-28: native GDevelop victory screenshot test and validator both passed in official Actions runs 40659339655 (982af1c0) and 40659350215 (4ee9fbf6). This verifies screenshot evidence of a gated victory event, NOT an authored final-screen UX or complete submission/review.",
-        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN.",
+        "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -989,11 +990,12 @@
       "position": 59,
       "status": "blocked",
       "updated_at": "2026-10-28T07:22:56.983Z",
-      "commit": "b8ef0c6ced4aeee211cf36c90abb75a718b7b0b4",
+      "commit": "5209fc4ce7875ff8239166c96b092c8d96502f09",
       "tests": [
         "Static QA 40637632552 success on preliminary report branch",
         "Release gate 40637450547 diagnostic success, explicitly NOT READY",
-        "Preliminary report updated with verified GLB QA 40649579075, Chrome/Static chat QA 40649326459/40649326394 and failed anonymous GDevelop editor attempt 40649114129"
+        "Preliminary report updated with verified GLB QA 40649579075, Chrome/Static chat QA 40649326459/40649326394 and failed anonymous GDevelop editor attempt 40649114129",
+        "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN."
       ],
       "blocker": "Final 59/59 and READY_FOR_FINAL_REVIEW remain blocked by M06-05, M07-04, M08-04, M09-03, FUN-08 and REL-01. Preliminary report updated, but not a final homologation."
     }
@@ -1997,6 +1999,12 @@
       "task": "REL-01",
       "commit": "e6e57c748c2e5b3fd89da9a6bbc209ab2f242349",
       "summary": "Created executable, non-fabricated human acceptance protocol for remaining GDevelop GUI/mobile/peer tests; still 54/59."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-03",
+      "commit": "5209fc4ce7875ff8239166c96b092c8d96502f09",
+      "summary": "Prepared pre-delivery report and fail-closed evidence ledger; 54/59 unchanged, human sign-off explicitly pending."
     }
   ]
 }
