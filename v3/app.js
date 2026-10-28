@@ -968,8 +968,7 @@ function renderChat(messages){
 $('chatForm').onsubmit=async e=>{
  e.preventDefault();
  const field=$('chatInput'),text=field.value.trim();
- if(chatImageDraft){setChatStatus('O print está somente em prévia local: o servidor ainda não aceita anexos. Remova a imagem para enviar apenas texto.','error');return}
- if(chatSending||text.length<2)return;
+ if(chatSending||(!chatImageDraft&&text.length<2))return;
  if(TEACHER&&!selectedThread)return setChatStatus('Escolha um aluno antes de responder.','error');
  chatSending=true;setChatEnabled(true);setChatStatus('Enviando mensagem…');
  try{
