@@ -270,6 +270,7 @@ function renderMain(){
  const teacherMissionFiveDemo=TEACHER&&m.n===5&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M05_GUIDE;
  const teacherMissionFiveBriefing=TEACHER&&m.n===5&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS;
  const teacherMissionFiveValidation=TEACHER&&m.n===5&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_FIVE_VALIDATION;
+ const teacherMissionSixDemo=TEACHER&&m.n===6&&activePhase==='demo'&&!!window.PIT_TEACHER_MISSION_SIX_MATRIX;
  const teacherMissionSixBriefing=TEACHER&&m.n===6&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_SIX_FOUNDATIONS;
  document.body.classList.toggle('pit-mission-one',missionOne);
  document.body.classList.toggle('pit-mission-two',missionTwo);
@@ -281,7 +282,8 @@ function renderMain(){
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.hydrate(missionThreeContext().session,e?.evidence,e?.status);
  if(missionFour)window.PIT_STUDENT_MISSION_FOUR.hydrate(missionFourContext().session,e?.evidence,e?.status);
  if(missionFive)window.PIT_STUDENT_MISSION_FIVE.hydrate(missionFiveContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=teacherMissionSixBriefing?window.PIT_TEACHER_MISSION_SIX_FOUNDATIONS.render():
+ $('mainContent').innerHTML=teacherMissionSixDemo?window.PIT_TEACHER_MISSION_SIX_MATRIX.render():
+  teacherMissionSixBriefing?window.PIT_TEACHER_MISSION_SIX_FOUNDATIONS.render():
   teacherMissionFiveValidation?window.PIT_TEACHER_MISSION_FIVE_VALIDATION.render(activePhase):
   teacherMissionFiveBriefing?window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.render():
   teacherMissionFiveDemo?window.PIT_GDEVELOP_M05_GUIDE.render():
@@ -326,6 +328,7 @@ function renderMain(){
  if(teacherMissionFiveBriefing)window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.mount();
  if(teacherMissionFiveValidation)window.PIT_TEACHER_MISSION_FIVE_VALIDATION.mount();
  if(teacherMissionSixBriefing)window.PIT_TEACHER_MISSION_SIX_FOUNDATIONS.mount();
+ if(teacherMissionSixDemo)window.PIT_TEACHER_MISSION_SIX_MATRIX.mount();
  if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
  if(missionFive)window.PIT_STUDENT_MISSION_FIVE.mount({
   ...missionFiveContext(),
