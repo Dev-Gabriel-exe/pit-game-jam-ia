@@ -6,12 +6,12 @@
  'use strict';
  const keys=['command','response','boundary','retest','saved','issue'];
  const config={
-  command:{min:6,max:95,label:'Qual entrada você usou?',help:'Informe o comando que realmente testou: setas, WASD, Espaço, clique ou toque.'},
-  response:{min:12,max:135,label:'Qual resposta apareceu no Preview?',help:'Descreva uma mudança observada na execução. Não basta dizer “funcionou”.'},
-  boundary:{min:12,max:135,label:'Como funcionou o obstáculo ou limite?',help:'Explique o que aconteceu ao tentar atravessar a parede, o chão, a área clicável ou outra restrição.'},
-  retest:{min:12,max:125,label:'O que mudou ao repetir o teste?',help:'Execute de novo, incluindo um caso que não deveria ativar a ação. Compare os resultados.'},
-  saved:{min:6,max:100,label:'Onde salvou o projeto atualizado?',help:'Indique o projeto na nuvem ou o caminho/nome do arquivo local.'},
-  issue:{min:0,max:95,label:'Qual erro encontrou e como resolveu? (opcional)',help:'Escreva um diagnóstico real. Se não houve erro, pode deixar vazio.'}
+  command:{min:6,max:56,label:'Qual entrada você usou?',help:'Informe o comando que realmente testou: setas, WASD, Espaço, clique ou toque.'},
+  response:{min:12,max:94,label:'Qual resposta apareceu no Preview?',help:'Descreva uma mudança observada na execução. Não basta dizer “funcionou”.'},
+  boundary:{min:12,max:93,label:'Como funcionou o obstáculo ou limite?',help:'Explique o que aconteceu ao tentar atravessar a parede, o chão, a área clicável ou outra restrição.'},
+  retest:{min:12,max:84,label:'O que mudou ao repetir o teste?',help:'Execute de novo, incluindo um caso que não deveria ativar a ação. Compare os resultados.'},
+  saved:{min:6,max:58,label:'Onde salvou o projeto atualizado?',help:'Indique o projeto na nuvem ou o caminho/nome do arquivo local.'},
+  issue:{min:0,max:52,label:'Qual erro encontrou e como resolveu? (opcional)',help:'Escreva um diagnóstico real. Se não houve erro, pode deixar vazio.'}
  };
  const genres={
   'Plataforma':1,
@@ -116,16 +116,16 @@
   return [
    'MISSÃO 04 — PRIMEIRO JOGÁVEL',
    'Jogo: '+cut(i.title,45),
-   'Gênero: '+cut(i.genre,22),
-   'Projeto: '+cut(i.project,43),
-   'Cena: '+cut(i.scene,42),
+   'Gênero: '+cut(i.genre,20),
+   'Projeto: '+cut(i.project,37),
+   'Cena: '+cut(i.scene,32),
    'Rota: '+names[r],
-   'Comando: '+cut(d.command,70),
-   'Resposta: '+cut(d.response,112),
-   'Limite: '+cut(d.boundary,115),
-   'Repetição: '+cut(d.retest,100),
-   'Salvo em: '+cut(d.saved,72),
-   'Correção: '+cut(d.issue||'Não informada',70)
+   'Comando: '+cut(d.command,config.command.max),
+   'Resposta: '+cut(d.response,config.response.max),
+   'Limite: '+cut(d.boundary,config.boundary.max),
+   'Repetição: '+cut(d.retest,config.retest.max),
+   'Salvo em: '+cut(d.saved,config.saved.max),
+   'Correção: '+cut(d.issue||'Não informada',config.issue.max)
   ].join('\n');
  }
  function parseEvidence(raw){
