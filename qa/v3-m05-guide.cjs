@@ -1,0 +1,45 @@
+'use strict';
+/* PIT Game Jam IA · M05-02 · run: node qa/v3-m05-guide.cjs
+   Source, markup and interaction regression. No actual browser or engine test. */
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const script=read('v3/gdevelop-mission-five-guide.js'),html=read('professor-v3.html'),student=read('aluno-v3.html'),app=read('v3/app.js'),css=read('v3/gdevelop-mission-five-guide.css');
+const window={matchMedia:()=>({matches:false})};
+vm.runInNewContext(script,{window});
+const M=window.PIT_GDEVELOP_M05_GUIDE;let checks=0;
+const ok=(b,message)=>{assert.ok(b,message);checks++};
+ok(M.routes.length===3,'three meaningful genres');
+ok(M.guideSteps.length===5,'five tutorial screens');
+ok(M.screenshots.length===5&&M.screenshots.every(s=>s.src.startsWith('https://wiki.gdevelop.io/gdevelop5/')),'official screenshot URLs');
+ok(M.fallback.endsWith('gdevelop-eventos-pt.svg'),'honest fallback');
+ok(M.routes[0].actions.includes('Score')&&M.routes[0].fix.includes('Trigger once'),'score guarded');
+ok(M.routes[1].condition.includes('Cursor/Touch')&&M.routes[1].step4.includes('Acertou'),'puzzle action');
+ok(M.routes[2].condition.includes('Physics 3D')&&M.routes[2].fix.includes('Z'),'3D physics not 2D');
+ok(M.routes.every(x=>x.negative&&x.step3&&x.step4&&x.step5),'each route has condition/action/tests');
+ok(M.render().includes('DEMONSTRAÇÃO DE 5 MINUTOS')&&M.render().includes('1 min · Preview'),'five minute demo');
+ok(M.render(2).includes('aria-labelledby="m5gTab2"'),'preselected 3D');
+ok(M.render().includes('role="tablist"')&&M.render().includes('role="tabpanel"'),'accessible tabs');
+ok(M.render().includes('as capturas de ações e variáveis mostram um projeto-exemplo 2D'),'sources distinguished');
+ok(css.split('{').length===css.split('}').length&&css.includes('prefers-reduced-motion'),'CSS valid and reduced-motion');
+ok(html.includes('gdevelop-mission-five-guide.js')&&html.includes('gdevelop-mission-five-guide.css'),'teacher loads guide');
+ok(!student.includes('gdevelop-mission-five-guide.js'),'student portal unaffected');
+ok(app.includes("TEACHER&&m.n===5&&activePhase==='demo'"),'teacher demo scoped to M05');
+ok(app.includes('PIT_TEACHER_MISSION_FIVE_FOUNDATIONS.render()'),'M05 briefing unaffected');
+function el(o={}){return {listeners:{},attrs:{},dataset:{},tabIndex:0,innerHTML:'',textContent:'',setAttribute(k,v){this.attrs[k]=v},addEventListener(k,fn){this.listeners[k]=fn},focus(){this.focused=true},click(){this.listeners.click?.()},...o}}
+const tabs=Array.from({length:3},(_,i)=>el({dataset:{m5gRoute:String(i)}}));
+const label=el(),cond=el(),negative=el();
+const panel=el({scrolls:0,scrollIntoView(){this.scrolls++},querySelector(selector){const refs={'[data-m5g-image]':'image','[data-m5g-prev]':'prev','[data-m5g-next]':'next','.m5g-picture-top strong':'caption'};if(!refs[selector])return null;return this[refs[selector]]=el({src:'',alt:'',complete:false,naturalWidth:0})}});
+const scope={querySelectorAll:s=>s==='[data-m5g-route]'?tabs:[],querySelector:s=>({'#m5gPanel':panel,'#m5gRule':label,'#m5gCondition':cond,'#m5gCheck':negative}[s]||null)};
+const changed=[];M.mount(scope,{onRouteChange:(id,i)=>changed.push([id,i])});
+ok(panel.innerHTML.includes('Localizar a aba de eventos'),'first step renders');
+panel.next.click();ok(panel.innerHTML.includes('Adicionar um evento vazio')&&panel.scrolls===1,'next + scroll');
+panel.next.click();ok(panel.innerHTML.includes('Qual é o gatilho verdadeiro?'),'condition step');
+panel.prev.click();ok(panel.innerHTML.includes('Adicionar um evento vazio'),'previous step');
+tabs[1].click();ok(label.textContent.includes('Uma escolha')&&changed.at(-1)[0]==='puzzle','puzzle switching');
+tabs[1].listeners.keydown({key:'End',preventDefault(){}});
+ok(tabs[2].focused&&label.textContent.includes('Porta'),'End key selects 3D');
+tabs[2].listeners.keydown({key:'ArrowRight',preventDefault(){}});
+ok(tabs[0].attrs['aria-selected']==='true','arrow key wraps to first');
+panel.image.listeners.error();
+ok(panel.image.src===M.fallback&&panel.caption.textContent.includes('DIAGRAMA AUTORAL'),'broken official image uses labeled local illustration');
+console.log('PASS '+checks+' M05-02 assertions. Browser, live editor and classroom E2E still pending.');
