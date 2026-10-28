@@ -16,7 +16,7 @@
   ],
   "priority": "UI-08",
   "current_phase": "TELAS",
-  "last_task": "UI-07",
+  "last_task": "UI-08",
   "completed_count": 36,
   "total_tasks": 59,
   "tasks": [
@@ -674,11 +674,14 @@
       "description": "Revisão visual global: todas as páginas desktop/tablet/celular, contraste, foco, teclado, movimento reduzido, carregamento",
       "group": "UI",
       "position": 41,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "in_progress",
+      "updated_at": "2026-10-28T04:29:33.213Z",
+      "commit": "c56b8129a43ee4a26538c919f66b1dfe9bb3382d",
+      "tests": [
+        "GitHub Actions static QA 40632570510 success",
+        "GitHub Actions Browser QA 40632570339 in progress; geometry audit has not yet reported a result"
+      ],
+      "blocker": "Visual audit Chrome at 390/768/1440 px is pending CI; screenshots and human visual inspection have not been completed. Earlier audit runs hung because failure path left Chromium running; fixed by explicit process exit in c56b8129."
     },
     {
       "id": "ART-01",
