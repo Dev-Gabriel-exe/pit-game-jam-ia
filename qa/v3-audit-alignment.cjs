@@ -54,6 +54,20 @@ assert(teacher.includes('./v3/gdevelop-mission-four-guide.js'),'M04 GDevelop gui
 assert(read('v3/gdevelop-mission-four-guide.js').includes('GDevelop'),'M04 guide must explain GDevelop');
 for(const time of ['12 min','15 min','9 min'])assert(m04Student.includes(time),'M04 student practice time '+time);
 for(const time of ['12 MIN','15 MIN','9 MIN'])assert(m04Teacher.includes(time),'M04 teacher practice time '+time);
+// M05: chapter identity, practical handoff and projector-safe assessment.
+const m05Teacher=read('v3/teacher-mission-five-validation.js');
+const m05Student=read('v3/student-mission-five.js');
+assert(m05Teacher.includes('<div class="t5v-top"><strong>V</strong>'),'M05 must display chapter V, not IV');
+assert.equal((m05Teacher.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M05 practice and review notes must be private');
+assert.equal((m05Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M05 private panels use shared stylesheet');
+assert(m05Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 05"'),'M05 assessment paper icon accessible');
+assert(!m05Teacher.includes('<details class="pit-private-teacher-notes" open'),'M05 notes must default closed');
+assert(!m05Student.includes('pit-private-teacher-notes'),'M05 student must not receive private teacher notes');
+assert(m05Student.includes('https://editor.gdevelop.io/'),'M05 student editor link exists');
+assert(m05Student.includes('não abre nem importa seu jogo automaticamente'),'M05 editor link must not imply automatic project loading');
+assert(m05Student.includes('aplicativo GDevelop já instalado'),'M05 student offline fallback exists');
+for(const time of ['8 min','8 min','8 min'])assert(m05Student.includes(time),'M05 student 24min split');
+for(const time of ['8 MIN'])assert(m05Teacher.includes(time),'M05 teacher 24min split');
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
