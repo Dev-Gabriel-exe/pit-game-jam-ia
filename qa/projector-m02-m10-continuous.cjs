@@ -18,7 +18,7 @@ const {chromium}=require('playwright');
    await page.locator('#pitProjector.pit-projector-m01').waitFor();
    const count=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]);
    assert(count>=12,'Missão '+mission+' tem apenas '+count+' slides; aula incompleta');
-   const sections=[],titles=[],interactives=[];let badOverflow=0;
+   const sections=[],titles=[],interactives=[],clipped=[];let badOverflow=0;
    for(let i=0;i<count;i++){
     const title=await page.locator('#pitProjectorTitle').innerText(),text=await page.locator('#pitProjectorContent').innerText();
     titles.push(title);
@@ -36,9 +36,10 @@ const {chromium}=require('playwright');
       interactives.push({slide:i+1,buttons:n});
      }
     }
-    const geometries=await pane.evaluate(el=>({overX:el.scrollWidth>el.clientWidth+9,overY:el.scrollHeight>el.clientHeight+10}));
+    const geometries=await pane.evaluate(el=>{const deck=el.querySelector('.pit-u-deck'),runtime=el.querySelector('.pit-u-component');return {overX:el.scrollWidth>el.clientWidth+9,overY:el.scrollHeight>el.clientHeight+10,clip:deck&&deck.scrollHeight>deck.clientHeight+12,clipPx:deck?deck.scrollHeight-deck.clientHeight:0,innerScroll:runtime?runtime.scrollHeight>runtime.clientHeight+12:false}});
     assert(!geometries.overX,'Overflow X M'+mission+' slide '+(i+1)+': '+title);
     if(geometries.overY)badOverflow++;
+    if(geometries.clip||geometries.innerScroll)clipped.push({index:i+1,title,clipPx:geometries.clipPx,innerScroll:geometries.innerScroll});
     if(i<count-1)await page.locator('#pitProjectorNext').click();
    }
    for(const name of ['CONCEITOS','EXEMPLO EM AÇÃO','OFICINA LIBERADA','RESULTADOS']){
@@ -49,7 +50,7 @@ const {chromium}=require('playwright');
    await page.locator('#pitProjectorClose').click();
    const preserved=await page.locator('#phasebar [data-phase="review"]').getAttribute('aria-current');
    assert(preserved==='true','Phase changed after projection M'+mission);
-   report.push({mission,slides:count,interactiveSlides:interactives.length,contentScrollWarnings:badOverflow});
+   report.push({mission,slides:count,interactiveSlides:interactives.length,contentScrollWarnings:badOverflow,clipped:clipped.slice(0,30),clippedTotal:clipped.length});
   }
   assert.deepEqual(errors,[],'Browser JS errors: '+errors.join(' / '));
   console.log('PASS: nine continuous complete presentations with working controls and unchanged classroom phases');
