@@ -4,6 +4,22 @@ const { randomBytes, createHash, timingSafeEqual } = require('node:crypto');
 
 const ROOM = 'PITGAME26';
 const MAX_BODY = 1200;
+const MAX_IMAGE_BYTES = 2*1024*1024;
+const IMAGE_TYPES = {'image/png':'png','image/jpeg':'jpg','image/webp':'webp'};
+function decodeImage(value,mime){
+ if(!IMAGE_TYPES[mime]||typeof value!=='string'||value.length>2800000||!/^[A-Za-z0-9+/]+={0,2}$/.test(value))return null;
+ const bytes=Buffer.from(value,'base64');
+ if(!bytes.length||bytes.length>MAX_IMAGE_BYTES||bytes.toString('base64')!==value)return null;
+ const png=bytes.subarray(0,8).equals(Buffer.from('89504e470d0a1a0a','hex'));
+ const jpg=bytes.subarray(0,3).equals(Buffer.from('ffd8ff','hex'));
+ const webp=bytes.subarray(0,4).toString()==='RIFF'&&bytes.subarray(8,12).toString()==='WEBP';
+ if(!(mime==='image/png'&&png||mime==='image/jpeg'&&jpg||mime==='image/webp'&&webp))return null;
+ return bytes;
+}
+async function ensureImages(){
+ await db.query('CREATE TABLE IF NOT EXISTS pit_chat_images (message_id bigint PRIMARY KEY REFERENCES pit_chat_messages(id) ON DELETE CASCADE, mime varchar(24) NOT NULL, bytes bytea NOT NULL, created_at timestamptz NOT NULL DEFAULT now())');
+}
+
 const ORIGINS = new Set([
   'https://dev-gabriel-exe.github.io',
   'https://pit-game-jam-chat.vercel.app'
@@ -101,6 +117,41 @@ module.exports = async function handler(req, res) {
       const data=await db.query(
         'SELECT id,author,mission,body,created_at,read_at FROM pit_chat_messages WHERE student_id=$1 AND room_code=$2 ORDER BY id DESC LIMIT 100',[id,ROOM]);
       return res.status(200).json({ok:true,messages:data.rows.reverse()});
+    }
+    if(req.method==='GET' && action==='image') {
+      const teacher=teacherOK(req),me=teacher?null:await student(req);
+      if(!teacher&&!me)return sendError(res,401,'Sessão inválida.');
+      const messageId=String(req.query?.messageId||'');
+      if(!/^[1-9][0-9]{0,17}$/.test(messageId))return sendError(res,400,'Imagem inválida.');
+      await ensureImages();
+      const data=await db.query('SELECT i.mime,i.bytes,m.student_id FROM pit_chat_images i JOIN pit_chat_messages m ON m.id=i.message_id WHERE i.message_id=$1 AND m.room_code=$2',[messageId,ROOM]);
+      if(!data.rowCount)return sendError(res,404,'Imagem não encontrada.');
+      if(!teacher&&String(data.rows[0].student_id)!==String(me.id))return sendError(res,403,'Imagem de outra conversa.');
+      res.setHeader('Content-Type',data.rows[0].mime);
+      res.setHeader('Content-Disposition','inline; filename="print."'+IMAGE_TYPES[data.rows[0].mime]);
+      return res.status(200).end(data.rows[0].bytes);
+    }
+    if(req.method==='POST' && action==='send-image') {
+      const teacher=teacherOK(req),me=teacher?null:await student(req);
+      if(!teacher&&!me)return sendError(res,401,'Sessão inválida.');
+      const id=teacher?String(req.body?.studentId||''):me.id;
+      if(!validId(id))return sendError(res,400,'Aluno inválido.');
+      if(teacher){const exists=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2',[id,ROOM]);if(!exists.rowCount)return sendError(res,404,'Aluno não encontrado.');}
+      const mime=String(req.body?.mime||''),bytes=decodeImage(req.body?.image,mime);
+      if(!bytes)return sendError(res,400,'Imagem inválida ou acima de 2 MB.');
+      const author=teacher?'teacher':'student';
+      const count=await db.query("SELECT count(*)::int AS n FROM pit_chat_messages WHERE student_id=$1 AND author=$2 AND created_at>now()-interval '1 minute'",[id,author]);
+      if(count.rows[0].n>=6)return sendError(res,429,'Aguarde antes de enviar outra imagem.');
+      const rawMission=Number(req.body?.mission),mission=Number.isInteger(rawMission)&&rawMission>=1&&rawMission<=10?rawMission:null;
+      await ensureImages();
+      const client=await db.connect();
+      try {
+       await client.query('BEGIN');
+       const msg=await client.query('INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',[ROOM,id,author,mission,'[Imagem]']);
+       await client.query('INSERT INTO pit_chat_images(message_id,mime,bytes) VALUES($1,$2,$3)',[msg.rows[0].id,mime,bytes]);
+       await client.query('COMMIT');
+       return res.status(201).json({ok:true,id:msg.rows[0].id});
+      }catch(err){await client.query('ROLLBACK');throw err}finally{client.release()}
     }
     if(req.method==='POST' && action==='send') {
       const teacher=teacherOK(req);
