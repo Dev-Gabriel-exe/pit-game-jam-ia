@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T04:20:52.811Z",
+  "last_completed_at": "2026-10-28T04:37:16.731Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "UI-08",
-  "current_phase": "TELAS",
+  "priority": "ART-01",
+  "current_phase": "ARTE",
   "last_task": "UI-08",
-  "completed_count": 36,
+  "completed_count": 37,
   "total_tasks": 59,
   "tasks": [
     {
@@ -674,14 +674,15 @@
       "description": "Revisão visual global: todas as páginas desktop/tablet/celular, contraste, foco, teclado, movimento reduzido, carregamento",
       "group": "UI",
       "position": 41,
-      "status": "in_progress",
-      "updated_at": "2026-10-28T04:29:33.213Z",
-      "commit": "c56b8129a43ee4a26538c919f66b1dfe9bb3382d",
+      "status": "done",
+      "updated_at": "2026-10-28T04:37:16.731Z",
+      "commit": "1fdc814dbd9f97c401c05370e81ba26bd2b50d21",
       "tests": [
-        "GitHub Actions static QA 40632570510 success",
-        "GitHub Actions Browser QA 40632570339 in progress; geometry audit has not yet reported a result"
+        "GitHub Actions static QA 40633154088 success",
+        "GitHub Actions Browser QA 40633153958 success: 12 V3 route/viewport checks, 12 screenshots, keyboard focus, reduced motion, no overflow, no broken local images",
+        "Visually inspected screenshot contact sheet and student/teacher 390px; formal WCAG contrast and screen-reader tests remain FUN-10"
       ],
-      "blocker": "Visual audit Chrome at 390/768/1440 px is pending CI; screenshots and human visual inspection have not been completed. Earlier audit runs hung because failure path left Chromium running; fixed by explicit process exit in c56b8129."
+      "blocker": null
     },
     {
       "id": "ART-01",
@@ -1476,6 +1477,23 @@
       ],
       "tests": "Static QA 40631670509 success; Browser QA 40631670537 success (fake API chat error/retry, focus, empty state)",
       "notes": "No live API, screen reader or isolated mobile chat viewport test. Global UI-08 should check mobile."
+    },
+    {
+      "id": "UI-08",
+      "completed_at": "2026-10-28T04:37:16.731Z",
+      "commit": "1fdc814dbd9f97c401c05370e81ba26bd2b50d21",
+      "files": [
+        "v3/accessibility-v3.css",
+        "index.html",
+        "fase1.html",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "qa/v3-visual-audit.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/REVISAO-GLOBAL-UI-08.md"
+      ],
+      "tests": "Static QA 40633154088 success; Browser QA 40633153958 success; 12 screenshots artifact 12792411418",
+      "notes": "Fixed 768px student navigation overflow. V3 main surfaces checked; legacy V2, WCAG contrast measurement and screen reader remain pending."
     }
   ]
 }
