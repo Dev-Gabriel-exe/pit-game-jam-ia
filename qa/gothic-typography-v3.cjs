@@ -32,7 +32,7 @@ const {chromium}=require('playwright');
      await page.locator('#pitProjectorLaunch').click();
      await page.locator('#pitProjector.pit-projector-m01').waitFor();
      const counter=await page.locator('#pitProjectorCount').innerText();
-     assert(Number(counter.split('/')[1])>=(mission===1?7:20),'Projection lost mission slides');
+     assert.equal(Number(counter.split('/')[1]),7,'Workshop projection should have seven core slides');
      const top=await page.locator('#pitProjectorTitle').evaluate(el=>({
       font:getComputedStyle(el).fontFamily,
       overflow:el.scrollWidth>el.clientWidth+8
