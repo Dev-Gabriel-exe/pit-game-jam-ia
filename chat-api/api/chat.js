@@ -126,6 +126,9 @@ module.exports = async function handler(req, res) {
       await ensureImages();
       const data=await db.query('SELECT i.mime,i.bytes FROM pit_chat_images i JOIN pit_chat_messages m ON m.id=i.message_id WHERE i.message_id=$1 AND m.room_code=$2 AND ($3::boolean OR m.student_id=$4::uuid)',[messageId,ROOM,teacher,teacher?null:me.id]);
       if(!data.rowCount)return sendError(res,404,'Imagem não encontrada ou sem acesso.');
+      res.setHeader('Cache-Control','private, no-store, max-age=0');
+      res.setHeader('X-Content-Type-Options','nosniff');
+      res.setHeader('Content-Security-Policy',"default-src 'none'; sandbox");
       res.setHeader('Content-Type',data.rows[0].mime);
       res.setHeader('Content-Disposition','inline; filename="print.'+IMAGE_TYPES[data.rows[0].mime]+'"');
       return res.status(200).end(data.rows[0].bytes);
