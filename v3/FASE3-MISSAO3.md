@@ -61,3 +61,20 @@ Foram executadas verificações automatizadas de sintaxe, renderização das fas
 
 ### Regressões após redução de escopo
 - Foram realizados **24 testes automatizados funcionais**, aprovados, cobrindo navegação Próxima/Anterior (inclusive retorno ao topo para celular), troca entre Gemini e Asset Store, prompt personalizado, fallback de screenshot, contador de sete critérios, hidratação da evidência, tamanho máximo seguro de 742 caracteres, renderização do professor, tempos, CSS, roteamento e isolamento da prévia. Esse total não inclui a confirmação manual do editor em sala ou teste no navegador real.
+
+## Auditoria de acabamento após aprovação visual — 27/10/2026
+
+O responsável aprovou a estrutura da Missão 03. A revisão de qualidade manteve o escopo de 30 minutos e o mesmo número de ferramentas, atividades e campos.
+
+### Ajustes pequenos aplicados
+
+1. A **captura do editor Sprite** era de uma interface antiga. Substituída pela captura oficial atual `https://wiki.gdevelop.io/gdevelop5/objects/sprite/adding_an_image_to_the_animation.png`, e o texto foi atualizado para mostrar corretamente `Add an animation → Add a sprite → PNG → Apply`.
+2. O campo **origem do asset** ainda citava Meshy, apesar de a modelagem por IA ter sido adiada à Missão 06. Essa indicação foi removida; exemplos agora incluem Gemini, Asset Store do GDevelop, 3D Box e desenho próprio.
+3. O aluno recebe orientação técnica curta para **nomes de objetos sem espaços**, com exemplos `Personagem` e `Caixa3D`, coerente com a documentação oficial do GDevelop.
+4. Os placeholders de nome do objeto, origem do recurso e resultado no Preview agora **acompanham a escolha entre Sprite 2D e Box 3D**, sem substituir respostas que já foram digitadas.
+
+### Validação
+
+33/33 verificações de regressão aprovadas, envolvendo sintaxe dos módulos, as quatro fases da apresentação docente, três fragmentos de prática, duração 5+5+18+2, tutorial de seis etapas, ateliê de duas alternativas, conteúdo dos novos exemplos, salvamento local, validação das evidências, recuperação após envio, isolamento por aluno e limite de 750 caracteres. Com campos máximos, a evidência gerada tem 742 caracteres e todas as linhas permanecem completas.
+
+**Pendente:** teste visual com navegador executando o front-end e ensaio de autenticação/envio/validação com uma turma real ou fictícia. O teste automatizado não comprova que a engine abre no laboratório, nem substitui a verificação das permissões, da conexão ou das condições das ferramentas gratuitas. Não exigir instalação ou downloads adicionais além dos que estiverem disponíveis no dia.
