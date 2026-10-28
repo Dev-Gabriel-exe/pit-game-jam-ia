@@ -72,3 +72,38 @@ Módulo `v3/teacher-mission-four-foundations.js` e `v3/teacher-mission-four-foun
 ### Pendente para M04-04
 
 Ainda faltam a auditoria professor/aluno lado a lado, a inspeção visual em Chrome/Android, o ensaio **real com API** de professor + aluno fictícios (liberação → envio → revisão → aprovação), verificação manual dos screenshots no laboratório e teste de execução do GDevelop. Os 59 testes citados são estáticos/funcionais em ambiente JavaScript simulado, **não testes E2E**.
+
+## M04-04 — Auditoria professor/aluno, entrega e avaliação — IMPLEMENTADA E VERIFICADA COM SIMULAÇÃO
+
+A Missão 04 passa a ter os **quatro momentos** do professor implementados com conteúdo próprio: conceitos (6 min), tutorial interativo (5 min), prática espelhada (36 min) e critérios de avaliação (3 min).
+
+### Correspondência pedagógica explícita
+
+| Caderno do aluno | Caderno do professor | Teste observável |
+|---|---|---|
+| Entrada usada | Fragmento 01, 12 min | Controle provoca mudança de estado no Preview |
+| Limite/obstáculo | Fragmento 02, 15 min | Parede bloqueia; plataforma sustenta; clique fora não ativa; física 3D impede atravessar |
+| Repetição + salvamento | Fragmento 03, 9 min | Teste negativo repetido e projeto editável recuperável |
+| Evidência do aluno | Rubrica na etapa Resultados | Campo comando, resposta, limite, reteste, arquivo salvo e diagnóstico opcional |
+
+As quatro alternativas (RPG, plataforma, puzzle/narrativa e 3D) mudam a implementação, sem acrescentar trabalho além dos 36 minutos. O professor tem no próprio material exemplos de falhas por rota, critério de aprovação e condição de revisão; **não há notas de fala**.
+
+### Ajustes de segurança e experiência aplicados
+
+- **API da turma:** `POST classroom/progress` usa um guard transacional no `ON CONFLICT ... WHERE` para não permitir que o aluno sobrescreva entregas **enviadas** ou **aprovadas**. Responde HTTP 409 em conflito. Depois de o professor solicitar revisão, o aluno pode corrigir e reenviar a mesma missão.
+- **Avaliação do professor:** solicitações de revisão exigem devolutiva objetiva de pelo menos 8 caracteres, tanto na interface como na API (HTTP 400 sem explicação).
+- **Privacidade de sala:** o `POST classroom/review` só atualiza estudantes da sala identificada pelo código `PITGAME26`, reforçando a validação por PIN.
+- **Painel de acompanhamento:** evidências multilinha são exibidas em `<pre>` com escape de HTML, quebra de linha e `white-space: pre-wrap`, facilitando a leitura de campos `Comando`, `Resposta`, `Limite`, `Repetição` e `Salvo em`.
+- **Sem falsa conquista:** XP/aprovação continuam dependentes da resposta do servidor, não da marcação das caixas de teste. O modo `?preview=1` impede qualquer envio real.
+
+### Testes executados
+
+1. **32/32 verificações técnicas de integração e apresentação**: JavaScript, CSS, professor e aluno, 12+15+9 minutos, rubrica de avaliação, quatro rotas de jogo, acessibilidade do seletor, formato da evidência, escopo do navegador e guardas da API.
+2. **14/14 cenários de API com PostgreSQL simulado**: bloqueio de etapa, liberação, submissão, imutabilidade da entrega, necessidade de devolutiva, isolamento de sala, revisão, reenvio, aprovação e proteção de trabalhos aprovados.
+3. **28/28 asserções do script de regressão persistente** `qa/v3-m04-regression.cjs` executadas em um ambiente JavaScript com módulos nativos simulados; os códigos JS reais foram carregados diretamente do GitHub. O script foi versionado e pode ser executado em uma cópia local com `node qa/v3-m04-regression.cjs` (não foi executado com Node diretamente nesta rodada).
+
+### O que ainda não foi comprovado
+
+Não houve teste em navegador real com captura visual, instância real do GDevelop, contas reais ou fictícias no banco Neon/Vercel, nem Playwright conectado ao front-end completo. O ambiente de execução local não conseguiu acessar o GitHub para clonar a branch, portanto os testes usaram arquivos obtidos pelo conector GitHub e um banco simulado. Esse trabalho permanece **pendente** para a etapa `FUN` da auditoria funcional, e não deve ser apresentado como E2E homologado.
+
+**Condição de conclusão da meta M04-04:** os roteiros e estados foram integrados, as falhas de sobrescrita e devolutiva foram corrigidas e os testes disponíveis passaram. Isso não equivale à homologação da oficina inteira.
