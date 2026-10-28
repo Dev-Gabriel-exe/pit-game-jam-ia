@@ -35,7 +35,7 @@ function elem(x={}){return {listeners:{},attrs:{},tabIndex:0,classList:{classes:
 const tabs=Array.from({length:3},()=>elem()),panel=elem(),cards=Array.from({length:3},()=>elem());
 const scope={querySelector:s=>s==='#t5vPanel'?panel:null,querySelectorAll:s=>s==='[data-t5v-tab]'?tabs:s==='[data-t5v-reveal]'?cards:[],classList:{add(){}}};
 vm.runInNewContext(teacherSrc,{window,document:{querySelector:s=>s==='.t5v-root'?scope:null}});
-T.mount();
+window.PIT_TEACHER_MISSION_FIVE_VALIDATION.mount();
 tabs[1].click();ok(panel.innerHTML.includes('Acertou=0'),'puzzle route switching');
 tabs[1].listeners.keydown({key:'End',preventDefault(){}});
 ok(tabs[2].focused&&panel.innerHTML.includes('Physics 3D'),'keyboard selects 3D route');
