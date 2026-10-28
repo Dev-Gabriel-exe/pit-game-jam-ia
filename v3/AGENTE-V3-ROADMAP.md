@@ -8,7 +8,7 @@ Concluir as Missões **04 a 10** nos dois cadernos; auditar **as dez**; reconstr
 
 ## Agendamento real e unidade de execução
 
-O usuário solicitou um ciclo **a cada 30 minutos**. O agendador nativo de tarefas do ChatGPT atualmente permite **no máximo 1 execução por hora**. Portanto, **ainda não há execução automática configurada**. Este arquivo define **microtarefas para blocos de trabalho de aproximadamente 30 minutos**; caso seja autorizado um agendamento horário, cada rodada fará um objetivo real, validará, registrará e terminará. Não fingir que existe cron a cada 30 minutos; não iniciar serviço/assinatura paga.
+O usuário concordou com o agendamento **a cada 1 hora**. A tarefa nativa recorrente **Agente Game Jam V3** foi criada e ativada, com fuso `America/Fortaleza`. A execução manual inicial já foi iniciada em 27/10/2026; cada rodada automática futura deverá ler o checkpoint do GitHub antes de trabalhar. As metas são microtarefas de engenharia, **não promessas de conclusão em 30 minutos**. Não criar outra automação, não duplicar tarefas ou iniciar serviço/assinatura paga.
 
 ## Fonte de verdade e regras de continuidade
 
