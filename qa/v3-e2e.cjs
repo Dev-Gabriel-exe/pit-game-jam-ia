@@ -112,6 +112,16 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.locator('#workspace:visible').waitFor();
  await closeArcade(sp);
  assert.match(await sp.locator('.stage-btn[data-stage="1"]').innerText(),/CONCLUÍDA/i);
+ await sp.locator('#openGallery').click();
+ await sp.locator('#missionGallery.open').waitFor();
+ assert.equal(await sp.locator('#arcadeProgress').getAttribute('aria-valuenow'),'1','gallery counts only backend-approved missions');
+ assert.match(await sp.locator('#arcadeProgressLabel').innerText(),/1 de 10 missões aprovadas/,'gallery approved count is synchronized');
+ assert.equal(await sp.locator('#arcadeProgressLabel').getAttribute('aria-live'),'polite','progress is announced accessibly');
+ assert.equal(await sp.locator('#arcadeEnter').isDisabled(),false,'approved mission remains revisitable');
+ await sp.locator('#missionGalleryClose').click();
+ await sp.locator('#missionGallery.open').waitFor({state:'hidden'});
+ console.log('PASS UI-03: approved progress, aria value and gallery state reflect fake backend');
+
  await tp.locator('#rosterClose').click();
  await tp.locator('#navSecondary').click();
  assert.equal(store.stage,2,'teacher opens stage 2 for the group');
