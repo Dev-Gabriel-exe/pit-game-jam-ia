@@ -114,6 +114,22 @@ async function build(){
     {type:{value:'SetBooleanVariable'},parameters:['PIT_Victory','True','']}
    ]
   });
+  // Visible, authored victory banner; initially hidden and revealed by the
+  // same native event that grants victory. Uses an official GDevelop Text schema.
+  const textTemplate=scene.objects.find(o=>o.type==='TextObject::Text');
+  if(textTemplate){
+   const banner=clone(textTemplate);
+   banner.name='PIT_VictoryBanner';banner.persistentUuid=newId();
+   banner.content.string='MISSÃO CONCLUÍDA';
+   const bannerInstance=clone(scene.instances.find(x=>x.name===textTemplate.name));
+   bannerInstance.name=banner.name;bannerInstance.persistentUuid=newId();
+   bannerInstance.x=300;bannerInstance.y=160;bannerInstance.zOrder=1000;
+   scene.objects.push(banner);scene.instances.push(bannerInstance);
+   scene.events.unshift({type:'BuiltinCommonInstructions::Standard',conditions:[],actions:[
+    {type:{value:'Hide'},parameters:[banner.name,'']}
+   ]});
+   scene.events[scene.events.length-1].actions.push({type:{value:'Show'},parameters:[banner.name,'']});
+  }
   project.tests.push({
    name:'PIT WIN — victory gated by a real GDevelop event',
    description:'Negative, positive and persistence cases for a conditional scene victory variable.',
