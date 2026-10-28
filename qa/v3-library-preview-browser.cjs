@@ -25,7 +25,7 @@ const {chromium}=require('playwright');
    }
    // Verify real browser downloads from the visible library buttons, not only Blob APIs.
    if(width===390){
-    for(const id of ['explorador','glb-cristal','som-moeda']){
+    for(const id of ['explorador','glb-cristal','wav-coleta']){
      const asset=await page.evaluate(id=>window.PIT_LIBRARY_API.assets.find(a=>a.id===id),id);
      assert(asset,'download smoke test asset exists '+id);
      const button=page.locator('[data-asset="'+id+'"]');
