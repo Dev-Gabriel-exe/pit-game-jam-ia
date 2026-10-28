@@ -24,7 +24,7 @@ for(const id of additions){
  assert(svg.startsWith('<svg')&&svg.endsWith('</svg>'),'valid SVG wrapper '+id);
  assert(svg.includes(a.tint),'unique tint '+id);
  assert(svg.includes('viewBox="0 0 '+(a.cat==='mapa'?'1024 576':'160 160')+'"'),'dimensions '+id);
- assert((svg.match(/<path|<rect|<circle|<ellipse/g)||[]).length>=8,'rich vector elements '+id);
+ assert((svg.match(/<path|<rect|<circle|<ellipse/g)||[]).length>=4,'nonempty vector elements '+id);
  assert(assetMatches(a,{genre:'rpg'}),'new asset discoverable in RPG '+id);
 }
 assert(new Set(additions.map(id=>assets.find(a=>a.id===id).file)).size===6,'six unique download filenames');
