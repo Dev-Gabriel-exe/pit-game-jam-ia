@@ -31,3 +31,35 @@
  --pit-motion-reveal:380ms;
  --pit-shadow-modal:0 20px 70px #000d;
 }
+
+/* ART-01 · Shared semantic layers. Existing M01–M03 content remains unchanged. */
+:root{
+ --pit-surface:#14171b;
+ --pit-surface-raised:#202126;
+ --pit-text-muted:#c5b8a8;
+ --pit-divider:#705844;
+ --pit-motion-ease:cubic-bezier(.2,.7,.2,1);
+ --pit-motion-slow:620ms;
+ --pit-shadow-card:0 10px 32px #0009;
+}
+::selection{background:var(--pit-bronze);color:var(--pit-abyss)}
+.shell .panel{border-radius:var(--pit-radius-md)}
+.shell .main-content{scrollbar-color:var(--pit-bronze) var(--pit-abyss)}
+.pit-art-panel{
+ position:relative;isolation:isolate;
+ background:linear-gradient(155deg,var(--pit-surface-raised),var(--pit-abyss));
+ border:1px solid var(--pit-divider);border-radius:var(--pit-radius-lg);
+ box-shadow:var(--pit-shadow-card);color:var(--pit-paper);
+}
+.pit-art-panel:focus-within{border-color:var(--pit-gold)}
+.pit-art-eyebrow{font:700 .78rem/1.4 var(--pit-font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--pit-gold)}
+.pit-art-title{font-family:var(--pit-font-display);font-weight:700;line-height:1.15;color:var(--pit-paper)}
+.pit-art-muted{color:var(--pit-text-muted)}
+.pit-art-state{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--pit-divider);border-radius:var(--pit-radius-sm);font:700 .8rem/1.3 var(--pit-font-ui)}
+.pit-art-state[data-status="approved"]{color:var(--pit-success);border-color:var(--pit-success)}
+.pit-art-state[data-status="revision"]{color:var(--pit-gold);border-color:var(--pit-bronze)}
+.pit-art-state[data-status="blocked"]{color:var(--pit-danger);border-color:var(--pit-danger)}
+.pit-art-reveal{animation:pit-art-reveal var(--pit-motion-reveal) var(--pit-motion-ease) both}
+@keyframes pit-art-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.pit-art-reveal{animation:none!important}}
+@media(prefers-contrast:more){.pit-art-panel{border-width:2px}.pit-art-muted{color:var(--pit-paper)}}
