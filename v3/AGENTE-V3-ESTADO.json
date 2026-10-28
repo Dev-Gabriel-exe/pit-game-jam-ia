@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09-03",
+  "priority": "M10-01",
   "current_phase": "MISSOES",
-  "last_task": "M09-02",
+  "last_task": "M09-03",
   "completed_count": 20,
   "total_tasks": 59,
   "tasks": [
@@ -406,11 +406,15 @@
       "description": "Alunos aplicam uma correção pequena ou justificam backlog; professor acompanha e revisa sem avaliações falsas",
       "group": "M09",
       "position": 24,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "blocked",
+      "updated_at": "2026-10-28T03:24:16.218Z",
+      "commit": "86697c3a435f553edb4a667b9bb509b61d08df7a",
+      "tests": [
+        "12/12 V8 source/integration checks executed: student resolution fixed/backlog, evidence roundtrip, teacher review rubric, module wiring",
+        "GitHub Actions static QA passes on recent feature commits; browser E2E under repair (obsolete selectors updated, latest run pending)",
+        "No actual peer playtest, GDevelop retest or backend review performed"
+      ],
+      "blocker": "Full acceptance requires real peer test in isolated classroom and professor observing correction/backlog and backend review; current environment has no authorized test classroom/GDevelop session. Browser CI is being repaired, not evidence of peer testing."
     },
     {
       "id": "M10-01",
@@ -1168,6 +1172,21 @@
       ],
       "tests": "19/19 V8 static and simulated student state checks passed",
       "notes": "Student records peer observation, reproducible steps and fix/backlog; no invented outcomes."
+    },
+    {
+      "id": "M09-03",
+      "completed_at": "2026-10-28T03:24:16.218Z",
+      "commit": "86697c3a435f553edb4a667b9bb509b61d08df7a",
+      "files": [
+        "v3/student-mission-nine.js",
+        "v3/teacher-mission-nine-validation.js",
+        "v3/teacher-mission-nine-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-e2e.cjs"
+      ],
+      "tests": "12/12 V8 checks passed; real playtest/backend not executed",
+      "notes": "Resolution fixed/backlog and professor rubric implemented; blocked pending real peer test and E2E."
     }
   ]
 }
