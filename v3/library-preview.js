@@ -58,13 +58,18 @@ function readGlb(buffer){
   if(a.componentType!==component||view.byteStride)throw Error('Formato GLB não suportado na prévia');
   const offset=binStart+(view.byteOffset||0)+(a.byteOffset||0);
   const bytes=component===5126?12:2;
-  if(!Number.isInteger(a.count)||a.count<1||offset<binStart||offset+a.count*bytes>binStart+binaryLength)throw Error('Acessor GLB fora dos limites');
+  if(!Number.isInteger(a.count)||a.count<1||offset<binStart||offset+a.count*bytes>binStart+binaryLength||offset+a.count*bytes>binStart+(view.byteOffset||0)+view.byteLength)throw Error('Acessor GLB fora dos limites');
   return {offset,count:a.count};
  }
  const p=accessor(prim.attributes.POSITION,5126),i=accessor(prim.indices,5123);
+ if(i.count%3!==0||p.count>100000||i.count>300000)throw Error('Geometria GLB inválida ou excessiva');
  const vertices=[],triangles=[];
  for(let n=0;n<p.count;n++)vertices.push([v.getFloat32(p.offset+n*12,true),v.getFloat32(p.offset+n*12+4,true),v.getFloat32(p.offset+n*12+8,true)]);
- for(let n=0;n<i.count;n+=3)triangles.push([v.getUint16(i.offset+n*2,true),v.getUint16(i.offset+(n+1)*2,true),v.getUint16(i.offset+(n+2)*2,true)]);
+ for(let n=0;n<i.count;n+=3){
+  const tri=[v.getUint16(i.offset+n*2,true),v.getUint16(i.offset+(n+1)*2,true),v.getUint16(i.offset+(n+2)*2,true)];
+  if(tri.some(index=>index>=p.count))throw Error('Índice GLB fora da malha');
+  triangles.push(tri);
+ }
  if(!vertices.length||!triangles.length)throw Error('GLB vazio');
  return {vertices,triangles};
 }
