@@ -1,0 +1,18 @@
+/* M06-03 · Laboratório autoral de prompts e importação */
+.f6t-root{padding:clamp(15px,3vw,34px);background:#101821;color:#f1dfc8;font:15px/1.6 Arial,sans-serif;border:1px solid #8a6248}
+.f6t-root *{box-sizing:border-box}.f6t-root h2,.f6t-root h3{font-family:Georgia,serif;color:#ffdfb7}
+.f6t-root header{background:linear-gradient(115deg,#312027,#192b34);border-left:4px solid #dba56c;padding:22px}
+.f6t-root header small{color:#f5bf82;letter-spacing:.12em;font-weight:bold}.f6t-root h2{font-size:clamp(25px,3vw,37px);margin:9px 0}
+.f6t-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin:20px 0}
+.f6t-form label,.f6t-prompt label{font-weight:bold;display:flex;flex-direction:column;gap:6px}
+.f6t-root input,.f6t-root select,.f6t-root textarea{background:#172630;color:#fff2df;border:1px solid #b08b69;padding:12px;font:inherit;width:100%;min-width:0}
+.f6t-prompt{padding:16px;border:1px solid #a77d58;background:#1e2830}
+.f6t-prompt textarea{resize:vertical;margin:8px 0 10px}
+.f6t-prompt button{border:1px solid #f3ce92;background:#71502e;color:#fff8e7;padding:12px 20px;cursor:pointer;font-weight:bold}
+.f6t-prompt span{display:block;margin-top:9px;color:#b7ebc7}
+.f6t-route{margin-top:18px;padding:20px;border:1px solid #806b56;background:#1a2730}
+.f6t-route[hidden]{display:none}.f6t-route h3{font-size:24px}.f6t-route li{margin:9px 0}
+.f6t-route p{background:#254033;padding:12px;border-left:3px solid #85d4ad}
+.f6t-root footer{margin-top:20px;border-top:1px solid #967352;padding-top:15px}.f6t-root a{color:#a5ddff}
+.f6t-root :is(input,select,textarea,button,a):focus-visible{outline:3px solid #ffdb7d;outline-offset:3px}
+@media(max-width:600px){.f6t-root header{padding:14px}.f6t-form{grid-template-columns:1fr}}
