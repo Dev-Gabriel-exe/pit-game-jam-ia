@@ -31,3 +31,140 @@ body.pit-projecting{overflow:hidden!important}
 @keyframes pitTextRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes pitImageReveal{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){#pitProjector *,#pitProjector *::before,#pitProjector *::after{animation:none!important;transition:none!important}}
+
+
+/* M01 pilot — one continuous 20-minute lesson; no professor dashboard in projection. */
+#pitProjector.pit-projector-m01{font-family:"Segoe UI",Arial,sans-serif;background:radial-gradient(ellipse at 76% -15%,#462c2166,transparent 55%),#090c11}
+#pitProjector.pit-projector-m01 .pit-projector-top{padding:10px 3.5vw;min-height:75px;background:#111016f2;border-bottom:1px solid #684a35}
+#pitProjector.pit-projector-m01 .pit-projector-top small{font:800 clamp(11px,.95vw,16px)/1.2 "Segoe UI",sans-serif;letter-spacing:.075em;color:#eab675}
+#pitProjector.pit-projector-m01 .pit-projector-top h1{font:750 clamp(24px,2.35vw,39px)/1.12 "Segoe UI",sans-serif;letter-spacing:-.02em;color:#fff5e5;margin:5px 0 0}
+#pitProjector.pit-projector-m01 .pit-projector-top button{font-size:13px;padding:10px 14px}
+#pitProjector.pit-projector-m01 .pit-projector-footer{padding:9px 3.5vw;gap:18px;min-height:65px;background:#111016f2}
+#pitProjector.pit-projector-m01 .pit-projector-footer button{font-size:16px;padding:10px 19px}
+#pitProjector.pit-projector-m01 .pit-projector-slide{padding:14px 4vw;overflow:hidden;align-items:stretch;justify-content:stretch;min-height:0}
+#pitProjector.pit-projector-m01 .pit-projector-slide .pit-projector-card{display:flex;flex:1;flex-direction:column;min-height:0;max-height:100%;width:100%;max-width:1400px;margin:auto;overflow:hidden;font:inherit}
+#pitProjector.pit-projector-m01 .pit-m01-deck{width:100%;height:100%;max-height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:clamp(10px,1.5vh,19px);margin:0 auto;color:#f6eddf}
+#pitProjector.pit-projector-m01 .pit-m01-deck [data-reveal]{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}
+#pitProjector.pit-projector-m01 .pit-m01-deck h2{font:780 clamp(35px,3.5vw,56px)/1.1 Georgia,serif;letter-spacing:-.015em;margin:0;color:#ffe4b9}
+#pitProjector.pit-projector-m01 .pit-m01-deck h3{font:750 clamp(25px,2.15vw,35px)/1.18 "Segoe UI",Arial,sans-serif;margin:0 0 8px;color:#ffe1b1}
+#pitProjector.pit-projector-m01 .pit-m01-deck p,#pitProjector.pit-projector-m01 .pit-m01-deck li{font:450 clamp(20px,1.65vw,28px)/1.36 "Segoe UI",Arial,sans-serif;margin:0;color:#f2e6d9}
+#pitProjector.pit-projector-m01 .pit-m01-kicker{font:850 clamp(15px,1.2vw,20px)/1.3 "Segoe UI",Arial,sans-serif;letter-spacing:.12em;color:#e7a764;text-transform:uppercase}
+#pitProjector.pit-projector-m01 .pit-m01-lead{font-size:clamp(21px,1.7vw,29px);max-width:1300px}
+#pitProjector.pit-projector-m01 .pit-m01-cover{display:grid;grid-template-columns:1.5fr .65fr;align-items:center;gap:30px}
+#pitProjector.pit-projector-m01 .pit-m01-cover h2{font-size:clamp(46px,5vw,76px);margin:0 0 28px}
+#pitProjector.pit-projector-m01 .pit-m01-cover p{font-size:clamp(25px,2.15vw,35px)}
+#pitProjector.pit-projector-m01 .pit-m01-cover-art{min-height:290px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;border:1px solid #775234;border-radius:22px;background:radial-gradient(circle,#4f2b25,#120f15 73%);text-align:center}
+#pitProjector.pit-projector-m01 .pit-m01-cover-art span{font:90px Georgia,serif;color:#d9aa68}
+#pitProjector.pit-projector-m01 .pit-m01-cover-art strong{font:850 20px/1.65 "Segoe UI",sans-serif;letter-spacing:.15em;color:#e9c99c}
+#pitProjector.pit-projector-m01 .pit-m01-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+#pitProjector.pit-projector-m01 .pit-m01-chips span{padding:11px 16px;border:1px solid #997044;border-radius:999px;font:750 clamp(16px,1.15vw,20px) "Segoe UI",sans-serif;color:#f2d3a8;background:#211b19}
+#pitProjector.pit-projector-m01 .pit-m01-flow{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:10px 0}
+#pitProjector.pit-projector-m01 .pit-m01-flow span{flex:1;text-align:center;padding:20px 8px;border:1px solid #9e7447;border-radius:10px;font:800 clamp(17px,1.4vw,23px) "Segoe UI",sans-serif;background:#34231c}
+#pitProjector.pit-projector-m01 .pit-m01-flow b{color:#efbd72;font-size:28px}
+#pitProjector.pit-projector-m01 .pit-m01-pane{padding:clamp(16px,2vw,28px);border:1px solid #72533d;border-radius:12px;background:#1b1c21}
+#pitProjector.pit-projector-m01 .pit-m01-concept{display:grid;grid-template-columns:1.35fr .88fr;gap:18px;align-items:stretch}
+#pitProjector.pit-projector-m01 .pit-m01-explanation{border:1px solid #745036;border-radius:13px;padding:clamp(22px,2vw,38px);background:#17191e;display:flex;align-items:center}
+#pitProjector.pit-projector-m01 .pit-m01-explanation p{font-size:clamp(23px,1.92vw,32px);line-height:1.44}
+#pitProjector.pit-projector-m01 .pit-m01-example{padding:clamp(20px,2vw,32px);background:#35241c;border:1px solid #a1724b;border-radius:13px}
+#pitProjector.pit-projector-m01 .pit-m01-example span,#pitProjector.pit-projector-m01 .pit-m01-field span{display:block;font:850 clamp(16px,1.25vw,21px) "Segoe UI",sans-serif;color:#f5b671;letter-spacing:.075em;margin-bottom:14px}
+#pitProjector.pit-projector-m01 .pit-m01-example p{font-size:clamp(22px,1.8vw,30px)}
+#pitProjector.pit-projector-m01 .pit-m01-snippet{grid-column:1/-1;border:1px solid #5b7378;border-radius:9px;padding:16px 25px;background:#10191d;color:#d5f4ee}
+#pitProjector.pit-projector-m01 .pit-m01-snippet code{font:650 clamp(18px,1.6vw,27px)/1.4 Consolas,monospace;white-space:normal;color:inherit}
+#pitProjector.pit-projector-m01 .pit-m01-pseudocode{white-space:pre-wrap;overflow:hidden;overflow-wrap:anywhere;font:600 clamp(20px,1.57vw,27px)/1.52 Consolas,monospace;color:#cbf1e5;background:#10191d;border:1px solid #597a74;border-radius:12px;padding:clamp(16px,2vw,32px);margin:0}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-switch-head{display:flex;justify-content:space-between;gap:20px;align-items:center}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-switch-head h4{font:750 clamp(23px,2.2vw,34px) "Segoe UI",sans-serif;margin:4px 0}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-switch-controls{display:flex;gap:10px}
+#pitProjector.pit-projector-m01 .pit-m01-genres button{padding:12px 24px;background:#29232a;border:1px solid #a27952;font-size:20px}
+#pitProjector.pit-projector-m01 .pit-m01-genres button[aria-pressed=true]{background:#75452d;color:#fff2d8}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-case-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-case-grid>div{min-height:130px;padding:24px;border:1px solid #645246;border-radius:10px;background:#1c1b1e}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-case-grid small{display:block;font:800 19px "Segoe UI",sans-serif;color:#d5a16e}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-case-grid strong{display:block;margin-top:14px;font:700 clamp(20px,1.7vw,27px)/1.26 "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-genres .tm-pro-case-code{padding:20px;border-radius:9px;background:#10191d;color:#dbf3e8;font:600 clamp(19px,1.5vw,24px) Consolas,monospace}
+#pitProjector.pit-projector-m01 .pit-m01-caption,#pitProjector.pit-projector-m01 .pit-m01-hint{font-size:clamp(17px,1.18vw,21px);color:#d5c7b2;line-height:1.3}
+#pitProjector.pit-projector-m01 .pit-m01-sim-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:16px;align-items:stretch}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-stage,#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-debugger{min-width:0;max-width:none;padding:12px;border:1px solid #826047;border-radius:12px;background:#191a1d;display:flex;flex-direction:column;gap:7px}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-stage-label{font:850 clamp(14px,1vw,19px) "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-game-scene{height:clamp(125px,21vh,230px);min-height:0;margin:0;border-radius:7px;flex:none}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-game-player,#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-game-crystal,#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-game-door{font-size:clamp(26px,3vw,45px)}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-stats>div{min-width:0;padding:6px;background:#251d18;border-radius:6px;text-align:center}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-stats small{display:block;font:800 14px "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-stats strong{font:800 clamp(18px,1.6vw,26px) "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-game-controls{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:0}
+#pitProjector.pit-projector-m01 .pit-m01-sim button{font:800 clamp(13px,1vw,17px) "Segoe UI",sans-serif;padding:10px 12px;min-height:43px}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-debug-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-debug-head strong{font-size:clamp(18px,1.5vw,26px)}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-debug-head span{font-size:14px}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-dbg-message{font:500 clamp(17px,1.24vw,22px)/1.35 "Segoe UI",sans-serif;padding:11px}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-rule-stack{display:flex;flex-direction:column;gap:5px;margin:0}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-rule-stack>div{padding:7px 11px}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-rule-stack span{font:800 14px "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-rule-stack code{font:550 clamp(14px,1vw,18px) Consolas,monospace}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-trace{padding:6px 10px;min-height:0}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-trace>span{font:800 14px "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-trace ol{margin:5px 0 0;padding-left:23px;max-height:62px;overflow:hidden}
+#pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-trace li{font:450 15px/1.35 "Segoe UI",sans-serif}
+#pitProjector.pit-projector-m01 .pit-m01-testing{padding:14px;border-radius:12px;border:1px solid #75583a;background:#1c1c20;display:flex;flex-direction:column;gap:13px}
+#pitProjector.pit-projector-m01 .pit-m01-testing .pit-m01-pane{padding:11px;border:none;background:transparent}
+#pitProjector.pit-projector-m01 .pit-m01-testing .pit-m01-pane p{font-size:clamp(18px,1.3vw,22px)}
+#pitProjector.pit-projector-m01 .pit-m01-testing .tm-pro-tests{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#pitProjector.pit-projector-m01 .pit-m01-testing .tm-pro-test-result{font:700 clamp(18px,1.25vw,22px)/1.4 "Segoe UI",sans-serif;padding:15px;border-radius:8px;background:#0f2224}
+#pitProjector.pit-projector-m01 .pit-m01-guide{display:grid;grid-template-columns:45% minmax(0,1fr);gap:20px;min-height:0;align-items:stretch}
+#pitProjector.pit-projector-m01 .pit-m01-guide-image{padding:12px;border-radius:12px;background:#161b20;border:1px solid #546273;display:flex;flex-direction:column;gap:10px;justify-content:center;min-height:0}
+#pitProjector.pit-projector-m01 .pit-m01-image-label{font:800 15px "Segoe UI",sans-serif;letter-spacing:.07em;color:#f0bb7d}
+#pitProjector.pit-projector-m01 .pit-m01-guide img{width:100%;height:auto;max-height:min(43vh,355px);object-fit:contain;border-radius:6px}
+#pitProjector.pit-projector-m01 .pit-m01-guide-content{display:flex;flex-direction:column;gap:8px;justify-content:center}
+#pitProjector.pit-projector-m01 .pit-m01-guide-content .pit-m01-lead{font-size:clamp(18px,1.37vw,23px);line-height:1.28}
+#pitProjector.pit-projector-m01 .pit-m01-guide-step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;padding:9px 13px;background:#1c1d21;border:1px solid #55483b;border-radius:8px}
+#pitProjector.pit-projector-m01 .pit-m01-guide-step>span{font:800 23px Georgia,serif;color:#e5ab66}
+#pitProjector.pit-projector-m01 .pit-m01-guide-step strong{font:850 clamp(16px,1.12vw,19px) "Segoe UI",sans-serif;color:#f5d4ad}
+#pitProjector.pit-projector-m01 .pit-m01-guide-step p{font-size:clamp(17px,1.27vw,21px);line-height:1.25;margin-top:3px}
+#pitProjector.pit-projector-m01 .pit-m01-two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+#pitProjector.pit-projector-m01 .pit-m01-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+#pitProjector.pit-projector-m01 .pit-m01-field{display:flex;gap:16px;align-items:start;padding:20px 24px;border:1px solid #735239;border-radius:10px;background:#1c1b1e}
+#pitProjector.pit-projector-m01 .pit-m01-field b{font:750 29px Georgia,serif;color:#edb974}
+#pitProjector.pit-projector-m01 .pit-m01-field span{margin-bottom:5px}
+#pitProjector.pit-projector-m01 .pit-m01-field strong{font:760 clamp(22px,1.75vw,29px) "Segoe UI",sans-serif;color:#fff0d6}
+#pitProjector.pit-projector-m01 .pit-m01-field p{font-size:clamp(17px,1.25vw,21px);margin-top:8px}
+#pitProjector.pit-projector-m01 .pit-m01-steps{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+#pitProjector.pit-projector-m01 .pit-m01-action{display:flex;gap:17px;padding:19px 23px;background:#1c1f23;border:1px solid #85623f;border-radius:10px}
+#pitProjector.pit-projector-m01 .pit-m01-action b{font:800 30px Georgia,serif;color:#f4b86c}
+#pitProjector.pit-projector-m01 .pit-m01-action strong{font:850 21px "Segoe UI",sans-serif;color:#f6c88d}
+#pitProjector.pit-projector-m01 .pit-m01-action p{font-size:clamp(18px,1.35vw,23px);margin-top:8px}
+#pitProjector.pit-projector-m01 .pit-m01-compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+#pitProjector.pit-projector-m01 .pit-m01-compare>div{padding:26px;border:1px solid #7d533d;border-radius:12px;background:#291c1d}
+#pitProjector.pit-projector-m01 .pit-m01-compare>div+div{border-color:#64886a;background:#1b2a24}
+#pitProjector.pit-projector-m01 .pit-m01-compare span{font:850 19px "Segoe UI",sans-serif;color:#f6bb74}
+#pitProjector.pit-projector-m01 .pit-m01-compare h3{margin:18px 0}
+#pitProjector.pit-projector-m01 .pit-m01-evaluation{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+#pitProjector.pit-projector-m01 .pit-m01-evaluation>div{padding:25px 20px;background:#1c1f22;border:1px solid #87623e;border-radius:11px}
+#pitProjector.pit-projector-m01 .pit-m01-evaluation b{font:800 42px Georgia,serif;color:#e6a860}
+#pitProjector.pit-projector-m01 .pit-m01-evaluation span{display:block;font:850 18px "Segoe UI",sans-serif;color:#dba66a;margin:18px 0 13px}
+#pitProjector.pit-projector-m01 .pit-m01-evaluation h3{font-size:clamp(21px,1.65vw,28px)}
+#pitProjector.pit-projector-m01 .pit-m01-evaluation p{font-size:clamp(19px,1.38vw,23px)}
+#pitProjector.pit-projector-m01 .pit-m01-finale{text-align:center;max-width:940px;margin:auto}
+#pitProjector.pit-projector-m01 .pit-m01-finale h2{margin:16px 0}
+#pitProjector.pit-projector-m01 .pit-m01-mark{font-size:70px;color:#dbaa67}
+#pitProjector.pit-projector-m01 .pit-m01-finale .pit-m01-chips{justify-content:center}
+@media(max-height:780px) and (min-width:900px){
+ #pitProjector.pit-projector-m01 .pit-projector-top{min-height:64px;padding:7px 3vw}
+ #pitProjector.pit-projector-m01 .pit-projector-top h1{font-size:27px}
+ #pitProjector.pit-projector-m01 .pit-projector-footer{min-height:52px;padding:5px 3vw}
+ #pitProjector.pit-projector-m01 .pit-projector-slide{padding:8px 3vw}
+ #pitProjector.pit-projector-m01 .pit-m01-deck{gap:7px}
+ #pitProjector.pit-projector-m01 .pit-m01-guide img{max-height:40vh}
+ #pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-game-scene{height:19vh}
+ #pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-trace{display:none}
+ #pitProjector.pit-projector-m01 .pit-m01-sim .tm-pro-rule-stack>div{padding:5px}
+ #pitProjector.pit-projector-m01 .pit-m01-cover-art{min-height:205px}
+}
+@media(max-width:900px){
+ #pitProjector.pit-projector-m01 .pit-projector-slide{overflow:auto}
+ #pitProjector.pit-projector-m01 .pit-projector-slide .pit-projector-card{max-height:none;overflow:visible}
+ #pitProjector.pit-projector-m01 .pit-m01-deck{height:auto;max-height:none}
+ #pitProjector.pit-projector-m01 .pit-m01-cover,#pitProjector.pit-projector-m01 .pit-m01-sim-grid,#pitProjector.pit-projector-m01 .pit-m01-guide,#pitProjector.pit-projector-m01 .pit-m01-concept,#pitProjector.pit-projector-m01 .pit-m01-two{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-m01-evaluation,#pitProjector.pit-projector-m01 .pit-m01-fields,#pitProjector.pit-projector-m01 .pit-m01-steps,#pitProjector.pit-projector-m01 .pit-m01-compare{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-m01-flow{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){#pitProjector.pit-projector-m01 *{animation:none!important;transition:none!important}}
