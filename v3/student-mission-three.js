@@ -5,8 +5,8 @@
 const FIELDS=[
  {key:'project',max:70,min:3,label:'Nome real do projeto no GDevelop',hint:'Nome que aparece na lista de projetos; deve permitir reencontrar o arquivo.'},
  {key:'scene',max:65,min:3,label:'Nome da cena inicial',hint:'Confira o nome da cena aberta no gerenciador.'},
- {key:'object',max:65,min:2,label:'Nome do primeiro objeto',hint:'O nome que você deu no painel Objects, não apenas o nome da imagem.'},
- {key:'source',max:75,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Meshy + GLB, GDevelop Asset Store ou desenho próprio. Informe a origem verdadeira.'},
+ {key:'object',max:65,min:2,label:'Nome do primeiro objeto',hint:'Confira o nome na lista Objects. Use letras, números ou _ sem espaços; ex.: Personagem, Caixa3D.'},
+ {key:'source',max:75,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Asset Store do GDevelop, 3D Box nativo ou desenho próprio. Registre a origem real.'},
  {key:'preview',max:180,min:15,label:'O que apareceu quando abriu o Preview?',hint:'Descreva o que você viu na execução, inclusive se precisou corrigir algo.'},
  {key:'saved',max:105,min:6,label:'Onde o projeto foi salvo?',hint:'Informe se foi em arquivo/pasta local ou na nuvem, com nome ou caminho que consiga localizar.'},
  {key:'fix',max:105,min:0,label:'Qual problema apareceu e como resolveu? (opcional)',hint:'Se não houve falha, deixe em branco ou explique uma escolha que fez.'}
@@ -89,9 +89,18 @@ function intro(ctx){
   ['03','EXECUTAR','Preview visível e arquivo salvo']
  ].map(([n,a,b])=>'<article><span>'+n+' · '+a+'</span><p>'+b+'</p></article>').join('')+'</div></div>';
 }
+function exampleFor(key,idea,type){
+ const use3D=type==='3D Box/Modelo';
+ const hint={project:idea.title,scene:idea.scene,
+  object:use3D?'Caixa3D':idea.item,
+  source:use3D?'3D Box nativo do GDevelop':'Imagem PNG feita no Gemini ou Asset Store do GDevelop',
+  preview:use3D?'O Preview mostrou minha caixa 3D no centro da cena.':'O Preview mostrou o personagem parado na cena.',
+  saved:'Projeto salvo em Jogos/MeuProjeto ou na nuvem do GDevelop',
+  fix:'O objeto estava invisível; posicionei a instância dentro da cena.'};
+ return 'Ex.: '+(hint[key]||'');
+}
 function field(f,d,idea,locked){
- const hint={project:idea.title,scene:idea.scene,object:idea.item,source:'Gemini + PNG (ou GDevelop Asset Store / Kenney)',preview:'No Preview apareceu uma personagem no centro da cena, sem movimento.',saved:'Projeto salvo na pasta Jogos/MeuProjeto ou em GDevelop Cloud',fix:'O objeto não aparecia; arrastei uma instância para a cena.'};
- const placeholder='Ex.: '+hint[f.key];
+ const placeholder=exampleFor(f.key,idea,d.objectType);
  const attr='id="m3-'+f.key+'" data-m3-field="'+f.key+'" maxlength="'+f.max+'" placeholder="'+esc(placeholder)+'" '+(locked?'disabled':'')+' autocomplete="off"';
  const control=['preview','saved','fix'].includes(f.key)?'<textarea rows="'+(f.key==='preview'?3:2)+'" '+attr+'>'+esc(d[f.key])+'</textarea>':
   '<input type="text" '+attr+' value="'+esc(d[f.key])+'">';
@@ -178,6 +187,11 @@ function mount(ctx){
    const name=el.dataset.m3Preview;el.textContent=d[name]||'Ainda não registrado';
   });
   const type=root.querySelector('#m3SelectedType');if(type)type.textContent=d.objectType;
+  const idea=ideaOf(ctx);
+  for(const fieldKey of ['object','source','preview']){
+   const input=root.querySelector('#m3-'+fieldKey);
+   if(input)input.placeholder=exampleFor(fieldKey,idea,d.objectType);
+  }
   const note=root.querySelector('#m3Notice');if(note)note.textContent=filled+'/7 registros e verificações · rascunho salvo neste navegador';
  }
  root.querySelectorAll('[data-m3-field]').forEach(el=>el.addEventListener('input',()=>{
