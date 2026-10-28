@@ -2203,6 +2203,12 @@
       "task": "REL-01",
       "commit": "d3434c40e7759fc568a63374a46961c93022c905",
       "summary": "Browser QA failed in run 40688042939 on invalid PNG fallback test line 65 (timeout); static QA 40688043022 SUCCESS. Root cause: test attempted to mutate Object.freeze(PIT_LIBRARY_API), so corruption never reached preview. Corrected negative test to intercept URL.createObjectURL for image/png and serve malformed bytes; production PNG decode validation remains unchanged. New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "94caa500dfe6e6408a67275c2b195214f7e78f3c",
+      "summary": "Verified prior invalid-PNG fix Browser QA 40688815690 SUCCESS and static QA 40688815692 SUCCESS. Added GLB MIME validation in v3/library-preview.js (c76dea71) before mesh parsing, and browser negative test to inject text/plain GLB and assert visible fallback (94caa500). CI for new GLB test pending. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
     }
   ]
 }
