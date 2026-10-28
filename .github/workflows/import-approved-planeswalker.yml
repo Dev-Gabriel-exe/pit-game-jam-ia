@@ -1,0 +1,46 @@
+name: Import approved Pixabay hero
+on:
+  push:
+    branches: [feature/portal-planeswalker-video-20261028]
+    paths: ['qa/import-planeswalker.cjs', '.github/workflows/import-approved-planeswalker.yml']
+permissions:
+  contents: write
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Fetch user-selected Planeswalker from Pixabay
+        run: |
+          node qa/import-planeswalker.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('v3/assets/missions/portal-planeswalker-307687.mp4')
+          buf=p.read_bytes()
+          assert len(buf)>1_000_000 and buf[4:8]==b'ftyp', 'Not a valid MP4 response'
+          print('Validated MP4 magic header:',len(buf),'bytes')
+          PY
+      - name: Copy approved source and poster to preview branch
+        run: |
+          for size in large medium small tiny; do
+            if curl -L -f -sS --retry 2 "https://cdn.pixabay.com/video/2025/10/03/307687_${size}.jpg" -o v3/assets/missions/portal-planeswalker-307687.jpg; then
+              break
+            fi
+          done
+          test -s v3/assets/missions/portal-planeswalker-307687.jpg
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v3/assets/missions/portal-planeswalker-307687.mp4 v3/assets/missions/portal-planeswalker-307687.jpg
+          git commit -m "asset(portal): save approved Planeswalker HD video and poster"
+          git fetch origin feature/portal-planeswalker-video-20261028
+          git rebase origin/feature/portal-planeswalker-video-20261028
+          git push origin HEAD:feature/portal-planeswalker-video-20261028

@@ -44,12 +44,12 @@ body.pit-portal-gothic{position:relative;isolation:isolate;background:transparen
 .pit-portal-gothic .nav-links a{font:700 12px/1.4 var(--pit-portal-readable);letter-spacing:.045em;color:#f1d9c0}
 .pit-portal-gothic .nav-links a:hover{color:#ffd89b}
 .pit-portal-gothic .hero{min-height:clamp(580px,79vh,820px);background:#0b0b10;isolation:isolate;border-bottom:1px solid #8555397a;overflow:hidden}
-.pit-portal-gothic .hero::before{z-index:-1;background:url("./assets/missions/missao-01.webp") center 42%/cover no-repeat}
+.pit-portal-gothic .hero::before{z-index:-1;background:url("./assets/missions/portal-planeswalker-307687.jpg") center 42%/cover no-repeat}
 .pit-portal-gothic .hero::after{position:absolute;z-index:1;inset:0;pointer-events:none;content:"";background:
  linear-gradient(90deg,#07070bed 0%,#08080de0 27%,#0b0b11ad 51%,#09080c4c 78%,#09080bd0 100%),
  linear-gradient(180deg,#100b1166 0%,transparent 38%,#09090ded 98%),
  radial-gradient(circle at 83% 43%,transparent 8%,#110a103b 61%)}
-.pit-hero-media{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#111015 url("./assets/missions/missao-01.webp") 62% 46%/cover no-repeat}
+.pit-hero-media{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#111015 url("./assets/missions/portal-planeswalker-307687.jpg") 62% 46%/cover no-repeat}
 .pit-hero-media video{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;object-position:65% 45%;opacity:0;
  filter:brightness(.76) saturate(.8) contrast(1.12);transform:translate3d(var(--pit-video-x),var(--pit-video-y),0) scale(1.08);
  transition:opacity 1.15s ease;will-change:opacity,transform}
