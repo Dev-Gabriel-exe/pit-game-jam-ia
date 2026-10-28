@@ -2239,6 +2239,12 @@
       "task": "M06-05",
       "commit": "8b958dac9ad80c52033ff2efa7a737947d1b79a0",
       "summary": "Added practical GDevelop import guide for 36 PNG, 5 WAV, 5 GLB with student evidence, save/reopen checklist, 2D vs 3D limitations and explicit manual NOT_RUN. PNG alpha Browser QA 40692649696 and 40692663836 still running at last check; static QA succeeded. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "268a226edbfbd3b9f570ead93c6547f2c5ef5b5f",
+      "summary": "Investigated slow Browser QA: 40692649696 and 40692837359 still in progress during library preview; PNG/WAV codec and E2E earlier steps passed, static QA succeeded. Optimized exhaustive 46-asset signature, 36-PNG pixel and 10-media structure checks to run once at 390px instead of redundantly at 390/1280; both viewport interaction tests retained. New CI pending, no manual GDevelop/mobile/peer pass; 54/59 unchanged."
     }
   ]
 }
