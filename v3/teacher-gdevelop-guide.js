@@ -112,5 +112,5 @@ function mount(){
  });
  choose(0,false);
 }
-window.PIT_TEACHER_GDEVELOP_GUIDE={render,mount,stageCount:stage.length};
+window.PIT_TEACHER_GDEVELOP_GUIDE={render,mount,stageCount:stage.length,stages:stage.map(s=>({...s,steps:s.steps.map(x=>[...x])}))};
 })();
