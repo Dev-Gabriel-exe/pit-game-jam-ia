@@ -4,7 +4,11 @@
 
 ## Critério central
 
-O professor chega **sem estudar antes**, não conhece GDevelop e não tem tempo para preparar a aula. O material projetado deve ensinar o conteúdo e guiar a prática por si só, **sem notas de fala ou instruções ocultas ao professor**. O aluno deve encontrar na própria tela: **o que fazer, por que fazer, onde clicar, como executar, como verificar e o que entregar**. Não presumir familiaridade com ferramentas. Sem gabarito no caderno do aluno. Evitar poluição textual: usar progressão visual, exemplos curtos, capturas reais verificadas, demonstrações e blocos expansíveis quando necessário.
+O professor chega **sem estudar antes**, não conhece GDevelop e não tem tempo para preparar a aula. O material projetado deve ensinar o conteúdo e guiar a prática por si só, **sem notas de fala visíveis durante a projeção**. O aluno deve encontrar na própria tela: **o que fazer, por que fazer, onde clicar, como executar, como verificar e o que entregar**. Não presumir familiaridade com ferramentas. Sem gabarito no caderno do aluno. Evitar poluição textual: usar progressão visual, exemplos curtos, capturas reais verificadas, demonstrações e blocos expansíveis quando necessário.
+
+## Regra de projeção e roteiro privado (correção do responsável, 28/10/2026)
+
+A apresentação do professor permanece espelhada por HDMI para os alunos durante a explicação. **Não colocar roteiro de condução ou instruções reservadas visíveis no material projetado.** Conceitos, analogias, exemplos, simulações, tutoriais didáticos e critérios de avaliação continuam visíveis, pois são parte da aula. O professor pode consultar orientações de acompanhamento **somente depois de retirar o espelhamento**: usar ícone de papel ▤ pequeno e discreto em `<details class="pit-private-teacher-notes">` fechado por padrão, com `<summary>` acessível por teclado e estilo `v3/teacher-private-notes.css`. Não abrir automaticamente, não criar notas privadas no caderno do aluno e fechar antes de retomar a projeção. O recolhimento visual não protege o texto contra inspeção ou compartilhamento; não inserir segredos ou dados pessoais. 
 
 ## Fase P0 — Inventário e auditoria (prioridade máxima)
 
