@@ -21,6 +21,7 @@ O checkpoint `v3/AGENTE-V3-ESTADO.json` registra **52 de 59 metas como `done`** 
 | Chat bidirecional | [Static QA FUN-07](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636877700) | Falha de rede simulada |
 | Downloads | [Static QA FUN-08](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40636997100) | 28 MIME/assinaturas; importação no GDevelop não executada |
 | E2E três alunos | [Browser QA FUN-09](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637186741) | 2D/3D via fixture HTTP, não jogos reais |
+| Postgres 16 descartável | [Postgres QA 40637833387](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637833387) | Handlers reais e transações com 3 alunos fictícios; não Neon/produção |
 | Segurança/regressão | [Static QA FUN-10](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637308970) | Auditoria estática; não é pentest |
 
 ### Hospedagem e URLs
@@ -43,6 +44,6 @@ Em `experiment/ltx-missions-01-10`, o status `ops/ltx-status.json` e `v3/motion-
 
 ## Bloqueios e próxima decisão
 
-Ver `v3/REL-01-ISSUES.md` e `v3/SEGURANCA-ROLLBACK-FUN-10.md`. Antes de homologar, é necessário executar importação e Preview no GDevelop, teste de transações em Postgres descartável, observação de revisão por pares, avaliação dos direitos dos MP4s e ensaio de backup/rollback. O professor pode avaliar o material em prévia, mas a aprovação para publicação deve ser explícita e posterior a esses critérios.
+Ver `v3/REL-01-ISSUES.md` e `v3/SEGURANCA-ROLLBACK-FUN-10.md`. Antes de homologar, é necessário executar importação e Preview no GDevelop, observação de revisão por pares, avaliação dos direitos dos MP4s e ensaio de backup/rollback. O professor pode avaliar o material em prévia, mas a aprovação para publicação deve ser explícita e posterior a esses critérios.
 
 **Estado final de homologação ainda NÃO alcançado.** Não alterar `status` para `READY_FOR_FINAL_REVIEW` ou `READY_FOR_FINAL` enquanto o gate estrito não passar.
