@@ -82,7 +82,7 @@ function intro(ctx){
  '<div><small>MISSÃO 03 · DESAFIO REAL</small><h3>Seu jogo vai abrir<br><em>pela primeira vez.</em></h3>'+
  '<p>Agora você vai criar <strong>'+esc(i.title)+'</strong> no GDevelop. Sua missão: abrir uma cena, adicionar um objeto de verdade, enxergá-lo no Preview e salvar o projeto. Sem programar controles ainda.</p>'+
  '<div class="m3-target"><small>HERDADO DO SEU MVP</small><strong>'+esc(i.scene)+'</strong><span>Uma cena e um objeto inicial; sua mecânica planejada é '+esc(i.mechanism)+'.</span></div>'+
- '<button type="button" class="m3-primary" data-m3-action="build">✦ ABRIR A MISSÃO NO GDEVELOP ›</button></div></div>'+
+ '<button type="button" class="m3-primary" data-m3-action="build">✦ VER TUTORIAL E COMEÇAR ›</button></div></div>'+
  '<div class="m3-goals">'+[
   ['01','CRIAR','Projeto vazio e uma cena nomeada'],
   ['02','MONTAR','Objeto e instância posicionada'],
@@ -129,7 +129,7 @@ function practice(ctx){
  ['03','PREVIEW E SALVAR','Execute o jogo, observe o resultado e salve o projeto editável.','preview','saved','fix']
  ];
  return '<div class="m3-page m3-work"><div class="m3-lead"><span>◈ PRIMEIRO PROJETO REAL</span><h3>Construa o começo do seu jogo.</h3>'+
- '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo é ver o objeto no Preview, não movimentá-lo.</p><div class="m3-time-plan"><span><b>4 min</b> · projeto e cena</span><span><b>7 min</b> · um asset</span><span><b>5 min</b> · Preview e salvar</span></div></div>'+
+ '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo é ver o objeto no Preview, não movimentá-lo.</p><p>Este caderno mostra o tutorial e registra sua evidência; ele não abre nem cria o jogo automaticamente. Abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop em outra aba</a> e siga as etapas abaixo. Se a internet falhar, use o aplicativo instalado, se disponível.</p><div class="m3-time-plan"><span><b>4 min</b> · projeto e cena</span><span><b>8 min</b> · um asset</span><span><b>6 min</b> · Preview e salvar</span></div></div>'+
  (locked?'<div class="m3-notice">Esta entrega está '+(ctx.status==='approved'?'aprovada':'em análise')+'. O registro permanece disponível para leitura.</div>':'')+
  (window.PIT_GDEVELOP_FIRST_RUN?window.PIT_GDEVELOP_FIRST_RUN.render('student'):'<p>Projeto vazio → cena → objeto → Preview → salvar.</p>')+
  '<div class="m3-asset-bridge"><strong>✦ UM ASSET VISUAL, DUAS ROTAS</strong><p>Use Gemini ou o Asset Store integrado ao GDevelop. Não perca tempo com animação, música ou vídeo agora: Flow, Suno e ElevenLabs ficam para a Missão 06. O primeiro recurso deve aparecer no Preview.</p></div>'+
