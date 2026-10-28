@@ -1,6 +1,6 @@
 /* UI-08 — Correções transversais sem alterar conteúdo aprovado M01–M03. */
 :where(a,button,input,select,textarea,[tabindex="0"]):focus-visible{
- outline:3px solid #d7ffa7;outline-offset:3px;
+ outline:3px solid var(--pit-focus,#d7ffa7);outline-offset:3px;
 }
 :where(button,input,select,textarea){touch-action:manipulation}
 :where(.resource-card,.start-card,.gate-card,.chat-window,.gallery-card,.arcade-card){
