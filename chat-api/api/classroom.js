@@ -84,9 +84,11 @@ module.exports=async function handler(req,res){
    const status=clean(req.body?.status,15);
    if(!['approved','revision'].includes(status))return err(res,400,'Validação inválida.');
    const feedback=clean(req.body?.feedback,550);
+   if(status==='revision'&&feedback.length<8)return err(res,400,'Explique a revisão em pelo menos 8 caracteres, indicando o teste a corrigir.');
    const r=await pool.query(
-     "UPDATE pit_student_stages SET status=$1,feedback=$2,reviewed_at=NOW(),updated_at=NOW() WHERE student_id=$3 AND stage=$4 AND status IN ('submitted','approved','revision') RETURNING stage,status,feedback",
-     [status,feedback,id,stage]);
+     "UPDATE pit_student_stages SET status=$1,feedback=$2,reviewed_at=NOW(),updated_at=NOW() WHERE student_id=$3 AND stage=$4 AND status IN ('submitted','approved','revision') "+
+     "AND EXISTS (SELECT 1 FROM pit_students s WHERE s.id=$3 AND s.room_code=$5) RETURNING stage,status,feedback",
+     [status,feedback,id,stage,ROOM]);
    if(!r.rowCount)return err(res,409,'Não há entrega pendente para validar.');
    return res.json({ok:true,progress:r.rows[0]});
   }
