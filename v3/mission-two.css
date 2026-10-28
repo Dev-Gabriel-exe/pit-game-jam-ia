@@ -1,0 +1,210 @@
+/* MISSÃO 02 — Design didático gótico, painel do professor e do aluno.
+  Cores e tipografia da V3; aulas projetáveis; animações desligáveis. */
+.tm2-root,.m2-root{font-family:"Segoe UI",Arial,sans-serif;color:#ebd8c1;min-width:0}
+.tm2-root *,.m2-root *{box-sizing:border-box}
+.tm2-root h2,.tm2-root h3,.tm2-root h4,.m2-root h2,.m2-root h3,.m2-root h4{font-family:Georgia,"Times New Roman",serif}
+.tm2-masthead,.m2-header{position:relative;isolation:isolate;overflow:hidden;border-bottom:1px solid #8a623f;background:linear-gradient(90deg,#0c0d10f5,#0b0b11e6 60%,#1310178a),url("./assets/missions/missao-02.webp") center 38%/cover;padding:23px clamp(14px,3vw,37px)}
+.tm2-masthead:before,.m2-header:before{position:absolute;content:"";inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 85% 25%,#e58d4924,transparent 40%);animation:tm2-atmosphere 12s ease-in-out infinite alternate}
+.tm2-masthead>small,.m2-header>small{display:block;color:#e5b47d;font-size:10px;font-weight:900;letter-spacing:.17em}
+.tm2-masthead-main,.m2-title-row{display:flex;align-items:center;gap:19px;margin-top:15px}
+.tm2-numeral,.m2-shield{flex:0 0 64px;height:80px;border:2px ridge #e4ae72;background:linear-gradient(135deg,#7b4e2b,#1e1418);clip-path:polygon(9% 0,91% 0,100% 16%,100% 75%,50% 100%,0 75%,0 16%);display:grid;place-items:center;font:700 37px Georgia,serif;color:#ffdfaf;text-shadow:0 3px 10px #000}
+.tm2-masthead-main>div,.m2-title-row>div{min-width:0}
+.tm2-masthead-main>div>span,.m2-title-row>div>span{color:#dfa36f;letter-spacing:.14em;font-weight:900;font-size:11px}
+.tm2-masthead h2,.m2-header h2{color:#ffe9cd;font:700 clamp(31px,3vw,44px)/1.08 Georgia,serif;margin:6px 0}
+.tm2-masthead p,.m2-header p{color:#d6bba4;font:italic 15px Georgia,serif;margin:5px 0}
+.tm2-times{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-width:850px;margin-top:22px}
+.tm2-times>span{border:1px solid #77533b;background:#1b1619b9;padding:10px 12px;color:#c2aa95;font-size:10px;font-weight:800;letter-spacing:.04em}
+.tm2-times b{font-size:15px;color:#f0ba83;font-family:Georgia,serif}
+.tm2-times>span.active{border-color:#f0b881;background:#533222d9;box-shadow:inset 0 -3px #e39d59;color:#ffe3bf}
+.tm2-content{padding:21px clamp(14px,3vw,37px) 31px;background:radial-gradient(circle at top right,#5e3c2228,transparent 50%),#0e1013;min-width:0}
+.tm2-section-title{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #754f37;padding-bottom:12px;color:#e8b47b;font-size:11px;font-weight:900;letter-spacing:.14em;margin-bottom:18px}
+.tm2-intro{max-width:1000px;margin:0 0 23px}
+.tm2-intro>small{font-size:11px;letter-spacing:.15em;font-weight:900;color:#e2a46b}
+.tm2-intro h3{font:700 clamp(27px,2.8vw,40px)/1.14 Georgia,serif;color:#ffe8ca;margin:11px 0}
+.tm2-intro p{font-size:16px;line-height:1.65;color:#d8c7b5;margin:9px 0}
+.tm2-intro strong{color:#f7c98d}
+.tm2-split-hero,.tm2-spec-architecture{display:grid;grid-template-columns:minmax(160px,.66fr) minmax(0,1.34fr);background:#1b1618;border:1px solid #8b5e41;min-height:240px;margin-bottom:18px;overflow:hidden}
+.tm2-hero-art,.tm2-spec-art{min-height:240px;background:linear-gradient(0deg,#111016c4,transparent 60%),url("./assets/missions/missao-02.webp") center 38%/cover;animation:tm2-art 18s ease-in-out infinite alternate}
+.tm2-hero-copy,.tm2-spec-architecture>div:last-child{padding:24px;align-content:center;display:grid;gap:9px}
+.tm2-hero-copy>span,.tm2-spec-architecture>div:last-child>span{font-size:11px;letter-spacing:.14em;color:#dfa66f;font-weight:900}
+.tm2-hero-copy h4,.tm2-spec-architecture h4{font:700 clamp(23px,2vw,29px) Georgia,serif;color:#ffe3bf;margin:1px 0 10px}
+.tm2-spec-architecture p{font-size:15px;line-height:1.6;color:#d8c3ae}
+.tm2-compare,.tm2-concepts,.tm2-spec-grid,.tm2-demo-notes,.tm2-review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tm2-compare>div{padding:15px;background:#100f12;border:1px solid #6a4b38;display:grid;align-content:start;gap:9px}
+.tm2-compare>div:last-child{background:#34261d;border-color:#c48b58}
+.tm2-compare small{font-size:10px;font-weight:900;letter-spacing:.13em;color:#edb477}
+.tm2-compare strong{font:700 17px/1.38 Georgia,serif;color:#f2d9b9}
+.tm2-compare p{font-size:12px;color:#bda898;margin:0;line-height:1.5}
+.tm2-concept{padding:19px;background:linear-gradient(160deg,#231c1b,#111517);border:1px solid #79553d;box-shadow:0 9px 25px #0005;transition:border-color .2s,transform .2s}
+.tm2-concept:hover{border-color:#e8aa6b;transform:translateY(-2px)}
+.tm2-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.tm2-card-top>span{width:38px;height:38px;display:grid;place-items:center;border:1px solid #b98558;background:#44291e;color:#f0c58c;font:700 17px Georgia,serif}
+.tm2-card-top>small{font-size:10px;letter-spacing:.15em;color:#dba271;font-weight:900}
+.tm2-concept h4{font:700 clamp(21px,2vw,27px)/1.22 Georgia,serif;color:#ffe6c8;margin:0 0 10px}
+.tm2-concept>p,.tm2-concept p{font-size:15px;color:#dfcbbb;line-height:1.6;margin:10px 0}
+.tm2-concept strong{color:#f5c48f}
+.tm2-example{padding:12px 14px;border-left:3px solid #dc995c;background:#39261e;margin-top:14px}
+.tm2-example b{font-size:10px;color:#f3bf84;letter-spacing:.11em}
+.tm2-example p{margin:6px 0 0;font-size:14px;color:#f3dec7}
+.tm2-requirement{border:1px solid #af7d50;background:linear-gradient(100deg,#44301f,#23191a);margin-top:19px;padding:21px}
+.tm2-requirement>span,.tm2-sources>span{font-size:11px;letter-spacing:.12em;font-weight:900;color:#dfaa76}
+.tm2-requirement>strong{display:block;margin:10px 0;color:#ffe5c1;font:700 22px/1.4 Georgia,serif}
+.tm2-requirement p{font-size:15px;color:#e2cab1;line-height:1.55}
+.tm2-sources{margin-top:17px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.tm2-sources a{font-size:12px;color:#f2c594;border:1px solid #875b3d;background:#32231b;padding:10px 12px;text-decoration:none}
+.tm2-sources a:hover{text-decoration:underline}
+.tm2-lab{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(220px,.95fr);border:1px solid #916843;background:#17171a;margin:21px 0 15px;box-shadow:0 12px 31px #0007}
+.tm2-feature-list{padding:20px;display:grid;gap:8px}
+.tm2-lab-title{display:grid;gap:7px;margin-bottom:8px}
+.tm2-lab-title>span{font:700 23px Georgia,serif;color:#ffe0b3}
+.tm2-lab-title small{font-size:12px;color:#bfaa99}
+.tm2-feature{display:flex;align-items:center;gap:12px;border:1px solid #65513f;background:#221c1c;padding:10px 12px;cursor:pointer}
+.tm2-feature.required{background:#2e281e}
+.tm2-feature input{width:18px;height:18px;accent-color:#e4a361;flex:none}
+.tm2-feature>span{display:grid;flex:1;gap:4px}
+.tm2-feature b{font-size:14px;color:#ffe3c6}
+.tm2-feature small{font-size:12px;color:#bba99a}
+.tm2-feature em{font-size:11px;color:#edba7f;white-space:nowrap;font-style:normal}
+.tm2-lab-output{padding:23px;background:linear-gradient(0deg,#181518,#2e201a);display:grid;align-content:start;gap:12px;text-align:center}
+.tm2-art{height:185px;background:linear-gradient(0deg,#1b1417bd,transparent),url("./assets/missions/missao-02.webp") center 39%/cover;border:2px ridge #ac8158}
+.tm2-lab-output>small{font-size:11px;letter-spacing:.08em;color:#d4ad87;font-weight:900}
+.tm2-lab-output>strong{font:700 57px Georgia,serif;color:#ffd7a4}
+.tm2-meter{height:9px;border:1px solid #68482e;background:#0b0e11;overflow:hidden}
+.tm2-meter span{display:block;background:linear-gradient(90deg,#c98546,#f6c68c);height:100%;transition:width .25s}
+.tm2-lab-output p{font-size:14px;color:#ead4ba;line-height:1.53}
+.tm2-lab-kpis{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tm2-lab-kpis>span{padding:10px;background:#181719;border:1px solid #71503b;font-size:11px;color:#d5b69b}
+.tm2-lab-kpis b{font-size:20px;color:#f3bf86}
+.tm2-lab-output button{background:#473124;border:1px solid #d6a06c;cursor:pointer;padding:12px;color:#ffe1be;font-weight:900}
+.tm2-demo-notes article{padding:21px;border:1px solid #815d41;background:#20191a}
+.tm2-demo-notes article>span,.tm2-sample-bar{color:#e3ae74;font-size:11px;letter-spacing:.12em;font-weight:900}
+.tm2-demo-notes h4{font-size:22px;color:#f5d5b2;margin:10px 0}
+.tm2-demo-notes p{font-size:14px;line-height:1.52;color:#d2beab}
+.tm2-genre-buttons{display:flex;flex-wrap:wrap;gap:7px}
+.tm2-genre-buttons button{cursor:pointer;background:#2d201b;border:1px solid #886449;color:#eed1b2;padding:9px 11px;font-size:11px;font-weight:900}
+.tm2-genre-buttons button[aria-pressed=true]{background:#714328;border-color:#f1bd85}
+.tm2-sample{border:1px solid #906947;background:#1d1b1d;margin-top:18px}
+.tm2-sample-bar{background:#493020;padding:14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tm2-sample-lines{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.tm2-sample-lines>div{padding:15px 17px;border:1px solid #483a31;display:grid;gap:6px}
+.tm2-sample-lines b{color:#cfa06d;font-size:11px;letter-spacing:.1em}
+.tm2-sample-lines span{color:#f5dbbd;font-size:15px}
+.tm2-review-grid article{display:flex;gap:14px;padding:18px;border:1px solid #896147;background:#211b1c}
+.tm2-review-grid article>span{font:700 27px Georgia,serif;color:#f0b97d}
+.tm2-review-grid h4{font:700 19px Georgia,serif;color:#f3d1a7;margin:0}
+.tm2-review-grid p{line-height:1.5;font-size:14px;color:#d9c7b6}
+.tm2-footer,.m2-root>.m2-footer{background:#0b0d0e;text-align:center;padding:12px;color:#a68b72;font-size:10px;letter-spacing:.11em}
+/* Student workbook: fewer words, more usable input and continuous live preview. */
+.m2-header{padding-bottom:20px}
+.m2-genre-chip{display:inline-block;margin-top:16px;color:#ffe1bb;background:#412c22;border:1px solid #a87b55;padding:9px 12px;font-size:11px;letter-spacing:.09em;font-weight:900;overflow-wrap:anywhere}
+.m2-page{padding:20px clamp(13px,2.5vw,32px) 29px;background:radial-gradient(circle at 80% 0%,#7a4a2517,transparent),#0c0f11}
+.m2-intro-hero{border:1px solid #8f6648;background:linear-gradient(130deg,#201a1b,#101418);display:grid;grid-template-columns:minmax(180px,.72fr) minmax(0,1.28fr);align-items:stretch}
+.m2-intro-hero>div:last-child{padding:clamp(18px,3vw,34px);align-content:center}
+.m2-intro-art{min-height:340px;background:linear-gradient(0deg,#1a1418b8,transparent),url("./assets/missions/missao-02.webp") center 35%/cover;animation:tm2-art 18s ease-in-out infinite alternate}
+.m2-brow{font-size:11px;color:#e0a36b;font-weight:900;letter-spacing:.13em}
+.m2-intro-hero h3,.m2-lead h3{font:700 clamp(28px,2.7vw,40px)/1.16 Georgia,serif;color:#f9dec0;margin:14px 0}
+.m2-intro-hero h3 em,.m2-lead h3 em{font-weight:400;color:#f1b27b}
+.m2-intro-hero p,.m2-lead p{line-height:1.65;color:#ddc8b6;font-size:16px}
+.m2-intro-hero strong{color:#f2c994}
+.m2-origin{padding:13px 15px;background:#33231e;border-left:3px solid #dc9e6a;margin:15px 0;display:grid;gap:6px}
+.m2-origin small{font-weight:900;color:#f1b985;font-size:11px;letter-spacing:.1em}
+.m2-origin strong{font:700 22px Georgia,serif;color:#ffe2bb;overflow-wrap:anywhere}
+.m2-origin span{font-size:13px;color:#e5cebb;line-height:1.4;overflow-wrap:anywhere}
+.m2-primary{background:linear-gradient(#fac984,#c08347 65%,#9b4c2b);border:2px ridge #eab77c;border-radius:2px;color:#21130e;font-size:13px;font-weight:900;min-height:47px;padding:12px 19px;cursor:pointer;box-shadow:inset 0 1px #ffe7b2,0 0 16px #d2753640}
+.m2-primary:hover:not(:disabled){filter:brightness(1.1)}
+.m2-primary:disabled{opacity:.48;filter:grayscale(.7);cursor:not-allowed}
+.m2-brief-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:14px}
+.m2-brief-grid article{background:#201a1a;border:1px solid #71533e;padding:15px}
+.m2-brief-grid span{color:#e8b176;font-size:11px;font-weight:900}
+.m2-brief-grid p{color:#e0c9b4;font-size:14px;margin:9px 0 0;line-height:1.5}
+.m2-lead{max-width:930px;margin-bottom:20px}
+.m2-workspace{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(240px,.8fr);gap:16px;align-items:start}
+.m2-sections{min-width:0;display:grid;gap:13px}
+.m2-panel{background:linear-gradient(150deg,#231a1b,#101417);border:1px solid #76573e;box-shadow:0 9px 22px #0005;padding:19px}
+.m2-panel-heading{margin-bottom:16px}
+.m2-panel-heading>span{font-size:11px;letter-spacing:.13em;color:#e9b581;font-weight:900}
+.m2-panel-heading h4{font:700 25px Georgia,serif;color:#f9e0c2;margin:9px 0}
+.m2-panel-heading p{color:#c0b2a5;font-size:14px;line-height:1.5;margin:6px 0}
+.m2-field{display:grid;gap:7px;margin:10px 0 17px}
+.m2-field>span{color:#eddac2;font-size:14px;font-weight:800}
+.m2-field input,.m2-field textarea{width:100%;background:#0b1013;border:1px solid #97704e;outline:none;color:#ffead0;border-radius:2px;padding:12px 13px;min-height:46px;font:15px/1.5 "Segoe UI",Arial,sans-serif;resize:vertical}
+.m2-field input:focus,.m2-field textarea:focus{border-color:#ffca86;box-shadow:0 0 0 2px #dc8b4d5e}
+.m2-field input::placeholder,.m2-field textarea::placeholder{color:#a49a8d;opacity:1}
+.m2-field>small{color:#b3a79e;font-size:12px;line-height:1.4}
+.m2-field input:disabled,.m2-field textarea:disabled{opacity:.8}
+.m2-next{border-top:1px solid #75563e;padding:16px 7px;display:grid;gap:12px}
+.m2-next span{color:#c3a98f;font-size:12px}
+.m2-asides{display:grid;gap:13px;position:sticky;top:10px;min-width:0}
+.m2-live{border:2px ridge #9c764c;background:linear-gradient(#20191b,#111417);box-shadow:0 13px 27px #0007;min-width:0;overflow:hidden}
+.m2-live-art{height:180px;background:linear-gradient(0deg,#100e13ee,transparent 75%),url("./assets/missions/missao-02.webp") center 44%/cover;position:relative;animation:tm2-art 16s ease-in-out infinite alternate}
+.m2-live-art>span{position:absolute;bottom:11px;left:13px;background:#1a1518cf;border:1px solid #bd8d58;padding:7px;color:#ffd4a0;font-size:10px;letter-spacing:.12em}
+.m2-live-inner{padding:17px}
+.m2-live-inner h4{font:700 26px Georgia,serif;color:#f5dfc5;margin:9px 0;overflow-wrap:anywhere}
+.m2-live-idea{color:#d1bfae;font-size:12px;line-height:1.55;margin-bottom:14px}
+.m2-live-idea strong{color:#efd0a4}
+.m2-live-row{display:grid;grid-template-columns:27px minmax(0,1fr);gap:9px;align-items:start;border:1px solid #58473e;background:#151719;padding:11px;margin:7px 0}
+.m2-live-row.ready{border-color:#a47753;background:#31241e}
+.m2-live-row>span{color:#edb67e;border:1px solid #916b4e;padding:5px;min-width:24px;text-align:center;font:700 12px Georgia,serif}
+.m2-live-row small,.m2-later small{font-size:10px;letter-spacing:.1em;color:#caa079;font-weight:900}
+.m2-live-row p,.m2-later p{color:#eddec8;font-size:13px;line-height:1.45;margin:5px 0 0;overflow-wrap:anywhere}
+.m2-scope-meter{padding:13px 0}
+.m2-scope-meter>span{color:#f1bd86;font-size:12px}
+.m2-scope-meter>div{margin-top:7px;height:7px;background:#332722;border:1px solid #7c573d;overflow:hidden}
+.m2-scope-meter i{display:block;height:100%;background:linear-gradient(90deg,#b2663c,#f0bb7e);transition:width .2s}
+.m2-later{padding:12px;background:#191617;border:1px solid #554339}
+.m2-hint{background:#251c1a;padding:16px;border:1px solid #7c583d}
+.m2-hint>span{font-size:11px;letter-spacing:.1em;color:#ecae78;font-weight:900}
+.m2-hint p{font-size:14px;line-height:1.55;color:#e9d3bb}
+.m2-hint small{font-size:12px;color:#c4b5a5}
+.m2-state-notice,.m2-feedback{padding:13px;border:1px solid #ad7b52;background:#33231c;color:#f0d5b4;margin:12px 0}
+.m2-stamp{border:1px solid #bf9263;padding:15px;background:#2e211b;color:#f6ca8c;font-weight:900;letter-spacing:.075em;margin-bottom:14px}
+.m2-delivery-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(210px,.66fr);gap:16px}
+.m2-delivery-layout .m2-live{display:grid;grid-template-columns:minmax(170px,.5fr) minmax(0,1fr)}
+.m2-delivery-layout .m2-live-art{height:auto;min-height:280px}
+.m2-evidence{margin-top:16px;background:#19171a;border:1px solid #866144;padding:16px;display:grid;gap:8px}
+.m2-evidence>strong{font-size:11px;letter-spacing:.12em;color:#e8b17b}
+.m2-evidence label{font-size:12px;color:#c6b1a2}
+.m2-evidence textarea{width:100%;min-height:205px;resize:vertical;background:#0b1114;border:1px solid #775b47;padding:13px;color:#eaddcd;font:13px/1.55 Consolas,monospace}
+.m2-evidence small{color:#b7a99e;font-size:12px}
+.m2-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end;margin-top:15px}
+.m2-back{border:1px solid #b38558;background:#38251d;color:#f4d2af;padding:11px 15px;cursor:pointer;font-size:12px;font-weight:900}
+.m2-back:disabled{opacity:.5}
+.m2-preview-msg{color:#e4b984;font-size:12px}
+.m2-warning{color:#f6ae95;font-size:13px}
+.m2-result-aside{display:grid;gap:13px;align-content:start}
+.m2-result-medal{border:1px solid #9d764e;background:radial-gradient(circle at center,#59412549,transparent 70%),#1b1718;text-align:center;padding:21px 17px;display:grid;justify-items:center;gap:11px}
+.m2-result-medal>span{display:grid;place-items:center;width:66px;height:66px;border:2px ridge #d6a676;border-radius:50%;background:#3b2119;color:#f5c58e;font-size:37px}
+.m2-result-medal strong{font:700 20px Georgia,serif;color:#f6d6b0}
+.m2-result-medal p{font-size:12px;line-height:1.55;color:#c9b5a4}
+.tm2-reveal-enabled [data-reveal]{opacity:0;transform:translateY(20px);filter:blur(1px)}
+.tm2-reveal-enabled [data-reveal].tm2-visible{animation:tm2-enter .7s cubic-bezier(.17,.7,.2,1) both;animation-delay:var(--tm2-delay,0ms)}
+@keyframes tm2-enter{from{opacity:0;transform:translateY(26px) scale(.985);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@keyframes tm2-atmosphere{from{opacity:.55;transform:scale(1)}to{opacity:1;transform:scale(1.05)}}
+@keyframes tm2-art{from{background-size:auto,cover}to{background-size:auto,110% auto}}
+.tm2-root button:focus-visible,.tm2-root a:focus-visible,.m2-root button:focus-visible{outline:2px solid #fcd19c;outline-offset:3px}
+@media(max-width:1050px){.tm2-concepts,.tm2-lab{grid-template-columns:1fr}.m2-workspace{grid-template-columns:minmax(0,1fr) minmax(200px,.75fr)}}
+@media(max-width:850px){.tm2-split-hero,.tm2-spec-architecture,.m2-intro-hero,.m2-workspace,.m2-delivery-layout{grid-template-columns:1fr}.m2-asides{position:static}.m2-live-art{height:200px}.m2-intro-art{min-height:220px}.tm2-hero-art,.tm2-spec-art{min-height:190px}.tm2-compare{grid-template-columns:1fr}.m2-delivery-layout .m2-live{grid-template-columns:1fr}.m2-delivery-layout .m2-live-art{min-height:190px}.tm2-times{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+ .tm2-masthead,.m2-header{padding:17px 14px}
+ .tm2-masthead h2,.m2-header h2{font-size:30px}
+ .tm2-numeral,.m2-shield{flex-basis:43px;height:58px;font-size:27px}
+ .tm2-masthead-main,.m2-title-row{gap:11px}
+ .tm2-content,.m2-page{padding:17px 12px}
+ .tm2-concepts,.tm2-spec-grid,.tm2-demo-notes,.tm2-review-grid,.m2-brief-grid{grid-template-columns:1fr}
+ .tm2-hero-copy,.tm2-spec-architecture>div:last-child{padding:16px}
+ .tm2-lab-output{padding:15px}
+ .tm2-feature-list{padding:13px}
+ .tm2-feature{gap:7px;padding:9px}
+ .tm2-feature b{font-size:13px}
+ .tm2-feature em{font-size:10px}
+ .m2-intro-hero>div:last-child{padding:17px}
+ .m2-panel{padding:16px 13px}
+ .m2-panel-heading h4{font-size:23px}
+ .m2-actions{flex-direction:column}
+ .m2-actions button{width:100%}
+ .tm2-sample-lines{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .tm2-reveal-enabled [data-reveal],.tm2-reveal-enabled [data-reveal].tm2-visible{animation:none!important;opacity:1!important;transform:none!important;filter:none!important}
+ .tm2-root *,.m2-root *{animation:none!important;transition:none!important}
+}
