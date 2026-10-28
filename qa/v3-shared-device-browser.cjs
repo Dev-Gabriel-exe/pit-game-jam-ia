@@ -43,7 +43,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  async function missionFive(){
   await workspace();
   await page.locator('.stage-btn[data-stage="5"]').click();
-  await page.locator('[data-q-tab="practice"]').click();
+  await page.locator('#phasebar [data-phase="practice"]').click();
   await page.locator('#evidenceInput').waitFor({timeout:10000});
   assert.equal(await page.locator('[data-step-check]').count(),3,'generic M05 checklist rendered');
  }
