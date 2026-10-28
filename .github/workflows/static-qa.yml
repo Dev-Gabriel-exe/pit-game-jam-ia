@@ -38,6 +38,11 @@ jobs:
         run: |
           node --check v3/media-fallback.js
           node qa/v3-media-fallback.cjs
+      - name: Verify ART-05 cinematic motion and earned-only award
+        run: |
+          node --check v3/arcade-gallery.js
+          node --check v3/final-achievement.js
+          node qa/v3-art-motion.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
