@@ -21,7 +21,14 @@ function render(){
  if(!overlay)return;
  const slide=slides[index];const content=$('pitProjectorContent');const isM01=Boolean(slide.section&&missionNumber()>=1&&missionNumber()<=10);
  overlay.classList.toggle('pit-projector-m01',isM01);
- content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';content.scrollTop=0;content.classList.add('pit-projector-enter');
+ const sectionOpening=isM01&&(index===0||slide.html.includes('pit-u-cover'));
+ const code=String(missionNumber()).padStart(2,'0');
+ const prefix=sectionOpening?'<div class="pit-projector-motion" aria-hidden="true"><video muted loop playsinline preload="none" poster="./v3/assets/missions/missao-'+code+'.webp" src="./v3/assets/missions/missao-'+code+'-motion.mp4"></video></div>':'';
+ content.classList.toggle('pit-projector-has-motion',sectionOpening);
+ content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML=prefix+'<div class="pit-projector-card">'+slide.html+'</div>';content.scrollTop=0;content.classList.add('pit-projector-enter');
+ if(sectionOpening&&new URLSearchParams(location.search).get('motion')!=='off'&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!navigator.connection?.saveData){
+   content.querySelector('.pit-projector-motion video')?.play().catch(()=>{});
+ }
  if(isM01&&missionNumber()===1&&window.PIT_M01_PROJECTOR?.mount)window.PIT_M01_PROJECTOR.mount(content,slide);
  if(isM01&&missionNumber()>1&&window.PIT_PROJECTOR_UNIVERSAL?.mount)window.PIT_PROJECTOR_UNIVERSAL.mount(content,slide);
  $('pitProjectorMission').textContent=isM01?String(missionNumber()).padStart(2,'0')+' · '+slide.section:String(missionNumber()).padStart(2,'0');
