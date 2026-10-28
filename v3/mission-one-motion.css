@@ -13,3 +13,8 @@
 @media(prefers-reduced-motion:reduce){
   .pit-arcade .arcade-mission-motion-video{display:none!important;transition:none!important}
 }
+
+/* An explicit ?motion=on is a user choice; otherwise OS reduced-motion remains respected. */
+@media(prefers-reduced-motion:reduce){
+ .pit-arcade.pit-force-motion .arcade-mission-motion-video{display:block!important;transition:none!important}
+}
