@@ -42,7 +42,7 @@ A visualização WebGL requer suporte a WebGL 2, navegador atualizado e acesso �
 
 - As builds persistidas NÃO contêm nome nem XP; são calculados novamente no servidor a cada leitura, usando \`display_name\` e status \`approved\`.
 - O arquivo GLB individual no catálogo é separado da personagem da V5. A versão inicial da V5 renderiza heróis 3D originais procedurais (armaduras/armas/capas); modelos humanoides rigados externos são evolução posterior, não requisito para batalha funcionar.
-- Uma turma grande (>48) precisa de chaves classificatórias ou heats; a primeira arena testa até 48 personagens por combate. Não use um único combate com 180 alunos.
+- A arena cria **chaves classificatórias de até 16 heróis quando a turma ultrapassa 20 alunos**. Cada chave dura até 28 segundos simulados; os vencedores disputam uma final de até 65 segundos. O professor pode aumentar a velocidade de reprodução. Isso evita carregar 180 modelos 3D simultaneamente.
 - A escolha de arma é visual; habilidades e valores de combate derivam principalmente da classe, atributos e talentos.
 - Não há multiplayer competitivo real-time: o professor executa o combate automático a partir de uma lista de builds previamente sincronizadas.
 - Não registrar PINs, tokens de aluno ou avaliações pessoais nos logs da interface.
@@ -52,7 +52,7 @@ A visualização WebGL requer suporte a WebGL 2, navegador atualizado e acesso �
 
 - Browser QA real com vídeo/aceleração WebGL desktop e Android.
 - Integração da API com banco de testes (nome, XP, permissões, review).
-- Teste de combate da turma com 20–40 heróis e tempo máximo definido.
+- Teste de uma turma de 20–40 heróis com chaves classificatórias e conferência dos vencedores.
 - Planejamento de chaves para >48 alunos, visualização de nomes legíveis no telão e edição de notas pelo professor se necessário.
 - Revisão de consumo de GPU, memória e desempenho no celular.
 
