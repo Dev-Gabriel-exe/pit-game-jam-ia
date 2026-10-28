@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:03:50.033Z",
+  "last_completed_at": "2026-10-28T05:12:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-04",
+  "priority": "FUN-05",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-03",
-  "completed_count": 45,
+  "last_task": "FUN-04",
+  "completed_count": 46,
   "total_tasks": 59,
   "tasks": [
     {
@@ -811,10 +811,13 @@
       "description": "Teste de liberar/bloquear missões e fases, com propagação confiável para aluno sem perder rascunho",
       "group": "FUN",
       "position": 50,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:12:00Z",
+      "commit": "85d34a89632131997d957d433a61e93be21a5b64",
+      "tests": [
+        "Browser QA 40635953139 success: Chrome fake API teacher stage/phase release, future lock and M01 draft persistence",
+        "Static QA 40635953113 success: actual classroom handler with disposable SQL verifies future stage/briefing rejection, practice release, previous evidence persistence"
+      ],
       "blocker": null
     },
     {
@@ -1647,6 +1650,18 @@
       ],
       "tests": "Static QA 40635705516 success; Browser QA 40635659892 success (PIN + sessionStorage + fake roster)",
       "notes": "PIN stored in sessionStorage remains an architectural limitation; no real PIN, DB or production data used."
+    },
+    {
+      "id": "FUN-04",
+      "completed_at": "2026-10-28T05:12:00Z",
+      "commit": "85d34a89632131997d957d433a61e93be21a5b64",
+      "files": [
+        "qa/v3-release-browser.cjs",
+        "qa/v3-isolated-backend.cjs",
+        ".github/workflows/browser-qa.yml"
+      ],
+      "tests": "Browser QA 40635953139 success: Chrome fake API teacher stage/phase release, future lock and M01 draft persistence; Static QA 40635953113 success: actual classroom handler with disposable SQL verifies future stage/briefing rejection, practice release, previous evidence persistence",
+      "notes": "Confirmed existing committed FUN-04 code at branch HEAD and successful actual GitHub Actions runs; Chrome used fake API and fictional student, SQL disposable mock; no live classroom DB tested."
     }
   ]
 }
