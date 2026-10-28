@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T04:49:24.809Z",
+  "last_completed_at": "2026-10-28T04:51:34.040Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "ART-04",
+  "priority": "ART-05",
   "current_phase": "ARTE",
-  "last_task": "ART-03",
-  "completed_count": 40,
+  "last_task": "ART-04",
+  "completed_count": 41,
   "total_tasks": 59,
   "tasks": [
     {
@@ -735,10 +735,13 @@
       "description": "Integrar WebP/AVIF otimizados com lazy loading, alternativas leves e respeito a movimento reduzido",
       "group": "ART",
       "position": 45,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T04:51:34.040Z",
+      "commit": "4bd6fa77a91617ffdf76fc8329e5aa52dca6445f",
+      "tests": [
+        "Static QA 40634595614: success; 10 WebP signatures/sizes, fallback VM loop guard, reduced motion and script order",
+        "Browser QA 40634595591: success; fake API E2E, 12 Chrome viewports and mobile broken-WebP fallback"
+      ],
       "blocker": null
     },
     {
@@ -1549,6 +1552,24 @@
       ],
       "tests": "Static QA 40634432778 success; browser QA 40634344438 success after corrected ART-02 hero assertion",
       "notes": "Status variants read actual progress; labels remain. New browser QA in progress, and GDevelop/manual accessibility still pending."
+    },
+    {
+      "id": "ART-04",
+      "completed_at": "2026-10-28T04:51:34.040Z",
+      "commit": "4bd6fa77a91617ffdf76fc8329e5aa52dca6445f",
+      "files": [
+        "v3/assets/art/poster-fallback.svg",
+        "v3/media-fallback.js",
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "v3/design-system.css",
+        "qa/v3-media-fallback.cjs",
+        "qa/v3-visual-audit.cjs",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "Static QA 40634595614 success; Browser QA 40634595591 success including actual Chrome fallback and 12 viewport checks",
+      "notes": "10 existing WebP posters below 120KB each; no AVIF generated. Fallback is local SVG. GDevelop and real backend remain pending."
     }
   ]
 }
