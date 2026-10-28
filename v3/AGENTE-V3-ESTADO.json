@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:46:00.491Z",
+  "last_completed_at": "2026-10-28T02:47:28.512Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M06-03",
+  "priority": "M06-04",
   "current_phase": "MISSOES",
-  "last_task": "M06-02",
-  "completed_count": 10,
+  "last_task": "M06-03",
+  "completed_count": 11,
   "total_tasks": 59,
   "tasks": [
     {
@@ -205,10 +205,13 @@
       "description": "Tutoriais segmentados por NECESSIDADE do jogo, com prompts personalizados pelo gênero, botões copiar, exportação/compatibilidade e fallback",
       "group": "M06",
       "position": 11,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:47:28.512Z",
+      "commit": "34225c82f22eb9636f9b19c0cacf67aa6f7668ee",
+      "tests": [
+        "15/15 V8 assertions executed: syntax, escaping, five routes, prompts, app wiring and simulated DOM",
+        "qa/v3-m06-tutorial.cjs added for later Node execution; not run in Node"
+      ],
       "blocker": null
     },
     {
@@ -935,6 +938,21 @@
       ],
       "tests": "13/13 V8 runtime/static assertions executed; Node/browser/GDevelop E2E pending",
       "notes": "Source-backed choice matrix; Suno/ElevenLabs noncommercial caveats; Meshy export restrictions; Flow daily credit limits; five zero-cost fallbacks."
+    },
+    {
+      "id": "M06-03",
+      "completed_at": "2026-10-28T02:47:28.512Z",
+      "commit": "34225c82f22eb9636f9b19c0cacf67aa6f7668ee",
+      "files": [
+        "v3/asset-forge-tutorial.js",
+        "v3/asset-forge-tutorial.css",
+        "v3/app.js",
+        "professor-v3.html",
+        "qa/v3-m06-tutorial.cjs",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "15/15 V8 assertions executed; browser/GDevelop not executed",
+      "notes": "Five optional tutorials with editable project-specific prompts, copy fallback, export/import steps and no-credit alternatives."
     }
   ]
 }
