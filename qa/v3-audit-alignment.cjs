@@ -88,6 +88,23 @@ for(const [name,source] of [['foundations',m06Foundations],['validation',m06Vali
 assert(!m06Foundations.includes('PRÓXIMA ETAPA DO PROFESSOR'),'M06 foundations projected footer has no teacher facilitation');
 assert(m06Validation.indexOf('Acompanhamento → aluno → Missão 06')<m06Validation.indexOf('</details>'),'M06 assessment navigation remains inside private notes');
 for(const t of ['5 min escolha','12 min criação','8 min importação','7 min Preview'])assert(m06Student.includes(t),'M06 student timing '+t);
+// M07: 50-minute schedule, shared guide neutral heading and no projected assessment workflow.
+const m07Student=read('v3/student-mission-seven.js');
+const m07Foundations=read('v3/teacher-mission-seven-foundations.js');
+const m07Validation=read('v3/teacher-mission-seven-validation.js');
+const m07Guide=read('v3/gdevelop-mission-seven-guide.js');
+assert(m07Student.includes('https://editor.gdevelop.io/'),'M07 student editor handoff');
+assert(m07Student.includes('não abre nem importa seu projeto automaticamente'),'M07 editor manual recovery notice');
+assert(m07Student.includes('aplicativo GDevelop já instalado'),'M07 offline fallback');
+assert(!m07Student.includes('pit-private-teacher-notes'),'M07 student contains no private teacher notes');
+assert(m07Guide.includes('TUTORIAL DE CONCLUSÃO · 4 MINUTOS'),'M07 shared guide neutral heading');
+assert(!m07Guide.includes('PROFESSOR · DEMONSTRAÇÃO'),'M07 shared guide cannot label student as professor');
+assert(m07Foundations.includes('[7,4,36,3]'),'M07 teacher 7+4+36+3=50 minutes');
+assert.equal((m07Validation.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M07 practice/review notes private');
+assert.equal((m07Validation.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M07 private notes styled');
+assert(m07Validation.includes('aria-label="Abrir roteiro privado da avaliação da Missão 07"'),'M07 review icon accessible');
+assert(!m07Validation.includes('<details class="pit-private-teacher-notes" open'),'M07 private notes closed');
+assert(m07Validation.indexOf('No acompanhamento, selecione')>m07Validation.lastIndexOf('<details class="pit-private-teacher-notes">'),'M07 assessment workflow within private note');
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
