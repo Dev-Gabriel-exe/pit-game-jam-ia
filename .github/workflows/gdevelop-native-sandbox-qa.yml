@@ -5,6 +5,7 @@ on:
       - feature/pit-gamejam-v3-arcade
     paths:
       - 'qa/v3-gdevelop-native-fixture.cjs'
+      - 'qa/v3-gdevelop-native-results.cjs'
       - '.github/workflows/gdevelop-native-sandbox-qa.yml'
   workflow_dispatch:
 permissions:
@@ -50,6 +51,10 @@ jobs:
             --timeout-ms=180000 \
             --artifacts-dir="$GITHUB_WORKSPACE/qa/gdevelop-native-artifacts" \
             --junit-path="$GITHUB_WORKSPACE/qa/gdevelop-native-artifacts/junit.xml"
+      - name: Assert real native gameplay results and screenshot evidence
+        run: |
+          node --check qa/v3-gdevelop-native-results.cjs
+          node qa/v3-gdevelop-native-results.cjs qa/gdevelop-native-artifacts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
