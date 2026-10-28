@@ -30,6 +30,17 @@ jobs:
           HF_TOKEN: ''
           HUGGING_FACE_HUB_TOKEN: ''
         run: python scripts/ltx-cinematic-sideclips.py
+      - name: Keep a downloadable artifact even if Git push is unavailable
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ltx-original-sideclips
+          path: |
+            v3/assets/cinematics/*.mp4
+            v3/assets/cinematics/*-poster.webp
+            v3/assets/cinematics/manifest-ltx-experimental.json
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Archive only verified MP4 files and posters on the experimental branch
         run: |
           git config user.name "github-actions[bot]"
@@ -37,5 +48,7 @@ jobs:
           git add v3/assets/cinematics/
           if ! git diff --cached --quiet; then
             git commit -m "assets(experimental): archive genuine LTX background clips and posters [skip ci]"
+            git fetch origin feature/cinematics-ltx-library-20261028
+            git rebase origin/feature/cinematics-ltx-library-20261028
             git push origin HEAD:feature/cinematics-ltx-library-20261028
           fi
