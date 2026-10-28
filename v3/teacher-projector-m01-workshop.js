@@ -102,7 +102,7 @@ function build(){
  slides.push(shot('MODO OFICINA · 8 MIN','Monte a ideia do seu jogo — sem programar',
   cap('MOMENTO DE CRIAÇÃO · CADERNO DO ALUNO · MISSÃO 01')+
   '<div class="pit-ws-practice"><div class="pit-ws-worksheet"><h3>Os sete campos do seu jogo</h3><div class="pit-ws-fields">'+fields.map((x,i)=>'<div><b>'+String(i+1).padStart(2,'0')+'</b><span><strong>'+x[0]+'</strong><small>'+x[1]+'</small></span></div>').join('')+'</div></div>'+
-  '<aside class="pit-ws-task"><div class="pit-ws-task-top">⏳ SEU TEMPO DE CRIAÇÃO</div><div class="pit-ws-timer" data-pit-timer role="timer" aria-label="Tempo restante de oficina">06:00</div>'+
+  '<aside class="pit-ws-task"><div class="pit-ws-task-top">⏳ TEMPO PARA CONCEBER A IDEIA</div><div class="pit-ws-timer" data-pit-timer role="timer" aria-label="Tempo restante de oficina">08:00</div>'+
   '<div class="pit-ws-timer-controls"><button type="button" data-pit-timer-action="toggle">▶ Iniciar</button><button type="button" data-pit-timer-action="reset">↺ Reiniciar</button></div>'+
   '<p><strong>Leia e explore o Caderno do Aluno</strong> → Missão 01 → “Começar a criar”. A tarefa é conceber a ideia, não programar.</p>'+
   '<label class="pit-ws-check"><input type="checkbox" data-pit-task="1"> Tenho uma ação principal</label>'+
