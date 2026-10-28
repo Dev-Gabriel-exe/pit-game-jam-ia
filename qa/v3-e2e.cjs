@@ -52,6 +52,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const portalHero=await portal.locator('.hero').evaluate(el=>getComputedStyle(el,'::before').backgroundImage);
  assert(portalHero.includes('portal-arcano.svg'),'portal uses original ART-02 gothic portal illustration');
  assert(require('node:fs').readFileSync('v3/arcade-gallery.js','utf8').includes('missao-'),'mission carousel preserves approved mission artwork');
+ // The CC0 asset catalogue is featured; legacy procedural generator intentionally starts folded.
+ assert(await portal.locator('#pitOpenAssets').isVisible(),'new real asset library is visible');
+ assert(!await portal.locator('#assetGrid').isVisible(),'old geometric assets are hidden by default');
+ await portal.locator('#pitLocalFallback summary').click();
+ assert(await portal.locator('#assetGrid').isVisible(),'legacy fallback can be explicitly expanded');
  await portal.locator('#assetFormat').selectOption('3d');
  assert.equal(await portal.locator('#assetGrid .resource-card').count(),5,'library shows five 3D props');
  await portal.locator('#assetGenre').selectOption('corrida');
