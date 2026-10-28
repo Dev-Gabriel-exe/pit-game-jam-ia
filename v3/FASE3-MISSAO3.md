@@ -58,3 +58,6 @@ Foram executadas verificações automatizadas de sintaxe, renderização das fas
 - [GDevelop Sprite](https://wiki.gdevelop.io/gdevelop5/objects/sprite/)
 - [GDevelop Preview](https://wiki.gdevelop.io/gdevelop5/interface/preview/)
 - [Gemini imagem](https://gemini.google/br/overview/image-generation/?hl=pt-BR)
+
+### Regressões após redução de escopo
+- Foram realizados **24 testes automatizados funcionais**, aprovados, cobrindo navegação Próxima/Anterior (inclusive retorno ao topo para celular), troca entre Gemini e Asset Store, prompt personalizado, fallback de screenshot, contador de sete critérios, hidratação da evidência, tamanho máximo seguro de 742 caracteres, renderização do professor, tempos, CSS, roteamento e isolamento da prévia. Esse total não inclui a confirmação manual do editor em sala ou teste no navegador real.
