@@ -40,7 +40,7 @@ function build(){
   eyebrow('EXPERIMENTE · RPG, PUZZLE OU TERROR')+
   '<div class="pit-m01-runtime pit-m01-genres">'+genres.innerHTML+'</div>'+
   '<p class="pit-m01-caption">Troque de gênero: ação, regra e feedback mudam, mas a estrutura de interação permanece.</p>',{interactive:true}));
- const pseudo=txt(b,'.tm-pro-codepanel pre');
+ const pseudo=one(b,'.tm-pro-codepanel pre')?.textContent.trim()||'';
  if(pseudo){
   const at=pseudo.indexOf('aoInteragirComPorta');
   const first=at>0?pseudo.slice(0,at):pseudo;
@@ -111,7 +111,7 @@ function build(){
  if(vague)all.push(slide('OFICINA LIBERADA · 6 MIN','Ideia criativa ≠ requisito verificável',
   eyebrow('COMPARE ANTES DE ENTREGAR')+
   '<div class="pit-m01-compare">'+[...vague.querySelectorAll('.tm-pro-criteria-grid > div')].map((e,i)=>'<div><span>'+(i===0?'AINDA VAGO':'JÁ TESTÁVEL')+'</span><h3>'+inner(e,'p')+'</h3><p>'+inner(e,'small')+'</p></div>').join('')+'</div>'));
- const criteria=txt(p,'.tm-pro-codepanel pre');
+ const criteria=one(p,'.tm-pro-codepanel pre')?.textContent.trim()||'';
  if(criteria)all.push(slide('OFICINA LIBERADA · 6 MIN','Como reconhecer um requisito correto',
   eyebrow('CRITÉRIOS DE ACEITAÇÃO')+lead('Um requisito precisa prever tanto o sucesso quanto os casos em que a vitória ainda não deve acontecer.')+
   '<pre class="pit-m01-pseudocode">'+esc(criteria)+'</pre>'));
