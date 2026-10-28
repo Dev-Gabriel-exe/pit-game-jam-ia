@@ -114,3 +114,9 @@
 @media(max-width:850px){.m4s-intro,.m4s-review-layout{grid-template-columns:1fr}.m4s-cover{min-height:240px}.m4s-brief-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.m4s-header{padding:17px 12px}.m4s-head-main{gap:10px}.m4s-head-main>span{width:45px;flex-basis:45px;height:60px;font-size:26px}.m4s-head-main h2{font-size:29px}.m4s-page{padding:16px 11px}.m4s-intro>div:last-child{padding:17px}.m4s-lead h3,.m4s-intro h3{font-size:27px}.m4s-timebox{grid-template-columns:1fr;gap:5px}.m4s-timebox span{padding:8px}.m4s-form,.m4s-review-card{padding:15px 12px}.m4s-review-grid{grid-template-columns:1fr}.m4s-submit{flex-direction:column}.m4s-submit button{width:100%}}
 @media(prefers-reduced-motion:reduce){.m4s-root *{animation:none!important;transition:none!important}}
+
+/* Acessibilidade e continuidade de autoria na rota 3D */
+.m4s-3d-hint{padding:14px 18px;margin:13px 0;border:1px solid #b48a57;background:linear-gradient(105deg,#353020,#1e211d)}
+.m4s-3d-hint[hidden]{display:none!important}
+.m4s-3d-hint>strong{display:block;font-size:11px;letter-spacing:.12em;color:#efd093}
+.m4s-3d-hint p{color:#e5d7b7;font-size:13px;line-height:1.65;margin:8px 0 0}
