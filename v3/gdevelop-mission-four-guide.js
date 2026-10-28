@@ -86,22 +86,23 @@
    '<span><b>'+String(stepIndex+1).padStart(2,'0')+'</b> / '+r.steps.length+' · '+safe(r.label)+'</span>'+
    '<button type="button" data-g4-next '+(stepIndex===r.steps.length-1?'disabled':'')+'>PRÓXIMO ›</button></nav>';
  }
- function render(){
+ function render(initialRoute=0){
+  const first=Number.isInteger(initialRoute)&&initialRoute>=0&&initialRoute<routes.length?initialRoute:0;
   return '<section class="g4-tutorial" id="g4Tutorial" aria-label="Tutorial ilustrado de controles e limites no GDevelop">'+
    '<header class="g4-heading"><div><span>◈ LABORATÓRIO DE INTERAÇÃO · 5 MIN DE DEMONSTRAÇÃO</span>'+
    '<h3>Da tecla ao limite — no editor real.</h3>'+
    '<p>Quatro caminhos possíveis. Escolha <b>somente a rota adequada ao jogo</b>. Cada tela mostra onde clicar, o resultado esperado e o que verificar se falhar. A prática completa acontece na oficina de 36 minutos.</p></div></header>'+
    '<div class="g4-branches" role="tablist" aria-label="Tipos de projeto">'+routes.map((r,i)=>
-   '<button type="button" role="tab" id="g4Tab'+i+'" data-g4-route="'+i+'" aria-controls="g4Panel" aria-selected="'+(i===0?'true':'false')+'" tabindex="'+(i===0?'0':'-1')+'"><strong>'+safe(r.label)+'</strong><small>'+safe(r.type)+'</small></button>').join('')+'</div>'+
-   '<div class="g4-context"><strong id="g4Context">RPG / EXPLORAÇÃO</strong><p id="g4Intro">'+safe(routes[0].intro)+'</p></div>'+
-   '<div class="g4-frame" id="g4Panel" role="tabpanel" aria-labelledby="g4Tab0">'+body(0,0)+'</div>'+
+   '<button type="button" role="tab" id="g4Tab'+i+'" data-g4-route="'+i+'" aria-controls="g4Panel" aria-selected="'+(i===first?'true':'false')+'" tabindex="'+(i===first?'0':'-1')+'"><strong>'+safe(r.label)+'</strong><small>'+safe(r.type)+'</small></button>').join('')+'</div>'+
+   '<div class="g4-context"><strong id="g4Context">'+safe(routes[first].label)+'</strong><p id="g4Intro">'+safe(routes[first].intro)+'</p></div>'+
+   '<div class="g4-frame" id="g4Panel" role="tabpanel" aria-labelledby="g4Tab'+first+'">'+body(first,0)+'</div>'+
    '<footer class="g4-footer"><strong>REGRA DE PRODUÇÃO</strong><p>O objetivo não é dominar quatro estilos. Um único tipo de controle, um obstáculo/restrição e três testes no Preview bastam. Imagens oficiais podem representar versões diferentes; o fallback é deliberadamente identificado como diagrama.</p></footer></section>';
  }
- function mount(scope){
+ function mount(scope,options={}){
   const root=scope||document.querySelector('#g4Tutorial');if(!root)return;
   const buttons=[...root.querySelectorAll('[data-g4-route]')],frame=root.querySelector('#g4Panel');
   if(!frame)return;
-  let r=0,step=0;
+  let r=Number.isInteger(options.initialRoute)&&options.initialRoute>=0&&options.initialRoute<routes.length?options.initialRoute:0,step=0;
   function draw(focus,scroll){
    if(r<0||r>=routes.length)return;
    const current=routes[r];
@@ -139,6 +140,7 @@
   function changeRoute(index,focus){
    if(index<0||index>=routes.length)return;
    r=index;step=0;draw(focus,false);
+   if(typeof options.onRouteChange==='function')options.onRouteChange(routes[index].id,index);
   }
   buttons.forEach((b,i)=>{
    b.addEventListener('click',()=>changeRoute(i,false));
