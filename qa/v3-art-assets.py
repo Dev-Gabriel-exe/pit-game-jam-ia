@@ -25,3 +25,12 @@ assert css.count("background-image:linear-gradient(") >= 4, "missing gradient fa
 for html in ["index.html", "aluno-v3.html", "professor-v3.html"]:
     assert "v3/design-system.css" in Path(html).read_text(encoding="utf-8"), html
 print("PASS ART-02: 4 illustrations integrated without external dependencies")
+
+for name, frames in [("estados-missao.svg", 5), ("tipos-recurso.svg", 4)]:
+    raw = (base / name).read_text(encoding="utf-8")
+    root = ET.fromstring(raw)
+    assert root.tag == "{http://www.w3.org/2000/svg}svg"
+    groups = [node for node in root if node.tag.endswith("g") and node.attrib.get("transform", "").startswith("translate(")]
+    assert len(groups) == frames, (name, len(groups))
+    assert not re.search(r"<script\\b|<foreignObject\\b|href=[\"']https?:", raw, re.I), name
+    print(f"PASS ART-03: {name} XML, {frames} unique vector frames")
