@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "AUD-05",
+  "priority": "UI-02",
   "current_phase": "MISSOES",
-  "last_task": "UI-01",
-  "completed_count": 29,
+  "last_task": "AUD-05",
+  "completed_count": 30,
   "total_tasks": 59,
   "tasks": [
     {
@@ -548,15 +548,15 @@
       "description": "Executar verificações de páginas e evidências por missão; corrigir defeitos P0/P1 antes de avançar",
       "group": "AUD",
       "position": 33,
-      "status": "in_progress",
-      "updated_at": "2026-10-28T03:47:00Z",
-      "commit": "bb3970c1f3b296de50ec91729f4175136b6a06b7",
+      "status": "done",
+      "updated_at": "2026-10-28T03:49:00Z",
+      "commit": "224a92372b77a0f7027c82a9cc88d64716274194",
       "tests": [
-        "Existing browser E2E baseline succeeded on commit 4ecace96 (run 40627911511)",
-        "Extended 70 page/phase checks committed in qa/v3-e2e.cjs; initial CI failures diagnosed and repaired: chat overlay and ambiguous phase selectors",
-        "Awaiting fresh GitHub Actions browser QA for bb3970c; do not claim 70 checks passed yet"
+        "GitHub Actions Browser QA run 40628604617 completed success, commit 043d938a",
+        "Chrome Playwright checked 40 teacher + 30 student mission/phase pages (70 total)",
+        "Fake API flow: stage release, M01 submission/approval, chat, 390px mobile and JS errors all passed"
       ],
-      "blocker": "AUD-05 browser matrix not yet confirmed green; CI running. GDevelop execution and real peer review not attempted."
+      "blocker": null
     },
     {
       "id": "UI-01",
@@ -579,11 +579,14 @@
       "description": "Portal público/cadastro/entrada: integrar identidade RPG, acessibilidade, navegação fluida e coerência com a turma",
       "group": "UI",
       "position": 35,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "in_progress",
+      "updated_at": "2026-10-28T03:49:00Z",
+      "commit": "c7ca7696a3180cc8c9514a6f813db808a16244af",
+      "tests": [
+        "Static QA run 40628644876 success for V3 portal routing and semantic skip link",
+        "Browser portal keyboard focus/hero/links smoke test committed; CI run 40628708881 queued, result pending"
+      ],
+      "blocker": "Need browser CI confirmation and visual inspection of Gothic portal at mobile/tablet before final UI-02 acceptance."
     },
     {
       "id": "UI-03",
@@ -1354,6 +1357,17 @@
       ],
       "tests": "GitHub Actions run 40628435393 success; route inventory and local links",
       "notes": "Detected mixed legacy/V3 portal links for UI-02; AUD-05 70-phase browser audit still pending."
+    },
+    {
+      "id": "AUD-05",
+      "completed_at": "2026-10-28T03:49:00Z",
+      "commit": "224a92372b77a0f7027c82a9cc88d64716274194",
+      "files": [
+        "qa/v3-e2e.cjs",
+        "v3/AUDITORIA-PAGINAS-E-EVIDENCIAS.md"
+      ],
+      "tests": "70 mission/role/phase Playwright checks PASS, run 40628604617; fake classroom submission/approval/chat/mobile PASS",
+      "notes": "GDevelop, real peer test and real backend remain explicitly unverified; no live student data."
     }
   ]
 }
