@@ -3,6 +3,7 @@
  * No production API, no students, no credentials, no writes.
  */
 const {chromium}=require('playwright'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
 (async()=>{
  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
  const context=await browser.newContext({viewport:{width:1280,height:900}});
@@ -15,8 +16,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await page.route('https://fonts.gstatic.com/**',route=>route.abort());
   await page.route('http://preview.invalid/**',async route=>{
    const u=new URL(route.request().url());
-   const response=await route.fetch({url:'http://127.0.0.1:8899'+u.pathname+u.search});
-   await route.fulfill({response});
+   const file=path.resolve('.'+decodeURIComponent(u.pathname));
+   if(!file.startsWith(process.cwd()+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile()){
+    await route.fulfill({status:404,body:'Not found'});return;
+   }
+   const ext=path.extname(file).toLowerCase();
+   const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream';
+   await route.fulfill({status:200,contentType:mime,body:fs.readFileSync(file)});
   });
   await page.goto('http://preview.invalid/'+role+'-v3.html',{waitUntil:'domcontentloaded',timeout:20000});
   await page.locator('#authTitle').waitFor({timeout:12000});
