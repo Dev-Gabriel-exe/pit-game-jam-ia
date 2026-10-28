@@ -89,12 +89,21 @@ function arenaScenery(scene,ground){
  const land=put(map,geo('CylinderGeometry',21.3,21.8,1.2,64),MATERIAL.floor,0,-.72,0);
  const ring=put(map,geo('TorusGeometry',18,.20,8,96),MATERIAL.gold,0,.04,0);ring.rotation.x=Math.PI/2;
  for(let r=4;r<=16;r+=4){const torus=put(map,geo('TorusGeometry',r,.022,4,96),MATERIAL.floorEdge,0,.035,0);torus.rotation.x=Math.PI/2}
- const tile=geo('BoxGeometry',2.16,.075,2.16);
+ // Instancing reduces 250+ separate draw calls to a single GPU draw call.
+ const tiles=[];
  for(let x=-18;x<19;x+=2.25)for(let z=-18;z<19;z+=2.25){
   if(Math.hypot(x,z)>19.3)continue;
-  const block=put(map,tile,((Math.round(x+z)+Math.round(z))%3===0)?MATERIAL.dark:MATERIAL.floor,x,-.058,z);
-  block.rotation.y=((Math.round(x-z)%4)-2)*.012;block.position.y=-.04-(Math.abs(Math.sin(x*z))*.025);
+  tiles.push({x,z,angle:((Math.round(x-z)%4)-2)*.012});
  }
+ const tile=geo('BoxGeometry',2.16,.075,2.16);
+ const instances=new THREE.InstancedMesh(tile,MATERIAL.floor,tiles.length);
+ const dummy=new THREE.Object3D(),shade=new THREE.Color();
+ tiles.forEach((v,i)=>{
+  dummy.position.set(v.x,-.04-Math.abs(Math.sin(v.x*v.z))*.025,v.z);
+  dummy.rotation.set(0,v.angle,0);dummy.updateMatrix();instances.setMatrixAt(i,dummy.matrix);
+  shade.setHex(i%3===0?0x19171d:i%5===0?0x29222a:0x25222b);instances.setColorAt(i,shade);
+ });
+ instances.instanceMatrix.needsUpdate=true;instances.receiveShadow=true;map.add(instances);
  for(const [x,z,r] of [[0,0,1.7],[5.5,-5.5,1.5],[-5.5,5.5,1.5],[5.7,5.7,1.2],[-5.7,-5.7,1.2]]){
   const socle=put(map,geo('CylinderGeometry',r*.81,r,1.05,8),MATERIAL.floorEdge,x,.42,z);
   socle.material=MATERIAL.dark;put(map,geo('CylinderGeometry',r*.3,r*.6,.6,8),MATERIAL.gold,x,1.2,z);
@@ -120,7 +129,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  if(!window.WebGL2RenderingContext)throw Error('Este dispositivo não suporta WebGL 2.');
  const renderer=new THREE.WebGLRenderer({antialias:quality!=='low',alpha:false,powerPreference:'high-performance'});
  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,quality==='low'?1:1.65));
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,quality==='low'?.85:1.18));
  renderer.shadowMap.enabled=quality!=='low';
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -196,12 +205,14 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  const now=()=>performance.now();
  function loop(t){
   if(!live)return;
-  const dt=Math.min(.045,Math.max(0,(t-previous)/1000||0));previous=t;
+  const rawDt=Math.max(0,(t-previous)/1000||0);
+  const dt=Math.min(.06,rawDt);
+  const simulationDt=Math.min(.8,rawDt);previous=t;
   frame++;elapsed+=dt;
   if(playing&&simulation){
    // A fixed 50 ms step produces the same combat on fast and slow devices.
-   accumulator+=dt*speed;
-   for(let n=0;n<9&&accumulator>=.05;n++){
+   accumulator+=simulationDt*speed;
+   for(let n=0;n<16&&accumulator>=.05;n++){
     accumulator-=.05;
     const result=simulation.update(.05);
     for(const ev of result.events){
