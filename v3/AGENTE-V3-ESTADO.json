@@ -2215,6 +2215,12 @@
       "task": "REL-01",
       "commit": "ff506e6f9f98724b566a7be55a23d79c0582dd7d",
       "summary": "Verified prior GLB MIME hardening static QA 40689488633 SUCCESS and Browser QA 40689488626 SUCCESS. Added RIFF chunk length check (WAV header bytes 4-7 must match blob size minus 8) in preview (cca0be86). Added Chrome negative regression forging RIFF size via Blob constructor to ensure visible error, then reload for normal audio playback (ff506e6f). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "dda0c2464fb4d15836f4413e06ded4f49f9720de",
+      "summary": "Confirmed WAV RIFF integrity regression Browser QA 40690117420 SUCCESS and static QA 40690117422 SUCCESS. Added exhaustive Chrome integration coverage generating every one of 46 catalogue blobs, checking nonempty data, matching .png/.glb/.wav filenames, MIME and file signatures. New CI pending; no actual GDevelop GUI import or physical device claim; 54/59 unchanged."
     }
   ]
 }
