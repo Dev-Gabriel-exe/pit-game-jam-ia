@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:33:13.463Z",
+  "last_completed_at": "2026-10-28T02:40:31.041Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M05-04",
+  "priority": "M06-01",
   "current_phase": "MISSOES",
-  "last_task": "M05-03",
-  "completed_count": 7,
+  "last_task": "M05-04",
+  "completed_count": 8,
   "total_tasks": 59,
   "tasks": [
     {
@@ -157,10 +157,14 @@
       "description": "Teste professor/aluno, três casos de aceitação da regra, persistência e qualidade visual",
       "group": "M05",
       "position": 8,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:40:31.041Z",
+      "commit": "1bf4000b9036abc0e40f2498f31d344e830333af",
+      "tests": [
+        "31/31 module+interaction simulations: teacher practices, 3 rule tests, keyboard tab navigation, route differences, responsive reduced motion CSS and lesson isolation",
+        "32/32 repeatable assertions in qa/v3-m05-integration.cjs run with repository JS and mocked Node native modules",
+        "Source guards verified for approval/review workflow; no Neon, GDevelop or real browser E2E tested"
+      ],
       "blocker": null
     },
     {
@@ -879,6 +883,21 @@
       ],
       "tests": "48/48 module checks + 19/19 simulated UI interactions + 33/33 persistent QA assertions",
       "notes": "Student M05 reuses M01–M04 game data; one customizable event; three real Preview tests self-reported; 2D/3D route; 728 char max evidence; no real browser, GDevelop or Neon test."
+    },
+    {
+      "id": "M05-04",
+      "completed_at": "2026-10-28T02:40:31.041Z",
+      "commit": "1bf4000b9036abc0e40f2498f31d344e830333af",
+      "files": [
+        "v3/teacher-mission-five-validation.js",
+        "v3/teacher-mission-five-validation.css",
+        "v3/app.js",
+        "professor-v3.html",
+        "qa/v3-m05-integration.cjs",
+        "v3/FASE3-MISSAO5.md"
+      ],
+      "tests": "31/31 functional/static checks and 32/32 offline regression assertions",
+      "notes": "Teacher M05 practical and review now mirror student M05; required positive negative and duplicate-protection test. Real browser, GDevelop and Neon E2E pending."
     }
   ]
 }
