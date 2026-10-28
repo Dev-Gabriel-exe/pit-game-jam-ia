@@ -91,7 +91,8 @@ function render(){
  '<div class="tm5-clock">'+minutes.map((time,i)=>'<div class="'+(i===0?'active':'')+'"><b>'+time+' min</b><small>'+['FUNDAMENTOS','EXEMPLO','LABORATÓRIO','RESULTADOS'][i]+'</small></div>').join('')+'</div></header>'+
  '<div class="tm5-content"><div class="tm5-lead"><small>ENGENHARIA DE JOGOS · 8 MINUTOS</small>'+
  '<h3>Uma imagem se move. Uma regra transforma movimento em jogo.</h3>'+
- '<p>Na Missão 04, o projeto passou a responder aos controles. Agora a cena precisa <strong>lembrar o que aconteceu</strong> e decidir o próximo resultado. O GDevelop faz isso por eventos: condições verificadas continuamente e ações que mudam o estado.</p></div>'+
+ '<p>Na Missão 04, o projeto passou a responder aos controles. Agora a cena precisa <strong>lembrar o que aconteceu</strong> e decidir o próximo resultado. O GDevelop faz isso por eventos: condições verificadas continuamente e ações que mudam o estado.</p>'+
+ '<div class="tm5-mini-timeline"><span><b>2 min</b> · evento + variável</span><span><b>3 min</b> · simular repetição</span><span><b>3 min</b> · exemplos por gênero</span></div></div>'+
  '<div class="tm5-rule-strip"><div><span>CONDIÇÃO</span><b>SE jogador toca o Cristal</b></div><span aria-hidden="true">→</span>'+
  '<div><span>AÇÃO</span><b>Score = Score + 1</b></div><span aria-hidden="true">→</span>'+
  '<div><span>FEEDBACK</span><b>Remover item · atualizar HUD</b></div></div>'+
