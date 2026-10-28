@@ -62,8 +62,9 @@ function svgAsset(a){
  return '<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+style+art+'</svg>';
 }
 function downloadBlob(blob,file){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=file;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},3000);}
-function pngDownload(a){return new Promise(function(resolve,reject){const svg=svgAsset(a);const img=new Image();img.onload=function(){try{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);c.toBlob(function(blob){if(blob){downloadBlob(blob,a.file);resolve(true)}else reject(Error('PNG indisponível'))},'image/png');}catch(e){reject(e)}};img.onerror=reject;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);})}
-function modelDownload(a){
+function pngBlob(a){return new Promise(function(resolve,reject){const svg=svgAsset(a);const img=new Image();img.onload=function(){try{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);c.toBlob(function(blob){if(blob){resolve(blob)}else reject(Error('PNG indisponível'))},'image/png');}catch(e){reject(e)}};img.onerror=reject;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);})}
+async function pngDownload(a){downloadBlob(await pngBlob(a),a.file);return true;}
+function modelBlob(a){
  const crystal=a.shape==='crystal';let verts=crystal?[0,1.55,0,-.9,0,0,0,0,-.9,.9,0,0,0,0,.9,0,-1.35,0]:[-1,-1,-1,1,-1,-1,1,1,-1,-1,1,-1,-1,-1,1,1,-1,1,1,1,1,-1,1,1];
  let faces=crystal?[0,1,2,0,2,3,0,3,4,0,4,1,5,2,1,5,3,2,5,4,3,5,1,4]:[0,1,2,0,2,3,4,7,6,4,6,5,0,4,5,0,5,1,1,5,6,1,6,2,2,6,7,2,7,3,3,7,4,3,4,0];
  if(a.shape==='totem'){for(let i=0;i<verts.length;i+=3){verts[i]*=.55;verts[i+1]*=1.85;verts[i+2]*=.55;}}
@@ -75,9 +76,10 @@ function modelDownload(a){
  const gltf={asset:{version:'2.0',generator:'PIT Creator Mode procedural lowpoly'},extensionsUsed:['KHR_materials_unlit'],buffers:[{byteLength:buf.byteLength}],bufferViews:[{buffer:0,byteOffset:0,byteLength:pos.byteLength,target:34962},{buffer:0,byteOffset:pos.byteLength,byteLength:indicesByte,target:34963}],accessors:[{bufferView:0,componentType:5126,count:pos.length/3,type:'VEC3',min:[Math.min(...xs),Math.min(...ys),Math.min(...zs)],max:[Math.max(...xs),Math.max(...ys),Math.max(...zs)]},{bufferView:1,componentType:5123,count:idx.length,type:'SCALAR'}],materials:[{name:'PIT material',doubleSided:true,pbrMetallicRoughness:{baseColorFactor:rgba,metallicFactor:0,roughnessFactor:1},extensions:{KHR_materials_unlit:{}}}],meshes:[{primitives:[{attributes:{POSITION:0},indices:1,material:0}]}],nodes:[{mesh:0,name:a.name}],scenes:[{nodes:[0]}],scene:0};
  const json=new TextEncoder().encode(JSON.stringify(gltf));const jsonPad=(4-json.length%4)%4;const all=12+8+json.length+jsonPad+8+buf.length;const buffer=new ArrayBuffer(all),v=new DataView(buffer),u=new Uint8Array(buffer);
  v.setUint32(0,0x46546c67,true);v.setUint32(4,2,true);v.setUint32(8,all,true);v.setUint32(12,json.length+jsonPad,true);v.setUint32(16,0x4e4f534a,true);u.set(json,20);u.fill(32,20+json.length,20+json.length+jsonPad);
- let start=20+json.length+jsonPad;v.setUint32(start,buf.length,true);v.setUint32(start+4,0x004e4942,true);u.set(buf,start+8);downloadBlob(new Blob([buffer],{type:'model/gltf-binary'}),a.file);
+ let start=20+json.length+jsonPad;v.setUint32(start,buf.length,true);v.setUint32(start+4,0x004e4942,true);u.set(buf,start+8);return new Blob([buffer],{type:'model/gltf-binary'});
 }
-function audioDownload(a){
+function modelDownload(a){downloadBlob(modelBlob(a),a.file);}
+function audioBlob(a){
  const sr=22050,seconds=a.id==='wav-vitoria'?1.3:.7,n=Math.floor(sr*seconds);const buffer=new ArrayBuffer(44+n*2),v=new DataView(buffer);
  function label(p,s){for(let i=0;i<s.length;i++)v.setUint8(p+i,s.charCodeAt(i));}
  label(0,'RIFF');v.setUint32(4,36+n*2,true);label(8,'WAVE');label(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);label(36,'data');v.setUint32(40,n*2,true);
@@ -88,8 +90,9 @@ function audioDownload(a){
  if(a.id==='wav-portal')hz=160+u*600;
  if(a.id==='wav-menu')hz=490+u*120;
  const env=Math.pow(1-u,2.3)*Math.min(1,u*45);const sample=(Math.sin(2*Math.PI*hz*t)+.18*Math.sin(2*Math.PI*hz*2.01*t))*env*.30;v.setInt16(44+i*2,Math.max(-32767,Math.min(32767,Math.round(sample*32767))),true);}
- downloadBlob(new Blob([buffer],{type:'audio/wav'}),a.file);
+ return new Blob([buffer],{type:'audio/wav'});
 }
+function audioDownload(a){downloadBlob(audioBlob(a),a.file);}
 /* Suggested genres are discovery aids, not technical compatibility or licenses. */
 const genreExamples={
  rpg:['explorador','heroina','robo','monstro','mapa-floresta','mapa-cidade','mapa-caverna','chave','moeda','cristal','porta','coracao','pocao','checkpoint','glb-cristal','glb-totem','glb-bau','glb-portal','wav-coleta','wav-vitoria','wav-dano','wav-portal','wav-menu'],
@@ -125,4 +128,5 @@ document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click'
 document.getElementById('assetSearch')?.addEventListener('input',renderAssets);
 for(const id of ['assetGenre','assetFormat'])document.getElementById(id)?.addEventListener('change',renderAssets);
 function refreshStatus(){try{const x=JSON.parse(localStorage.getItem('pit_creator_mode_v08')||'{}');let done=Array.isArray(x.done)?x.done:[];const meter=document.getElementById('myProgress');if(meter)meter.textContent=done.length+'/6 missões • '+done.reduce((s,n)=>s+[100,120,150,150,200,280][n-1],0)+' XP';}catch(e){}}
+window.PIT_LIBRARY_API=Object.freeze({assets,assetBlob:async function(a){if(!a||!assets.some(x=>x.id===a.id))throw Error('Asset desconhecido');return a.cat==='modelo'?modelBlob(a):a.cat==='som'?audioBlob(a):pngBlob(a)},downloadBlob});
 renderAssets();refreshStatus();window.addEventListener('pageshow',refreshStatus);
