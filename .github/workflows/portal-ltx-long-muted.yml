@@ -1,0 +1,38 @@
+name: Generate longer muted LTX portal hero
+on:
+  push:
+    branches:
+      - feature/portal-ltx-longer-muted-20261028
+    paths:
+      - 'scripts/portal-ltx-long-muted.py'
+      - '.github/workflows/portal-ltx-long-muted.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ltx-longer-hero:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install public Gradio client
+        run: python -m pip install --disable-pip-version-check -q "gradio_client>=1.10,<3"
+      - name: Render ONE genuine LTX clip on anonymous public GPU
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+        run: python scripts/portal-ltx-long-muted.py
+      - name: Save only verified video to isolated feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html v3/assets/missions/portal-hero-long-ltx.mp4
+          git diff --cached --quiet && { echo "No verified clip produced"; exit 1; }
+          git commit -m "feat(portal): genuine 8-second muted LTX cinematic hero [skip ci]"
+          git push origin HEAD:feature/portal-ltx-longer-muted-20261028
