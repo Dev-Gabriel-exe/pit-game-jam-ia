@@ -87,7 +87,9 @@ async function build(){
    obj.content.modelResourceName=item.resource.name;
    obj.content.width=80;obj.content.height=80;obj.content.depth=80;
    instance=clone(scene.instances.find(x=>x.name==='Ground'));
-   instance.x=250;instance.y=250;instance.z=90;
+   // Starter player faces north from (615,768); place the prop ahead,
+   // inside the corridor rather than behind a wall, for visual inspection.
+   instance.x=620;instance.y=540;instance.z=15;
    instance.width=80;instance.height=80;instance.depth=80;
    instance.customSize=true;instance.locked=false;instance.zOrder=999;
   }
