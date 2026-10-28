@@ -59,11 +59,14 @@ function transition(original,action,mode='guard'){
   }
   if(!safe)record('warn','Cinco novos quadros de contato → cinco pontos indevidos. Score='+st.score+'.');
  }else if(action==='release'){
+  st.frames++;
   st.contact=false;record('info','Contato encerrado. Trigger once pode voltar a disparar em um próximo contato válido.');
  }else if(action==='key'){
+  st.frames++;
   if(st.hasKey)record('skip','A chave já foi coletada: TemChave continua 1.');
   else{st.hasKey=true;record('ok','SE tocar Chave → TemChave recebe 1; exibir feedback.');}
  }else if(action==='door'){
+  st.frames++;
   st.attempts++;
   if(st.hasKey){st.door='ABERTA';record('ok','SE tentar Porta E TemChave=1 → abrir Porta.')}
   else{st.door='FECHADA';record('skip','SE tentar Porta E TemChave=0 → manter fechada; exibir aviso.');}
