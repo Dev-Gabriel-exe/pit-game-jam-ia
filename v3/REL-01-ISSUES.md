@@ -14,6 +14,9 @@
 
 | P2 (acesso à sessão) | O único botão de trocar identificação estava em painel oculto em alguns layouts; ao acrescentar botão superior, o cabeçalho do professor passou a transbordar em 768px | Botão visível em aluno/professor, handler compartilhado, topnav com rolagem horizontal contida; Chrome confirmou logout do professor e isolamento de alunos | [Browser QA 40643089001](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40643089001) success |
 
+| P2 (confiabilidade do chat) | O histórico do professor usava `fetch` direto, sem o timeout e a proteção de prévia do helper compartilhado | `v3/app.js` agora faz a consulta com `call('chat','messages',...)`; o E2E rejeita `studentId` ausente/incorreto | [Browser QA 40649326459](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649326459) passou; [Static QA 40649326394](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649326394) passou |
+| P2 (formato 3D) | Antes, os GLBs só tinham assinatura/chunks inspecionados, sem verificação semântica independente | `qa/v3-gltf-validator.cjs` testa os 5 GLBs procedurais com o validador oficial Khronos glTF 2.0; todos apresentaram **0 erros e 0 avisos** | [Khronos GLB QA 40649579075](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649579075) sucesso; **não substitui importação GDevelop** |
+
 **Compatibilidade de dados:** as chaves antigas sem identificação não foram lidas, migradas nem apagadas, pois não há maneira segura de atribuir seu conteúdo ao aluno correto. O formulário genérico passa a criar novos rascunhos identificados; os módulos autorais das Missões 01–10 não foram alterados.
 
 Para executar as verificações restantes sem falsificar resultados, usar o [protocolo de homologação manual](./REL-01-HOMOLOGACAO-MANUAL.md), que identifica casos, arquivos, versões e evidências obrigatórias.
@@ -21,7 +24,8 @@ Para executar as verificações restantes sem falsificar resultados, usar o [pro
 
 ## Impedimentos ainda abertos
 
-- **M06-05 e FUN-08 (P1):** importar PNG/WAV/GLB e abrir/salvar starters no GDevelop real. A estrutura dos arquivos e downloads foi verificada em Node e Chrome, mas importação não.
+- **M06-05 e FUN-08 (P1):** importar PNG/WAV/GLB e abrir/salvar starters no GDevelop real. A estrutura dos arquivos e downloads foi verificada em Node e Chrome; adicionalmente, **5/5 GLBs passaram no Khronos glTF 2.0 Validator (0 erros, 0 avisos)**. Isso ainda não prova importação no GDevelop.
+- **Editor GDevelop real (tentativa isolada):** [GDevelop sandbox QA 40649114129](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40649114129) abriu o endereço oficial do editor (HTTP 200), mas encontrou a tela de entrada com “Log in”, “Sign up” e “Start for free”, sem botão Preview acessível; **nenhuma conta foi criada e o Preview ficou NOT_RUN**. O teste de navegador guarda captura diagnóstica como artifact e falha explicitamente em vez de declarar aprovação.
 - **M07-04 (P1):** o fluxo de backend fictício, aprovação e revisão agora possui cobertura automatizada; ainda falta Preview real de GDevelop 2D/3D.
 - **M08-04 (P1):** a cobertura de navegador móvel, foco e movimento reduzido já passou em CI; falta comparação antes/depois dentro do Preview GDevelop.
 - **M09-03 (P1):** o fluxo de revisão fictício passou em testes automatizados; falta observação real de teste por pares em ambiente isolado.
