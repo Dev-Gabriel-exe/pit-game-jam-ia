@@ -255,6 +255,27 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
   const locked=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'nao alterar'},cToken);
   assert.equal(locked.statusCode,409,'approved M'+n+' cannot be overwritten');
  }
+ // M07 acceptance: fictional author submits a genuine native-fixture-derived
+ // victory test description; teacher requests revision and approves only after
+ // the resubmission. This checks the real classroom handlers, NOT the editor UI.
+ const m7Stage=await call(classroom,'POST','stage',{stage:7,phase:'review'},'',origin,pin);
+ assert.equal(m7Stage.statusCode,200);
+ const m7Evidence='Missão 07 autoral fictícia: início, desafio, condição PIT_Ready, vitória e captura antes/depois no GDevelop 2D. Projeto salvo localmente.';
+ const m7Draft=await call(classroom,'POST','progress',{stage:7,route:'2d',status:'working',evidence:m7Evidence},a.body.token);
+ assert.equal(m7Draft.statusCode,200);
+ const m7Submit=await call(classroom,'POST','progress',{stage:7,route:'2d',status:'submitted',evidence:m7Evidence},a.body.token);
+ assert.equal(m7Submit.statusCode,200);
+ const m7Revision=await call(classroom,'POST','review',{studentId:a.body.studentId,stage:7,status:'revision',feedback:'Inclua teste negativo e captura do estado antes da vitória.'},'',origin,pin);
+ assert.equal(m7Revision.statusCode,200);
+ const m7BlockedApproval=await call(classroom,'POST','review',{studentId:a.body.studentId,stage:7,status:'approved'},'',origin,pin);
+ assert.equal(m7BlockedApproval.statusCode,409);
+ const m7Resubmit=await call(classroom,'POST','progress',{stage:7,route:'2d',status:'submitted',evidence:m7Evidence+' Teste negativo: porta fechada antes da condição.'},a.body.token);
+ assert.equal(m7Resubmit.statusCode,200);
+ const m7Approved=await call(classroom,'POST','review',{studentId:a.body.studentId,stage:7,status:'approved',feedback:'Fluxo e teste negativo comprovados na descrição.'},'',origin,pin);
+ assert.equal(m7Approved.statusCode,200);
+ const m7Final=await call(classroom,'GET','state',{},a.body.token);
+ assert.equal(m7Final.body.progress.find(p=>p.stage===7)?.status,'approved');
+ console.log('PASS M07: isolated real handler draft, submission, revision, resubmission and approval; native fixture evidence separately validated');
  const finalC=await call(classroom,'GET','state',{},cToken);
  assert.equal(finalC.body.progress.length,10,'all ten missions persisted for fictional student C');
  assert(finalC.body.progress.every(p=>p.status==='approved'),'all ten stages approved');
