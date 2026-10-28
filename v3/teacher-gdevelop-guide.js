@@ -65,7 +65,7 @@ function panel(index){
   [],[]
  ][index];
  const captions=labels.length?'<div class="tm-guide-image-translations" aria-label="Tradução das palavras exibidas na imagem">'+labels.map(x=>'<span>'+escapeHTML(x)+'</span>').join('')+'</div>':'';
- const img='<img loading="lazy" decoding="async" src="'+escapeHTML(d.img)+'" alt="'+escapeHTML(d.alt)+'" onerror="this.onerror=null;this.src=&#39;./v3/assets/guide/gdevelop-eventos-pt.svg&#39;;this.alt=&#39;Esquema local em português que representa condições e ações&#39;">';
+ const img='<img loading="lazy" decoding="async" src="'+escapeHTML(d.img)+'" alt="'+escapeHTML(d.alt)+'" data-tm-guide-image>';
  return '<div class="tm-guide-panel tm-guide-panel-in"><div class="tm-guide-image"><div class="tm-guide-image-head"><span>'+(index<3?'CAPTURA REAL DO GDEVELOP':'ILUSTRAÇÃO EM PORTUGUÊS')+'</span><strong>'+String(index+1).padStart(2,'0')+' / 05</strong></div><div class="tm-guide-image-shot">'+img+captions+'</div></div>'+
  '<div class="tm-guide-explanation"><span class="tm-guide-part">ETAPA '+String(index+1).padStart(2,'0')+'</span>'+
  '<h4>'+d.title+'</h4><p class="tm-guide-lead">'+d.lead+'</p>'+
@@ -85,6 +85,19 @@ function mount(){
   tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
   screen.setAttribute('aria-labelledby','tmGuideTab'+index);
   screen.innerHTML=panel(index);
+  const shot=screen.querySelector('[data-tm-guide-image]');
+  if(shot){
+   const fallback=()=>{
+    if(shot.dataset.fallback)return;
+    shot.dataset.fallback='1';
+    shot.src='./v3/assets/guide/gdevelop-eventos-pt.svg';
+    shot.alt='Diagrama didático autoral em português; captura externa indisponível';
+    const label=screen.querySelector('.tm-guide-image-head span');
+    if(label)label.textContent='DIAGRAMA AUTORAL · CAPTURA INDISPONÍVEL';
+   };
+   shot.addEventListener('error',fallback);
+   if(shot.complete&&shot.naturalWidth===0)fallback();
+  }
   screen.querySelector('[data-tm-guide-prev]')?.addEventListener('click',()=>choose(index-1,false));
   screen.querySelector('[data-tm-guide-next]')?.addEventListener('click',()=>choose(index+1,false));
   if(focus)tabs[index].focus();
