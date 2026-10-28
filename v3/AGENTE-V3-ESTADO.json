@@ -978,7 +978,8 @@
         "2026-10-28: GitHub Actions on checkpoint 0bf207fb: PIT Game Jam QA run 40671063508 SUCCESS and Browser QA run 40671063511 SUCCESS. These are automated regressions, not manual GDevelop/mobile/peer approval.",
         "2026-10-28: checkpoint d63599ca validated: static QA 40671846999 SUCCESS; Browser QA 40671846818 SUCCESS; manual criteria NOT_RUN.",
         "Actual PNG preview code committed 9b72e3ab; GitHub CI pending; no browser or GDevelop validation claimed.",
-        "Browser QA 40677106597 FAIL: async preview test race at 1280px (sprite has real image, 0!==1). Test wait/decode fix committed 57ca0e8; new CI result pending."
+        "Browser QA 40677106597 FAIL: async preview test race at 1280px (sprite has real image, 0!==1). Test wait/decode fix committed 57ca0e8; new CI result pending.",
+        "2026-10-28 confirmed: corrected PNG async preview regression Browser QA 40678411209 SUCCESS, static 40678411153 SUCCESS; checkpoint Browser QA 40678431100 SUCCESS, static 40678431018 SUCCESS. Manual tests NOT_RUN."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -2106,6 +2107,12 @@
       "task": "REL-01",
       "commit": "57ca0e84998cb81cd9758c04d47da30eb6030963",
       "summary": "Diagnosed Browser QA run 40677106597 failure: PNG preview generation is async; test asserted image synchronously at 1280px. Updated Chrome regression to wait for image and decode, and for WAV audio; fixed stale 'six' label for ten resources. CI on new commit not yet observed. 54/59 unchanged; manual GDevelop/mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "49450dab5605c2f2da5eedde04f6a8785818b04c",
+      "summary": "Verified fix 57ca0e84 and checkpoint 49450dab: static QA 40678411153 and 40678431018 SUCCESS; Browser QA 40678411209 and 40678431100 SUCCESS. Prior 40677106597 failed; regression recovered. Manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
     }
   ]
 }
