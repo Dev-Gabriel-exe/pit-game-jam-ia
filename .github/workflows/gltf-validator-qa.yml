@@ -1,0 +1,32 @@
+name: PIT Game Jam — Khronos GLB validation
+on:
+  push:
+    paths:
+      - 'biblioteca.js'
+      - 'qa/v3-gltf-validator.cjs'
+      - '.github/workflows/gltf-validator-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gltf-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install official glTF validator (open-source)
+        run: npm install --no-save --ignore-scripts gltf-validator@2.0.0-dev.3.10
+      - name: Validate every procedural GLB against glTF 2.0
+        run: |
+          node --check qa/v3-gltf-validator.cjs
+          node qa/v3-gltf-validator.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gltf-2-validation-report
+          path: qa/gltf-validator-artifacts/report.json
+          if-no-files-found: ignore
+          retention-days: 7
