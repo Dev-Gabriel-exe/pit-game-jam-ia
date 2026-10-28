@@ -974,7 +974,8 @@
         "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending.",
         "2026-10-28: unified 10 experimental LTX MP4 clips with latest V3 student gallery, motion manifest and playback controller; static QA 40665593226 PASS; added dedicated media regression test, latest CI pending.",
         "2026-10-28: fixed keyboard focus restoration after auto-opened student gallery; Browser QA 40668919135 SUCCESS: UI-08 12 viewport checks, FUN-01/02/03/04/09, REL-01/02. Release remains blocked on manual GUI/GDevelop/mobile/peer sign-off.",
-        "Manual acceptance matrix documented (LIB-PNG/GLB/WAV/MAP and UI08-KEY/MOTION/MOBILE); execution NOT_RUN, no pass claimed."
+        "Manual acceptance matrix documented (LIB-PNG/GLB/WAV/MAP and UI08-KEY/MOTION/MOBILE); execution NOT_RUN, no pass claimed.",
+        "2026-10-28: GitHub Actions on checkpoint 0bf207fb: PIT Game Jam QA run 40671063508 SUCCESS and Browser QA run 40671063511 SUCCESS. These are automated regressions, not manual GDevelop/mobile/peer approval."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -2072,6 +2073,12 @@
       "task": "REL-01",
       "commit": "aec07946e325c22ff3d3800d65098cca5232746b",
       "summary": "Added explicit seven-case manual acceptance matrix for real GDevelop library imports, audio, maps, UI-08 keyboard/reduced motion/mobile; documentation-only checkpoint, no manual tests executed; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "0bf207fba85f801d679c30d36860ba953fd0748d",
+      "summary": "Verified GitHub Actions static QA 40671063508 and Browser QA 40671063511 both SUCCESS for prior checkpoint; manual blockers unchanged; no production deployment."
     }
   ]
 }
