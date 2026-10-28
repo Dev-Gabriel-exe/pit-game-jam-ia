@@ -6,7 +6,7 @@
 const C=window.PIT_V5_CORE;const $=id=>document.getElementById(id);
 const url=new URLSearchParams(location.search),preview=url.has('preview'),teacher=url.get('mode')==='teacher';
 const BASE='https://pit-game-jam-chat.vercel.app/api/arena';
-const state={preview,teacher,session:null,authenticated:false,hero:null,build:null,progress:{missions:0,total:0,approvedXp:0,reviewXp:0},stage:null,arena:false,roster:[],sound:false,audio:null,battle:null,heartbeat:null,loaded:false};
+const state={preview,teacher,session:null,authenticated:false,hero:null,build:null,progress:{missions:0,total:0,approvedXp:0,reviewXp:0},stage:null,arena:false,roster:[],tournament:null,sound:false,audio:null,battle:null,heartbeat:null,loaded:false};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const notice=(message,isError=false)=>{const n=$('v5Notice');n.hidden=false;n.textContent=message;n.style.borderLeftColor=isError?'#e27677':'#ddb077'};
 const status=message=>{$('v5Connection').textContent=message};
@@ -144,8 +144,16 @@ function onEvent(e){
   message='✶ A arena tem um campeão!';
   const win=state.stage?.simulation?.result().winner;
   $('v5Winner').hidden=false;
-  $('v5Winner').textContent=win?'✶ CAMPEÃO DA ARENA ✶ · '+win.name:'✦ FINAL DA BATALHA';
-  $('v5StartBattle').textContent='▶ Repetir batalha';
+  const t=state.tournament;
+  if(t?.phase==='heat'&&win&&!t.winners.some(x=>x.id===win.id)){
+   const finalist=state.roster.find(x=>String(x.id)===String(win.id));
+   if(finalist)t.winners.push(finalist);
+  }
+  const pending=Boolean(t?.phase==='heat');
+  $('v5Winner').textContent=pending
+    ?'⚔ CLASSIFICADO PARA A FINAL ⚔ · '+(win?.name||'Herói')+' · '+t.winners.length+' de '+t.heats.length+' chaves'
+    :win?'✶ CAMPEÃO DA ARENA ✶ · '+win.name:'✦ FINAL DA BATALHA';
+  $('v5StartBattle').textContent=pending?'▶ Próxima chave / final':'▶ Repetir batalha';
   $('v5StartBattle').disabled=false;
   $('v5PauseBattle').disabled=true;
  }
@@ -166,6 +174,15 @@ function arenaHeroes(){
  return [{id:state.hero.id,name:state.hero.name,build:current(),progress:state.progress},
   ...demoRoster().slice(1,7)];
 }
+function runRound(group,title){
+ const seed=C.hash(group.map(x=>x.id).join('|')+'-v5');
+ state.battle=state.stage.fighters(group,{seed});
+ $('v5BattleTitle').textContent=title;
+ $('v5Winner').hidden=true;$('v5BattleLog').replaceChildren();
+ $('v5StartBattle').disabled=false;$('v5StartBattle').textContent='▶ Começar batalha';
+ $('v5PauseBattle').disabled=false;$('v5PauseBattle').textContent='Ⅱ Pausar';
+ paintBattle();
+}
 function openBattle(){
  if(!state.stage){notice('A arena Three.js ainda não está disponível neste dispositivo.',true);return}
  const members=arenaHeroes();
@@ -174,14 +191,34 @@ function openBattle(){
  $('v5Main').hidden=false;$('v5Battle').hidden=false;$('v5Back').hidden=false;$('v5Practice').hidden=true;
  $('v5TheaterLabel').textContent='⚔ ARENA DOS CRIADORES · BATALHA AUTOMÁTICA';
  $('v5StageNote').textContent='Combate automático · câmera rotacionável · mapa com colisões';
- $('v5Winner').hidden=true;$('v5BattleLog').replaceChildren();
- const seed=C.hash(members.map(x=>x.id).join('|')+'-v5');
- state.battle=state.stage.fighters(members,{seed});
- $('v5StartBattle').disabled=false;$('v5StartBattle').textContent='▶ Começar batalha';$('v5PauseBattle').disabled=false;
- $('v5BattleTitle').textContent=state.teacher?'Grande final — '+members.length+' alunos':'Treino — '+members.length+' personagens';
- paintBattle();$('v5Battle').scrollIntoView({behavior:'smooth',block:'nearest'});
+ if(members.length>20){
+  const heats=[];
+  for(let i=0;i<members.length;i+=16)heats.push(members.slice(i,i+16));
+  state.tournament={heats,winners:[],phase:'heat',index:0};
+  runRound(heats[0],'Classificatória 1 / '+heats.length+' · '+heats[0].length+' heróis');
+ }else{
+  state.tournament=null;
+  runRound(members,state.teacher?'Grande final · '+members.length+' alunos':'Treino · '+members.length+' personagens');
+ }
+ $('v5Battle').scrollIntoView({behavior:'smooth',block:'nearest'});
  if(state.heartbeat)clearInterval(state.heartbeat);
  state.heartbeat=setInterval(paintBattle,350);
+}
+function nextRound(){
+ const t=state.tournament;
+ if(!t||t.phase!=='heat'){openBattle();return}
+ if(t.index<t.heats.length-1){
+  t.index++;
+  runRound(t.heats[t.index],'Classificatória '+(t.index+1)+' / '+t.heats.length+' · '+t.heats[t.index].length+' heróis');
+  return;
+ }
+ t.phase='final';
+ if(t.winners.length<=1){
+  $('v5Winner').textContent='✶ CAMPEÃO DA ARENA ✶ · '+(t.winners[0]?.name||'Sem vencedor');
+  $('v5StartBattle').textContent='▶ Repetir torneio';
+  return;
+ }
+ runRound(t.winners,'GRANDE FINAL · '+t.winners.length+' vencedores das chaves');
 }
 function createTeacherView(roster){
  state.roster=roster;const first=roster[0];
@@ -257,7 +294,7 @@ $('v5Back').onclick=()=>{
  showHero();
 };
 $('v5StartBattle').onclick=()=>{if(!state.stage?.simulation)return;
- if(state.stage.simulation.finished){openBattle()}
+ if(state.stage.simulation.finished){nextRound();if(state.stage?.simulation?.finished)return}
  state.stage.resume();$('v5StartBattle').disabled=true;$('v5PauseBattle').disabled=false};
 $('v5PauseBattle').onclick=()=>{
  if(!state.stage)return;if(state.stage.playing){state.stage.pause();$('v5PauseBattle').textContent='▶ Continuar';$('v5StartBattle').disabled=false}
