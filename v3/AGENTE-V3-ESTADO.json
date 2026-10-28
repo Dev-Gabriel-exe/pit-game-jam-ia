@@ -2149,6 +2149,12 @@
       "task": "REL-01",
       "commit": "77a9e0a9766fe02e556167205c0f1ca54a2d159c",
       "summary": "Detected real static QA 40683185509 and Browser QA 40683185604 failures after adding two sprites (40 resources): static test hardcoded 38/28 and Browser QA preview regression failed; updated static regression for 40/30 and 12 unique additions. Browser QA root cause not yet confirmed; new CI pending. Manual tests NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "510168748072675fc70ded988e98624114ac08de",
+      "summary": "Read actual failed GitHub Actions logs: static QA failed because new sentinela/arqueiro were absent from all genreExamples; Browser QA failed because preview browser test still asserted 38 resources. Added both to RPG filter (5bb0c78f) and updated browser test for 40 preview buttons, 40 counter and both PNG previews (51016874). New CI pending; manual GDevelop/mobile/peer NOT_RUN. 54/59 unchanged."
     }
   ]
 }
