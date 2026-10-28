@@ -1,0 +1,37 @@
+name: Preview Licensed Gothic Footage
+on:
+  push:
+    branches: [experiment/missao-01-cinematic-footage]
+    paths: ['.github/workflows/preview-licensed-footage.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download Mixkit Free License clips for inspection (temporary only)
+        run: |
+          curl -L --fail --retry 2 --silent --show-error https://assets.mixkit.co/videos/33866/33866-720.mp4 -o /tmp/gothic.mp4
+          curl -L --fail --retry 2 --silent --show-error https://assets.mixkit.co/videos/4013/4013-720.mp4 -o /tmp/castle.mp4
+          ffprobe -v error -show_entries format=duration,size -of json /tmp/gothic.mp4
+          ffprobe -v error -show_entries format=duration,size -of json /tmp/castle.mp4
+      - name: Save preview frames for visual quality review
+        run: |
+          mkdir -p experiments/hyperframes-missao-01/references
+          ffmpeg -y -loglevel error -ss 2 -i /tmp/gothic.mp4 -frames:v 1 -vf "scale=960:-1" experiments/hyperframes-missao-01/references/mixkit-33866-preview.jpg
+          ffmpeg -y -loglevel error -ss 3 -i /tmp/castle.mp4 -frames:v 1 -vf "scale=960:-1" experiments/hyperframes-missao-01/references/mixkit-4013-preview.jpg
+      - name: Commit sample thumbnails only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experiments/hyperframes-missao-01/references/*-preview.jpg
+          if ! git diff --cached --quiet; then git commit -m "test(cinematic): compare free-licensed video frames [skip ci]"; git push; fi
