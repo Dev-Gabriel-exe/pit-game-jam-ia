@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "UI-03",
+  "priority": "UI-04",
   "current_phase": "MISSOES",
-  "last_task": "UI-02",
-  "completed_count": 31,
+  "last_task": "UI-03",
+  "completed_count": 32,
   "total_tasks": 59,
   "tasks": [
     {
@@ -595,10 +595,14 @@
       "description": "Caderno do aluno: header, jornada/carrossel, mapa de missões, páginas auxiliares e progresso real",
       "group": "UI",
       "position": 36,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:53:00Z",
+      "commit": "c6c88529ec7ef44c9269730bda756074e1bd9368",
+      "tests": [
+        "GitHub Actions Browser QA run 40628836785 completed success, commit 317d14e7",
+        "Chrome checked 70 mission/role/phase pages and gallery progress after fake M01 teacher approval: 1/10, aria-valuenow=1",
+        "GitHub Actions static QA run 40628836783 completed success"
+      ],
       "blocker": null
     },
     {
@@ -1382,6 +1386,18 @@
       ],
       "tests": "GitHub Actions static QA 40628745840 and Browser QA 40628745770 both success; portal keyboard/mobile/V3 routing",
       "notes": "Replaced 6 legacy links, added skip link and Gothic hero. No live deployment, screen reader or human visual approval."
+    },
+    {
+      "id": "UI-03",
+      "completed_at": "2026-10-28T03:53:00Z",
+      "commit": "c6c88529ec7ef44c9269730bda756074e1bd9368",
+      "files": [
+        "aluno-v3.html",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-ALUNO-UI-03.md"
+      ],
+      "tests": "Browser QA 40628836785 success: gallery approved progress, aria-live, all 70 mission pages",
+      "notes": "Chat async test flakiness observed in a later run; QA wait repaired in dece9bca, fresh run pending. No real backend or screen reader."
     }
   ]
 }
