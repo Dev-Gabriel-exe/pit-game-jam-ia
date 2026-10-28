@@ -16,8 +16,8 @@
   ],
   "priority": "AUD-05",
   "current_phase": "MISSOES",
-  "last_task": "AUD-04",
-  "completed_count": 28,
+  "last_task": "UI-01",
+  "completed_count": 29,
   "total_tasks": 59,
   "tasks": [
     {
@@ -548,11 +548,15 @@
       "description": "Executar verificações de páginas e evidências por missão; corrigir defeitos P0/P1 antes de avançar",
       "group": "AUD",
       "position": 33,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
-      "blocker": null
+      "status": "in_progress",
+      "updated_at": "2026-10-28T03:47:00Z",
+      "commit": "bb3970c1f3b296de50ec91729f4175136b6a06b7",
+      "tests": [
+        "Existing browser E2E baseline succeeded on commit 4ecace96 (run 40627911511)",
+        "Extended 70 page/phase checks committed in qa/v3-e2e.cjs; initial CI failures diagnosed and repaired: chat overlay and ambiguous phase selectors",
+        "Awaiting fresh GitHub Actions browser QA for bb3970c; do not claim 70 checks passed yet"
+      ],
+      "blocker": "AUD-05 browser matrix not yet confirmed green; CI running. GDevelop execution and real peer review not attempted."
     },
     {
       "id": "UI-01",
@@ -560,10 +564,13 @@
       "description": "Inventariar todas as telas/rotas reais e dependências: index.html, fase1.html, aluno-v3.html, professor-v3.html, biblioteca.js, galeria e HUD",
       "group": "UI",
       "position": 34,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:47:00Z",
+      "commit": "6bfcefa51c6a27fc90a52b7cdba6a851f7bbff3c",
+      "tests": [
+        "GitHub Actions static QA run 40628435393 success, including UI-01 route inventory",
+        "8 HTML routes, local src/href dependencies and 10 posters checked by qa/v3-ui-route-inventory.cjs"
+      ],
       "blocker": null
     },
     {
@@ -1335,6 +1342,18 @@
       ],
       "tests": "GitHub Actions AUD-04 success run 40627821351; official sources reviewed, no account testing",
       "notes": "Updated Suno lifetime downloads, Gemini free resolution, ElevenLabs shared credits and rights."
+    },
+    {
+      "id": "UI-01",
+      "completed_at": "2026-10-28T03:47:00Z",
+      "commit": "6bfcefa51c6a27fc90a52b7cdba6a851f7bbff3c",
+      "files": [
+        "qa/v3-ui-route-inventory.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-ROTAS-UI.md"
+      ],
+      "tests": "GitHub Actions run 40628435393 success; route inventory and local links",
+      "notes": "Detected mixed legacy/V3 portal links for UI-02; AUD-05 70-phase browser audit still pending."
     }
   ]
 }
