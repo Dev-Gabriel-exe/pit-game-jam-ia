@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T03:16:07.363Z",
+  "last_completed_at": "2026-10-28T03:17:48.544Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M08-03",
+  "priority": "M08-04",
   "current_phase": "MISSOES",
-  "last_task": "M08-02",
-  "completed_count": 17,
+  "last_task": "M08-03",
+  "completed_count": 18,
   "total_tasks": 59,
   "tasks": [
     {
@@ -345,10 +345,13 @@
       "description": "Aluno: implementar ao menos uma melhoria real de usabilidade, comparando antes/depois no Preview",
       "group": "M08",
       "position": 20,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:17:48.544Z",
+      "commit": "5601d9934e59d82c666277e751c5ecfa1f04a0fa",
+      "tests": [
+        "22/22 V8 checks on fetched repository sources: JS syntax, student validation, max evidence, roundtrip, mock-session isolation, HTML escape, route callback, CSS and app submission guards",
+        "No actual GDevelop Preview, browser UI or authenticated API test performed"
+      ],
       "blocker": null
     },
     {
@@ -1101,6 +1104,20 @@
       ],
       "tests": "19/19 V8 checks passed; real browser/GDevelop not executed",
       "notes": "Three genre routes; text/HUD/feedback, official screenshots with diagram fallback, keyboard tabs, before-after checks."
+    },
+    {
+      "id": "M08-03",
+      "completed_at": "2026-10-28T03:17:48.544Z",
+      "commit": "5601d9934e59d82c666277e751c5ecfa1f04a0fa",
+      "files": [
+        "v3/student-mission-eight.js",
+        "v3/student-mission-eight.css",
+        "v3/gdevelop-mission-eight-guide.js",
+        "aluno-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "22/22 V8 source and simulated state checks passed",
+      "notes": "Student practice requires one real UX improvement, before/after, negative case and project reference; no auto-approval."
     }
   ]
 }
