@@ -905,6 +905,39 @@ async function loadChat(){
   if(!$('chatMessages').querySelector('.msg'))$('chatMessages').innerHTML='<div class="chat-empty"><strong>Conexão indisponível</strong>Suas mensagens digitadas não foram apagadas. Tente novamente quando houver conexão.</div>';
  }
 }
+// Image attachment draft is local-only until the chat API supports authenticated uploads.
+// Never send base64 through the text-only chat endpoint or expose object URLs to others.
+let chatImageDraft=null;
+function clearChatImageDraft(){
+ if(chatImageDraft?.url)URL.revokeObjectURL(chatImageDraft.url);
+ chatImageDraft=null;
+ const input=$('chatImageInput'),preview=$('chatImagePreview');
+ if(input)input.value='';
+ if(preview){preview.hidden=true;preview.replaceChildren()}
+}
+function prepareChatImage(file){
+ if(!file)return;
+ const types=['image/png','image/jpeg','image/webp'];
+ if(!types.includes(file.type)||file.size>2*1024*1024){
+  setChatStatus('Escolha PNG, JPG ou WebP de até 2 MB.','error');return;
+ }
+ clearChatImageDraft();
+ const url=URL.createObjectURL(file);
+ chatImageDraft={file,url};
+ const preview=$('chatImagePreview');
+ if(preview){
+  const img=document.createElement('img');img.src=url;img.alt='Prévia local do print';img.style.cssText='max-width:150px;max-height:100px;object-fit:contain;border-radius:8px';
+  const label=document.createElement('span');label.textContent=file.name+' · prévia local (não enviada)';
+  const remove=document.createElement('button');remove.type='button';remove.textContent='Remover imagem';remove.onclick=clearChatImageDraft;
+  preview.replaceChildren(img,label,remove);preview.hidden=false;
+ }
+ setChatStatus('Imagem preparada apenas neste aparelho. O envio de imagens aguarda suporte seguro do servidor.','info');
+}
+$('chatImageInput')?.addEventListener('change',e=>prepareChatImage(e.target.files?.[0]));
+$('chatInput')?.addEventListener('paste',e=>{
+ const file=Array.from(e.clipboardData?.files||[]).find(f=>f.type.startsWith('image/'));
+ if(file){e.preventDefault();prepareChatImage(file)}
+});
 function renderChat(messages){
  const el=$('chatMessages'),prevBottom=el.scrollHeight-el.scrollTop-el.clientHeight;
  el.innerHTML=(messages||[]).map(m=>{
@@ -916,7 +949,7 @@ function renderChat(messages){
 $('chatForm').onsubmit=async e=>{
  e.preventDefault();
  const field=$('chatInput'),text=field.value.trim();
- if(chatSending||text.length<2)return;
+ if(chatImageDraft){setChatStatus('O print está somente em prévia local: o servidor ainda não aceita anexos. Remova a imagem para enviar apenas texto.','error');return}\n if(chatSending||text.length<2)return;
  if(TEACHER&&!selectedThread)return setChatStatus('Escolha um aluno antes de responder.','error');
  chatSending=true;setChatEnabled(true);setChatStatus('Enviando mensagem…');
  try{
