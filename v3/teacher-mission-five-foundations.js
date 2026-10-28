@@ -136,8 +136,8 @@ function examplePanel(i){
  '<div><strong>ESCOPO / MEMÓRIA</strong><p>'+escape(e.variable)+'</p></div>'+
  '<div><strong>FEEDBACK OBSERVÁVEL</strong><p>'+escape(e.feedback)+'</p></div></div>';
 }
-function mount(){
- const root=document.querySelector('#tm5Foundations');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('#tm5Foundations');if(!root)return;
  let mode='guard',state=initialState();
  const $=s=>root.querySelector(s);
  const redraw=()=>{
