@@ -27,8 +27,8 @@ PROMPT=(
 )
 NEG='low quality, geometry, vector, flat graphics, slideshow, fake camera pan, static image, distortion, duplicated limbs, bad anatomy, deformed character, jitter'
 attempts=[
- ('LTX-2.5 official ZeroGPU','Lightricks/LTX-2.5','/run',[
-   PROMPT, handle_file(str(SOURCE)),768,512,2.0,1234,'conv',False,False,False
+ ('LTX distilled official ZeroGPU','Lightricks/ltx-video-distilled','/image_to_video',[
+   PROMPT,NEG,handle_file(str(SOURCE)),None,640,384,'image-to-video',3.0,9,1234,False,1.0,False
   ])
 ]
 for label,space,api_name,args in attempts:
