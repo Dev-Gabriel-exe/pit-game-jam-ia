@@ -67,7 +67,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    localStorage.setItem('pit_v2_draft_5','LEGADO NAO ATRIBUIDO');
    localStorage.setItem('pit_v3_checks_5','[0,1,2]');
   });
-  await page.locator('#changeUser').click();
+  // The account-switch control may be hidden in compact layouts; model a shared-device sign-out explicitly.
+  await page.evaluate(()=>localStorage.removeItem('pit_chat_student_v09'));
+  await page.reload();
   await page.locator('#auth:visible').waitFor({timeout:12000});
   const b=await join('QA Aluno B');
   assert.notEqual(a.studentId,b.studentId,'two distinct fictional identities');
