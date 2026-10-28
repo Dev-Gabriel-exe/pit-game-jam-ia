@@ -18,9 +18,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install isolated browser test dependency
-        run: npm install --no-save --ignore-scripts playwright@1.58.2
-      - name: Install Khronos glTF validator
-        run: npm install --no-save --ignore-scripts gltf-validator@2.0.0-dev.3.10
+        run: npm install --no-save --ignore-scripts playwright@1.58.2 gltf-validator@2.0.0-dev.3.10
       - name: Validate generated GLB models (independent of GDevelop)
         run: node qa/v3-gltf-validator.cjs
       - name: Verify browser and test syntax
