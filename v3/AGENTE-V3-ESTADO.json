@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:15:00Z",
+  "last_completed_at": "2026-10-28T05:20:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-06",
+  "priority": "FUN-07",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-05",
-  "completed_count": 47,
+  "last_task": "FUN-06",
+  "completed_count": 48,
   "total_tasks": 59,
   "tasks": [
     {
@@ -841,10 +841,13 @@
       "description": "Teste do acompanhamento/roster por aluno, atividade, status, progresso e atualizações",
       "group": "FUN",
       "position": 52,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:20:00Z",
+      "commit": "4e4acd5ecb11519fa0de3a07eb00537772840446",
+      "tests": [
+        "Static QA 40636760085 success: actual roster and heartbeat handlers with 3 fictional students and disposable SQL; verified approved count, per-stage progress, activity, future stage rejection",
+        "Browser QA 40636789133 success: Chrome teacher panel with 3 fictional students; stats, pending/online/help filters, detail/back navigation"
+      ],
       "blocker": null
     },
     {
@@ -1677,6 +1680,19 @@
       ],
       "tests": "Static QA 40636673696 success: actual classroom handlers with disposable SQL, 10 missions, 3 fictional students, 2D/3D, drafts, short/long evidence, revision, edit, resubmit, approval and immutability; Regression fix: revision cannot be approved before a new submitted evidence (409)",
       "notes": "Real handler tests executed in disposable in-memory SQL, not live Postgres or full browser UI; those remain FUN-09."
+    },
+    {
+      "id": "FUN-06",
+      "completed_at": "2026-10-28T05:20:00Z",
+      "commit": "4e4acd5ecb11519fa0de3a07eb00537772840446",
+      "files": [
+        "chat-api/api/classroom.js",
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-teacher-browser.cjs",
+        "v3/TESTES-FUN-06.md"
+      ],
+      "tests": "Static QA 40636760085 success: actual roster and heartbeat handlers with 3 fictional students and disposable SQL; verified approved count, per-stage progress, activity, future stage rejection; Browser QA 40636789133 success: Chrome teacher panel with 3 fictional students; stats, pending/online/help filters, detail/back navigation",
+      "notes": "Real handlers with in-memory SQL and Chrome with fake API only; no real database or student data. Heartbeat spoofed future stage now returns 403."
     }
   ]
 }
