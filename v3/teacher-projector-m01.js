@@ -2,6 +2,23 @@
 (function(){
 'use strict';
 let index=0,slides=[],overlay=null,origin=null;
+let motionUserOn=true;
+const motionReduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+const motionAllowed=()=>new URLSearchParams(location.search).get('motion')!=='off'&&!motionReduced.matches&&!navigator.connection?.saveData;
+function syncMotion(){
+ if(!overlay)return;
+ const playing=motionUserOn&&motionAllowed();
+ overlay.classList.toggle('pit-motion-off',!playing);
+ const toggle=document.getElementById('pitProjectorMotionToggle');
+ if(toggle){toggle.disabled=!motionAllowed();toggle.setAttribute('aria-pressed',String(playing));toggle.textContent=playing?'◈ Pausar animações':'▷ Animações pausadas';toggle.title=!motionAllowed()?'Modo de movimento reduzido ou economia de dados ativo':playing?'Pausar os vídeos e efeitos de movimento':'Retomar vídeos e efeitos de movimento';}
+ overlay.querySelectorAll('#pitProjectorContent video').forEach(video=>{
+  if(!playing){video.pause();video.classList.remove('pit-cinema-playing');return;}
+  video.addEventListener('playing',()=>video.classList.add('pit-cinema-playing'),{once:true});
+  video.play().then(()=>video.classList.add('pit-cinema-playing')).catch(()=>video.classList.remove('pit-cinema-playing'));
+ });
+}
+motionReduced.addEventListener?.('change',syncMotion);
+navigator.connection?.addEventListener?.('change',syncMotion);
 const CARD_SELECTOR=['.tm1-hero-line','.tm1-concept','.tm1-key','.tm2-intro','.tm2-concept','.tm2-requirement','.tm3-lead','.tm3-concept','.tm3-principle','.tm3-comparison','.tm4f-card','.tm5-concept','.f6-card','.f6-scope','[class*="-concept-card"]','[class*="-theory-card"]','.t7f-concepts > *','.t8f-concepts > *','.t9-concepts > *','.t10-concepts > *','article','[class*="-card"]'].join(',');
 function missionNumber(){const match=($('missionNumber')?.textContent||'').match(/MISSÃO\s+(\d+)/i);return match?Number(match[1]):0;}
 const $=id=>document.getElementById(id);
@@ -22,13 +39,12 @@ function render(){
  const slide=slides[index];const content=$('pitProjectorContent');const isM01=Boolean(slide.section&&missionNumber()>=1&&missionNumber()<=10);
  overlay.classList.toggle('pit-projector-m01',isM01);
  const sectionOpening=isM01&&(index===0||slide.html.includes('pit-u-cover'));
+ const featured=slide.html.includes('pit-m01-hero-cinema')||slide.html.includes('pit-u-cinema-panel');
  const code=String(missionNumber()).padStart(2,'0');
- const prefix=sectionOpening?'<div class="pit-projector-motion" aria-hidden="true"><video muted loop playsinline preload="none" poster="./v3/assets/missions/missao-'+code+'.webp" src="./v3/assets/missions/missao-'+code+'-motion.mp4"></video></div>':'';
+ const prefix=sectionOpening&&!featured?'<div class="pit-projector-motion" aria-hidden="true"><video muted loop playsinline preload="none" poster="./v3/assets/missions/missao-'+code+'.webp" src="./v3/assets/missions/missao-'+code+'-motion.mp4"></video></div>':'';
  content.classList.toggle('pit-projector-has-motion',sectionOpening);
  content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML=prefix+'<div class="pit-projector-card">'+slide.html+'</div>';content.scrollTop=0;content.classList.add('pit-projector-enter');
- if(sectionOpening&&new URLSearchParams(location.search).get('motion')!=='off'&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!navigator.connection?.saveData){
-   content.querySelector('.pit-projector-motion video')?.play().catch(()=>{});
- }
+ syncMotion();
  if(isM01&&missionNumber()===1&&window.PIT_M01_PROJECTOR?.mount)window.PIT_M01_PROJECTOR.mount(content,slide);
  if(isM01&&missionNumber()>1&&window.PIT_PROJECTOR_UNIVERSAL?.mount)window.PIT_PROJECTOR_UNIVERSAL.mount(content,slide);
  $('pitProjectorMission').textContent=isM01?String(missionNumber()).padStart(2,'0')+' · '+slide.section:String(missionNumber()).padStart(2,'0');
@@ -44,9 +60,10 @@ function open(){
  slides=build();if(!slides.length)return;
  origin=document.activeElement;index=0;
  overlay=document.createElement('div');overlay.id='pitProjector';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Apresentação da missão atual');
- overlay.innerHTML='<div class="pit-projector-top"><div><small>✦ PIT GAME JAM IA · MISSÃO <span id="pitProjectorMission"></span></small><h1 id="pitProjectorTitle"></h1></div><button id="pitProjectorClose" type="button">✕ Encerrar apresentação</button></div><main id="pitProjectorContent" class="pit-projector-slide"></main><footer class="pit-projector-footer"><button id="pitProjectorPrev" type="button">← Anterior</button><div class="pit-projector-meter"><span id="pitProjectorCount"></span><div><i id="pitProjectorProgress"></i></div></div><button id="pitProjectorNext" type="button">Próximo →</button></footer>';
+ overlay.innerHTML='<div class="pit-projector-top"><div><small>✦ PIT GAME JAM IA · MISSÃO <span id="pitProjectorMission"></span></small><h1 id="pitProjectorTitle"></h1></div><div class="pit-projector-tools"><button id="pitProjectorMotionToggle" type="button" aria-pressed="true">◈ Pausar animações</button><button id="pitProjectorClose" type="button">✕ Encerrar apresentação</button></div></div><main id="pitProjectorContent" class="pit-projector-slide"></main><footer class="pit-projector-footer"><button id="pitProjectorPrev" type="button">← Anterior</button><div class="pit-projector-meter"><span id="pitProjectorCount"></span><div><i id="pitProjectorProgress"></i></div></div><button id="pitProjectorNext" type="button">Próximo →</button></footer>';
  document.body.appendChild(overlay);document.body.classList.add('pit-projecting');$('pitProjectorMission').textContent=String(missionNumber()).padStart(2,'0');
  $('pitProjectorClose').onclick=close;$('pitProjectorPrev').onclick=()=>move(-1);$('pitProjectorNext').onclick=()=>move(1);
+ $('pitProjectorMotionToggle').onclick=()=>{motionUserOn=!motionUserOn;syncMotion()};
  render();$('pitProjectorClose').focus();
 }
 document.addEventListener('keydown',e=>{if(!overlay)return;if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
