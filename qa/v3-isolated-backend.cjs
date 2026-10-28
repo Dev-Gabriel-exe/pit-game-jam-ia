@@ -13,7 +13,7 @@ class MockPool{
   if(q.startsWith('select count(*)::int as n from pit_students where room_code'))return result([{n:students.length}]);
   if(q.startsWith('insert into pit_students(')){
    const id='00000000-0000-4000-8000-'+String(students.length+1).padStart(12,'0');
-   const row={id,room_code:params[0],display_name:params[1],token_hash:params[2]};
+   const row={id,room_code:params[0],display_name:params[1],token_hash:params[2],joined_at:state.updated_at,last_seen_at:null,active_stage:1};
    students.push(row);return result([{id,display_name:row.display_name}]);
   }
   if(q.startsWith('select id,display_name from pit_students where')){
@@ -36,10 +36,13 @@ class MockPool{
   if(q.startsWith('select id,author,mission,body,created_at,read_at from pit_chat_messages'))return result([]);
 
   if(q.startsWith('select s.id,s.display_name,s.joined_at,s.last_seen_at,s.active_stage')){
-   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:state.updated_at,last_seen_at:state.updated_at,active_stage:1,highest_stage:1,approved:stages.filter(p=>p.student_id===s.id&&p.status==='approved').length,unread_chat:0,stages:stages.filter(p=>p.student_id===s.id)})));
+   return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:s.joined_at,last_seen_at:s.last_seen_at,active_stage:s.active_stage,highest_stage:Math.max(0,...stages.filter(p=>p.student_id===s.id).map(p=>p.stage)),approved:stages.filter(p=>p.student_id===s.id&&p.status==='approved').length,unread_chat:0,stages:stages.filter(p=>p.student_id===s.id).map(p=>({stage:p.stage,status:p.status,route:p.route,evidence:p.evidence,feedback:p.feedback,updated_at:p.updated_at,reviewed_at:p.reviewed_at}))})));
   }
   if(q.startsWith('select s.id,s.display_name,s.joined_at,')){
    return result(students.map(s=>({id:s.id,display_name:s.display_name,joined_at:state.updated_at,last_body:null,last_at:null,unread:0})));
+  }
+  if(q.startsWith('update pit_students set last_seen_at=')){
+   const row=students.find(s=>s.id===params[0]);if(row){row.active_stage=params[1];row.last_seen_at='2026-10-28T00:10:00Z'}return result([]);
   }
   if(q.startsWith('update pit_classroom_state set current_stage=')){
    state.current_stage=params[0];state.phase=params[1];return result([state]);
@@ -240,5 +243,37 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(oversized.statusCode,200,'long evidence is accepted after server-side sanitization');
  assert.equal(oversized.body.progress.evidence.length,750,'evidence truncated at 750 characters');
  console.log('PASS FUN-05: ten real handler stage cycles, drafts, 2D/3D, invalid inputs, revision/resubmission, approval, lock, 750-char limit, 3 fictional students isolated');
+
+ // FUN-06 — roster/heartbeat based on the real handler and its actual SQL contract.
+ const unauthorizedRoster=await call(classroom,'GET','roster',{},cToken);
+ assert.equal(unauthorizedRoster.statusCode,403,'student cannot read classroom roster');
+ const forgedActivity=await call(classroom,'POST','heartbeat',{stage:10},a.body.token);
+ assert.equal(forgedActivity.statusCode,200,'M10 is released at end of FUN-05');
+ const earlyStage=await call(classroom,'POST','stage',{stage:4,phase:'practice'},'',origin,pin);
+ assert.equal(earlyStage.statusCode,200);
+ const spoofed=await call(classroom,'POST','heartbeat',{stage:10},b.body.token);
+ assert.equal(spoofed.statusCode,403,'student cannot forge activity in a locked future stage');
+ const heartbeatC=await call(classroom,'POST','heartbeat',{stage:4},cToken);
+ assert.equal(heartbeatC.statusCode,200,'student activity updates on released mission');
+ const heartbeatB=await call(classroom,'POST','heartbeat',{stage:2},b.body.token);
+ assert.equal(heartbeatB.statusCode,200);
+ const teacherRoster=await call(classroom,'GET','roster',{},'',origin,pin);
+ assert.equal(teacherRoster.statusCode,200,'teacher sees isolated roster');
+ assert.equal(teacherRoster.body.roster.length,3,'all three fictional students visible');
+ const cRow=teacherRoster.body.roster.find(s=>s.id===cId);
+ assert.equal(cRow.active_stage,4,'roster reports last legitimate activity');
+ assert.equal(cRow.highest_stage,10,'roster computes highest evidence stage');
+ assert.equal(cRow.approved,10,'roster computes ten approved missions');
+ assert.equal(cRow.stages.length,10,'roster contains ten per-mission statuses');
+ assert(cRow.stages.every(p=>p.status==='approved'),'roster stage statuses are accurate');
+ assert(cRow.last_seen_at,'heartbeat updates last-seen timestamp');
+ const bRow=teacherRoster.body.roster.find(s=>s.id===b.body.studentId);
+ assert.equal(bRow.active_stage,2,'B activity is independent');
+ assert.equal(bRow.approved,0,'B has no approved work');
+ assert.equal(bRow.highest_stage,10,'B has evidence at M10');
+ assert.equal(bRow.stages.length,3,'B has three own stage records');
+ assert(!JSON.stringify(teacherRoster.body).includes(cToken),'roster never leaks raw student tokens');
+ console.log('PASS FUN-06: actual roster and heartbeat handlers, three fictional students, per-stage status, approved totals, activity, teacher-only access, future-stage heartbeat blocked');
+
 
 })().catch(e=>{console.error(e);process.exitCode=1});
