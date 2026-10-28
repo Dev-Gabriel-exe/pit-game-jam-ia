@@ -1,0 +1,45 @@
+/* V3 visual cohesion: readable fantasy headings, consistent ink, bronze and parchment. No external font dependency. */
+:root{--pit-font-display:Georgia,'Palatino Linotype','Book Antiqua',serif;--pit-font-ui:'Segoe UI',Verdana,system-ui,sans-serif;--pit-fantasy-gold:#f3ca8e;--pit-fantasy-line:#8d6345;--pit-fantasy-paper:#f4e9d8}
+body:is([data-role="teacher"],[data-role="student"]){font-family:var(--pit-font-ui);font-size:16px;line-height:1.5;color:var(--pit-fantasy-paper)}
+body:is([data-role="teacher"],[data-role="student"]) :is(button,input,textarea,select){font-family:var(--pit-font-ui);letter-spacing:normal}
+body:is([data-role="teacher"],[data-role="student"]) :is(.brand-title,.mainhead h1,.panel-heading,.drawer-head h2,.gallery-title h2,.chat-header strong,.lesson-headline h2,.pit-art-title){font-family:var(--pit-font-display);font-weight:700;letter-spacing:.015em;line-height:1.2}
+body:is([data-role="teacher"],[data-role="student"]) :is(.main-content p,.main-content li,.main-content label,.teacher-brief,.notice,.drawer-content){line-height:1.55}
+body:is([data-role="teacher"],[data-role="student"]) :is(button,input,textarea,select):focus-visible{outline:3px solid #f7d698;outline-offset:2px}
+/* Teacher chat: fantasy visual language, retaining two-column sidebar and existing chat controls. */
+body[data-role="teacher"] #chatWindow{background:linear-gradient(145deg,#15141d,#0a111a 76%);border:1px solid var(--pit-fantasy-line);box-shadow:0 20px 70px #000d,inset 0 0 0 1px #d4a77322;color:var(--pit-fantasy-paper)}
+body[data-role="teacher"] #chatWindow .chat-header{background:linear-gradient(105deg,#39271f,#1a1921 65%,#111823);border-bottom:1px solid #a3774e}
+body[data-role="teacher"] #chatWindow .chat-header strong{font-family:var(--pit-font-display);font-size:23px;color:#ffe2b2}
+body[data-role="teacher"] #chatWindow .chat-header button{border:1px solid #ae875f;color:#ffe3bc;background:#251f22;border-radius:9px}
+body[data-role="teacher"] #chatWindow .chat-threads{background:linear-gradient(180deg,#201b22,#131722);border-right:1px solid #74583d}
+body[data-role="teacher"] #chatWindow .chat-threads:before{content:'⚔  ALUNOS DA TURMA';color:#e6bd86;letter-spacing:.08em}
+body[data-role="teacher"] #chatWindow .chat-threads button{color:#f2e4d2;border-radius:9px}
+body[data-role="teacher"] #chatWindow .chat-threads button:before{background:#352a31;border-color:#80634a}
+body[data-role="teacher"] #chatWindow .chat-threads button:hover{background:#372c32;border-color:#9e7852}
+body[data-role="teacher"] #chatWindow .chat-threads button.active,body[data-role="teacher"] #chatWindow .chat-threads button[aria-pressed="true"]{background:#493225;border-color:#e4b879;box-shadow:inset 3px 0 #f0c383;color:#fff0d9}
+body[data-role="teacher"] #chatWindow .teacher-chat-conversation{background:radial-gradient(ellipse at 50% -20%,#50341e33,transparent 60%),linear-gradient(155deg,#171823,#0b111a)}
+body[data-role="teacher"] #chatWindow .chat-status{background:#241f24;color:#f0d3ac;border-bottom:1px solid #75583c}
+body[data-role="teacher"] #chatWindow .chat-messages{background:radial-gradient(ellipse at top,#61402524,transparent 68%)}
+body[data-role="teacher"] #chatWindow .msg{background:#302a35;border-color:#7e6054;color:#f8e9d6}
+body[data-role="teacher"] #chatWindow .msg.mine{background:#283a35;border-color:#80a58c;color:#ecffe9}
+body[data-role="teacher"] #chatWindow .msg small{color:#e1c5a4}
+body[data-role="teacher"] #chatWindow .chat-compose{background:#211d24;border-top:1px solid #866346}
+body[data-role="teacher"] #chatWindow .chat-compose label{color:#f5d5a8}
+body[data-role="teacher"] #chatWindow .chat-compose textarea{background:#101720;border-color:#977350;color:#fff4e6}
+body[data-role="teacher"] #chatWindow .chat-compose button{background:linear-gradient(110deg,#80512d,#b37a43);border:1px solid #f0c084;color:#fff9e9}
+/* Teacher follow-up: roster, progress and student status belong to the same game HUD. */
+body[data-role="teacher"] .drawer{background:linear-gradient(145deg,#201a22,#0d1119 80%);border-left:2px solid #b98a57;box-shadow:-14px 0 60px #000d,inset 2px 0 #e6c28d20}
+body[data-role="teacher"] .drawer-head{background:linear-gradient(100deg,#3b2b24,#1a1b24);border-bottom:1px solid #956f4b}
+body[data-role="teacher"] .drawer-head h2{color:#ffe0ad;font-size:clamp(23px,3vw,30px)}
+body[data-role="teacher"] .drawer-content{color:#f3e5d4}
+body[data-role="teacher"] .roster-table{font-size:15px}
+body[data-role="teacher"] .roster-table th{color:#ffdb9e;font-family:var(--pit-font-display);font-size:17px}
+body[data-role="teacher"] .roster-table td,body[data-role="teacher"] .roster-table th{border-bottom-color:#5c4638;padding:12px 9px}
+body[data-role="teacher"] .roster-table tr:hover{background:#44302280}
+body[data-role="teacher"] .drawer-controls button{border:1px solid #916c4b;background:#28232a;color:#f9e6ce;border-radius:9px}
+body[data-role="teacher"] .drawer-controls button[aria-pressed="true"]{background:#65412a;border-color:#e8b77c;color:#fff4df}
+body[data-role="teacher"] .state-pill{background:#332b2b;border-color:#946e4b;color:#f5dbba}
+body[data-role="teacher"] .state-pill.approved{background:#1e4436;border-color:#6bbd91;color:#d7ffe6}
+body[data-role="teacher"] .state-pill.submitted{background:#56391d;border-color:#e8b56b;color:#ffe6b5}
+body[data-role="teacher"] .progress-circle{border-color:#705037;background:radial-gradient(circle,#3a2a24,#171922);color:#ffdda4;box-shadow:inset 0 0 0 5px #17131a,0 0 22px #bd854b44}
+body[data-role="teacher"] .badge-item.done{color:#bceccc}
+@media(max-width:650px){body[data-role="teacher"] #chatWindow .chat-header strong{font-size:19px}body[data-role="teacher"] .roster-table{font-size:13px}}
