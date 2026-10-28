@@ -2252,6 +2252,12 @@
       "task": "UI-05",
       "commit": "13d896b514bc5d968381ee421b9cb329589945c5",
       "summary": "Expanded library 46→49 original procedural assets: owl 160x160 PNG, glowgarden 1024x576 PNG, hourglass 160x160 PNG; added RPG/puzzle discovery, real previews and full-catalogue tests (commits 84f6a39, 600f02c); guide updated and license limitation documented (6331494, e90ab28). Static QA 40694559980 SUCCESS, Browser QA 40694560079 SUCCESS (49 previews, PNG/GLB/WAV, UI-08, simulated chat/auth/roster/evidence/privacy); 54/59 unchanged, no manual GDevelop/physical mobile/peer tests."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "9e8297c9afa337711a9e00babf3589731427c471",
+      "summary": "Verified 49-asset Browser QA 40694836172 and static QA 40694836248 SUCCESS. Added real Chrome download smoke tests through UI for PNG explorer, GLB crystal and WAV collection with suggested filename and completed download assertions; corrected actual WAV id. New CI pending. GDevelop GUI, physical mobile and peer playtest NOT_RUN; 54/59 unchanged."
     }
   ]
 }
