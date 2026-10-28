@@ -2,7 +2,13 @@
 /* Media provided by RuneSnow on Pixabay Content License, user-approved ID 307687. */
 const {chromium}=require('playwright'),fs=require('fs');
 const ID='307687',URL='https://pixabay.com/videos/fantasy-planeswalker-mage-myth-307687/';
-const urls=new Set();
+const urls=new Set([
+'https://cdn.pixabay.com/video/2025/10/03/307687_medium.mp4',
+'https://cdn.pixabay.com/video/2025/10/03/307687_large.mp4',
+'https://cdn.pixabay.com/video/2025/10/03/307687_small.mp4',
+'https://cdn.pixabay.com/video/2025/10/03/307687_tiny.mp4',
+'https://cdn.pixabay.com/video/2025/10/03/307687.mp4'
+]);
 function collect(str){
  const s=String(str||'').replace(/\\u002f/ig,'/').replace(/\\\//g,'/');
  for(const x of s.matchAll(/https?:\/\/[^\s"'<>\\]+?\.mp4(?:\?[^\s"'<>\\]*)?/ig))if(x[0].includes('307687')&&x[0].includes('pixabay.com/video/'))urls.add(x[0]);
@@ -27,7 +33,7 @@ function collect(str){
  let best=null;
  for(const u of new Set(variants)){
   try{
-   const res=await context.request.get(u,{timeout:40000,headers:{Referer:'https://pixabay.com/'}});
+   const res=await context.request.get(u,{timeout:40000,headers:{Referer:'https://pixabay.com/',Accept:'video/mp4,*/*'}});console.log('CDN candidate HTTP',res.status(),u);
    if(res.status()!==200&&res.status()!==206)continue;
    const b=await res.body(),type=res.headers()['content-type']||'';
    if(b.length<75000||(!type.includes('video')&&b.subarray(4,8).toString()!=='ftyp'))continue;
