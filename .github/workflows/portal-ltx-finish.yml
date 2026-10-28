@@ -1,0 +1,51 @@
+name: Finish longer LTX portal poster
+on:
+  push:
+    branches:
+      - feature/portal-ltx-longer-muted-20261028
+    paths:
+      - '.github/workflows/portal-ltx-finish.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  poster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install video utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Extract real poster frame and adjust fallback links
+        run: |
+          test -s v3/assets/missions/portal-hero-long-ltx.mp4
+          ffmpeg -v error -y -ss 0.4 -i v3/assets/missions/portal-hero-long-ltx.mp4 -frames:v 1 -c:v libwebp -quality 82 v3/assets/missions/portal-hero-long-poster.webp
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html')
+          css=Path('v3/portal-cinematic.css')
+          hc=html.read_text()
+          cc=css.read_text()
+          old='poster="./v3/assets/missions/missao-01.webp"'
+          new='poster="./v3/assets/missions/portal-hero-long-poster.webp"'
+          assert hc.count(old)==1
+          old_bg='url("./assets/missions/missao-01.webp")'
+          assert cc.count(old_bg)==2
+          hc=hc.replace(old,new)
+          cc=cc.replace(old_bg,'url("./assets/missions/portal-hero-long-poster.webp")')
+          html.write_text(hc)
+          css.write_text(cc)
+          print('Updated video fallback from genuine LTX first frame')
+          PY
+      - name: Commit poster and fallback into existing feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html v3/portal-cinematic.css v3/assets/missions/portal-hero-long-poster.webp
+          git diff --cached --quiet && exit 1
+          git commit -m "feat(portal): use true LTX frame as muted hero fallback [skip ci]"
+          git push origin HEAD:feature/portal-ltx-longer-muted-20261028
