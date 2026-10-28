@@ -237,13 +237,14 @@
       "group": "M06",
       "position": 13,
       "status": "blocked",
-      "updated_at": "2026-10-28T08:34:00Z",
+      "updated_at": "2026-10-28T08:36:00Z",
       "commit": "3e09626ec9356ab09ed8f4f624c4162ee71dd095",
       "tests": [
         "18/18 V8 assertions executed: module syntax, professor/student fields, phase integration, offline fallback, static responsive CSS, evidence roundtrip",
         "qa/v3-m06-integration.cjs added, not run in Node",
         "Real GDevelop import and mobile browser tests NOT executed",
-        "Native GDevelop 5.6.285 run 40657143854 SUCCESS: 2D PIT PNG and 3D PIT GLB loaded/rendered, 8/8 gameplay tests; manual screenshots reviewed; Chrome WAV/PNG decode run 40656562279 SUCCESS."
+        "Native GDevelop 5.6.285 run 40657143854 SUCCESS: 2D PIT PNG and 3D PIT GLB loaded/rendered, 8/8 gameplay tests; manual screenshots reviewed; Chrome WAV/PNG decode run 40656562279 SUCCESS.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
       ],
       "blocker": "Real GDevelop native runtime and screenshots verified for PIT PNG/GLB, but GUI drag-and-drop import, WAV audible GDevelop playback, offline mobile physical verification and starter save/reopen remain NOT_RUN."
     },
@@ -300,13 +301,14 @@
       "group": "M07",
       "position": 17,
       "status": "blocked",
-      "updated_at": "2026-10-28T08:34:00Z",
+      "updated_at": "2026-10-28T08:36:00Z",
       "commit": "3f4e2b8c9ed997eec547474f866f5a2c83db2841",
       "tests": [
         "20/20 V8 assertions executed: teacher/student rubric, state machine, negative and victory cases, evidence, integration and responsive CSS",
         "qa/v3-m07-integration.cjs committed, not executed in Node",
         "Real GDevelop and isolated backend submission/review tests NOT executed",
-        "Native GDevelop run 40657143854 SUCCESS: 2D and 3D conditional-victory events tested with negative, positive and persistence assertions; 8/8 total gameplay tests."
+        "Native GDevelop run 40657143854 SUCCESS: 2D and 3D conditional-victory events tested with negative, positive and persistence assertions; 8/8 total gameplay tests.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
       ],
       "blocker": "Native GDevelop event victory tests pass, and isolated backend submission/review tests passed previously. Still missing actual mission authorial final victory screen and end-to-end GDevelop project evidence/submission/review."
     },
@@ -874,13 +876,14 @@
       "group": "FUN",
       "position": 54,
       "status": "blocked",
-      "updated_at": "2026-10-28T08:34:00Z",
-      "commit": "3e09626ec9356ab09ed8f4f624c4162ee71dd095",
+      "updated_at": "2026-10-28T08:36:00Z",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
       "tests": [
         "Static QA 40636997100 success: 28 generated asset MIME/signatures, GLB v2 mesh/chunks, WAV PCM headers, 4 ZIP CRC/manifest",
         "Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint",
         "Khronos GLB QA 40649579075 SUCCESS: 5/5 procedural models validated with 0 errors/0 warnings; import into GDevelop remains NOT_RUN",
-        "Chrome Browser QA 40656562279 SUCCESS: 5 WAV files decoded with Web Audio and 4 PNGs decoded/pixel inspected. Native GDevelop 40657143854 SUCCESS: 2D PNG and 3D GLB rendered in disposable projects; 8/8 gameplay tests, screenshots validated."
+        "Chrome Browser QA 40656562279 SUCCESS: 5 WAV files decoded with Web Audio and 4 PNGs decoded/pixel inspected. Native GDevelop 40657143854 SUCCESS: 2D PNG and 3D GLB rendered in disposable projects; 8/8 gameplay tests, screenshots validated.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
       ],
       "blocker": "PNG/GLB programmatic resource import into real GDevelop native runtime and Chrome WAV decode verified. Still missing GDevelop GUI import, WAV playback/listening, starter save/reopen and real mobile device."
     },
@@ -921,8 +924,8 @@
       "group": "REL",
       "position": 57,
       "status": "blocked",
-      "updated_at": "2026-10-28T08:34:00Z",
-      "commit": "0910c61b629003fc596d392c1e393298312c7d1c",
+      "updated_at": "2026-10-28T08:36:00Z",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
       "tests": [
         "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
         "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
@@ -936,7 +939,8 @@
         "Strict release gate NOT PASSED; 7 acceptance IDs remain blocked",
         "2026-10-28: release gate executed in isolated V8 against actual checkpoint: NOT READY (52/59), 7 blocked; Node/CI execution of updated gate not performed",
         "Added qa/v3-release-gate-selftest.cjs with four synthetic Node regression cases; wired into static-qa.yml. CI run 40656964777 queued at checkpoint; outcome not claimed.",
-        "Native GDevelop 40657143854 SUCCESS: 8/8 real 2D/3D gameplay tests including conditional victory; screenshots of original PIT sprite and crystal inspected. Browser QA 40656562279 SUCCESS: WAV/PNG media decoding. Static QA 40657155850 SUCCESS: evidence-gate synthetic negative cases."
+        "Native GDevelop 40657143854 SUCCESS: 8/8 real 2D/3D gameplay tests including conditional victory; screenshots of original PIT sprite and crystal inspected. Browser QA 40656562279 SUCCESS: WAV/PNG media decoding. Static QA 40657155850 SUCCESS: evidence-gate synthetic negative cases.",
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
       ],
       "blocker": "Seven IDs remain blocked. Native runtime partially clears prior GDevelop access obstacle, but manual editor import/save/reopen, actual authorial final screen, peer observation, physical mobile, final rollback/licensing remain unverified."
     },
@@ -1881,6 +1885,12 @@
       "task": "REL-01",
       "commit": "0910c61b629003fc596d392c1e393298312c7d1c",
       "summary": "Real GDevelop 5.6.285 8/8 native gameplay tests passed on disposable 2D/3D PIT PNG/GLB fixtures, victory event assertions; Chrome 5 WAV + 4 PNG decoded. Remaining manual acceptance explicitly blocked."
+    },
+    {
+      "at": "2026-10-28T08:36:00Z",
+      "task": "REL-01",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+      "summary": "GDevelop native 40657474661 SUCCESS: 8/8 real 2D/3D gameplay tests with conditional victory and PlaySound WAV action; sound audibility and manual editor import still NOT_RUN."
     }
   ]
 }
