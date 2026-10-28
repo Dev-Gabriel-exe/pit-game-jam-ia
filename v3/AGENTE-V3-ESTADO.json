@@ -8,14 +8,14 @@
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
-  "execution_policy": "One validated incremental objective per cycle; never imply 30-minute automatic schedule was created.",
+  "execution_policy": "Execute as many consecutive safe, verifiable goals per run as practical; commit, test and checkpoint each. Never fabricate GDevelop or peer tests, never publish or merge main.",
   "content_approved": [
     "M01",
     "M02",
     "M03"
   ],
   "priority": "REL-01",
-  "current_phase": "FUNCIONALIDADES",
+  "current_phase": "ENTREGA",
   "last_task": "REL-01",
   "completed_count": 52,
   "total_tasks": 59,
@@ -917,15 +917,16 @@
       "group": "REL",
       "position": 57,
       "status": "blocked",
-      "updated_at": "2026-10-28T06:07:00Z",
-      "commit": "c1e8f70b5b0069b035bd8613caa5ec733fae9b72",
+      "updated_at": "2026-10-28T06:20:00Z",
+      "commit": "8da3aa47f4703ad14b58d7c3881640295022515c",
       "tests": [
-        "Static QA 40637308970 success: full static regression suite including FUN-10",
-        "Browser QA 40637186741 success: Chrome E2E 3 fictional students, teacher and simulated 503",
-        "Release gate script qa/v3-release-gate.cjs added; GitHub Actions 40637450547 pending at checkpoint",
-        "Postgres QA 40637833387 success: actual handlers against disposable PostgreSQL 16, 3 fictional students, token hashing, review/revision, roster and isolated chat"
+        "6/6 actual V8 assertions passed on extracted studentStorageKey/savedChecks: distinct accounts, preview, legacy ignore, malformed data",
+        "Static QA 40643089008 success on feature commit 8da3aa47f4703ad14b58d7c3881640295022515c",
+        "Browser QA 40643089001 success: Chrome E2E, 12 viewport audit, two fictional students sharing one browser, fallback M05 draft/checklist isolation, student/teacher sign-out",
+        "Postgres QA 40637833387 success (previous unchanged handlers; disposable PostgreSQL 16)",
+        "Release gate remains diagnostic only: 7 blocked IDs; strict gate must not pass"
       ],
-      "blocker": "P1 acceptance blockers remain: real GDevelop asset import/Preview, physical/mobile editor confirmation and observed peer testing. Disposable Postgres 16 handler integration is now verified; no production/Neon writes."
+      "blocker": "Remaining P1 acceptance blockers: real GDevelop PNG/WAV/GLB/starter import and 2D/3D Preview, physical mobile confirmation, observed peer playtest; licensing/rollback checks before publication. Shared-browser draft privacy and accessible sign-out fixed and verified in Chrome."
     },
     {
       "id": "REL-02",
@@ -1812,6 +1813,25 @@
       ],
       "tests": "Postgres QA 40637833387 success",
       "notes": "One P1 blocker resolved with actual disposable Postgres 16; remaining GDevelop/peer acceptance unverified."
+    },
+    {
+      "id": "REL-01",
+      "completed_at": null,
+      "commit": "8da3aa47f4703ad14b58d7c3881640295022515c",
+      "files": [
+        "v3/app.js",
+        "aluno-v3.html",
+        "professor-v3.html",
+        "v3/style.css",
+        "qa/v3-shared-device-browser.cjs",
+        "qa/v3-teacher-browser.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/REL-01-ISSUES.md",
+        "v3/REL-01-HOMOLOGACAO-MANUAL.md",
+        "v3/REL-03-RELATORIO-PRELIMINAR.md"
+      ],
+      "tests": "V8 helper 6/6 PASS; Static QA 40643089008 success; Browser QA 40643089001 success; PostgreSQL 40637833387 previously passed, backend unchanged",
+      "notes": "Fixed cross-account leakage of fallback drafts/checklists on shared devices, exposed teacher/student sign-out, fixed tablet nav overflow; manual GDevelop/peer acceptance still NOT_RUN. No production, main, real students or paid services."
     }
   ]
 }
