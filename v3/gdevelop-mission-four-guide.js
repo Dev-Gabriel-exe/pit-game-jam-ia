@@ -24,7 +24,7 @@
   defaultTop:'https://wiki.gdevelop.io/gdevelop5/behaviors/topdown/top-down-movement-default-controls-box.png',
   separate:'https://wiki.gdevelop.io/gdevelop5/all-features/separate-objects-action.png',
   platformer:'https://wiki.gdevelop.io/gdevelop5/behaviors/platformer/pasted/20230304-153154.png',
-  platformControls:'https://wiki.gdevelop.io/gdevelop5/behaviors/platformer/platformer-defaultcontrols-box.png',
+  platformControls:'https://wiki.gdevelop.io/gdevelop5/behaviors/platformer/pasted/20230304-153154.png',
   platformGround:'https://wiki.gdevelop.io/gdevelop5/tutorials/platformer/grass-platform-add-behavior.jpg',
   physics3d:'https://wiki.gdevelop.io/gdevelop5/behaviors/physics3d/first-person.png',
   eventSheet:'https://wiki.gdevelop.io/gdevelop5/interface/events-editor/pasted/20230313-175502.png'
