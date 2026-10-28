@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "UI-04",
+  "priority": "UI-05",
   "current_phase": "MISSOES",
-  "last_task": "UI-03",
-  "completed_count": 32,
+  "last_task": "UI-04",
+  "completed_count": 33,
   "total_tasks": 59,
   "tasks": [
     {
@@ -611,10 +611,14 @@
       "description": "Caderno do professor: painel de turma e progresso por aluno/missão, filtros, liberação, feedback e revisão",
       "group": "UI",
       "position": 37,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:55:00Z",
+      "commit": "7a4e1437a0fb77dbc45c2c57fa9926534f7799d2",
+      "tests": [
+        "GitHub Actions Browser QA run 40628996955 completed success on f5f9c1a7",
+        "Chrome tested pending/help/all roster filters, aria-pressed state, mandatory revision feedback, teacher approval and student progress using fake backend",
+        "Static QA on f5f9c1a7 pending/success should be checked separately; no live API or real class used"
+      ],
       "blocker": null
     },
     {
@@ -1398,6 +1402,20 @@
       ],
       "tests": "Browser QA 40628836785 success: gallery approved progress, aria-live, all 70 mission pages",
       "notes": "Chat async test flakiness observed in a later run; QA wait repaired in dece9bca, fresh run pending. No real backend or screen reader."
+    },
+    {
+      "id": "UI-04",
+      "completed_at": "2026-10-28T03:55:00Z",
+      "commit": "7a4e1437a0fb77dbc45c2c57fa9926534f7799d2",
+      "files": [
+        "v3/app.js",
+        "professor-v3.html",
+        "v3/professor-gothic.css",
+        "qa/v3-e2e.cjs",
+        "v3/REVISAO-PAINEL-UI-04.md"
+      ],
+      "tests": "Browser QA 40628996955 success: roster filter accessibility, review feedback guard, approval and chat fake API",
+      "notes": "UI-04 validated in isolated Chrome; real backend authorization, concurrency and classroom remain future functional QA."
     }
   ]
 }
