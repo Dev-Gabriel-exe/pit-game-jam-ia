@@ -125,3 +125,7 @@ A versão inicial da Missão 01 do professor foi reprovada por superficialidade 
 - **Limite didático:** não abrir o GDevelop nesta missão. A criação no editor inicia na Missão 03, com prints/tutorial incorporado na própria tela.
 - **Arquivos novos:** `teacher-mission-two.js`, `student-mission-two.js`, `mission-two.css`.
 - **Mais informações e testes:** [FASE3-MISSAO2.md](./FASE3-MISSAO2.md).
+
+## Fase 3 — Missão 03 (27/10/2026)
+
+**Implementada em professor e aluno; aguardando homologação visual e teste E2E.** Após revisão de tempo feita pelo usuário, foi reduzida à entrega de **um único asset visual** importado em projeto GDevelop salvo com Preview. Os 30 minutos são 5 de conceitos, 5 de tutorial demonstrado, 18 de oficina (4+8+6) e 2 de resultados. Ferramentas: GDevelop obrigatório, Gemini opcional para 2D e Asset Store/3D Box como alternativa. **Flow, Suno, ElevenLabs e Meshy não são exigidos na Missão 03**, pois a oficina ainda precisa construir o primeiro jogo; serão explorados como opções seletivas na Missão 06, com atenção aos limites gratuitos/licenças. Tutorial usa capturas oficiais verificadas, explicações em português e fallback ilustrado. Mais em [FASE3-MISSAO3.md](./FASE3-MISSAO3.md).
