@@ -32,7 +32,7 @@ const {chromium}=require('playwright');
   assert.equal(stagePosts.length,0,'preview mode cannot call real classroom API');
   await page.locator('#pitProjectorLaunch').click();
   const n=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1].trim());
-  assert(n>=20,'continuous projector must include full M02 lesson');
+  assert.equal(n,7,'M02 presents seven workshop screens; full lesson remains available with ?aula=detalhada');
   assert.equal(await page.locator('#pitProjectorContent .pit-projector-motion video, #pitProjectorContent .pit-u-cinema-panel video, #pitProjectorContent .pit-m01-hero-cinema video').count(),1,'opening slide has a cinematic video');
   assert.match(await page.locator('#pitProjectorContent .pit-projector-motion video, #pitProjectorContent .pit-u-cinema-panel video, #pitProjectorContent .pit-m01-hero-cinema video').getAttribute('src'),/missao-02-motion.mp4/);
   await page.locator('#pitProjectorNext').click();
