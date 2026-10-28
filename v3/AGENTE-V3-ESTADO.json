@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:54:21.778Z",
+  "last_completed_at": "2026-10-28T02:56:35.226Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M08-01",
+  "priority": "M08-02",
   "current_phase": "MISSOES",
-  "last_task": "M07-04",
-  "completed_count": 15,
+  "last_task": "M08-01",
+  "completed_count": 16,
   "total_tasks": 59,
   "tasks": [
     {
@@ -314,10 +314,13 @@
       "description": "Professor: UX de jogos, affordance, instruções, HUD, contraste, resposta ao input e feedback de erro",
       "group": "M08",
       "position": 18,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:56:35.226Z",
+      "commit": "e43058c407fcbd5541213d0526cf34199deca218",
+      "tests": [
+        "16/16 V8 assertions executed: six UX concepts, before-after simulation, syntax, integration, responsive CSS",
+        "qa/v3-m08-foundations.cjs committed, not executed in Node"
+      ],
       "blocker": null
     },
     {
@@ -1066,6 +1069,21 @@
       ],
       "tests": "20/20 V8 checks passed; backend/GDevelop E2E blocked",
       "notes": "Teacher rubric and practice mirror student, but real submission/review/approval remains unverified."
+    },
+    {
+      "id": "M08-01",
+      "completed_at": "2026-10-28T02:56:35.226Z",
+      "commit": "e43058c407fcbd5541213d0526cf34199deca218",
+      "files": [
+        "v3/teacher-mission-eight-foundations.js",
+        "v3/teacher-mission-eight-foundations.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m08-foundations.cjs",
+        "v3/FASE3-MISSAO8.md"
+      ],
+      "tests": "16/16 V8 assertions; browser/GDevelop not executed",
+      "notes": "Teacher UX concepts and accessible before-after simulator; no claims of engine execution."
     }
   ]
 }
