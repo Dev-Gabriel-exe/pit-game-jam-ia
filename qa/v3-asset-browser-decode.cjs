@@ -22,7 +22,9 @@ const {chromium}=require('playwright');
      if(blob.type!=='audio/wav')throw Error('WAV MIME '+id);
      const bytes=await blob.arrayBuffer();
      const decoded=await audio.decodeAudioData(bytes.slice(0));
-     if(decoded.sampleRate!==22050||decoded.numberOfChannels!==1||decoded.duration<=0.05)
+     // Web Audio may resample decoded PCM to the device AudioContext rate.
+     // Validate the source header independently, not the resampled output rate.
+     if(new DataView(bytes).getUint32(24,true)!==22050||decoded.numberOfChannels!==1||decoded.duration<=0.05)
       throw Error('WAV decoded format '+id);
      const samples=decoded.getChannelData(0);
      let energy=0;for(let i=0;i<samples.length;i++)energy+=samples[i]*samples[i];
