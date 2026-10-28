@@ -194,11 +194,7 @@ function mount(host,s){
  const module=window[s.mountModule],root=host.querySelector('.pit-u-component');
  if(!module||!root)return;
  try{module.mount?.(root)}catch(err){console.warn('PIT projector: mount failed',s.mountModule,err)}
- // Some mission 3 nested components are autonomous and require their own scoped mounts.
- if(s.mountModule==='PIT_TEACHER_MISSION_THREE'){
-  if(root.querySelector('.gd3-root'))window.PIT_GDEVELOP_FIRST_RUN?.mount(root.querySelector('.gd3-root'));
-  if(root.querySelector('.ast3-root'))window.PIT_ASSET_STUDIO?.mount(root.querySelector('.ast3-root'),{title:'Projeto de jogo',genre:'Livre',hero:'Protagonista',scene:'Primeira cena',objective:'Criar o MVP'});
- }
+ // Mission 3 parent mount already initializes both embedded widgets when present.
 }
 window.PIT_PROJECTOR_UNIVERSAL={build,mount,PHASES,MAP};
 })();
