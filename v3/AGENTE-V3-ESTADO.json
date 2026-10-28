@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:13:24.058Z",
+  "last_completed_at": "2026-10-28T02:22:52.095Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M05-02",
+  "priority": "M05-03",
   "current_phase": "MISSOES",
-  "last_task": "M05-01",
-  "completed_count": 5,
+  "last_task": "M05-02",
+  "completed_count": 6,
   "total_tasks": 59,
   "tasks": [
     {
@@ -122,10 +122,15 @@
       "description": "Tutorial ilustrado GDevelop: criar evento de interação, variável/contador e feedback; versão clique 2D/3D sem exigir cópia de jogo",
       "group": "M05",
       "position": 6,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:22:52.095Z",
+      "commit": "b2cd9a0c3d5e6c415224811a06a3b786114d3347",
+      "tests": [
+        "38/38 source, syntax, content, route, tab-keyboard, navigation, screenshot fallback and isolation checks passed",
+        "25/25 checks in qa/v3-m05-guide.cjs executed on repository source with mocked Node native modules",
+        "Verified official documentation sources for five screenshot URLs, Trigger once and 3D Physics collision distinction",
+        "No real browser, GDevelop runtime, or authenticated API/Neon test performed; all remain future QA"
+      ],
       "blocker": null
     },
     {
@@ -838,6 +843,20 @@
       ],
       "tests": "13 in-process JS/static assertions passed; repeatable Node QA file committed but not run in local checkout",
       "notes": "M05 teacher concepts and 2D/3D genre examples plus interactive protected-vs-repeated frame simulator wired into briefing. Fixed frame counter for key, door, release. No browser, GDevelop engine or live API tests; those remain pending."
+    },
+    {
+      "id": "M05-02",
+      "completed_at": "2026-10-28T02:22:52.095Z",
+      "commit": "b2cd9a0c3d5e6c415224811a06a3b786114d3347",
+      "files": [
+        "v3/gdevelop-mission-five-guide.js",
+        "v3/gdevelop-mission-five-guide.css",
+        "professor-v3.html",
+        "qa/v3-m05-guide.cjs",
+        "v3/FASE3-MISSAO5.md"
+      ],
+      "tests": "38/38 functional/static simulations + 25/25 repeatable QA assertions",
+      "notes": "Completed GDevelop 5-step illustrated Events demo; 3 alternative paths; official screenshot URLs; offline clearly-labeled diagram; keyboard, fallback, reduced motion. Real browser/editor E2E remains pending."
     }
   ]
 }
