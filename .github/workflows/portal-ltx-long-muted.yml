@@ -22,6 +22,10 @@ jobs:
           python-version: '3.12'
       - name: Install public Gradio client
         run: python -m pip install --disable-pip-version-check -q "gradio_client>=1.10,<3"
+      - name: Install FFmpeg for color grading and video QA
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Render ONE genuine LTX clip on anonymous public GPU
         env:
           HF_HUB_DISABLE_TELEMETRY: '1'
