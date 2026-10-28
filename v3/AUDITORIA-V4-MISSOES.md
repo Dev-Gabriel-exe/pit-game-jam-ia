@@ -7,7 +7,7 @@
 | M01 | `teacher-content.js`, `teacher-mission-one.js`, `teacher-mission-one-pro.js` | `mission-one.js` | Correção pedagógica inicial implementada; QA e revisão integral pendentes |
 | M02 | `teacher-mission-two.js` | `student-mission-two.js` | Orientações operacionais corrigidas; QA/homologação pendentes |
 | M03 | `teacher-mission-three.js` | `student-mission-three.js` | Corrigidos tempo, abertura do editor e roteiro privado; QA de regressão em verificação |
-| M04 | `teacher-mission-four-foundations.js`, `teacher-mission-four-validation.js` | `student-mission-four.js` | Pendente |
+| M04 | `teacher-mission-four-foundations.js`, `teacher-mission-four-validation.js` | `student-mission-four.js` | Auditoria de projeção e acesso ao editor corrigida; QA da alteração em execução, homologação humana pendente |
 | M05 | `teacher-mission-five-foundations.js`, `teacher-mission-five-validation.js` | `student-mission-five.js` | Pendente |
 | M06 | `teacher-mission-six-foundations.js`, `teacher-mission-six-matrix.js`, `teacher-mission-six-validation.js` | `student-mission-six.js` | Pendente |
 | M07 | `teacher-mission-seven-foundations.js`, `teacher-mission-seven-validation.js` | `student-mission-seven.js` | Pendente |
@@ -51,3 +51,12 @@
 - **Regra de projeção:** roteiro de acompanhamento da prática inserido como `<details class="pit-private-teacher-notes">`, fechado por padrão e acionado apenas por ícone discreto ▤. Deve ser aberto somente após desligar o espelhamento HDMI. Não é um mecanismo de autenticação; conteúdo projetado permanece explicação didática normal.
 - **Teste de regressão:** `qa/v3-audit-alignment.cjs` atualizado para conferir tempo, link real do editor, não abertura automática e roteiros privados M01–M03 recolhidos (commit `75a9b5391cbeb6d8bc940763fca62e5405d790de`). O resultado da CI desse commit deve ser confirmado; testes manuais de GDevelop, mobile físico e alunos continuam NOT_RUN.
 - **Próximo:** M04 — verificar as duas faces e corrigir instruções/avaliação sem expor notas privadas. M03 ainda não homologada em sala.
+
+## M04 — Primeiro Jogável · auditoria das duas faces (28/10/2026)
+
+- **Objetivo e tempo sincronizados:** 50 minutos totais (6 fundamentos, 5 demonstração, 36 oficina, 3 avaliação). Os 36 minutos de oficina são 12 entrada/controle + 15 limite/obstáculo + 9 Preview e salvamento em ambas as faces. Quatro rotas alternativas, sem exigir que cada aluno implemente todas.
+- **Aluno (`student-mission-four.js`):** havia tutorial e ficha autoral com entrada, resposta, limite, reteste, salvamento e declaração manual de três testes, mas faltava um endereço explícito para abrir o editor. Adicionado link real para `https://editor.gdevelop.io/`, com nova aba segura, explicação de que o projeto não é importado automaticamente e alternativa do aplicativo local/offline (commit `8fc93f5eaa293c56d32ea74fdb51a4a8d8277017`). A ficha é declaratória e não prova execução por si só.
+- **Professor (`teacher-mission-four-validation.js`):** prática já tinha notas recolhidas; na avaliação havia uma orientação operacional reservada, anteriormente movida para `<details>`, mas sem o estilo `.pit-private-teacher-notes-body`. Corrigido estilo e acessibilidade do ícone ▤ na avaliação (commit `953c89828decc838f72bd6a35bb8e205b9a3ace6`). Conceitos, critérios e exemplos continuam projetáveis; o roteiro privado permanece fechado por padrão e só deve ser aberto sem HDMI.
+- **Regressão:** `qa/v3-audit-alignment.cjs` agora verifica as duas notas recolhidas, rótulos acessíveis, sincronização de 12/15/9 minutos e link/limitações do editor; `qa/v3-private-teacher-notes-browser.cjs` foi estendido para renderizar a prática e a avaliação da M04 em Chrome 390/1280 px, conferir ocultação inicial, tamanho do ícone e abertura/fechamento por Enter (commits `8ee2eba00eadb24efa6e97016b88352bb73b802c` e `24fbefbfb1c9ca5f5e80a043e5236faf2269ba48`). **CI desse último commit ainda não concluída na hora do registro**; testes não devem ser considerados aprovados antes da confirmação.
+- **Pendências:** revisão visual humana, teste real no editor GUI GDevelop, importação/salvamento do projeto, aparelho físico, chat/API autenticados e observação de aluno seguem **NOT_RUN** nesta rodada. M04 não homologada.
+- **Próxima missão após CI:** M05, com auditoria da lógica SE/ENTÃO, variáveis, teste negativo e espelhamento professor/aluno.
