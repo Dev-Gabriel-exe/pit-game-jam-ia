@@ -30,9 +30,12 @@ for(const project of manifest.projects){
   const screenshotPath=path.resolve(screenshotRoot,shot.file);
   assert(screenshotPath.startsWith(screenshotRoot+path.sep),'screenshot must remain inside artifact folder');
   assert(fs.existsSync(screenshotPath),'native screenshot file '+shot.file);
-  const png=fs.readFileSync(screenshotPath);
-  assert(png.length>50&&png.subarray(0,8).toString('hex')==='89504e470d0a1a0a',
-   'GDevelop screenshot must be nonempty PNG: '+shot.file);
+  const image=fs.readFileSync(screenshotPath);
+  const ext=path.extname(screenshotPath).toLowerCase();
+  const png=ext==='.png'&&image.subarray(0,8).toString('hex')==='89504e470d0a1a0a';
+  const jpeg=['.jpg','.jpeg'].includes(ext)&&image.length>4&&image[0]===255&&image[1]===216&&image[2]===255;
+  assert(image.length>50&&(png||jpeg),
+   'GDevelop screenshot must be nonempty PNG or JPEG with matching extension: '+shot.file);
  }
  count++;
  console.log('PASS real native GDevelop',project,results.length,'gameplay tests',screenshots.length,'PIT screenshot(s)');
