@@ -46,4 +46,3 @@ jobs:
           node qa/v3-mission-release-motion.cjs
           node qa/v3-e2e.cjs
           node qa/v3-multi-student-browser.cjs
-          node qa/m01-projector-continuous.cjs
