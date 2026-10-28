@@ -7,7 +7,7 @@
 
 ## Resultado atual e rastreabilidade
 
-O checkpoint `v3/AGENTE-V3-ESTADO.json` registra 51 de 59 metas como `done` após FUN-10. Os IDs bloqueados são M06-05, M07-04, M08-04, M09-03, FUN-08 e REL-01. REL-02 e REL-03 ainda estavam em elaboração no momento desta consolidação. O gate `qa/v3-release-gate.cjs --strict` **deve falhar** enquanto houver qualquer tarefa pendente; a execução diagnóstica sem `--strict` lista as pendências.
+O checkpoint `v3/AGENTE-V3-ESTADO.json` registra **52 de 59 metas como `done`** após REL-02. Os IDs bloqueados são M06-05, M07-04, M08-04, M09-03, FUN-08, REL-01 e REL-03. O relatório permanece preliminar. O gate `qa/v3-release-gate.cjs --strict` **deve falhar** enquanto houver qualquer tarefa pendente; a execução diagnóstica sem `--strict` lista as pendências.
 
 ### Funcionalidades verificadas em ambiente isolado
 
