@@ -16,7 +16,7 @@
   ],
   "priority": "REL-01",
   "current_phase": "MISSOES",
-  "last_task": "REL-03",
+  "last_task": "UI-05",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -649,7 +649,8 @@
       "tests": [
         "GitHub Actions static QA run 40629213658 completed success, 28 IDs, 4 genres, 3 formats, intersections and provenance",
         "GitHub Actions Browser QA run 40629180903 completed success, 3 real Chrome downloads: PNG/GLB/WAV, file names, nonzero bytes and magic signatures",
-        "Chrome verified filters 3D=5, corrida+3D=1, corrida+audio=3, all 70 mission pages still passed"
+        "Chrome verified filters 3D=5, corrida+3D=1, corrida+audio=3, all 70 mission pages still passed",
+        "2026-10-28: actual procedural PNG sprite/map, GLB geometry and WAV audio preview modal integrated on portal; Chrome Browser QA 40668919135 SUCCESS at 390px/1280px, 28 preview buttons, real media decoding, focus restoration and Escape."
       ],
       "blocker": null
     },
@@ -967,7 +968,8 @@
         "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN.",
         "2026-10-28: browser QA 40662326867 SUCCESS; triage register v3/TRIAGEM-DEFEITOS.md commit 20d667ac with explicit P0/P1/P2 and NOT_RUN distinction, linked from pre-delivery report commit 1ef62d41. Human verification pending.",
         "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending.",
-        "2026-10-28: unified 10 experimental LTX MP4 clips with latest V3 student gallery, motion manifest and playback controller; static QA 40665593226 PASS; added dedicated media regression test, latest CI pending."
+        "2026-10-28: unified 10 experimental LTX MP4 clips with latest V3 student gallery, motion manifest and playback controller; static QA 40665593226 PASS; added dedicated media regression test, latest CI pending.",
+        "2026-10-28: fixed keyboard focus restoration after auto-opened student gallery; Browser QA 40668919135 SUCCESS: UI-08 12 viewport checks, FUN-01/02/03/04/09, REL-01/02. Release remains blocked on manual GUI/GDevelop/mobile/peer sign-off."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -2035,6 +2037,12 @@
       "task": "REL-01",
       "commit": "e42851d9170434ff6003cf85737361168f39804d",
       "summary": "Unified experimental cinematic cards with latest V3 missions; kept 54/59 until manual acceptance."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "bcf6c0a3474e7d0e8737b4a09196bc613d345342",
+      "summary": "Added real procedural sprite/map, GLB mesh and WAV previews with keyboard-accessible modal, plus gallery focus fix; static QA 40668919128 and full Browser QA 40668919135 SUCCESS. 54/59 unchanged; manual sign-off still blocked."
     }
   ]
 }
