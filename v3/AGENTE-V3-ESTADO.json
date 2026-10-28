@@ -378,9 +378,10 @@
         "12/12 V8 static integration checks executed on fetched files: teacher rubric, student validation, accessibility styles, responsive rules and wiring",
         "Browser E2E run 40626036851 launched in GitHub Actions; outcome not yet confirmed at checkpoint",
         "No actual GDevelop Preview, measured FPS or real mobile device inspection",
-        "2026-10-28: qa/v3-m08-acceptance.cjs added and wired into static CI: checks distinct before/after, negative case, evidence persistence/isolation, teacher mobile/accessibility/performance rubric; CI run 40661631619 pending. Does not substitute physical mobile or GDevelop Preview."
+        "2026-10-28: qa/v3-m08-acceptance.cjs added and wired into static CI: checks distinct before/after, negative case, evidence persistence/isolation, teacher mobile/accessibility/performance rubric; CI run 40661631619 pending. Does not substitute physical mobile or GDevelop Preview.",
+        "Static QA run 40661631619 SUCCESS on ad784b99: automated before/after, student isolation, negative evidence, teacher accessibility/mobile/performance rubric and app integration passed."
       ],
-      "blocker": "M08 evidence/rubric automated regression added; still requires real GDevelop Preview before/after and physical mobile performance check. CI outcome pending."
+      "blocker": "Automated M08 acceptance CI PASS 40661631619; real GDevelop Preview before/after and physical mobile FPS/UX inspection still unverified."
     },
     {
       "id": "M09-01",
@@ -1980,6 +1981,12 @@
       "task": "FUN-08",
       "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
       "summary": "Automated download/MIME/integrity/native GDevelop resource-import acceptance completed. Manual GUI, audible playback and physical-device homologation remains REL-01."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M08-04",
+      "commit": "ad784b99dc41c16843213d585a3f6788f53d47b3",
+      "summary": "M08 automated acceptance CI PASS 40661631619; physical-device and real GDevelop Preview remain manual."
     }
   ]
 }
