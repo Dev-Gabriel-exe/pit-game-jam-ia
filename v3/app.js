@@ -578,13 +578,17 @@ function renderStudentDetails(){
  $('rosterContent').innerHTML='<div class="buttonrow"><button id="rosterBack" class="outline">← Voltar à turma</button></div>'+
  '<h2>'+esc(user.display_name)+'</h2><p class="muted">Última atualização: '+new Date(user.last_seen_at).toLocaleString('pt-BR')+'</p>'+
  (user.stages||[]).map(st=>'<div class="concept-card"><strong>Etapa '+String(st.stage).padStart(2,'0')+' · '+esc(mission(st.stage).title)+'</strong>'+
- '<span class="state-pill '+esc(st.status)+'">'+esc(chooseStatus(st.status))+'</span><p>Rota '+esc(st.route.toUpperCase())+'</p><p><b>Registro:</b> '+esc(st.evidence||'Nenhum registro')+'</p>'+
+ '<span class="state-pill '+esc(st.status)+'">'+esc(chooseStatus(st.status))+'</span><p>Rota '+esc(String(st.route||'2d').toUpperCase())+'</p><div class="roster-evidence"><b>REGISTRO DO ALUNO</b><pre>'+esc(st.evidence||'Nenhum registro')+'</pre></div>'+
  (st.feedback?'<p><b>Retorno anterior:</b> '+esc(st.feedback)+'</p>':'')+
- (st.status==='submitted'||st.status==='revision'?'<div class="formline"><label>Comentário</label><textarea class="review-comment" data-n="'+st.stage+'" maxlength="550" placeholder="Orientação para o aluno (opcional)"></textarea></div><div class="buttonrow"><button class="action btnsmall" data-review="approved" data-stage="'+st.stage+'">✓ Aprovar</button><button class="outline btnsmall" data-review="revision" data-stage="'+st.stage+'">↻ Pedir revisão</button></div>':'')+'</div>').join('')+
+ (st.status==='submitted'||st.status==='revision'?'<div class="formline"><label>Devolutiva ao aluno</label><textarea class="review-comment" data-n="'+st.stage+'" maxlength="550" placeholder="Para pedir revisão, descreva o teste que deve ser repetido (mín. 8 caracteres)."></textarea><small>Obrigatória ao pedir revisão; opcional para aprovação.</small></div><div class="buttonrow"><button class="action btnsmall" data-review="approved" data-stage="'+st.stage+'">✓ Aprovar</button><button class="outline btnsmall" data-review="revision" data-stage="'+st.stage+'">↻ Pedir revisão</button></div>':'')+'</div>').join('')+
  (!(user.stages||[]).length?'<p class="notice">O estudante ainda não registrou prática.</p>':'');
  $('rosterBack').onclick=()=>{selectedRoster=null;renderRoster()};
  $('rosterContent').querySelectorAll('[data-review]').forEach(btn=>btn.onclick=async()=>{
-  const n=Number(btn.dataset.stage),comment=$('rosterContent').querySelector('textarea[data-n="'+n+'"]')?.value||'';
+  const n=Number(btn.dataset.stage),field=$('rosterContent').querySelector('textarea[data-n="'+n+'"]'),comment=field?.value?.trim()||'';
+  if(btn.dataset.review==='revision'&&comment.length<8){
+   setToast('Explique qual teste o estudante deve repetir (mínimo 8 caracteres).',true);
+   field?.focus();return;
+  }
   try{await call('classroom','review','POST',{studentId:user.id,stage:n,status:btn.dataset.review,feedback:comment});setToast('Entrega atualizada.');await loadRoster()}
   catch(e){setToast(e.message,true)}
  });
