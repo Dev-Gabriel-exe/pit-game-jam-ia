@@ -2173,6 +2173,12 @@
       "task": "REL-01",
       "commit": "e9e6c38a8b4a8ab1bdaad5f895dd866af8fa68d0",
       "summary": "Four consecutive rounds: (1) verified static QA 40685828053 and Browser QA 40685828077 SUCCESS for 44 resources; (2) added original griffin and druid 160x160 character sprites with RPG/platform/puzzle genre mappings, 44→46 assets (7db6c98e); (3) updated static library tests for 46 resources, 36 2D and 18 additions (9252521e); (4) updated Chrome preview tests for 46 preview buttons and new character PNGs (e9e6c38a). New CI pending; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "a9940c4d42e3baff7cffe3daa7b86994cd4e67e7",
+      "summary": "Verified previous Browser QA 40685851384 SUCCESS with UI-08 12/12 route/viewport checks; identified explicit test coverage gap: preview mode did not exercise authenticated mobile chat. Added qa/v3-ui08-chat-mobile.cjs using a fictional student token and fully intercepted HTTP API; checks 320/390/768px chat geometry, ARIA open/close, focus restoration, Escape and Enter, and JS errors (cd0d7f37). Wired new regression into browser-qa.yml (a9940c4d). Local node --check PASS; new Browser QA 40686431158 pending. No real student data or live API used; manual GDevelop/mobile/peer NOT_RUN; 54/59 unchanged."
     }
   ]
 }
