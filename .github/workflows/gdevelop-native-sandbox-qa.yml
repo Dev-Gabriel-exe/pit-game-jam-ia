@@ -1,0 +1,59 @@
+name: PIT Game Jam — Native GDevelop sandbox QA
+on:
+  push:
+    branches:
+      - feature/pit-gamejam-v3-arcade
+    paths:
+      - 'qa/v3-gdevelop-native-fixture.cjs'
+      - '.github/workflows/gdevelop-native-sandbox-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-gdevelop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GDEVELOP_EXAMPLES_SHA: 0648e82703e81f12f33b65ef4777e1fd02d7666b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare isolated native GDevelop dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libnss3 libatk-bridge2.0-0 libgbm1 libasound2t64 unzip
+          mkdir -p "$RUNNER_TEMP/pit-qa-deps"
+          npm install --prefix "$RUNNER_TEMP/pit-qa-deps" --no-save --ignore-scripts sharp@0.34.4
+      - name: Checkout pinned public GDevelop examples (not this project's main)
+        run: |
+          mkdir -p "$RUNNER_TEMP/gdevelop-examples"
+          cd "$RUNNER_TEMP/gdevelop-examples"
+          git init -q
+          git remote add origin https://github.com/GDevelopApp/GDevelop-examples.git
+          git fetch --depth 1 origin "$GDEVELOP_EXAMPLES_SHA"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GDEVELOP_EXAMPLES_SHA"
+          npm ci --omit=dev --ignore-scripts
+      - name: Generate real PIT PNG/WAV/GLB in disposable GDevelop projects
+        run: |
+          node --check qa/v3-gdevelop-native-fixture.cjs
+          NODE_PATH="$RUNNER_TEMP/pit-qa-deps/node_modules" node qa/v3-gdevelop-native-fixture.cjs "$RUNNER_TEMP/gdevelop-examples"
+          mkdir -p qa/gdevelop-native-artifacts
+          cp "$RUNNER_TEMP/gdevelop-examples/pit-qa-fixture-report.json" qa/gdevelop-native-artifacts/fixture-report.json
+      - name: Run official GDevelop native gameplay tests on 2D and 3D PIT fixtures
+        run: |
+          cd "$RUNNER_TEMP/gdevelop-examples"
+          node scripts/run-gameplay-tests.js \
+            --projects=examples/pit-qa-top-down/starting-top-down.json,examples/pit-qa-first-person/starting-first-person.json \
+            --timeout-ms=180000 \
+            --artifacts-dir="$GITHUB_WORKSPACE/qa/gdevelop-native-artifacts" \
+            --junit-path="$GITHUB_WORKSPACE/qa/gdevelop-native-artifacts/junit.xml"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gdevelop-native-sandbox-evidence
+          path: qa/gdevelop-native-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
