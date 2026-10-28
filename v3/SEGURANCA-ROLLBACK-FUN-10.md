@@ -20,7 +20,7 @@ A interface escapa texto vindo de alunos antes de inserir em HTML; o PIN fica em
 | Prioridade | Item | Tratamento antes de publicar |
 | --- | --- | --- |
 | P1 | Importação de PNG/GLB/WAV e starters no editor GDevelop não homologada | Executar teste real e registrar versão/capturas (FUN-08) |
-| P1 | Nenhum ciclo de transações com Postgres isolado real | Executar E2E em banco descartável, sem turma real |
+| Resolvido em homologação isolada | Transações com Postgres 16 descartável | [Postgres QA 40637833387](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40637833387) passou; Neon de produção permanece intocado |
 | P1 | Direitos/termos de reutilização dos MP4 LTX experimentais ainda não auditados para distribuição | Verificar termos do serviço/modelo e manter a branch experimental fora da produção até liberação |
 | P2 | PIN persistido na sessão e ausência de rate limit distribuído para tentativas de login de professor | Adotar proteção de borda/limite de tentativas e rotação de PIN |
 | P2 | Token do aluno em `localStorage`; possível exposição se ocorrer XSS no mesmo domínio | Revisar CSP, dependências e sanitização antes do lançamento |
