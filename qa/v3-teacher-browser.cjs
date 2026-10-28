@@ -36,6 +36,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.reload();await page.locator('#workspace:visible').waitFor({timeout:12000});
  await page.locator('#rosterButton').click();
  await page.locator('#rosterDrawer').waitFor({state:'visible',timeout:10000});
+ await page.locator('#rosterDrawer').filter({hasText:/Aluno QA Isolado/}).waitFor({timeout:10000});
  assert.match(await page.locator('#rosterDrawer').innerText(),/Aluno QA Isolado/,'teacher sees fictional roster');
  assert(requests>4,'all requests handled by fake HTTP fixture');
  await context.close();await browser.close();
