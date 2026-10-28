@@ -1,0 +1,33 @@
+name: Test Mission 01 Animated Carousel
+on:
+  push:
+    branches: [experiment/missao-01-gothic-motion]
+    paths:
+      - qa/mission-one-motion-e2e.cjs
+      - .github/workflows/mission-one-motion-e2e.yml
+      - aluno-v3.html
+      - v3/arcade-gallery.js
+      - v3/mission-one-motion.js
+      - v3/mission-one-motion.css
+      - v3/assets/missions/missao-01-motion.mp4
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  video-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: npm install --no-save --ignore-scripts playwright@1.58.2
+      - name: Run isolated browser test
+        run: |
+          google-chrome --version
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/site.log 2>&1 &
+          node --check v3/arcade-gallery.js
+          node --check v3/mission-one-motion.js
+          node qa/mission-one-motion-e2e.cjs
