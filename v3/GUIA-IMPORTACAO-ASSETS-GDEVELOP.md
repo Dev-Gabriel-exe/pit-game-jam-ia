@@ -31,6 +31,10 @@ A biblioteca também inclui a **Coruja mecânica** (personagem), o **Jardim biol
 3. Execute **Preview** e confira geometria e material. Os cinco modelos da biblioteca são **estáticos low-poly**, sem animações de esqueleto.
 4. Salve e reabra o projeto. Se a importação não funcionar, registre o erro e utilize PNG como alternativa, sem declarar que o GLB foi homologado.
 
+## Procedência e direitos de uso
+
+Os PNGs, GLBs e WAVs desta biblioteca são **gerados proceduralmente pelo próprio projeto**, sem incorporar arquivos de jogos comerciais. A indicação “uso didático” na interface descreve a finalidade, **não é uma licença pública de redistribuição**. Como o repositório ainda não apresenta um arquivo `LICENSE` na raiz, a distribuição externa de pacotes de assets deve aguardar uma licença definida pelo responsável. Registre a origem no projeto do aluno e não atribua licenças de terceiros.
+
 ## Evidência da Missão 06
 
 Preencha: **recurso**, **formato**, **origem**, **objeto/cena**, **resultado do Preview** e **erro ou ajuste necessário**. Anexe uma captura real do GDevelop mostrando o recurso no jogo. A prévia no portal e o download isolado **não comprovam importação**.
