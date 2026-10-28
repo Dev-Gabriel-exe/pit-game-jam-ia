@@ -174,7 +174,10 @@ function close(){
  root.classList.remove('launching','open','pit-low-stimulus');root.hidden=true;
  document.body.classList.remove('pit-arcade-open');
  window.PIT_ONE_MOTION?.sync();
- if(previousFocus&&previousFocus.isConnected)previousFocus.focus();
+ // Auto-opened preview galleries may have BODY as the prior focus target.
+ // Restore to the real gallery launcher so keyboard navigation resumes in the app.
+ const target=previousFocus&&previousFocus.isConnected&&previousFocus!==document.body&&previousFocus!==document.documentElement?previousFocus:$('openGallery');
+ if(target&&target.isConnected)target.focus();
 }
 $('arcadePrev').addEventListener('click',()=>choose(active-1));
 $('arcadeNext').addEventListener('click',()=>choose(active+1));
