@@ -16,7 +16,7 @@
   ],
   "priority": "REL-01",
   "current_phase": "MISSOES",
-  "last_task": "REL-01",
+  "last_task": "UI-05",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -644,8 +644,8 @@
       "group": "UI",
       "position": 38,
       "status": "done",
-      "updated_at": "2026-10-28T10:20:00Z",
-      "commit": "e2ea47bd1712de7bb71db609cdc72a7fe5c2dc8b",
+      "updated_at": "2026-10-28T13:14:40.736Z",
+      "commit": "e90ab285072ecf5b7567fe91e0bf4d5e7981a1ee",
       "tests": [
         "GitHub Actions static QA run 40629213658 completed success, 28 IDs, 4 genres, 3 formats, intersections and provenance",
         "GitHub Actions Browser QA run 40629180903 completed success, 3 real Chrome downloads: PNG/GLB/WAV, file names, nonzero bytes and magic signatures",
@@ -654,7 +654,8 @@
         "2026-10-28: expanded procedural library 28→34 with feiticeira/golem, ruins/swamp maps, lantern/shield sprites, original SVG geometry and downloadable PNG. Browser previews reuse the same generated source, with 34 preview controls and six new PNG decode assertions.",
         "2026-10-28: GitHub Actions static QA run 40669904173 SUCCESS: 34 unique assets, filters, all asset MIME/GLB/WAV signatures; Browser QA run 40669806579 SUCCESS with six new PNG previews, UI-08 and simulated chat/roster/evidence. Latest dynamic portal count test commit c31c099b awaiting its own CI.",
         "2026-10-28: library expanded 34→38 with original procedural necropolis/observatory 1024×576 PNG maps and spikes/pedestal 160×160 PNG sprites; SVG shape source, genre filters, index static counts, browser preview assertions, and provenance documentation updated. V8 syntax, 38 unique IDs, dimensions and RPG discovery checks PASS in this run. Static and browser GitHub Actions at 97a2cfbc queued/running at checkpoint; manual GDevelop GUI and physical mobile remain NOT_RUN.",
-        "2026-10-28: GitHub Actions Browser QA 40670539982 SUCCESS at d9e529f4: 38 preview buttons, 10 expansion PNG downloads decoded at 390px/1280px, GLB/WAV real previews, focus/Escape; UI-08 12 Chrome route/viewport checks SUCCESS. Static QA 40670660476 SUCCESS at checkpoint 27e9325c, including 38 assets and binary ZIP tests. Intermediate static QA failed only due old 34-count inline assertion, fixed in 97a2cfbc. Latest browser reruns pending; no manual GDevelop/physical mobile claimed."
+        "2026-10-28: GitHub Actions Browser QA 40670539982 SUCCESS at d9e529f4: 38 preview buttons, 10 expansion PNG downloads decoded at 390px/1280px, GLB/WAV real previews, focus/Escape; UI-08 12 Chrome route/viewport checks SUCCESS. Static QA 40670660476 SUCCESS at checkpoint 27e9325c, including 38 assets and binary ZIP tests. Intermediate static QA failed only due old 34-count inline assertion, fixed in 97a2cfbc. Latest browser reruns pending; no manual GDevelop/physical mobile claimed.",
+        "2026-10-28: expanded procedural catalogue 46→49 (39 PNG, 5 GLB, 5 WAV) with new owl character, bioluminescent garden map and hourglass item; static QA 40694559980 SUCCESS including genre filters, unique IDs/files and SVG structure. Browser QA 40694560079 still running at checkpoint; latest previously green UI-08 Browser QA 40693156997 SUCCESS. Manual GDevelop GUI/mobile/peer NOT_RUN."
       ],
       "blocker": null
     },
@@ -2245,6 +2246,12 @@
       "task": "REL-01",
       "commit": "268a226edbfbd3b9f570ead93c6547f2c5ef5b5f",
       "summary": "Investigated slow Browser QA: 40692649696 and 40692837359 still in progress during library preview; PNG/WAV codec and E2E earlier steps passed, static QA succeeded. Optimized exhaustive 46-asset signature, 36-PNG pixel and 10-media structure checks to run once at 390px instead of redundantly at 390/1280; both viewport interaction tests retained. New CI pending, no manual GDevelop/mobile/peer pass; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "UI-05",
+      "commit": "13d896b514bc5d968381ee421b9cb329589945c5",
+      "summary": "Expanded library 46→49 original procedural assets: owl 160x160 PNG, glowgarden 1024x576 PNG, hourglass 160x160 PNG; added RPG/puzzle discovery, real previews and full-catalogue tests (commits 84f6a39, 600f02c); guide updated and license limitation documented (6331494, e90ab28). Static QA 40694559980 SUCCESS, Browser QA 40694560079 in progress; 54/59 unchanged, no manual GDevelop/physical mobile/peer tests."
     }
   ]
 }
