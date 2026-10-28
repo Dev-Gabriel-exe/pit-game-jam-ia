@@ -1,0 +1,41 @@
+name: Experimental LTX Side Clips (No Production)
+on:
+  push:
+    branches: [feature/cinematics-ltx-library-20261028]
+    paths:
+      - 'scripts/ltx-cinematic-sideclips.py'
+      - '.github/workflows/ltx-cinematic-sideclips.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install public client and video utilities
+        run: |
+          python -m pip install --disable-pip-version-check -q "gradio_client>=1.10,<3"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Generate at most two original atmospheric clips, respecting public limits
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+        run: python scripts/ltx-cinematic-sideclips.py
+      - name: Archive only verified MP4 files and posters on the experimental branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v3/assets/cinematics/
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(experimental): archive genuine LTX background clips and posters [skip ci]"
+            git push origin HEAD:feature/cinematics-ltx-library-20261028
+          fi
