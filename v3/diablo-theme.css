@@ -220,3 +220,11 @@ body.pit-v3-visual-preview .mission-submission:after{content:"DEMONSTRAÇÃO VIS
 @keyframes pit-fantasy-breathe{from{transform:scale(1.055) translate3d(0,0,0)}to{transform:scale(1.14) translate3d(-1.1%,-.9%,0)}}
 @keyframes pit-fantasy-shimmer{0%,42%{transform:translateX(-85%);opacity:0}54%{opacity:1}80%,100%{transform:translateX(85%);opacity:0}}
 @media(prefers-reduced-motion:reduce){.pit-arcade .arcade-mission-photo{animation:none!important;transition:none!important;will-change:auto}}
+
+/* ART-05 · Data Saver and reduced-stimulus mode: no parallax or ambient shimmer. */
+.pit-arcade.pit-low-stimulus .arcade-mission-photo,
+.pit-arcade.pit-low-stimulus .arcade-ambient::before,
+.pit-arcade.pit-low-stimulus .arcade-card::before{
+ animation:none!important;transition:none!important;
+}
+.pit-arcade.pit-low-stimulus .arcade-mission-photo{transform:none!important;filter:none!important}
