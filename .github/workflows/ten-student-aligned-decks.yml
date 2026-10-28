@@ -1,0 +1,38 @@
+name: Ten student-aligned practical projector decks
+on:
+  push:
+    branches: [feature/oficina-projetada-10-missoes-20261028]
+  pull_request:
+    paths:
+      - 'v3/teacher-projector-curriculum.*'
+      - 'v3/teacher-projector-m01-workshop.js'
+      - 'qa/student-aligned-projector.cjs'
+      - 'professor-v3.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  curriculum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Student evidence and ten mission projector browser QA
+        run: |
+          node --check v3/teacher-projector-curriculum.js
+          node --check v3/teacher-projector-m01-workshop.js
+          node --check qa/student-aligned-projector.cjs
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-course.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/student-aligned-projector.cjs
