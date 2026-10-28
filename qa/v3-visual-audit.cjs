@@ -43,6 +43,15 @@ const fs=require('node:fs'),path=require('node:path');
    assert(metrics.scroll<=metrics.viewport+4,route.name+' '+width+' horizontal overflow: '+JSON.stringify(metrics));
    assert.equal(metrics.behavior,'auto',route.name+' reduced-motion scroll behavior');
    assert.equal(metrics.missing.length,0,route.name+' missing local images');
+   if(route.name==='aluno'&&width===390){
+    const poster=page.locator('.stage-art[data-pit-fallback]').first();
+    assert.equal(await poster.count(),1,'ART-04 student poster opt-in');
+    const original=await poster.getAttribute('src');
+    await poster.evaluate(el=>{el.src='./v3/assets/missions/art04-missing.webp'});
+    await page.locator('.stage-art[data-pit-fallback-state="fallback"]').first().waitFor({timeout:6000});
+    assert((await poster.getAttribute('src')).endsWith('poster-fallback.svg'),'ART-04 actual browser image fallback');
+    await poster.evaluate((el,src)=>{el.removeAttribute('data-pit-fallback-state');el.hidden=false;el.src=src},original);
+   }
    await page.keyboard.press('Tab');
    const focused=await page.evaluate(()=>({tag:document.activeElement?.tagName,outline:getComputedStyle(document.activeElement).outlineStyle}));
    assert(focused.tag&&focused.tag!=='BODY',route.name+' '+width+' has a keyboard focus target');
