@@ -42,4 +42,39 @@ assert(teacher.includes('./v3/teacher-private-notes.css'),'teacher-only styleshe
 assert(!student.includes('teacher-private-notes.css'),'student should not load teacher-only stylesheet');
 assert(read('v3/student-mission-three.js').includes('https://editor.gdevelop.io/'),'student M03 must have real editor handoff');
 assert(read('v3/student-mission-three.js').includes('não abre nem cria o jogo automaticamente'),'student M03 should not imply automatic GDevelop launch');
+const m04Teacher=read('v3/teacher-mission-four-validation.js');
+const m04Student=read('v3/student-mission-four.js');
+assert.equal((m04Teacher.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M04 practice and review each conceal private guidance');
+assert.equal((m04Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M04 private notes use shared CSS');
+assert(m04Teacher.includes('aria-label="Abrir roteiro privado da prática da Missão 04"'),'M04 practice paper control accessible');
+assert(m04Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 04"'),'M04 review paper control accessible');
+assert(!m04Teacher.includes('<details class="pit-private-teacher-notes" open'),'M04 notes default closed');
+assert(!m04Student.includes('pit-private-teacher-notes'),'student M04 must not contain private teacher notes');
+assert(m04Student.includes('https://editor.gdevelop.io/')&&m04Student.includes('rel="noopener noreferrer"'),'M04 must link to real free GDevelop editor safely');
+assert(m04Student.includes('não importa nem recupera seu projeto automaticamente'),'M04 must explain editor link limitations');
+for(const time of ['12 min','15 min','9 min'])assert(m04Student.includes(time),'M04 student practice time '+time);
+for(const time of ['12 MIN','15 MIN','9 MIN'])assert(m04Teacher.includes(time),'M04 teacher practice time '+time);
+// End-to-end source contract: every mission has student evidence and a private teacher practice guide.
+const teacherValidation={
+ 4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
+ 6:'teacher-mission-six-validation',7:'teacher-mission-seven-validation',
+ 8:'teacher-mission-eight-validation',9:'teacher-mission-nine-validation',
+ 10:'teacher-mission-ten-validation'
+};
+for(let n=1;n<=10;n++){
+ const studentSource=read('v3/'+files[n-1]+'.js');
+ assert(studentSource.includes('evidence'),'M'+n+' must support student evidence');
+ assert(studentSource.includes('submitWork')||n<=2,'M'+n+' must provide submit control');
+}
+for(const [number,name] of Object.entries(teacherValidation)){
+ const source=read('v3/'+name+'.js');
+ assert(source.includes('<details class="pit-private-teacher-notes">'),'M'+number+' must hide teacher facilitation');
+ assert(source.includes('<summary'),'M'+number+' must provide a discreet notes control');
+ assert(!source.includes('<details class="pit-private-teacher-notes" open'),'M'+number+' notes must default closed');
+}
+assert(teacher.includes('./v3/teacher-private-notes-guard.js'),'teacher must load notes guard');
+assert(!student.includes('teacher-private-notes-guard.js'),'student must not load private notes guard');
+const guard=read('v3/teacher-private-notes-guard.js');
+assert(guard.includes("event.key==='Escape'"),'Escape must close private notes');
+assert(guard.includes('visibilitychange'),'private notes must close on hidden tab');
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
