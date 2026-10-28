@@ -1,0 +1,26 @@
+/* M08-01 · UX professor */
+.t8f-root{color:#f0ddc4;background:#111a23;font:15px/1.6 Arial,sans-serif;border:1px solid #866447}
+.t8f-root *{box-sizing:border-box}.t8f-root h2,.t8f-root h3{font-family:Georgia,serif;color:#ffe0b7}
+.t8f-root header{padding:clamp(16px,3vw,30px);background:linear-gradient(110deg,#17151aeb,#32242be3),url("./assets/missions/missao-08.webp") center/cover}
+.t8f-root header small{color:#f2bd86;font-weight:bold;letter-spacing:.11em}
+.t8f-root h2{font-size:clamp(26px,3vw,39px);margin:10px 0}
+.t8f-clock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:16px}.t8f-clock span{background:#2e2427;border:1px solid #956c4b;padding:10px;font-size:11px}.t8f-clock b{display:block;font-size:19px;color:#f0bd84}
+.t8f-concepts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:20px}
+.t8f-concepts article{background:#1d2b35;border:1px solid #7e634f;padding:16px}
+.t8f-concepts small{color:#eeb982;font-weight:900}.t8f-concepts h3{font-size:21px;margin:7px 0}
+.t8f-lab{padding:20px;background:#15222b;border-top:1px solid #84654d}.t8f-lab>div>small{color:#edb780;font-weight:bold}
+.t8f-modes{display:flex;gap:12px;flex-wrap:wrap;margin:15px 0}.t8f-modes label{padding:11px;background:#2a2d33;border:1px solid #9c7959;cursor:pointer}
+.t8f-scene{padding:20px;background:#121a20;border:1px solid #94714e;transition:background .2s}
+.t8f-hud{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:12px;background:#292a2a;color:#7d7974}
+.t8f-scene[data-t8f-scene="polished"] .t8f-hud{background:#2b3c3a;color:#fff1d9;border-bottom:3px solid #a7c6a6}
+.t8f-stage{display:flex;justify-content:space-around;align-items:center;font-size:clamp(32px,6vw,70px);min-height:160px;color:#655c58}
+.t8f-scene[data-t8f-scene="polished"] .t8f-stage{color:#f0bc7f}
+.t8f-actions{display:flex;gap:10px;flex-wrap:wrap}.t8f-actions button{background:#6f4b32;border:1px solid #dfb07a;color:#fff5e7;padding:12px 18px;cursor:pointer}
+.t8f-response{margin-top:12px;padding:12px;background:#2d2728;border-left:3px solid #ac765e}
+.t8f-scene[data-t8f-scene="polished"] .t8f-response{background:#263c31;border-color:#a4d2aa}
+.t8f-accept{padding:15px;background:#253b34;margin-top:15px;border-left:3px solid #a7d6b4}
+.t8f-root footer{padding:17px;border-top:1px solid #8a6a4c}
+.t8f-root :is(button,input):focus-visible{outline:3px solid #ffde86;outline-offset:3px}
+@media(max-width:850px){.t8f-concepts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.t8f-concepts,.t8f-clock{grid-template-columns:1fr}.t8f-scene{padding:12px}}
+@media(prefers-reduced-motion:reduce){.t8f-root *{transition:none!important;animation:none!important}}
