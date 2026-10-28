@@ -178,7 +178,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
- function resume(){if(simulation&&!simulation.finished)playing=true}
+ function resume(){if(simulation&&!simulation.finished){playing=true;physicsLast=performance.now();simulateStep(.20)}}
  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
  function burst(x,z,color=0xf4bb7e,count=10){
@@ -203,26 +203,35 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  }
  resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
  const now=()=>performance.now();
+ function simulateStep(seconds){
+  if(!live||!playing||!simulation)return;
+  accumulator+=Math.min(1,Math.max(0,seconds))*speed;
+  for(let n=0;n<20&&accumulator>=.05;n++){
+   accumulator-=.05;
+   const result=simulation.update(.05);
+   for(const ev of result.events){
+    if(ev.type==='hit'||ev.type==='special'){
+     const unit=individuals.get(ev.target||ev.hero);
+     if(unit)burst(unit.mesh.root.position.x,unit.mesh.root.position.z,ev.type==='special'?0xb98ef1:0xf4ae7e,ev.type==='special'?17:5);
+    }
+    onEvent(ev);
+   }
+   for(const f of simulation.fighters)sync(f);
+   if(result.finished){playing=false;break}
+  }
+ }
+ let physicsLast=performance.now();
+ const physicsTimer=setInterval(()=>{
+  const now=performance.now(),span=Math.max(0,(now-physicsLast)/1000);
+  physicsLast=now;
+  if(playing)simulateStep(span);
+ },50);
  function loop(t){
   if(!live)return;
   const rawDt=Math.max(0,(t-previous)/1000||0);
   const dt=Math.min(.06,rawDt);
-  const simulationDt=Math.min(.8,rawDt);previous=t;
+  previous=t;
   frame++;elapsed+=dt;
-  if(playing&&simulation){
-   // A fixed 50 ms step produces the same combat on fast and slow devices.
-   accumulator+=simulationDt*speed;
-   for(let n=0;n<16&&accumulator>=.05;n++){
-    accumulator-=.05;
-    const result=simulation.update(.05);
-    for(const ev of result.events){
-     if(ev.type==='hit'||ev.type==='special'){const unit=individuals.get(ev.target||ev.hero);if(unit)burst(unit.mesh.root.position.x,unit.mesh.root.position.z,ev.type==='special'?0xb98ef1:0xf4ae7e,ev.type==='special'?17:5)}
-     onEvent(ev);
-    }
-    for(const f of simulation.fighters)sync(f);
-    if(result.finished){playing=false;break}
-   }
-  }
   if(simulation){
     const active=new Set();
     for(let i=0;i<simulation.projectiles.length;i++){
@@ -257,7 +266,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  const onVisibility=()=>{if(document.hidden)pause()};
  document.addEventListener('visibilitychange',onVisibility);
  const dispose=()=>{
-  if(!live)return;live=false;pause();renderer.setAnimationLoop(null);resizeObserver.disconnect();
+  if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
   clearHeroes();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
