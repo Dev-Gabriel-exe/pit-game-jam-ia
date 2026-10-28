@@ -149,7 +149,16 @@ function renderAssets(){
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',function(){document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.remove('active')});b.classList.add('active');renderAssets();}));
 document.getElementById('assetSearch')?.addEventListener('input',renderAssets);
 for(const id of ['assetGenre','assetFormat'])document.getElementById(id)?.addEventListener('change',renderAssets);
-function refreshStatus(){try{const x=JSON.parse(localStorage.getItem('pit_creator_mode_v08')||'{}');let done=Array.isArray(x.done)?x.done:[];const meter=document.getElementById('myProgress');if(meter)meter.textContent=done.length+'/6 missões • '+done.reduce((s,n)=>s+[100,120,150,150,200,280][n-1],0)+' XP';}catch(e){}}
+function refreshStatus(){
+ const meter=document.getElementById('myProgress');
+ if(meter)meter.textContent='Progresso e conquistas no Caderno do Aluno';
+ const stats=[...document.querySelectorAll('.statband span')];
+ const resourceCount=stats.find(el=>/recursos para download/i.test(el.textContent));
+ if(resourceCount)resourceCount.textContent=assets.length+' recursos para download';
+ const missionCount=stats.find(el=>/\d+ missões/i.test(el.textContent));
+ const cards=document.querySelectorAll('#missoes .mission-card').length;
+ if(missionCount&&cards)missionCount.textContent=cards+' missões';
+}
 window.PIT_LIBRARY_API=Object.freeze({assets,assetBlob:async function(a){if(!a||!assets.some(x=>x.id===a.id))throw Error('Asset desconhecido');return a.cat==='modelo'?modelBlob(a):a.cat==='som'?audioBlob(a):pngBlob(a)},downloadBlob});
 renderAssets();refreshStatus();window.addEventListener('pageshow',refreshStatus);
 /* Load the independent preview layer after the local asset API is ready. */
