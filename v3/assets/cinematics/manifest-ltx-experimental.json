@@ -1,0 +1,37 @@
+{
+  "status": "experimental-only",
+  "productionChange": false,
+  "requiredReview": "Human review before embedding; originals are low-res reference clips",
+  "clips": [
+    {
+      "duration": 6.166667,
+      "width": 736,
+      "height": 416,
+      "bytes": 620850,
+      "codec": "H.264",
+      "id": "biblioteca-arcana",
+      "title": "Biblioteca arcana",
+      "role": "Biblioteca de recursos ou cartão de consulta, sem texto sobreposto",
+      "source": "missao-06.webp",
+      "mp4": "v3/assets/cinematics/biblioteca-arcana.mp4",
+      "poster": "v3/assets/cinematics/biblioteca-arcana-poster.webp",
+      "usage": "Small silent looping background only, not full-screen hero",
+      "provenance": "LTX-Video Distilled via public Gradio ZeroGPU"
+    },
+    {
+      "duration": 6.166667,
+      "width": 736,
+      "height": 416,
+      "bytes": 797032,
+      "codec": "H.264",
+      "id": "jornada-portal",
+      "title": "Portal da jornada",
+      "role": "Card de seleção de missões ou transição de capítulos",
+      "source": "missao-02.webp",
+      "mp4": "v3/assets/cinematics/jornada-portal.mp4",
+      "poster": "v3/assets/cinematics/jornada-portal-poster.webp",
+      "usage": "Small silent looping background only, not full-screen hero",
+      "provenance": "LTX-Video Distilled via public Gradio ZeroGPU"
+    }
+  ]
+}
