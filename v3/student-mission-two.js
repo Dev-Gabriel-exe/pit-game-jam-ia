@@ -40,7 +40,7 @@ function validate(session){
 }
 function progress(d){
  return [clean(d.scene).length>=5,clean(d.mechanic).length>=5,
-  clean(d.elements).split(/[,;\n]/).map(clean).filter(Boolean).length===3&&clean(d.test).length>=12];
+  clean(d.elements).split(/[,;\n]/).map(clean).filter(Boolean).length===3,clean(d.test).length>=12];
 }
 function getIdea(ctx){
  const c=ctx?.idea||{},g=window.PIT_GENRE_CONTEXT;
