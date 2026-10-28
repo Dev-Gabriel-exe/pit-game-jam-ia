@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T05:01:05.780Z",
+  "last_completed_at": "2026-10-28T05:03:50.033Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-03",
+  "priority": "FUN-04",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-02",
-  "completed_count": 44,
+  "last_task": "FUN-03",
+  "completed_count": 45,
   "total_tasks": 59,
   "tasks": [
     {
@@ -796,10 +796,13 @@
       "description": "Teste de login professor, proteção por PIN, permissões e isolamento de dados",
       "group": "FUN",
       "position": 49,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:03:50.033Z",
+      "commit": "a1bed50d0d6b58ed5b590a8ecd80db841474a659",
+      "tests": [
+        "Static QA 40635705516 success: actual handlers with mock SQL, PIN rejection, teacher-only roster/stage/review/chat",
+        "Browser QA 40635659892 success: fake API teacher PIN login, sessionStorage, reload and fictional roster"
+      ],
       "blocker": null
     },
     {
@@ -1631,6 +1634,19 @@
       ],
       "tests": "Static QA 40635407764 success (actual handlers+mock SQL); Browser QA 40635407765 success (2 fake students, reload and forged token)",
       "notes": "No real Neon/Postgres transaction or production registration tested; isolated in-memory SQL and fake HTTP only."
+    },
+    {
+      "id": "FUN-03",
+      "completed_at": "2026-10-28T05:03:50.033Z",
+      "commit": "a1bed50d0d6b58ed5b590a8ecd80db841474a659",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-teacher-browser.cjs",
+        ".github/workflows/browser-qa.yml",
+        "v3/TESTES-FUN-03.md"
+      ],
+      "tests": "Static QA 40635705516 success; Browser QA 40635659892 success (PIN + sessionStorage + fake roster)",
+      "notes": "PIN stored in sessionStorage remains an architectural limitation; no real PIN, DB or production data used."
     }
   ]
 }
