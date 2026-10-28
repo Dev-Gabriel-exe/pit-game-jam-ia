@@ -966,7 +966,8 @@
         "2026-10-28: automated/manual release evidence ledger qa/v3-release-evidence-ledger.cjs committed 1bd69465, CI wired 47ec9035; pre-delivery report v3/PRE-ENTREGA-TECNICA.md committed 5209fc4c. CI of ledger pending. Manual criteria remain NOT_RUN.",
         "2026-10-28: dynamic release ledger selftest CI PASS 40662261372; machine-checkable human sign-off template and validator added in commits 4c4dd097,0ad19933,16ebef23; latest CI pending; human checks remain NOT_RUN.",
         "2026-10-28: browser QA 40662326867 SUCCESS; triage register v3/TRIAGEM-DEFEITOS.md commit 20d667ac with explicit P0/P1/P2 and NOT_RUN distinction, linked from pre-delivery report commit 1ef62d41. Human verification pending.",
-        "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending."
+        "2026-10-28: fixed unsafe releaseReady on unsigned 59/59; added synthetic 54/55/59 ledger cases and human signoff negative cases. CI 40662696740 failed due missing template in isolated fixture; fixed in 59068df5, rerun 40662756721 pending.",
+        "2026-10-28: unified 10 experimental LTX MP4 clips with latest V3 student gallery, motion manifest and playback controller; static QA 40665593226 PASS; added dedicated media regression test, latest CI pending."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -2028,6 +2029,12 @@
       "task": "REL-01",
       "commit": "59068df5389200f9d22ec1d0777862a15b33a73f",
       "summary": "Hardened release readiness against unsigned 59/59; repaired isolated test fixture, awaiting full CI."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "e42851d9170434ff6003cf85737361168f39804d",
+      "summary": "Unified experimental cinematic cards with latest V3 missions; kept 54/59 until manual acceptance."
     }
   ]
 }
