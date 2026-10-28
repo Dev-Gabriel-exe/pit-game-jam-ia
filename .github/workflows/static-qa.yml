@@ -20,6 +20,8 @@ jobs:
         run: node qa/v3-human-signoff-gate.cjs
       - name: Verify human sign-off negative cases
         run: node qa/v3-human-signoff-selftest.cjs
+      - name: Verify unified animated mission gallery
+        run: node qa/v3-motion-unification.cjs
       - name: Audit V3 360-minute mission matrix
         run: node qa/v3-audit-matrix.cjs
       - name: Verify M08-04 before-after evidence, isolation and UX rubric
