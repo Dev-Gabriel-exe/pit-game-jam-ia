@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T04:45:38.688Z",
+  "last_completed_at": "2026-10-28T04:49:24.809Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "ART-03",
+  "priority": "ART-04",
   "current_phase": "ARTE",
-  "last_task": "ART-02",
-  "completed_count": 39,
+  "last_task": "ART-03",
+  "completed_count": 40,
   "total_tasks": 59,
   "tasks": [
     {
@@ -720,10 +720,13 @@
       "description": "Criar variantes originais para estados de missão e tipos de asset, sem usar franquias ou marcas protegidas",
       "group": "ART",
       "position": 44,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T04:49:24.809Z",
+      "commit": "cce3e359b667b91c3f2273f4a6295008d102f864",
+      "tests": [
+        "Static QA 40634432778: success, including ART-03 Node icon variants and Python XML parsing",
+        "Browser QA 40634344438: success after updating outdated portal image assertion; latest run pending"
+      ],
       "blocker": null
     },
     {
@@ -1528,6 +1531,24 @@
       ],
       "tests": "Static QA 40634093683 success (4 original SVG XML/assets/security and CSS integration)",
       "notes": "Browser QA still running; one intermediate run failed in browser E2E. Need inspect latest result before claiming browser validation."
+    },
+    {
+      "id": "ART-03",
+      "completed_at": "2026-10-28T04:49:24.809Z",
+      "commit": "cce3e359b667b91c3f2273f4a6295008d102f864",
+      "files": [
+        "v3/assets/art/estados-missao.svg",
+        "v3/assets/art/tipos-recurso.svg",
+        "v3/app.js",
+        "biblioteca.js",
+        "v3/design-system.css",
+        "qa/v3-art-variants.cjs",
+        "qa/v3-art-assets.py",
+        "qa/v3-e2e.cjs",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "Static QA 40634432778 success; browser QA 40634344438 success after corrected ART-02 hero assertion",
+      "notes": "Status variants read actual progress; labels remain. New browser QA in progress, and GDevelop/manual accessibility still pending."
     }
   ]
 }
