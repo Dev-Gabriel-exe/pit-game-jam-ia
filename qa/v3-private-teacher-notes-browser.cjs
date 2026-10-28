@@ -8,7 +8,9 @@ const assert=require('node:assert/strict');
  const modules=[
   ['teacher-mission-one-pro','PIT_TEACHER_MISSION_ONE'],
   ['teacher-mission-two','PIT_TEACHER_MISSION_TWO'],
-  ['teacher-mission-three','PIT_TEACHER_MISSION_THREE']
+  ['teacher-mission-three','PIT_TEACHER_MISSION_THREE'],
+  ['teacher-mission-four-validation','PIT_TEACHER_MISSION_FOUR_VALIDATION','practice','Abrir roteiro privado da prática da Missão 04'],
+  ['teacher-mission-four-validation','PIT_TEACHER_MISSION_FOUR_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 04']
  ];
  for(const width of [390,1280]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
@@ -16,14 +18,14 @@ const assert=require('node:assert/strict');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('http://127.0.0.1:8899/index.html');
   await page.setContent('<!doctype html><html lang="pt-BR"><head><link rel="stylesheet" href="/v3/teacher-private-notes.css"></head><body style="background:#10151c"><main id="mount"></main></body></html>');
-  for(const [file,global] of modules){
+  for(const [file,global,phase='practice',label='Abrir roteiro privado do professor'] of modules){
    await page.addScriptTag({url:'http://127.0.0.1:8899/v3/'+file+'.js'});
-   await page.evaluate(name=>{document.querySelector('#mount').innerHTML=window[name].render('practice')},global);
+   await page.evaluate(({name,phase})=>{document.querySelector('#mount').innerHTML=window[name].render(phase)},{name:global,phase});
    const notes=page.locator('details.pit-private-teacher-notes');
    assert.equal(await notes.count(),1,file+' contains exactly one private practice note');
    assert.equal(await notes.evaluate(el=>el.open),false,file+' defaults closed');
    const summary=notes.locator('summary');
-   assert.equal(await summary.getAttribute('aria-label'),'Abrir roteiro privado do professor');
+   assert.equal(await summary.getAttribute('aria-label'),label);
    const size=await summary.evaluate(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}));
    assert(size.width<=30&&size.height<=30,file+' paper icon remains discreet '+JSON.stringify(size));
    assert.equal(await notes.locator('.pit-private-teacher-notes-body').isVisible(),false,file+' notes hidden during projection');
@@ -37,5 +39,5 @@ const assert=require('node:assert/strict');
   await context.close();
  }
  await browser.close();
- console.log('PASS V4 private teacher notes: M01-M03 Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
+ console.log('PASS V4 private teacher notes: M01-M04 practice and M04 review in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
 })().catch(e=>{console.error(e);process.exit(1)});
