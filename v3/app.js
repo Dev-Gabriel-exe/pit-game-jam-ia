@@ -113,6 +113,13 @@ function missionNineContext(){
   phase:activePhase,status:entry(9)?.status||'',feedback:entry(9)?.feedback||'',preview:visualPreview,
   canSubmit:state.current_stage>9||(state.current_stage===9&&['practice','review'].includes(state.phase))};
 }
+function missionTenContext(){
+ const previous=missionNineContext(),session=previous.session,e=entry(9);
+ if(!TEACHER&&e?.evidence&&window.PIT_STUDENT_MISSION_NINE)window.PIT_STUDENT_MISSION_NINE.hydrate(session,e.evidence,e.status);
+ return {...previous,playtest:!TEACHER&&window.PIT_STUDENT_MISSION_NINE?window.PIT_STUDENT_MISSION_NINE.load(session):{},
+  phase:activePhase,status:entry(10)?.status||'',feedback:entry(10)?.feedback||'',preview:visualPreview,
+  canSubmit:state.current_stage>=10&&['practice','review'].includes(state.phase)};
+}
 function statusLabel(n){return stageStatuses[entry(n)?.status]||'Não iniciada'}
 function renderJourney(){
  const list=$('journey');
@@ -297,6 +304,7 @@ function renderMain(){
  const missionSeven=!TEACHER&&m.n===7&&!!window.PIT_STUDENT_MISSION_SEVEN;
  const missionEight=!TEACHER&&m.n===8&&!!window.PIT_STUDENT_MISSION_EIGHT;
  const missionNine=!TEACHER&&m.n===9&&!!window.PIT_STUDENT_MISSION_NINE;
+ const missionTen=!TEACHER&&m.n===10&&!!window.PIT_STUDENT_MISSION_TEN;
  const teacherMissionOne=TEACHER&&m.n===1&&!!window.PIT_TEACHER_MISSION_ONE;
  const teacherMissionTwo=TEACHER&&m.n===2&&!!window.PIT_TEACHER_MISSION_TWO;
  const teacherMissionThree=TEACHER&&m.n===3&&!!window.PIT_TEACHER_MISSION_THREE;
@@ -329,6 +337,7 @@ function renderMain(){
  document.body.classList.toggle('pit-mission-seven',missionSeven);
  document.body.classList.toggle('pit-mission-eight',missionEight);
  document.body.classList.toggle('pit-mission-nine',missionNine);
+ document.body.classList.toggle('pit-mission-ten',missionTen);
  if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
  if(missionTwo)window.PIT_STUDENT_MISSION_TWO.hydrate(missionTwoContext().session,e?.evidence,e?.status);
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.hydrate(missionThreeContext().session,e?.evidence,e?.status);
@@ -338,6 +347,7 @@ function renderMain(){
  if(missionSeven)window.PIT_STUDENT_MISSION_SEVEN.hydrate(missionSevenContext().session,e?.evidence,e?.status);
  if(missionEight)window.PIT_STUDENT_MISSION_EIGHT.hydrate(missionEightContext().session,e?.evidence,e?.status);
  if(missionNine)window.PIT_STUDENT_MISSION_NINE.hydrate(missionNineContext().session,e?.evidence,e?.status);
+ if(missionTen)window.PIT_STUDENT_MISSION_TEN.hydrate(missionTenContext().session,e?.evidence,e?.status);
  $('mainContent').innerHTML=teacherMissionTenDemo?window.PIT_GDEVELOP_M10_GUIDE.render():
   teacherMissionTenBriefing?window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.render():
   teacherMissionNineValidation?window.PIT_TEACHER_MISSION_NINE_VALIDATION.render(activePhase):
@@ -361,6 +371,7 @@ function renderMain(){
   teacherMissionThree?window.PIT_TEACHER_MISSION_THREE.render(activePhase):
   teacherMissionTwo?window.PIT_TEACHER_MISSION_TWO.render(activePhase):
   teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):
+  missionTen?window.PIT_STUDENT_MISSION_TEN.render(missionTenContext()):
   missionNine?window.PIT_STUDENT_MISSION_NINE.render(missionNineContext()):
   missionEight?window.PIT_STUDENT_MISSION_EIGHT.render(missionEightContext()):
   missionSeven?window.PIT_STUDENT_MISSION_SEVEN.render(missionSevenContext()):
@@ -382,7 +393,7 @@ function renderMain(){
  }else{
   $('missionStatus').textContent=statusLabel(m.n);
   $('missionStatus').className='state-pill '+(e?.status||'');
-  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree||missionFour||missionFive||missionSix||missionSeven||missionEight||missionNine)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
+  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree||missionFour||missionFive||missionSix||missionSeven||missionEight||missionNine||missionTen)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='← Passo anterior';
   $('navSecondary').disabled=activePhase==='briefing';
@@ -414,6 +425,11 @@ function renderMain(){
  if(teacherMissionTenBriefing)window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.mount();
  if(teacherMissionTenDemo)window.PIT_GDEVELOP_M10_GUIDE.mount();
  if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
+ if(missionTen)window.PIT_STUDENT_MISSION_TEN.mount({
+  ...missionTenContext(),
+  onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
+  onMessage:message=>setToast(message,true)
+ });
  if(missionNine)window.PIT_STUDENT_MISSION_NINE.mount({
   ...missionNineContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
@@ -513,6 +529,7 @@ async function sendWork(status){
  const pilotSeven=!TEACHER&&activeStage===7&&!!window.PIT_STUDENT_MISSION_SEVEN;
  const pilotEight=!TEACHER&&activeStage===8&&!!window.PIT_STUDENT_MISSION_EIGHT;
  const pilotNine=!TEACHER&&activeStage===9&&!!window.PIT_STUDENT_MISSION_NINE;
+ const pilotTen=!TEACHER&&activeStage===10&&!!window.PIT_STUDENT_MISSION_TEN;
  let evidence=$('evidenceInput')?.value||'';
  let route=$('routeSelect')?.value||'2d';
  if(pilot){
@@ -599,6 +616,13 @@ async function sendWork(status){
   evidence=window.PIT_STUDENT_MISSION_NINE.evidence(q.session);
   route=q.polish?.route==='3d'?'3d':'2d';
   if(visualPreview)return setToast('Prévia: playtest registrado, sem envio à turma real.');
+ }else if(pilotTen){
+  const q=missionTenContext(),v=window.PIT_STUDENT_MISSION_TEN.validate(q.session);
+  if(!v.ok){activePhase='practice';renderMain();scrollMissionToStart();setToast(v.label,true);$('mainContent').querySelector(v.field==='checks'?'[data-m10s-check]':'#m10s-'+v.field)?.focus();return;}
+  if(status==='submitted'&&!q.canSubmit)return setToast('O professor ainda não liberou a prática.',true);
+  evidence=window.PIT_STUDENT_MISSION_TEN.evidence(q.session);
+  route=q.playtest?.route==='3d'?'3d':'2d';
+  if(visualPreview)return setToast('Prévia: lançamento registrado, sem envio à turma real.');
  }else{
   if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
   if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
@@ -657,7 +681,7 @@ $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage,activePhase);
  const idx=phaseList.indexOf(activePhase);
  if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();scrollMissionToStart();}
- else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE)||(activeStage===4&&window.PIT_STUDENT_MISSION_FOUR)||(activeStage===5&&window.PIT_STUDENT_MISSION_FIVE)||(activeStage===6&&window.PIT_STUDENT_MISSION_SIX)||(activeStage===7&&window.PIT_STUDENT_MISSION_SEVEN)||(activeStage===8&&window.PIT_STUDENT_MISSION_EIGHT)||(activeStage===9&&window.PIT_STUDENT_MISSION_NINE))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
+ else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE)||(activeStage===4&&window.PIT_STUDENT_MISSION_FOUR)||(activeStage===5&&window.PIT_STUDENT_MISSION_FIVE)||(activeStage===6&&window.PIT_STUDENT_MISSION_SIX)||(activeStage===7&&window.PIT_STUDENT_MISSION_SEVEN)||(activeStage===8&&window.PIT_STUDENT_MISSION_EIGHT)||(activeStage===9&&window.PIT_STUDENT_MISSION_NINE)||(activeStage===10&&window.PIT_STUDENT_MISSION_TEN))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10){selectStage(activeStage+1);teacherAdvance(activeStage,'briefing')}return}
