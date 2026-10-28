@@ -16,3 +16,6 @@
 .f6t-root footer{margin-top:20px;border-top:1px solid #967352;padding-top:15px}.f6t-root a{color:#a5ddff}
 .f6t-root :is(input,select,textarea,button,a):focus-visible{outline:3px solid #ffdb7d;outline-offset:3px}
 @media(max-width:600px){.f6t-root header{padding:14px}.f6t-form{grid-template-columns:1fr}}
+
+/* AUD-03 · Fluxo esquemático acessível; não se passa por captura de tela. */
+.f6t-diagram{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px;background:#161d30;border:1px solid #8d779c;margin:12px 0 3px}.f6t-diagram span{flex:1 1 85px;text-align:center;padding:10px 7px;background:#30314e;border:1px solid #9988bd;color:#f8e8ce;font-weight:800}.f6t-diagram b{color:#d7b3ef}.f6t-diagram-caption{font-size:.78rem;color:#c8b9db;margin:4px 0 14px}@media(max-width:580px){.f6t-diagram{display:grid;grid-template-columns:1fr}.f6t-diagram b{text-align:center;transform:rotate(90deg)}}
