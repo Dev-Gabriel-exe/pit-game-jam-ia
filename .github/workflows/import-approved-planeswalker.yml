@@ -1,0 +1,35 @@
+name: Import approved Pixabay hero
+on:
+  push:
+    branches: [feature/portal-planeswalker-video-20261028]
+    paths: ['qa/import-planeswalker.cjs', '.github/workflows/import-approved-planeswalker.yml']
+permissions:
+  contents: write
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Fetch user-selected Planeswalker from Pixabay
+        run: |
+          node qa/import-planeswalker.cjs
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height -of json v3/assets/missions/portal-planeswalker-307687.mp4 | tee /tmp/probe.json
+          python3 -c "import json;v=json.load(open('/tmp/probe.json'));s=next(x for x in v['streams'] if x.get('codec_name') in ('h264','hevc','av1','vp9'));assert s['width']>=1280 and s['height']>=720 and float(v['format']['duration'])>=5;print('VALID',s,v['format'])"
+      - name: Compress and upload to preview branch
+        run: |
+          mv v3/assets/missions/portal-planeswalker-307687.mp4 /tmp/planeswalker-original.mp4
+          ffmpeg -hide_banner -loglevel error -y -i /tmp/planeswalker-original.mp4 -vf "scale='min(1920,iw)':-2" -an -c:v libx264 -pix_fmt yuv420p -preset fast -crf 24 -movflags +faststart v3/assets/missions/portal-planeswalker-307687.mp4
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v3/assets/missions/portal-planeswalker-307687.mp4
+          git commit -m "asset(portal): add approved Planeswalker 1080p video"
+          git push origin HEAD:feature/portal-planeswalker-video-20261028
