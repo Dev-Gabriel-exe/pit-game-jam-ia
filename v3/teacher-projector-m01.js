@@ -34,7 +34,7 @@ function open(){
 }
 document.addEventListener('keydown',e=>{if(!overlay)return;if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
 document.addEventListener('click',e=>{if(e.target?.id==='pitProjectorLaunch')open()});
-const button=document.createElement('button');button.id='pitProjectorLaunch';button.type='button';button.textContent='▣ Apresentar aula · Missão 01';button.title='Protótipo exclusivo da Missão 01';
+const button=document.createElement('button');button.id='pitProjectorLaunch';button.type='button';button.innerHTML='<svg class="pit-projector-sigil" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M32 3 40 17 54 12 49 28 60 34 45 39 49 55 33 48 18 59 18 41 4 35 18 27 12 12 27 17Z" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/><path d="M32 14 42 32 32 50 22 32Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M32 22v20M26 32h12" stroke="currentColor" stroke-width="2.4"/><circle cx="32" cy="32" r="3" fill="#e8a74e"/></svg><span>APRESENTAR <small>MISSÃO 01</small></span>';button.setAttribute('aria-label','Apresentar aula da Missão 01');button.title='Protótipo exclusivo da Missão 01';
 const pane=$('mainPane');if(pane){const head=pane.querySelector('.mainhead');head?.appendChild(button)}
 const observer=new MutationObserver(()=>{button.hidden=!eligible();if(overlay&&!eligible())close()});if($('missionNumber'))observer.observe($('missionNumber'),{childList:true,subtree:true});button.hidden=!eligible();
 })();
