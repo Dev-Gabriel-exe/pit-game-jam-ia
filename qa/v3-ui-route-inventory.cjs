@@ -30,5 +30,9 @@ for(const file of ['aluno-v3.html','professor-v3.html']){
  assert.match(html,/data-role=["'](?:student|teacher)["']/,file+' role');
 }
 assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/biblioteca\.js/,'public asset library');
+const portal=fs.readFileSync(path.join(root,'index.html'),'utf8');
+assert.match(portal,/\.\/aluno-v3\.html/,'portal must link V3 student notebook');
+assert.match(portal,/\.\/professor-v3\.html/,'portal must link V3 teacher notebook');
+assert(!/\.\/(?:aluno|professor)\.html#pit-(?:creator-missions|mission-control)/.test(portal),'portal must not route primary calls to legacy V2 notebooks');
 console.log('PASS UI-01: '+pages.length+' HTML routes, '+total+' referenced links/assets and 10 mission posters');
 report.forEach(line=>console.log('  '+line));
