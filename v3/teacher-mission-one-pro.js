@@ -154,9 +154,9 @@ function review(){
  '<div class="tm-pro-engine" data-reveal><div><span>TRANSIÇÃO PARA O MVP</span><h4>Missão 02 · MVP em Foco</h4><p>O objetivo definido será limitado a uma cena, um comportamento principal, um evento e uma condição de conclusão. Esse recorte é o protótipo que será construído ao longo da oficina.</p></div></div>');
 }
 function render(phase){return phase==='demo'?demo():phase==='practice'?practice():phase==='review'?review():concepts()}
-function mount(){
- const root=document.querySelector('.tm1-root');if(!root)return;
- if(window.PIT_TEACHER_GDEVELOP_GUIDE)window.PIT_TEACHER_GDEVELOP_GUIDE.mount();
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.tm1-root');if(!root)return;
+ if(!rootOverride&&window.PIT_TEACHER_GDEVELOP_GUIDE)window.PIT_TEACHER_GDEVELOP_GUIDE.mount();
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const reveal=[...root.querySelectorAll('[data-reveal]')];
  if(!reduced&&typeof IntersectionObserver!=='undefined'){
