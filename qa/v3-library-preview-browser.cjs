@@ -11,7 +11,7 @@ const {chromium}=require('playwright');
    await page.goto('http://127.0.0.1:8899/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW),{timeout:10000});
    const count=await page.locator('[data-preview]').count();
-   assert.equal(count,28,'every current resource has a preview button');
+   assert.equal(count,34,'every current resource has a preview button');
    async function open(id){
     const button=page.locator('[data-preview="'+id+'"]');
     await button.click();
@@ -27,6 +27,31 @@ const {chromium}=require('playwright');
    await open('mapa-floresta');
    assert.equal(await page.locator('#pitPreviewStage img').evaluate(img=>img.complete&&img.naturalWidth===1024&&img.naturalHeight===576),true,'actual 1024x576 map');
    await page.locator('.pit-preview-close').click();
+   for(const id of ['feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo']){
+    await open(id);
+    const actual=await page.locator('#pitPreviewStage img').evaluate(async img=>{
+     await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,complete:img.complete};
+    });
+    assert.equal(actual.complete,true,'new preview decoded '+id);
+    assert.equal(actual.width,id.startsWith('mapa-')?1024:160,'new preview width '+id);
+    assert.equal(actual.height,id.startsWith('mapa-')?576:160,'new preview height '+id);
+    await page.locator('.pit-preview-close').click();
+   }
+   const newPng=await page.evaluate(async()=>{
+    const api=window.PIT_LIBRARY_API,results=[];
+    for(const id of ['feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo']){
+     const blob=await api.assetBlob(api.assets.find(a=>a.id===id));
+     const b=new Uint8Array(await blob.arrayBuffer());
+     results.push({id,type:blob.type,size:blob.size,magic:Array.from(b.slice(0,8)).join(',')});
+    }
+    return results;
+   });
+   assert.equal(newPng.length,6,'all six downloadable resources generated');
+   for(const a of newPng){
+    assert.equal(a.type,'image/png','real PNG '+a.id);
+    assert(a.size>500,'nonempty PNG '+a.id);
+    assert.equal(a.magic,'137,80,78,71,13,10,26,10','PNG signature '+a.id);
+   }
    await open('glb-cristal');
    await page.locator('#pitPreviewStage canvas').waitFor();
    const mesh=await page.evaluate(()=>{
@@ -47,7 +72,7 @@ const {chromium}=require('playwright');
    assert.equal(audio.paused,true,'audio does not autoplay');
    await page.locator('.pit-preview-close').click();
    assert.deepEqual(errors,[],'no JS page errors at '+width);
-   console.log('PASS LIBRARY PREVIEW '+width+'px: 28 buttons, sprite/map decode, GLB mesh, WAV audio, focus and Escape');
+   console.log('PASS LIBRARY PREVIEW '+width+'px: 34 buttons, six new PNG downloads, sprite/map decode, GLB mesh, WAV audio, focus and Escape');
    await page.close();
   }
  }finally{await browser.close()}
