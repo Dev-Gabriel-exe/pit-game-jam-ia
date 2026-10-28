@@ -103,8 +103,34 @@ function storytelling(m,p,src,minutes){
  }
  return results;
 }
-function liveSegments(src){
+function liveSegments(src,m,p){
  const root=contentRegion(src.root);
+ const fixed={
+  '2:1':['.tm2-lab','.tm2-demo-notes'],
+  '3:1':['.gd3-root'],
+  '4:0':['.tm4f-pathways'],
+  '4:1':['#g4Tutorial'],
+  '4:2':['.t4v-route-picker'],
+  '4:3':['.t4v-route-picker'],
+  '5:0':['.tm5-simulator','.tm5-genres'],
+  '5:1':['#m5Guide'],
+  '5:2':['.t5v-route-picker'],
+  '5:3':['.t5v-route-picker'],
+  '6:0':['.f6-decision'],
+  '6:1':['#f6Matrix'],
+  '6:2':['#f6Tutorial'],
+  '7:0':['.t7f-sim'],
+  '7:1':['#g7Guide'],
+  '8:0':['.t8f-lab'],
+  '8:1':['#g8Guide'],
+  '9:0':['.t9-lab'],
+  '9:1':['.t9-lab'],
+  '10:0':['.t10-choices'],
+  '10:1':['#g10Guide']
+ };
+ const configured=(fixed[m+':'+p]||[]).map(sel=>src.root.querySelector(sel)).filter(Boolean);
+ if(configured.length)return configured;
+
  const controls=[...root.querySelectorAll('button:not([hidden]),input,select,textarea,[role="tab"]')].filter(x=>!x.closest(PRIVATE));
  if(!controls.length)return [];
  const clusters=[];
@@ -136,7 +162,7 @@ function liveSegments(src){
  });
 }
 function interactive(m,p,src,minutes){
- const nodes=liveSegments(src),section=LABELS[p]+' · '+minutes[p]+' MIN';
+ const nodes=liveSegments(src,m,p),section=LABELS[p]+' · '+minutes[p]+' MIN';
  return nodes.map((node,i)=>{
   const title=plain(node.querySelector('h2,h3,h4')?.textContent||node.closest('section')?.querySelector('h2,h3,h4')?.textContent||'Experimente no simulador').slice(0,100);
   return slide(section,title,heading('SIMULAÇÃO / TUTORIAL · INTERATIVO')+
