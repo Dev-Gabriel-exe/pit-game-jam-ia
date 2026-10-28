@@ -103,6 +103,8 @@ jobs:
           assert (root/"cover.jpg").read_bytes()[:3] == b'\xff\xd8\xff'
           print(f"PASS: V3 10 missions, {len(ids)} unique resources, functioning generators")
           PY
+      - name: Verify authenticated chat image contracts
+        run: node qa/v3-chat-images-selftest.cjs
       - name: Test GLB, WAV and SVG resource generators
         run: |
           node <<'JS'
