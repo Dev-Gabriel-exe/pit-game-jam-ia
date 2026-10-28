@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T04:57:48.816Z",
+  "last_completed_at": "2026-10-28T05:01:05.780Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "FUN-02",
+  "priority": "FUN-03",
   "current_phase": "FUNCIONALIDADES",
-  "last_task": "FUN-01",
-  "completed_count": 43,
+  "last_task": "FUN-02",
+  "completed_count": 44,
   "total_tasks": 59,
   "tasks": [
     {
@@ -781,10 +781,13 @@
       "description": "Teste de portal/cadastro e sessão autenticada de aluno; rejeição de token inválido e persistência por usuário",
       "group": "FUN",
       "position": 48,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T05:01:05.780Z",
+      "commit": "17d8e573fee00a404a7de3d003a0143e481ad5bd",
+      "tests": [
+        "Static QA 40635407764 success: actual chat/classroom handlers with disposable SQL fixture, 2 fictional users, token hashes and isolation",
+        "Browser QA 40635407765 success: 2 Chrome sessions, reload persistence, invalid token rejection and zero production API calls"
+      ],
       "blocker": null
     },
     {
@@ -1614,6 +1617,20 @@
       ],
       "tests": "Static QA 40635164256 success; read-only live hosting 40635164103 success; Browser QA 40635127839 success (untrusted mirror + fake API)",
       "notes": "Feature V3 not deployed to main; Pages HTTP 200 does not prove feature is live. No production writes or real students used."
+    },
+    {
+      "id": "FUN-02",
+      "completed_at": "2026-10-28T05:01:05.780Z",
+      "commit": "17d8e573fee00a404a7de3d003a0143e481ad5bd",
+      "files": [
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-session-browser.cjs",
+        ".github/workflows/static-qa.yml",
+        ".github/workflows/browser-qa.yml",
+        "v3/TESTES-FUN-02.md"
+      ],
+      "tests": "Static QA 40635407764 success (actual handlers+mock SQL); Browser QA 40635407765 success (2 fake students, reload and forged token)",
+      "notes": "No real Neon/Postgres transaction or production registration tested; isolated in-memory SQL and fake HTTP only."
     }
   ]
 }
