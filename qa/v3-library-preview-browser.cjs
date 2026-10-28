@@ -15,17 +15,24 @@ const {chromium}=require('playwright');
    const catalogueSize=await page.evaluate(()=>window.PIT_LIBRARY_API.assets.length);
    assert(catalogueSize>=49,'expanded catalogue has at least 49 resources');
    assert.equal(count,catalogueSize,'every current resource has a preview button');
-   assert.equal(await page.locator('.statband span').filter({hasText:'recursos para download'}).innerText(),catalogueSize+' recursos para download','portal count follows actual catalogue');
+   const openAssetsCount=await page.locator('.statband span').filter({hasText:'pacotes CC0'}).innerText();
+   assert.match(openAssetsCount,/17 pacotes CC0/,'portal correctly highlights real creator packs');
    assert.equal(await page.locator('.statband span').filter({hasText:'missões'}).innerText(),'10 missões','portal count follows mission cards');
    assert.match(await page.locator('#myProgress').innerText(),/Caderno do Aluno/,'no misleading legacy XP counter');
+   async function ensureFallbackOpen(){
+    if(await page.locator('#pitLocalFallback').getAttribute('open')===null)
+      await page.locator('#pitLocalFallback summary').click();
+   }
    async function open(id){
+    await ensureFallbackOpen();
     const button=page.locator('[data-preview="'+id+'"]');
     await button.click();
     await page.locator('#pitAssetPreview:not([hidden])').waitFor();
     assert.equal(await page.locator('#pitPreviewTitle').innerText().then(Boolean),true,'title exists');
    }
-   // Verify real browser downloads from the visible library buttons, not only Blob APIs.
+   // Verify actual bytes in the explicitly opened procedural contingency drawer.
    if(width===390){
+    await ensureFallbackOpen();
     for(const id of ['explorador','glb-cristal','wav-coleta']){
      const asset=await page.evaluate(id=>window.PIT_LIBRARY_API.assets.find(a=>a.id===id),id);
      assert(asset,'download smoke test asset exists '+id);
