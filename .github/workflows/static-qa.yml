@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check JavaScript syntax
         run: node --check biblioteca.js
+      - name: Verify final automated evidence ledger and manual sign-off boundaries
+        run: node qa/v3-release-evidence-ledger.cjs
       - name: Audit V3 360-minute mission matrix
         run: node qa/v3-audit-matrix.cjs
       - name: Verify M08-04 before-after evidence, isolation and UX rubric
