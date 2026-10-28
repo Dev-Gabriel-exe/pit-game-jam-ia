@@ -8,7 +8,7 @@ const {chromium}=require('playwright');
   const page=await browser.newPage({viewport:{width:1600,height:900},reducedMotion:'reduce'});
   const errors=[],report=[];
   page.on('pageerror',err=>errors.push(err.message));
-  await page.goto('http://127.0.0.1:8899/professor-v3.html?preview=1',{waitUntil:'domcontentloaded'});
+  await page.goto('http://127.0.0.1:8899/professor-v3.html?preview=1&oficina=detalhado',{waitUntil:'domcontentloaded'});
   await page.locator('#workspace:visible').waitFor({timeout:20000});
   if(await page.locator('#missionGallery.open').count())await page.locator('#missionGalleryClose').click();
   for(let mission=2;mission<=10;mission++){
