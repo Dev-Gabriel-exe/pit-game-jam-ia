@@ -9,9 +9,9 @@ const ctx={document:{querySelector:()=>null,querySelectorAll:()=>[],getElementBy
 vm.createContext(ctx);vm.runInContext(source,ctx,{timeout:3000});
 const data=vm.runInContext('({assets,genreExamples,assetMatches})',ctx);
 const {assets,genreExamples,assetMatches}=data;
-assert(assets.length>=49,'catalogue retains at least 49 resources');
+assert(assets.length>=51,'catalogue retains at least 49 resources');
 assert.equal(new Set(assets.map(x=>x.id)).size,assets.length,'unique resource IDs');
-const formats={'2d':39,'3d':5,audio:5};
+const formats={'2d':41,'3d':5,audio:5};
 for(const [format,expected] of Object.entries(formats))assert.equal(assets.filter(a=>assetMatches(a,{format})).length,expected,format+' resources');
 for(const [genre,ids] of Object.entries(genreExamples)){
  assert(ids.length>0,'nonempty genre '+genre);
@@ -20,7 +20,7 @@ for(const [genre,ids] of Object.entries(genreExamples)){
  assert(assets.some(a=>assetMatches(a,{genre,format:'2d'})),'genre '+genre+' offers 2D');
 }
 assert(assets.every(a=>Object.keys(genreExamples).some(genre=>assetMatches(a,{genre}))),'all assets have at least one suggested genre');
-const additions=['coruja-mecanica','mapa-jardim-luz','ampulheta','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal','sentinela','arqueiro','mapa-arquipelago','mapa-fortaleza','bussola','reliquia','grifo','druida'];
+const additions=['raposa-automata','mapa-laboratorio','coruja-mecanica','mapa-jardim-luz','ampulheta','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal','sentinela','arqueiro','mapa-arquipelago','mapa-fortaleza','bussola','reliquia','grifo','druida'];
 assert(additions.every(id=>assets.some(a=>a.id===id)),'all original additions exist');
 for(const id of additions){
  const a=assets.find(x=>x.id===id);
