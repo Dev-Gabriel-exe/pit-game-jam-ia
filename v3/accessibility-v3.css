@@ -22,3 +22,13 @@
   transition-duration:.01ms!important;
  }
 }
+
+/* UI-08: 701–1024 px previously overflowed due to an unwrapped V3 navigation row. */
+@media(min-width:701px) and (max-width:1024px){
+ .topnav{gap:2px;padding:4px 9px;min-width:0}
+ .topnav .navbrand{display:none}
+ .topnav a,.topnav button{font-size:12px;padding:7px 6px;white-space:nowrap}
+ .topnav .navspacer{flex:1 1 0;min-width:0}
+ .topnav #currentUser{max-width:116px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .topnav .role-tag{font-size:10px;padding:6px 8px;white-space:nowrap}
+}
