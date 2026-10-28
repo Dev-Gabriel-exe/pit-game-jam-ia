@@ -58,6 +58,7 @@ let progressMap=new Map();
 function isLocked(m){return m.n>(options.currentStage||1);}
 function isDone(m){return progressMap.get(m.n)?.status==='approved';}
 function stateOf(m){
+ if(options.preview)return ['PRÉVIA','active'];
  if(isDone(m))return ['CONQUISTADA','complete'];
  if(isLocked(m))return ['BLOQUEADA','locked'];
  const status=progressMap.get(m.n)?.status;
@@ -107,7 +108,8 @@ function choose(index,initial){
  });
  const m=M[active],status=stateOf(m),locked=isLocked(m);
  $('arcadeTitle').textContent=m.title;
- $('arcadeDescription').textContent=m.goal;
+ const themed=options.genre&&window.PIT_GENRE_CONTEXT?window.PIT_GENRE_CONTEXT.stage(m.n,options.genre,{title:options.projectTitle||''}):null;
+  $('arcadeDescription').textContent=m.goal+(themed?' · Exemplo para '+themed.genre+': '+themed.focus:'');
  $('arcadeDeliverable').textContent=m.deliver;
  $('arcadeStatus').textContent=status[0];
  $('arcadeStatus').className='arcade-status '+status[1];
@@ -121,7 +123,7 @@ function choose(index,initial){
  if($('arcadeProgress'))$('arcadeProgress').setAttribute('aria-valuenow',String(approved));
  if($('arcadeProgressLabel'))$('arcadeProgressLabel').textContent=approved+' de '+M.length+' missões aprovadas';
  if($('arcadePlayerName'))$('arcadePlayerName').textContent=options.studentName||'AVENTUREIRO';
- if($('arcadePlayerStage'))$('arcadePlayerStage').textContent='MISSÃO LIBERADA '+pad(options.currentStage||1)+' / 10';
+ if($('arcadePlayerStage'))$('arcadePlayerStage').textContent=options.genre?'CRIANDO '+options.genre.toUpperCase()+' · 10 MISSÕES':options.preview?'MODO PRÉVIA · 10 MISSÕES':'MISSÃO LIBERADA '+pad(options.currentStage||1)+' / 10';
  steps.querySelectorAll('button').forEach((dot,i)=>{
   dot.classList.toggle('current',i===active);
   dot.classList.toggle('done',isDone(M[i]));
