@@ -43,6 +43,7 @@ const {chromium}=require('playwright');
     assert(m.cardHeight<=m.viewportHeight+18,'Hero content clipped M'+mission+' '+dims.width+' '+m.cardHeight+' vs '+m.viewportHeight);
     assert(m.headerEnabled,'Motion toggle should be available');
     if(mission===1){
+     await page.waitForFunction(()=>{const v=document.querySelector('#pitProjectorContent .pit-cinema-film');return v&&!v.paused&&v.currentTime>0.06&&v.readyState>=2;},null,{timeout:12000});
      await page.locator('#pitProjectorMotionToggle').click();
      const state=await page.locator('#pitProjector').evaluate(root=>({
       paused:[...root.querySelectorAll('#pitProjectorContent video')].every(v=>v.paused),
