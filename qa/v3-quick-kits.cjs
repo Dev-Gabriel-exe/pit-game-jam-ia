@@ -62,7 +62,7 @@ function unpackStored(bytes){
  }
  assert(all.has('png')&&all.has('glb')&&all.has('wav'),'all three formats packaged');
 
- // FUN-08: all 28 generated assets, declared MIME and binary structure.
+ // FUN-08: all current generated assets, declared MIME and binary structure.
  for(const asset of api.assets){
   const blob=await api.assetBlob(asset),data=Buffer.from(await blob.arrayBuffer());
   const expected=asset.cat==='modelo'?'model/gltf-binary':asset.cat==='som'?'audio/wav':'image/png';
