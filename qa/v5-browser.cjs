@@ -35,7 +35,7 @@ const {chromium}=require('playwright');
   await page.locator('#v5Practice').click();
   await page.locator('#v5Battle:not([hidden])').waitFor();
   assert.match(await page.locator('#v5BattleTitle').innerText(),/Treino/);
-  assert.equal(await page.locator('#v5Fighters .v5-fighter').count(),7,'Arena must show registered hero + six training bots');
+  assert.equal(await page.locator('#v5Fighters .v5-fighter').count(),8,'Preview arena must show eight explicitly fictional heroes');
   await page.locator('#v5StartBattle').click();
   await page.waitForTimeout(1900);
   const sim=await page.evaluate(()=>window.PIT_V5_APP.state.stage.simulation);
