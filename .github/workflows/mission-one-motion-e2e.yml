@@ -1,7 +1,7 @@
 name: Test Mission 01 Animated Carousel
 on:
   push:
-    branches: [experiment/missao-01-gothic-motion]
+    branches: [experiment/missao-01-gothic-motion, experiment/missao-01-hyperframes]
     paths:
       - qa/mission-one-motion-e2e.cjs
       - .github/workflows/mission-one-motion-e2e.yml
