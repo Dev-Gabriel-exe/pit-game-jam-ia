@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check JavaScript syntax
         run: node --check biblioteca.js
+      - name: Verify teacher chat sidebar layout and messaging controls
+        run: node qa/v3-teacher-chat-layout.cjs
       - name: Verify final automated evidence ledger and manual sign-off boundaries
         run: node qa/v3-release-evidence-ledger.cjs
       - name: Regression test dynamic release evidence ledger
