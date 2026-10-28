@@ -306,6 +306,7 @@ function renderMain(){
  const teacherMissionFiveDemo=TEACHER&&m.n===5&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M05_GUIDE;
  const teacherMissionFiveBriefing=TEACHER&&m.n===5&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_FIVE_FOUNDATIONS;
  const teacherMissionFiveValidation=TEACHER&&m.n===5&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_FIVE_VALIDATION;
+ const teacherMissionTenDemo=TEACHER&&m.n===10&&activePhase==='demo'&&!!window.PIT_GDEVELOP_M10_GUIDE;
  const teacherMissionTenBriefing=TEACHER&&m.n===10&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS;
  const teacherMissionNineValidation=TEACHER&&m.n===9&&['practice','review'].includes(activePhase)&&!!window.PIT_TEACHER_MISSION_NINE_VALIDATION;
  const teacherMissionNineBriefing=TEACHER&&m.n===9&&activePhase==='briefing'&&!!window.PIT_TEACHER_MISSION_NINE_FOUNDATIONS;
@@ -337,7 +338,8 @@ function renderMain(){
  if(missionSeven)window.PIT_STUDENT_MISSION_SEVEN.hydrate(missionSevenContext().session,e?.evidence,e?.status);
  if(missionEight)window.PIT_STUDENT_MISSION_EIGHT.hydrate(missionEightContext().session,e?.evidence,e?.status);
  if(missionNine)window.PIT_STUDENT_MISSION_NINE.hydrate(missionNineContext().session,e?.evidence,e?.status);
- $('mainContent').innerHTML=teacherMissionTenBriefing?window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.render():
+ $('mainContent').innerHTML=teacherMissionTenDemo?window.PIT_GDEVELOP_M10_GUIDE.render():
+  teacherMissionTenBriefing?window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.render():
   teacherMissionNineValidation?window.PIT_TEACHER_MISSION_NINE_VALIDATION.render(activePhase):
   teacherMissionNineBriefing?window.PIT_TEACHER_MISSION_NINE_FOUNDATIONS.render():
   teacherMissionEightValidation?window.PIT_TEACHER_MISSION_EIGHT_VALIDATION.render(activePhase):
@@ -410,6 +412,7 @@ function renderMain(){
  if(teacherMissionNineBriefing)window.PIT_TEACHER_MISSION_NINE_FOUNDATIONS.mount();
  if(teacherMissionNineValidation)window.PIT_TEACHER_MISSION_NINE_VALIDATION.mount();
  if(teacherMissionTenBriefing)window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS.mount();
+ if(teacherMissionTenDemo)window.PIT_GDEVELOP_M10_GUIDE.mount();
  if(teacherMissionFiveDemo)window.PIT_GDEVELOP_M05_GUIDE.mount();
  if(missionNine)window.PIT_STUDENT_MISSION_NINE.mount({
   ...missionNineContext(),
