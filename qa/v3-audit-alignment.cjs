@@ -105,6 +105,25 @@ assert.equal((m07Validation.match(/class="pit-private-teacher-notes-body"/g)||[]
 assert(m07Validation.includes('aria-label="Abrir roteiro privado da avaliação da Missão 07"'),'M07 review icon accessible');
 assert(!m07Validation.includes('<details class="pit-private-teacher-notes" open'),'M07 private notes closed');
 assert(m07Validation.indexOf('No acompanhamento, selecione')>m07Validation.lastIndexOf('<details class="pit-private-teacher-notes">'),'M07 assessment workflow within private note');
+// M08: one real before/after improvement, 40-minute alignment, neutral shared tutorial, and HDMI-safe review.
+const m08Student=read('v3/student-mission-eight.js');
+const m08Foundations=read('v3/teacher-mission-eight-foundations.js');
+const m08Validation=read('v3/teacher-mission-eight-validation.js');
+const m08Guide=read('v3/gdevelop-mission-eight-guide.js');
+assert(m08Foundations.includes('[5,4,28,3]'),'M08 teacher 5+4+28+3=40 minutes');
+assert(m08Student.includes('OFICINA · 28 MINUTOS'),'M08 student practice 28 min');
+for(const t of ['5 min · ANTES','15 min · IMPLEMENTAR','8 min · DEPOIS + TESTE'])assert(m08Student.includes(t),'M08 student timing '+t);
+assert(m08Guide.includes('TUTORIAL DE POLIMENTO · 4 MINUTOS'),'M08 shared guide neutral 4-minute heading');
+assert(!m08Guide.includes('PROFESSOR · DEMONSTRAÇÃO'),'M08 student cannot see teacher-only heading');
+assert(m08Student.includes('https://editor.gdevelop.io/'),'M08 student editor handoff');
+assert(m08Student.includes('não abre nem importa seu projeto automaticamente'),'M08 link cannot imply automatic GDevelop loading');
+assert(m08Student.includes('aplicativo GDevelop já instalado'),'M08 student offline fallback');
+assert(!m08Student.includes('pit-private-teacher-notes'),'M08 student must not receive teacher private notes');
+assert.equal((m08Validation.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M08 practice and review must have private panels');
+assert.equal((m08Validation.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M08 panels must use shared CSS');
+assert(m08Validation.includes('aria-label="Abrir roteiro privado da avaliação da Missão 08"'),'M08 review private icon accessible');
+assert(!m08Validation.includes('<details class="pit-private-teacher-notes" open'),'M08 private notes default closed');
+assert(m08Validation.indexOf('Depois de retirar o espelhamento')>m08Validation.indexOf('function review()'),'M08 assessment workflow hidden in review panel');
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
