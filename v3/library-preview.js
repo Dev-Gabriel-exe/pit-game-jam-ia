@@ -136,6 +136,9 @@ async function open(id,trigger){
    objectUrl=URL.createObjectURL(blob);
    const large=document.createElement('img');large.src=objectUrl;large.alt='PNG original ampliado de '+a.name;large.decoding='async';
    stage.appendChild(large);
+   await large.decode();if(token!==runId)return;
+   const expectedWidth=a.cat==='mapa'?1024:160,expectedHeight=a.cat==='mapa'?576:160;
+   if(large.naturalWidth!==expectedWidth||large.naturalHeight!==expectedHeight)throw Error('Dimensões PNG inesperadas');
    help.textContent=a.desc+' Prévia ampliada gerada dos mesmos bytes PNG disponibilizados para download.';
   }
  }catch(error){
