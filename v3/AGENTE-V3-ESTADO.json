@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:40:31.041Z",
+  "last_completed_at": "2026-10-28T02:43:52.600Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M06-01",
+  "priority": "M06-02",
   "current_phase": "MISSOES",
-  "last_task": "M05-04",
-  "completed_count": 8,
+  "last_task": "M06-01",
+  "completed_count": 9,
   "total_tasks": 59,
   "tasks": [
     {
@@ -173,10 +173,14 @@
       "description": "Professor: pipeline de assets, formatos PNG/GLB/WAV/MP4, importação, autoria, licenças e limites de planos gratuitos",
       "group": "M06",
       "position": 9,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:43:52.600Z",
+      "commit": "00c3d273bd2c8274936e5300202d0c4525bc39f4",
+      "tests": [
+        "27/27 static + functional checks for M06 professor foundation, official formats and demo quiz",
+        "Format guidance grounded in current official GDevelop docs for Sprite, WAV/AAC, MP4/H.264/AAC, GLB",
+        "No browser/GDevelop or real classroom API test yet"
+      ],
       "blocker": null
     },
     {
@@ -898,6 +902,20 @@
       ],
       "tests": "31/31 functional/static checks and 32/32 offline regression assertions",
       "notes": "Teacher M05 practical and review now mirror student M05; required positive negative and duplicate-protection test. Real browser, GDevelop and Neon E2E pending."
+    },
+    {
+      "id": "M06-01",
+      "completed_at": "2026-10-28T02:43:52.600Z",
+      "commit": "00c3d273bd2c8274936e5300202d0c4525bc39f4",
+      "files": [
+        "v3/teacher-mission-six-foundations.js",
+        "v3/teacher-mission-six-foundations.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "v3/FASE3-MISSAO6.md"
+      ],
+      "tests": "27/27 deterministic JS+CSS integration and simulated decision-quiz checks",
+      "notes": "Five-minute pipeline: one AI/fallback asset only. PNG sprite, WAV/AAC audio, MP4 H.264/AAC cutscene optional, GLB low-poly. Provenance/license/privacy/fallback checked. No real editor/browser E2E."
     }
   ]
 }
