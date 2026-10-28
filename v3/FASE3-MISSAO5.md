@@ -79,3 +79,23 @@ O rascunho esquemático inicial foi substituído pelo módulo `v3/gdevelop-missi
 ### Próxima meta
 
 **M05-04 — Auditoria de alinhamento:** comparar professor/aluno, critérios da regra, proteção contra duplicação, três testes de aceitação, persistência e revisão. Não declarar a oficina homologada sem ensaios reais.
+
+## M05-04 — Auditoria professor/aluno + regressão — CONCLUÍDA NO CÓDIGO
+
+**Novos módulos:** `v3/teacher-mission-five-validation.js` e `v3/teacher-mission-five-validation.css`. Conectados no `professor-v3.html` e `v3/app.js`, exclusivamente nas fases **prática** e **resultados** da Missão 05. Briefing e demonstração M05 anteriores permanecem preservados.
+
+### Sincronização entre materiais
+- Professor e aluno usam o mesmo tempo **8 + 5 + 24 + 3 min**; prática fragmentada em **8 + 8 + 8 min**.
+- **SE/Condição:** evento técnico no GDevelop com objeto, entrada, colisão ou outro gatilho consistente com a mecânica escolhida.
+- **ENTÃO/Ação e variável:** condição verdadeira atualiza uma variável e produz feedback visual/sonoro observável.
+- **Testes de aceitação:** (1) caso positivo passa; (2) caso negativo não aciona a regra; (3) repetição não duplica pontos ou respostas indevidas.
+- **Preservação do projeto:** salvar o mesmo jogo em formato editável, mantendo continuidade para a Missão 06.
+- Professor usa rubrica com quatro itens: evento, ação e estado, os três testes, continuidade do projeto. Disponibiliza diagnóstico de falhas para coleta 2D, clique/narrativa e porta 3D, sem textos de condução/fala.
+
+### Verificações
+- **31/31 verificações de módulo e interação** realizadas em JavaScript: CSS/JS, rotas, três blocos de laboratório, rubrica, isolamento por fase/usuário, navegação com teclado, ausência de animações obrigatórias e apresentação de evidência como declaração.
+- **32/32 asserções de regressão** executadas usando o código do repositório com execução em ambiente JavaScript de módulos nativos simulados. Script persistente: `qa/v3-m05-integration.cjs` (com uma cópia local, `node qa/v3-m05-integration.cjs`).
+- Guardas de API já implementados na M04: submissões aprovadas/enviadas não podem ser sobrescritas sem revisão; pedidos de revisão exigem justificativa. Auditoria M05 os reconfirmou no código, mas **não repetiu teste com banco Neon real**.
+- **Pendente:** inspeção visual real em Chrome/Android, abertura de screenshot oficiais, execução de eventos no GDevelop, validação E2E com API/Neon em ambiente de teste. Não chamar essa etapa de homologação completa.
+
+**Próxima meta:** M06-01 — conceitos do professor sobre pipeline de assets e importação, preparando a Forja de IA.
