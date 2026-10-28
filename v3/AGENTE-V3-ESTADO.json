@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T02:51:21.901Z",
+  "last_completed_at": "2026-10-28T02:52:42.087Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M07-02",
+  "priority": "M07-03",
   "current_phase": "MISSOES",
-  "last_task": "M07-01",
-  "completed_count": 13,
+  "last_task": "M07-02",
+  "completed_count": 14,
   "total_tasks": 59,
   "tasks": [
     {
@@ -267,10 +267,14 @@
       "description": "Tutorial 2D e 3D com demonstração progressiva de GDevelop de início → interação → resultado",
       "group": "M07",
       "position": 15,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:52:42.087Z",
+      "commit": "97ad236f1296e443e95a36cfa13943d079fbfc0f",
+      "tests": [
+        "16/16 V8 assertions executed: 2D/3D routes, navigation, source URLs, app syntax, DOM simulation, CSS",
+        "3 official GDevelop screenshot URLs opened and visually checked via web",
+        "qa/v3-m07-guide.cjs committed, not run in Node"
+      ],
       "blocker": null
     },
     {
@@ -1009,6 +1013,21 @@
       ],
       "tests": "18/18 V8 checks passed; real GDevelop/browser not executed",
       "notes": "Teacher state machine and four genre examples; simulator does not claim engine execution."
+    },
+    {
+      "id": "M07-02",
+      "completed_at": "2026-10-28T02:52:42.087Z",
+      "commit": "97ad236f1296e443e95a36cfa13943d079fbfc0f",
+      "files": [
+        "v3/gdevelop-mission-seven-guide.js",
+        "v3/gdevelop-mission-seven-guide.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "qa/v3-m07-guide.cjs",
+        "v3/FASE3-MISSAO7.md"
+      ],
+      "tests": "16/16 V8 assertions; 3 official image URLs checked; no GDevelop Preview",
+      "notes": "Illustrated scene flow for 2D and Physics 3D, fallback labeled, no claim of actual editor run."
     }
   ]
 }
