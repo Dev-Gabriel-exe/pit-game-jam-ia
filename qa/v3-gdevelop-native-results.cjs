@@ -18,10 +18,14 @@ for(const project of manifest.projects){
  const resultFile=path.join(root,id,'results.json');
  assert(fs.existsSync(resultFile),'GDevelop results absent for '+project);
  const results=JSON.parse(fs.readFileSync(resultFile,'utf8'));
- assert(Array.isArray(results)&&results.length>=3,'official and PIT tests executed: '+project);
+ assert(Array.isArray(results)&&results.length>=4,'official, PIT asset and victory tests executed: '+project);
  for(const t of results)assert.equal(t.status,'passed','GDevelop gameplay test '+t.testName+' failed');
  const pit=results.filter(t=>String(t.testName||'').startsWith('PIT QA'));
- assert.equal(pit.length,1,'exactly one PIT test in '+project);
+ assert.equal(pit.length,1,'exactly one PIT asset test in '+project);
+ const win=results.filter(t=>String(t.testName||'').startsWith('PIT WIN'));
+ assert.equal(win.length,1,'exactly one real GDevelop conditional-victory test in '+project);
+ assert(Array.isArray(win[0].assertions)&&win[0].assertions.length>=3&&win[0].assertions.every(a=>a.passed),
+  'native victory test must record three passing GDevelop assertions: '+project);
  const screenshots=pit[0].screenshots||[];
  assert(screenshots.length>=1,'GDevelop screenshot missing for '+project);
  for(const shot of screenshots){
