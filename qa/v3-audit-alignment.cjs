@@ -124,6 +124,29 @@ assert.equal((m08Validation.match(/class="pit-private-teacher-notes-body"/g)||[]
 assert(m08Validation.includes('aria-label="Abrir roteiro privado da avaliação da Missão 08"'),'M08 review private icon accessible');
 assert(!m08Validation.includes('<details class="pit-private-teacher-notes" open'),'M08 private notes default closed');
 assert(m08Validation.indexOf('Depois de retirar o espelhamento')>m08Validation.indexOf('function review()'),'M08 assessment workflow hidden in review panel');
+// M09: honest peer observation, exact 25-minute schedule, student GDevelop access and HDMI-safe review.
+const m09Student=read('v3/student-mission-nine.js');
+const m09Foundations=read('v3/teacher-mission-nine-foundations.js');
+const m09Validation=read('v3/teacher-mission-nine-validation.js');
+const m09Css=read('v3/student-mission-nine.css');
+assert(m09Foundations.includes('[3,3,16,3]'),'M09 teacher 3+3+16+3=25 minutes');
+assert(m09Student.includes('PLAYTEST · 16 MINUTOS'),'M09 student playtest 16 min');
+assert(m09Student.includes('Rodada A: 1 min hipótese/tarefa + 5 min teste + 2 min registro'),'M09 student first round 8 min');
+assert(m09Student.includes('Rodada B: inverter os papéis e repetir os mesmos 8 min'),'M09 student second round 8 min');
+assert(m09Foundations.includes('Rodada A (8 min)'),'M09 teacher round A 8 min');
+assert(m09Foundations.includes('Rodada B (8 min)'),'M09 teacher round B 8 min');
+assert(m09Student.includes('https://editor.gdevelop.io/'),'M09 student GDevelop editor handoff');
+assert(m09Student.includes('não abre nem importa seu jogo automaticamente'),'M09 editor handoff must be honest');
+assert(m09Student.includes('aplicativo GDevelop já instalado'),'M09 student offline fallback');
+assert(m09Css.includes('.m9s-editor-handoff a:focus-visible'),'M09 editor link keyboard focus');
+assert(!m09Student.includes('pit-private-teacher-notes'),'M09 student must not receive private notes');
+assert.equal((m09Validation.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M09 teacher practice and review private panels');
+assert.equal((m09Validation.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M09 panels share private notes styling');
+assert(m09Validation.includes('aria-label="Abrir roteiro privado da avaliação da Missão 09"'),'M09 review private paper icon accessible');
+assert(!m09Validation.includes('<details class="pit-private-teacher-notes" open'),'M09 private notes closed by default');
+assert(m09Validation.indexOf('Depois de retirar o espelhamento')>m09Validation.indexOf('function review()'),'M09 review workflow is concealed');
+assert(m09Student.includes('só declare')===false || m09Student.includes('após modificar'),'M09 cannot claim unobserved correction');
+
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
