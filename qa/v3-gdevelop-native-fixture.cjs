@@ -105,8 +105,14 @@ async function build(){
   }
   scene.events.push({
    type:'BuiltinCommonInstructions::Standard',
-   conditions:[{type:{value:'BooleanVariable'},parameters:['PIT_Ready','True','']}],
-   actions:[{type:{value:'SetBooleanVariable'},parameters:['PIT_Victory','True','']}]
+   conditions:[
+    {type:{value:'BooleanVariable'},parameters:['PIT_Ready','True','']},
+    {type:{value:'BooleanVariable'},parameters:['PIT_Victory','False','']}
+   ],
+   actions:[
+    {type:{value:'PlaySound'},parameters:['',resources[1].name,'','80','1']},
+    {type:{value:'SetBooleanVariable'},parameters:['PIT_Victory','True','']}
+   ]
   });
   project.tests.push({
    name:'PIT WIN — victory gated by a real GDevelop event',
