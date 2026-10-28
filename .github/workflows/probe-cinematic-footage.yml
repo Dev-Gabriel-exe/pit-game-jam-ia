@@ -17,10 +17,10 @@ jobs:
           python3 - <<'PY'
           import urllib.request,re,html,json
           urls=[
-          'https://pixabay.com/videos/magical-portal-glowing-doorway-348295/',
-          'https://pixabay.com/videos/ai-generated-black-cat-353558/',
-          'https://pixabay.com/videos/castle-ruins-portal-fantasy-166619/',
-          'https://pixabay.com/videos/horror-castle-fantasy-gothic-66791/',
+          'https://mixkit.co/free-stock-video/mysterious-people-in-robes-in-an-old-building-at-night-33866/',
+          'https://mixkit.co/free-stock-video/medieval-castle-in-the-mountains-4013/',
+          'https://mixkit.co/free-stock-video/mysterious-people-in-robes-in-an-old-building-at-night-33866/',
+          'https://mixkit.co/free-stock-video/medieval-castle-in-the-mountains-4013/',
           ]
           for url in urls:
            print("\nSOURCE:",url,flush=True)
