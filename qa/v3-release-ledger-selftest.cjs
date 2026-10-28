@@ -17,8 +17,14 @@ try{
  t.status='done';t.blocker=null;next.completed_count=55;
  ledger=run(next);
  assert.equal(ledger.automatedTasksComplete,55);
- assert.equal(ledger.humanAcceptance.length,4);
- assert(!ledger.humanAcceptance.some(x=>x.id==='M06-05'));
+ assert.equal(ledger.humanAcceptance.length,5);
+ assert.equal(ledger.humanAcceptance.find(x=>x.id==='M06-05').status,'NOT_RUN');
  assert.equal(ledger.releaseReady,false);
- console.log('PASS REL ledger: actual 54/59 and simulated 55/59 transition');
+ const all=structuredClone(state);
+ for(const task of all.tasks){task.status='done';task.blocker=null}
+ all.completed_count=59;
+ ledger=run(all);
+ assert.equal(ledger.releaseReady,false,'59/59 without signed human evidence must NOT release');
+ assert.equal(ledger.humanGate,'PENDING');
+ console.log('PASS REL ledger: actual 54/59, simulated 55/59 and unsigned 59/59 fail closed');
 }finally{fs.rmSync(dir,{recursive:true,force:true})}
