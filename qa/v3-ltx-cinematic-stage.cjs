@@ -56,9 +56,10 @@ const {chromium}=require('playwright');
      assert.equal(await page.locator('#pitProjectorMotionToggle').getAttribute('aria-pressed'),'true');
      await page.locator('#pitProjectorNext').click();
      assert.equal(await page.locator('#pitProjectorContent video').count(),0,'M01 non-cinematic slide should not keep a video decoding');
-     const flow=page.locator('#pitProjectorContent .pit-m01-flow span');
-     assert((await flow.count())>=4,'M01 action flow missing after hero');
-     assert.match(await flow.first().evaluate(el=>getComputedStyle(el).animationName),/pitCinFlow/,'Flow should animate without blocking text');
+     await page.locator('#pitProjectorNext').click();
+     const flow=page.locator('#pitProjectorContent .pit-ws-flow-node');
+     assert((await flow.count())===4,'M01 interactive model must still show four conceptual steps');
+     assert.match(await flow.first().evaluate(el=>getComputedStyle(el).animationName),/pitWsFlow/,'Flow should animate in the new model without blocking text');
     }
     await page.locator('#pitProjectorClose').click();
     report.push({viewport:dims.width,mission,...m});
