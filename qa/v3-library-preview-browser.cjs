@@ -15,6 +15,7 @@ const {chromium}=require('playwright');
    const catalogueSize=await page.evaluate(()=>window.PIT_LIBRARY_API.assets.length);
    assert(catalogueSize>=49,'expanded catalogue has at least 49 resources');
    assert.equal(count,catalogueSize,'every current resource has a preview button');
+   await page.waitForFunction(()=>Boolean(window.PIT_OPEN_ASSETS)&&document.querySelector('#pitOpenCount')?.textContent.includes('17 pacotes gratuitos'),null,{timeout:12000});
    const openAssetsCount=await page.locator('.statband span').filter({hasText:'pacotes CC0'}).innerText();
    assert.match(openAssetsCount,/17 pacotes CC0/,'portal correctly highlights real creator packs');
    assert.equal(await page.locator('.statband span').filter({hasText:'missões'}).innerText(),'10 missões','portal count follows mission cards');
