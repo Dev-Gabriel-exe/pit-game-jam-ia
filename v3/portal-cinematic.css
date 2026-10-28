@@ -9,7 +9,7 @@
  --pit-portal-gothic:"Cinzel Decorative","Cinzel",Georgia,serif;
  --pit-portal-chapter:"Cinzel",Georgia,serif;
  --pit-portal-readable:"Source Sans 3","Segoe UI",Arial,sans-serif;
- --pit-parallax-x:0px;--pit-parallax-y:0px;--pit-hero-x:0px;--pit-hero-y:0px;
+ --pit-grid-x:0px;--pit-grid-y:0px;--pit-halo-x:0px;--pit-halo-y:0px;--pit-runes-x:0px;--pit-runes-y:0px;--pit-video-x:0px;--pit-video-y:0px;--pit-mark-x:0px;--pit-mark-y:0px;--pit-sparks-x:0px;--pit-sparks-y:0px;
 }
 html{background:#09090c}
 body.pit-portal-gothic{position:relative;isolation:isolate;background:transparent;color:var(--pit-portal-paper);font-family:var(--pit-portal-readable)}
@@ -22,11 +22,11 @@ body.pit-portal-gothic{position:relative;isolation:isolate;background:transparen
  repeating-linear-gradient(90deg,transparent 0 115px,#e3a86716 116px 117px,transparent 118px 236px),
  repeating-linear-gradient(0deg,transparent 0 115px,#e3a86712 116px 117px,transparent 118px 236px);
  mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
- transform:translate3d(calc(var(--pit-parallax-x)*.12),calc(var(--pit-parallax-y)*.12),0);
+ transform:translate3d(var(--pit-grid-x),var(--pit-grid-y),0);
  will-change:transform}
 .pit-ambient-halo{position:absolute;width:min(70vw,780px);aspect-ratio:1;right:-18vw;top:15vh;border-radius:50%;border:1px solid #d5975229;
  box-shadow:0 0 0 34px #b5804212,0 0 0 85px #ab68350c,0 0 130px #8b472120,inset 0 0 60px #a968371c;
- transform:translate3d(calc(var(--pit-parallax-x)*-.25),calc(var(--pit-parallax-y)*-.25),0);
+ transform:translate3d(var(--pit-halo-x),var(--pit-halo-y),0);
  will-change:transform}
 .pit-ambient-halo::before,.pit-ambient-halo::after{content:"";position:absolute;inset:12%;border:1px dashed #c08e5451;transform:rotate(37deg)}
 .pit-ambient-halo::after{inset:28%;border:1px solid #e0af6d47;border-radius:50%;transform:none}
@@ -36,7 +36,7 @@ body.pit-portal-gothic{position:relative;isolation:isolate;background:transparen
  radial-gradient(circle at 38% 56%,#e89150 0 1px,transparent 2px),
  radial-gradient(circle at 71% 79%,#db8559 0 1px,transparent 2px);
  background-size:281px 305px,377px 415px,467px 321px,353px 289px;
- transform:translate3d(calc(var(--pit-parallax-x)*.4),calc(var(--pit-parallax-y)*.4),0);
+ transform:translate3d(var(--pit-runes-x),var(--pit-runes-y),0);
  will-change:transform}
 .pit-portal-gothic nav{background:#09080bdc;border-bottom:1px solid #98704b88;box-shadow:0 8px 40px #0009;backdrop-filter:blur(16px)}
 .pit-portal-gothic .logo{font:800 clamp(14px,1.25vw,19px)/1.1 var(--pit-portal-chapter);letter-spacing:.015em;color:#f6e1c1;text-shadow:0 2px 9px #000}
@@ -51,13 +51,13 @@ body.pit-portal-gothic{position:relative;isolation:isolate;background:transparen
  radial-gradient(circle at 83% 43%,transparent 8%,#110a103b 61%)}
 .pit-hero-media{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#111015 url("./assets/missions/missao-01.webp") 62% 46%/cover no-repeat}
 .pit-hero-media video{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;object-position:65% 45%;opacity:0;
- filter:brightness(.76) saturate(.8) contrast(1.12);transform:translate3d(calc(var(--pit-hero-x)*-.45),calc(var(--pit-hero-y)*-.45),0) scale(1.08);
+ filter:brightness(.76) saturate(.8) contrast(1.12);transform:translate3d(var(--pit-video-x),var(--pit-video-y),0) scale(1.08);
  transition:opacity 1.15s ease;will-change:opacity,transform}
 .pit-hero-media.pit-video-playing video{opacity:.86}
 .pit-hero-media::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 50% 75% at 79% 46%,#d69b6422,transparent 73%);mix-blend-mode:screen}
 .pit-hero-mark{position:absolute;right:clamp(12px,7vw,125px);top:50%;width:clamp(140px,23vw,320px);aspect-ratio:1;
  border:1px solid #e5bb8050;border-radius:50%;box-shadow:0 0 0 19px #b9823620,0 0 0 44px #bb955913,inset 0 0 48px #bd783c25;
- transform:translate3d(calc(var(--pit-hero-x)*-.8),calc(-50% + var(--pit-hero-y)*-.8),0);
+ transform:translate3d(var(--pit-mark-x),calc(-50% + var(--pit-mark-y)),0);
  opacity:.62}
 .pit-hero-mark::before{content:"✧";position:absolute;inset:17%;display:grid;place-items:center;border:1px solid #e7b67a65;
  transform:rotate(45deg);font:900 clamp(60px,8vw,140px) var(--pit-portal-gothic);color:#ead0a076;text-shadow:0 0 35px #d7a36666}
@@ -68,7 +68,7 @@ body.pit-portal-gothic{position:relative;isolation:isolate;background:transparen
  radial-gradient(circle at 89% 74%,#f9af63 0 2px,transparent 3px),
  radial-gradient(circle at 73% 31%,#f4c28c 0 1px,transparent 2px);
  background-size:310px 300px,450px 275px,365px 410px,480px 380px;opacity:.42;
- transform:translate3d(calc(var(--pit-hero-x)*.38),calc(var(--pit-hero-y)*.38),0)}
+ transform:translate3d(var(--pit-sparks-x),var(--pit-sparks-y),0)}
 .pit-portal-gothic .hero>.container{position:relative;z-index:2;padding-top:clamp(62px,9vh,130px);padding-bottom:clamp(75px,10vh,115px);max-width:1190px}
 .pit-portal-gothic .hero .kicker{font:800 12px/1.5 var(--pit-portal-chapter);letter-spacing:.13em;color:#dfac75}
 .pit-portal-gothic .hero h1{font:800 clamp(44px,6.3vw,90px)/1.075 var(--pit-portal-gothic);letter-spacing:-.01em;
