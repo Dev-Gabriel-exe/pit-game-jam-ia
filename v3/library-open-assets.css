@@ -1,0 +1,66 @@
+/* Biblioteca arcana: open-source game assets, readable + rich thumbnails. */
+#pitOpenAssets{margin:0 auto 31px;padding:clamp(17px,2.5vw,29px);border:1px solid #aa734b;border-radius:17px;background:linear-gradient(135deg,#261a1beF,#15151cea 50%,#261c1bea);box-shadow:0 26px 56px #0009,inset 0 1px #ffe3b81c;position:relative;color:#f6e6d3;isolation:isolate}
+#pitOpenAssets:before{content:"";z-index:-1;position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse 46% 40% at 88% 3%,#d28b4121,transparent)}
+.pit-open-head{display:flex;align-items:center;justify-content:space-between;gap:23px;padding-bottom:22px}
+.pit-open-head h3{font:750 clamp(27px,2.8vw,39px)/1.18 "Cinzel",Georgia,serif;color:#ffdeb1;margin:9px 0 8px;letter-spacing:-.01em;text-wrap:balance}
+.pit-open-head p{font:450 clamp(15px,1.2vw,18px)/1.5 "Source Sans 3",Arial,sans-serif;color:#e0cabb;margin:0;max-width:850px}
+.pit-open-eyebrow{font:800 12px/1.3 "Cinzel",Georgia,serif;letter-spacing:.1em;color:#ebaf75}
+.pit-open-count{padding:12px 16px;border:1px solid #926848;border-radius:10px;background:#1b1618;color:#f7cd9d;text-align:center;min-width:155px;font:800 13px/1.5 "Source Sans 3",sans-serif}
+.pit-open-filters{display:grid;grid-template-columns:minmax(280px,1.6fr) minmax(170px,.75fr) minmax(155px,.7fr);align-items:end;gap:14px;margin:0 0 27px;padding:17px;border:1px solid #886047;border-radius:11px;background:#130f14b6}
+.pit-open-tabs{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pit-open-filters label{display:grid;gap:6px;font:750 12px "Source Sans 3",sans-serif;color:#ecc8a3}
+.pit-open-filters :is(select,input){min-height:42px;width:100%;padding:9px 12px;background:#1e1a20;color:#f7e6d6;border:1px solid #9b795d;border-radius:7px;font:500 14px "Source Sans 3",sans-serif}
+.pit-open-tabs button{min-height:40px;padding:8px 11px;border:1px solid #876347;border-radius:8px;background:#281e20;color:#ead5bb;cursor:pointer;font:760 12px "Source Sans 3",sans-serif}
+.pit-open-tabs button[aria-pressed=true]{background:linear-gradient(145deg,#e5b77a,#b4784e);border-color:#f2cc9e;color:#1a1110}
+.pit-open-filters :is(input,select,button):focus-visible,.pit-real-actions :is(a,button):focus-visible,.pit-real-modal button:focus-visible{outline:3px solid #f6d39c;outline-offset:3px}
+.pit-open-subhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:7px 20px;margin:0 0 15px}
+.pit-open-subhead h4{font:750 clamp(21px,2.1vw,29px)/1.2 "Cinzel",Georgia,serif;margin:0;color:#ffdfac}
+.pit-open-subhead p{font:500 clamp(13px,1vw,16px)/1.45 "Source Sans 3",sans-serif;max-width:680px;color:#d5bfa9;margin:0}
+#pitOpenAssets section+section{margin-top:30px;padding-top:26px;border-top:1px solid #8862475c}
+.pit-real-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.pit-real-card{position:relative;overflow:hidden;min-width:0;border:1px solid #72513f;border-radius:11px;background:linear-gradient(155deg,#241b20,#14151b);display:flex;flex-direction:column;box-shadow:0 8px 18px #0008;transition:border-color .22s,transform .22s,box-shadow .22s}
+.pit-real-card:hover{border-color:#c58b59;transform:translateY(-3px);box-shadow:0 11px 30px #000b,0 0 15px #ad60272c}
+.pit-real-model-art{aspect-ratio:16/9;position:relative;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 47% 47%,#51404a 0%,#24212d 42%,#131218 92%)}
+.pit-real-model-art:before,.pit-real-model-art:after{content:"";position:absolute;left:50%;top:52%;width:43%;aspect-ratio:1;border-radius:50%;border:1px solid #d0a26a45;transform:translate(-50%,-50%);box-shadow:0 0 0 18px #edc08b14,0 0 0 39px #edc08b09}
+.pit-real-model-art:after{width:30%;border-style:dashed;transform:translate(-50%,-50%) rotate(35deg)}
+.pit-real-emblem{position:relative;z-index:1;font-size:clamp(37px,4.1vw,58px);filter:drop-shadow(0 8px 11px #000b)}
+.pit-real-format{position:absolute;z-index:2;right:9px;bottom:8px;padding:5px 8px;border-radius:6px;background:#111015e9;border:1px solid #d29c666d;font:800 10px/1.1 "Source Sans 3",sans-serif;color:#efc38f;letter-spacing:.035em}
+.pit-real-pack-art{position:relative;aspect-ratio:16/9;background:#19171e;overflow:hidden}
+.pit-real-pack-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s;filter:brightness(.88) contrast(1.04)}
+.pit-real-card:hover .pit-real-pack-art img{transform:scale(1.035)}
+.pit-real-card-body{padding:15px;display:flex;flex-direction:column;flex:1;gap:8px}
+.pit-real-card-body small{font:800 11px/1.3 "Source Sans 3",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#e3a96e}
+.pit-real-card-body h3{font:700 clamp(16px,1.32vw,20px)/1.25 "Cinzel",Georgia,serif;color:#f9dcbd;margin:0;text-wrap:balance}
+.pit-real-card-body p{font:480 clamp(13px,1.06vw,16px)/1.46 "Source Sans 3",sans-serif;color:#d7c4b6;margin:0;flex:1;min-height:59px}
+.pit-real-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.pit-real-actions>*{display:flex;flex:1 1 120px;min-height:38px;justify-content:center;align-items:center;text-align:center;padding:8px 9px;border:1px solid #c19260;border-radius:7px;background:#503021;color:#fbe8d1;font:770 12px/1.3 "Source Sans 3",sans-serif;cursor:pointer;text-decoration:none}
+.pit-real-actions>:first-child{background:linear-gradient(140deg,#d7a96d,#a96f46);color:#21110f;border-color:#f5d19e}
+.pit-real-actions>*:hover{filter:brightness(1.12)}
+.pit-real-actions>[disabled]{opacity:.5;cursor:wait}
+.pit-open-disclaimer{margin-top:28px;padding:15px 18px;border:1px solid #a2774c88;border-left:4px solid #e3ae71;border-radius:8px;background:#2a211fe0;font:500 clamp(13px,1vw,15px)/1.52 "Source Sans 3",sans-serif;color:#dfcabb}
+.pit-open-disclaimer a{color:#f3bb75;text-decoration:underline}
+#pitOpenEmpty{padding:30px;text-align:center;font:700 18px "Source Sans 3",sans-serif}
+.pit-real-modal[hidden]{display:none}
+.pit-real-modal{position:fixed;inset:0;z-index:12500;background:#050408e8;display:grid;place-items:center;padding:13px;backdrop-filter:blur(8px)}
+.pit-real-modal-open{overflow:hidden}
+.pit-real-modal-body{max-height:96dvh;overflow:auto;width:min(740px,100%);background:#18171e;border:2px solid #bb8650;border-radius:14px;box-shadow:0 25px 90px #000f;padding:clamp(15px,2.3vw,25px)}
+.pit-real-modal-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pit-real-modal-top span{font:800 12px "Cinzel",Georgia,serif;letter-spacing:.04em;color:#e6ad78}
+.pit-real-modal-top button,.pit-real-modal-footer button{min-height:42px;padding:9px 15px;border:1px solid #ba8c59;border-radius:7px;background:#503222;color:#ffecd4;cursor:pointer;font:800 13px "Source Sans 3",sans-serif}
+.pit-real-modal h3{font:750 28px/1.2 "Cinzel",Georgia,serif;color:#f4d3aa;margin:16px 0 6px}
+.pit-real-modal p{font:500 16px "Source Sans 3",sans-serif;color:#dbc6b3}
+.pit-real-stage{min-height:320px;display:grid;place-items:center;border:1px solid #81634a;border-radius:9px;background:radial-gradient(ellipse at 50% 38%,#383445,#13131c 73%);overflow:hidden;text-align:center}
+.pit-real-stage model-viewer{display:block;min-height:290px}
+.pit-real-stage p{margin:5px;font-size:13px}
+.pit-real-modal-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px}
+.pit-real-modal-footer span{font:500 13px "Source Sans 3",sans-serif;color:#ccb49e}
+@media(max-width:1200px){.pit-real-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.pit-open-filters{grid-template-columns:1fr 1fr}.pit-open-tabs{grid-column:1/-1}}
+@media(max-width:770px){.pit-real-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pit-open-head{align-items:start;flex-direction:column}.pit-open-count{width:100%;text-align:left}.pit-open-subhead{display:block}.pit-open-subhead p{margin-top:9px}}
+@media(max-width:540px){#pitOpenAssets{padding:14px;border-radius:10px}.pit-open-filters{grid-template-columns:1fr;padding:10px}.pit-open-tabs{grid-column:1}.pit-real-grid{grid-template-columns:1fr}.pit-real-model-art{aspect-ratio:16/7}.pit-real-pack-art{aspect-ratio:16/7}.pit-real-card-body p{min-height:0}.pit-real-modal-top span{font-size:10px}.pit-real-stage{min-height:255px}.pit-real-modal-footer button{width:100%}}
+@media(prefers-reduced-motion:reduce){.pit-real-card,.pit-real-pack-art img{transition:none!important}.pit-real-card:hover{transform:none}}
+
+/* Procedural fallback should no longer look like the featured catalogue. */
+.pit-local-title{margin:0 0 18px;padding:0 0 16px;border-bottom:1px solid #906a4c64}
+.pit-local-title .eyebrow{font:850 11px/1.4 "Cinzel",Georgia,serif;color:#dba368;letter-spacing:.09em}
+.pit-local-title h3{font:750 clamp(23px,2.5vw,34px)/1.2 "Cinzel",Georgia,serif;color:#f7d9ae;margin:9px 0}
+.pit-local-title p{font:500 clamp(14px,1.12vw,17px)/1.5 "Source Sans 3",sans-serif;color:#cfbca8;margin:0}
