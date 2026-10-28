@@ -131,3 +131,9 @@ for(const id of ['assetGenre','assetFormat'])document.getElementById(id)?.addEve
 function refreshStatus(){try{const x=JSON.parse(localStorage.getItem('pit_creator_mode_v08')||'{}');let done=Array.isArray(x.done)?x.done:[];const meter=document.getElementById('myProgress');if(meter)meter.textContent=done.length+'/6 missões • '+done.reduce((s,n)=>s+[100,120,150,150,200,280][n-1],0)+' XP';}catch(e){}}
 window.PIT_LIBRARY_API=Object.freeze({assets,assetBlob:async function(a){if(!a||!assets.some(x=>x.id===a.id))throw Error('Asset desconhecido');return a.cat==='modelo'?modelBlob(a):a.cat==='som'?audioBlob(a):pngBlob(a)},downloadBlob});
 renderAssets();refreshStatus();window.addEventListener('pageshow',refreshStatus);
+/* Load the independent preview layer after the local asset API is ready. */
+if(document.getElementById('assetGrid')){
+ const css=document.createElement('link');css.rel='stylesheet';css.href='./v3/library-preview.css';document.head.appendChild(css);
+ const js=document.createElement('script');js.src='./v3/library-preview.js';js.async=true;document.body.appendChild(js);
+}
+
