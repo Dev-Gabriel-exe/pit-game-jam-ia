@@ -976,7 +976,8 @@
         "2026-10-28: fixed keyboard focus restoration after auto-opened student gallery; Browser QA 40668919135 SUCCESS: UI-08 12 viewport checks, FUN-01/02/03/04/09, REL-01/02. Release remains blocked on manual GUI/GDevelop/mobile/peer sign-off.",
         "Manual acceptance matrix documented (LIB-PNG/GLB/WAV/MAP and UI08-KEY/MOTION/MOBILE); execution NOT_RUN, no pass claimed.",
         "2026-10-28: GitHub Actions on checkpoint 0bf207fb: PIT Game Jam QA run 40671063508 SUCCESS and Browser QA run 40671063511 SUCCESS. These are automated regressions, not manual GDevelop/mobile/peer approval.",
-        "2026-10-28: checkpoint d63599ca validated: static QA 40671846999 SUCCESS; Browser QA 40671846818 SUCCESS; manual criteria NOT_RUN."
+        "2026-10-28: checkpoint d63599ca validated: static QA 40671846999 SUCCESS; Browser QA 40671846818 SUCCESS; manual criteria NOT_RUN.",
+        "Actual PNG preview code committed 9b72e3ab; GitHub CI pending; no browser or GDevelop validation claimed."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -2092,6 +2093,12 @@
       "task": "REL-01",
       "commit": "ebeebb73684df8c181cdb4d3c4f3657a5383c9e5",
       "summary": "Corrected stale UI-05 documentation that still claimed 28 resources; current catalogue is 38; linked verified CI and distinguished manual GDevelop acceptance. No code/runtime test this round; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "9b72e3ab1e8ff4b747d23a9891ca0dca1560c71c",
+      "summary": "Changed enlarged 2D library preview to use actual generated PNG blob rather than SVG stand-in, with token cancellation, MIME/size validation and URL cleanup. GitHub CI pending; no manual GDevelop signoff. 54/59 unchanged."
     }
   ]
 }
