@@ -1,0 +1,33 @@
+name: QA LTX Cinematic Carousel
+on:
+  push:
+    branches: [experiment/ltx-missions-01-10]
+    paths:
+      - 'qa/ltx-carousel-e2e.cjs'
+      - '.github/workflows/ltx-carousel-e2e.yml'
+      - 'v3/assets/missions/*-motion.mp4'
+      - 'v3/motion-manifest.js'
+      - 'v3/arcade-gallery.js'
+      - 'v3/mission-one-motion.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: qa-ltx-cinematic-carousel
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install isolated Playwright
+        run: npm install --no-save --ignore-scripts playwright@1.58.2
+      - name: Browser QA for mission carousel
+        run: |
+          node --check v3/arcade-gallery.js
+          node --check v3/mission-one-motion.js
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/ltx-test-server.log 2>&1 &
+          node qa/ltx-carousel-e2e.cjs
