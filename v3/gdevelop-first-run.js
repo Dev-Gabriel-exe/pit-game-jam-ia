@@ -89,8 +89,12 @@ function mount(scope){
    img.alt='Diagrama didático do editor GDevelop em português; imagem oficial indisponível';
    const caption=frame.querySelector('.gd3-picture-caption span');if(caption)caption.textContent='DIAGRAMA DE APOIO · IMAGEM EXTERNA INDISPONÍVEL';
   });
-  frame.querySelector('[data-gd3-prev]')?.addEventListener('click',()=>apply(index-1,false));
-  frame.querySelector('[data-gd3-next]')?.addEventListener('click',()=>apply(index+1,false));
+  const navigate=next=>{
+   apply(next,false);
+   if(frame.scrollIntoView)frame.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  };
+  frame.querySelector('[data-gd3-prev]')?.addEventListener('click',()=>navigate(index-1));
+  frame.querySelector('[data-gd3-next]')?.addEventListener('click',()=>navigate(index+1));
   if(focus)tabs[i]?.focus();
  }
  tabs.forEach((b,i)=>{
