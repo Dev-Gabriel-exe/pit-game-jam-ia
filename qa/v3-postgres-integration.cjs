@@ -17,7 +17,7 @@ const origin='https://dev-gabriel-exe.github.io',pin='0123456789abcdef';
 async function call(handler,method,action,body={},token='',teacherPin='',query={}){
  const headers={origin};if(token)headers['x-pit-student-token']=token;if(teacherPin)headers['x-pit-teacher-pin']=teacherPin;
  const req={method,headers,query:{action,...query},body};
- const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;return this},status(n){this.statusCode=n;return this},json(data){this.body=data;return this},end(){return this}};
+ const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;return this},status(n){this.statusCode=n;return this},json(data){this.body=data;return this},end(data){this.binary=data;return this}};
  await handler(req,res);return res;
 }
 (async()=>{
@@ -81,6 +81,35 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  const messagesA=await call(chat,'GET','messages',{},users[0].token);
  const messagesB=await call(chat,'GET','messages',{},users[1].token);
  assert.equal(messagesA.body.messages.length,2);assert.equal(messagesB.body.messages.length,0,'student messages isolated');
+ // Private image flow: real binary persistence, authorized reads and cross-student denial.
+ const png=Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000b49444154789c636000020000050001a5f645400000000049454e44ae426082','hex');
+ const image=png.toString('base64');
+ const uploaded=await call(chat,'POST','send-image',{image,mime:'image/png',mission:4},users[0].token);
+ assert.equal(uploaded.statusCode,201,'student A image upload persisted');
+ const imageId=uploaded.body.id;
+ const own=await call(chat,'GET','image',{},users[0].token,'',{messageId:imageId});
+ assert.equal(own.statusCode,200,'owner can fetch own image');
+ assert(Buffer.isBuffer(own.binary)&&own.binary.equals(png),'binary image bytes preserved');
+ assert.equal(own.headers['Content-Type'],'image/png');
+ const other=await call(chat,'GET','image',{},users[1].token,'',{messageId:imageId});
+ assert.equal(other.statusCode,404,'student B cannot read student A image');
+ const teacherImage=await call(chat,'GET','image',{},'',pin,{messageId:imageId});
+ assert.equal(teacherImage.statusCode,200,'teacher can read authorized student image');
+ const anonymous=await call(chat,'GET','image',{},'','',{messageId:imageId});
+ assert.equal(anonymous.statusCode,401,'anonymous image retrieval blocked');
+ const invalidImage=await call(chat,'POST','send-image',{image:'dGVzdA==',mime:'image/png'},users[0].token);
+ assert.equal(invalidImage.statusCode,400,'spoofed image signature rejected');
+ const wrongMime=await call(chat,'POST','send-image',{image,mime:'image/svg+xml'},users[0].token);
+ assert.equal(wrongMime.statusCode,400,'SVG image rejected');
+ const forgedMessage=await call(chat,'POST','send',{body:'[Imagem]'},users[0].token);
+ assert.equal(forgedMessage.statusCode,400,'image placeholder cannot be forged');
+ const teacherUpload=await call(chat,'POST','send-image',{studentId:users[1].studentId,image,mime:'image/png',mission:4},'',pin);
+ assert.equal(teacherUpload.statusCode,201,'teacher can send screenshot to student B');
+ const studentBImage=await call(chat,'GET','image',{},users[1].token,'',{messageId:teacherUpload.body.id});
+ assert.equal(studentBImage.statusCode,200,'student B can open teacher screenshot');
+ const studentAForbidden=await call(chat,'GET','image',{},users[0].token,'',{messageId:teacherUpload.body.id});
+ assert.equal(studentAForbidden.statusCode,404,'student A cannot open teacher screenshot for B');
+ console.log('PASS CHAT IMAGES: binary upload, both directions, ownership isolation, anonymous denial, MIME and signature checks');
  const hashRows=await pool.query('SELECT token_hash FROM pit_students');
  assert(hashRows.rows.every(x=>/^[a-f0-9]{64}$/.test(x.token_hash)&&users.every(u=>u.token!==x.token_hash)),'database stores only token hashes');
  const count=await pool.query('SELECT count(*)::int AS n FROM pit_student_stages');
