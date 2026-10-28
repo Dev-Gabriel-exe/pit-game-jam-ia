@@ -9,7 +9,10 @@ assert(decode(png.toString('base64'),'image/png')?.equals(png),'valid PNG accept
 assert.equal(decode(png.toString('base64'),'image/jpeg'),null,'MIME spoof rejected');
 assert.equal(decode('abc','image/png'),null,'malformed base64 rejected');
 assert.equal(decode(Buffer.alloc(2*1024*1024+1).toString('base64'),'image/png'),null,'oversized payload rejected');
-assert(source.includes("if(!teacher&&String(data.rows[0].student_id)!==String(me.id))"),'student isolation on image download');
+// Ownership must be enforced by the database query, not by filtering bytes after retrieval.
+assert(source.includes('m.room_code=$2 AND ($3::boolean OR m.student_id=$4::uuid)'),'image read must filter room and owner in SQL');
+assert(source.includes('[messageId,ROOM,teacher,teacher?null:me.id]'),'image read must bind authenticated student ID, never client-supplied ID');
+assert(source.includes("if(!data.rowCount)return sendError(res,404"),'cross-student images must return no data');
 assert(source.includes("if(!teacher&&!me)return sendError(res,401"),'image upload and download require authentication');
 assert(source.includes("await client.query('ROLLBACK')"),'failed image uploads roll back chat messages');
 assert(source.includes("res.setHeader('Cache-Control','no-store, private')"),'private image responses must not be cached');
