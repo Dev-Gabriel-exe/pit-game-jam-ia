@@ -62,3 +62,15 @@ Quatro situações selecionáveis com botões de resposta, estados ARIA e explic
 **Verificações executadas:** 15/15 verificações V8 de sintaxe, prompts personalizados, limpeza de entradas, escape de HTML, integração, renderização, troca de rota e edição de campos em DOM simulado. Teste repetível registrado em `qa/v3-m06-tutorial.cjs` (não executado no Node nesta rodada). **Pendências:** validar botões e instruções em navegador real e executar importação no editor GDevelop; nomes dos menus variam por versão.
 
 **Próxima meta:** M06-04 — aluno escolhe uma trilha, importa e testa apenas um asset, registra procedência e evidência sem resultado fictício.
+
+## M06-04 — Caderno do aluno: um asset testado — CONCLUÍDO
+
+**Código:** `v3/student-mission-six.js` e `v3/student-mission-six.css`, integrados em `aluno-v3.html` e `v3/app.js`. O aluno recebe o tutorial reutilizável M06-03, escolhe **uma** modalidade, registra necessidade, arquivo/formato, origem, licença, antes/depois, teste negativo e projeto salvo. Rascunhos são isolados por identificador de sessão e não enviados até confirmação. Prévia não chama backend.
+
+**Critérios:** oito campos obrigatórios com limites, três declarações manuais de testes no Preview e resumo legível para o professor. Envio bloqueado quando incompleto, quando já submetido/aprovado ou quando a etapa não foi liberada. `hydrate` recupera evidência estruturada do servidor sem sobrescrever rascunho local preenchido. O texto tem até 750 caracteres (máximo verificado: 732). O aluno não recebe pontos ou aprovação automática por marcar caixas.
+
+**Verificações executadas:** 20/20 testes V8 de sintaxe, isolamento de sessões fictícias, validação, bloqueios, renderização, integração, hidratação e tamanho da evidência. Teste repetível criado em `qa/v3-m06-student.cjs` (ainda não executado no Node nesta rodada).
+
+**Pendências:** teste real no navegador, no GDevelop e com backend autorizado; professor precisa revisar a evidência e confirmar a importação. A M06-05 fará auditoria de integração e regressão.
+
+**Próxima meta:** M06-05 — alinhamento professor/aluno, contingência offline, importação e verificações responsivas.
