@@ -12,6 +12,9 @@ const {chromium}=require('playwright');
    await page.waitForFunction(()=>Boolean(window.PIT_LIBRARY_PREVIEW),{timeout:10000});
    const count=await page.locator('[data-preview]').count();
    assert.equal(count,34,'every current resource has a preview button');
+   assert.equal(await page.locator('.statband span').filter({hasText:'recursos para download'}).innerText(),'34 recursos para download','portal count follows actual catalogue');
+   assert.equal(await page.locator('.statband span').filter({hasText:'missões'}).innerText(),'10 missões','portal count follows mission cards');
+   assert.match(await page.locator('#myProgress').innerText(),/Caderno do Aluno/,'no misleading legacy XP counter');
    async function open(id){
     const button=page.locator('[data-preview="'+id+'"]');
     await button.click();
