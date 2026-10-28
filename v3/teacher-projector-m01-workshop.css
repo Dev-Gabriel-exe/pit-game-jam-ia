@@ -115,4 +115,10 @@
  #pitProjector.pit-projector-m01 .pit-ws-bottom{font-size:15px}
  #pitProjector.pit-projector-m01 .pit-ws-depth-trigger,#pitProjector.pit-projector-m01 .pit-ws-quiet{width:100%;white-space:normal}
 }
+/* Animate comprehension, not body text. A quiet pulse follows the four game states. */
+#pitProjector.pit-projector-m01:not(.pit-motion-off) .pit-ws-flow-node{animation:pitWsFlow 7.2s ease-in-out infinite;animation-delay:0s}
+#pitProjector.pit-projector-m01:not(.pit-motion-off) .pit-ws-flow-node:nth-of-type(2){animation-delay:1.8s}
+#pitProjector.pit-projector-m01:not(.pit-motion-off) .pit-ws-flow-node:nth-of-type(3){animation-delay:3.6s}
+#pitProjector.pit-projector-m01:not(.pit-motion-off) .pit-ws-flow-node:nth-of-type(4){animation-delay:5.4s}
+@keyframes pitWsFlow{0%,15%,100%{border-color:#8f6945;box-shadow:none}4%,11%{border-color:#f0c17d;box-shadow:0 0 0 1px #e2b37b8c,0 0 30px #db8b3654}}
 @media(prefers-reduced-motion:reduce){#pitProjector .pit-workshop-deck *,#pitProjector .pit-ws-depth-modal *{animation:none!important;transition:none!important}}
