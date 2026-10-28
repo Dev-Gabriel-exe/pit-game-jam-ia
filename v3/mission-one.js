@@ -65,7 +65,7 @@ function evidence(session){
   'Feedback da conquista: '+clean(d.feedback)
  ].join('\n').slice(0,750);
 }
-function chosenExample(d){return window.PIT_GENRE_CONTEXT?.profile(d.genre)||null}
+function chosenExample(d){return d.genre&&window.PIT_GENRE_CONTEXT?window.PIT_GENRE_CONTEXT.profile(d.genre):null}
 function heading(step,icon,title,description){
  return '<div class="qo-section-kicker"><span class="qo-step-icon" aria-hidden="true">'+icon+'</span><span>FRAGMENTO '+step+' / 03</span></div>'+
  '<h3>'+title+'</h3><p class="qo-section-desc">'+description+'</p>';
