@@ -41,9 +41,10 @@ Em `experiment/ltx-missions-01-10`, o status `ops/ltx-status.json` e `v3/motion-
 - Heartbeat de missão futura rejeitado (403) para não falsear o painel.
 - Testes de MIME/GLB/WAV/ZIP, três sessões fictícias e falha HTTP simulada adicionados.
 - Guia operacional do professor incluído como página estática com atalho no painel.
+- Corrigida a exposição cruzada de rascunhos/checklists do formulário genérico quando dois alunos fictícios compartilham um navegador; agora as chaves são isoladas por identificador. Acrescentada ação de sair/trocar na navegação de aluno/professor e rolagem contida em 768px. [Static QA 40643089008](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40643089008) e [Browser QA 40643089001](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40643089001) passaram. Chaves legadas sem proprietário continuam armazenadas, mas não são exibidas nem migradas automaticamente.
 
 ## Bloqueios e próxima decisão
 
-Ver `v3/REL-01-ISSUES.md` e `v3/SEGURANCA-ROLLBACK-FUN-10.md`. Antes de homologar, é necessário executar importação e Preview no GDevelop, observação de revisão por pares, avaliação dos direitos dos MP4s e ensaio de backup/rollback. O professor pode avaliar o material em prévia, mas a aprovação para publicação deve ser explícita e posterior a esses critérios.
+Ver `v3/REL-01-ISSUES.md`, `v3/REL-01-HOMOLOGACAO-MANUAL.md` e `v3/SEGURANCA-ROLLBACK-FUN-10.md`. Antes de homologar, é necessário executar importação e Preview no GDevelop, observação de revisão por pares, avaliação dos direitos dos MP4s e ensaio de backup/rollback. O professor pode avaliar o material em prévia, mas a aprovação para publicação deve ser explícita e posterior a esses critérios.
 
 **Estado final de homologação ainda NÃO alcançado.** Não alterar `status` para `READY_FOR_FINAL_REVIEW` ou `READY_FOR_FINAL` enquanto o gate estrito não passar.
