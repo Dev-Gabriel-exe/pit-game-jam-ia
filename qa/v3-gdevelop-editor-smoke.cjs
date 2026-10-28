@@ -25,8 +25,12 @@ fs.mkdirSync(dir,{recursive:true});
     entry.http=response?.status()||null;
     if(!response||response.status()>=400)throw Error('Editor HTTP '+entry.http);
     await page.waitForLoadState('networkidle',{timeout:25000}).catch(()=>{});
+    await page.waitForTimeout(15000);
     const preview=page.getByRole('button',{name:/^(Preview|Prévia|Pré-visualizar|Launch a preview|Iniciar prévia)/i}).first();
-    await preview.waitFor({state:'visible',timeout:90000});
+    const landing=await page.locator('body').innerText({timeout:5000}).catch(()=>'');
+    if(/Log in/i.test(landing)&&/Sign up/i.test(landing)&&/Start for free/i.test(landing)&&await preview.count()===0)
+      throw Error('GDevelop redirected to sign-in/onboarding landing. No account creation permitted; editor/Preview NOT_RUN.');
+    await preview.waitFor({state:'visible',timeout:30000});
     entry.observations.push('Visible GDevelop Preview control in loaded editor');
     await page.screenshot({path:path.join(dir,item.id+'-editor.png'),fullPage:false});
     const popupPromise=page.waitForEvent('popup',{timeout:30000}).catch(()=>null);
