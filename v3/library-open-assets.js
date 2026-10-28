@@ -54,14 +54,14 @@ const official={Gobkit:'https://github.com/Ariescar/gobkit-free-assets','Kenney 
 const state={tab:'todos',genre:'todos',query:''};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function matches(x){
- const type=state.tab;
- if(type!=='todos'){
-  if(type==='3d'&&x.type!=='3d'&&x.url==null)return false;
-  if(type==='3d'&&x.type!=='3d'&&x.url)return false;
-  if(type==='audio'&&x.type!=='audio')return false;
-  if(type==='2d'&&x.type!=='2d')return false;
-  if(type==='modelos'&&!x.url)return false;
- }
+ const type=state.tab,hasFile=Boolean(x.url);
+ if(type==='personagens'&&x.cat!=='personagem')return false;
+ if(type==='mapas'&&x.cat!=='mapa')return false;
+ if(type==='sons'&&x.cat!=='som')return false;
+ if(type==='modelos'&&!hasFile)return false;
+ if(type==='3d'&&(hasFile||x.type!=='3d'))return false;
+ if(type==='2d'&&x.type!=='2d')return false;
+ if(type==='audio'&&x.type!=='audio')return false;
  if(state.genre!=='todos'&&!x.genre.split(' ').includes(state.genre))return false;
  const q=state.query.trim().toLocaleLowerCase('pt-BR');
  return !q||[x.name,x.desc||'',x.info||'',x.tag||'',x.source||''].some(s=>s.toLocaleLowerCase('pt-BR').includes(q));
@@ -72,7 +72,7 @@ function render(){
  const modelGrid=host.querySelector('#pitGlbGrid'),packGrid=host.querySelector('#pitPackGrid');
  const counts=host.querySelector('#pitOpenCount');
  counts.textContent=individual.length+' modelos GLB individuais · '+curated.length+' pacotes gratuitos';
- const stat=[...document.querySelectorAll('.statband span')].find(x=>/recursos para download|arquivos individuais/i.test(x.textContent));
+ const stat=[...document.querySelectorAll('.statband span')].find(x=>/recursos para download|arquivos individuais|pacotes CC0/i.test(x.textContent));
  if(stat){const locals=window.PIT_LIBRARY_API?.assets?.length||0;stat.textContent=(locals+models.length)+' arquivos individuais · '+packs.length+' pacotes CC0';}
  modelGrid.innerHTML=individual.map(a=>'<article class="pit-real-card pit-real-model" data-kind="glb" data-id="'+a.id+'">'+
   '<div class="pit-real-model-art"><span class="pit-real-emblem" aria-hidden="true">'+a.icon+'</span><span class="pit-real-format">GLB REAL · '+a.size+'</span></div>'+
@@ -89,13 +89,13 @@ function render(){
  host.querySelector('#pitOpenEmpty').hidden=Boolean(individual.length||curated.length);
  host.querySelectorAll('[data-pit-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pitTab===state.tab)));
 }
-host.innerHTML='<div class="pit-open-head"><div><span class="pit-open-eyebrow">✦ BIBLIOTECA ARCANA · RECURSOS REAIS</span><h3>Heróis, mundos e sons para construir.</h3><p>Escolha modelos <strong>GLB de verdade</strong> ou baixe pacotes de criadores independentes. Tudo aqui é <strong>CC0</strong> — gratuito, inclusive para projetos comerciais.</p></div><div class="pit-open-count" id="pitOpenCount" aria-live="polite"></div></div>'+
+host.innerHTML='<div class="pit-open-head"><div><span class="pit-open-eyebrow">✦ NOVA BIBLIOTECA ARCANA · ACERVO REAL CC0</span><h3>Escolha o mundo do seu jogo.</h3><p><strong>Agora com personagens 3D, mapas e centenas de sons reais.</strong> Veja as imagens oficiais dos pacotes, escolha um gênero e baixe o que precisar. A antiga forja geométrica fica recolhida no final.</p></div><div class="pit-open-count" id="pitOpenCount" aria-live="polite"></div></div>'+
  '<div class="pit-open-filters"><div class="pit-open-tabs" role="group" aria-label="Tipo de recurso">'+
- ['todos','modelos','3d','2d','audio'].map((t,i)=>'<button type="button" data-pit-tab="'+t+'" aria-pressed="'+(i===0?'true':'false')+'">'+({todos:'Todos',modelos:'GLB prontos','3d':'Pacotes 3D', '2d':'Mapas 2D',audio:'Áudio'}[t])+'</button>').join('')+'</div>'+
+ ['todos','personagens','mapas','sons','modelos','3d','2d'].map((t,i)=>'<button type="button" data-pit-tab="'+t+'" aria-pressed="'+(i===0?'true':'false')+'">'+({todos:'✦ Todos',personagens:'⚔ Personagens 3D',mapas:'🗺 Mapas e cenários',sons:'♫ Efeitos sonoros',modelos:'◈ GLB individuais', '3d':'Pacotes 3D', '2d':'Mapas 2D'}[t])+'</button>').join('')+'</div>'+
  '<label>Buscar<input type="search" id="pitOpenSearch" placeholder="Ex.: castelo, inimigo, floresta, som..." aria-label="Buscar recursos externos gratuitos"></label>'+
  '<label>Gênero<select id="pitOpenGenre"><option value="todos">Todos os gêneros</option><option value="rpg">RPG / aventura</option><option value="plataforma">Plataforma</option><option value="puzzle">Puzzle / terror</option><option value="corrida">Corrida</option></select></label></div>'+
- '<section id="pitModelSection"><div class="pit-open-subhead"><h4>Personagens e objetos 3D · download individual</h4><p>GLB prontos para importar no <strong>GDevelop → Objetos → Modelo 3D</strong>. Clique em “Visualizar 3D” para girar o modelo real. Animações existentes dependem da configuração no jogo.</p></div><div id="pitGlbGrid" class="pit-real-grid"></div></section>'+
- '<section id="pitPackSection"><div class="pit-open-subhead"><h4>Pacotes completos de criadores independentes</h4><p>São ZIPs oficiais da Kenney, não recursos gerados por formas geométricas. Extraia o pacote e importe os arquivos desejados. Para modelos que não estejam em GLB, converta antes de usar no GDevelop.</p></div><div id="pitPackGrid" class="pit-real-grid"></div></section>'+
+ '<section id="pitPackSection"><div class="pit-open-subhead"><h4>Acervo de fantasia, mapas e sons · prévias reais</h4><p>As imagens vêm dos criadores. Clique em <strong>Baixar ZIP</strong> para obter o pacote oficial, ou confira a licença no site de origem. Selecione “Personagens 3D”, “Mapas” ou “Sons” acima.</p></div><div id="pitPackGrid" class="pit-real-grid"></div></section>'+
+ '<section id="pitModelSection"><div class="pit-open-subhead"><h4>Modelos GLB prontos para importar individualmente</h4><p>Criaturas, personagens e elementos de cenário. Clique em <strong>Visualizar 3D</strong> para examinar o modelo real antes do download. No GDevelop, adicione um objeto 3D Model.</p></div><div id="pitGlbGrid" class="pit-real-grid"></div></section>'+
  '<p id="pitOpenEmpty" hidden>Nenhum recurso encontrado. Tente outro gênero ou pesquisa.</p>'+
  '<div class="pit-open-disclaimer"><strong>Licenças e formatos verificados:</strong> Kenney, Gobkit, Vuena e Quaternius disponibilizam os recursos selecionados em CC0. Arquivos ZIP podem incluir FBX, OBJ, glTF e formatos variados; <strong>o GDevelop exige GLB para objetos 3D</strong>. Os modelos individuais acima já são GLB. Links de ZIP levam diretamente aos arquivos oficiais quando disponíveis. <a href="https://wiki.gdevelop.io/gdevelop5/objects/3d-model/" target="_blank" rel="noopener noreferrer">Como importar no GDevelop</a>.</div>';
 const modal=document.createElement('div');

@@ -64,3 +64,41 @@
 .pit-local-title .eyebrow{font:850 11px/1.4 "Cinzel",Georgia,serif;color:#dba368;letter-spacing:.09em}
 .pit-local-title h3{font:750 clamp(23px,2.5vw,34px)/1.2 "Cinzel",Georgia,serif;color:#f7d9ae;margin:9px 0}
 .pit-local-title p{font:500 clamp(14px,1.12vw,17px)/1.5 "Source Sans 3",sans-serif;color:#cfbca8;margin:0}
+
+
+/* The original geometric sprites are emergency resources, not the storefront. */
+#pitLocalFallback{margin:32px 0 5px;border:1px solid #6f5144;border-radius:11px;background:linear-gradient(135deg,#1f191e,#141216);overflow:hidden}
+#pitLocalFallback>summary{display:flex;align-items:center;gap:15px;list-style:none;cursor:pointer;padding:16px 22px;color:#f0d6b6;min-height:72px;user-select:none}
+#pitLocalFallback>summary::-webkit-details-marker{display:none}
+#pitLocalFallback>summary:hover{background:#332620}
+#pitLocalFallback>summary:focus-visible{outline:3px solid #f6d09b;outline-offset:-4px}
+#pitLocalFallback>summary strong{font:750 clamp(16px,1.4vw,21px)/1.3 "Cinzel",Georgia,serif;display:block}
+#pitLocalFallback>summary small{font:500 clamp(12px,1vw,15px)/1.44 "Source Sans 3",Arial,sans-serif;color:#cdb9a5;display:block;margin-top:3px}
+#pitLocalFallback .pit-local-icon{display:grid;place-items:center;width:46px;min-width:46px;height:46px;border:1px solid #9a7156;border-radius:8px;font:32px Georgia,serif;color:#d2a16d;background:#2c2224}
+#pitLocalFallback .pit-local-chevron{font:700 25px "Source Sans 3",sans-serif;margin-left:auto;transition:transform .2s}
+#pitLocalFallback[open] .pit-local-chevron{transform:rotate(180deg)}
+#pitLocalFallback .catalogue-panel{margin:0 16px 15px}
+#pitLocalFallback+.tip{margin-top:14px}
+#pitOpenAssets .pit-real-pack .pit-real-pack-art{aspect-ratio:16/8.5}
+#pitOpenAssets .pit-real-pack-art img{object-position:center}
+#pitOpenAssets .pit-open-filters{position:relative}
+#pitOpenAssets .pit-real-grid .pit-real-card{min-height:100%}
+#pitOpenAssets .pit-open-tabs [data-pit-tab="personagens"],
+#pitOpenAssets .pit-open-tabs [data-pit-tab="mapas"],
+#pitOpenAssets .pit-open-tabs [data-pit-tab="sons"]{border-color:#b28a65}
+#pitOpenAssets .pit-real-pack-art{background-image:radial-gradient(ellipse at center,#4b3b32,#1d171b)}
+#pitOpenAssets .pit-real-card-body small{line-height:1.45}
+@media(max-width:790px){
+ #pitLocalFallback .resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pitLocalFallback>summary{padding:15px}
+}
+@media(max-width:540px){
+ #pitLocalFallback .resource-grid{grid-template-columns:minmax(0,1fr)}
+ #pitLocalFallback .catalogue-panel{margin:0 8px 10px;padding:12px}
+ #pitLocalFallback>summary{gap:10px}
+ #pitLocalFallback>summary strong{font-size:15px}
+ #pitLocalFallback>summary small{font-size:12px}
+ #pitLocalFallback .pit-local-icon{width:33px;min-width:33px;height:33px;font-size:24px}
+ #pitOpenAssets .pit-real-pack .pit-real-pack-art{aspect-ratio:16/8}
+ #pitOpenAssets .pit-real-pack .pit-real-card-body p{font-size:14px}
+}
