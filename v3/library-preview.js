@@ -116,7 +116,9 @@ async function open(id,trigger){
    audio.addEventListener('error',()=>{if(token===runId)error.hidden=false;});
    stage.append(audio,error);
   }else if(a.cat==='modelo'){
-   const blob=await api.assetBlob(a);const mesh=readGlb(await blob.arrayBuffer());if(token!==runId)return;
+   const blob=await api.assetBlob(a);if(token!==runId)return;
+   if(blob.type!=='model/gltf-binary'&&blob.type!=='application/octet-stream')throw Error('Tipo de arquivo GLB inválido');
+   const mesh=readGlb(await blob.arrayBuffer());if(token!==runId)return;
    const canvas=document.createElement('canvas');canvas.width=560;canvas.height=340;canvas.setAttribute('role','img');canvas.setAttribute('aria-label','Modelo 3D real '+a.name+' em visualização rotativa');
    stage.appendChild(canvas);
    const render=()=>drawMesh(canvas,mesh,a.tint,rotation);
