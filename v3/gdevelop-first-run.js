@@ -84,11 +84,15 @@ function mount(scope){
   frame.setAttribute('aria-labelledby','gd3Tab'+i);
   frame.innerHTML=panel(i);
   const img=frame.querySelector('[data-gd3-image]');
-  if(img)img.addEventListener('error',()=>{
-   if(img.dataset.offline)return;img.dataset.offline='true';img.src=localFallback;
-   img.alt='Diagrama didático do editor GDevelop em português; imagem oficial indisponível';
-   const caption=frame.querySelector('.gd3-picture-caption span');if(caption)caption.textContent='DIAGRAMA DE APOIO · IMAGEM EXTERNA INDISPONÍVEL';
-  });
+  if(img){
+   const showFallback=()=>{
+    if(img.dataset.offline)return;img.dataset.offline='true';img.src=localFallback;
+    img.alt='Diagrama didático do editor GDevelop em português; imagem oficial indisponível';
+    const caption=frame.querySelector('.gd3-picture-caption span');if(caption)caption.textContent='DIAGRAMA DE APOIO · IMAGEM EXTERNA INDISPONÍVEL';
+   };
+   img.addEventListener('error',showFallback);
+   if(img.complete&&img.naturalWidth===0)showFallback();
+  }
   const navigate=next=>{
    apply(next,false);
    if(frame.scrollIntoView)frame.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
