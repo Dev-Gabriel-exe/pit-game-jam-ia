@@ -20,7 +20,9 @@ const assert=require('node:assert/strict');
    ['teacher-mission-eight-validation','PIT_TEACHER_MISSION_EIGHT_VALIDATION','practice','Abrir roteiro privado da Missão 08'],
    ['teacher-mission-eight-validation','PIT_TEACHER_MISSION_EIGHT_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 08'],
    ['teacher-mission-nine-validation','PIT_TEACHER_MISSION_NINE_VALIDATION','practice','Abrir roteiro privado da Missão 09'],
-   ['teacher-mission-nine-validation','PIT_TEACHER_MISSION_NINE_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 09']
+   ['teacher-mission-nine-validation','PIT_TEACHER_MISSION_NINE_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 09'],
+   ['teacher-mission-ten-validation','PIT_TEACHER_MISSION_TEN_VALIDATION','practice','Abrir roteiro privado da Missão 10'],
+   ['teacher-mission-ten-validation','PIT_TEACHER_MISSION_TEN_VALIDATION','review','Abrir roteiro privado da avaliação da Missão 10']
  ];
  for(const width of [390,1280]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
@@ -63,9 +65,28 @@ const assert=require('node:assert/strict');
   assert.equal(student.choices,3,'M09 supports no-change after a passed test');
   assert.equal(student.initialValidation.field,'outcome','M09 requires explicit real test result');
   assert.equal(student.editor,true,'M09 GDevelop handoff rendered');
+  // M10 student must see the real editor handoff and an audience-neutral GDevelop guide.
+  await page.addScriptTag({url:'http://127.0.0.1:8899/v3/gdevelop-mission-ten-guide.js'});
+  await page.addScriptTag({url:'http://127.0.0.1:8899/v3/student-mission-ten.js'});
+  const launch=await page.evaluate(width=>{
+   const ctx={session:'qa-v4-m10-'+width,phase:'practice',status:'draft',idea:{title:'Projeto fictício',genre:'Plataforma'},preview:true};
+   document.querySelector('#mount').innerHTML=window.PIT_STUDENT_MISSION_TEN.render(ctx);
+   return {
+    editor:!!document.querySelector('.m10s-editor-handoff a[href="https://editor.gdevelop.io/"]'),
+    neutral:document.querySelector('#g10Guide')?.textContent.includes('TUTORIAL DE ENTREGA · 3 MIN'),
+    noPrivate:document.querySelectorAll('.pit-private-teacher-notes').length===0,
+    unchecked:document.querySelectorAll('[data-m10s-check]:checked').length===0,
+    initialField:window.PIT_STUDENT_MISSION_TEN.validate(ctx.session).field
+   };
+  },width);
+  assert.equal(launch.editor,true,'M10 GDevelop editor link at '+width+'px');
+  assert.equal(launch.neutral,true,'M10 shared guide is student-safe at '+width+'px');
+  assert.equal(launch.noPrivate,true,'M10 no teacher notes in student view');
+  assert.equal(launch.unchecked,true,'M10 cannot predeclare successful tests');
+  assert.equal(launch.initialField,'pitch','M10 requires real student evidence');
   assert.deepEqual(errors,[],width+'px no JavaScript errors');
   await context.close();
  }
  await browser.close();
- console.log('PASS V4 private teacher notes: M01-M09 practice and M04-M09 review; M09 student neutral form in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
+ console.log('PASS V4 private teacher notes: M01-M10 practice and M04-M10 review; M09 neutral form and M10 student editor handoff in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
 })().catch(e=>{console.error(e);process.exit(1)});
