@@ -14,6 +14,8 @@
 
 **Compatibilidade de dados:** as chaves antigas sem identificação não foram lidas, migradas nem apagadas, pois não há maneira segura de atribuir seu conteúdo ao aluno correto. O formulário genérico passa a criar novos rascunhos identificados; os módulos autorais das Missões 01–10 não foram alterados.
 
+Para executar as verificações restantes sem falsificar resultados, usar o [protocolo de homologação manual](./REL-01-HOMOLOGACAO-MANUAL.md), que identifica casos, arquivos, versões e evidências obrigatórias.
+
 ## Impedimentos ainda abertos
 
 - **M06-05 e FUN-08 (P1):** importar PNG/WAV/GLB e abrir/salvar starters no GDevelop real. A estrutura dos arquivos e downloads foi verificada em Node e Chrome, mas importação não.
