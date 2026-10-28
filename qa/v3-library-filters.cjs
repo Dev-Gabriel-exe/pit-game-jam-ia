@@ -1,6 +1,10 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('biblioteca.js','utf8'),html=fs.readFileSync('index.html','utf8');
+const importGuide=fs.readFileSync('v3/guia-importacao-gdevelop.html','utf8');
+assert.match(html,/id="gdevelopImportGuide"[^>]*href=|href="\.\/v3\/guia-importacao-gdevelop\.html"[^>]*id="gdevelopImportGuide"/,'library links student import guide');
+for(const term of ['Sprite','3D Model','WAV','Preview','salve e reabra','Missão 06'])assert(importGuide.toLowerCase().includes(term.toLowerCase()),'guide includes '+term);
+assert.match(importGuide,/href="\.\.\/index\.html#recursos"/,'offline return to catalogue');
 const ctx={document:{querySelector:()=>null,querySelectorAll:()=>[],getElementById:()=>null},window:{addEventListener:()=>{}},localStorage:{getItem:()=>null},console,Blob,TextEncoder,ArrayBuffer,DataView,Uint8Array,Float32Array,Uint16Array,Math,URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}}};
 vm.createContext(ctx);vm.runInContext(source,ctx,{timeout:3000});
 const data=vm.runInContext('({assets,genreExamples,assetMatches})',ctx);
