@@ -5,6 +5,10 @@ const s=JSON.parse(fs.readFileSync('v3/AGENTE-V3-ESTADO.json','utf8'));
 assert.equal(s.tasks.length,59);
 const required=['M06-05','M08-04','M09-03','REL-01','REL-03'];
 const pending=s.tasks.filter(t=>t.status!=='done').map(t=>t.id);
+const signoff=JSON.parse(fs.readFileSync('v3/HOMOLOGACAO-RESULTADOS.template.json','utf8'));
+const signed=Boolean(signoff.executed_at&&signoff.reviewer&&signoff.checks.length===5&&signoff.checks.every(c=>c.status==='PASS'&&Array.isArray(c.evidence)&&c.evidence.length>0));
+assert.equal(signoff.production_deploy_authorized,false);
+assert.equal(signoff.main_merge_authorized,false);
 assert(pending.every(id=>required.includes(id)),'unexpected acceptance gate outside documented manual list');
 const human={
  'M06-05':['GDevelop GUI import PNG/GLB','audible WAV playback','GUI save/reopen','offline and physical mobile'],
@@ -16,9 +20,9 @@ const human={
 for(const id of pending)assert(s.tasks.some(t=>t.id===id&&['blocked','in_progress'].includes(t.status)));
 const ledger={
  generatedFrom:'v3/AGENTE-V3-ESTADO.json',automatedTasksComplete:s.completed_count,
- totalTasks:s.total_tasks,releaseReady:pending.length===0,automatedGate:'PASS',
- humanGate:pending.length?'PENDING':'CHECKPOINT_CLAIMS_COMPLETE_REQUIRES_HUMAN_SIGNOFF',manualProtocol:'v3/HOMOLOGACAO-PRESENCIAL.md',
- humanAcceptance:pending.map(id=>({id,status:'NOT_RUN',requirements:human[id]})),
+ totalTasks:s.total_tasks,releaseReady:pending.length===0&&signed,automatedGate:'PASS',
+ humanGate:signed?'SIGNED':'PENDING',manualProtocol:'v3/HOMOLOGACAO-PRESENCIAL.md',
+ humanAcceptance:required.map(id=>({id,status:signoff.checks.find(c=>c.id===id)?.status||'NOT_RUN',requirements:human[id]})),
  verifiedCI:{staticQA:'40661714996',browserQA:'40661631661',nativeGDevelop:'40660294582',backendM07:'40661334064'},
  noMainMerge:true,noProductionDeploy:true
 };
