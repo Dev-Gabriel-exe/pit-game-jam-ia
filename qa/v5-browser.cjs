@@ -62,6 +62,7 @@ const {chromium}=require('playwright');
  const teacher=await browser.newPage({viewport:{width:1280,height:800},reducedMotion:'reduce'});
  await teacher.goto('http://127.0.0.1:8899/v5/index.html?preview=1&mode=teacher',{waitUntil:'domcontentloaded'});
  await teacher.locator('#v5Main').waitFor({state:'visible'});
+ await teacher.waitForFunction(()=>Boolean(window.PIT_V5_APP.state.stage),null,{timeout:25000});
  await teacher.locator('#v5Practice').click();
  assert.equal(await teacher.locator('#v5Fighters .v5-fighter').count(),8,'Teacher battle must load eight simulated players');
  assert.match(await teacher.locator('#v5Connection').innerText(),/DEMONSTRAÇÃO/);
