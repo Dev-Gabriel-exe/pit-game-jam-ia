@@ -1,14 +1,14 @@
 # PIT Game Jam IA — Auditoria de tipografia e suficiência pedagógica no Modo Apresentação
 
-**Data:** 28/10/2026 · **Escopo:** professor, missões 01–10, quatro etapas por missão · **Método:** Chrome real 1600×900, modo prévia sem credenciais/turma real, `qa/v3-projector-content-audit.cjs` (run 40747065265). **Não é homologação visual humana nem execução do editor GDevelop.**
+**Data:** 28/10/2026 · **Escopo:** professor, missões 01–10, quatro etapas por missão · **Método:** Chrome real 1280×720, 1600×900 e 1920×1080, modo prévia sem credenciais/turma real, `qa/v3-projector-content-audit.cjs` (runs 40747065265 e 40747674275). **Não é homologação visual humana nem execução do editor GDevelop.**
 
 ## Resumo mensurado
 
 - **40/40** combinações missão × fase projetaram ao menos um slide, sem erros JavaScript observados na auditoria.
 - **196 slides** no conjunto, incluindo teoria, exemplos, prática e revisão.
 - **21/40 fases** contêm algum texto abaixo de **18 px** (muitas etiquetas e textos secundários).
-- **11/40 fases** contêm ao menos um slide com rolagem vertical (**15 slides** com rolagem no total).
-- **0** fases com transbordamento horizontal detectado no contêiner de apresentação (1600×900).
+- **720p:** 12/40 fases e 18 slides com rolagem vertical; **900p:** 11/40 fases e 15 slides; **1080p:** 10/40 fases e 14 slides.
+- **0** fases com transbordamento horizontal detectado no contêiner de apresentação nas três resoluções.
 - **9/40 fases** projetaram menos de 40% dos caracteres da tela original. A métrica inclui conteúdo auxiliar e pode subestimar cobertura útil; é um sinal de investigação, não prova de perda proporcional.
 - **22/40 fases** têm controles na tela-fonte; em apenas **2/40** restaram controles nos slides gerados. Como o projetor usa `outerHTML`, eventos JS ligados aos nós originais não são transferidos; um botão desenhado no slide não comprova que o simulador funcione.
 
