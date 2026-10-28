@@ -2264,6 +2264,12 @@
       "task": "REL-01",
       "commit": "37d647ab4ebbc6fbcb2515d925ea76728cf53808",
       "summary": "Inspected 49-asset browser QA runs 40696042014 and 40696213113: both reached library preview stage and remained in progress; static QA succeeded. Added actual disk byte verification for UI-downloaded PNG, GLB and WAV including signatures and GLB/RIFF declared length. New CI pending. No manual GDevelop/mobile/peer pass; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M06-05",
+      "commit": "e5fc5c2ed38fd92cef8867935e6d83485ea8b1c0",
+      "summary": "Published standalone offline-friendly HTML GDevelop guide for 39 PNG, 5 WAV, 5 GLB, linked prominently from portal library, with accessible manual checklist and evidence instructions. Added static QA assertions for guide link/content/back navigation. Prior 49-asset Browser QA 40696516959 and static QA 40696516920 succeeded; new CI pending. Manual import, mobile physical and peer playtest NOT_RUN; 54/59 unchanged."
     }
   ]
 }
