@@ -244,7 +244,8 @@
         "qa/v3-m06-integration.cjs added, not run in Node",
         "Real GDevelop import and mobile browser tests NOT executed",
         "Native GDevelop 5.6.285 run 40657143854 SUCCESS: 2D PIT PNG and 3D PIT GLB loaded/rendered, 8/8 gameplay tests; manual screenshots reviewed; Chrome WAV/PNG decode run 40656562279 SUCCESS.",
-        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation."
       ],
       "blocker": "Real GDevelop native runtime and screenshots verified for PIT PNG/GLB, but GUI drag-and-drop import, WAV audible GDevelop playback, offline mobile physical verification and starter save/reopen remain NOT_RUN."
     },
@@ -883,7 +884,8 @@
         "Browser MIME check added in qa/v3-e2e.cjs; run 40637008102 pending at checkpoint",
         "Khronos GLB QA 40649579075 SUCCESS: 5/5 procedural models validated with 0 errors/0 warnings; import into GDevelop remains NOT_RUN",
         "Chrome Browser QA 40656562279 SUCCESS: 5 WAV files decoded with Web Audio and 4 PNGs decoded/pixel inspected. Native GDevelop 40657143854 SUCCESS: 2D PNG and 3D GLB rendered in disposable projects; 8/8 gameplay tests, screenshots validated.",
-        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED."
+        "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation."
       ],
       "blocker": "PNG/GLB programmatic resource import into real GDevelop native runtime and Chrome WAV decode verified. Still missing GDevelop GUI import, WAV playback/listening, starter save/reopen and real mobile device."
     },
@@ -944,7 +946,8 @@
         "QA evidence manifest qa/evidence/native-gdevelop-2026-10-28.json committed at 99c490a00a2a720e546fc1c6f558a1a4614a0f31; contains verified 8/8 native GDevelop results, source asset and screenshot SHA-256, with manual limitations explicit.",
         "2026-10-28: GDevelop fixture extended with project JSON save/reopen structural roundtrip and SHA-256 resource integrity assertions. V8 syntax parse PASS; native CI execution pending.",
         "2026-10-28: native GDevelop run 40658610737 fixture preparation SUCCESS; gameplay/result verification still in_progress when checked. Added validator assertion that all generated asset entries have nonempty byte sizes; CI outcome pending.",
-        "2026-10-28: Added PNG IHDR and minimum 320x180 screenshot dimension checks in native GDevelop results validator. V8 syntax PASS; CI native gameplay 40658610737 and 40658856014 still in_progress when checked; new checks NOT_RUN in CI."
+        "2026-10-28: Added PNG IHDR and minimum 320x180 screenshot dimension checks in native GDevelop results validator. V8 syntax PASS; CI native gameplay 40658610737 and 40658856014 still in_progress when checked; new checks NOT_RUN in CI.",
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -1919,6 +1922,12 @@
       "task": "REL-01",
       "commit": "de55f8048ec3b283ef755c42893c5e08a6d6b9d5",
       "summary": "Native screenshot evidence hardened against tiny PNG placeholders; V8 syntax passed, native CI pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "summary": "Verified two successful native GDevelop QA workflows and recorded evidence across M06-05/FUN-08/REL-01; no false completion.",
+      "commit": "8f78e54289a0d414c6a4b18e82f0d084666ce1b6"
     }
   ]
 }
