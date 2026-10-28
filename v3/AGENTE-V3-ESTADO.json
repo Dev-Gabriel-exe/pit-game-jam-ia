@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08-04",
+  "priority": "REL-01",
   "current_phase": "MISSOES",
-  "last_task": "FUN-08",
+  "last_task": "REL-01",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -245,7 +245,8 @@
         "Real GDevelop import and mobile browser tests NOT executed",
         "Native GDevelop 5.6.285 run 40657143854 SUCCESS: 2D PIT PNG and 3D PIT GLB loaded/rendered, 8/8 gameplay tests; manual screenshots reviewed; Chrome WAV/PNG decode run 40656562279 SUCCESS.",
         "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
-        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation."
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
       ],
       "blocker": "Real GDevelop native runtime and screenshots verified for PIT PNG/GLB, but GUI drag-and-drop import, WAV audible GDevelop playback, offline mobile physical verification and starter save/reopen remain NOT_RUN."
     },
@@ -379,7 +380,8 @@
         "Browser E2E run 40626036851 launched in GitHub Actions; outcome not yet confirmed at checkpoint",
         "No actual GDevelop Preview, measured FPS or real mobile device inspection",
         "2026-10-28: qa/v3-m08-acceptance.cjs added and wired into static CI: checks distinct before/after, negative case, evidence persistence/isolation, teacher mobile/accessibility/performance rubric; CI run 40661631619 pending. Does not substitute physical mobile or GDevelop Preview.",
-        "Static QA run 40661631619 SUCCESS on ad784b99: automated before/after, student isolation, negative evidence, teacher accessibility/mobile/performance rubric and app integration passed."
+        "Static QA run 40661631619 SUCCESS on ad784b99: automated before/after, student isolation, negative evidence, teacher accessibility/mobile/performance rubric and app integration passed.",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
       ],
       "blocker": "Automated M08 acceptance CI PASS 40661631619; real GDevelop Preview before/after and physical mobile FPS/UX inspection still unverified."
     },
@@ -425,7 +427,8 @@
       "tests": [
         "12/12 V8 source/integration checks executed: student resolution fixed/backlog, evidence roundtrip, teacher review rubric, module wiring",
         "GitHub Actions static QA passes on recent feature commits; browser E2E under repair (obsolete selectors updated, latest run pending)",
-        "No actual peer playtest, GDevelop retest or backend review performed"
+        "No actual peer playtest, GDevelop retest or backend review performed",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
       ],
       "blocker": "Fake-API Chrome and isolated SQL review/revision flows now passed; real peer test observation with fictional participants in an isolated classroom has not been executed."
     },
@@ -958,7 +961,8 @@
         "2026-10-28: Added PNG IHDR and minimum 320x180 screenshot dimension checks in native GDevelop results validator. V8 syntax PASS; CI native gameplay 40658610737 and 40658856014 still in_progress when checked; new checks NOT_RUN in CI.",
         "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
         "2026-10-28: Added real GDevelop gameplay harness screenshot after conditional victory, plus fail-closed requirement for screenshot artifact. V8 syntax PASS on both changed JS files; native CI pending, authorial final victory screen still unverified.",
-        "2026-10-28: native GDevelop victory screenshot test and validator both passed in official Actions runs 40659339655 (982af1c0) and 40659350215 (4ee9fbf6). This verifies screenshot evidence of a gated victory event, NOT an authored final-screen UX or complete submission/review."
+        "2026-10-28: native GDevelop victory screenshot test and validator both passed in official Actions runs 40659339655 (982af1c0) and 40659350215 (4ee9fbf6). This verifies screenshot evidence of a gated victory event, NOT an authored final-screen UX or complete submission/review.",
+        "2026-10-28: v3/HOMOLOGACAO-PRESENCIAL.md committed e6e57c748c2e5b3fd89da9a6bbc209ab2f242349 with exact manual pass/fail/not-run steps; execution NOT_RUN."
       ],
       "blocker": "Manual GDevelop GUI import/save/reopen and WAV listening, real mobile device, observed peer playtest and final homologation remain unverified. New fixture roundtrip is programmatic, not GUI proof."
     },
@@ -1987,6 +1991,12 @@
       "task": "M08-04",
       "commit": "ad784b99dc41c16843213d585a3f6788f53d47b3",
       "summary": "M08 automated acceptance CI PASS 40661631619; physical-device and real GDevelop Preview remain manual."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "e6e57c748c2e5b3fd89da9a6bbc209ab2f242349",
+      "summary": "Created executable, non-fabricated human acceptance protocol for remaining GDevelop GUI/mobile/peer tests; still 54/59."
     }
   ]
 }
