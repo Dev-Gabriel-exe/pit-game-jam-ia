@@ -23,3 +23,13 @@
 **Verificações executadas:** 16/16 V8, incluindo sintaxe, duas rotas, condições de vitória, navegação por etapas, mudança de rota em DOM simulado, links, integração e CSS responsivo. Teste repetível registrado em `qa/v3-m07-guide.cjs` (não executado no Node nesta rodada).
 
 **Pendências:** não houve teste real de clique no GDevelop ou Preview 2D/3D; validar em homologação com projetos fictícios. **Próxima meta:** M07-03 — aluno cria condição autoral de conclusão, teste negativo e evidência.
+
+## M07-03 — Caderno do aluno: conclusão autoral — CONCLUÍDO
+
+**Código:** `v3/student-mission-seven.js` e CSS, integrados em `aluno-v3.html` e `v3/app.js`. O aluno continua o objetivo e a condição de vitória definidos nas Missões 01–02, preservando o controle, regra e asset anteriores. O tutorial M07-02 é compartilhado, com rota 3D pré-selecionada quando o projeto anterior usa física 3D, inclusive navegação por teclado.
+
+**Evidência:** início, desafio, condição SE, resultado ENTÃO, tentativa de vitória prematura, repetição/reinício e projeto salvo; três declarações manuais de testes no Preview. Persistência isolada por sessão, hidratação de evidência enviada, limite 750 caracteres, bloqueio de envio incompleto e prévia sem backend.
+
+**Verificações executadas:** 21/21 asserções V8 com alunos fictícios, validação, isolamento, hidratação, limite de evidência, roteamento 3D, integração e HTML/CSS. Teste repetível em `qa/v3-m07-student.cjs` (não executado no Node nesta rodada). Sem navegador/GDevelop/API real.
+
+**Próxima meta:** M07-04 — professor/aluno, vitória prematura, estado final, rascunho e envio; testes de regressão.
