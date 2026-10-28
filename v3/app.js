@@ -927,7 +927,7 @@ function prepareChatImage(file){
  const preview=$('chatImagePreview');
  if(preview){
   const img=document.createElement('img');img.src=url;img.alt='Prévia local do print';img.style.cssText='max-width:150px;max-height:100px;object-fit:contain;border-radius:8px';
-  const label=document.createElement('span');label.textContent=file.name+' · prévia local (não enviada)';
+  const label=document.createElement('span');label.textContent=file.name+' · pronto para envio';
   const remove=document.createElement('button');remove.type='button';remove.textContent='Remover imagem';remove.onclick=clearChatImageDraft;
   preview.replaceChildren(img,label,remove);preview.hidden=false;
  }
@@ -953,6 +953,7 @@ async function openChatImage(id,button){
   const objectURL=URL.createObjectURL(blob),img=document.createElement('img');
   img.src=objectURL;img.alt='Imagem compartilhada na conversa';img.style.cssText='max-width:100%;max-height:340px;object-fit:contain;border-radius:8px';
   img.onload=()=>URL.revokeObjectURL(objectURL);
+  img.onerror=()=>{URL.revokeObjectURL(objectURL);img.replaceWith(button);button.disabled=false;setChatStatus('Não foi possível exibir a imagem.','error')};
   button.replaceWith(img);
  }catch(error){setChatStatus(error.message,'error');button.disabled=false}
 }
