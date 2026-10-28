@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T01:55:01.980Z",
+  "last_completed_at": "2026-10-28T02:06:45.623Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M04-04",
+  "priority": "M05-01",
   "current_phase": "MISSOES",
-  "last_task": "M04-03",
-  "completed_count": 3,
+  "last_task": "M04-04",
+  "completed_count": 4,
   "total_tasks": 59,
   "tasks": [
     {
@@ -79,10 +79,15 @@
       "description": "Integração aluno/professor, evidência observável sem inventar resultado, status/revisão e testes de regressão do fluxo",
       "group": "M04",
       "position": 4,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T02:06:45.623Z",
+      "commit": "3cf9f324c398725ead288e0a4efb94250c8e2539",
+      "tests": [
+        "32/32 module integration checks: professor/aluno phase alignment, evaluation rubric, keyboard navigation, CSS/JS and API guards",
+        "14/14 mock SQL authorization/transition cases: locked stage, release, submit, duplicate block, revision feedback, resubmit, approval, classroom isolation",
+        "28/28 assertions in qa/v3-m04-regression.cjs executed in JS runtime with mocked Node native modules and fake PostgreSQL",
+        "No real browser screenshots, actual GDevelop execution or connected Neon/Postgres E2E were performed"
+      ],
       "blocker": null
     },
     {
@@ -789,6 +794,22 @@
       ],
       "tests": "59/59 static/functional and simulated UI checks passed",
       "notes": "Student reuses M01–M03 data and existing GDevelop project; one control and one limit; 2D/3D route choice, three honest Preview tests, persistent evidence under 750 chars, safe preview mode. No real browser/API tests yet."
+    },
+    {
+      "id": "M04-04",
+      "completed_at": "2026-10-28T02:06:45.623Z",
+      "commit": "3cf9f324c398725ead288e0a4efb94250c8e2539",
+      "files": [
+        "v3/teacher-mission-four-validation.js",
+        "v3/teacher-mission-four-validation.css",
+        "professor-v3.html",
+        "v3/app.js",
+        "chat-api/api/classroom.js",
+        "qa/v3-m04-regression.cjs",
+        "v3/FASE3-MISSAO4.md"
+      ],
+      "tests": "32/32 module checks + 14/14 simulated API scenarios + 28/28 repeatable regression assertions",
+      "notes": "Aligned M04 teacher practice/results with student; prevented submitted/approved overwrite, required revision guidance, room-scoped teacher review, readable multiline evidence. Real browser/Neon/GDevelop E2E remains pending."
     }
   ]
 }
