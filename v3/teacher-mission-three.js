@@ -92,8 +92,8 @@ function review(){
  '<div class="tm3-principle"><strong>PRÓXIMA MISSÃO: PRIMEIRO JOGÁVEL</strong><p>Um objeto estático ganhará controle e interação. O projeto salvo nesta etapa será a base obrigatória para continuar o desenvolvimento.</p></div>');
 }
 function render(phase){return phase==='demo'?demo():phase==='practice'?practice():phase==='review'?review():briefing()}
-function mount(){
- const root=document.querySelector('.tm3-root');if(!root)return;
+function mount(rootOverride){
+ const root=rootOverride||document.querySelector('.tm3-root');if(!root)return;
  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  const reveals=[...root.querySelectorAll('[data-tm3-reveal]')];
  if(!reduced&&typeof IntersectionObserver!=='undefined'){
