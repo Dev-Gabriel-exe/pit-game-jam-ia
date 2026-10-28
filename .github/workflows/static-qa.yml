@@ -16,6 +16,8 @@ jobs:
         run: node qa/v3-audit-matrix.cjs
       - name: Audit V3 teacher/student alignment
         run: node qa/v3-audit-alignment.cjs
+      - name: Audit V3 GDevelop tutorials
+        run: node qa/v3-audit-guides.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
