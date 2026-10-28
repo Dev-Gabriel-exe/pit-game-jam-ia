@@ -61,6 +61,37 @@ function unpackStored(bytes){
   console.log('PASS UI-06 '+kit.id+': '+files.size+' ZIP entries, valid CRC and file signatures');
  }
  assert(all.has('png')&&all.has('glb')&&all.has('wav'),'all three formats packaged');
+
+ // FUN-08: all 28 generated assets, declared MIME and binary structure.
+ for(const asset of api.assets){
+  const blob=await api.assetBlob(asset),data=Buffer.from(await blob.arrayBuffer());
+  const expected=asset.cat==='modelo'?'model/gltf-binary':asset.cat==='som'?'audio/wav':'image/png';
+  assert.equal(blob.type,expected,'MIME '+asset.id);
+  assert(data.length>30,'asset has bytes '+asset.id);
+  if(expected==='model/gltf-binary'){
+   assert.equal(data.toString('ascii',0,4),'glTF','GLB magic '+asset.id);
+   assert.equal(data.readUInt32LE(4),2,'GLB v2 '+asset.id);
+   assert.equal(data.readUInt32LE(8),data.length,'GLB total length '+asset.id);
+   const jsonLen=data.readUInt32LE(12);
+   assert.equal(data.toString('ascii',16,20),'JSON','GLB JSON chunk '+asset.id);
+   const gltf=JSON.parse(data.toString('utf8',20,20+jsonLen).trim());
+   assert.equal(gltf.asset.version,'2.0','GLB schema '+asset.id);
+   assert(gltf.meshes?.length>=1&&gltf.bufferViews?.length>=1,'GLB has mesh and buffer views '+asset.id);
+   const binAt=20+jsonLen;
+   assert.equal(data.toString('ascii',binAt+4,binAt+7),'BIN','GLB binary chunk '+asset.id);
+   assert.equal(binAt+8+data.readUInt32LE(binAt),data.length,'GLB binary bounds '+asset.id);
+  }else if(expected==='audio/wav'){
+   assert.equal(data.toString('ascii',0,4),'RIFF');
+   assert.equal(data.toString('ascii',8,12),'WAVE');
+   assert.equal(data.readUInt32LE(4)+8,data.length,'RIFF byte length '+asset.id);
+   assert.equal(data.readUInt16LE(20),1,'PCM '+asset.id);
+   assert.equal(data.readUInt16LE(22),1,'mono '+asset.id);
+   assert.equal(data.readUInt32LE(24),22050,'sample rate '+asset.id);
+   assert.equal(data.readUInt32LE(40)+44,data.length,'WAV data length '+asset.id);
+  }else assert.equal(data.subarray(0,8).toString('hex'),'89504e470d0a1a0a','PNG signature '+asset.id);
+ }
+ console.log('PASS FUN-08: all '+api.assets.length+' asset MIME types and GLB/WAV structure; PNG uses fixture stub here, real browser PNG verified separately');
+
  const html=fs.readFileSync('index.html','utf8');
  assert(html.includes('id="quickKits"')&&html.includes('v3/quick-kits.js'),'portal integrates kits');
  for(const kit of lib.kits)assert(html.includes('data-quick-kit="'+kit.id+'"'),'button '+kit.id);
