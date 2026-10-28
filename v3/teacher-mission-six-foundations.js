@@ -60,8 +60,9 @@ function render(){
  ['PRIVACIDADE','Não enviar rostos, vozes ou dados pessoais de terceiros sem autorização.'],
  ['DEPENDÊNCIA','Manter alternativa local/Asset Store quando acabar o crédito gratuito ou a rede falhar.']
  ].map(([h,p])=>'<article><b>'+h+'</b><p>'+p+'</p></article>').join('')+'</div></div>'+
- '<footer class="f6-end"><strong>PRÓXIMA ETAPA DO PROFESSOR</strong><p>Na demonstração de 5 minutos: importar um arquivo real e executar Preview. Na prática de 32 minutos: cada aluno escolhe uma modalidade, gera ou encontra um recurso, importa, testa e identifica a origem. Na avaliação de 3 minutos: comprovar que a regra anterior segue funcionando.</p>'+
- '<p>Os serviços de IA, seus limites gratuitos e alternativas serão verificados especificamente na M06-02, pois preços e cotas mudam.</p></footer></div></section>';
+ '<footer class="f6-end"><strong>PRÓXIMA ETAPA · UM ASSET NO JOGO</strong><p>O objetivo é importar um recurso no mesmo projeto, demonstrar o resultado no Preview e confirmar que a regra da Missão 05 continua funcionando. Escolha apenas um formato necessário ao seu jogo.</p>'+
+ '<p>Antes de usar uma ferramenta de IA, confira limites atuais de exportação e licença. Desenho ou gravação própria também são caminhos válidos.</p></footer>'+
+ '<details class="pit-private-teacher-notes"><summary aria-label="Abrir roteiro privado da Missão 06">▤</summary><div class="pit-private-teacher-notes-body"><small>ROTEIRO RESERVADO · CONSULTAR SEM ESPELHAMENTO HDMI</small><p>Na demonstração de 5 minutos, importe um arquivo real e execute Preview. Na prática de 32 minutos, acompanhe escolha (5), criação (12), importação (8) e teste/registro (7). Na avaliação de 3 minutos, confirme a regra anterior e a procedência do arquivo. Feche este painel antes de voltar a projetar.</p></div></details></div></section>';
 }
 function mount(){
  const root=document.querySelector('#f6Foundations');if(!root)return;
