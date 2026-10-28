@@ -33,3 +33,13 @@
 **Verificações executadas:** 21/21 asserções V8 com alunos fictícios, validação, isolamento, hidratação, limite de evidência, roteamento 3D, integração e HTML/CSS. Teste repetível em `qa/v3-m07-student.cjs` (não executado no Node nesta rodada). Sem navegador/GDevelop/API real.
 
 **Próxima meta:** M07-04 — professor/aluno, vitória prematura, estado final, rascunho e envio; testes de regressão.
+
+## M07-04 — Integração professor/aluno — PARCIAL / BLOQUEADA POR E2E REAL
+
+**Código entregue:** `v3/teacher-mission-seven-validation.js` e CSS integrados às fases `practice` e `review` do professor, espelhando os sete campos do aluno, teste negativo, reinício e condição de conclusão. Rubrica com seis critérios; não aprova automaticamente. Fallback permite mostrar texto final na própria cena, sem criar cena extra.
+
+**Verificações executadas:** 20/20 V8 de sintaxe, fluxo da máquina de estados (vitória prematura, vitória legítima e derrota), validação do aluno, bloqueio de revisão enviada, alinhamento professor/aluno, integração estática e CSS. Teste repetível em `qa/v3-m07-integration.cjs` (não executado no Node nesta rodada).
+
+**Impedimento para aceite integral:** não foi executado o ciclo real de login fictício, rascunho, envio, devolutiva e aprovação em backend isolado, nem o Preview do GDevelop. Portanto não afirmar que envio/revisão foram homologados. A meta fica `blocked` até existir ambiente de testes autorizado, sem tocar na turma real.
+
+**Próxima ação segura:** M08-01 — fundamentos de UX e polimento, preservando este bloqueio para homologação.
