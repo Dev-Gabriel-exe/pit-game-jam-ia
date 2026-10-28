@@ -22,13 +22,14 @@ const {chromium}=require('playwright');
     assert.equal(await page.locator('#pitPreviewTitle').innerText().then(Boolean),true,'title exists');
    }
    await open('explorador');
+   await page.locator('#pitPreviewStage img').waitFor({state:'visible'});
    assert.equal(await page.locator('#pitPreviewStage img').count(),1,'sprite has real image');
-   assert.equal(await page.locator('#pitPreviewStage img').evaluate(img=>img.complete&&img.naturalWidth>0),true,'sprite decoded');
+   assert.equal(await page.locator('#pitPreviewStage img').evaluate(async img=>{await img.decode();return img.complete&&img.naturalWidth>0}),true,'sprite decoded');
    await page.keyboard.press('Escape');
    assert.equal(await page.locator('#pitAssetPreview').isHidden(),true,'escape closes dialog');
    assert.equal(await page.evaluate(()=>document.activeElement?.dataset.preview),'explorador','focus restored to trigger');
    await open('mapa-floresta');
-   assert.equal(await page.locator('#pitPreviewStage img').evaluate(img=>img.complete&&img.naturalWidth===1024&&img.naturalHeight===576),true,'actual 1024x576 map');
+   assert.equal(await page.locator('#pitPreviewStage img').evaluate(async img=>{await img.decode();return img.complete&&img.naturalWidth===1024&&img.naturalHeight===576}),true,'actual 1024x576 map');
    await page.locator('.pit-preview-close').click();
    for(const id of ['feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
     await open(id);
@@ -49,7 +50,7 @@ const {chromium}=require('playwright');
     }
     return results;
    });
-   assert.equal(newPng.length,10,'all six downloadable resources generated');
+   assert.equal(newPng.length,10,'all ten downloadable resources generated');
    for(const a of newPng){
     assert.equal(a.type,'image/png','real PNG '+a.id);
     assert(a.size>500,'nonempty PNG '+a.id);
@@ -69,6 +70,7 @@ const {chromium}=require('playwright');
    await page.getByRole('button',{name:'Girar ↷'}).click();
    await page.locator('.pit-preview-close').click();
    await open('wav-vitoria');
+   await page.locator('#pitPreviewStage audio').waitFor({state:'visible'});
    const audio=await page.locator('#pitPreviewStage audio').evaluate(a=>({src:a.src,type:a.canPlayType('audio/wav'),paused:a.paused}));
    assert(audio.src.startsWith('blob:'),'real WAV is bound as blob URL');
    assert(audio.type,'browser can play WAV');
