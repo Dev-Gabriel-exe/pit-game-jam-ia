@@ -28,6 +28,8 @@ jobs:
         run: |
           node --check v3/quick-kits.js
           node qa/v3-quick-kits.cjs
+      - name: Verify ART-01 semantic design tokens
+        run: node qa/v3-design-tokens.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
