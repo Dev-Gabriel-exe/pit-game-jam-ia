@@ -1,0 +1,24 @@
+/* UI-08 — Correções transversais sem alterar conteúdo aprovado M01–M03. */
+:where(a,button,input,select,textarea,[tabindex="0"]):focus-visible{
+ outline:3px solid #d7ffa7;outline-offset:3px;
+}
+:where(button,input,select,textarea){touch-action:manipulation}
+:where(.resource-card,.start-card,.gate-card,.chat-window,.gallery-card,.arcade-card){
+ overflow-wrap:anywhere;
+}
+:where(.resource-card,.start-card,.gate-card) a:focus-visible{
+ border-radius:4px;
+}
+@media(max-width:600px){
+ :where(.chat-window,.chat-messages,.chat-compose,.chat-threads){min-width:0}
+ :where(.chat-window .chat-header){flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+ *,*::before,*::after{
+  scroll-behavior:auto!important;
+  animation-duration:.01ms!important;
+  animation-iteration-count:1!important;
+  transition-duration:.01ms!important;
+ }
+}
