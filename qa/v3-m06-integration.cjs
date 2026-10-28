@@ -1,0 +1,24 @@
+/* M06-05 · execute: node qa/v3-m06-integration.cjs (sem rede) */
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const base=path.join(__dirname,'..'),read=p=>fs.readFileSync(path.join(base,p),'utf8');
+const memory=new Map(),context={window:{},document:{},navigator:{},localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)}};
+for(const file of ['v3/teacher-mission-six-validation.js','v3/student-mission-six.js','v3/asset-forge-tutorial.js','v3/teacher-mission-six-matrix.js'])vm.runInNewContext(read(file),context,{filename:file});
+const teacher=context.window.PIT_TEACHER_MISSION_SIX_VALIDATION,student=context.window.PIT_STUDENT_MISSION_SIX;
+assert.equal(teacher.checks.length,6);
+assert.ok(teacher.render().includes('Licença')&&teacher.render().includes('Preview'));
+assert.ok(teacher.render().includes('Contingência'));
+assert.equal(student.fields.length,8);
+assert.ok(['need','file','source','license','before','after','negative','saved'].every(k=>student.fields.some(f=>f.id===k)));
+const app=read('v3/app.js'),aluno=read('aluno-v3.html'),prof=read('professor-v3.html');
+new vm.Script(app);
+for(const phase of ['SixBriefing','SixDemo','SixPractice','SixReview'])assert.ok(app.includes('teacherMission'+phase));
+assert.match(app,/PIT_STUDENT_MISSION_SIX.validate\(q.session\)/);
+assert.ok(aluno.indexOf('student-mission-six.js')<aluno.indexOf('v3/app.js'));
+assert.ok(prof.indexOf('teacher-mission-six-validation.js')<prof.indexOf('v3/app.js'));
+assert.match(read('v3/student-mission-six.css'),/@media\(max-width:600px\)/);
+assert.match(read('v3/teacher-mission-six-validation.css'),/@media\(max-width:760px\)/);
+const d=student.load('fake');for(const f of student.fields)d[f.id]='X'.repeat(f.max);d.checks=[0,1,2];student.save('fake',d);
+const evidence=student.evidence('fake');assert.ok(evidence.length<=750);
+assert.equal(student.parseEvidence(evidence).saved.length,65);
+console.log('M06-05: verificações offline concluídas. Importação GDevelop, navegador móvel e API real NÃO testados.');
