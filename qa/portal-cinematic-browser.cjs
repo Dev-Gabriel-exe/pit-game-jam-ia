@@ -38,7 +38,7 @@ const {chromium}=require('playwright');
    }
    const noOverflow=await page.evaluate(()=>({documentWidth:document.documentElement.scrollWidth,viewport:innerWidth,heroWidth:document.getElementById('inicio').scrollWidth}));
    assert(noOverflow.documentWidth<=viewport.width+9,'Horizontal overflow at '+viewport.width+': '+JSON.stringify(noOverflow));
-   assert(await page.locator('.gate-card').count()===3,'Portal entrances changed');
+   assert(await page.locator('#cadernos .gate-card').count()===3,'Portal entrances changed');
    assert(await page.locator('.mission-card').count()===10,'Mission list changed');
    assert.deepEqual(errors,[],'Browser script errors: '+errors.join(' | '));
    await page.screenshot({path:'qa/portal-cinematic-'+viewport.width+'.png',fullPage:true});
