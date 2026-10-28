@@ -303,7 +303,7 @@
       "position": 17,
       "status": "blocked",
       "updated_at": "2026-10-28T08:36:00Z",
-      "commit": "531a7121504c58bbbdfc37888fd1ec39562e94ea",
+      "commit": "5a843488b20525642c62ef7da0c57d614f445474",
       "tests": [
         "20/20 V8 assertions executed: teacher/student rubric, state machine, negative and victory cases, evidence, integration and responsive CSS",
         "qa/v3-m07-integration.cjs committed, not executed in Node",
@@ -313,9 +313,10 @@
         "2026-10-28: Added real GDevelop gameplay harness screenshot after conditional victory, plus fail-closed requirement for screenshot artifact. V8 syntax PASS on both changed JS files; native CI pending, authorial final victory screen still unverified.",
         "2026-10-28: native GDevelop victory screenshot test and validator both passed in official Actions runs 40659339655 (982af1c0) and 40659350215 (4ee9fbf6). This verifies screenshot evidence of a gated victory event, NOT an authored final-screen UX or complete submission/review.",
         "2026-10-28: conditional GDevelop TextObject victory-banner prototype added to disposable fixture; V8 syntax PASS; native CI and visible banner behavior NOT_RUN. Prototype conditional on starter containing TextObject.",
-        "2026-10-28: native GDevelop QA 40660294582 SUCCESS, 2D/3D TextObject victory banner with before/after screenshots; static QA 40660294650 SUCCESS. This proves native fixture, not student-authored project or real submission/review."
+        "2026-10-28: native GDevelop QA 40660294582 SUCCESS, 2D/3D TextObject victory banner with before/after screenshots; static QA 40660294650 SUCCESS. This proves native fixture, not student-authored project or real submission/review.",
+        "2026-10-28: isolated real classroom handler M07 draft->submission->revision->resubmission->approval PASS in complete static QA 40661334064; native GDevelop victory 2D/3D and before/after screenshots PASS 40660294582."
       ],
-      "blocker": "GDevelop native 2D/3D victory banner and before/after captures now pass. Remaining: student-authored final game and actual GDevelop evidence submission/review in classroom; cannot mark done on fixture alone."
+      "blocker": "Native GDevelop 2D/3D victory and full isolated M07 evidence/review integration pass CI. Still missing observed student-authored final GDevelop project and actual classroom submission/review; no human/editor evidence yet."
     },
     {
       "id": "M08-01",
@@ -1958,6 +1959,12 @@
       "task": "M07-04",
       "commit": "531a7121504c58bbbdfc37888fd1ec39562e94ea",
       "summary": "GDevelop native victory banner passed 2D/3D and pre/post screenshots; real student-authored end-to-end acceptance still pending."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "M07-04",
+      "commit": "5a843488b20525642c62ef7da0c57d614f445474",
+      "summary": "Full static QA PASS 40661334064, native victory PASS 40660294582. Authorial classroom acceptance remains pending."
     }
   ]
 }
