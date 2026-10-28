@@ -47,11 +47,11 @@ function guideContent(){
  return '<div class="pit-ws-guide-list">'+stages.map((g,i)=>'<article><div class="pit-ws-guide-art"><img src="'+esc(g.img)+'" alt="'+esc(g.alt)+'" loading="lazy"></div><div><small>ETAPA '+(i+1)+' / '+stages.length+'</small><h3>'+esc(g.title)+'</h3><p>'+esc(g.lead)+'</p><ol>'+(g.steps||[]).map(s=>'<li><strong>'+esc(s[0])+'</strong> · '+esc(s[1])+'</li>').join('')+'</ol><p class="pit-ws-guide-note">'+esc(g.note)+'</p></div></article>').join('')+'</div>';
 }
 deeper.guide={title:'GDevelop — tutorial visual por etapas',body:guideContent()};
-const clock={seconds:6*60,started:false,tick:null,until:0};
+const clock={seconds:11*60,started:false,tick:null,until:0};
 const stopClock=()=>{if(clock.tick){clearInterval(clock.tick);clock.tick=null;} if(clock.started){clock.seconds=Math.max(0,Math.ceil((clock.until-performance.now())/1000));clock.started=false;}};
 function build(){
  if(new URLSearchParams(location.search).get('m01')==='detalhado')return previous.build();
- stopClock();clock.seconds=6*60;
+ stopClock();clock.seconds=11*60;
  const slides=[];
  slides.push(shot('ABERTURA · 1 MIN','Missão 01 — o chamado',
   cap('CAPÍTULO I · O CHAMADO · DA IDEIA À PRIMEIRA REGRA')+
@@ -99,15 +99,15 @@ function build(){
   '<button type="button" class="pit-ws-quiet" data-pit-depth="guide" aria-haspopup="dialog">◈ Tutorial visual do GDevelop</button></div>',
   {deepId:'engine'}));
  const fields=[['Gênero','RPG, puzzle, terror, plataforma...'],['Título','Nome provisório do jogo'],['Protagonista','Quem o jogador controla'],['Ação principal','O que ele faz? Use um verbo'],['Objetivo','O que precisa alcançar?'],['Condição de vitória','Como saber que terminou?'],['Feedback','Como o jogo mostra o resultado?']];
- slides.push(shot('MODO OFICINA · 6 MIN','Agora é a sua vez: crie a primeira ficha',
+ slides.push(shot('MODO OFICINA · 11 MIN','Agora é a sua vez: crie a primeira ficha',
   cap('MOMENTO DE CRIAÇÃO · CADERNO DO ALUNO · MISSÃO 01')+
   '<div class="pit-ws-practice"><div class="pit-ws-worksheet"><h3>Os sete campos do seu jogo</h3><div class="pit-ws-fields">'+fields.map((x,i)=>'<div><b>'+String(i+1).padStart(2,'0')+'</b><span><strong>'+x[0]+'</strong><small>'+x[1]+'</small></span></div>').join('')+'</div></div>'+
-  '<aside class="pit-ws-task"><div class="pit-ws-task-top">⏳ SEU TEMPO DE CRIAÇÃO</div><div class="pit-ws-timer" data-pit-timer role="timer" aria-label="Tempo restante de oficina">06:00</div>'+
+  '<aside class="pit-ws-task"><div class="pit-ws-task-top">⏳ SEU TEMPO DE CRIAÇÃO</div><div class="pit-ws-timer" data-pit-timer role="timer" aria-label="Tempo restante de oficina">11:00</div>'+
   '<div class="pit-ws-timer-controls"><button type="button" data-pit-timer-action="toggle">▶ Iniciar</button><button type="button" data-pit-timer-action="reset">↺ Reiniciar</button></div>'+
-  '<p><strong>Abra o Caderno do Aluno</strong> → Missão 01 → “Começar a criar”. Preencha a ficha do seu próprio jogo.</p>'+
-  '<label class="pit-ws-check"><input type="checkbox" data-pit-task="1"> Tenho uma ação principal</label>'+
-  '<label class="pit-ws-check"><input type="checkbox" data-pit-task="2"> Minha vitória pode ser testada</label>'+
-  '<label class="pit-ws-check"><input type="checkbox" data-pit-task="3"> Descrevi como o jogo responde</label>'+
+  '<p><strong>Leia (2 min):</strong> o briefing. <strong>Explore (2 min):</strong> os exemplos e o prompt de ideias. <strong>Crie (5 min):</strong> preencha 7 campos. <strong>Revise (2 min):</strong> confira e entregue.</p>'+
+  '<label class="pit-ws-check"><input type="checkbox" data-pit-task="1"> Escolhi gênero, título e protagonista</label>'+
+  '<label class="pit-ws-check"><input type="checkbox" data-pit-task="2"> Minha ação leva a um objetivo testável</label>'+
+  '<label class="pit-ws-check"><input type="checkbox" data-pit-task="3"> Defini condição de vitória e feedback</label>'+
   '<div class="pit-ws-progress" aria-live="polite">0 de 3 verificações</div></aside></div>',
   {workshop:true}));
  slides.push(shot('VALIDAÇÃO · 1 MIN','Uma boa ideia pode ser testada',
@@ -118,7 +118,7 @@ function build(){
    ['02 · MECÂNICA','Ação verificável','Uma ação concreta do jogador, como coletar, saltar ou conversar.'],
    ['03 · CONDIÇÃO','Final observável','Uma regra que permite saber se o jogador venceu ou falhou.']
   ],'pit-ws-concepts pit-ws-review')+
-  '<div class="pit-ws-bottom"><strong>Entregue no Caderno do Aluno:</strong> confira sua ficha e clique em “Enviar ao professor”. Na Missão 02, a ideia será reduzida a um MVP.'+
+  '<div class="pit-ws-bottom"><strong>Checklist real da Missão 01:</strong> gênero, título, protagonista, ação e objetivo; condição final observável; feedback explicado. Revise a ficha e selecione “Enviar ao professor”. O GDevelop começa na Missão 03.'+
   deep('test','Testes de aceitação')+'</div>',{deepId:'test'}));
  return slides;
 }
@@ -128,7 +128,7 @@ function mountClock(root){
  const redraw=()=>{
   const sec=Math.max(0,clock.seconds);
   timer.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
-  toggle.textContent=clock.started?'Ⅱ Pausar':'▶ '+(clock.seconds<360?'Retomar':'Iniciar');
+  toggle.textContent=clock.started?'Ⅱ Pausar':'▶ '+(clock.seconds<660?'Retomar':'Iniciar');
   timer.classList.toggle('pit-ws-time-over',sec===0);
  };
  function update(){
@@ -140,7 +140,7 @@ function mountClock(root){
   if(clock.started){stopClock()}else if(clock.seconds){clock.until=performance.now()+clock.seconds*1000;clock.started=true;clock.tick=setInterval(update,250)}
   redraw();
  });
- reset.addEventListener('click',()=>{stopClock();clock.seconds=360;redraw()});
+ reset.addEventListener('click',()=>{stopClock();clock.seconds=660;redraw()});
  root.querySelectorAll('[data-pit-task]').forEach(x=>x.addEventListener('change',()=>{
   root.querySelector('.pit-ws-progress').textContent=root.querySelectorAll('[data-pit-task]:checked').length+' de 3 verificações';
  }));
