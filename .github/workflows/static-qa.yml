@@ -59,7 +59,9 @@ jobs:
           node --check qa/v3-gdevelop-native-results-selftest.cjs
           node qa/v3-gdevelop-native-results-selftest.cjs
       - name: Audit REL-01 release gate (diagnostic, no deployment)
-        run: node qa/v3-release-gate.cjs
+        run: |
+          node qa/v3-release-gate.cjs
+          node qa/v3-release-gate-selftest.cjs
       - name: Validate core HTML, asset filenames and gamification storage
         run: |
           python3 - <<'PY'
