@@ -944,7 +944,9 @@ function startVisualPreview(){
 }
 if($('previewOnly'))$('previewOnly').onclick=startVisualPreview;
 $('showResources').onclick=()=>{window.open('./index.html#recursos','_blank','noopener')};
-$('changeUser').onclick=()=>{if(TEACHER){sessionStorage.removeItem('pit_teacher_pin');teacherPin=''}else{localStorage.removeItem('pit_chat_student_v09');studentSession=null}location.reload()};
+const changeIdentity=()=>{if(TEACHER){sessionStorage.removeItem('pit_teacher_pin');teacherPin=''}else{localStorage.removeItem('pit_chat_student_v09');studentSession=null}location.reload()};
+$('changeUser').onclick=changeIdentity;
+if($('changeUserTop'))$('changeUserTop').onclick=changeIdentity;
 (async()=>{
  if(MISSIONS.length!==10){$('loading').textContent='Erro: catálogo de etapas incompleto.';return}
  if(new URLSearchParams(location.search).get('preview')==='1'){
