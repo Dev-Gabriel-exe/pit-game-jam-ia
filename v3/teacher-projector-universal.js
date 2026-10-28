@@ -29,7 +29,7 @@ function source(m,p){
  if(!obj||typeof obj[fn]!=='function')return null;
  const phase=PHASES[p];
  let markup;
- try{markup=obj[fn](phase)}catch(error){console.warn('PIT projector: phase source unavailable',m,p,error);return null}
+ try{markup=(fn==='render'&&(['PIT_TEACHER_MISSION_TWO','PIT_TEACHER_MISSION_THREE','PIT_TEACHER_MISSION_FOUR_VALIDATION','PIT_TEACHER_MISSION_FIVE_VALIDATION','PIT_TEACHER_MISSION_SEVEN_VALIDATION','PIT_TEACHER_MISSION_EIGHT_VALIDATION','PIT_TEACHER_MISSION_NINE_VALIDATION','PIT_TEACHER_MISSION_TEN_VALIDATION'].includes(key)))?obj[fn](phase):obj[fn]()}catch(error){console.warn('PIT projector: phase source unavailable',m,p,error);return null}
  const tpl=document.createElement('template');tpl.innerHTML=markup||'';
  tpl.content.querySelectorAll(PRIVATE).forEach(x=>x.remove());
  return {root:tpl.content,mod:key,phase};
