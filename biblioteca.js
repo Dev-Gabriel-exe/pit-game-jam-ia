@@ -139,7 +139,7 @@ function audioBlob(a){
 function audioDownload(a){downloadBlob(audioBlob(a),a.file);}
 /* Suggested genres are discovery aids, not technical compatibility or licenses. */
 const genreExamples={
- rpg:['explorador','heroina','feiticeira','golem','mapa-ruinas','mapa-pantano','mapa-necropole','mapa-observatorio','lanterna','escudo','espinhos','pedestal','robo','monstro','mapa-floresta','mapa-cidade','mapa-caverna','chave','moeda','cristal','porta','coracao','pocao','checkpoint','glb-cristal','glb-totem','glb-bau','glb-portal','wav-coleta','wav-vitoria','wav-dano','wav-portal','wav-menu'],
+ rpg:['sentinela','arqueiro','explorador','heroina','feiticeira','golem','mapa-ruinas','mapa-pantano','mapa-necropole','mapa-observatorio','lanterna','escudo','espinhos','pedestal','robo','monstro','mapa-floresta','mapa-cidade','mapa-caverna','chave','moeda','cristal','porta','coracao','pocao','checkpoint','glb-cristal','glb-totem','glb-bau','glb-portal','wav-coleta','wav-vitoria','wav-dano','wav-portal','wav-menu'],
  plataforma:['explorador','heroina','golem','escudo','espinhos','robo','monstro','fantasma','mapa-plataforma','mapa-caverna','moeda','cristal','coracao','pocao','checkpoint','glb-obstaculo','wav-coleta','wav-vitoria','wav-dano'],
  puzzle:['heroina','feiticeira','golem','mapa-ruinas','mapa-pantano','mapa-necropole','mapa-observatorio','lanterna','escudo','espinhos','pedestal','robo','monstro','fantasma','mapa-floresta','mapa-caverna','chave','cristal','porta','pocao','glb-cristal','glb-totem','glb-bau','glb-portal','wav-portal','wav-menu','wav-vitoria'],
  corrida:['piloto','mapa-corrida','glb-obstaculo','wav-menu','wav-dano','wav-vitoria']
