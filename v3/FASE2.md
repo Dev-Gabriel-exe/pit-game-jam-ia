@@ -77,3 +77,26 @@ Com a Missão 01 do Professor aprovada em seu conteúdo, o Caderno do Aluno rece
 - **Sem novas perguntas, novas entregas ou mudanças na API.** Evidência continua gerada nos mesmos sete campos e o tempo previsto de 20 minutos foi mantido.
 - Verificações de JS, sincronização, rascunho, HTML escaping, limite de evidência, ausência de novos endpoints, responsividade e estado em tempo real: 16/16 aprovadas.
 - Pendente: conferência da aparência no celular/computador reais, ainda não realizada.
+
+## Personalização por gênero nas dez missões — 27/10/2026
+
+### Comportamento
+
+1. O aluno escolhe o gênero na Missão 01. O módulo `v3/genre-personalization.js` reúne exemplos distintos para **Aventura, RPG, Terror, Plataforma, Corrida, Puzzle, Narrativa interativa, Exploração e Outro**.
+2. A escolha altera instantaneamente os **seis placeholders da Missão 01**, o exemplo de inspiração e o prompt opcional de IA. Os valores digitados **não são substituídos**.
+3. Cada uma das missões **02–10** recebe um briefing temático, exemplos opcionais para seus três passos, uma sugestão contextual de solução e um **placeholder de evidência** adaptado. A mesma escolha acompanha o aluno em todas as páginas.
+4. O carrossel mantém as artes cinematográficas e objetivos oficiais, mas passa a mostrar o gênero do aluno e um exemplo contextual no dossiê da missão.
+5. O módulo utiliza, quando disponíveis, o título e as decisões da Missão 01; os dados são recuperados da evidência oficial persistida quando o aluno acessa outro dispositivo.
+6. **Nenhum exemplo é enviado automaticamente.** As dez missões preservam seus objetivos obrigatórios, três etapas técnicas, ferramentas, verificações, tempos e mecanismo de envio/avaliação. O professor não recebe o módulo de personalização, pois a aula conceitual deve funcionar para todos os gêneros.
+7. No modo **`?preview=1`**, as dez missões ficam acessíveis exclusivamente para avaliação visual, sem liberação real de turma ou conexão com a API. No uso real, permanecem as restrições estabelecidas pelo professor.
+8. Sem gênero selecionado, os placeholders da Missão 01 continuam neutros. A escolha **Outro** oferece exemplos genéricos adaptáveis.
+
+### Testes automatizados
+
+- 28/28 verificações de código, dados e comportamento aprovadas: 9 gêneros × 10 missões, placeholders diferentes, exemplos coerentes, limite de 750 caracteres, título de projeto reutilizado, ausência de substituição de respostas, troca de gênero em tempo real, isolamento da escolha por aluno, restauração da evidência oficial, isolamento do professor, sintaxe JS e CSS.
+- **Pendente:** inspeção visual com navegador e teste com fluxo completo de turma na URL de produção. Os exemplos são sugestões, não templates prontos do GDevelop, e precisarão acompanhar os tutoriais executáveis das missões 03–05.
+
+### Arquivos
+
+- Novo: `v3/genre-personalization.js`.
+- Alterados: `v3/mission-one.js`, `v3/app.js`, `v3/arcade-gallery.js`, `v3/mission-interior.css`, `aluno-v3.html`.
