@@ -237,7 +237,14 @@ function studentGenreFocus(m){
   '<div class="pit-genre-focus-kicker"><span>✦ EXEMPLO PARA '+esc(g.genre.toUpperCase())+'</span><small>PROJETO · '+esc(g.title)+'</small></div>'+
   '<p>'+esc(g.focus)+'</p><small>Referência opcional: adapte à mecânica real do seu jogo.</small></aside>';
 }
-function savedChecks(n){try{const v=JSON.parse(localStorage.getItem('pit_v3_checks_'+n)||'[]');return Array.isArray(v)?v:[]}catch{return []}}
+// Generic fallback forms must never share drafts/checklists across students using one browser.
+// Old unscoped V2/V3 keys are deliberately not read or deleted: ownership cannot be established.
+function studentStorageKey(kind,n){
+ const id=visualPreview?'preview':studentSession?.studentId;
+ const identity=typeof id==='string'&&(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)||id==='preview')?id:'unverified';
+ return 'pit_v3_'+kind+'_'+identity+'_'+n;
+}
+function savedChecks(n){try{const v=JSON.parse(localStorage.getItem(studentStorageKey('checks',n))||'[]');return Array.isArray(v)?v.filter(x=>Number.isInteger(x)&&x>=0&&x<3):[]}catch{return []}}
 function studentTasks(m){
  const checked=savedChecks(m.n);
  const g=genreContext(m.n);
@@ -275,7 +282,7 @@ function phaseBody(m){
 }
 function studentWorkForm(m){
  const e=entry(m.n)||{};
- const draft=localStorage.getItem('pit_v2_draft_'+m.n),evidence=draft!==null?draft:(e.evidence||'');
+ const draft=localStorage.getItem(studentStorageKey('draft',m.n)),evidence=draft!==null?draft:(e.evidence||'');
  const locked=m.n>state.current_stage||(m.n===state.current_stage&&!['practice','review'].includes(state.phase));
  const approved=e.status==='approved',genre=genreContext(m.n);
  const done=savedChecks(m.n).length,ready=done>=m.steps.length;
@@ -406,7 +413,7 @@ function renderMain(){
   $('navSecondary').disabled=activePhase==='briefing';
  }
  const evidence=$('evidenceInput');
- if(evidence)evidence.oninput=()=>localStorage.setItem('pit_v2_draft_'+m.n,evidence.value);
+ if(evidence)evidence.oninput=()=>localStorage.setItem(studentStorageKey('draft',m.n),evidence.value);
  if($('startWork'))$('startWork').onclick=()=>sendWork('working');
  if($('submitWork'))$('submitWork').onclick=()=>sendWork('submitted');
  if(teacherMissionOne)window.PIT_TEACHER_MISSION_ONE.mount();
@@ -486,7 +493,7 @@ function renderMain(){
  $('mainContent').querySelectorAll('[data-step-check]').forEach(input=>input.onchange=()=>{
   const checks=new Set(savedChecks(m.n));const n=Number(input.dataset.stepCheck);
   if(input.checked)checks.add(n);else checks.delete(n);
-  localStorage.setItem('pit_v3_checks_'+m.n,JSON.stringify([...checks].sort()));
+  localStorage.setItem(studentStorageKey('checks',m.n),JSON.stringify([...checks].sort()));
   renderMain();
  });
  const logicButtons=$('mainContent').querySelectorAll('[data-logic]');
@@ -640,7 +647,7 @@ async function sendWork(status){
   const response=await call('classroom','progress','POST',{stage:activeStage,route,evidence,status});
   const index=progress.findIndex(p=>p.stage===activeStage);
   if(index>=0)progress[index]=response.progress;else progress.push(response.progress);
-  localStorage.removeItem('pit_v2_draft_'+activeStage);
+  localStorage.removeItem(studentStorageKey('draft',activeStage));
   renderAll();setToast(status==='submitted'?'Evidência enviada ao professor.':'Etapa marcada como em atividade.');
  }catch(e){setToast(e.message,true)}
 }
