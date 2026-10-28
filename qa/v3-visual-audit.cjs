@@ -29,6 +29,7 @@ const fs=require('node:fs'),path=require('node:path');
    if(route.name==='aluno'||route.name==='professor'){
     await page.locator('#workspace:visible').waitFor({timeout:12000});
     if(await page.locator('#missionGallery.open').count()){
+     if(route.name==='aluno')assert.equal(await page.locator('#missionGallery').evaluate(el=>el.classList.contains('pit-low-stimulus')),true,'ART-05 reduced-motion gallery is low-stimulus');
      await page.locator('#missionGalleryClose').click();
      await page.locator('#missionGallery.open').waitFor({state:'hidden'});
     }
