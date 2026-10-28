@@ -307,9 +307,9 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(msgC1.statusCode,201);assert.equal(msgC2.statusCode,201);assert.equal(msgB.statusCode,201);
  const teacherUnread=await call(chat,'GET','unread',{},'',origin,pin);
  assert.equal(teacherUnread.body.unread,3,'teacher sees three unread student messages');
- const teacherThreads=await call(chat,'GET','threads',{},'',origin,pin);
- assert.equal(teacherThreads.body.threads[0].id,cId,'thread with most unread appears first');
- assert.equal(teacherThreads.body.threads[0].unread,2);
+ const threadsAfterMessages=await call(chat,'GET','threads',{},'',origin,pin);
+ assert.equal(threadsAfterMessages.body.threads[0].id,cId,'thread with most unread appears first');
+ assert.equal(threadsAfterMessages.body.threads[0].unread,2);
  const cMessages=await call(chat,'GET','messages',{},cToken);
  assert.equal(cMessages.body.messages.length,2,'student C sees own messages');
  assert(cMessages.body.messages[0].id<cMessages.body.messages[1].id,'messages sorted ascending for reading');
