@@ -64,4 +64,4 @@ const fs=require('node:fs'),path=require('node:path');
 
  console.log('PASS UI-08: 12 Chrome route/viewport geometry, reduced motion, focus and no horizontal overflow (screenshots pending)');
  await browser.close();
-})().catch(e=>{console.error(e);process.exitCode=1});
+})().catch(e=>{console.error(e);process.exit(1)});
