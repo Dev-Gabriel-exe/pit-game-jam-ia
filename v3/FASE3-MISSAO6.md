@@ -74,3 +74,13 @@ Quatro situações selecionáveis com botões de resposta, estados ARIA e explic
 **Pendências:** teste real no navegador, no GDevelop e com backend autorizado; professor precisa revisar a evidência e confirmar a importação. A M06-05 fará auditoria de integração e regressão.
 
 **Próxima meta:** M06-05 — alinhamento professor/aluno, contingência offline, importação e verificações responsivas.
+
+## M06-05 — Integração e revisão: PARCIAL / BLOQUEADA POR TESTES REAIS
+
+**Código entregue:** `v3/teacher-mission-six-validation.js` e CSS integrados à fase `review` do professor, espelhando os oito campos e três declarações de teste do aluno. A tela exibe seis critérios, decisões de aprovar/revisar dependentes de demonstração real e planos B sem conta/créditos. O professor não aprova automaticamente.
+
+**Verificações realmente executadas:** 18/18 asserções V8 sobre scripts, sintaxe, campos, fases professor/aluno, contratos de evidência, fallback, CSS responsivo estático e limite de 750 caracteres. Teste repetível adicionado em `qa/v3-m06-integration.cjs` (não executado no Node nesta rodada).
+
+**Impedimento para aceite integral:** não houve navegador móvel real nem acesso a um editor GDevelop com projeto fictício para importar e reproduzir PNG/WAV/GLB/MP4; por isso não se pode declarar que a importação funcionou ou que a interface foi homologada em Android/iOS. A API real e turma não foram acessadas. A tarefa permanece `blocked` no checkpoint até esses testes serem executados em ambiente isolado. Não publicar nem aprovar automaticamente.
+
+**Próxima ação segura:** seguir M07-01, preservando o bloqueio M06-05 para retorno na auditoria/homologação.
