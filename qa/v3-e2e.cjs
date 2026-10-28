@@ -39,6 +39,17 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const tc=await browser.newContext({viewport:{width:1440,height:980}}),sc=await browser.newContext({viewport:{width:1440,height:980}});
  const tp=await tc.newPage(),sp=await sc.newPage();
  for(const p of [tp,sp]){p.on('pageerror',e=>error.push(e.message));await p.route('https://pit-game-jam-chat.vercel.app/api/**',fixture)}
+ const portal=await tc.newPage();
+ await portal.goto(base+'index.html');
+ assert.equal(await portal.locator('a.skip-link[href="#conteudo"]').count(),1,'portal skip link exists');
+ await portal.keyboard.press('Tab');
+ assert.equal(await portal.evaluate(()=>document.activeElement?.classList.contains('skip-link')),true,'keyboard first focus is skip link');
+ assert.equal(await portal.locator('a[href="./aluno-v3.html"]').count()>0,true,'portal routes to student V3');
+ assert.equal(await portal.locator('a[href="./professor-v3.html"]').count()>0,true,'portal routes to teacher V3');
+ const portalHero=await portal.locator('.hero').evaluate(el=>getComputedStyle(el,'::before').backgroundImage);
+ assert(portalHero.includes('missao-01.webp'),'portal uses approved cinematic mission artwork');
+ await portal.close();
+ console.log('PASS UI-02: portal V3 routes, keyboard skip link and cinematic artwork in Chrome');
  await tp.goto(base+'professor-v3.html');
  await tp.locator('#authPin').fill('test-pin-1234567890');
  await tp.locator('#authSubmit').click();
