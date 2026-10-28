@@ -79,3 +79,16 @@ Não há migração ou mudança no banco. A entrega usa `POST /api/classroom?act
 ## Referências de verificação
 - GDevelop: https://wiki.gdevelop.io/gdevelop5/tutorials/basic-game-making-concepts/
 - GDevelop: https://wiki.gdevelop.io/gdevelop5/interface/
+
+## Revisão de qualidade final — alinhamento professor/aluno (27/10/2026)
+
+A Missão 02 foi aprovada pelo usuário quanto a aparência e conteúdo. Revisão localizada, **sem alterar a carga de 30 minutos ou criar novas atividades**:
+
+1. **Separadores consistentes:** o exemplo do professor usa `Guardiã · Cristais · Portal`, enquanto o aluno originalmente precisava digitar uma lista separada por vírgulas para conseguir avançar. O formulário agora aceita **vírgula, ponto e vírgula, ponto médio (·), bullet (•) ou quebra de linha**. Continua exigindo exatamente três elementos distintos na lista (não existe verificação automática semântica de relevância).
+2. **Progresso fiel à validação:** o contador visual de 4 decisões e o estado destacado da ficha usam as mesmas verificações do botão de revisão. O preenchimento de apenas dois ou quatro elementos não ganha falsa indicação de conclusão.
+3. **Orientação didática curta:** o campo de elementos apresenta contagem imediata (0–3, ou excedente) e sinalização acessível. O critério de aceite inclui a estrutura **DADO → QUANDO → ENTÃO** com exemplos adaptados ao gênero — sem transformar o formulário em uma sequência maior de questões.
+4. **Preservação:** módulos do professor, tema gótico, identidade autoral dos alunos, respostas armazenadas, evidência oficial e os critérios obrigatórios permanecem inalterados.
+
+Verificações complementares: **20/20 aprovadas**, incluindo quatro tipos de separador, duas/quatro entradas inválidas, nove exemplos de teste adaptados, geração de evidência, sintaxe, CSS, renderização e carregamento por perfil.
+
+**Não homologado:** interação e estética em navegador real, integração com API e avaliação de uma turma fictícia. Esta revisão não representa teste E2E.
