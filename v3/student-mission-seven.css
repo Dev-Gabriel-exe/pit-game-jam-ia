@@ -20,3 +20,11 @@
 .m7s-actions{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
 .m7s-root :is(button,textarea,input):focus-visible{outline:3px solid #ffe08b;outline-offset:3px}
 @media(max-width:650px){.m7s-root header{padding:15px}.m7s-practice{padding:10px}}
+
+/* M07 student editor handoff: readable, keyboard accessible, mobile-safe. */
+.m7s-editor-handoff{padding:16px 18px;margin:0 0 18px;background:#1b313b;border:1px solid #a47c50;border-left:4px solid #e4b777;border-radius:8px}
+.m7s-editor-handoff strong{display:block;color:#ffe2b2;letter-spacing:.04em}
+.m7s-editor-handoff p{margin:7px 0 0}
+.m7s-editor-handoff a{color:#ffdc99;text-decoration:underline;text-underline-offset:3px;font-weight:700;overflow-wrap:anywhere}
+.m7s-editor-handoff a:hover{color:#fff0c7}
+.m7s-editor-handoff a:focus-visible{outline:3px solid #ffe08b;outline-offset:3px;border-radius:2px}
