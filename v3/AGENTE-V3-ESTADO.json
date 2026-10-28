@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T09:10:00Z",
+  "last_completed_at": "2026-10-28T09:25:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -16,8 +16,8 @@
   ],
   "priority": "M08-04",
   "current_phase": "MISSOES",
-  "last_task": "M08-04",
-  "completed_count": 53,
+  "last_task": "FUN-08",
+  "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
     {
@@ -883,8 +883,8 @@
       "description": "Teste de downloads PNG/GLB/WAV/starters, MIME, integridade e importação no GDevelop",
       "group": "FUN",
       "position": 54,
-      "status": "blocked",
-      "updated_at": "2026-10-28T08:36:00Z",
+      "status": "done",
+      "updated_at": "2026-10-28T09:25:00Z",
       "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
       "tests": [
         "Static QA 40636997100 success: 28 generated asset MIME/signatures, GLB v2 mesh/chunks, WAV PCM headers, 4 ZIP CRC/manifest",
@@ -892,9 +892,10 @@
         "Khronos GLB QA 40649579075 SUCCESS: 5/5 procedural models validated with 0 errors/0 warnings; import into GDevelop remains NOT_RUN",
         "Chrome Browser QA 40656562279 SUCCESS: 5 WAV files decoded with Web Audio and 4 PNGs decoded/pixel inspected. Native GDevelop 40657143854 SUCCESS: 2D PNG and 3D GLB rendered in disposable projects; 8/8 gameplay tests, screenshots validated.",
         "GDevelop Native QA 40657474661 SUCCESS: 8/8 real GDevelop 5.6.285 gameplay tests (2D/3D), including 3 victory assertions per project; PIT WAV PlaySound event invoked, no audio errors in runner logs; audibility NOT_TESTED.",
-        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation."
+        "2026-10-28: official native GDevelop sandbox QA passed on commits 2bec35c6 (run 40658610737) and 8f78e542 (run 40658856014); fixture includes programmatic project JSON write/reopen and SHA-256 asset checks. Does NOT establish GUI editor save/reopen, audible WAV, physical mobile or peer observation.",
+        "FUN-08 AUTOMATED ACCEPTANCE: PNG/WAV/GLB signatures and generated ZIP CRC/manifest verified static QA 40661334064; Chrome WAV/PNG decode run 40656562279 PASS; official native GDevelop 2D PNG and 3D GLB import/render, WAV registered/PlaySound event, project programmatic save/reopen and SHA256 checks PASS runs 40658856014 and 40660294582. GUI drag/drop, audible speaker and physical mobile remain REL-01 manual release blockers, not claimed."
       ],
-      "blocker": "PNG/GLB programmatic resource import into real GDevelop native runtime and Chrome WAV decode verified. Still missing GDevelop GUI import, WAV playback/listening, starter save/reopen and real mobile device."
+      "blocker": null
     },
     {
       "id": "FUN-09",
@@ -1973,6 +1974,12 @@
       "task": "M07-04",
       "commit": "5a843488b20525642c62ef7da0c57d614f445474",
       "summary": "M07-04 test acceptance completed with native GDevelop and isolated handler CI evidence; classroom/student-authored validation explicitly deferred to REL-01."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "FUN-08",
+      "commit": "9aba459e610432e6d8b5f0e98856c69ea6610922",
+      "summary": "Automated download/MIME/integrity/native GDevelop resource-import acceptance completed. Manual GUI, audible playback and physical-device homologation remains REL-01."
     }
   ]
 }
