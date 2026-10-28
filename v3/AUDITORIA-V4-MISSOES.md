@@ -8,7 +8,7 @@
 | M02 | `teacher-mission-two.js` | `student-mission-two.js` | Orientações operacionais corrigidas; QA/homologação pendentes |
 | M03 | `teacher-mission-three.js` | `student-mission-three.js` | Corrigidos tempo, abertura do editor e roteiro privado; QA de regressão em verificação |
 | M04 | `teacher-mission-four-foundations.js`, `teacher-mission-four-validation.js` | `student-mission-four.js` | Auditoria de projeção e acesso ao editor corrigida; QA da alteração em execução, homologação humana pendente |
-| M05 | `teacher-mission-five-foundations.js`, `teacher-mission-five-validation.js` | `student-mission-five.js` | Pendente |
+| M05 | `teacher-mission-five-foundations.js`, `teacher-mission-five-validation.js` | `student-mission-five.js` | Capítulo, roteiro reservado de avaliação e abertura explícita do GDevelop corrigidos; QA/CI em verificação, homologação humana pendente |
 | M06 | `teacher-mission-six-foundations.js`, `teacher-mission-six-matrix.js`, `teacher-mission-six-validation.js` | `student-mission-six.js` | Pendente |
 | M07 | `teacher-mission-seven-foundations.js`, `teacher-mission-seven-validation.js` | `student-mission-seven.js` | Pendente |
 | M08 | `teacher-mission-eight-foundations.js`, `teacher-mission-eight-validation.js` | `student-mission-eight.js` | Pendente |
@@ -60,3 +60,11 @@
 - **Regressão:** `qa/v3-audit-alignment.cjs` agora verifica as duas notas recolhidas, rótulos acessíveis, sincronização de 12/15/9 minutos e link/limitações do editor; `qa/v3-private-teacher-notes-browser.cjs` foi estendido para renderizar a prática e a avaliação da M04 em Chrome 390/1280 px, conferir ocultação inicial, tamanho do ícone e abertura/fechamento por Enter (commits `8ee2eba00eadb24efa6e97016b88352bb73b802c` e `24fbefbfb1c9ca5f5e80a043e5236faf2269ba48`). **CI desse último commit ainda não concluída na hora do registro**; testes não devem ser considerados aprovados antes da confirmação.
 - **Pendências:** revisão visual humana, teste real no editor GUI GDevelop, importação/salvamento do projeto, aparelho físico, chat/API autenticados e observação de aluno seguem **NOT_RUN** nesta rodada. M04 não homologada.
 - **Próxima missão após CI:** M05, com auditoria da lógica SE/ENTÃO, variáveis, teste negativo e espelhamento professor/aluno.
+
+## M05 — Auditoria pedagógica das duas faces (28/10/2026)
+
+- **Professor:** `teacher-mission-five-validation.js` exibia o numeral **IV** apesar de ser a Missão 05; corrigido para **V**. Na avaliação, o caminho operacional `Acompanhamento → aluno → Missão 05` era visível na projeção. Agora o caminho reservado, os passos de revisão e a recomendação de desligar o HDMI ficam no segundo `<details class="pit-private-teacher-notes">`, fechado por padrão e com `<summary>▤</summary>` acessível. A rubrica SE/ENTÃO, os testes positivo/negativo/repetição e os critérios permanecem projetáveis.
+- **Aluno:** `student-mission-five.js` já continha sete passos, três testes declaratórios, campos de condição/ação/variável e envio; faltava o **acesso explícito ao editor**. Adicionado link para `https://editor.gdevelop.io/` em nova aba, aviso de que não abre/importa o projeto automaticamente e alternativa de aplicativo local/offline. O aluno continua o jogo da Missão 04.
+- **Sincronização:** os dois perfis usam 24 min de prática em 8 + 8 + 8, uma regra autoral e os mesmos critérios de prova. A ficha não comprova execução do GDevelop por si só. O projeto editável e o Preview real continuam essenciais para a aprovação.
+- **Regressão:** `qa/v3-audit-alignment.cjs` ganhou verificações de numeral V, dois painéis privados, ausência de notas no aluno, link e fallback. `qa/v3-private-teacher-notes-browser.cjs` agora cobre prática e avaliação da M05 em Chrome 390/1280 px, inclusive abertura/fechamento por Enter. Os resultados dos workflows da alteração precisam ser conferidos no commit correspondente antes de declarar aprovação.
+- **Ainda NOT_RUN nesta rodada:** teste humano de GDevelop GUI, celular físico, playtest observado e submissão real de turma. Próximo alvo: verificar CI e prosseguir com M06, sem antecipar a estética.
