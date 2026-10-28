@@ -109,6 +109,8 @@ async function open(id,trigger){
    const header=new Uint8Array(await blob.slice(0,12).arrayBuffer());if(token!==runId)return;
    const ascii=(start,end)=>String.fromCharCode(...header.slice(start,end));
    if(header.length!==12||ascii(0,4)!=='RIFF'||ascii(8,12)!=='WAVE')throw Error('Arquivo WAV sem cabeçalho RIFF/WAVE');
+   const wavSize=new DataView(header.buffer,header.byteOffset,header.byteLength).getUint32(4,true);
+   if(wavSize+8!==blob.size)throw Error('Tamanho RIFF incompatível com o WAV');
    objectUrl=URL.createObjectURL(blob);
    const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=objectUrl;audio.setAttribute('aria-label','Ouvir '+a.name);
    const error=document.createElement('p');error.className='pit-preview-error';error.setAttribute('role','alert');error.hidden=true;
