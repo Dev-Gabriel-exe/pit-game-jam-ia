@@ -105,6 +105,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.getByText('Aguardando validação').first().waitFor();
  await tp.locator('#rosterButton').click();
  await tp.locator('#rosterDrawer.open').waitFor();
+ await tp.waitForFunction(()=>document.querySelector('#rosterStats')?.textContent?.includes('inscritos'),null,{timeout:6500});
  assert.match(await tp.locator('#rosterStats').innerText(),/1 inscritos/,'roster uses fake enrolled student');
  await tp.locator('#filterPending').click();
  assert.equal(await tp.locator('#filterPending').getAttribute('aria-pressed'),'true','pending filter announces selection');
