@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T03:25:14.207Z",
+  "last_completed_at": "2026-10-28T03:26:32.468Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,10 +14,10 @@
     "M02",
     "M03"
   ],
-  "priority": "M10-02",
+  "priority": "M10-03",
   "current_phase": "MISSOES",
-  "last_task": "M10-01",
-  "completed_count": 21,
+  "last_task": "M10-02",
+  "completed_count": 22,
   "total_tasks": 59,
   "tasks": [
     {
@@ -437,10 +437,14 @@
       "description": "Tutorial GDevelop atualizado sobre salvar projeto, exportar/compartilhar quando disponível, opções e plano B",
       "group": "M10",
       "position": 26,
-      "status": "todo",
-      "updated_at": null,
-      "commit": null,
-      "tests": [],
+      "status": "done",
+      "updated_at": "2026-10-28T03:26:32.468Z",
+      "commit": "670bd899ba6c54e2066eee9d616370feb171aa3f",
+      "tests": [
+        "15/15 V8 checks executed: three routes, four steps, DOM pager, keyboard, official links, responsive CSS, professor integration",
+        "Official GDevelop docs on Save, Share, gd.games and paid cloud collaboration checked 2026-10-28",
+        "Diagram is explicitly schematic, not a screenshot; no actual GDevelop export, publishing or link verification performed"
+      ],
       "blocker": null
     },
     {
@@ -1203,6 +1207,19 @@
       ],
       "tests": "15/15 V8 checks passed; no actual export/publication",
       "notes": "Safe editable project + optional link/build, no forced publishing, technical pitch and privacy."
+    },
+    {
+      "id": "M10-02",
+      "completed_at": "2026-10-28T03:26:32.468Z",
+      "commit": "670bd899ba6c54e2066eee9d616370feb171aa3f",
+      "files": [
+        "v3/gdevelop-mission-ten-guide.js",
+        "v3/gdevelop-mission-ten-guide.css",
+        "professor-v3.html",
+        "v3/app.js"
+      ],
+      "tests": "15/15 V8 checks passed; actual export not executed",
+      "notes": "Save/Preview, manual web export and optional gd.games routes with explicit schematic illustration and no-cost fallback."
     }
   ]
 }
