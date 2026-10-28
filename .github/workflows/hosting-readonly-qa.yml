@@ -1,0 +1,21 @@
+name: PIT Game Jam — Read-only Hosting Probe
+on:
+  push:
+    branches: [feature/pit-gamejam-v3-arcade]
+    paths:
+      - 'qa/v3-hosting-audit.cjs'
+      - '.github/workflows/hosting-readonly-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hosting-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify hosting contracts and read-only OPTIONS/GET
+        run: node qa/v3-hosting-audit.cjs --live
