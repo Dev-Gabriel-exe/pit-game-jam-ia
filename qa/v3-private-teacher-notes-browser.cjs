@@ -45,9 +45,27 @@ const assert=require('node:assert/strict');
    await page.keyboard.press('Enter');
    assert.equal(await notes.evaluate(el=>el.open),false,file+' keyboard Enter closes private notes');
   }
+  // Student M09 must not pretend a defect or correction before a peer playtest.
+  await page.addScriptTag({url:'http://127.0.0.1:8899/v3/student-mission-nine.js'});
+  const student=await page.evaluate(width=>{
+   const ctx={session:'qa-v4-m09-'+width,phase:'practice',status:'draft',idea:{title:'Projeto fictício',genre:'Puzzle'}};
+   document.querySelector('#mount').innerHTML=window.PIT_STUDENT_MISSION_NINE.render(ctx);
+   return {
+    selectedOutcomes:document.querySelectorAll('input[name="m9Outcome"]:checked').length,
+    selectedResolutions:document.querySelectorAll('input[name="m9Resolution"]:checked').length,
+    choices:document.querySelectorAll('input[name="m9Resolution"]').length,
+    initialValidation:window.PIT_STUDENT_MISSION_NINE.validate(ctx.session),
+    editor:!!document.querySelector('.m9s-editor-handoff a[href="https://editor.gdevelop.io/"]')
+   };
+  },width);
+  assert.equal(student.selectedOutcomes,0,'M09 no fabricated issue selected at '+width+'px');
+  assert.equal(student.selectedResolutions,0,'M09 no fabricated decision selected at '+width+'px');
+  assert.equal(student.choices,3,'M09 supports no-change after a passed test');
+  assert.equal(student.initialValidation.field,'outcome','M09 requires explicit real test result');
+  assert.equal(student.editor,true,'M09 GDevelop handoff rendered');
   assert.deepEqual(errors,[],width+'px no JavaScript errors');
   await context.close();
  }
  await browser.close();
- console.log('PASS V4 private teacher notes: M01-M09 practice and M04-M09 review in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
+ console.log('PASS V4 private teacher notes: M01-M09 practice and M04-M09 review; M09 student neutral form in Chrome 390/1280px, default closed, discreet icon, keyboard open/close');
 })().catch(e=>{console.error(e);process.exit(1)});
