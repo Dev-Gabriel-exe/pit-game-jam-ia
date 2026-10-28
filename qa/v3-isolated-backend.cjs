@@ -295,10 +295,11 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(unauthorizedRoster.statusCode,403,'student cannot read classroom roster');
  const forgedActivity=await call(classroom,'POST','heartbeat',{stage:10},a.body.token);
  assert.equal(forgedActivity.statusCode,200,'M10 is released at end of FUN-05');
- const earlyStage=await call(classroom,'POST','stage',{stage:4,phase:'practice'},'',origin,pin);
- assert.equal(earlyStage.statusCode,200);
- const spoofed=await call(classroom,'POST','heartbeat',{stage:10},b.body.token);
- assert.equal(spoofed.statusCode,403,'student cannot forge activity in a locked future stage');
+ const noRegression=await call(classroom,'POST','stage',{stage:4},'',origin,pin);
+ assert.equal(noRegression.statusCode,200);
+ assert.equal(noRegression.body.state.current_stage,10,'cannot relock already-released missions');
+ const heartbeatAfterNoRegression=await call(classroom,'POST','heartbeat',{stage:10},b.body.token);
+ assert.equal(heartbeatAfterNoRegression.statusCode,200,'previously released mission remains available');
  const heartbeatC=await call(classroom,'POST','heartbeat',{stage:4},cToken);
  assert.equal(heartbeatC.statusCode,200,'student activity updates on released mission');
  const heartbeatB=await call(classroom,'POST','heartbeat',{stage:2},b.body.token);
@@ -319,7 +320,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(bRow.highest_stage,10,'B has evidence at M10');
  assert.equal(bRow.stages.length,3,'B has three own stage records');
  assert(!JSON.stringify(teacherRoster.body).includes(cToken),'roster never leaks raw student tokens');
- console.log('PASS FUN-06: actual roster and heartbeat handlers, three fictional students, per-stage status, approved totals, activity, teacher-only access, future-stage heartbeat blocked');
+ console.log('PASS FUN-06: actual roster and heartbeat handlers, three fictional students, per-stage status, approved totals, activity, teacher-only access, already-released stages cannot be relocked');
 
  // FUN-07 — chat message order, unread counters, isolation, read receipts and rate limit.
  const fakeSend=await call(chat,'POST','send',{body:'Mensagem sem token'},'f'.repeat(64));
