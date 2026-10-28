@@ -72,6 +72,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.phase,'practice','professor releases practice for the whole class');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
+ if(await sp.locator('#missionGallery').evaluate(el=>el.classList.contains('open'))){await sp.locator('#missionGalleryClose').click();await sp.locator('#missionGallery.open').waitFor({state:'hidden'});}
  await sp.locator('[data-q-tab="practice"]').click();
  assert.equal(await sp.locator('#qo-genre').isEnabled(),true,'student can edit project idea after release');
  await sp.locator('#qo-genre').selectOption('Aventura');
