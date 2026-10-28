@@ -14,6 +14,7 @@ const fs=require('node:fs'),path=require('node:path');
   {name:'professor',url:'professor-v3.html?preview=1'}
  ];
  const sizes=[390,768,1440],report=[],dir='qa/ui-08-artifacts';
+ let screenshots=0;
 
  fs.mkdirSync(dir,{recursive:true});
  for(const width of sizes){
@@ -56,7 +57,7 @@ const fs=require('node:fs'),path=require('node:path');
    }
    if(route.name==='aluno'&&width===390)console.log('Chat mobile viewport requires authenticated fixture; preview may hide chat controls.');
    assert.deepEqual(errors,[],route.name+' '+width+' JavaScript page errors');
-   // Screenshots are intentionally deferred: this automated pass checks geometry and interaction only.
+   await page.screenshot({path:path.join(dir,route.name+'-'+width+'.png'),animations:'disabled',timeout:8000});screenshots++;
    report.push({route:route.name,width,scroll:metrics.scroll,focus:focused.tag,missingImages:metrics.missing.length});
    console.log('AUDIT UI-08 '+route.name+' '+width+'px: geometry, focus, reduced motion PASS');
    await page.close();
@@ -64,7 +65,8 @@ const fs=require('node:fs'),path=require('node:path');
   await context.close();
  }
  fs.writeFileSync(path.join(dir,'metrics.json'),JSON.stringify(report,null,2)+'\n');
+ assert.equal(screenshots,12,'All twelve diagnostic screenshots captured');
 
- console.log('PASS UI-08: 12 Chrome route/viewport geometry, reduced motion, focus and no horizontal overflow (screenshots pending)');
+ console.log('PASS UI-08: 12 Chrome route/viewport checks, reduced motion, focus, no horizontal overflow and 12 screenshots');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
