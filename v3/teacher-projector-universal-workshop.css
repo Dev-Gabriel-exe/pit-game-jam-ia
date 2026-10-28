@@ -1,0 +1,78 @@
+/* PIT Game Jam IA — complete student-aligned teacher slides M02–M10. */
+#pitProjector.pit-projector-m01 .pit-ws-all{gap:clamp(9px,1.24vh,16px)}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-lead{font-size:clamp(17px,1.4vw,22px);line-height:1.35;max-width:1300px}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-bottom{gap:12px;flex-wrap:nowrap}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-bottom .pit-ws-depth-trigger{flex-shrink:0}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-concept h3{font-size:clamp(20px,1.72vw,28px)!important}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-concept p{font-size:clamp(17px,1.32vw,21px)!important}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover .pit-u-cinema-panel{width:100%;height:clamp(240px,44vh,460px);max-height:54vh;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover{grid-template-columns:minmax(0,1fr) minmax(0,.9fr)}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover h2{font-size:clamp(35px,4vw,62px);margin:0 0 16px}
+#pitProjector.pit-projector-m01 .pit-ws-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;flex:1;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-choice{display:flex;flex-direction:column;justify-content:center;gap:20px;align-items:flex-start;border:2px solid #846048;border-radius:14px;background:linear-gradient(155deg,#2c2020,#161920);color:#fae5ce;cursor:pointer;text-align:left;padding:clamp(20px,2vw,35px);transition:border-color .17s,box-shadow .17s}
+#pitProjector.pit-projector-m01 .pit-ws-choice span{font:800 clamp(14px,1.1vw,18px) var(--pit-font-reading,"Segoe UI",sans-serif);color:#dfa770;letter-spacing:.08em}
+#pitProjector.pit-projector-m01 .pit-ws-choice strong{font:710 clamp(22px,2vw,34px)/1.32 var(--pit-font-chapter,Georgia,serif);color:#ffddb5}
+#pitProjector.pit-projector-m01 .pit-ws-choice:hover,#pitProjector.pit-projector-m01 .pit-ws-choice[aria-pressed=true]{border-color:#e6b270;box-shadow:0 0 28px #d78b373b;background:#32271f}
+#pitProjector.pit-projector-m01 .pit-ws-choice-answer{flex-shrink:0;border:1px solid #ad7a4c;border-radius:10px;background:#241d1d;padding:16px 23px;color:#f1dec9;font:680 clamp(18px,1.4vw,23px)/1.42 var(--pit-font-reading,"Segoe UI",sans-serif)}
+#pitProjector.pit-projector-m01 .pit-ws-choice-answer.pit-ws-correct{border-color:#679d76;background:#1a2a23;color:#d4f6e1}
+#pitProjector.pit-projector-m01 .pit-ws-choice-answer.pit-ws-incorrect{border-color:#bd8469;background:#2e1e1c;color:#fbe1cf}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-read-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:19px;align-items:stretch;min-height:0;flex:1}
+#pitProjector.pit-projector-m01 .pit-ws-read-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#pitProjector.pit-projector-m01 .pit-ws-read-step{display:flex;align-items:center;gap:13px;min-width:0;padding:16px;border:1px solid #82624a;border-radius:11px;background:#222025}
+#pitProjector.pit-projector-m01 .pit-ws-read-step b{font:840 27px var(--pit-font-reading,"Segoe UI",sans-serif);color:#e9ae6d}
+#pitProjector.pit-projector-m01 .pit-ws-read-step p{font:530 clamp(17px,1.35vw,22px)/1.33 var(--pit-font-reading,"Segoe UI",sans-serif);margin:0;color:#f0e1d0}
+#pitProjector.pit-projector-m01 .pit-ws-read-aside{padding:22px;border:1px solid #956f49;border-radius:12px;background:linear-gradient(155deg,#3a2720,#1b1c22);display:flex;flex-direction:column;justify-content:center;gap:15px}
+#pitProjector.pit-projector-m01 .pit-ws-read-aside>span{font:800 clamp(13px,1.04vw,17px) var(--pit-font-reading,"Segoe UI",sans-serif);letter-spacing:.08em;color:#f1bb7c}
+#pitProjector.pit-projector-m01 .pit-ws-read-aside strong{font:770 clamp(29px,3vw,49px) var(--pit-font-chapter,Georgia,serif);color:#ffe6c0}
+#pitProjector.pit-projector-m01 .pit-ws-read-aside p{font:510 clamp(16px,1.2vw,20px)/1.42 var(--pit-font-reading,"Segoe UI",sans-serif)}
+#pitProjector.pit-projector-m01 .pit-ws-read-aside :is(a,button){display:block;text-decoration:none;border:1px solid #ce9c68;border-radius:8px;padding:12px 15px;background:#523629;color:#f9e3c4;font:760 clamp(14px,1.08vw,18px) var(--pit-font-reading,"Segoe UI",sans-serif);text-align:center;cursor:pointer}
+#pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-worksheet h3{font-size:clamp(23px,2vw,31px)!important}
+#pitProjector.pit-projector-m01 .pit-ws-task-steps{display:grid;grid-template-columns:1fr 1fr;gap:13px;flex:1;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-task-step{display:flex;align-items:center;gap:12px;border:1px solid #73503e;border-radius:10px;padding:15px;background:#272125}
+#pitProjector.pit-projector-m01 .pit-ws-task-step b{font:840 28px var(--pit-font-reading,"Segoe UI",sans-serif);color:#ecb77c}
+#pitProjector.pit-projector-m01 .pit-ws-task-step p{font:530 clamp(17px,1.3vw,21px)/1.35 var(--pit-font-reading,"Segoe UI",sans-serif);color:#f6e5d0;margin:0}
+#pitProjector.pit-projector-m01 .pit-ws-task-tiny{font:530 clamp(14px,1.04vw,17px)/1.37 var(--pit-font-reading,"Segoe UI",sans-serif);color:#cfbca8}
+#pitProjector.pit-projector-m01 .pit-ws-final-checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;flex:1;min-height:0}
+#pitProjector.pit-projector-m01 .pit-ws-final-check{display:flex;align-items:center;gap:16px;cursor:pointer;padding:clamp(17px,1.8vw,30px);border:1px solid #96704d;border-radius:12px;background:linear-gradient(160deg,#2d2222,#181a1e);min-width:0}
+#pitProjector.pit-projector-m01 .pit-ws-final-check:has(input:checked){border-color:#72ac86;background:#1d2b24}
+#pitProjector.pit-projector-m01 .pit-ws-final-check input{accent-color:#cfa36e;width:29px;height:29px;flex-shrink:0}
+#pitProjector.pit-projector-m01 .pit-ws-final-check span{display:flex;flex-direction:column;gap:15px}
+#pitProjector.pit-projector-m01 .pit-ws-final-check b{color:#e6ad72;font:800 24px var(--pit-font-reading,"Segoe UI",sans-serif)}
+#pitProjector.pit-projector-m01 .pit-ws-final-check strong{font:720 clamp(18px,1.53vw,25px)/1.36 var(--pit-font-reading,"Segoe UI",sans-serif);color:#ffe5c6}
+#pitProjector.pit-projector-m01 .pit-ws-final-deliver{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;border:1px solid #ac8256;border-radius:11px;background:#30241e;flex-shrink:0}
+#pitProjector.pit-projector-m01 .pit-ws-final-deliver small{display:block;font:800 clamp(12px,1vw,16px) var(--pit-font-reading,"Segoe UI",sans-serif);color:#ecb073;margin-bottom:4px}
+#pitProjector.pit-projector-m01 .pit-ws-final-deliver strong{display:block;font:750 clamp(18px,1.42vw,24px)/1.25 var(--pit-font-reading,"Segoe UI",sans-serif);color:#ffe0b6}
+#pitProjector.pit-projector-m01 .pit-ws-final-deliver p{font:510 clamp(14px,1.06vw,17px)/1.34 var(--pit-font-reading,"Segoe UI",sans-serif);margin-top:7px}
+#pitProjector.pit-projector-m01 [data-pit-ws-complete]{white-space:nowrap;font:770 15px var(--pit-font-reading,"Segoe UI",sans-serif);color:#c6ebca}
+#pitProjector.pit-projector-m01 .pit-ws-depth-grid:has(article:nth-child(4)){grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-height:780px) and (min-width:901px){
+ #pitProjector.pit-projector-m01 .pit-ws-all{gap:7px}
+ #pitProjector.pit-projector-m01 .pit-ws-choice{padding:13px 18px;gap:10px}
+ #pitProjector.pit-projector-m01 .pit-ws-choice strong{font-size:21px}
+ #pitProjector.pit-projector-m01 .pit-ws-read-step{padding:10px}
+ #pitProjector.pit-projector-m01 .pit-ws-read-aside{padding:12px;gap:8px}
+ #pitProjector.pit-projector-m01 .pit-ws-read-aside strong{font-size:33px}
+ #pitProjector.pit-projector-m01 .pit-ws-task-step{padding:9px}
+ #pitProjector.pit-projector-m01 .pit-ws-task-step p{font-size:16px}
+ #pitProjector.pit-projector-m01 .pit-ws-final-deliver{padding:9px 14px}
+ #pitProjector.pit-projector-m01 .pit-ws-final-check{padding:12px}
+}
+@media(max-width:900px){
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-bottom{flex-wrap:wrap}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-read-grid{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-choice-grid{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-final-checks{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-final-deliver{flex-wrap:wrap}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-cover .pit-u-cinema-panel{max-height:280px;height:240px}
+}
+@media(max-width:540px){
+ #pitProjector.pit-projector-m01 .pit-ws-read-list,#pitProjector.pit-projector-m01 .pit-ws-task-steps{grid-template-columns:1fr}
+ #pitProjector.pit-projector-m01 .pit-ws-final-check{padding:13px}
+ #pitProjector.pit-projector-m01 .pit-ws-final-check strong{font-size:17px}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-choice{padding:14px}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-choice strong{font-size:19px}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-read-aside{padding:15px}
+ #pitProjector.pit-projector-m01 .pit-ws-all .pit-ws-practice{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){#pitProjector.pit-projector-m01 .pit-ws-choice{transition:none!important}}
