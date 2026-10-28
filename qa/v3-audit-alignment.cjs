@@ -66,6 +66,8 @@ assert(!m05Student.includes('pit-private-teacher-notes'),'M05 student must not r
 assert(m05Student.includes('https://editor.gdevelop.io/'),'M05 student editor link exists');
 assert(m05Student.includes('não abre nem importa seu jogo automaticamente'),'M05 editor link must not imply automatic project loading');
 assert(m05Student.includes('aplicativo GDevelop já instalado'),'M05 student offline fallback exists');
+assert(read('v3/gdevelop-mission-five-guide.js').includes('TUTORIAL DE EVENTOS · 5 MINUTOS'),'M05 shared tutorial must use neutral audience heading');
+assert(!read('v3/gdevelop-mission-five-guide.js').includes('PROFESSOR · DEMONSTRAÇÃO'),'M05 student tutorial must not show teacher-only heading');
 for(const time of ['8 min','8 min','8 min'])assert(m05Student.includes(time),'M05 student 24min split');
 for(const time of ['8 MIN'])assert(m05Teacher.includes(time),'M05 teacher 24min split');
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
