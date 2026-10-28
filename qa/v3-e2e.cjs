@@ -48,6 +48,24 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await portal.locator('a[href="./professor-v3.html"]').count()>0,true,'portal routes to teacher V3');
  const portalHero=await portal.locator('.hero').evaluate(el=>getComputedStyle(el,'::before').backgroundImage);
  assert(portalHero.includes('missao-01.webp'),'portal uses approved cinematic mission artwork');
+ await portal.locator('#assetFormat').selectOption('3d');
+ assert.equal(await portal.locator('#assetGrid .resource-card').count(),5,'library shows five 3D props');
+ await portal.locator('#assetGenre').selectOption('corrida');
+ assert.equal(await portal.locator('#assetGrid .resource-card').count(),1,'racing filter intersects 3D');
+ await portal.locator('#assetFormat').selectOption('audio');
+ assert.equal(await portal.locator('#assetGrid .resource-card').count(),3,'racing audio filter has three samples');
+ await portal.locator('#assetGenre').selectOption('todos');
+ await portal.locator('#assetFormat').selectOption('todos');
+ for(const [id,file,magic] of [['explorador','explorador.png','PNG'],['glb-cristal','cristal_3d.glb','glTF'],['wav-coleta','coleta.wav','RIFF']]){
+  const promise=portal.waitForEvent('download',{timeout:15000});
+  await portal.locator('#assetGrid [data-asset="'+id+'"]').click();
+  const download=await promise;
+  assert.equal(download.suggestedFilename(),file,'download filename for '+id);
+  const bytes=require('node:fs').readFileSync(await download.path());
+  assert(bytes.length>100,'download contains real bytes: '+id);
+  assert.equal(magic==='PNG'?bytes.toString('ascii',1,4):bytes.toString('ascii',0,4),magic,'valid file signature '+id);
+ }
+ console.log('PASS UI-05: 3 real browser downloads (PNG/GLB/WAV) and genre/format filters');
  await portal.close();
  console.log('PASS UI-02: portal V3 routes, keyboard skip link and cinematic artwork in Chrome');
  await tp.goto(base+'professor-v3.html');
