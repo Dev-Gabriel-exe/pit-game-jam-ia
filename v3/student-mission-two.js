@@ -3,13 +3,15 @@
 const FIELDS=[
  {id:'scene',label:'Onde seu primeiro jogo vai acontecer?',min:5,max:86,help:'Uma cena, sala, pista, tela ou percurso curto — não o universo inteiro.'},
  {id:'mechanic',label:'Qual mecânica será jogável primeiro?',min:5,max:105,help:'Escolha uma única interação principal: coletar, conversar, clicar, saltar, correr...'},
- {id:'elements',label:'Quais três elementos são indispensáveis?',min:9,max:120,help:'Separe três elementos por vírgula, por exemplo: Personagem, Chave, Porta.'},
- {id:'test',label:'Como alguém vai comprovar que funciona?',min:12,max:155,help:'Defina uma situação e um resultado: quando acontecer X, o jogo mostrará Y.'},
+ {id:'elements',label:'Quais três elementos são indispensáveis?',min:9,max:120,help:'Liste três elementos separados por vírgula, ponto e vírgula ou ·. Ex.: Personagem, Chave, Porta.'},
+ {id:'test',label:'Como alguém vai comprovar que funciona?',min:12,max:155,help:'Escreva um teste observável: DADO um estado, QUANDO alguém age, ENTÃO o jogo responde.'},
  {id:'later',label:'O que pode ficar para depois?',min:0,max:120,help:'Opcional: efeitos, personagens, mapas ou sistemas que não são essenciais ao MVP.'}
 ];
 const blank=()=>({scene:'',mechanic:'',elements:'',test:'',later:''});
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const parts=s=>String(s??'').split(/[,;·•\n]/).map(clean).filter(Boolean);
+const essential=d=>[clean(d.scene).length>=5,clean(d.mechanic).length>=5,clean(d.elements).length>=9&&parts(d.elements).length===3,clean(d.test).length>=12];
 const key=id=>'pit_v3_missao02_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
 function load(session){
  try{
@@ -34,13 +36,12 @@ function validate(session){
  for(const f of FIELDS){
   if(clean(d[f.id]).length<f.min)return {ok:false,field:f.id,label:'Complete o campo "'+f.label+'" para definir seu MVP.'};
  }
- const count=d.elements.split(/[,;\n]/).map(clean).filter(Boolean).length;
+ const count=parts(d.elements).length;
  if(count!==3)return {ok:false,field:'elements',label:'Liste exatamente três elementos indispensáveis, separados por vírgula.'};
  return {ok:true,label:'MVP especificado.',field:null};
 }
 function progress(d){
- return [clean(d.scene).length>=5,clean(d.mechanic).length>=5,
-  clean(d.elements).split(/[,;\n]/).map(clean).filter(Boolean).length===3,clean(d.test).length>=12];
+ return essential(d);
 }
 function getIdea(ctx){
  const c=ctx?.idea||{},g=window.PIT_GENRE_CONTEXT;
@@ -56,7 +57,7 @@ function example(id,ctx){
   scene:p.scene,
   mechanic:p.mechanic,
   elements:p.character+', '+p.item+', '+(p.genre==='Puzzle'?'cofre':p.genre==='Corrida'?'linha de chegada':'saída'),
-  test:p.trigger+' → '+p.signal,
+  test:'Dado o início da fase, quando '+p.trigger+', então '+p.signal+'.',
   later:'Vários cenários, inventário completo, animações extras'
  })[id]||'';
 }
@@ -66,17 +67,19 @@ function field(id,ctx,d,readonly){
  const attr='data-m2-field="'+id+'" id="m2-'+id+'" maxlength="'+f.max+'" '+(readonly?'disabled':'')+' placeholder="'+esc('Ex.: '+sample)+'" autocomplete="off"';
  const input=textarea?'<textarea rows="'+(id==='test'?3:2)+'" '+attr+'>'+esc(d[id])+'</textarea>':
   '<input type="text" '+attr+' value="'+esc(d[id])+'">';
- return '<label class="m2-field" for="m2-'+id+'"><span>'+f.label+'</span>'+input+'<small>'+f.help+'</small></label>';
+ return '<label class="m2-field" for="m2-'+id+'"><span>'+f.label+'</span>'+input+'<small>'+f.help+'</small>'+(
+  id==='elements'?'<small class="m2-field-counter" id="m2ElementsCount" aria-live="polite">'+parts(d.elements).length+' de 3 elementos identificados</small>':
+  id==='test'?'<div class="m2-acceptance-guide"><b>TESTE DE ACEITAÇÃO</b><span>DADO que existe um estado inicial, QUANDO o jogador faz algo, ENTÃO o jogo mostra um resultado verificável.</span></div>':'')+'</label>';
 }
 function live(d,ctx){
  const i=getIdea(ctx);
  const pairs=[['CENÁRIO','scene','Uma cena pequena'],['MECÂNICA','mechanic','Uma interação principal'],
   ['3 ELEMENTOS','elements','Três objetos ou sistemas'],['PRONTO QUANDO','test','Uma condição testável']];
- const done=progress(d).filter(Boolean).length;
+ const ok=progress(d),done=ok.filter(Boolean).length;
  return '<aside class="m2-live" aria-label="Resumo do MVP em construção"><div class="m2-live-art"><span>PROJETO '+esc(i.genre?i.genre.toUpperCase():'AUTORAL')+'</span></div>'+
  '<div class="m2-live-inner"><span class="m2-brow">◈ DOCUMENTO DE ESCOPO · VERSÃO 0.1</span>'+
  '<h4>'+esc(i.title)+'</h4><p class="m2-live-idea">Da Missão 01: <strong>'+esc(i.action)+'</strong> para <strong>'+esc(i.objective)+'</strong>.</p>'+
- pairs.map(([name,id,empty],j)=>'<div class="m2-live-row '+(clean(d[id])?'ready':'')+'"><span>'+('0'+(j+1))+'</span><div><small>'+name+'</small><p data-m2-preview="'+id+'">'+esc(clean(d[id])||empty)+'</p></div></div>').join('')+
+ pairs.map(([name,id,empty],j)=>'<div class="m2-live-row '+(ok[j]?'ready':'')+'"><span>'+('0'+(j+1))+'</span><div><small>'+name+'</small><p data-m2-preview="'+id+'">'+esc(clean(d[id])||empty)+'</p></div></div>').join('')+
  '<div class="m2-scope-meter"><span><b id="m2Done">'+done+'</b>/4 decisões essenciais definidas</span><div><i id="m2Rail" style="width:'+(done*25)+'%"></i></div></div>'+
  '<div class="m2-later"><small>DEPOIS DA OFICINA · NÃO ESSENCIAL</small><p data-m2-preview="later">'+esc(clean(d.later)||'Nenhum item opcional registrado')+'</p></div></div></aside>';
 }
@@ -148,20 +151,25 @@ function evidence(session,source){
 function render(ctx){return '<div class="m2-root" id="m2Root">'+header(ctx.phase,ctx)+(ctx.phase==='practice'?building(ctx):ctx.phase==='review'?delivery(ctx):intro(ctx))+'</div>'}
 function mount(ctx){
  const root=document.querySelector('#m2Root');if(!root)return;
- const d=load(ctx.session),updating=()=>{};
+ const d=load(ctx.session);
  function redraw(){
-  const filled=progress(d).filter(Boolean).length;
+  const results=progress(d),filled=results.filter(Boolean).length;
   root.querySelectorAll('[data-m2-preview]').forEach(el=>{
    const k=el.dataset.m2Preview;
    const fallback={scene:'Uma cena pequena',mechanic:'Uma interação principal',elements:'Três objetos ou sistemas',
     test:'Uma condição testável',later:'Nenhum item opcional registrado'};
    el.textContent=clean(d[k])||fallback[k]||'';
-   el.closest('.m2-live-row')?.classList.toggle('ready',!!clean(d[k]));
+   const index={scene:0,mechanic:1,elements:2,test:3}[k];
+   el.closest('.m2-live-row')?.classList.toggle('ready',index!==undefined?results[index]:!!clean(d[k]));
   });
   const notice=root.querySelector('#m2Notice'),done=root.querySelector('#m2Done'),bar=root.querySelector('#m2Rail');
   if(notice)notice.textContent=filled+' de 4 decisões essenciais definidas · rascunho salvo neste navegador';
   if(done)done.textContent=filled;
   if(bar)bar.style.width=filled*25+'%';
+  const counter=root.querySelector('#m2ElementsCount');
+  if(counter){const n=parts(d.elements).length;counter.textContent=n+' de 3 elementos identificados'+(n>3?' · reduza o escopo':n===3?' · quantidade correta':'');counter.classList.toggle('m2-counter-complete',results[2]);}
+  const input=root.querySelector('#m2-elements');
+  if(input){const n=parts(d.elements).length;input.setAttribute('aria-invalid',String(Boolean(n)&&!results[2]));}
  }
  root.querySelectorAll('[data-m2-field]').forEach(el=>{
   const change=()=>{d[el.dataset.m2Field]=el.value;save(ctx.session,d);redraw()};
