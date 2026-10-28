@@ -18,7 +18,7 @@
   if(event.key==='Escape')closeAll();
  });
  document.addEventListener('click',event=>{
-  if(event.target.closest?.('[data-phase], [data-mission], [data-nav], #missionGallery, #missionGalleryGrid, .gallery-grid, .mission-nav, .phase-nav'))closeAll();
+  if(event.target.closest?.('[data-phase], [data-stage], [data-mission], [data-nav], #missionGallery, #missionGalleryGrid, .gallery-grid, .mission-nav, .phase-nav'))closeAll();
  },true);
  document.addEventListener('visibilitychange',()=>{
   if(document.hidden)closeAll();
