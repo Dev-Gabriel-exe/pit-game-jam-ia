@@ -14,7 +14,12 @@ function writeResults(project,{status='passed',pit=true,screenshot=true}={}){
  const dest=resultDir(project);
  fs.mkdirSync(path.join(dest,'gameplay-test-screenshots'),{recursive:true});
  const results=[{testName:'Official movement',status:'passed'},{testName:'Official collision',status:'passed'}];
- if(pit)results.push({testName:'PIT QA — generated asset',status,screenshots:[{file:'gameplay-test-screenshots/evidence.png'}]});
+ if(pit){
+  results.push({testName:'PIT QA — generated asset',status,screenshots:[{file:'gameplay-test-screenshots/evidence.png'}]});
+  results.push({testName:'PIT WIN — conditional event',status:'passed',assertions:[
+   {message:'negative',passed:true},{message:'positive',passed:true},{message:'persistence',passed:true}
+  ]});
+ }
  fs.writeFileSync(path.join(dest,'results.json'),JSON.stringify(results));
  fs.writeFileSync(path.join(dest,'gameplay-test-screenshots','evidence.png'),screenshot?png:Buffer.alloc(0));
 }
