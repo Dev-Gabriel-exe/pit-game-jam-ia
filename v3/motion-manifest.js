@@ -1,2 +1,2 @@
-/* Only include missions with a real, validated LTX-generated MP4. */
-window.PIT_MOTION_READY=[1];
+/* Only real validated LTX clips; the rest retain original WebP posters. */
+window.PIT_MOTION_READY=[1,2,3,4];
