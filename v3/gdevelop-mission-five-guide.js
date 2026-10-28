@@ -97,7 +97,7 @@ function panel(route,step){
 function render(initialRoute=0){
  const route=Number.isInteger(initialRoute)&&initialRoute>=0&&initialRoute<routes.length?initialRoute:0;
  return '<section class="m5g-root" id="m5Guide" aria-label="Tutorial de eventos do GDevelop — Missão 05">'+
- '<header class="m5g-head"><span>◈ MISSÃO 05 · PROFESSOR · DEMONSTRAÇÃO DE 5 MINUTOS</span>'+
+ '<header class="m5g-head"><span>◈ MISSÃO 05 · TUTORIAL DE EVENTOS · 5 MINUTOS</span>'+
  '<h2>Do SE ao ENTÃO. Na interface real.</h2><p>Escolha apenas uma rota conforme o gênero. As capturas pertencem à documentação oficial do editor; comandos e posições podem variar conforme a versão. O diagrama de apoio é autoral.</p>'+
  '<div class="m5g-clock">1 min · localizar Events <b>→</b> 1 min · criar evento <b>→</b> 1 min · condição <b>→</b> 1 min · variável/ação <b>→</b> 1 min · Preview</div></header>'+
  '<div class="m5g-tabs" role="tablist" aria-label="Rota por gênero">'+routes.map((r,i)=>
