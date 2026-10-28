@@ -90,21 +90,39 @@ function audioDownload(a){
  const env=Math.pow(1-u,2.3)*Math.min(1,u*45);const sample=(Math.sin(2*Math.PI*hz*t)+.18*Math.sin(2*Math.PI*hz*2.01*t))*env*.30;v.setInt16(44+i*2,Math.max(-32767,Math.min(32767,Math.round(sample*32767))),true);}
  downloadBlob(new Blob([buffer],{type:'audio/wav'}),a.file);
 }
+/* Suggested genres are discovery aids, not technical compatibility or licenses. */
+const genreExamples={
+ rpg:['explorador','heroina','robo','monstro','mapa-floresta','mapa-cidade','mapa-caverna','chave','moeda','cristal','porta','coracao','pocao','checkpoint','glb-cristal','glb-totem','glb-bau','glb-portal','wav-coleta','wav-vitoria','wav-dano','wav-portal','wav-menu'],
+ plataforma:['explorador','heroina','robo','monstro','fantasma','mapa-plataforma','mapa-caverna','moeda','cristal','coracao','pocao','checkpoint','glb-obstaculo','wav-coleta','wav-vitoria','wav-dano'],
+ puzzle:['heroina','robo','monstro','fantasma','mapa-floresta','mapa-caverna','chave','cristal','porta','pocao','glb-cristal','glb-totem','glb-bau','glb-portal','wav-portal','wav-menu','wav-vitoria'],
+ corrida:['piloto','mapa-corrida','glb-obstaculo','wav-menu','wav-dano','wav-vitoria']
+};
+function assetMatches(a,{cat='todos',search='',genre='todos',format='todos'}={}){
+ const type=a.cat==='modelo'?'3d':a.cat==='som'?'audio':'2d';
+ const q=String(search).trim().toLocaleLowerCase('pt-BR');
+ return (cat==='todos'||a.cat===cat)
+  &&(format==='todos'||type===format)
+  &&(genre==='todos'||(genreExamples[genre]||[]).includes(a.id))
+  &&(!q||[a.name,a.desc,a.file].some(x=>x.toLocaleLowerCase('pt-BR').includes(q)));
+}
 function assetIcon(a){return ({personagem:'🎮',mapa:'🗺️',item:'🗝️',modelo:'🧊',som:'🔊'})[a.cat]}
 function renderAssets(){
  const cat=document.querySelector('[data-filter].active')?.dataset.filter||'todos';
- const search=(document.getElementById('assetSearch')?.value||'').toLowerCase();
- const filtered=assets.filter(a=>(cat==='todos'||a.cat===cat) && (a.name.toLowerCase().includes(search)||a.desc.toLowerCase().includes(search)));
+ const search=document.getElementById('assetSearch')?.value||'';
+ const genre=document.getElementById('assetGenre')?.value||'todos';
+ const format=document.getElementById('assetFormat')?.value||'todos';
+ const filtered=assets.filter(a=>assetMatches(a,{cat,search,genre,format}));
  const box=document.getElementById('assetGrid');if(!box)return;
  box.innerHTML=filtered.map(function(a){
  const image='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgAsset(a));
  const tag={personagem:'PNG · SPRITE',mapa:'PNG · CENÁRIO',item:'PNG · OBJETO',modelo:'GLB · MODELO 3D',som:'WAV · ÁUDIO'}[a.cat];
- return '<article class="resource-card"><div class="asset-picture"><img src="'+image+'" loading="lazy" alt="Prévia de '+a.name+'"></div><div class="res-inner"><small>'+tag+'</small><h3>'+a.name+'</h3><p>'+a.desc+'</p><button type="button" class="download" data-asset="'+a.id+'">↓ Baixar '+a.file+'</button></div></article>';
+ return '<article class="resource-card"><div class="asset-picture"><img src="'+image+'" loading="lazy" alt="Prévia de '+a.name+'"></div><div class="res-inner"><small>'+tag+'</small><h3>'+a.name+'</h3><p>'+a.desc+'</p><small title="Recurso procedural original do projeto, não extraído de jogo comercial">Gerado localmente · uso didático</small><button type="button" class="download" data-asset="'+a.id+'">↓ Baixar '+a.file+'</button></div></article>';
  }).join('')||'<p>Sem resultados. Experimente outra categoria.</p>';
  box.querySelectorAll('[data-asset]').forEach(b=>b.addEventListener('click',async function(){const a=assets.find(x=>x.id===b.dataset.asset);b.disabled=true;const old=b.textContent;b.textContent='Preparando arquivo…';try{if(a.cat==='modelo')modelDownload(a);else if(a.cat==='som')audioDownload(a);else await pngDownload(a);}catch(e){alert('Não foi possível baixar. Tente Chrome/Edge atualizado. '+e.message)}finally{b.disabled=false;b.textContent=old}}));
  const n=document.getElementById('resultCount');if(n)n.textContent=filtered.length+' recursos nesta seleção';
 }
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',function(){document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.remove('active')});b.classList.add('active');renderAssets();}));
 document.getElementById('assetSearch')?.addEventListener('input',renderAssets);
+for(const id of ['assetGenre','assetFormat'])document.getElementById(id)?.addEventListener('change',renderAssets);
 function refreshStatus(){try{const x=JSON.parse(localStorage.getItem('pit_creator_mode_v08')||'{}');let done=Array.isArray(x.done)?x.done:[];const meter=document.getElementById('myProgress');if(meter)meter.textContent=done.length+'/6 missões • '+done.reduce((s,n)=>s+[100,120,150,150,200,280][n-1],0)+' XP';}catch(e){}}
 renderAssets();refreshStatus();window.addEventListener('pageshow',refreshStatus);
