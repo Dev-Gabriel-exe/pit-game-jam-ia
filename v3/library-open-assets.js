@@ -27,6 +27,9 @@ const packs=[
  {id:'k-impact-audio',name:'130 impactos e golpes',cat:'som',type:'audio',genre:'rpg plataforma puzzle corrida',count:130,tag:'Efeitos OGG',desc:'Colisões, golpes, passos e ruídos de ação para feedback do jogador.',page:K+'impact-sounds',zip:'https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip',img:'https://kenney.nl/media/pages/assets/impact-sounds/37d145475f-1677589720/audio_impact.png'},
  {id:'k-scifi-audio',name:'70 sons futuristas',cat:'som',type:'audio',genre:'plataforma corrida puzzle',count:70,tag:'Sons OGG',desc:'Motores, lasers e efeitos de tecnologia para jogos futuristas.',page:K+'sci-fi-sounds',zip:'https://kenney.nl/media/pages/assets/sci-fi-sounds/6b296f9ecf-1677589334/kenney_sci-fi-sounds.zip',img:'https://kenney.nl/media/pages/assets/sci-fi-sounds/112ea5fed7-1677589328/audiopreview_scifi.png'},
  {id:'k-rpg-audio',name:'50 sons de RPG',cat:'som',type:'audio',genre:'rpg puzzle',count:50,tag:'Efeitos de aventura',desc:'Passos, armas e ações de RPG, disponíveis gratuitamente no catálogo original.',page:K+'rpg-audio',img:'https://kenney.nl/media/pages/assets/rpg-audio/ce8569f2f8-1677590326/preview-4.png'},
+,
+ {id:'v-blocky-glb',name:'8 heróis 3D com animações',source:'Vuena',cat:'personagem',type:'3d',genre:'rpg plataforma puzzle',count:8,tag:'Knight · Wizard · Robot · Zombie',desc:'Herói, cavaleiro, mago, pirata, robô, zumbi e princesa. O pacote inclui GLBs com 6 animações cada.',page:'https://vuena.itch.io/blocky-characters-free-sample',img:'https://img.itch.zone/aW1nLzMxMjcwMTk1LnBuZw==/original/OJm0OP.png'},
+ {id:'q-platformer',name:'100+ modelos 3D de plataforma',source:'Quaternius',cat:'mapa',type:'3d',genre:'plataforma rpg',count:100,tag:'Personagem · inimigos · plataformas',desc:'Personagem animado, 4 inimigos, plataformas, mecanismos e natureza. Formatos glTF/FBX/OBJ; converta em GLB para GDevelop.',page:'https://quaternius.itch.io/ultimate-platformer-pack',img:'https://img.itch.zone/aW1nLzc3MjUwOTMuanBn/original/CZF2e6.jpg'}
 ];
 const models=[
  {id:'g-guard-a',name:'Guardião arcano A',cat:'personagem',genre:'rpg puzzle',icon:'⚔️',info:'Inimigo 3D animado, formato GLB.',size:'167 KB',url:A+'minion/minion-a01.glb',source:'Gobkit'},
@@ -69,6 +72,8 @@ function render(){
  const modelGrid=host.querySelector('#pitGlbGrid'),packGrid=host.querySelector('#pitPackGrid');
  const counts=host.querySelector('#pitOpenCount');
  counts.textContent=individual.length+' modelos GLB individuais · '+curated.length+' pacotes gratuitos';
+ const stat=[...document.querySelectorAll('.statband span')].find(x=>/recursos para download|arquivos individuais/i.test(x.textContent));
+ if(stat){const locals=window.PIT_LIBRARY_API?.assets?.length||0;stat.textContent=(locals+models.length)+' arquivos individuais · '+packs.length+' pacotes CC0';}
  modelGrid.innerHTML=individual.map(a=>'<article class="pit-real-card pit-real-model" data-kind="glb" data-id="'+a.id+'">'+
   '<div class="pit-real-model-art"><span class="pit-real-emblem" aria-hidden="true">'+a.icon+'</span><span class="pit-real-format">GLB REAL · '+a.size+'</span></div>'+
   '<div class="pit-real-card-body"><small>'+esc(a.source)+' · CC0</small><h3>'+esc(a.name)+'</h3><p>'+esc(a.info)+'</p>'+
@@ -92,7 +97,7 @@ host.innerHTML='<div class="pit-open-head"><div><span class="pit-open-eyebrow">�
  '<section id="pitModelSection"><div class="pit-open-subhead"><h4>Personagens e objetos 3D · download individual</h4><p>GLB prontos para importar no <strong>GDevelop → Objetos → Modelo 3D</strong>. Clique em “Visualizar 3D” para girar o modelo real. Animações existentes dependem da configuração no jogo.</p></div><div id="pitGlbGrid" class="pit-real-grid"></div></section>'+
  '<section id="pitPackSection"><div class="pit-open-subhead"><h4>Pacotes completos de criadores independentes</h4><p>São ZIPs oficiais da Kenney, não recursos gerados por formas geométricas. Extraia o pacote e importe os arquivos desejados. Para modelos que não estejam em GLB, converta antes de usar no GDevelop.</p></div><div id="pitPackGrid" class="pit-real-grid"></div></section>'+
  '<p id="pitOpenEmpty" hidden>Nenhum recurso encontrado. Tente outro gênero ou pesquisa.</p>'+
- '<div class="pit-open-disclaimer"><strong>Licenças e formatos verificados:</strong> Kenney e Gobkit disponibilizam esses pacotes em CC0. Arquivos ZIP podem incluir FBX, OBJ, glTF e formatos variados; <strong>o GDevelop exige GLB para objetos 3D</strong>. Os modelos individuais acima já são GLB. Links de ZIP levam diretamente aos arquivos oficiais quando disponíveis. <a href="https://wiki.gdevelop.io/gdevelop5/objects/3d-model/" target="_blank" rel="noopener noreferrer">Como importar no GDevelop</a>.</div>';
+ '<div class="pit-open-disclaimer"><strong>Licenças e formatos verificados:</strong> Kenney, Gobkit, Vuena e Quaternius disponibilizam os recursos selecionados em CC0. Arquivos ZIP podem incluir FBX, OBJ, glTF e formatos variados; <strong>o GDevelop exige GLB para objetos 3D</strong>. Os modelos individuais acima já são GLB. Links de ZIP levam diretamente aos arquivos oficiais quando disponíveis. <a href="https://wiki.gdevelop.io/gdevelop5/objects/3d-model/" target="_blank" rel="noopener noreferrer">Como importar no GDevelop</a>.</div>';
 const modal=document.createElement('div');
 modal.className='pit-real-modal';modal.id='pitRealModal';modal.hidden=true;modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label','Prévia 3D do recurso');
 modal.innerHTML='<section class="pit-real-modal-body"><div class="pit-real-modal-top"><span>✦ VISUALIZADOR 3D · GLB REAL</span><button type="button" id="pitRealClose" aria-label="Fechar visualizador 3D">✕ Fechar</button></div>'+
@@ -180,5 +185,6 @@ modal.querySelector('#pitRealDownload').addEventListener('click',e=>{if(current)
 modal.addEventListener('click',e=>{if(e.target===modal)close()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
 render();
+window.addEventListener('pageshow',render);
 window.PIT_OPEN_ASSETS=Object.freeze({packs,models,render});
 })();
