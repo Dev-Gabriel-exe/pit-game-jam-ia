@@ -33,6 +33,10 @@ jobs:
           node --check v3/app.js
           node --check v3/teacher-content.js
           node qa/v3-e2e.cjs
+      - name: Validate real PNG, GLB and WAV library previews in Chrome
+        run: |
+          node --check v3/library-preview.js
+          node qa/v3-library-preview-browser.cjs
       - name: Run UI-08 viewport, focus and reduced-motion audit
         run: node qa/v3-visual-audit.cjs
       - name: Verify FUN-01 static mirror cannot use live credentials
