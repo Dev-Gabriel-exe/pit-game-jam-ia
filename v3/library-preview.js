@@ -102,7 +102,10 @@ async function open(id,trigger){
    const blob=await api.assetBlob(a);if(token!==runId)return;
    objectUrl=URL.createObjectURL(blob);
    const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=objectUrl;audio.setAttribute('aria-label','Ouvir '+a.name);
-   stage.appendChild(audio);
+   const error=document.createElement('p');error.className='pit-preview-error';error.setAttribute('role','alert');error.hidden=true;
+   error.textContent='O navegador não conseguiu reproduzir este WAV. Você ainda pode baixar o arquivo e testá-lo no GDevelop.';
+   audio.addEventListener('error',()=>{if(token===runId)error.hidden=false;});
+   stage.append(audio,error);
   }else if(a.cat==='modelo'){
    const blob=await api.assetBlob(a);const mesh=readGlb(await blob.arrayBuffer());if(token!==runId)return;
    const canvas=document.createElement('canvas');canvas.width=560;canvas.height=340;canvas.setAttribute('role','img');canvas.setAttribute('aria-label','Modelo 3D real '+a.name+' em visualização rotativa');
