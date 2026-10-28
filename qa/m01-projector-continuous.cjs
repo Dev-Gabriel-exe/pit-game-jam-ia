@@ -40,8 +40,8 @@ const {chromium}=require('playwright');
     if(geometry.horizontal)throw new Error('Overflow horizontal slide '+(i+1)+': '+title);
     if(geometry.vertical)warnings.push(size.width+'px slide '+(i+1)+' overflow vertical: '+title);
     if(body.includes('GDevelop:')||title.startsWith('GDevelop:'))guide++;
-    if(body.includes('Como criar, conferir e entregar'))practice=true;
-    if(body.includes('O que será avaliado'))review=true;
+    if(title.includes('Como criar, conferir e entregar'))practice=true;
+    if(title.includes('O que será avaliado'))review=true;
     if(title==='Simulador: o castelo dos cristais'){
      const collect=page.locator('#pitProjectorContent [data-tm1="collect"]');
      assert(await collect.count(),'Simulador não está na apresentação');
