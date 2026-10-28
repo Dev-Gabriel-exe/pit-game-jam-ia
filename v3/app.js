@@ -56,6 +56,21 @@ function missionThreeContext(){
   phase:activePhase,status:entry(3)?.status||'',feedback:entry(3)?.feedback||'',preview:visualPreview,
   canSubmit:state.current_stage>3||(state.current_stage===3&&['practice','review'].includes(state.phase))};
 }
+function missionFourContext(){
+ const session=visualPreview?'preview':studentSession?.studentId||'student-unverified';
+ const one=entry(1),two=entry(2),three=entry(3);
+ if(!TEACHER&&one?.evidence&&window.PIT_MISSION_ONE)window.PIT_MISSION_ONE.hydrate(session,one.evidence,one.status);
+ if(!TEACHER&&two?.evidence&&window.PIT_STUDENT_MISSION_TWO)window.PIT_STUDENT_MISSION_TWO.hydrate(session,two.evidence,two.status);
+ if(!TEACHER&&three?.evidence&&window.PIT_STUDENT_MISSION_THREE)window.PIT_STUDENT_MISSION_THREE.hydrate(session,three.evidence,three.status);
+ return {
+  session,
+  idea:!TEACHER&&window.PIT_MISSION_ONE?window.PIT_MISSION_ONE.load(session):{},
+  mvp:!TEACHER&&window.PIT_STUDENT_MISSION_TWO?window.PIT_STUDENT_MISSION_TWO.load(session):{},
+  previous:!TEACHER&&window.PIT_STUDENT_MISSION_THREE?window.PIT_STUDENT_MISSION_THREE.load(session):{},
+  phase:activePhase,status:entry(4)?.status||'',feedback:entry(4)?.feedback||'',preview:visualPreview,
+  canSubmit:state.current_stage>4||(state.current_stage===4&&['practice','review'].includes(state.phase))
+ };
+}
 function statusLabel(n){return stageStatuses[entry(n)?.status]||'Não iniciada'}
 function renderJourney(){
  const list=$('journey');
@@ -234,6 +249,7 @@ function renderMain(){
  const missionOne=!TEACHER&&m.n===1&&!!window.PIT_MISSION_ONE;
  const missionTwo=!TEACHER&&m.n===2&&!!window.PIT_STUDENT_MISSION_TWO;
  const missionThree=!TEACHER&&m.n===3&&!!window.PIT_STUDENT_MISSION_THREE;
+ const missionFour=!TEACHER&&m.n===4&&!!window.PIT_STUDENT_MISSION_FOUR;
  const teacherMissionOne=TEACHER&&m.n===1&&!!window.PIT_TEACHER_MISSION_ONE;
  const teacherMissionTwo=TEACHER&&m.n===2&&!!window.PIT_TEACHER_MISSION_TWO;
  const teacherMissionThree=TEACHER&&m.n===3&&!!window.PIT_TEACHER_MISSION_THREE;
@@ -242,14 +258,17 @@ function renderMain(){
  document.body.classList.toggle('pit-mission-one',missionOne);
  document.body.classList.toggle('pit-mission-two',missionTwo);
  document.body.classList.toggle('pit-mission-three',missionThree);
+ document.body.classList.toggle('pit-mission-four',missionFour);
  if(missionOne)window.PIT_MISSION_ONE.hydrate(missionOneContext().session,e?.evidence,e?.status);
  if(missionTwo)window.PIT_STUDENT_MISSION_TWO.hydrate(missionTwoContext().session,e?.evidence,e?.status);
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.hydrate(missionThreeContext().session,e?.evidence,e?.status);
+ if(missionFour)window.PIT_STUDENT_MISSION_FOUR.hydrate(missionFourContext().session,e?.evidence,e?.status);
  $('mainContent').innerHTML=teacherMissionFourDemo?window.PIT_GDEVELOP_M04_GUIDE.render():
   teacherMissionFourBriefing?window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS.render():
   teacherMissionThree?window.PIT_TEACHER_MISSION_THREE.render(activePhase):
   teacherMissionTwo?window.PIT_TEACHER_MISSION_TWO.render(activePhase):
   teacherMissionOne?window.PIT_TEACHER_MISSION_ONE.render(activePhase):
+  missionFour?window.PIT_STUDENT_MISSION_FOUR.render(missionFourContext()):
   missionThree?window.PIT_STUDENT_MISSION_THREE.render(missionThreeContext()):
   missionTwo?window.PIT_STUDENT_MISSION_TWO.render(missionTwoContext()):
   missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
@@ -265,7 +284,7 @@ function renderMain(){
  }else{
   $('missionStatus').textContent=statusLabel(m.n);
   $('missionStatus').className='state-pill '+(e?.status||'');
-  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
+  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree||missionFour)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='← Passo anterior';
   $('navSecondary').disabled=activePhase==='briefing';
@@ -279,6 +298,11 @@ function renderMain(){
  if(teacherMissionThree)window.PIT_TEACHER_MISSION_THREE.mount();
  if(teacherMissionFourBriefing)window.PIT_TEACHER_MISSION_FOUR_FOUNDATIONS.mount();
  if(teacherMissionFourDemo)window.PIT_GDEVELOP_M04_GUIDE.mount();
+ if(missionFour)window.PIT_STUDENT_MISSION_FOUR.mount({
+  ...missionFourContext(),
+  onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
+  onMessage:message=>setToast(message,true)
+ });
  if(missionThree)window.PIT_STUDENT_MISSION_THREE.mount({
   ...missionThreeContext(),
   onPhase:p=>{activePhase=p;renderMain();scrollMissionToStart();},
@@ -342,6 +366,7 @@ async function sendWork(status){
  const pilot=!TEACHER&&activeStage===1&&!!window.PIT_MISSION_ONE;
  const pilotTwo=!TEACHER&&activeStage===2&&!!window.PIT_STUDENT_MISSION_TWO;
  const pilotThree=!TEACHER&&activeStage===3&&!!window.PIT_STUDENT_MISSION_THREE;
+ const pilotFour=!TEACHER&&activeStage===4&&!!window.PIT_STUDENT_MISSION_FOUR;
  let evidence=$('evidenceInput')?.value||'';
  let route=$('routeSelect')?.value||'2d';
  if(pilot){
@@ -364,6 +389,19 @@ async function sendWork(status){
   evidence=window.PIT_STUDENT_MISSION_THREE.evidence(q.session,q.idea);
   route=window.PIT_STUDENT_MISSION_THREE.load(q.session).objectType.startsWith('3D')?'3d':'2d';
   if(visualPreview)return setToast('Prévia: registro preparado, sem envio para a turma real.');
+ }else if(pilotFour){
+  const q=missionFourContext(),validation=window.PIT_STUDENT_MISSION_FOUR.validate(q.session,q);
+  if(!validation.ok){
+   activePhase='practice';renderMain();scrollMissionToStart();setToast(validation.label,true);
+   if(validation.field!=='checks')$('m4s-'+validation.field)?.focus();
+   else $('mainContent').querySelector('[data-m4s-check]')?.focus();
+   return;
+  }
+  if(status==='submitted'&&!q.canSubmit)return setToast('O professor ainda não liberou a prática.',true);
+  evidence=window.PIT_STUDENT_MISSION_FOUR.evidence(q.session,q);
+  const draft=window.PIT_STUDENT_MISSION_FOUR.load(q.session);
+  route=window.PIT_STUDENT_MISSION_FOUR.routeServerType(window.PIT_STUDENT_MISSION_FOUR.activeRoute(q,draft));
+  if(visualPreview)return setToast('Prévia: testes registrados, sem envio para a turma real.');
  }else{
   if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
   if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
@@ -422,7 +460,7 @@ $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage,activePhase);
  const idx=phaseList.indexOf(activePhase);
  if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();scrollMissionToStart();}
- else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
+ else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE)||(activeStage===4&&window.PIT_STUDENT_MISSION_FOUR))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10){selectStage(activeStage+1);teacherAdvance(activeStage,'briefing')}return}
