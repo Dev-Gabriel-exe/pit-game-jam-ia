@@ -2227,6 +2227,12 @@
       "task": "REL-01",
       "commit": "9aebe7eba633bff93b6fcac0cd1fa2dac6fbe634",
       "summary": "Verified all GLB mesh and WAV PCM structural tests Browser QA 40691686142 SUCCESS and static QA 40691686228 SUCCESS (commit 1616f2ae). Added browser decoding of all 36 PNG assets with real Image.decode and strict 160x160 sprite / 1024x576 map dimensions (9aebe7eb). New CI pending; GDevelop GUI, physical mobile and peer tests NOT_RUN; 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-28",
+      "task": "REL-01",
+      "commit": "21422c6aa97255a7539d7e4113afc055f2fc5930",
+      "summary": "Previous 36-PNG decode browser run 40692311960 reached and passed library preview step; overall workflow still running FUN-09 at last observation. Added pixel alpha assertions for all 25 sprite/item PNG transparent corners and 11 maps opaque center, in addition to 36 PNG decode and dimensions. CI pending; 54/59 unchanged; GDevelop GUI/mobile/peer NOT_RUN."
     }
   ]
 }
