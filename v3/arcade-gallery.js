@@ -52,6 +52,7 @@ function scene(m){
 const root=$('missionGallery');
 if(!root||!M.length){window.PIT_ARCADE=null;return;}
 const track=$('missionGalleryGrid'),steps=$('arcadeChapters'),reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lowStimulus=reduced||Boolean(window.navigator?.connection?.saveData);
 const pad=n=>String(n).padStart(2,'0');
 let active=0,opened=false,launching=false,options={},previousFocus=null,touchX=null,transitionTimer=null;
 let progressMap=new Map();
@@ -131,8 +132,8 @@ function choose(index,initial){
   dot.setAttribute('aria-current',String(i===active));
  });
  const selected=track.querySelector('.arcade-card.current');
- if(selected&&selected.scrollIntoView)selected.scrollIntoView({behavior:initial||reduced?'auto':'smooth',block:'nearest',inline:'center'});
- if(!initial&&!reduced&&selected){selected.classList.remove('arcade-pop');void selected.offsetWidth;selected.classList.add('arcade-pop');}
+ if(selected&&selected.scrollIntoView)selected.scrollIntoView({behavior:initial||lowStimulus?'auto':'smooth',block:'nearest',inline:'center'});
+ if(!initial&&!lowStimulus&&selected){selected.classList.remove('arcade-pop');void selected.offsetWidth;selected.classList.add('arcade-pop');}
 }
 function enter(){
  if(!opened||launching)return;
@@ -148,7 +149,7 @@ function enter(){
    transitionTimer=null;
    close();
    if(typeof options.onEnter==='function')options.onEnter(m.n);
- },reduced?130:1600);
+ },lowStimulus?130:1600);
 }
 function open(data){
  if(opened){refresh(data);return;}
@@ -156,7 +157,7 @@ function open(data){
  active=Math.max(0,Math.min(M.length-1,Number(options.activeStage||options.currentStage||1)-1));
  previousFocus=document.activeElement;
  opened=true;
- root.hidden=false;root.classList.add('open');document.body.classList.add('pit-arcade-open');
+ root.hidden=false;root.classList.add('open');root.classList.toggle('pit-low-stimulus',lowStimulus);document.body.classList.add('pit-arcade-open');
  build();
  $('missionGalleryClose').focus();
 }
@@ -168,7 +169,7 @@ function refresh(data){
 function close(){
  clearTimeout(transitionTimer);transitionTimer=null;launching=false;opened=false;
  $('arcadeCinematic').hidden=true;$('arcadeCinematic').setAttribute('aria-hidden','true');
- root.classList.remove('launching','open');root.hidden=true;
+ root.classList.remove('launching','open','pit-low-stimulus');root.hidden=true;
  document.body.classList.remove('pit-arcade-open');
  if(previousFocus&&previousFocus.isConnected)previousFocus.focus();
 }
@@ -188,7 +189,7 @@ track.addEventListener('touchend',e=>{
  if(Math.abs(dx)>45)choose(active+(dx<0?1:-1));
 },{passive:true});
 track.addEventListener('pointermove',e=>{
- if(reduced)return;const card=e.target.closest('.arcade-card.current');
+ if(lowStimulus)return;const card=e.target.closest('.arcade-card.current');
  if(!card)return;const box=card.getBoundingClientRect();
  card.style.setProperty('--mx',(((e.clientX-box.left)/box.width-.5)*15).toFixed(1)+'px');
  card.style.setProperty('--my',(((e.clientY-box.top)/box.height-.5)*10).toFixed(1)+'px');
