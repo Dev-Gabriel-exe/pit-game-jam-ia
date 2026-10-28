@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-M05",
+  "priority": "V4-M05-CI",
   "current_phase": "MISSOES",
-  "last_task": "V4-M04",
+  "last_task": "V4-M05",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2290,37 +2290,43 @@
       "task": "V4-M04",
       "commit": "24fbefbfb1c9ca5f5e80a043e5236faf2269ba48",
       "summary": "Audited M04 professor/student. Added direct GDevelop editor link and explicit no-auto-import/offline fallback; fixed collapsed review teacher note CSS and accessible paper icon; expanded static QA and real Chrome regression to practice/review at 390/1280px. Static QA run 40723851317 SUCCESS; Browser QA run 40723850983 IN_PROGRESS. Audit doc 933967658; 54/59 unchanged, GDevelop GUI/physical mobile/peer NOT_RUN."
+    },
+    {
+      "at": "2026-10-28T17:22:00Z",
+      "task": "V4-M05",
+      "commit": "ccd0c33618b022ea0988c94a3e476c3274831878",
+      "summary": "M05 pedagogical two-face audit: corrected chapter IV→V, concealed private teacher review workflow in default-closed accessible details, added student GDevelop editor handoff/offline fallback; expanded static and real Chrome private-notes regression. Static QA 40734962746 SUCCESS on e33fc8f16; Browser QA 40734962627 IN_PROGRESS at checkpoint. GDevelop GUI/physical mobile/peer NOT_RUN. Original 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M04",
+    "task": "V4-M05",
     "status": "in_progress",
-    "updated_at": "2026-10-28T16:14:06.337Z",
+    "updated_at": "2026-10-28T17:22:00Z",
     "code_commits": [
-      "8fc93f5eaa293c56d32ea74fdb51a4a8d8277017",
-      "953c89828decc838f72bd6a35bb8e205b9a3ace6",
-      "8ee2eba00eadb24efa6e97016b88352bb73b802c",
-      "24fbefbfb1c9ca5f5e80a043e5236faf2269ba48"
+      "4901b555b04db691d6fc0d36eabcd8dcbd9031cd",
+      "cc16a7534de29904b9e4cf8406c1d86446afdaa2",
+      "5c0ae78159e8706d97d2101fb0912ff2b4e425eb",
+      "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b"
     ],
-    "audit_commit": "93396765836a573d7b1835d801ed6087e94923d0",
+    "audit_commit": "ccd0c33618b022ea0988c94a3e476c3274831878",
     "tests": [
       {
         "name": "GitHub Actions static QA",
-        "run_id": 40723851317,
-        "sha": "24fbefbfb1c9ca5f5e80a043e5236faf2269ba48",
+        "run_id": 40734962746,
+        "sha": "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b",
         "result": "SUCCESS"
       },
       {
         "name": "GitHub Actions Browser QA",
-        "run_id": 40723850983,
-        "sha": "24fbefbfb1c9ca5f5e80a043e5236faf2269ba48",
+        "run_id": 40734962627,
+        "sha": "e33fc8f16f6bf5a8c031c99fdd29b598e3b5839b",
         "result": "IN_PROGRESS"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
-    "next_task": "V4-M05",
-    "blocker": "M04 Chrome regression pending; no manual human signoff"
+    "next_task": "V4-M05-CI then V4-M06",
+    "blocker": "Browser QA pending and human GDevelop/mobile/peer not run"
   }
 }
