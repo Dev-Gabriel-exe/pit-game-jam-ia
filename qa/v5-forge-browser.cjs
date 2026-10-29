@@ -18,7 +18,7 @@ const {chromium}=require('playwright');
    for(const id of ['B01','D01','T01','B02','D02'])await page.locator('[data-talent="'+id+'"]').click();
    assert.equal(await page.locator('#forgeSelectedSlots .occupied').count(),5);
    assert.equal(await page.locator('#forgeTryM5').isDisabled(),true);
-   assert.equal((await page.evaluate(()=>window.PIT_V5_FORGE_DEBUG.planned)).length,1); // T01 remains planned; D01/D02 work since B.3
+   assert.equal((await page.evaluate(()=>window.PIT_V5_FORGE_DEBUG.planned)).length,0); // B5 made T01 executable along with D01/D02
    await page.locator('#forgeMissionRange').evaluate(el=>{el.value='3';el.dispatchEvent(new Event('input',{bubbles:true}))});
    assert.equal(await page.locator('#forgeSelectedSlots .occupied').count(),3);
    assert.equal(await page.locator('#forgeChosen').textContent(),'3 / 3');
