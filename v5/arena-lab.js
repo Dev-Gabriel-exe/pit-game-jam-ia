@@ -270,7 +270,8 @@ function initRound({sameSeed=false}={}){
   state.stage.fighters(state.roster,{seed:state.seed,limit:battleLimit,
    damageScale:damageMode.scale,mageDamageBonus:damageMode.mageBonus,
    stormDelay:damageMode.scale===1?18:damageMode.scale===.75?28:damageMode.scale===.60?34:40,
-   stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:damageMode.scale===.60?.60:.55});
+   stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:damageMode.scale===.60?.60:.55,
+   engagementMode:trial?'spaced':'free'});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   $('cinematicCamera').setAttribute('aria-pressed','true');
