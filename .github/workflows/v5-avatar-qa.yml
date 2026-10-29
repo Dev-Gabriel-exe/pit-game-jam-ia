@@ -29,7 +29,7 @@ jobs:
           node qa/v5-wardrobe-catalog.cjs
   interface:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - run: |
@@ -42,3 +42,4 @@ jobs:
           sleep 2
           node qa/v5-avatar-gallery-browser.cjs
           node qa/v5-wardrobe-browser.cjs
+          node qa/v5-avatar-combat-browser.cjs
