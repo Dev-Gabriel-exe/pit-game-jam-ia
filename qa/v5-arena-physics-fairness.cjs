@@ -129,6 +129,25 @@ console.log('PASS swept projectile interception, dead-target persistence and pos
 }
 
 console.log('PASS Guardian range-aware Fortress decision.');
+// Legacy Rune Mage's Barrier is documented as temporary. Holding an
+// unconsumed shield for an entire match made defensive Mage builds overperform.
+{
+ const b=CORE.seedBuild('mage-ward','mage');b.talents.ward=3;
+ const m={...CORE.canonical(b,b.name,1000),id:'mage-ward',name:b.name};
+ const w={...CORE.canonical(CORE.seedBuild('warrior-idle','warrior'),'warrior-idle',1000),id:'warrior-idle',name:'warrior-idle'};
+ const sim=CORE.battle([m,w],{seed:610,limit:20});
+ const [mage,warrior]=sim.fighters;
+ Object.assign(mage,{x:2,z:11,basic:999,special:0});
+ Object.assign(warrior,{x:4,z:11,basic:999,special:999,rushCooldown:999});
+ mage.stats.speed=0;warrior.stats.speed=0;
+ sim.update(.05);
+ assert(mage.shield>0&&mage.shieldLife>0,'Mage should receive a temporary Ward shield');
+ for(let i=0;i<82;i++)sim.update(.05);
+ assert.equal(mage.shield,0,'Mage Ward must expire rather than accumulate indefinitely');
+ assert.equal(mage.shieldLife,0,'Mage Ward expiry timer must finish exactly');
+}
+
+console.log('PASS finite-duration Mage Ward shield.');
 
 console.log('PASS seeded replay, 30-player hit/elimination events, variable winners, multiple winning classes.');
 console.log('NOTE: Passing this anti-repetition gate is NOT certification that the planned 120 talents are balanced.');
