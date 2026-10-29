@@ -167,7 +167,8 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
  });
 }
 export function createStage(container,{mode='hero',quality='auto',arenaScale=1,onEvent=()=>{}}={}){
- const worldScale=Math.max(1,Math.min(3,Number(arenaScale)||1));
+ const worldScale=Math.max(1,Math.min(5,Number(arenaScale)||1));
+ const stadiumScale=worldScale>1.3?worldScale/2.6:1;
  if(!container)throw Error('Stage container is required');
  if(!window.WebGL2RenderingContext)throw Error('Este dispositivo não suporta WebGL 2.');
  const renderer=new THREE.WebGLRenderer({antialias:quality!=='low',alpha:false,powerPreference:'high-performance'});
@@ -181,10 +182,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  renderer.setClearColor(0x09070f,1);
  container.replaceChildren(renderer.domElement);renderer.domElement.className='v5-webgl';
  const scene=new THREE.Scene();scene.background=new THREE.Color(worldScale>1.3?0x17121c:0x09070f);scene.fog=new THREE.FogExp2(0x17121c,worldScale>1.3?.004:.018);
- const camera=new THREE.PerspectiveCamera(41,1,.15,330);
+ const camera=new THREE.PerspectiveCamera(41,1,.15,580);
  camera.position.set(0,17,27);camera.lookAt(0,1,0);
  const controls=new OrbitControls(camera,renderer.domElement);
- controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=48*worldScale;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
+ controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=78*worldScale;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
  controls.target.set(0,1,0);
  scene.add(new THREE.HemisphereLight(0xb9a7bb,0x574132,worldScale>1.3?3.4:2.2));
  if(worldScale>1.3){
@@ -199,9 +200,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const amber=new THREE.PointLight(0xd66c38,42,29);amber.position.set(12,11,-8);scene.add(amber);
  const root=new THREE.Group();scene.add(root);
  const world=worldScale>1.3?buildEclipseCitadel(root,{quality}):arenaScenery(scene,root);
- if(worldScale>1.3){container.dataset.v5Map=world.mapType;loadMedievalArchitecture(root,worldScale,quality,container)}
- else container.dataset.v5Map='original-ring-1';
+ if(worldScale>1.3){
+  world.world.scale.setScalar(stadiumScale);
+  container.dataset.v5Map=world.mapType;
+  container.dataset.v5PlayfieldWidth=String(Math.round(99*stadiumScale));
+  container.dataset.v5SpectatorCapacity=String(world.spectatorSeats.length);
+  loadMedievalArchitecture(root,worldScale,quality,container);
+ }else container.dataset.v5Map='original-ring-1';
  const individuals=new Map(),effects=[],labels=new Map();
+ const standSeats=(world.spectatorSeats||[]).map(seat=>({...seat,x:seat.x*stadiumScale,y:seat.y*stadiumScale,z:seat.z*stadiumScale}));
+ const occupiedSeats=new Map(),spectators=new Set();
+ const nicknameLayer=document.createElement('div');nicknameLayer.className='arena-nickname-layer';nicknameLayer.setAttribute('aria-hidden','true');container.append(nicknameLayer);
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();let followId=null;
@@ -222,7 +231,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    });
    labels.delete(x.id);
   }
-  individuals.clear();
+  individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();
+  container.dataset.v5Spectators='0';
  }
  function animateModel(item,motion){
   if(!item.actions||item.lastMotion===motion)return;
@@ -286,10 +296,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   m.actor.visible=false; // Never expose a procedural placeholder as a real CC0 character
   const label=caption(b.name,b.name.length>18?43:56);
   label.position.set(0,3.35,0);m.root.add(label);
+  // 3D labels become illegible at coliseum scale. Browser-projected nick
+  // badges remain at a readable pixel size above EVERY fighter.
+  if(id!=='preview')label.visible=false;
+  const nick=document.createElement('div');nick.className='arena-nickname';
+  nick.textContent=b.name;nick.dataset.fighterId=String(id);
+  nick.dataset.klass=b.klass;
+  if(id!=='preview')nicknameLayer.append(nick);
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
   const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
-  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,hp:100,dead:false};
+  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null};
   individuals.set(item.id,item);
   addRealCharacter(item);
   return item;
@@ -309,7 +326,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
-  camera.position.set(0,worldScale>1.3?76:26,worldScale>1.3?112:37);controls.target.set(0,.2,0);controls.update();
+  container.dataset.v5Spectators='0';
+  camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);controls.target.set(0,.2,0);controls.update();
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
@@ -324,19 +342,36 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    effects.push({mesh:part,life:.5+Math.random()*.3});
   }
  }
+ // Knocked-out fighters remain visible as idle spectators in an assigned
+ // grandstand seat. They are DEAD in the combat engine and cannot deal damage.
+ function sendToGrandstand(id,reason='knockout'){
+  const unit=individuals.get(String(id));if(!unit||unit.spectator)return false;
+  const seat=standSeats[occupiedSeats.size];
+  if(!seat)return false;
+  occupiedSeats.set(unit.id,seat);spectators.add(unit.id);
+  unit.spectator=true;unit.dead=true;unit.seat=seat;
+  unit.transfer={started:performance.now(),from:unit.mesh.root.position.clone(),duration:1450};
+  unit.mesh.circle.visible=false;unit.bar.visible=false;
+  unit.nick.classList.add('spectating');unit.nick.textContent='👁 '+unit.name;
+  animateModel(unit,'idle');
+  container.dataset.v5Spectators=String(spectators.size);
+  return true;
+ }
  function sync(f){
   const unit=individuals.get(f.id);if(!unit)return;
   unit.hp=f.hp;unit.dead=!f.alive;
   const health=Math.max(.001,f.hp/f.stats.hp);
   unit.fill.scale.x=health;unit.fill.position.x=-.65*(1-health);
   unit.fill.material.color.setHex(health>.55?0xd0a86e:health>.24?0xd08e52:0xbf5051);
-  unit.mesh.root.position.set(f.x,Math.max(0,f.y||0),f.z);
-  unit.mesh.actor.rotation.y=f.face;
-  animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
-  if(!f.alive){unit.mesh.actor.rotation.z=THREE.MathUtils.lerp(unit.mesh.actor.rotation.z,-1.2,.07);unit.mesh.circle.visible=false}
+  if(!unit.spectator){
+   unit.mesh.root.position.set(f.x,Math.max(0,f.y||0),f.z);
+   unit.mesh.actor.rotation.y=f.face;
+   animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
+   if(!f.alive){unit.mesh.circle.visible=false}
+  }
  }
  function overview(){
-  followId=null;camera.position.set(0,worldScale>1.3?76:26,worldScale>1.3?112:37);controls.target.set(0,.2,0);controls.update();
+  followId=null;camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);controls.target.set(0,.2,0);controls.update();
  }
  function focusFighter(id){
   const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
@@ -360,6 +395,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
      const unit=individuals.get(ev.target||ev.hero);
      if(unit)burst(unit.mesh.root.position.x,unit.mesh.root.position.z,ev.type==='special'?0xb98ef1:0xf4ae7e,ev.type==='special'?17:5);
     }
+    if(ev.type==='knockout'||ev.type==='storm')sendToGrandstand(ev.target||ev.hero,ev.type);
     onEvent(ev);
    }
    for(const f of simulation.fighters)sync(f);
@@ -391,7 +427,24 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   for(const [id,u] of individuals){
    u.bar.quaternion.copy(camera.quaternion);
    if(u.mixer&&!reduce)u.mixer.update(dt);
-   const a=u.mesh.actor,active=!u.dead;
+   if(u.spectator&&u.seat){
+    if(u.transfer){
+     const t=THREE.MathUtils.clamp((performance.now()-u.transfer.started)/u.transfer.duration,0,1);
+     // Vanish upward, reappear safely above grandstand, settle into a seat.
+     if(t<.45){
+      const a=t/.45;
+      u.mesh.root.position.copy(u.transfer.from).add(new THREE.Vector3(0,a*13*stadiumScale,0));
+      u.mesh.root.visible=a<.85;
+     }else{
+      const a=(t-.45)/.55,smoothed=a*a*(3-2*a);
+      u.mesh.root.visible=true;
+      u.mesh.root.position.set(u.seat.x,u.seat.y+8*(1-smoothed)*stadiumScale,u.seat.z);
+     }
+     if(t>=1){u.transfer=null;u.mesh.root.position.set(u.seat.x,u.seat.y,u.seat.z)}
+    }
+    u.mesh.actor.rotation.set(0,Math.atan2(-u.seat.x,-u.seat.z),0);
+   }
+   const a=u.mesh.actor,active=!u.dead||u.spectator;
    if(!active)continue;
    const wobble=reduce?0:Math.sin(elapsed*2.7+id.length)*.055;
    a.position.y=wobble;
@@ -412,7 +465,23 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     const target=new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
     controls.target.add(delta);camera.position.add(delta);
    }}
-  controls.update();renderer.render(scene,camera);
+  controls.update();
+  // Nickname overlay is 2D screen space, but positions are projected from
+  // each actual 3D character. It is not an unrelated static roster.
+  const rectW=container.clientWidth,rectH=container.clientHeight;
+  for(const u of individuals.values()){
+   if(!u.nick?.isConnected)continue;
+   const worldPos=new THREE.Vector3(0,3.48,0);
+   u.mesh.root.localToWorld(worldPos);
+   worldPos.project(camera);
+   const inside=u.mesh.root.visible&&worldPos.z<1&&worldPos.z>-1&&Math.abs(worldPos.x)<.985&&Math.abs(worldPos.y)<.97;
+   u.nick.style.display=inside?'block':'none';
+   if(inside){
+    const sx=(worldPos.x*.5+.5)*rectW,sy=(-worldPos.y*.5+.5)*rectH;
+    u.nick.style.transform='translate(-50%,-100%) translate('+Math.round(sx)+'px,'+Math.round(sy)+'px)';
+   }
+  }
+  renderer.render(scene,camera);
  }
  renderer.setAnimationLoop(loop);
  const onVisibility=()=>{if(document.hidden)pause()};
@@ -420,10 +489,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
-  clearHeroes();
+  clearHeroes();nicknameLayer.remove();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,overview,get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,overview,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
