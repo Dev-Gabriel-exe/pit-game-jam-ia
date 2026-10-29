@@ -13,11 +13,15 @@ const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
 const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
 const IDENTITY=window.PIT_V5_BUILD_IDENTITY;
+const AVATARS=window.PIT_V5_AVATARS,WARDROBE=window.PIT_V5_WARDROBE;
+const SHOWCASE=typeof location!=='undefined'&&new URLSearchParams(location.search).get('avatars')==='1';
+const REQUESTED_AVATAR=typeof location!=='undefined'&&AVATARS?AVATARS.get(new URLSearchParams(location.search).get('avatar')):null;
 const loader=new GLTFLoader(), cache=new Map();
-function loadCharacter(klass){
+function loadCharacter(klass,override=null){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
- if(!cache.has(klass))cache.set(klass,new Promise((resolve,reject)=>loader.load(asset.model,resolve,undefined,reject)).catch(err=>{cache.delete(klass);throw err}));
- return cache.get(klass);
+ const url=override||asset.model,key=url;
+ if(!cache.has(key))cache.set(key,new Promise((resolve,reject)=>loader.load(url,resolve,undefined,reject)).catch(err=>{cache.delete(key);throw err}));
+ return cache.get(key);
 }
 const MATERIAL={
  floor:new THREE.MeshStandardMaterial({color:0x25222b,roughness:.95,metalness:.04}),
@@ -410,8 +414,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  }
  function addRealCharacter(item){
   const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
+  const avatar=SHOWCASE&&WARDROBE&&AVATARS?AVATARS.get(item.avatarId):null;
+  const recipe=avatar?WARDROBE.spec(avatar):null;
   if(item.id==='preview'){container.dataset.v5Asset='loading';container.dataset.v5AssetClass=klass}
-  loadCharacter(klass).then(gltf=>{
+  (recipe?loadCharacter(klass,recipe.url).catch(err=>{
+   console.warn('[V5] Quaternius CC0 unavailable, using KayKit rig',err.message||err);
+   return loadCharacter(klass);
+  }):loadCharacter(klass)).then(gltf=>{
    if(!live||individuals.get(item.id)!==item)return;
    const model=cloneSkinned(gltf.scene);
    const bounds=new THREE.Box3().setFromObject(model),measure=new THREE.Vector3(),center=new THREE.Vector3();
@@ -436,6 +445,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const actor=item.mesh.actor;for(const child of actor.children)child.visible=false;
    actor.visible=true;
    actor.add(model);item.modelRoot=model;item.personalMaterials=personalMaterials;
+   if(avatar){
+    // Optional armory preview only. Full 30-user synchronized choice is H.
+    const armor=WARDROBE.construct(THREE,avatar,{height:2.55});
+    actor.add(armor.root);item.wardrobe=armor;
+    container.dataset.v5LastAvatar=avatar.id;
+    container.dataset.v5WardrobeMeshes=String(armor.meshCount);
+   }
    if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
    if(gltf.animations?.length){
     item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
@@ -452,7 +468,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    console.warn('[V5] GLB indisponível, preservado herói procedural:',klass,err.message||err);
   });
  }
- function addHero(raw,id,position={x:0,z:0},scale=1){
+ function addHero(raw,id,position={x:0,z:0},scale=1,avatarId=null){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
   const identity=IDENTITY&&PHASE2&&raw?.schema===PHASE2.VERSION&&isPhase2()?IDENTITY.describe(raw,PHASE2,TALENT_FX):null;
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
@@ -469,7 +485,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
   const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
-  const item={id:String(id),name:b.name,build:b,identity,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0,hitReaction:null};
+  const item={id:String(id),name:b.name,build:b,identity,avatarId,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0,hitReaction:null};
   if(identity)installIdentityVisual(item);
   individuals.set(item.id,item);
   addRealCharacter(item);
@@ -508,7 +524,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5HitReactions='0';container.dataset.v5LastGlbClip='';
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
-  for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
+  const classCounters={warrior:0,mage:0,hunter:0,guardian:0};
+  for(const f of simulation.fighters){
+   const klass=f.build.klass,slot=classCounters[klass]++%10;
+   let avatar=SHOWCASE&&AVATARS?AVATARS.forClass(klass)[slot]:null;
+   if(SHOWCASE&&REQUESTED_AVATAR?.klass===klass&&slot===0)avatar=REQUESTED_AVATAR;
+   addHero(f.build,f.id,{x:f.x,z:f.z},1,avatar?.id||null);
+  }
+  container.dataset.v5AvatarMode=SHOWCASE?'40-class-armory':'off';
   container.dataset.v5BuildVisuals=String([...individuals.values()].filter(u=>u.identityVisual).length);
   container.dataset.v5BuildIdentities=String(new Set([...individuals.values()].filter(u=>u.identity).map(u=>u.identity.visualId)).size);
   container.dataset.v5Spectators='0';
