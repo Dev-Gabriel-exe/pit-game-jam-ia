@@ -78,8 +78,30 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title}));
   }
  }
+ // Check alternate M04 paths, not only the default 2D top-down route.
+ const m04RouteChecks=[];
+ await page.locator('.stage-btn[data-stage="4"]').click();
+ await page.locator('#phasebar [data-phase="demo"]').click();
+ for(const routeIndex of [1,2,3]){
+  await page.locator('#g4Tutorial [data-g4-route="'+routeIndex+'"]').click();
+  const selected=await page.locator('#g4Tutorial [data-g4-route="'+routeIndex+'"]').getAttribute('aria-selected');
+  await page.locator('#pitProjectorLaunch').click();
+  const total=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]?.trim())||0;
+  const steps=[];
+  for(let i=0;i<total;i++){
+   const el=page.locator('#pitProjectorContent [data-pit-projector-step]');
+   if(await el.count()){
+    const id=await el.getAttribute('data-pit-projector-step');
+    const complete=await el.evaluate(node=>node.querySelectorAll('.g4-instruction').length===2&&!!node.querySelector('.g4-result')&&!!node.querySelector('.pit-projector-diagnostic')&&!node.querySelector('.pit-private-teacher-notes'));
+    steps.push({id,complete});
+   }
+   if(i<total-1)await page.locator('#pitProjectorNext').click();
+  }
+  await page.locator('#pitProjectorClose').click();
+  m04RouteChecks.push({routeIndex,selected,total,steps,pass:selected==='true'&&steps.length===4&&steps.every((s,i)=>s.id==='M04:'+i&&s.complete)});
+ }
  fs.mkdirSync('qa/projector-audit-artifacts',{recursive:true});
- fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors},null,2));
+ fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors,m04RouteChecks},null,2));
  const fail=rows.filter(x=>x.error||!x.slides||x.retainedRatio<.4||x.slidesWithOverflowX).map(x=>({mission:x.mission,phase:x.phase,error:x.error||'coverage_or_overflow',ratio:x.retainedRatio}));
  const m01=rows.find(x=>x.mission===1&&x.phase==='demo');
  const m03=rows.find(x=>x.mission===3&&x.phase==='demo');
@@ -92,7 +114,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M01 demo contains substantial material',pass:(m01?.slides||0)>=10&&(m01?.retainedRatio||0)>.4},
   {name:'M03 demo contains substantial material',pass:(m03?.slides||0)>=8&&(m03?.retainedRatio||0)>.4},
   {name:'M04: all four steps of selected GDevelop route projected separately',pass:JSON.stringify(m04?.guideSteps)===JSON.stringify(expected04)},
-  {name:'M04: each step includes action, result, recovery, and source without private notes',pass:m04?.m04Sections?.length===4&&m04.m04Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)}
+  {name:'M04: each step includes action, result, recovery, and source without private notes',pass:m04?.m04Sections?.length===4&&m04.m04Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
+  {name:'M04: platform, puzzle, and 3D routes each project all four complete steps',pass:m04RouteChecks.length===3&&m04RouteChecks.every(x=>x.pass)}
  ];
  console.log('PROJECTOR_REGRESSION '+JSON.stringify(projectorChecks));
  console.log('PROJECTOR_SUMMARY '+JSON.stringify({viewport:width+'x'+height,phases:rows.length,errors,fail,smallText:rows.filter(x=>x.smallFontSlides>0).length,scroll:rows.filter(x=>x.slidesWithScroll>0).length,totalScrollSlides:rows.reduce((n,x)=>n+x.slidesWithScroll,0)}));
