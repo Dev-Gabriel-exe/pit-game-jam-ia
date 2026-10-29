@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Chrome/static/Browser QA for M05 split at current SHA, inspect 720p overflow; then M04 tutorial scroll and teacher/student full audit",
+  "priority": "Confirm M04/M05 720p Chrome measurements and static/Browser CI at exact feature SHA; fix any regressions; continue teacher/student pedagogical audit before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-M05-DEMO-720P-SPLIT",
+  "last_task": "V4-M04-DEMO-720P-SPLIT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2527,12 +2527,19 @@
       "status": "in_progress",
       "commit": "93804ff7f3b2df80990650ebfada04fa0bb7a3d0",
       "summary": "Split five M05 GDevelop projected tutorial steps into action and verification slides (14 expected total) for 720p legibility; preserve all where/how/result/recovery/source, selected RPG/puzzle/3D route and exclude private notes. Added Chrome regression assertions for five action+five verification pairs per route. V8 JS syntax PASS; Chrome/CI NOT_CONFIRMED; physical/human NOT_RUN. Documentation commit d9ee0895; roadmap 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T22:19:33.469Z",
+      "task": "V4-M04-DEMO-720P-SPLIT",
+      "status": "in_progress",
+      "commit": "0c9407b302e699209782d15ba4e4a90fb0bc4fb0",
+      "summary": "Split M04 selected GDevelop route into 4 action + 4 verification slides (11 expected including intro/footer), CSS and all-route Chrome regression. V8 JS syntax PASS and 16/16 original route/step structural checks PASS. New Chrome/CI NOT_CONFIRMED, 720p scroll NOT_MEASURED; physical/human NOT_RUN. Roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M05-DEMO-720P-SPLIT",
+    "task": "V4-M04-DEMO-720P-SPLIT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T21:16:59.230Z",
+    "updated_at": "2026-10-29T22:19:33.469Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2573,9 +2580,12 @@
       "cd13f9901a8747a37808bc758591caa7b3f3aff8",
       "40b200514cb2c1e90b6036e3e70fc57693fb00cc",
       "82a798d2c3180a793e032a2b724d59eb3b2f9af9",
-      "93804ff7f3b2df80990650ebfada04fa0bb7a3d0"
+      "93804ff7f3b2df80990650ebfada04fa0bb7a3d0",
+      "1844fd699e0f7ed72017de3e663bbdc8209b5678",
+      "e37633edd179cadfae7450434b1f888d70af0751",
+      "0c9407b302e699209782d15ba4e4a90fb0bc4fb0"
     ],
-    "documentation_commit": "d9ee0895571b58bd736add3727c54dca463c941b",
+    "documentation_commit": "919f134ef82a59abe868d9e1e0c6503e0a84d751",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2985,6 +2995,16 @@
       {
         "name": "M05 720p scrolling after split",
         "result": "NOT_MEASURED; previous 5/9 scrolling measurement is pre-change"
+      },
+      {
+        "name": "M04 720p split source validation",
+        "sha": "0c9407b302e699209782d15ba4e4a90fb0bc4fb0",
+        "result": "PASS: V8 syntax for projector, guide and Chrome QA; 16/16 original route/step HTML structural assertions (two instructions, expected result, diagnostic, source, no private notes). Not a browser run."
+      },
+      {
+        "name": "M04 720p new Chrome/static/Browser QA",
+        "sha": "0c9407b302e699209782d15ba4e4a90fb0bc4fb0",
+        "result": "NOT_CONFIRMED: GitHub PR-only workflow query and combined statuses returned empty; Chrome scroll measurement NOT_MEASURED. GDevelop GUI, HDMI, physical mobile and human playtest NOT_RUN."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
