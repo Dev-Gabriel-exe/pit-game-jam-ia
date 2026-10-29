@@ -365,6 +365,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  function resume(){if(simulation&&!simulation.finished){playing=true;physicsLast=performance.now();simulateStep(.20)}}
  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
+ function warningFx(item){
+  if(!item||effects.filter(e=>e.isAbility).length>=18)return;
+  const klass=item.build.klass;
+  const color={warrior:0xff9e62,mage:0xb38bff,hunter:0x9edf91,guardian:0x89d8f6}[klass]||0xe1b176;
+  const material=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72,side:THREE.DoubleSide,depthWrite:false});
+  const mesh=new THREE.Mesh(new THREE.RingGeometry(1.15,1.32,36),material);
+  mesh.rotation.x=-Math.PI/2;
+  mesh.position.set(item.mesh.root.position.x,.28,item.mesh.root.position.z);
+  root.add(mesh);mesh.userData.velocity=new THREE.Vector3();
+  effects.push({mesh,life:.58,maxLife:.58,isAbility:true});
+ }
  function specialFx(item){
   // A 30-player fight often saturates the hit-spark budget. Reserve ability
   // effects so class specials remain visible even while many hits occur.
@@ -468,7 +479,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const result=simulation.update(.05);
    for(const ev of result.events){
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
-    if(ev.type==='special'){
+    if(ev.type==='prepare'){
+     triggerMotion(attacker,'cast',.5);
+     warningFx(attacker);
+    }else if(ev.type==='special'){
      triggerMotion(attacker,'cast',.72);
      specialFx(attacker);
     }else if(ev.type==='launch'){
