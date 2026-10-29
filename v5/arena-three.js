@@ -175,17 +175,22 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  renderer.shadowMap.enabled=quality!=='low';
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=1.38;
+ renderer.toneMappingExposure=worldScale>1.3?1.65:1.38;
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.setClearColor(0x09070f,1);
  container.replaceChildren(renderer.domElement);renderer.domElement.className='v5-webgl';
- const scene=new THREE.Scene();scene.background=new THREE.Color(0x09070f);scene.fog=new THREE.FogExp2(0x0c0a12,.018);
+ const scene=new THREE.Scene();scene.background=new THREE.Color(worldScale>1.3?0x17121c:0x09070f);scene.fog=new THREE.FogExp2(0x17121c,worldScale>1.3?.004:.018);
  const camera=new THREE.PerspectiveCamera(41,1,.15,180);
  camera.position.set(0,17,27);camera.lookAt(0,1,0);
  const controls=new OrbitControls(camera,renderer.domElement);
  controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=48*worldScale;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
  controls.target.set(0,1,0);
- scene.add(new THREE.HemisphereLight(0x9f88b0,0x2b1e19,2.2));
+ scene.add(new THREE.HemisphereLight(0xb9a7bb,0x574132,worldScale>1.3?3.4:2.2));
+ if(worldScale>1.3){
+  scene.add(new THREE.AmbientLight(0xbdb2ad,1.45));
+  const fill=new THREE.DirectionalLight(0xe4c3a0,1.9);fill.position.set(20,25,-12);scene.add(fill);
+  MATERIAL.floor.color.setHex(0x4b3b45);MATERIAL.floorEdge.color.setHex(0x8c6a54);MATERIAL.dark.color.setHex(0x30252c);
+ }
  const moon=new THREE.DirectionalLight(0x929dd3,3.4);moon.position.set(-12,26,15);moon.castShadow=quality!=='low';
  moon.shadow.mapSize.set(quality==='low'?512:1024,quality==='low'?512:1024);
  moon.shadow.camera.left=-28*worldScale;moon.shadow.camera.right=28*worldScale;moon.shadow.camera.top=28*worldScale;moon.shadow.camera.bottom=-28*worldScale;
@@ -197,7 +202,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const individuals=new Map(),effects=[],labels=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
- let accumulator=0;const shots=new Map();
+ let accumulator=0;const shots=new Map();let followId=null;
  function clearHeroes(){
   modelLoadedCount=0;modelErrorCount=0;
   delete container.dataset.v5ModelsLoaded;delete container.dataset.v5ModelsFailed;
@@ -328,6 +333,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
   if(!f.alive){unit.mesh.actor.rotation.z=THREE.MathUtils.lerp(unit.mesh.actor.rotation.z,-1.2,.07);unit.mesh.circle.visible=false}
  }
+ function overview(){
+  followId=null;camera.position.set(0,26*worldScale,37*worldScale);controls.target.set(0,.2,0);controls.update();
+ }
+ function focusFighter(id){
+  const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
+  followId=String(id);camera.position.set(f.x+9,11,f.z+14);controls.target.set(f.x,1.4,f.z);controls.update();return true;
+ }
  function resize(){
   if(!live)return;
   const w=Math.max(10,container.clientWidth),h=Math.max(10,container.clientHeight);
@@ -394,6 +406,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    e.mesh.scale.setScalar(Math.max(.01,e.life));
    if(e.life<=0){root.remove(e.mesh);e.mesh.geometry.dispose();e.mesh.material.dispose();effects.splice(i,1)}
   }
+  if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId&&x.alive);if(f){
+    const target=new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
+    controls.target.add(delta);camera.position.add(delta);
+   }}
   controls.update();renderer.render(scene,camera);
  }
  renderer.setAnimationLoop(loop);
@@ -407,5 +423,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,overview,get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
