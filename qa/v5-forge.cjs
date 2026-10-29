@@ -14,7 +14,7 @@ for(const klass of F.CLASSES){
  assert.deepEqual(d.talents,byPath,'Three paths must remain freely mixable');
  assert.equal(F.validate(d,data).slotsLeft,0);
  assert.throws(()=>F.choose(d,data.talents[28].id,data),/Todos os talentos/);
- assert.equal(F.executable(d,P.TALENTS[klass].map(t=>t.id),data).ok,false);
+ assert.equal(F.executable(d,P.TALENTS[klass].map(t=>t.id),data).ok,true); // B5 all three paths' first talents execute
  d=F.choose(d,byPath[2],data);assert.equal(F.validate(d,data).slotsLeft,1);
  d=F.invest(d,'FOR',1,data);d=F.invest(d,'DES',1,data);
  assert.equal(F.validate(d,data).pointsUsed,2);
