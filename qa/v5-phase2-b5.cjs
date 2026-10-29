@@ -43,8 +43,17 @@ const effect=(s,id,type)=>s.events.some(e=>e.talent===id&&(!type||e.type===type)
  go(sim,600);
  for(const t of ['T01','T04','T05'])assert(effect(sim,t,'talent'),t+' should cast');
  assert(effect(sim,'T03','proc'),'T03 shield impact should reflect within melee range');
- assert(effect(sim,'T02','charge')&&effect(sim,'T02','proc'),'T02 should charge after 5s quiet and reduce next incoming hit');
+
  assert(sim.events.some(e=>e.talent==='T05'&&e.type==='debuff'),'T05 must weaken damage');
+}
+{
+ const {sim,e}=duel('warrior',['T02'],'warrior',[],2);
+ e.basic=999;e.offenseDelay=999;
+ go(sim,120);
+ assert(effect(sim,'T02','charge'),'T02 should charge after 5s without taking damage');
+ e.basic=0;e.offenseDelay=0;
+ go(sim,90);
+ assert(effect(sim,'T02','proc'),'T02 should reduce the next genuine incoming hit');
 }
 {
  const {sim,f}=duel('mage',['A01','A02','A04','A05'],'guardian',[],6);

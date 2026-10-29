@@ -735,11 +735,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(f.s02Until>time)heal(f,f.s02Power*step,'S02');
    if(f.s02Until>0&&f.s02Until<=time)f.s02Until=0;
    if(has(f,'S02')&&f.s02Until<=time&&f.hp<f.stats.hp-.1&&
-     time-f.lastHitAt>=5&&(f.cooldowns.S02||0)<=0){
+     time-Math.max(0,f.lastHitAt)>=5&&(f.cooldowns.S02||0)<=0){
     f.cooldowns.S02=15;f.s02Until=time+4;f.s02Power=f.stats.hp*.02*effectiveness(f,'S02')/4;
     emit('proc',f,{talent:'S02'});
    }
-   if(has(f,'T02')&&!f.passives.t02Ready&&time-f.lastHitAt>=5){
+   if(has(f,'T02')&&!f.passives.t02Ready&&time-Math.max(0,f.lastHitAt)>=5){
     f.passives.t02Ready=true;emit('charge',f,{talent:'T02'});
    }
    if(f.regenUntil>time){heal(f,f.regenPower*step,'G09')}
