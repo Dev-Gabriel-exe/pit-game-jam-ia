@@ -28,9 +28,10 @@ const importedBuild=(()=>{
 const PACES=[
  {scale:1,mageBonus:1,label:'Dano 100% · original'},
  {scale:.75,mageBonus:1.10,label:'Dano 75% · prolongado'},
- {scale:.60,mageBonus:1.10,label:'Dano 60% · épico'}
+ {scale:.60,mageBonus:1.10,label:'Dano 60% · épico'},
+ {scale:.50,mageBonus:1.10,label:'Dano 50% · lendário'}
 ];
-const state={damageIndex:2,mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
+const state={damageIndex:3,mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
@@ -265,11 +266,11 @@ function initRound({sameSeed=false}={}){
  state.roster=roster(mission,state.count);
  try{
   const damageMode=PACES[state.damageIndex];
-  const battleLimit=damageMode.scale===1?95:damageMode.scale===.75?110:125;
+  const battleLimit=damageMode.scale===1?95:damageMode.scale===.75?110:damageMode.scale===.60?125:145;
   state.stage.fighters(state.roster,{seed:state.seed,limit:battleLimit,
    damageScale:damageMode.scale,mageDamageBonus:damageMode.mageBonus,
-   stormDelay:damageMode.scale===1?18:damageMode.scale===.75?28:34,
-   stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:.60});
+   stormDelay:damageMode.scale===1?18:damageMode.scale===.75?28:damageMode.scale===.60?34:40,
+   stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:damageMode.scale===.60?.60:.55});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   $('cinematicCamera').setAttribute('aria-pressed','true');
