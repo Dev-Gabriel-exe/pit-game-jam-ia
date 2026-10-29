@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T18:15:07.113Z",
+  "last_completed_at": "2026-10-29T19:26:45.781Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Browser QA 40928905906 for M04 review; then restore M05/Comprovar (24%), M08/Entender (39%), M09/Criar (35%); reduce long M04/M05 demo slides",
+  "priority": "Confirm Chrome/static/Browser QA for M08/Entender projection on current branch; then M09/Criar low coverage and M04/M05 720p long slides",
   "current_phase": "MISSOES",
-  "last_task": "V4-M04-REVIEW-PROJECTION-COVERAGE",
+  "last_task": "V4-M08-BRIEFING-PROJECTION-COVERAGE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2506,12 +2506,19 @@
       "status": "in_progress",
       "commit": "7bde9d55f683e375f0ab12ff925812518891ed5e",
       "summary": "Verified Chrome projector audit 40928905958 SUCCESS across 3 resolutions, 19/19 regressions. M04/Comprovar 720p now 7 slides, 70% retention, no scrolling/overflow; private notes excluded. Static QA 40928905948 SUCCESS; Browser QA pending. Remaining low-coverage phases M05/review 24%, M08/briefing 39%, M09/practice 35%. No human tests or main changes."
+    },
+    {
+      "timestamp": "2026-10-29T19:26:45.781Z",
+      "task": "V4-M08-BRIEFING-PROJECTION-COVERAGE",
+      "status": "in_progress",
+      "commit": "811cd5003c880af830613d9a854a4a5c7fe5ecba",
+      "summary": "Restored M08/Entender into 11 projected slides, all six UX concepts, interactive before/after simulator and explicit Preview caveat; excluded private notes. Added Chrome assertions for coverage and live radio/button interactions. Three JS files parsed in V8; previous M04 Chrome and Browser CI SUCCESS. New M08 CI/Chrome NOT_CONFIRMED; physical/human tests NOT_RUN. Roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M04-REVIEW-PROJECTION-COVERAGE",
+    "task": "V4-M08-BRIEFING-PROJECTION-COVERAGE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T18:15:33.776Z",
+    "updated_at": "2026-10-29T19:26:45.781Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2543,9 +2550,11 @@
       "3157b84a1219911bd38775dfee12497b20817b0a",
       "188b8ecd510e278f61d8860559ddffb52f95071c",
       "b8fb9d9089854d8f0a6ea678637e6975a8d3fbdc",
-      "7bde9d55f683e375f0ab12ff925812518891ed5e"
+      "7bde9d55f683e375f0ab12ff925812518891ed5e",
+      "40f24dee2b6eed29efb8de83401e4ad8b89b6f4f",
+      "811cd5003c880af830613d9a854a4a5c7fe5ecba"
     ],
-    "documentation_commit": "632f8d1bfeb3d79cc7cebd8b52d8ac79200e73d6",
+    "documentation_commit": "cf2c82a9dbfe9c5082fac7bb3350a7c26fdc6b4b",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2905,6 +2914,28 @@
           40928905906
         ],
         "result": "Static QA 40928905948 SUCCESS; Browser QA 40928905906 IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "M04 previous Browser QA",
+        "run_id": 40928905906,
+        "result": "SUCCESS confirmed by GitHub workflow jobs (browser-qa)"
+      },
+      {
+        "name": "M04 previous Chrome 3 resolutions",
+        "run_id": 40928905958,
+        "result": "SUCCESS confirmed by GitHub workflow jobs (3/3)"
+      },
+      {
+        "name": "M08 JS syntax",
+        "result": "PASS: new Function parsed teacher-projector-m01.js, teacher-mission-eight-foundations.js and qa/v3-projector-content-audit.cjs"
+      },
+      {
+        "name": "M08 new Chrome and CI",
+        "result": "NOT_CONFIRMED: new regression written, browser execution not observed"
+      },
+      {
+        "name": "GDevelop GUI, HDMI, physical mobile, peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
