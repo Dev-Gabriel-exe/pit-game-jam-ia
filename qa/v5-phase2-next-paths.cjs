@@ -68,7 +68,7 @@ for(const [k,enemy,dist] of [['warrior','guardian',2],['mage','warrior',2],['hun
 }
 // The reactive Rune Mind must actually reduce the *next* skill hit, not basics.
 {
- const {sim}=staged('mage',['R04'],'warrior',['B01'],2,902);
+ const {sim}=staged('mage',['R04'],'warrior',['B03','B05','B01'],2,902);
  advance(sim,700);
  assert(seen(sim,'R04').some(x=>x.type==='charge'),'R04 must arm on incoming talent');
  assert(seen(sim,'R04').some(x=>x.type==='proc'),'R04 must mitigate a later incoming talent');
