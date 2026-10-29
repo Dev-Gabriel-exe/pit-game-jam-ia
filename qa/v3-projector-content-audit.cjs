@@ -45,7 +45,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
     });
     slides.push(metrics);
     if(phase==='demo'&&(mission===1||mission===3)){
-     const step=await page.locator('#pitProjectorContent [data-pit-projector-step]').getAttribute('data-pit-projector-step').catch(()=>null);
+     const stepNode=page.locator('#pitProjectorContent [data-pit-projector-step]');
+     const step=await stepNode.count()?await stepNode.getAttribute('data-pit-projector-step'):null;
      if(step)guideSteps.push(step);
      if(mission===1&&await page.locator('#pitProjectorContent .tm-pro-demo-layout').count()){
       const simulator=page.locator('#pitProjectorContent');
