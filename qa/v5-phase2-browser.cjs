@@ -12,6 +12,7 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('#phase2Mode').getAttribute('aria-pressed'),'true');
   assert.equal(await page.locator('[data-fighter]').count(),30);
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.phase2),true);
+  assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-engagement-mode'),'spaced');
   assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),'0.5');
   const comparisonSeed=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed);
   for(const pace of ['1','0.75','0.6','0.5']){
