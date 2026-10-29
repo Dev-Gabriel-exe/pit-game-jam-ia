@@ -102,7 +102,12 @@ function canonical(input,serverName,awardedXp){
 }
 function derived(b){
  const c=CLASS[b.klass]||CLASS.warrior,a=b.attributes||{},t=b.talents||{};
- const s=k=>int(a[k],0,30),r=k=>int(t[k],0,3);
+ // Deliberate diminishing returns after 12 invested offensive points.
+ // Prevent all-in Force / Agility / Spirit builds from scaling linearly to 20
+ // at mission 10. Vitality remains fully effective for defensive play.
+ // The future 5-stat V5 Forja will enforce the 12-point cap explicitly.
+ const s=k=>{const value=int(a[k],0,30);return k==='vitality'?value:Math.min(12,value)+Math.max(0,value-12)*.45};
+ const r=k=>int(t[k],0,3);
  let hp=c.hp+s('vitality')*11+(r('stamina')*15)+(r('aegis')*11)+r('bones')*8;
  let speed=c.speed+s('agility')*.09+r('dash')*.22+r('shadow')*.18;
  // Previously magic*spirit*.22 inflated Arcanista damage far above melee.
