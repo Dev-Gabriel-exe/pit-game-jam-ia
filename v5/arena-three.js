@@ -253,7 +253,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    labels.delete(x.id);
   }
   individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();floatingLayer.replaceChildren();floating.clear();floatDebounce.clear();followId=null;
-  availableClips=0;container.dataset.v5GlbClips='0';
+  availableClips=0;container.dataset.v5GlbClips='0';container.dataset.v5ChoreographiesActive='0';
   container.dataset.v5Spectators='0';
  }
  function animateModel(item,motion,force=false,clipSpeed=1){
