@@ -176,6 +176,51 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
    const glow=new THREE.PointLight(0xef8d50,4.2,13,2);glow.position.set(x,3.6,z);world.add(glow);
   }
  }
+ // Twelve spacious, purely decorative duel courts. These are orientation cues,
+ // NOT physical walls or forced brackets: the authoritative battle engine still
+ // owns all targeting, collision, storm and victory logic.
+ // Low-quality mode uses eight courts to preserve the mobile GPU budget.
+ const duelCourts=low?8:12;
+ const engraving=new THREE.MeshStandardMaterial({color:0x916b6a,emissive:0x3a202c,emissiveIntensity:.14,metalness:.31,roughness:.67});
+ const courtMetal=new THREE.MeshStandardMaterial({color:0x97846c,metalness:.57,roughness:.43});
+ for(let i=0;i<duelCourts;i++){
+  const angle=(i+.5)*Math.PI*2/duelCourts;
+  const px=Math.cos(angle)*33,pz=Math.sin(angle)*33;
+  const court=new THREE.Group();court.position.set(px,.075,pz);court.rotation.y=-angle;
+  court.name='duel-court-'+String(i+1).padStart(2,'0');
+  world.add(court);
+  const rim=torus(court,5.4,.075,engraving,0,0,0);
+  rim.castShadow=false;
+  const inner=torus(court,4.65,.025,courtMetal,0,.004,0);
+  inner.castShadow=false;
+  // Cardinal inlays read as wayfinding marks from the teacher's high camera.
+  for(let n=0;n<4;n++){
+   const a=n*Math.PI/2;
+   const carve=box(court,.16,.035,1.2,courtMetal,Math.sin(a)*4.25,.012,Math.cos(a)*4.25);
+   carve.rotation.y=a;carve.castShadow=false;
+  }
+  const glyph=cyl(court,.31,.31,.035,6,engraving,0,.018,0);
+  glyph.rotation.y=Math.PI/6;glyph.castShadow=false;
+ }
+ // Peripheral ironwork frames the entire field without creating new physics
+ // obstacles. The silhouette helps to communicate the much greater scale.
+ const boundaryInset=48.3;
+ for(let side=0;side<4;side++){
+  const bearing=side*Math.PI/2,flank=new THREE.Group();
+  flank.rotation.y=bearing;world.add(flank);
+  for(let n=-4;n<=4;n++){
+   const x=n*11.5;
+   // Twin low parapets mark the edge; open gaps preserve sight lines.
+   if(Math.abs(n)!==4){
+    box(flank,7.5,.6,.6,darkIron,x,.30,boundaryInset);
+    box(flank,7.55,.10,.72,oldGold,x,.68,boundaryInset);
+   }
+   if(n%2===0){
+    const footing=cyl(flank,.82,1.07,.82,8,stone,x,.24,boundaryInset+1.2);
+    footing.castShadow=false;
+   }
+  }
+ }
  // Grand backdrop: standing rock masses outside the walls, not collision props.
  const rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),ash,low?90:165);
  for(let i=0;i<rocks.count;i++){
@@ -186,10 +231,10 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  }
  rocks.instanceMatrix.needsUpdate=true;world.add(rocks);
  // GPU-safe persistent status so browser QA can prove this is a different map.
- world.userData.version='eclipse-citadel-2-grandstands';
+ world.userData.version='eclipse-citadel-3-duel-courts';
  world.userData.playfield='square';
  world.userData.width=112;
 const sortedSeats=orderedSides.flatMap(side=>spectatorSeats.filter(seat=>seat.side===side));
  world.userData.spectatorSeatCapacity=sortedSeats.length;
- return {world,mapType:'eclipse-citadel-2-grandstands',objects:made.length,tiles:instanceCount,spectatorSeats:sortedSeats};
+ return {world,mapType:'eclipse-citadel-3-duel-courts',objects:made.length,tiles:instanceCount,duelCourts,spectatorSeats:sortedSeats};
 }
