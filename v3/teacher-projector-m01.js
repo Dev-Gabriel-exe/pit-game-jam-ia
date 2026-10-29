@@ -134,6 +134,31 @@ function pedagogicalDemoSlides(root,mission){
   if(footer)result.push({title:'Conferência final do Preview',html:cleanCopy(footer)});
   return result.length>=8?result:null;
  }
+ // M04/Comprovar: project the complete rubric and evidence, not only nested cards.
+ // These are public assessment criteria; private HDMI-off guidance is removed.
+ if(mission===4&&root.querySelector('.t4v-root[data-t4v-phase="review"]')){
+  const source=root.querySelector('.t4v-root[data-t4v-phase="review"]');
+  const result=[];
+  function add(node,title,id,group){
+   if(!node)return;
+   const wrapper=document.createElement('section');
+   wrapper.className='pit-projector-review-step t4v-root';
+   wrapper.dataset.pitProjectorReview='M04:'+id;
+   const content=document.createElement('div');content.className='t4v-content';
+   if(group){
+    const grid=document.createElement('div');grid.className=group;
+    grid.innerHTML=cleanCopy(node);content.append(grid);
+   }else content.innerHTML=cleanCopy(node);
+   wrapper.append(content);
+   result.push({title,html:wrapper.outerHTML});
+  }
+  add(source.querySelector('.t4v-intro'),'Como avaliar uma evidência verificável','intro');
+  const criteria=[...source.querySelectorAll('.t4v-rubric > article')];
+  criteria.forEach((criterion,i)=>add(criterion,'Critério '+(i+1)+' de 4 · '+(criterion.querySelector('small')?.textContent||'Teste'),'rubric-'+(i+1),'t4v-rubric'));
+  add(source.querySelector('.t4v-decisions'),'Decisão: aprovar ou solicitar revisão','decision');
+  add(source.querySelector('.t4v-verification'),'Registro, limites e devolutiva','record');
+  return criteria.length===4&&result.length===7?result:null;
+ }
  if(mission===4&&root.querySelector('#g4Tutorial')){
   const guide=window.PIT_GDEVELOP_M04_GUIDE;
   if(guide?.projectorPanel&&guide.routes?.length){
