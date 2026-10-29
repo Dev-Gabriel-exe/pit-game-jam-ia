@@ -218,4 +218,34 @@ assert(!student.includes('teacher-private-notes-guard.js'),'student must not loa
 const guard=read('v3/teacher-private-notes-guard.js');
 assert(guard.includes("event.key==='Escape'"),'Escape must close private notes');
 assert(guard.includes('visibilitychange'),'private notes must close on hidden tab');
+// M10 route-aware handoff: the student must know exactly what to enter for local,
+// exported Web and optional gd.games delivery; a typed note is not a valid public URL.
+const vm=require('node:vm');
+const draftStore=new Map(),sandbox={window:{},localStorage:{
+ getItem:key=>draftStore.get(key)||null,setItem:(key,value)=>draftStore.set(key,value)
+}};
+vm.runInNewContext(m10Student,sandbox,{timeout:3000,filename:'student-mission-ten.js'});
+const m10=sandbox.window.PIT_STUDENT_MISSION_TEN;
+for(const route of ['local','web','gd']){
+ assert(m10.accessHelp(route).length>65,'M10 route '+route+' explains what to fill');
+ assert(m10.accessPlaceholder(route).length>12,'M10 route '+route+' gives a concrete example');
+}
+assert(m10.accessHelp('local').includes('Não invente URL'),'M10 local route must not suggest fabricated publication');
+assert(m10.accessHelp('web').includes('servidor estático'),'M10 web route explains local execution');
+assert(m10.accessHelp('gd').includes('sem login'),'M10 gd.games route requires unauthenticated check');
+const launchHtml=m10.render({session:'m10-qa',idea:{title:'Projeto teste',genre:'RPG'},status:'draft',phase:'practice',canSubmit:true,preview:true});
+assert(launchHtml.includes('id="m10sAccessHelp"'),'M10 route-specific hint visible beside access field');
+assert(launchHtml.includes('aria-describedby="m10sAccessHelp"'),'M10 access hint accessible to screen readers');
+assert(m10Student.includes('hint.textContent=accessHelp(id)'),'M10 hint updates when route changes');
+const launchFixture={route:'gd',checks:[0,1,2]};
+for(const f of m10.fields)launchFixture[f.id]='Resultado observado em teste real de projeto editável';
+launchFixture.access='O jogo está na pasta do laboratório';
+m10.save('m10-qa',launchFixture);
+assert.equal(m10.validate('m10-qa').ok,false,'M10 gd route cannot accept a local-path description as URL');
+launchFixture.access='https://gd.games/jogo-teste';
+m10.save('m10-qa',launchFixture);
+assert.equal(m10.validate('m10-qa').ok,true,'M10 gd route accepts a properly formatted URL');
+launchFixture.access='https://gd.games/jogo-teste?token=segredo';
+m10.save('m10-qa',launchFixture);
+assert.equal(m10.validate('m10-qa').ok,false,'M10 must reject token-bearing URLs');
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
