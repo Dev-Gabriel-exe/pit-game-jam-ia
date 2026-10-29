@@ -126,3 +126,14 @@
 - **Commits:** `535643ac6b37900d2e8cbe9902908377d0573220` (guardião) e `893d43ee26e4c7e558469e708e1bf2ae759726f6` (Browser QA). **CI confirmada no SHA de código `893d43ee`: QA estática `40786484132` SUCCESS e Browser QA `40786484133` SUCCESS, incluindo a etapa de notas privadas em Chrome.**
 - **Limite importante:** fechar notas por navegação não detecta se o HDMI foi religado enquanto o painel está aberto. O professor deve fechá-lo antes de reativar a projeção; `<details>` não é controle de acesso. GDevelop GUI, celular físico, playtest humano e turma real seguem `NOT_RUN`.
 - **Próximo:** fazer varredura transversal dos roteiros operacionais ainda visíveis nas dez apresentações e do percurso autônomo de evidência do aluno. A CI passou; homologação presencial continua pendente.
+
+## Auditoria transversal M03/M06/M07 — 28/10/2026, 21h (Fortaleza)
+
+**Falhas confirmadas por comparação de fontes reais, não apenas pela existência de arquivos:**
+
+1. **M03 — plano legado divergia da apresentação:** `v3/teacher-mission-one-pro.js` continha `3:[7,5,16,2]`, enquanto `v3/teacher-mission-three.js` projetava `5,5,18,2` e o aluno já tinha a prática `4+8+6=18`. Atualizado o plano para `5+5+18+2`, sem mudar o total de 30 minutos nem a prática do aluno.
+2. **M07 — plano legado divergia da apresentação:** o `PLAN` continha `7:[5,6,36,3]`, mas `teacher-mission-seven-foundations.js` já mostrava `7+4+36+3`. Atualizado o `PLAN` para `7+4+36+3`; 50 minutos preservados.
+3. **M06 — requisito conflitante:** `v2/missions.js` exigia gerar um asset com IA, mas `student-mission-six.js` aceita criação própria e biblioteca licenciada, e `teacher-mission-six-validation.js` avalia necessidade, licença e importação. Corrigido o objetivo compartilhado para tornar IA opcional, mantendo origem/licença e Preview obrigatórios. Não se exige ferramenta paga ou geração fictícia.
+4. **Regressão acrescentada:** `qa/v3-audit-matrix.cjs` agora compara o `PLAN` aos módulos projetados M03/M07 e verifica o contrato da M06. `v3/AUDITORIA-MATRIZ-01-10.md` atualizado: 228 minutos de prática (63,3%) em 360 minutos, e não 226.
+
+**Provas de engenharia:** commits `9821ec65e` (PLAN), `875d3a02d` (M06), `a736f287a` (teste), `d1894693` (matriz). QA estática do commit `a736f287a`: GitHub Actions `40792890200` **SUCCESS**; Browser QA do mesmo commit `40792890258` estava **IN_PROGRESS** na consulta. A revisão documental posterior ainda requer CI no SHA correspondente. GDevelop GUI, dispositivo físico, HDMI real e teste humano permanecem **NOT_RUN**. Esta rodada não homologa as dez missões; ainda há auditoria qualitativa e funcional pendente.
