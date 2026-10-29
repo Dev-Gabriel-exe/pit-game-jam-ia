@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100c14">
+<title>PIT Game Jam IA V5 · Arena dos Criadores (protótipo)</title>
+<meta name="description" content="Protótipo isolado V5 da PIT Game Jam: customize heróis 3D, atribua pontos, escolha talentos e teste a arena automática.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./arena.css">
+</head><body>
+<header class="top"><a href="../aluno-v3.html">⚔ PIT <strong>GAME JAM IA</strong></a><div class="topright"><span class="edition">V5 · PROTÓTIPO EXPERIMENTAL</span><a href="../index.html">↖ Portal</a></div></header>
+<main>
+<section class="intro"><span class="eyebrow">✦ RITUAL DE ASCENSÃO · NOVA CAMPANHA</span><h1>Forje seu herói.<br><em>Conquiste a Arena.</em></h1>
+<p>Suas missões dão XP. Seus pontos moldam atributos. Seus talentos definem uma build única. Na Grande Final, os heróis batalham automaticamente em uma arena 3D.</p>
+<div class="notice"><strong>Protótipo isolado:</strong> não modifica a turma nem as avaliações. O XP oficial vem somente das missões aprovadas; XP de demonstração e adversários fictícios não valem pontos reais.</div></section>
+<div class="layout">
+<section class="builder panel" aria-labelledby="builderTitle">
+ <div class="pane-title"><span class="eyebrow">01 · PERSONAGEM</span><h2 id="builderTitle">Sua lenda começa aqui</h2></div>
+ <label class="field">Nome do herói <input id="heroName" maxlength="56" placeholder="Nome do cadastro" readonly></label>
+ <p class="hint" id="identityHint">Lendo identificação da oficina...</p>
+ <div class="xpbox"><div class="xprow"><strong id="heroLevel">NÍVEL 1</strong><strong id="xpText">0 / 1.000 XP</strong></div><div class="xpbar"><div id="xpFill"></div></div><span id="xpHint">XP por missão aprovada. A prévia pode simular evolução.</span></div>
+ <div class="classes" role="group" aria-label="Escolha a classe"><button type="button" data-class="warrior">⚔<b>Guerreiro</b><small>Impacto</small></button><button type="button" data-class="arcanist">✦<b>Arcanista</b><small>Magia</small></button><button type="button" data-class="hunter">➶<b>Caçador</b><small>Agilidade</small></button><button type="button" data-class="guardian">⬡<b>Guardião</b><small>Resistência</small></button></div>
+ <div class="subhead"><h3>Personalizar aparência</h3><span>3D procedural</span></div>
+ <div class="triple"><label>Paleta<select id="appearanceTone"><option value="0">Bronze</option><option value="1">Ametista</option><option value="2">Esmeralda</option><option value="3">Safira</option><option value="4">Vermelho</option><option value="5">Prata</option></select></label><label>Elmo<select id="appearanceHead"><option value="0">Capuz</option><option value="1">Elmo</option><option value="2">Coroa</option></select></label><label>Insígnia<select id="appearanceCrest"><option value="0">Runas</option><option value="1">Asas</option><option value="2">Cristal</option></select></label></div>
+ <div class="subhead"><h3>Pontos de atributos</h3><span id="attrRemaining">4 disponíveis</span></div>
+ <div id="attributes" class="attribute-list"></div>
+ <div class="subhead"><h3>Árvore de talentos</h3><span id="talentRemaining">0 disponíveis</span></div>
+ <p class="hint">A cada 200 XP, desbloqueie um ponto de talento. Cada habilidade pode evoluir até duas vezes. Experimente builds diferentes.</p>
+ <div id="talents" class="talent-grid"></div>
+ <div class="battle-stats" id="combatStats"></div>
+ <div class="demo"><button id="demoLevel" type="button">✧ Simular +200 XP</button><button id="demoReset" type="button">↺ Limpar evolução simulada</button></div>
+</section>
+<section class="stage panel" aria-labelledby="stageTitle">
+ <div class="pane-title stage-title"><div><span class="eyebrow">02 · EXPERIÊNCIA 3D</span><h2 id="stageTitle">Arena dos Criadores</h2></div><span class="stage-status" id="battleStatus">PERSONAGEM EM EXIBIÇÃO</span></div>
+ <div class="viewport" id="viewport"><canvas id="arenaCanvas" aria-label="Arena 3D em Three.js com personagens animados"></canvas>
+  <div class="canvas-fallback" id="canvasFallback" hidden><strong>Modo 3D indisponível neste dispositivo.</strong><p>A personalização, a progressão e as simulações de combate continuam acessíveis; experimente abrir num navegador com WebGL.</p></div>
+  <div class="arena-hud"><span>⚜ RUÍNAS DA ASCENSÃO</span><span id="arenaClock">00:00</span></div>
+  <div class="arena-bottom"><span id="aliveCount">1 HERÓI</span><span id="leaderName">Prepare seu herói</span></div>
+ </div>
+ <div class="controls"><button id="previewHero" type="button">◉ Ver meu herói</button><button id="startDuel" type="button" class="primary">⚔ Testar duelo</button><button id="startDemo" type="button">✦ Battle Royale demonstrativo</button><button id="loadClass" type="button">♜ Carregar turma (professor)</button><button id="startClass" type="button" disabled>🏆 Batalha da turma</button><button id="audioToggle" type="button" aria-pressed="false">🔇 Som desligado</button></div>
+ <div class="matchbox"><div><h3>Classificação da arena</h3><small id="matchHint">Escolha uma classe e comece. Adversários de demonstração são fictícios.</small></div><div id="scoreboard" class="scoreboard" aria-live="polite"></div></div>
+ <div class="battle-log"><h3>Diário de combate</h3><div id="battleLog" role="log" aria-live="polite"><p>Os portões aguardam os combatentes.</p></div></div>
+</section>
+</div>
+<section class="notes"><h2>Como a V5 se conecta à oficina</h2><div class="notegrid"><article><b>01</b><h3>Missões aprovadas</h3><p>Somente aprovações do professor somam XP real, sempre até o limite previsto. Escolhas de build ficam locais nesta primeira versão.</p></article><article><b>02</b><h3>Classes e talentos</h3><p>Os pontos criam estilos diferentes de personagem. Na arena, atributos, defesa, crítico e habilidades especiais têm efeitos reais no combate simulado.</p></article><article><b>03</b><h3>Grande final</h3><p>O professor poderá carregar um elenco autorizado e iniciar a batalha automática. A arena é uma atividade festiva, não uma nota escolar.</p></article></div></section>
+</main><footer>⚔ PIT GAME JAM IA V5 · ARENA EXPERIMENTAL · <a href="../professor-v3.html">Mission Control</a></footer>
+<script src="./rules.js"></script><script type="module" src="./arena.js"></script>
+</body></html>
