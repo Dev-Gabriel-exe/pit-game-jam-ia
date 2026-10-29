@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-PROJECTOR-CONTENT: M04 all-route Chrome PASS, browser pending, fix 720p scroll and M05/M07 demo coverage",
+  "priority": "V4-CROSS-PROJECTOR-CONTENT: verify M05 Chrome/Browser CI, reduce 720p scroll, reconstruct M07 demo",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-PROJECTOR-M04",
+  "last_task": "V4-CROSS-PROJECTOR-M05",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2436,12 +2436,19 @@
       "status": "in_progress",
       "commit": "af0ca4c2199456cf18f1d097eb80398ad5d05ecd",
       "note": "M01 projected state simulator restored with independent local handlers and five full event-guide steps; M03 first-run guide expanded to six complete steps; image fallback labeled, projection CSS adjusted, Chrome regression at three viewports added. V8 syntax PASS, static QA 40865003847 SUCCESS; projector audit 40865003839 QUEUED, Browser QA 40865003827 IN_PROGRESS. Manual GDevelop/HDMI/mobile/peer NOT_RUN. 54/59 unchanged; main untouched."
+    },
+    {
+      "at": "2026-10-29T13:18:00Z",
+      "task": "V4-CROSS-PROJECTOR-M05",
+      "status": "in_progress",
+      "commit": "11237086ce6b5cf310341bd3ddd989a882236b55",
+      "summary": "Projected M05 five GDevelop steps per selected route (RPG/puzzle/3D), with visible recovery, sources, local image fallback, three-route Chrome regression. V8 syntax PASS, static CI 40880579845 SUCCESS, projector 40880580062 and Browser 40880579891 IN_PROGRESS. Human GUI/HDMI/mobile/peer NOT_RUN. 54/59 unchanged, main untouched."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-CROSS-PROJECTOR-CONTENT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T12:19:25.307Z",
+    "updated_at": "2026-10-29T13:18:00Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2453,7 +2460,8 @@
       "8511e5c99ffed6944e8d8549fbb9842298c378cb",
       "eba253b95dcc843ace77f66241c73aabbfc42841",
       "177f8eebeb8b2ffc9ab2d75e227f3a538988aa28",
-      "08c37b782353aa7dcb38e08f97ab9b654be93959"
+      "08c37b782353aa7dcb38e08f97ab9b654be93959",
+      "11237086ce6b5cf310341bd3ddd989a882236b55"
     ],
     "documentation_commit": "407dbf3df8c5b6254ba310c7f29e0d3433739782",
     "tests": [
@@ -2570,13 +2578,45 @@
         "run_id": 40872128258,
         "sha": "08c37b782353aa7dcb38e08f97ab9b654be93959",
         "result": "SUCCESS 3/3 jobs: 8/8 projector assertions including platform, puzzle and 3D complete steps, no private notes; 720p vertical scrolling remains"
+      },
+      {
+        "name": "M04 final Browser QA",
+        "run_id": 40872128441,
+        "sha": "08c37b782353aa7dcb38e08f97ab9b654be93959",
+        "result": "SUCCESS confirmed"
+      },
+      {
+        "name": "M05 projector source syntax",
+        "result": "PASS: V8 new Function parse of guide, projector, and Chrome QA; does not execute browser"
+      },
+      {
+        "name": "M05 static QA",
+        "run_id": 40880579845,
+        "sha": "11237086ce6b5cf310341bd3ddd989a882236b55",
+        "result": "SUCCESS confirmed"
+      },
+      {
+        "name": "M05 projector Chrome 1280/1600/1920",
+        "run_id": 40880580062,
+        "sha": "11237086ce6b5cf310341bd3ddd989a882236b55",
+        "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "M05 Browser QA",
+        "run_id": 40880579891,
+        "sha": "11237086ce6b5cf310341bd3ddd989a882236b55",
+        "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "GDevelop GUI, HDMI projection, physical mobile, human peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm final Browser QA 40872128441; reduce M04 720p scroll where pedagogically necessary; then reconstruct M05/M07 projected GDevelop tutorials",
-    "blocker": "M04 all-route projector Chrome 3/3 PASS; final Browser QA still pending; 720p scrolling and six low-coverage phases across missions remain; manual GDevelop GUI/HDMI/mobile/peer NOT_RUN."
+    "next_task": "Confirm M05 Chrome/Browser CI; inspect 720p scroll; reconstruct M07 selected 2D/3D tutorial steps in projector",
+    "blocker": "M05 code and V8 syntax pass, static QA success; projector/browser CI pending; manual GDevelop GUI/HDMI/mobile/peer NOT_RUN; 54/59 unchanged"
   }
 }
