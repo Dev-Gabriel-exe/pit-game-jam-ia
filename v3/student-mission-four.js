@@ -140,15 +140,15 @@
    command:read('Comando: '),response:read('Resposta: '),boundary:read('Limite: '),
    retest:read('Repetição: '),saved:read('Salvo em: '),issue:read('Correção: ')==='Não informada'?'':read('Correção: ')
   });
-  // Restoration of a submitted evidence reflects the three test declarations.
-  d.checks=[0,1,2];return d;
+  // Evidence text cannot prove the three manual Preview tests were performed.
+  return d;
  }
  function hydrate(session,raw,status){
   const d=parseEvidence(raw);
   if(!d||!d.command||!d.response)return;
   const old=load(session);
-  if(status==='revision'&&keys.some(k=>clean(old[k])))return;
-  if(status!=='submitted'&&status!=='approved'&&keys.some(k=>clean(old[k])))return;
+  // Never overwrite an existing local draft, including checked tests, with remote text.
+  if(keys.some(k=>clean(old[k]))||old.checks.length||old.route!==null)return;
   save(session,d);
  }
  function title(phase,ctx){
@@ -247,7 +247,7 @@
    '<label for="evidenceInput">Texto estruturado enviado ao professor</label>'+
    '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx))+'</textarea>'+
    '<small>A evidência é uma declaração do aluno; o caderno não testa o jogo por conta própria.</small></div>'+
-   (!v.ok?'<div class="m4s-warning">'+esc(v.label)+'</div>':'')+
+   (!submitted&&!v.ok?'<div class="m4s-warning">'+esc(v.label)+'</div>':'')+
    '<div class="m4s-submit"><button type="button" class="m4s-back" data-m4s-nav="practice" '+(submitted?'disabled':'')+'>‹ REVISAR TESTES</button>'+
    '<button type="button" class="m4s-action" id="submitWork" '+(!v.ok||submitted||(!ctx.canSubmit&&!ctx.preview)?'disabled':'')+'>'+
    (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
