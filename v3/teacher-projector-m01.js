@@ -54,6 +54,19 @@ function pedagogicalDemoSlides(root,mission){
  return null;
 }
 function activateProjectorControls(content){
+ // Cloned tutorial images do not inherit the original tab component's error listeners.
+ content.querySelectorAll('[data-gd3-image],[data-tm-guide-image]').forEach(img=>{
+  const fallback=()=>{
+   if(img.dataset.pitProjectorFallback)return;
+   img.dataset.pitProjectorFallback='1';
+   img.src=img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
+   img.alt='Diagrama didático autoral em português; captura externa indisponível';
+   const caption=img.closest('.gd3-picture,.tm-guide-image')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span');
+   if(caption)caption.textContent='DIAGRAMA AUTORAL · CAPTURA INDISPONÍVEL';
+  };
+  img.addEventListener('error',fallback);
+  if(img.complete&&img.naturalWidth===0)fallback();
+ });
  const demo=content.querySelector('.tm-pro-demo-layout');
  if(demo){
   let gems=0,won=false;
