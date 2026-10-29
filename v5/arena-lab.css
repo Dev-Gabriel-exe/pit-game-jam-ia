@@ -92,7 +92,11 @@ body.arena-immersive .stage-flair{display:none}
 .arena-nickname[data-klass="mage"]{border-color:#b39ade}
 .arena-nickname[data-klass="hunter"]{border-color:#88cbaa}
 .arena-nickname[data-klass="guardian"]{border-color:#84b6d5}
-.arena-nickname.spectating{background:#263321f0;color:#d7efb1;border-color:#8bc06c;font-weight:700}
+.arena-nickname.spectating{background:#263321f0;color:#d7efb1;border-color:#8bc06c!important;font-weight:700}
+.arena-nickname[data-build-path]::after{content:attr(data-build-path);display:inline-block;margin-left:5px;padding:1px 3px;
+ border:1px solid var(--v5-build-accent,#caa36f);border-radius:3px;color:var(--v5-build-accent,#caa36f);
+ font-size:9px;letter-spacing:.04em;font-weight:900;vertical-align:baseline}
+.arena-nickname.spectating[data-build-path]::after{opacity:.7}
 .combat-stats{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px}
 .counter{display:inline-flex;align-items:center;border:1px solid #bc915d7d;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:900;white-space:nowrap}
 .counter.alive{color:#ecd3a5;background:#563b252e}

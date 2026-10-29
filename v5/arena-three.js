@@ -12,6 +12,7 @@ const TALENT_FX=window.PIT_V5_TALENT_VFX;
 const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
 const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
+const IDENTITY=window.PIT_V5_BUILD_IDENTITY;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -254,6 +255,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   }
   individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();floatingLayer.replaceChildren();floating.clear();floatDebounce.clear();followId=null;
   availableClips=0;container.dataset.v5GlbClips='0';container.dataset.v5ChoreographiesActive='0';
+  container.dataset.v5BuildVisuals='0';container.dataset.v5BuildIdentities='0';
   container.dataset.v5Spectators='0';
  }
  function animateModel(item,motion,force=false,clipSpeed=1){
@@ -316,6 +318,42 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5ChoreographyPose=timeline.pose;
   return true;
  }
+ // C.3: build-specific insignia, visible from the arena's elevated camera.
+ // All geometry is visual-only, owned by the character and disposed on reset.
+ function installIdentityVisual(item){
+  const identity=item.identity;if(!identity)return false;
+  const group=new THREE.Group(),accent=new THREE.Color(identity.accent),detail=new THREE.Color(identity.detail);
+  const emissive=()=>new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:.88,depthWrite:false,side:THREE.DoubleSide});
+  const secondary=()=>new THREE.MeshBasicMaterial({color:detail,transparent:true,opacity:.76,depthWrite:false,side:THREE.DoubleSide});
+  const outer=new THREE.Mesh(new THREE.TorusGeometry(.94,.065,6,32),emissive());
+  outer.rotation.x=-Math.PI/2;outer.position.y=.13;group.add(outer);
+  const inner=new THREE.Mesh(new THREE.TorusGeometry(.69,.027,5,24),secondary());
+  inner.rotation.x=-Math.PI/2;inner.position.y=.16;group.add(inner);
+  let crestGeometry;
+  switch(identity.shape){
+   case 'crown':crestGeometry=new THREE.ConeGeometry(.28,.48,5);break;
+   case 'trident':crestGeometry=new THREE.TorusKnotGeometry(.21,.045,28,5,2,3);break;
+   case 'orb':crestGeometry=new THREE.SphereGeometry(.22,10,8);break;
+   default:crestGeometry=new THREE.OctahedronGeometry(.28,0);
+  }
+  const crest=new THREE.Mesh(crestGeometry,emissive());
+  crest.position.set(0,2.94,.30);group.add(crest);
+  const mini=new THREE.Mesh(new THREE.TorusGeometry(.32,.03,5,22),secondary());
+  mini.position.set(0,2.94,.30);group.add(mini);
+  const shards=[];
+  for(let n=0;n<identity.shards;n++){
+   const shard=new THREE.Mesh(new THREE.OctahedronGeometry(.10+n*.016,0),n===0?emissive():secondary());
+   shard.position.set((n-1)*.45,1.85+n*.15,-.52);group.add(shard);shards.push(shard);
+  }
+  item.mesh.root.add(group);
+  item.identityVisual={group,outer,inner,crest,mini,shards};
+  item.nick.dataset.buildPath=identity.primaryAbbr;
+  item.nick.dataset.buildSignature=identity.visualId;
+  item.nick.title=identity.primaryLabel+' · '+identity.mix.map(x=>x.label+': '+x.count).join(' · ');
+  item.nick.style.borderColor=identity.accentHex;
+  item.nick.style.setProperty('--v5-build-accent',identity.accentHex);
+  return true;
+ }
  function addRealCharacter(item){
   const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
   if(item.id==='preview'){container.dataset.v5Asset='loading';container.dataset.v5AssetClass=klass}
@@ -328,14 +366,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const factor=Math.min(3,2.55/measure.y);
    model.scale.setScalar(factor);
    model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
-   const tint=new THREE.Color(PALETTES[item.build.appearance.palette]||PALETTES.ember);
+   const tint=new THREE.Color(item.identity?.accent||PALETTES[item.build.appearance.palette]||PALETTES.ember);
    const personalMaterials=[];
    model.traverse(o=>{
     // Cached GLB geometry and textures are shared across clones.
     o.userData.v5SharedGLB=true;
     if(!o.isMesh)return;
     o.castShadow=true;o.receiveShadow=true;
-    const custom=source=>{const mat=source.clone();if(mat.color)mat.color.lerp(tint,.10);personalMaterials.push(mat);return mat};
+    const custom=source=>{const mat=source.clone();if(mat.color)mat.color.lerp(tint,item.identity?.28:.10);personalMaterials.push(mat);return mat};
     if(o.material)o.material=Array.isArray(o.material)?o.material.map(custom):custom(o.material);
    });
    // Keep original procedural mesh as offline fallback, but do not overlay it.
@@ -360,6 +398,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  }
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
+  const identity=IDENTITY&&PHASE2&&raw?.schema===PHASE2.VERSION&&isPhase2()?IDENTITY.describe(raw,PHASE2,TALENT_FX):null;
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
   m.actor.visible=false; // Never expose a procedural placeholder as a real CC0 character
   const label=caption(b.name,b.name.length>18?43:56);
@@ -374,7 +413,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
   const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
-  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0,hitReaction:null};
+  const item={id:String(id),name:b.name,build:b,identity,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0,hitReaction:null};
+  if(identity)installIdentityVisual(item);
   individuals.set(item.id,item);
   addRealCharacter(item);
   return item;
@@ -408,6 +448,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
+  container.dataset.v5BuildVisuals=String([...individuals.values()].filter(u=>u.identityVisual).length);
+  container.dataset.v5BuildIdentities=String(new Set([...individuals.values()].filter(u=>u.identity).map(u=>u.identity.visualId)).size);
   container.dataset.v5Spectators='0';
   camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);controls.target.set(0,.2,0);controls.update();
   elapsed=0;accumulator=0;playing=false;
@@ -514,6 +556,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   occupiedSeats.set(unit.id,seat);spectators.add(unit.id);
   unit.spectator=true;unit.dead=true;unit.seat=seat;
   unit.choreography=null;unit.choreoUntil=0;unit.hitReaction=null;
+  // Keep the hero's chosen insignia visible while spectating.
+  if(unit.identityVisual)unit.identityVisual.group.visible=true;
   unit.transfer={started:performance.now(),from:unit.mesh.root.position.clone(),duration:1450};
   unit.mesh.circle.visible=false;unit.bar.visible=false;
   unit.nick.classList.add('spectating');unit.nick.textContent='👁 '+unit.name;
@@ -670,6 +714,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     u.mesh.actor.rotation.set(0,Math.atan2(-u.seat.x,-u.seat.z),0);
    }
    const a=u.mesh.actor,active=!u.dead||u.spectator;
+   if(u.identityVisual){
+    const emblem=u.identityVisual,spin=reduce?0:elapsed*.30*(u.identity.variant%2?1:-1);
+    emblem.crest.rotation.y=spin;
+    emblem.outer.rotation.z=reduce?0:Math.sin(elapsed*.65+u.identity.variant)*.025;
+    emblem.crest.position.y=2.94+(reduce?0:Math.sin(elapsed*2.2+u.identity.variant)*.065);
+    emblem.mini.position.y=emblem.crest.position.y;
+    emblem.shards.forEach((shard,i)=>{
+     shard.rotation.y=spin+i*.7;
+     shard.position.y=1.85+i*.15+(reduce?0:Math.sin(elapsed*1.4+i)*.055);
+    });
+   }
    if(!active)continue;
    const wobble=reduce?0:Math.sin(elapsed*2.7+id.length)*.055;
    const choreography=u.choreography&&DIRECTOR?DIRECTOR.sample(u.choreography.timeline,elapsed-u.choreography.started,{reducedMotion:reduce}):null;
