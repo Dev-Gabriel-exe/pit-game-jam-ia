@@ -31,3 +31,29 @@ body.pit-projecting{overflow:hidden!important}
 @keyframes pitTextRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes pitImageReveal{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){#pitProjector *,#pitProjector *::before,#pitProjector *::after{animation:none!important;transition:none!important}}
+
+/* M01/M03: a projected tutorial is a complete, numbered teaching step, not a frozen tab. */
+#pitProjector .pit-projector-tutorial-step{width:100%;font-family:system-ui,"Segoe UI",Arial,sans-serif;line-height:1.48}
+#pitProjector .pit-projector-tutorial-step .gd3-panel,
+#pitProjector .pit-projector-tutorial-step .tm-guide-panel{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(12px,2vw,28px);align-items:start;width:100%;max-width:100%}
+#pitProjector .pit-projector-tutorial-step .gd3-picture,
+#pitProjector .pit-projector-tutorial-step .tm-guide-image{min-width:0;max-width:100%}
+#pitProjector .pit-projector-tutorial-step img{display:block;max-width:100%;max-height:30vh;width:auto;height:auto;object-fit:contain;margin:auto}
+#pitProjector .pit-projector-tutorial-step h4{font:700 clamp(26px,2.3vw,38px)/1.2 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-tutorial-step p,
+#pitProjector .pit-projector-tutorial-step .gd3-step,
+#pitProjector .pit-projector-tutorial-step .tm-guide-item{font:400 clamp(20px,1.55vw,27px)/1.45 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-tutorial-step small,
+#pitProjector .pit-projector-tutorial-step span,
+#pitProjector .pit-projector-tutorial-step strong{font-size:max(18px,1.25vw);line-height:1.35}
+#pitProjector .pit-projector-tutorial-step .gd3-steps,
+#pitProjector .pit-projector-tutorial-step .tm-guide-explanation{min-width:0}
+#pitProjector .tm-pro-demo-layout{width:100%;max-width:100%;font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .tm-pro-demo-layout button,
+#pitProjector [data-tm-test]{min-height:44px}
+#pitProjector .tm-pro-demo-layout .tm-pro-debugger{min-width:0}
+@media(max-width:1000px){
+ #pitProjector .pit-projector-tutorial-step .gd3-panel,
+ #pitProjector .pit-projector-tutorial-step .tm-guide-panel{grid-template-columns:minmax(0,1fr)}
+ #pitProjector .pit-projector-tutorial-step img{max-height:22vh}
+}
