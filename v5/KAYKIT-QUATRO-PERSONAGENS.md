@@ -28,7 +28,8 @@ Quatro GLBs diferentes (não 3 GLBs para 4 classes). A aparência do Ladino Enca
 - `v5/arena-three.js`: carga dos modelos originais, câmera e motor preservados, multiplicador visual 2,55, animações incorporadas com limite de ações instanciadas por herói (grupo de locomação, combate, magia, reação, defesa e queda) para reduzir custo de até 30 jogadores.
 - `qa/v5-four-classes.cjs` e `qa/v5-four-classes-browser.cjs`: origem, 4 URLs diferentes, altura, presença de clipes e funcionamento em 390/1200px.
 - No commit `47e5785ebf8f34d6bfba84f0baa90166c61565fe`, CI passou; browser registrou **76 animações por cada um dos quatro GLBs**, altura 2,55 (ambos 390 e 1200px): https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40969610400.
-- A aplicação mais recente, com otimização das animações em 30 personagens, está no commit `88c2dd6bd5469fd869dbf6681074632a15aa67d1`. Verificar `V5 Arena Lab` CI desta revisão antes de declarar aprovação de 30 participantes.
+- A aplicação com otimização de ações de animação em 30 personagens está no commit `88c2dd6bd5469fd869dbf6681074632a15aa67d1`.
+- **PASS completo no GitHub Actions:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40969675495 — jobs `rules` e `browser` em SUCCESS. Navegador de 1440px validou 30 personagens GLB reais, cenas carregadas, M5/M10, animações, arquibancadas e 120 talentos. Navegador de 390px validou 4 personagens GLB, reset/pause, M5/M10, sem erros. Isso prova funcionamento automatizado no navegador, NÃO comprova FPS de 30 no aparelho físico do aluno.
 
 ## Prévia isolada
 - Quatro modelos: https://pit-v5-arsenal-demo.vercel.app/v5/personagens-lab.html
