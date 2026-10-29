@@ -111,6 +111,6 @@ for(let seed=1;seed<=12;seed++){
  assert(sim.fighters.every(f=>Number.isFinite(f.x)&&Number.isFinite(f.z)&&Number.isFinite(f.hp)));
 }
 assert(winClasses.size>=2,'No winner diversity in experimental cohort');
-assert(allTalentIds.size>=13,'Real talents insufficiently exercised: '+JSON.stringify([...allTalentIds]));
+assert.equal(allTalentIds.size,20,'All 20 talents must trigger naturally in 30-hero simulations: '+JSON.stringify([...allTalentIds]));
 console.log('PHASE2 12x30 BOT AUDIT '+JSON.stringify({talentsObserved:[...allTalentIds].sort(),eventKinds:[...eventKinds].sort(),winnerClasses:[...winClasses]}));
 console.log('PASS V5 B.1: 20 catalog-faithful executable M5 talents, authorized budgets, deterministic simulation, and 30-bot battles. No server lock or 120 animations claimed.');

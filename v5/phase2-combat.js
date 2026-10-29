@@ -251,8 +251,12 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    const dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
    const preferred=f.stats.range>3?Math.min(f.stats.range*.65,6.0):1.65;
-   const chase=d>preferred+1?1:d<preferred-.7?-.6:0;
-   const strafe=(d<preferred+5?.21:0)*((f.id.length+seed)%2?-1:1);
+   // Hunter can deliberately hold a clear firing lane to charge P02.
+   // This is a genuine tactical cost: no strafing or retreat while aiming.
+   const holdForAim=has(f,'P02')&&!f.passives.p02Ready&&(f.cooldowns.P02||0)<=0
+    &&d>4&&d<=f.stats.range+.5;
+   const chase=holdForAim?0:d>preferred+1?1:d<preferred-.7?-.6:0;
+   const strafe=holdForAim?0:(d<preferred+5?.21:0)*((f.id.length+seed)%2?-1:1);
    const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1);
    const goalVX=(dx/d*chase-dz/d*strafe)*f.stats.speed*penalty;
    const goalVZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*penalty;

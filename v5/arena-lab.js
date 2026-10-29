@@ -323,6 +323,7 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get previewOnly(){return true},
  get phase2(){return state.phase2},
  get combatEngine(){return $('arenaStage').dataset.v5CombatEngine||'uninitialized'},
+ get talentEvents(){return state.stage?.simulation?.events?.filter(e=>e.type==='talent').length||0},
  get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'},
  get seed(){return state.seed},
  get round(){return state.round}
