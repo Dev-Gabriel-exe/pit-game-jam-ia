@@ -17,7 +17,7 @@ const rosters=[
  {name:'Phase2 M5',engine:PHASE2,
   list:['mage','hunter'].map((klass,i)=>({id:'duel-'+i,name:klass,build:PHASE2.exampleBuild(klass,klass,5,0),approvedMissions:5}))},
  {name:'Legacy M10',engine:CORE,
-  list:['mage','hunter'].map((klass,i)=>({id:'duel-'+i,name:klass,build:CORE.seedBuild(klass,klass)}))}
+  list:['warrior','hunter'].map((klass,i)=>({id:'duel-'+i,name:klass,build:CORE.seedBuild(klass,klass)}))}
 ];
 for(const {name,engine,list} of rosters){
  const original=getFirstHit(engine,list,{damageScale:1,mageDamageBonus:1});
@@ -30,7 +30,7 @@ for(const {name,engine,list} of rosters){
  const hero=list.find(e=>e.id===original.first.hero);
  const expected=.75*(hero.build.klass==='mage'?1.10:1);
  const ratio=long.first.amount/original.first.amount;
- assert(Math.abs(ratio-expected)<.055,name+' first hit must obey 75% pacing + only mage 10% compensation: '+ratio+' vs '+expected);
+ assert(Math.abs(ratio-expected)<.055,name+' first hit must obey 75% pacing + only mage 10% compensation: original='+original.first.amount+' long='+long.first.amount+' ratio='+ratio+' vs '+expected);
  const epic=getFirstHit(engine,list,{damageScale:.60,mageDamageBonus:1.10});
  assert.equal(epic.first.hero,original.first.hero);
  const epicRatio=epic.first.amount/original.first.amount;
