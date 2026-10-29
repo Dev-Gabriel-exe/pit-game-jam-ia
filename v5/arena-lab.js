@@ -14,7 +14,7 @@ const glyph={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
 const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
-const state={mission:5,count:30,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0};
+const state={mission:5,count:30,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
@@ -83,22 +83,67 @@ function appendLog(content,klass='hit'){
  log.prepend(el);
  while(log.children.length>26)log.lastChild.remove();
 }
+function heroName(id){
+ const candidate=state.stage?.simulation?.fighters.find(f=>f.id===id);
+ return candidate?.name||'Combatente';
+}
+function spotlight(text,detail,id,kind,priority,eventTime){
+ // A dozen ordinary hits at once should never obscure a knockout or skill.
+ const t=Number(eventTime)||0;
+ if(priority<state.spotPriority&&t-state.spotTime<1.3)return;
+ const element=$('battleSpotlight');
+ element.dataset.type=kind;
+ $('spotlightText').textContent=text;
+ $('spotlightSource').textContent=detail;
+ state.spotId=id;
+ $('followSpotlight').disabled=!id;
+ state.spotPriority=priority;state.spotTime=t;
+ if(state.director&&id&&t-state.lastCameraTime>7){
+  state.stage?.focusFighter(id);
+  state.lastCameraTime=t;
+ }
+}
 function onEvent(event){
- if(event.type==='special'){
-  const name=state.roster.find(x=>x.id===event.hero)?.name||'Herói';
-  appendLog('✦ '+name+' conjurou '+(event.ability||'sua técnica de classe')+'!','special');
- }
- if(event.type==='critical')appendLog('⚡ Um golpe crítico atingiu o adversário!','special');
- if(event.type==='knockout'){
-  const defeated=state.roster.find(x=>x.id===event.target)?.name||'Um combatente';
-  appendLog('☠ '+defeated+' foi eliminado e subiu para a arquibancada!','hit');
- }
- if(event.type==='storm')appendLog('☄ Um combatente caiu na tempestade e foi para a arquibancada.','hit');
- if(event.type==='end'){
-  const winner=state.stage.simulation?.result()?.winner;
+ const t=Number(event.time)||0;
+ const hero=heroName(event.hero),target=heroName(event.target);
+ if(event.type==='hit'){
+  const kind=event.kind==='melee'?'golpe corpo a corpo':
+   event.kind==='multishot'?'flecha dupla':'projétil';
+  const points=Math.round(event.amount||0);
+  if(t-state.lastHitLog>=1.4){
+   appendLog('⚔ '+hero+' acertou '+target+': −'+points+' PV ('+kind+')','hit');
+   state.lastHitLog=t;
+  }
+  if(points>=6)spotlight(hero+' atingiu '+target,'−'+points+' PV · '+kind,event.hero,'hit',1,t);
+ }else if(event.type==='special'){
+  const ability=event.ability||'habilidade de classe';
+  spotlight(hero+' usou '+ability,'Habilidade especial · '+CORE.CLASS[state.stage.simulation.fighters.find(f=>f.id===event.hero)?.build.klass]?.label,event.hero,'special',3,t);
+  appendLog('✦ '+hero+' ativou '+ability,'special');
+ }else if(event.type==='dodge'){
+  if(t-state.lastHitLog>=.7){
+   appendLog('◇ '+hero+' esquivou de um golpe','dodge');
+   state.lastHitLog=t;
+  }
+  spotlight(hero+' desviou do ataque','Esquiva — dano evitado',event.hero,'dodge',2,t);
+ }else if(event.type==='dash'){
+  if(t-state.lastHitLog>=1){
+   appendLog('➤ '+hero+' avançou para atacar','special');
+   state.lastHitLog=t;
+  }
+ }else if(event.type==='knockout'){
+  const killer=event.by||heroName(event.hero);
+  spotlight(killer+' eliminou '+target,'☠ '+target+' foi para a arquibancada',event.hero,'knockout',5,t);
+  appendLog('☠ '+killer+' eliminou '+target+' · arquibancada','end');
+ }else if(event.type==='storm'){
+  spotlight(target+' foi eliminado pela tempestade','A área segura está diminuindo',event.target||event.hero,'knockout',5,t);
+  appendLog('☄ '+target+' saiu da arena pela tempestade','end');
+ }else if(event.type==='end'){
+  const sim=state.stage?.simulation,detail=sim?.result(),winner=detail?.winner;
   state.result=winner||null;state.fought=true;
+  const champion=sim?.fighters.find(f=>f.id===winner?.id);
   const title=winner?'✶ Vencedor: '+winner.name:'A luta terminou sem vencedor.';
-  $('result').textContent=title;
+  $('result').textContent=title+(champion?' · '+CORE.CLASS[champion.build.klass].label+' · '+champion.kills+' eliminações · '+Math.round(champion.damage)+' dano':'');
+  spotlight(title,champion?'Dano total: '+Math.round(champion.damage)+' · KOs: '+champion.kills:'Fim de confronto',winner?.id,'knockout',6,t);
   appendLog('✶ '+title,'end');
   message('CONFRONTO FINALIZADO','finished');
   $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;
@@ -129,11 +174,14 @@ function initRound(){
  if(!state.stage)return;
  state.stage.pause();
  state.fought=false;state.result=null;state.busy=true;state.speed=1;
+ state.spotId=null;state.spotPriority=0;state.spotTime=-999;state.lastHitLog=-999;state.lastCameraTime=-999;
+ $('battleSpotlight').dataset.type='ready';$('spotlightText').textContent='Aguardando início do confronto';$('spotlightSource').textContent='Os golpes, habilidades e eliminações aparecem aqui.';
+ $('combatClock').textContent='00:00';$('followSpotlight').disabled=true;
  state.stage.setSpeed(1);
  $('speedBattle').textContent='Velocidade ×1';
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
- $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;
+ $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission;
  state.round++;
  const random=new Uint32Array(1);
@@ -187,7 +235,18 @@ document.querySelectorAll('.milestone').forEach(button=>{
 $('startBattle').addEventListener('click',begin);
 $('pauseBattle').addEventListener('click',pause);
 $('resetBattle').addEventListener('click',initRound);
-$('overviewCamera').addEventListener('click',()=>state.stage?.overview());
+$('overviewCamera').addEventListener('click',()=>{
+ state.director=false;$('actionCamera').setAttribute('aria-pressed','false');state.stage?.overview();
+});
+$('followSpotlight').addEventListener('click',()=>{if(state.spotId)state.stage?.focusFighter(state.spotId)});
+$('actionCamera').addEventListener('click',()=>{
+ state.director=!state.director;
+ $('actionCamera').setAttribute('aria-pressed',String(state.director));
+ $('actionCamera').textContent=state.director?'◉ Câmera: seguindo':'◉ Câmera de combate';
+ state.lastCameraTime=-999;
+ if(state.director&&state.spotId)state.stage?.focusFighter(state.spotId);
+ else if(!state.director)state.stage?.overview();
+});
 const expandButton=$('expandStage');
 function setImmersive(on){
  document.body.classList.toggle('arena-immersive',on);
@@ -208,7 +267,11 @@ try{
  state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:4.4,onEvent});
  const actorFill=new THREE.DirectionalLight(0xffd5b9,2.5);actorFill.position.set(4,13,14);state.stage.scene.add(actorFill);
  initRound();
- state.interval=setInterval(()=>{if(!document.hidden){updateScoreboard();reportModels()}},450);
+ state.interval=setInterval(()=>{if(!document.hidden){
+  updateScoreboard();reportModels();
+  const seconds=state.stage?.simulation?.time||0;
+  $('combatClock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(Math.floor(seconds%60)).padStart(2,'0');
+ }},450);
 }catch(e){
  state.busy=true;message('WEBGL INDISPONÍVEL');
  if($('stageLoading'))$('stageLoading').textContent='O Three.js não pôde iniciar: '+String(e?.message||e);
