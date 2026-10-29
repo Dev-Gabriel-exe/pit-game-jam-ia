@@ -71,3 +71,8 @@ Feedback do usuário: câmera cinematográfica melhorou; "Seguir" ainda ficava n
 - Link estável do demonstrador isolado, atualizado com o efeito ativo prioritário: https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1
 - Deploy da última versão de código da arena `cfb1d10eda35542aafa16c28959c790c1c9aba02`: Vercel `dpl_3wVvYrbFwfBieqf1VFTWg4hrRAwG`, READY e alias `pit-v5-coliseu-demo.vercel.app`.
 - A configuração atual B.6 de HP é Guerreiro 137, Guardião 140, Caçador 93 e Arcanista 78, **antes** de alocação individual de VIT/DEF. A maior vida base já existe, mas não assegura sobrevivência equilibrada ante ataque à distância; analisar medindo win rates e tempo até primeira eliminação na Fase E.
+
+### Prévia V5 de habilidades e terceira pessoa — build de apresentação
+- Última revisão de animações de habilidade: commit `a56871672dc897ced44653a0e7c175b61d0ad52c`, com pose de ator mais pronunciada e brilho sincronizado com eventos C.2 reais. Mudança somente de renderização, sem mudar física/dano/cooldowns.
+- Deploy isolado estável: `dpl_8P72npQWgVG9fk8KXQBnDUjmFoWB`, Vercel `READY`, alias público `https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1`. Não é a `main`.
+- Regressões: `PIT Game Jam QA` estático aprovou a build. Os testes longos com Playwright/Chromium foram iniciados para a última revisão; não classificar como concluídos antes dos resultados dos jobs `V5 Arena Lab`.
