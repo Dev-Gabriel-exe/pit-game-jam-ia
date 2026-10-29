@@ -23,8 +23,21 @@ for(let n=1;n<=10;n++){
  assert.equal(m.checks?.length,3,'three student acceptance checks '+n);
  cumulative=end;practical+=phase[2];
 }
+// Cross-check the actual projected teacher schedules, not only the legacy PLAN table.
+function displayedPhaseMinutes(file,pattern){
+ const source=fs.readFileSync(root+'/'+file,'utf8');
+ const match=source.match(pattern);
+ assert(match,'projected schedule not found in '+file);
+ return match[1].split(',').map(x=>Number(x.trim()));
+}
+assert.deepEqual(Array.from(plan[3]),displayedPhaseMinutes('v3/teacher-mission-three.js',/const minutes=\[([\d,\s]+)\]/),'M03 PLAN must match projected 5+5+18+2');
+assert.deepEqual(Array.from(plan[7]),displayedPhaseMinutes('v3/teacher-mission-seven-foundations.js',/\+\[([\d,\s]+)\]\.map\(\(n,i\)=>/),'M07 PLAN must match projected 7+4+36+3');
+// The M06 student and teacher accept a real imported asset without mandatory generative AI.
+assert(/IA é opcional/i.test(missions[5].goal),'M06 must not require an AI account or credits');
+assert(/origem\/licença/i.test(missions[5].checks[0]),'M06 acceptance must verify origin and license');
+assert(/Preview/i.test(missions[5].deliver),'M06 delivery must mention a real Preview');
 assert.equal(cumulative,360,'six-hour total');
 assert(practical>=216,'at least 60% practical time');
 assert.equal(missions[3].minutes,50,'M04 practice emphasis');
 assert.equal(missions[9].minutes,30,'M10 final pitch');
-console.log('PASS AUD-01: 10 missions; 360 minutes; '+practical+' practical minutes ('+(practical/360*100).toFixed(1)+'%); contiguous schedule, goals and deliverables.');
+console.log('PASS AUD-01: 10 missions; 360 minutes; '+practical+' practical minutes ('+(practical/360*100).toFixed(1)+'%); projected M03/M07 schedules aligned, M06 AI optional with license/Preview evidence.');
