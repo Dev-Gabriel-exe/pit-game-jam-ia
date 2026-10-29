@@ -57,3 +57,29 @@ body.pit-projecting{overflow:hidden!important}
  #pitProjector .pit-projector-tutorial-step .tm-guide-panel{grid-template-columns:minmax(0,1fr)}
  #pitProjector .pit-projector-tutorial-step img{max-height:22vh}
 }
+
+
+/* M04 projection: preserve the selected GDevelop route and all four actionable steps. */
+#pitProjector .pit-projector-route-intro{padding:clamp(18px,3vw,38px);border-left:4px solid #e0ad75;background:#181b20;font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-route-intro h3{color:#ffe1b3}
+#pitProjector .pit-projector-g4-step .g4-step{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-g4-step .g4-step-picture{min-width:0}
+#pitProjector .pit-projector-g4-step .g4-step-picture img{width:100%;height:auto;max-height:29vh;min-height:0;object-fit:contain}
+#pitProjector .pit-projector-g4-step .g4-step-guide{padding:clamp(12px,1.3vw,20px)}
+#pitProjector .pit-projector-g4-step h4{font:700 clamp(25px,2.3vw,36px)/1.2 system-ui,"Segoe UI",Arial,sans-serif;margin:4px 0 10px}
+#pitProjector .pit-projector-g4-step .g4-instruction{padding:8px 12px;margin:6px 0}
+#pitProjector .pit-projector-g4-step .g4-instruction p,
+#pitProjector .pit-projector-g4-step .g4-result p,
+#pitProjector .pit-projector-g4-step .g4-diagnostic p{font:400 clamp(19px,1.5vw,24px)/1.4 system-ui,"Segoe UI",Arial,sans-serif;margin:5px 0}
+#pitProjector .pit-projector-g4-step .g4-mini-tag,
+#pitProjector .pit-projector-g4-step .g4-instruction strong,
+#pitProjector .pit-projector-g4-step .g4-result strong,
+#pitProjector .pit-projector-g4-step .g4-diagnostic strong,
+#pitProjector .pit-projector-g4-step .g4-picture-label span,
+#pitProjector .pit-projector-g4-step .g4-picture-source{font-size:clamp(18px,1.25vw,20px);line-height:1.3}
+#pitProjector .pit-projector-g4-step .g4-source-link{font-size:18px}
+#pitProjector .pit-projector-g4-step .pit-projector-diagnostic{margin-top:7px;padding:7px 0}
+@media(max-width:1000px){
+ #pitProjector .pit-projector-g4-step .g4-step{grid-template-columns:minmax(0,1fr)}
+ #pitProjector .pit-projector-g4-step .g4-step-picture img{max-height:18vh}
+}
