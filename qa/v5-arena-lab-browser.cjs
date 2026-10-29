@@ -48,7 +48,8 @@ const {chromium}=require('playwright');
     assert(Number(await page.locator('#arenaStage').getAttribute('data-v5-spectators'))>0);
     assert(await page.locator('.arena-nickname.spectating').count()>0,'Spectator nick must stay visible in 3D scene');
     assert.match(await page.locator('#spectatorsCount').textContent(),/[1-9]\d* na arquibancada/);
-    console.log('PASS eliminated hero transported to a grandstand seat with a nickname');
+    await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5SpecialFx||0)>0&&Number(document.querySelector('#arenaStage')?.dataset.v5AnimationEvents||0)>0,null,{timeout:30000});
+    console.log('PASS eliminated hero in grandstand, with animated attack/cast reactions and per-class special VFX');
     // No screenshot during a live WebGL duel: headless SwiftShader may stall and falsely fail QA.
    }
    await page.waitForTimeout(700);
