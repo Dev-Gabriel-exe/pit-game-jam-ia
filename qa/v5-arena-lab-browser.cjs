@@ -24,6 +24,15 @@ const {chromium}=require('playwright');
     await page.screenshot({path:'qa/v5-arena-lab-error-'+width+'.png',fullPage:true});
     throw e;
    }
+   // Capture the quiet architectural scene before battle starts. Headless
+   // SwiftShader screenshot errors should not invalidate functional QA.
+   if(width===1440){
+    try{
+     await page.locator('#arenaStage').screenshot({
+      path:'qa/v5-arena-lab-coliseum-desktop.png',timeout:15000,animations:'disabled'
+     });
+    }catch(error){console.warn('Architecture screenshot unavailable: '+error.message)}
+   }
    assert.equal(await page.locator('#arenaStage canvas').count(),1);
    assert.equal(await page.locator('#battleSpotlight').count(),1);
    assert.equal(await page.locator('#actionCamera').count(),1);
@@ -91,6 +100,8 @@ const {chromium}=require('playwright');
    assert.equal(await page.locator('[data-fighter]').count(),count);
    const environment=await page.locator('#arenaStage').getAttribute('data-v5-environment');
    console.log('SCENERY STATUS '+width+'px: '+environment);
+   assert.equal(environment,'loaded','Os seis GLBs CC0 da arquitetura devem carregar');
+   assert(Number(await page.locator('#arenaStage').getAttribute('data-v5-environment-parts'))>=40,'A arena deve montar componentes arquitetônicos reais');
    assert.deepEqual(errors,[],'Unexpected JS error: '+errors.join(' | '));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<15,'Horizontal overflow at '+width+'px: '+overflow);
