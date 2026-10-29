@@ -6,11 +6,17 @@ const {chromium}=require('playwright');
  try{
   for(const width of [1440,390]){
    const page=await browser.newPage({viewport:{width,height:900}});
-   const errors=[];page.on('pageerror',error=>errors.push(error.message));
+   const errors=[];page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error')errors.push('CONSOLE: '+message.text())});
    await page.goto('http://127.0.0.1:8899/v5/arena-lab.html',{waitUntil:'domcontentloaded',timeout:40000});
    assert.equal(await page.locator('.milestone').count(),2);
    assert.equal(await page.locator('[data-mission="5"]').getAttribute('aria-pressed'),'true');
-   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:90000});
+   try{await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:65000});}
+   catch(e){
+    const debug=await page.evaluate(()=>({stage:document.querySelector('#arenaStage')?.dataset, status:document.querySelector('#arenaStatus')?.textContent, models:document.querySelector('#modelReport')?.textContent, lab:!!window.PIT_V5_ARENA_LAB, canvas:document.querySelectorAll('#arenaStage canvas').length}));
+    console.error('MODEL DEBUG '+JSON.stringify({width,debug,errors}));
+    await page.screenshot({path:'qa/v5-arena-lab-error-'+width+'.png',fullPage:true});
+    throw e;
+   }
    assert.equal(await page.locator('#arenaStage canvas').count(),1);
    assert.equal(await page.locator('[data-fighter]').count(),4);
    assert.equal(await page.locator('#startBattle').isDisabled(),false);
