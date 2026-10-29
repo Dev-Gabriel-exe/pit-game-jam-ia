@@ -393,13 +393,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    default:crestGeometry=new THREE.OctahedronGeometry(.28,0);
   }
   const crest=new THREE.Mesh(crestGeometry,emissive());
-  crest.position.set(0,2.94,.30);group.add(crest);
+  crest.position.set(0,2.94,.30);crest.visible=false;group.add(crest);
   const mini=new THREE.Mesh(new THREE.TorusGeometry(.32,.03,5,22),secondary());
-  mini.position.set(0,2.94,.30);group.add(mini);
+  mini.position.set(0,2.94,.30);mini.visible=false;group.add(mini);
   const shards=[];
   for(let n=0;n<identity.shards;n++){
    const shard=new THREE.Mesh(new THREE.OctahedronGeometry(.10+n*.016,0),n===0?emissive():secondary());
-   shard.position.set((n-1)*.45,1.85+n*.15,-.52);group.add(shard);shards.push(shard);
+   shard.position.set((n-1)*.45,1.85+n*.15,-.52);shard.visible=false;group.add(shard);shards.push(shard);
   }
   item.mesh.root.add(group);
   item.identityVisual={group,outer,inner,crest,mini,shards};
@@ -426,14 +426,16 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    // No extra modular outfits, helmets, fake limbs or overlaid T-poses.
    model.scale.setScalar(factor);
    model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
-   const tint=new THREE.Color(item.identity?.accent||PALETTES[item.build.appearance.palette]||PALETTES.ember);
+   // Preserve the *original* KayKit palette, armour and cape textures.
+   // Mixing 28% build tint into every mesh made our four distinct classes
+   // look like the same old procedural character, especially on phones.
    const personalMaterials=[];
    model.traverse(o=>{
     // Cached GLB geometry and textures are shared across clones.
     o.userData.v5SharedGLB=true;
     if(!o.isMesh)return;
     o.castShadow=true;o.receiveShadow=true;
-    const custom=source=>{const mat=source.clone();if(mat.color)mat.color.lerp(tint,item.identity?.28:.10);personalMaterials.push(mat);return mat};
+    const custom=source=>{const mat=source.clone();personalMaterials.push(mat);return mat};
     if(o.material)o.material=Array.isArray(o.material)?o.material.map(custom):custom(o.material);
    });
    // Keep original procedural mesh as offline fallback, but do not overlay it.
@@ -443,6 +445,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(item.id!=='preview'){
     container.dataset.v5RigFamily='kaykit-adventurers-cc0';
     container.dataset.v5RigModel=asset.model.split('/').pop();
+    container.dataset.v5RigOriginalMaterials='true';
+    container.dataset.v5ModelNames='Barbarian, Mage, Rogue_Hooded, Knight';
     container.dataset.v5RigHeight='2.55';
    }
    if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
