@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T09:13:37.993Z",
+  "last_completed_at": "2026-10-29T10:16:38.531Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: confirm M08 static/Browser QA on final code, then continue literal teacher/student acceptance criteria; pedagogy before aesthetics",
+  "priority": "V4-CROSS-PROJECTOR-CONTENT: audit real presentation coverage (M01/M03 demos), slide completeness and interactive examples; pedagogy before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M08-TARGET-SCREEN",
+  "last_task": "V4-CROSS-M08-CI-CONTRACT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2422,47 +2422,56 @@
       "task": "V4-CROSS-M08-TARGET-SCREEN",
       "commit": "27450669f0f42cc99748070397d1e6ff390d6fe0",
       "summary": "Confirmed M10 Browser QA 40841100405 SUCCESS. M08 projected teacher rubric required narrow-screen/mobile test even for desktop-only games, while student guide omitted it. Aligned teacher public rubric/private guidance and student numbered practice to target resolution; narrow Preview optional for mobile-targeted games, no physical-device claim. Added 7 static regression assertions. Direct V8 checks: 10/10 source contracts and 3/3 JS syntax PASS. New M08 GitHub CI not yet confirmed. Human GDevelop GUI/HDMI/mobile/peer NOT_RUN. Original 54/59 unchanged; main untouched."
+    },
+    {
+      "at": "2026-10-29T10:16:38.531Z",
+      "task": "V4-CROSS-M08-CI-CONTRACT",
+      "status": "done",
+      "commit": "33046130d2549a74a568b8c82ae7169642ff7102",
+      "note": "Fixed stale M08 mobile-title acceptance assertion after target-screen rubric change; QA run 40856157541 success; browser pending. Next: projector coverage."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M08-TARGET-SCREEN",
+    "task": "V4-CROSS-PROJECTOR-CONTENT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T09:13:37.993Z",
+    "updated_at": "2026-10-29T10:16:38.531Z",
     "code_commits": [
-      "223c54ab661fedf2fe7f2ed0a78661cef15051eb",
-      "c38bae855a4662ce3ee130530d59f1d643206cf0",
-      "27450669f0f42cc99748070397d1e6ff390d6fe0"
+      "33046130d2549a74a568b8c82ae7169642ff7102"
     ],
-    "documentation_commit": "63c671c677b65db26bd9a0476bbaedc2a8b5964f",
+    "documentation_commit": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
     "tests": [
       {
-        "name": "M10 previous final static QA",
-        "run_id": 40841100397,
-        "result": "SUCCESS",
-        "sha": "334979ea2c4d20508a0710257f1e366acc1f07b8"
+        "name": "M08 static QA prior code",
+        "run_id": 40847981578,
+        "sha": "5ae815e3048560fd3c54b8421c071b68d23880be",
+        "result": "FAIL: stale title /MOBILE/ expectation in qa/v3-m08-acceptance.cjs"
       },
       {
-        "name": "M10 previous final Browser QA",
-        "run_id": 40841100405,
-        "result": "SUCCESS",
-        "sha": "334979ea2c4d20508a0710257f1e366acc1f07b8"
+        "name": "M08 updated acceptance contract static QA",
+        "run_id": 40856157541,
+        "sha": "33046130d2549a74a568b8c82ae7169642ff7102",
+        "result": "SUCCESS"
       },
       {
-        "name": "M08 direct source alignment contracts",
-        "result": "PASS 10/10",
-        "sha": "27450669f0f42cc99748070397d1e6ff390d6fe0"
+        "name": "M08 updated acceptance contract Browser QA",
+        "run_id": 40856157563,
+        "sha": "33046130d2549a74a568b8c82ae7169642ff7102",
+        "result": "IN_PROGRESS at checkpoint"
       },
       {
-        "name": "M08 JS syntax V8",
-        "result": "PASS 3/3",
-        "sha": "27450669f0f42cc99748070397d1e6ff390d6fe0"
+        "name": "Documentation commit static QA",
+        "run_id": 40856233174,
+        "sha": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
+        "result": "IN_PROGRESS at checkpoint"
       },
       {
-        "name": "M08 GitHub CI",
-        "result": "NOT_YET_VERIFIED"
+        "name": "Documentation commit Browser QA",
+        "run_id": 40856233410,
+        "sha": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
+        "result": "IN_PROGRESS at checkpoint"
       },
       {
-        "name": "GDevelop GUI, physical mobile, HDMI projection, peer playtest",
+        "name": "Manual GDevelop GUI, physical mobile, HDMI projection, peer playtest",
         "result": "NOT_RUN"
       }
     ],
@@ -2470,7 +2479,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm CI of M08 final code and audit further literal teacher/student contradictions",
-    "blocker": "Physical GDevelop, HDMI, mobile and human peer tests NOT_RUN; M08 CI not yet verified"
+    "next_task": "Verify CI on latest checkpoint and implement a small, measurable fix for projector pedagogical coverage, prioritizing M01/M03 demonstration/tutorial slides",
+    "blocker": "Projector audit documents 9/40 phases under 40% retained text and cloned interactive controls without handlers; manual human validation remains NOT_RUN."
   }
 }
