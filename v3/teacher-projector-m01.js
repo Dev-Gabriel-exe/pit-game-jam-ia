@@ -84,6 +84,41 @@ function pedagogicalDemoSlides(root,mission){
   add('.tm1-key','Próxima missão: reduzir a ideia a um MVP');
   return result.length===10?result:null;
  }
+ // M03 / Criar: project the three actual GDevelop lab fragments, not just generic cards.
+ // Private teacher instructions are deliberately excluded from every slide.
+ if(mission===3&&root.querySelector('[data-tm3-phase="practice"]')){
+  const cards=[...root.querySelectorAll('.tm3-labcards > .tm3-labcard')];
+  if(cards.length!==3)return null;
+  const result=[];
+  function add(selector,title){
+   const node=root.querySelector(selector);
+   if(node)result.push({title,html:cleanCopy(node)});
+  }
+  add('.tm3-lead','Da ficha MVP ao primeiro projeto executável');
+  add('.tm3-lab-overview','Entrada, construção e evidência');
+  add('.tm3-practical-timing','Laboratório: 4 + 8 + 6 minutos');
+  cards.forEach((card,i)=>{
+   const copy=card.cloneNode(true);
+   // In the projected tutorial, recovery instructions must be readable
+   // without asking the class to expand a hidden disclosure.
+   copy.querySelectorAll('details').forEach(details=>{
+    const visible=document.createElement('section');
+    visible.className='pit-projector-diagnostic';
+    const label=document.createElement('strong');
+    label.textContent=details.querySelector('summary')?.textContent?.trim()||'SE NÃO FUNCIONAR';
+    visible.appendChild(label);
+    [...details.children].filter(el=>el.tagName!=='SUMMARY').forEach(el=>visible.appendChild(el.cloneNode(true)));
+    details.replaceWith(visible);
+   });
+   result.push({title:'Fragmento '+(i+1)+' de 3 · '+(card.querySelector('h4')?.textContent?.trim()||'GDevelop'),
+    html:'<section data-pit-projector-lab="M03:'+(i+1)+'">'+cleanCopy(copy)+'</section>'});
+  });
+  add('.tm3-asset-inset','Escolher um recurso gratuito sem atrasar a prática');
+  add('.tm3-paths','Rotas alternativas: Sprite 2D ou 3D Box');
+  const outcome=[...root.querySelectorAll('.tm3-principle')].find(node=>node.textContent.includes('RESULTADO DA MISSÃO 03'));
+  if(outcome)result.push({title:'Critério de entrega: Preview e projeto recuperável',html:cleanCopy(outcome)});
+  return result.length>=8?result:null;
+ }
  if(mission===3&&root.querySelector('[data-tm3-phase="demo"]')&&firstRun?.projectorPanel&&firstRun.steps?.length===6){
   const result=[];
   for(const [selector,title] of [['.tm3-lead','Do projeto ao primeiro Preview'],['.gd3-heading','Tutorial de GDevelop: seis etapas']]){
