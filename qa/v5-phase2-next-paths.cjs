@@ -56,7 +56,7 @@ for(const [k,enemy,dist] of [['warrior','guardian',2],['mage','warrior',2],['hun
   for(const id of ['E01','E02','E04','E05'])assert(sim.events.some(x=>x.type==='talent'&&x.talent===id),id+' not cast');
   assert(seen(sim,'E01').some(x=>x.type==='trap'),'E01 must trigger physical trap zone');
   assert(seen(sim,'E03').some(x=>x.type==='proc'),'E03 poison requires real trap damage');
-  assert(seen(sim,'E03').some(x=>x.type==='hit'),'E03 must inflict real poison damage');
+  assert(sim.events.some(x=>x.type==='hit'&&x.skill==='E03'&&x.amount>0),'E03 must inflict real poison damage');
   assert(seen(sim,'E04').some(x=>x.type==='zone-effect'),'E04 must slow enemies in zone');
  }
  if(k==='guardian'){
