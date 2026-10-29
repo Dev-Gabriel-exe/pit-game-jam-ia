@@ -44,8 +44,9 @@ for(const event of sim1.events)assert(Number.isFinite(event.time),'Event time mu
 for(const f of CORE.battle(input,{seed:2321,arenaScale:4.4,limit:95}).fighters){
  assert(Number.isFinite(f.x)&&Number.isFinite(f.z)&&Number.isFinite(f.vx),'Initial physics state must be valid');
 }
-const allWinners=new Set(),classesWinning=new Set(),hist=new Map(),byClass=new Map();
+const allWinners=new Set(),classesWinning=new Set(),hist=new Map(),byClass=new Map(),byMission=new Map();
 for(const mission of [5,10]){
+ const histogram=new Map();byMission.set(mission,histogram);
  for(let seed=1;seed<=36;seed++){
   const sim=CORE.battle(roster(mission,30),{seed:seed*314159+mission*100,arenaScale:4.4,limit:95});
   const res=sim.run(2500);
@@ -55,6 +56,7 @@ for(const mission of [5,10]){
   classesWinning.add(res.winner.klass);
   hist.set(res.winner.id,(hist.get(res.winner.id)||0)+1);
   byClass.set(res.winner.klass,(byClass.get(res.winner.klass)||0)+1);
+  histogram.set(res.winner.klass,(histogram.get(res.winner.klass)||0)+1);
   assert(res.events.some(e=>e.type==='hit'), 'No hits in M'+mission+' seed '+seed);
   // 3D spectators are driven only by real engine events.
   assert(res.events.some(e=>e.type==='knockout'||e.type==='storm'),'No eliminations in M'+mission);
@@ -63,10 +65,14 @@ for(const mission of [5,10]){
 const summary=Object.fromEntries([...byClass].sort((a,b)=>a[0].localeCompare(b[0])));
 console.log('V5 FAIRNESS AUDIT 72 fights, 30 unique fictitious heroes: '+JSON.stringify(summary));
 console.log('Unique winner IDs: '+allWinners.size+'; winning classes: '+classesWinning.size);
+for(const [mission,histogram] of byMission)console.log('M'+mission+' WIN RATES: '+JSON.stringify(Object.fromEntries(histogram)));
 assert(allWinners.size>=5,'Same bot dominates seeds; winner diversity too low');
 assert.equal(classesWinning.size,4,'Todas as quatro classes precisam conseguir vencer nas sementes de referencia');
 for(const klass of classes)assert((byClass.get(klass)||0)>=3,'Classe sem vitorias suficientes no benchmark: '+klass);
-assert(Math.max(...byClass.values())<=43,'Uma unica classe domina mais de 60% das 72 partidas de referencia');
+assert(Math.max(...byClass.values())<=30,'Uma classe ultrapassou 42% das 72 vitorias de referencia');
+assert((byClass.get('hunter')||0)<=23,'Caçador voltou a dominar o torneio de 30 participantes');
+assert((byClass.get('warrior')||0)>=8,'Guerreiro voltou a ser inviavel em combate');
+for(const [mission,histogram] of byMission)assert(new Set(histogram.keys()).size>=3,'Menos de 3 classes venceram no marco M'+mission);
 const maxWins=Math.max(...hist.values());
 assert(maxWins<48,'Single bot won two thirds of matches: unbalanced default roster');
 console.log('PASS seeded replay, 30-player hit/elimination events, variable winners, multiple winning classes.');
