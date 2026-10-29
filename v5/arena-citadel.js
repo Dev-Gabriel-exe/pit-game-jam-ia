@@ -77,6 +77,11 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
   const rhombus=cyl(sigil,.45,.45,.06,4,oldGold,Math.sin(a)*6.65,.02,Math.cos(a)*6.65);
   rhombus.rotation.y=a+Math.PI/4;
  }
+ // Grandstands are actual spectator seats, not just walls. Three stepped terraces
+ // on all four sides, with 144 logical seats and visible stone benches/rails.
+ const spectatorSeats=[];
+ const spectatorsPerRow=12;
+ const orderedSides=[2,1,3,0]; // Fill far side first, visible from the main spectator camera.
  // Dark lava-lit trench beyond the playable floor, then three tiers of spectator
  // stands. The trench is decoration outside the logical storm boundary.
  for(let side=0;side<4;side++){
@@ -88,6 +93,23 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
    const h=1.5+tier*1.5,depth=2.65;
    box(perimeter,109,1.4,depth,tier%2?stone:basalt,0,h-1.1,53.0+tier*2.45);
    box(perimeter,109,.21,.22,oldGold,0,h-.37,51.66+tier*2.45);
+  }
+  // Seats on each terrace are spaced so 30 eliminated heroes never overlap.
+  // Aisle edges and stone benches make the audience tier legible on camera.
+  for(let tier=0;tier<3;tier++){
+   const h=1.5+tier*1.5,z=53.0+tier*2.45;
+   box(perimeter,101,.25,1.0,highStone,0,h-.24,z+.6);
+   box(perimeter,101,.18,.19,oldGold,0,h-.34,z-1.18);
+   for(const x of [-43,-15,15,43]){
+    box(perimeter,.18,.42,2.6,oldGold,x,h-.18,z);
+   }
+   for(let seat=0;seat<spectatorsPerRow;seat++){
+    const sx=-40+seat*(80/(spectatorsPerRow-1));
+    const angle=side*Math.PI/2;
+    const local=new THREE.Vector3(sx,h+.18,z);
+    local.applyAxisAngle(new THREE.Vector3(0,1,0),angle);
+    spectatorSeats.push({side,tier,seat,x:local.x,y:local.y,z:local.z,lookAtX:0,lookAtZ:0});
+   }
   }
   // Fortress walls and crenellations, 10-meter silhouettes above the stands.
   box(perimeter,114,10,3.1,basalt,0,7.5,61.1);
@@ -164,8 +186,10 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  }
  rocks.instanceMatrix.needsUpdate=true;world.add(rocks);
  // GPU-safe persistent status so browser QA can prove this is a different map.
- world.userData.version='eclipse-citadel-1';
+ world.userData.version='eclipse-citadel-2-grandstands';
  world.userData.playfield='square';
  world.userData.width=112;
- return {world,mapType:'eclipse-citadel-1',objects:made.length,tiles:instanceCount};
+const sortedSeats=orderedSides.flatMap(side=>spectatorSeats.filter(seat=>seat.side===side));
+ world.userData.spectatorSeatCapacity=sortedSeats.length;
+ return {world,mapType:'eclipse-citadel-2-grandstands',objects:made.length,tiles:instanceCount,spectatorSeats:sortedSeats};
 }
