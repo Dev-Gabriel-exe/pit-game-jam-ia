@@ -271,7 +271,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    // The legacy special is still class-generic, not one of the 120 talents.
    // Do not consume a Warrior's seismic strike when the opponent is
    // outside its actual splash radius; this previously wasted most casts.
-   const readyForSpecial=f.build.klass==='guardian'||
+   // Fortress has a defensive shield *and* a short area-control pulse.
+   // Spending its entire cooldown without an enemy in that area wastes the
+   // Guardian's defining close-range counterplay against mobile classes.
+   const readyForSpecial=f.build.klass==='guardian'?
+    d<=3.35+f.build.talents.taunt*.6:
     (f.build.klass==='warrior'?d<=3.05:d<=Math.max(f.stats.range+1.3,4.2));
    if(f.special<=.55&&f.special>0&&readyForSpecial&&!f.telegraph){
     // Advance notice: observers can see where a dangerous ability comes from.

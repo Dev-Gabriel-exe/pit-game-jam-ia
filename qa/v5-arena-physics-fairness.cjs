@@ -107,6 +107,28 @@ projectilePhysicsCase();
 projectilePhysicsCase({targetDies:true});
 projectilePhysicsCase({shooterDies:true});
 console.log('PASS swept projectile interception, dead-target persistence and posthumous impact.');
+// A Guardian must not burn its area-control cooldown with zero targets
+// inside the actual impact radius. Once someone enters, it must execute.
+{
+ const lineup=[['guardian-test','guardian'],['mage-test','mage']].map(([id,klass])=>
+  ({...CORE.canonical(CORE.seedBuild(id,klass),id,500),id,name:id}));
+ const sim=CORE.battle(lineup,{seed:113,limit:20});
+ const [guardian,mage]=sim.fighters;
+ Object.assign(guardian,{x:2,z:11,special:0,basic:999,rushCooldown:999});
+ Object.assign(mage,{x:12,z:11,special:999,basic:999});
+ guardian.stats.speed=0;mage.stats.speed=0;
+ sim.update(.05);
+ assert(!sim.events.some(e=>e.type==='special'&&e.hero===guardian.id),
+  'Guardian must save Fortress for a nearby target');
+ assert.equal(guardian.special,0,'Out-of-range Fortress must not consume cooldown');
+ Object.assign(mage,{x:4,z:11});
+ sim.update(.05);
+ assert(sim.events.some(e=>e.type==='special'&&e.hero===guardian.id),
+  'Guardian must use Fortress inside its actual pulse radius');
+ assert(guardian.special>0,'Fortress cooldown must start after a real cast');
+}
+
+console.log('PASS Guardian range-aware Fortress decision.');
 
 console.log('PASS seeded replay, 30-player hit/elimination events, variable winners, multiple winning classes.');
 console.log('NOTE: Passing this anti-repetition gate is NOT certification that the planned 120 talents are balanced.');
