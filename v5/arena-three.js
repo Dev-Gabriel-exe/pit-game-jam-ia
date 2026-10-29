@@ -251,6 +251,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5Map=world.mapType;
   container.dataset.v5PlayfieldWidth=String(Math.round(99*stadiumScale));
   container.dataset.v5SpectatorCapacity=String(world.spectatorSeats.length);
+  container.dataset.v5DuelCourts=String(world.duelCourts||0);
   loadMedievalArchitecture(root,worldScale,quality,container);
  }else container.dataset.v5Map='original-ring-1';
  // Visible and accurate safe-zone boundary, scaled from the combat core.
