@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T12:18:41.071Z",
+  "last_completed_at": "2026-10-29T12:19:25.307Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-PROJECTOR-CONTENT: M04 default Chrome PASS, all-route regression pending, next M05/M07 demos",
+  "priority": "V4-CROSS-PROJECTOR-CONTENT: M04 all-route Chrome PASS, browser pending, fix 720p scroll and M05/M07 demo coverage",
   "current_phase": "MISSOES",
   "last_task": "V4-CROSS-PROJECTOR-M04",
   "completed_count": 54,
@@ -2441,7 +2441,7 @@
   "v4_checkpoint": {
     "task": "V4-CROSS-PROJECTOR-CONTENT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T12:18:41.071Z",
+    "updated_at": "2026-10-29T12:19:25.307Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2564,13 +2564,19 @@
         "run_id": 40872128441,
         "sha": "08c37b782353aa7dcb38e08f97ab9b654be93959",
         "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "M04 all four selected routes projected in Chrome 1280/1600/1920",
+        "run_id": 40872128258,
+        "sha": "08c37b782353aa7dcb38e08f97ab9b654be93959",
+        "result": "SUCCESS 3/3 jobs: 8/8 projector assertions including platform, puzzle and 3D complete steps, no private notes; 720p vertical scrolling remains"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M04 all-route Chrome matrix and Browser QA; investigate 720p scrolling; then project M05/M07 tutorial steps",
-    "blocker": "M04 default route Chrome QA PASS but 720p step slides still scroll; all-route Chrome CI and latest Browser QA pending; manual HDMI/GDevelop GUI/mobile/peer NOT_RUN."
+    "next_task": "Confirm final Browser QA 40872128441; reduce M04 720p scroll where pedagogically necessary; then reconstruct M05/M07 projected GDevelop tutorials",
+    "blocker": "M04 all-route projector Chrome 3/3 PASS; final Browser QA still pending; 720p scrolling and six low-coverage phases across missions remain; manual GDevelop GUI/HDMI/mobile/peer NOT_RUN."
   }
 }
