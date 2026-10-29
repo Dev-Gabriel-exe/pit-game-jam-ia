@@ -24,6 +24,10 @@ const {chromium}=require('playwright');
     throw e;
    }
    assert.equal(await page.locator('#arenaStage canvas').count(),1);
+   assert.equal(await page.locator('#battleSpotlight').count(),1);
+   assert.equal(await page.locator('#actionCamera').count(),1);
+   assert.equal(await page.locator('.battle-legend').count(),1);
+   assert.equal(await page.locator('.battle-float-layer').count(),1);
    assert.equal(await page.locator('.arena-nickname').count(),count,'Nicks devem estar associados a cada personagem 3D');
    assert((await page.locator('.arena-nickname').first().textContent()).trim().length>0);
    assert.equal(await page.locator('#spectatorsCount').textContent(),'0 na arquibancada');
@@ -31,6 +35,10 @@ const {chromium}=require('playwright');
    assert.equal(await page.locator('[data-focus]').count(),count,'Todos devem oferecer camera individual');
    await page.locator('[data-focus]').first().click();
    await page.locator('#overviewCamera').click();
+   await page.locator('#actionCamera').click();
+   assert.equal(await page.locator('#actionCamera').getAttribute('aria-pressed'),'true');
+   await page.locator('#actionCamera').click();
+   assert.equal(await page.locator('#actionCamera').getAttribute('aria-pressed'),'false');
    await page.locator('#expandStage').click();
    assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('arena-immersive')),true);
    await page.locator('#expandStage').click();
@@ -62,6 +70,8 @@ const {chromium}=require('playwright');
       console.error('SPECIAL FX DEBUG '+JSON.stringify({debug,errors}));
       throw error;
     }
+    assert.notEqual(await page.locator('#battleSpotlight').getAttribute('data-type'),'ready','O narrador deve indicar ações reais');
+    assert((await page.locator('#spotlightText').textContent()).length>=8);
     console.log('PASS eliminated hero in grandstand, with animated attack/cast reactions and per-class special VFX');
     // No screenshot during a live WebGL duel: headless SwiftShader may stall and falsely fail QA.
    }
