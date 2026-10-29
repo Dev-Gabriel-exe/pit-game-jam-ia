@@ -113,7 +113,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   if(f.navObstacle!==index){
    const cross=rx*(target.z-o.z)-rz*(target.x-o.x);
    // A fixed hero/seed parity breaks symmetrical head-on approaches.
-   const parity=([...(f.id)].reduce((v,c)=>v+c.charCodeAt(0),seed^index)&1);
+   const parity=([...f.id].reduce((v,c)=>v+c.charCodeAt(0),seed^index))&1;
    f.navSide=Math.abs(cross)>.15?(cross>0?1:-1):(parity?1:-1);
    f.navObstacle=index;f.navActive=false;f.navTurns++;
   }
