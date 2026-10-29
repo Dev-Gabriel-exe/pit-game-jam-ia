@@ -10,3 +10,5 @@
 .fighters{max-height:540px;overflow:auto;scrollbar-color:#9e7655 #19141b;padding-right:4px}
 .fighter .name strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:650px){.roster-controls{align-items:stretch}.roster-controls .eyebrow{flex:1 1 100%}.roster-mode{flex:1 1 100px;text-align:center}.roster-note{margin-left:0}}
+
+.fighter .small button{background:#34262e;border:1px solid #82654d;color:#efd6b3;font-size:10px;font-weight:800;padding:2px 8px;min-height:24px}.fighter .small button:hover{background:#5a382d;border-color:#cc9e6d}
