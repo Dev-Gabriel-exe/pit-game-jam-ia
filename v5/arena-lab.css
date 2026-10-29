@@ -200,3 +200,5 @@ body.arena-immersive .stage-flair{display:none}
 #damagePace{border-color:#bd9868;background:#382a28;color:#f2dcb5;font-weight:800}
 #damagePace[data-scale="1"]{border-color:#807b83;background:#23202b;color:#c8bfc1}
 #damagePace[data-scale="0.6"]{border-color:#9869be;background:#37213d;color:#e4c8fc}
+
+#damagePace[data-scale="0.5"]{border-color:#cc9a73;background:#4b2935;color:#ffe4cc}
