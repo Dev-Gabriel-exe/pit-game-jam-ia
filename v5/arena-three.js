@@ -547,15 +547,23 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    stormMaterial.opacity=result.time>18?.75:.36;
    for(const ev of result.events){
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
+    const cue=ev.talent&&attacker?cueFor(attacker.build.klass,ev.talent):null;
     if(ev.type==='prepare'){
-     triggerMotion(attacker,'cast',.5);
-     warningFx(attacker);
-    }else if(ev.type==='talent'||ev.type==='shield'){
-     triggerMotion(attacker,'cast',.72);
-     specialFx(attacker);
+     triggerMotion(attacker,'cast',.5);warningFx(attacker);
+    }else if(ev.type==='talent'){
+     triggerMotion(attacker,cue?.motion||'cast',cue?.duration||.72);
+     if(!cue)specialFx(attacker);else talentVisual(attacker,ev);
+    }else if(ev.type==='shield'){
+     triggerMotion(attacker,'block',.58);
+     if(!isPhase2())specialFx(attacker);
     }else if(ev.type==='special'){
-     triggerMotion(attacker,'cast',.72);
-     specialFx(attacker);
+     triggerMotion(attacker,'cast',.72);specialFx(attacker);
+    }else if(ev.type==='proc'||ev.type==='charge'){
+     if(cue&&ev.type==='proc')talentVisual(attacker,ev,null,true);
+    }else if(ev.type==='trap'||ev.type==='talent-impact'||ev.type==='zone'){
+     if(cue)talentVisual(attacker,ev,{x:ev.x,z:ev.z},true);
+    }else if(ev.type==='teleport'){
+     if(cue){triggerMotion(attacker,'dodge',.42);talentVisual(attacker,ev,{x:ev.x,z:ev.z});}
     }else if(ev.type==='launch'){
      triggerMotion(attacker,'attack',.47);
     }else if(ev.type==='hit'){
@@ -638,15 +646,16 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const e=effects[i];e.life-=dt;e.mesh.position.addScaledVector(e.mesh.userData.velocity,dt);
    if(e.isAbility){
     const progress=1-e.life/e.maxLife;
-    e.mesh.scale.setScalar(.7+progress*2.3);
-    e.mesh.material.opacity=.78*(1-progress);
-    e.mesh.rotation.y+=dt*1.8;
+    e.mesh.scale.setScalar((e.baseScale||.7)*(1+progress*(e.talentCue?.style==='barrier'?.8:1.7)));
+    e.mesh.material.opacity=(e.talentCue?.type==='passivo'?.52:.78)*(1-progress);
+    e.mesh.rotation.y+=dt*(e.talentCue?.spin||1.8);
    }else{
     e.mesh.userData.velocity.y-=dt*7;
     e.mesh.scale.setScalar(Math.max(.01,e.life));
    }
-   if(e.life<=0){root.remove(e.mesh);e.mesh.geometry.dispose();e.mesh.material.dispose();effects.splice(i,1)}
+   if(e.life<=0){discardEffect(e);effects.splice(i,1)}
   }
+  container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId);if(f){
     const watching=occupiedSeats.get(followId);
     const target=watching?new THREE.Vector3(watching.x,watching.y+1.4,watching.z):new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
