@@ -74,3 +74,33 @@ body.arena-immersive .stage-flair{display:none}
  body.arena-immersive .controls button{font-size:11px;min-height:37px}
  body.arena-immersive .controls .cta{grid-column:span 2}
 }
+
+
+/* Nicks anchored to the actual 3D hero coordinates (CSS pixel size readable
+   independently of camera distance); spectators remain labeled in stands. */
+.arena-nickname-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+.arena-nickname{
+ position:absolute;top:0;left:0;display:none;
+ padding:3px 7px;border:1px solid #caa36fb0;border-radius:5px;
+ background:#120f19e8;color:#f9e6c4;
+ font:800 12px/1.15 "Source Sans 3",system-ui,sans-serif;letter-spacing:.02em;
+ white-space:nowrap;max-width:180px;text-overflow:ellipsis;overflow:hidden;
+ text-shadow:0 1px 2px #08070e;box-shadow:0 2px 9px #0009;
+ will-change:transform;
+}
+.arena-nickname[data-klass="warrior"]{border-color:#db916c}
+.arena-nickname[data-klass="mage"]{border-color:#b39ade}
+.arena-nickname[data-klass="hunter"]{border-color:#88cbaa}
+.arena-nickname[data-klass="guardian"]{border-color:#84b6d5}
+.arena-nickname.spectating{background:#263321f0;color:#d7efb1;border-color:#8bc06c;font-weight:700}
+.combat-stats{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px}
+.counter{display:inline-flex;align-items:center;border:1px solid #bc915d7d;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:900;white-space:nowrap}
+.counter.alive{color:#ecd3a5;background:#563b252e}
+.counter.audience{color:#cae3af;border-color:#789e5e;background:#2c4d243b}
+@media(max-width:700px){
+ .combat-stats{width:100%;justify-content:flex-start}
+ .counter{font-size:10px;padding:5px 7px}
+ .arena-nickname{font-size:11px;max-width:125px;padding:3px 5px}
+ .stage{height:min(71vh,690px);min-height:475px}
+}
+@media(max-width:390px){.arena-nickname{font-size:10px;max-width:110px}}
