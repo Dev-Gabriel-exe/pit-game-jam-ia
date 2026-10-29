@@ -207,3 +207,11 @@
 - **Regressão acrescentada:** `qa/v3-audit-alignment.cjs` executa módulos reais em VM com armazenamento fictício e verifica ida/volta de evidências completas, rejeição de evidência parcial em entrega aprovada/enviada, preservação de rascunhos e restauração do backlog opcional vazio.
 - **CI confirmada da rodada anterior:** no SHA `b05d4e28`, QA estática run `40828116103` **SUCCESS** e Browser QA run `40828116098` **SUCCESS**. Os novos commits M01/M02 `9b1bf750`, `1203b559`, `eac42a61`, `fa5290a3` e `0066ddde` requerem conferência de CI final; não inferir sucesso de runs anteriores.
 - **Pendências:** testes humanos de GDevelop GUI, projeção HDMI, dispositivo móvel físico e playtest com alunos permanecem **NOT_RUN**. A restauração continua dependendo da evidência textual recebida do backend, sem autenticar a veracidade do texto.
+
+## Auditoria transversal M09 → M10 — coerência do pitch projetado (29/10/2026)
+
+- **Falha confirmada no material projetado:** `v3/teacher-mission-ten-foundations.js` ainda exigia no conceito “DEMONSTRAÇÃO REPRODUZÍVEL” uma **correção da Missão 09** e, no pitch cronometrado, limitava a fala a “correção ou backlog”. Isso contradizia o caderno M09, o aluno M10 e a rubrica M10, que já reconheciam um playtest sem defeitos.
+- **Correção no código:** a explicação técnica e o pitch de 20 segundos agora aceitam três decisões observáveis: **correção com reteste, backlog justificado ou nenhuma alteração após teste sem falha**. Nenhum aluno precisa inventar uma falha para cumprir a apresentação. Conceitos e critérios permanecem visíveis para projeção; nenhuma orientação privada foi exposta.
+- **Regressão automatizada:** `qa/v3-audit-alignment.cjs` carrega o módulo real em VM, renderiza o HTML projetado e confere as três alternativas, além de rejeitar as duas formulações antigas. Commits de código `d5658ce` e teste `7bcf353`.
+- **CI da alteração:** QA estática `40841041474` e Browser QA `40841041472` iniciadas para `7bcf353`; **resultado ainda não confirmado no momento deste registro**. Os testes de GDevelop GUI, HDMI físico, celular real e playtest humano permanecem `NOT_RUN`.
+- **Próxima meta:** confirmar CI no SHA correto e continuar a auditoria literal das apresentações M01–M10, priorizando divergências concretas entre os resultados admitidos pelo aluno e os critérios projetados pelo professor.
