@@ -84,7 +84,10 @@ function reportModels(){
   message('MODELO 3D INDISPONÍVEL');return;
  }
  $models.textContent=count+' / '+expectedCount+' modelos 3D reais carregados';
- if(count===expectedCount&&expectedCount===4&&!state.fought){
+ if(count===expectedCount&&expectedCount===4&&!state.fought&&!state.stage?.playing&&!state.busy){
+  return;
+ }
+ if(count===expectedCount&&expectedCount===4&&!state.fought&&!state.stage?.playing){
   state.busy=false;
   $('startBattle').disabled=false;
   message('OS QUATRO HERÓIS ESTÃO PRONTOS');
