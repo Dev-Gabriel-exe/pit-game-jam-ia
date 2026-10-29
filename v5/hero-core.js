@@ -218,7 +218,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     f.rush=1.35;
     f.rushCooldown=5.5+rnd()*1.2;
     if(f.build.klass==='warrior')f.shield=Math.min(f.stats.hp*.24,f.shield+20);
-    else if(f.build.klass==='guardian')f.shield=Math.min(f.stats.hp*.30,f.shield+10);
+    // Guardian's shield belongs to Fortress, not every mobility dash.
     log('dash',f,{target:target.id,x:f.x,z:f.z});
    }
    // A bow/staff cannot fire accurately while sprinting at full velocity.
