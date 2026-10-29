@@ -132,7 +132,41 @@ function arenaScenery(scene,ground){
  map.add(new THREE.Points(dust,new THREE.PointsMaterial({color:0xb88a58,size:.085,transparent:true,opacity:.42,sizeAttenuation:true,depthWrite:false})));
  ground.add(map);return {map};
 }
-export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}}={}){
+// Real CC0 GLB architectural pieces from Tactical Slash (KayKit derivatives).
+// Asset provenance: https://github.com/sion-rgb/tactical-slash/blob/main/THIRD_PARTY_ASSETS.md
+// Use source-commit-pinned URLs rather than unlicensed third-party game content.
+function loadMedievalArchitecture(root,worldScale,quality,container){
+ const source='https://raw.githubusercontent.com/sion-rgb/tactical-slash/8bf8d835cb7afa7cb3f4d893b0966c6b4e9b7727/assets/environment/';
+ const planned=[
+  {name:'dungeon_wall.glb',count:quality==='low'?18:36,radius:20.1,height:4.6,rotate:true},
+  {name:'dungeon_pillar.glb',count:quality==='low'?12:24,radius:18.5,height:5.7,rotate:false},
+  {name:'dungeon_crate.glb',count:quality==='low'?10:18,radius:16.8,height:1.5,rotate:true}
+ ];
+ container.dataset.v5Environment='loading';
+ Promise.allSettled(planned.map(async cfg=>{
+  const gltf=await loader.loadAsync(source+cfg.name);
+  const raw=gltf.scene;
+  const bounds=new THREE.Box3().setFromObject(raw),size=bounds.getSize(new THREE.Vector3());
+  const longest=Math.max(size.x,size.y,size.z,.01);
+  const group=new THREE.Group();root.add(group);
+  for(let n=0;n<cfg.count;n++){
+   const angle=n/cfg.count*2*Math.PI+(cfg.name.includes('crate')?.27:0);
+   const object=raw.clone(true),scale=cfg.height/longest*worldScale;
+   object.scale.setScalar(scale);
+   object.position.set(Math.cos(angle)*cfg.radius*worldScale,-bounds.min.y*scale,Math.sin(angle)*cfg.radius*worldScale);
+   object.rotation.y=angle+(cfg.rotate?Math.PI/2:0);
+   object.traverse(part=>{if(part.isMesh){part.castShadow=quality!=='low';part.receiveShadow=true}});
+   group.add(object);
+  }
+  return cfg.name;
+ })).then(results=>{
+  const successes=results.filter(x=>x.status==='fulfilled').map(x=>x.value);
+  container.dataset.v5Environment=successes.length===planned.length?'loaded':successes.length?'partial':'failed';
+  container.dataset.v5EnvironmentAssets=successes.join(',');
+ });
+}
+export function createStage(container,{mode='hero',quality='auto',arenaScale=1,onEvent=()=>{}}={}){
+ const worldScale=Math.max(1,Math.min(3,Number(arenaScale)||1));
  if(!container)throw Error('Stage container is required');
  if(!window.WebGL2RenderingContext)throw Error('Este dispositivo não suporta WebGL 2.');
  const renderer=new THREE.WebGLRenderer({antialias:quality!=='low',alpha:false,powerPreference:'high-performance'});
@@ -149,16 +183,17 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  const camera=new THREE.PerspectiveCamera(41,1,.15,180);
  camera.position.set(0,17,27);camera.lookAt(0,1,0);
  const controls=new OrbitControls(camera,renderer.domElement);
- controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=48;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
+ controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=48*worldScale;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
  controls.target.set(0,1,0);
  scene.add(new THREE.HemisphereLight(0x9f88b0,0x2b1e19,2.2));
  const moon=new THREE.DirectionalLight(0x929dd3,3.4);moon.position.set(-12,26,15);moon.castShadow=quality!=='low';
  moon.shadow.mapSize.set(quality==='low'?512:1024,quality==='low'?512:1024);
- moon.shadow.camera.left=-28;moon.shadow.camera.right=28;moon.shadow.camera.top=28;moon.shadow.camera.bottom=-28;
+ moon.shadow.camera.left=-28*worldScale;moon.shadow.camera.right=28*worldScale;moon.shadow.camera.top=28*worldScale;moon.shadow.camera.bottom=-28*worldScale;
  scene.add(moon);
  const amber=new THREE.PointLight(0xd66c38,42,29);amber.position.set(12,11,-8);scene.add(amber);
  const root=new THREE.Group();scene.add(root);
- arenaScenery(scene,root);
+ const world=arenaScenery(scene,root);world.map.scale.setScalar(worldScale);
+ if(worldScale>1.3)loadMedievalArchitecture(root,worldScale,quality,container);
  const individuals=new Map(),effects=[],labels=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
@@ -221,6 +256,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
    });
    // Keep original procedural mesh as offline fallback, but do not overlay it.
    const actor=item.mesh.actor;for(const child of actor.children)child.visible=false;
+   actor.visible=true;
    actor.add(model);item.modelRoot=model;item.personalMaterials=personalMaterials;
    if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
    if(gltf.animations?.length){
@@ -240,6 +276,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
+  m.actor.visible=false; // Never expose a procedural placeholder as a real CC0 character
   const label=caption(b.name,b.name.length>18?43:56);
   label.position.set(0,3.35,0);m.root.add(label);
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
@@ -261,11 +298,11 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   clearHeroes();const normalized=list.map((entry,i)=>({
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
-  simulation=CORE.battle(normalized,{seed,limit});
+  simulation=CORE.battle(normalized,{seed,limit,arenaScale:worldScale});
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
-  camera.position.set(0,26,37);controls.target.set(0,.2,0);controls.update();
+  camera.position.set(0,26*worldScale,37*worldScale);controls.target.set(0,.2,0);controls.update();
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
