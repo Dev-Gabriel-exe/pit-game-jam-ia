@@ -75,5 +75,38 @@ assert((byClass.get('warrior')||0)>=8,'Guerreiro voltou a ser inviavel em combat
 for(const [mission,histogram] of byMission)assert(new Set(histogram.keys()).size>=3,'Menos de 3 classes venceram no marco M'+mission);
 const maxWins=Math.max(...hist.values());
 assert(maxWins<48,'Single bot won two thirds of matches: unbalanced default roster');
+
+function projectilePhysicsCase(options={}){
+ const roster=[
+  ['shot','hunter'],['marked','mage'],['interceptor','guardian']
+ ].map(([id,klass])=>({...CORE.canonical(CORE.seedBuild(id,klass),id,500),id,name:id}));
+ const sim=CORE.battle(roster,{seed:8751,arenaScale:1,limit:20});
+ const [shot,marked,interceptor]=sim.fighters;
+ // Zero movement isolates projectile collision from the combat AI.
+ for(const f of sim.fighters){f.stats.speed=0;f.basic=999;f.special=999;f.vx=0;f.vz=0}
+ Object.assign(shot,{x:2,z:11,basic:0});
+ Object.assign(marked,{x:8,z:11});
+ Object.assign(interceptor,{x:2,z:4});
+ sim.update(.05);
+ assert.equal(sim.projectiles.length,1,'Hunter should launch one physical arrow');
+ assert.equal(sim.projectiles[0].to,'marked','Marked target must be selected before interception');
+ // A third fighter enters the flight path after release. The arrow must
+ // collide with the first body encountered, not ghost through to 'marked'.
+ Object.assign(interceptor,{x:5,z:11});
+ if(options.targetDies){marked.alive=false;marked.hp=0}
+ if(options.shooterDies){shot.alive=false;shot.hp=0}
+ for(let step=0;step<12&&!sim.finished;step++)sim.update(.05);
+ const physicalContact=sim.events.some(e=>e.hero==='shot'&&e.type==='hit'&&e.target==='interceptor')||
+  sim.events.some(e=>e.hero==='interceptor'&&e.type==='dodge'&&e.attacker==='shot');
+ assert(physicalContact,'Released arrow must contact the intercepting fighter');
+ assert(!sim.events.some(e=>e.hero==='shot'&&e.type==='hit'&&e.target==='marked'),'Arrow cannot phase through the interceptor');
+ assert.equal(sim.projectiles.length,0,'Projectile must stop at the first collision');
+ if(options.shooterDies)assert.equal(shot.hp,0,'Posthumous projectile must not resurrect its shooter');
+}
+projectilePhysicsCase();
+projectilePhysicsCase({targetDies:true});
+projectilePhysicsCase({shooterDies:true});
+console.log('PASS swept projectile interception, dead-target persistence and posthumous impact.');
+
 console.log('PASS seeded replay, 30-player hit/elimination events, variable winners, multiple winning classes.');
 console.log('NOTE: Passing this anti-repetition gate is NOT certification that the planned 120 talents are balanced.');

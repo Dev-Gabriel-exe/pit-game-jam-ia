@@ -167,8 +167,10 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  const areaHit=(f,radius,damage,except=null)=>{
   for(const o of fighters)if(o.alive&&o!==f&&o!==except&&Math.hypot(o.x-f.x,o.z-f.z)<radius)hit(f,o,damage,'special');
  };
- function hit(f,o,dmg,kind){
-  if(!o.alive||!f.alive)return;
+ function hit(f,o,dmg,kind,launchedProjectile=false){
+  // Already-released projectiles remain physical even if their shooter falls.
+  // Posthumous hits count as damage/KOs but cannot revive the shooter.
+  if(!o.alive||(!f.alive&&!launchedProjectile))return;
   let amount=Math.max(1,dmg-o.stats.defense*.43);
   // Class-intrinsic resistance while closing: being a frontline hero
   // must be a meaningful strategic option in a 30-player ranged FFA.
@@ -183,11 +185,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   log('hit',f,{target:o.id,amount:+amount.toFixed(1),kind,x:o.x,z:o.z});
   // Limited frontline sustain to counter constant ranged focus in FFA.
   // Intrinsic provisional rule, NOT one of the 120 designed talent effects.
-  if(f.build.klass==='warrior'&&kind==='melee')f.hp=Math.min(f.stats.hp,f.hp+Math.min(4.4,amount*.15));
-  if(f.build.talents.leech||f.build.talents.vamp)f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
-  if(o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
+  if(f.alive&&f.build.klass==='warrior'&&kind==='melee')f.hp=Math.min(f.stats.hp,f.hp+Math.min(4.4,amount*.15));
+  if(f.alive&&(f.build.talents.leech||f.build.talents.vamp))f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
+  if(f.alive&&o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
   if(o.hp<=0){o.alive=false;o.eliminatedAt=time;f.kills++;o.animation='defeated';log('knockout',f,{target:o.id,by:f.name})}
-  if(f.hp<=0){f.alive=false;f.eliminatedAt=time;f.animation='defeated';log('knockout',o,{target:f.id,by:o.name})}
+  if(f.alive&&f.hp<=0){f.alive=false;f.eliminatedAt=time;f.animation='defeated';log('knockout',o,{target:f.id,by:o.name})}
  }
  function blocked(f,x,z){
   for(const o of obstacles){const dx=x-o.x,dz=z-o.z,d=Math.hypot(dx,dz),min=o.r+.56;
@@ -339,30 +341,48 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     a.x=ca.x;a.z=ca.z;b.x=cb.x;b.z=cb.z;
    }
   }
+  // Continuous swept-disc contact: use first point along the flight segment,
+  // not just distance to the originally aimed character at the end of a frame.
+  // In a 30-player FFA, another fighter may intercept an arrow and pillars
+  // must stop it only when they are *before* the fighter along its path.
+  function firstContact(x,z,dx,dz,cx,cz,r){
+   const ox=x-cx,oz=z-cz,c=ox*ox+oz*oz-r*r;
+   if(c<=0)return 0;
+   const a=dx*dx+dz*dz;
+   if(a<1e-10)return null;
+   const b=ox*dx+oz*dz;
+   if(b>=0)return null;
+   const disc=b*b-a*c;
+   if(disc<0)return null;
+   const t=(-b-Math.sqrt(disc))/a;
+   return t>=0&&t<=1?t:null;
+  }
   for(let i=projectiles.length-1;i>=0;i--){
-   const p=projectiles[i],target=fighters.find(x=>x.id===p.to);
-   if(!target?.alive){projectiles.splice(i,1);continue}
-   const prevX=p.x,prevZ=p.z;
-   p.x+=p.vx*step;p.z+=p.vz*step;p.age+=step;
-   const segX=p.x-prevX,segZ=p.z-prevZ,len2=Math.max(.00001,segX*segX+segZ*segZ);
-   const hitT=clamp(((target.x-prevX)*segX+(target.z-prevZ)*segZ)/len2,0,1);
-   const closestX=prevX+segX*hitT,closestZ=prevZ+segZ*hitT;
-   const targetDistance=Math.hypot(target.x-closestX,target.z-closestZ);
-   // The same collision radii used by walking actors now block arrows/spells.
-   // Deterministic segment-vs-circle checks prevent shooting through pillars.
-   let obstructed=false;
+   const p=projectiles[i],startX=p.x,startZ=p.z;
+   const dx=p.vx*step,dz=p.vz*step;
+   p.x+=dx;p.z+=dz;p.age+=step;
+   let earliest=Infinity,impact=null,victim=null;
    for(const obstacle of obstacles){
-    const t=clamp(((obstacle.x-prevX)*segX+(obstacle.z-prevZ)*segZ)/len2,0,1);
-    const qx=prevX+segX*t,qz=prevZ+segZ*t;
-    if(Math.hypot(qx-obstacle.x,qz-obstacle.z)<obstacle.r+.2){obstructed=true;break}
+    const t=firstContact(startX,startZ,dx,dz,obstacle.x,obstacle.z,obstacle.r+.2);
+    if(t!==null&&t<earliest){earliest=t;impact='pillar';victim=null}
    }
-   if(obstructed){projectiles.splice(i,1);continue}
-   if(targetDistance<=.85){
-    const from=fighters.find(x=>x.id===p.from);
-    if(from?.alive)hit(from,target,p.damage,p.kind);
+   for(const other of fighters){
+    if(!other.alive||other.id===p.from)continue;
+    const t=firstContact(startX,startZ,dx,dz,other.x,other.z,.85);
+    // Tie-breaking is deterministic and independent of combat iteration order.
+    if(t!==null&&(t<earliest-1e-8||
+      (impact==='fighter'&&Math.abs(t-earliest)<=1e-8&&other.id<victim.id))){
+     earliest=t;impact='fighter';victim=other;
+    }
+   }
+   if(impact){
+    p.x=startX+dx*earliest;p.z=startZ+dz*earliest;
+    if(victim){
+     const from=fighters.find(x=>x.id===p.from);
+     if(from)hit(from,victim,p.damage,p.kind,true);
+    }
     projectiles.splice(i,1);
-   }
-   else if(p.age>3)projectiles.splice(i,1);
+   }else if(p.age>3)projectiles.splice(i,1);
   }
   const left=fighters.filter(x=>x.alive);
   if(left.length<=1||time>=limit){
