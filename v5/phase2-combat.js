@@ -56,7 +56,9 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1}={}){
+ const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
+ const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
  if(!Array.isArray(entries)||entries.length<2||entries.length>30)throw Error('Arena experimental aceita 2 a 30 heróis');
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
@@ -289,6 +291,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    amount*=1+.12*effectiveness(attacker,'P05');target.markBy=null;target.markUntil=0;
    emit('proc',attacker,{talent:'P05',target:target.id});
   }
+  // Reversible V5 LAB pacing, applied once after mitigation/crit and before
+  // barrier absorption. Defaults are neutral for every production caller.
+  amount*=pace*(attacker.build.klass==='mage'?mageBonus:1);
   // E05 creates protection after being hit: the current impact remains real.
   // Extra anti-shield damage never spills into HP: calculate normal HP
   // penetration separately, independent of the added barrier-only portion.
