@@ -5,6 +5,9 @@ on:
     paths:
       - 'v5/arena-lab.*'
       - 'v5/arena-three.js'
+      - 'v5/talent-vfx.js'
+      - 'qa/v5-talent-vfx.cjs'
+      - 'qa/v5-talent-vfx-browser.cjs'
       - 'v5/arena-citadel.js'
       - 'v5/hero-core.js'
       - 'v5/phase2-combat.js'
@@ -35,6 +38,9 @@ jobs:
       - run: |
           node --check v5/arena-lab.js
           node --check v5/arena-three.js
+          node --check v5/talent-vfx.js
+          node --check qa/v5-talent-vfx.cjs
+          node --check qa/v5-talent-vfx-browser.cjs
           node --check v5/arena-citadel.js
           node --check qa/v5-arena-lab.cjs
           node --check qa/v5-arena-lab-browser.cjs
@@ -58,6 +64,7 @@ jobs:
           node qa/v5-phase2-b4.cjs
           node qa/v5-phase2-b5.cjs
           node qa/v5-phase2-b6.cjs
+          node qa/v5-talent-vfx.cjs
           node qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-balance-matrix.cjs
   browser:
@@ -75,6 +82,7 @@ jobs:
           sleep 2
           node qa/v5-arena-lab-browser.cjs
           node qa/v5-phase2-browser.cjs
+          node qa/v5-talent-vfx-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
