@@ -46,7 +46,7 @@ function duel(k,chosen,other,otherSkills=[],distance=2){
 function go(sim,n=600){for(let i=0;i<n&&!sim.finished;i++)sim.update(.05)}
 const seen=(sim,id,kind)=>sim.events.some(e=>e.talent===id&&(!kind||e.type===kind));
 {
- const {sim,f}=duel('warrior',['D06','D07','D08','D09','D10'],'warrior',['B09']);
+ const {sim,f}=duel('warrior',['D06','D07','D08','D09','D10'],'warrior',['B01']);
  f.stats.hp=1400;f.hp=1400;
  go(sim,450);
  assert(seen(sim,'D06','proc'),'D06 should mitigate after a real incoming hit');
