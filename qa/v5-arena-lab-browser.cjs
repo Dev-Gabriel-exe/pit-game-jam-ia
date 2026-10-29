@@ -21,6 +21,9 @@ const {chromium}=require('playwright');
    }
    assert.equal(await page.locator('#arenaStage canvas').count(),1);
    assert.equal(await page.locator('[data-fighter]').count(),count);
+   assert.equal(await page.locator('[data-focus]').count(),count,'Todos devem oferecer camera individual');
+   await page.locator('[data-focus]').first().click();
+   await page.locator('#overviewCamera').click();
    await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,null,{timeout:10000});
    assert.equal(await page.locator('#startBattle').isDisabled(),false);
    await page.locator('#startBattle').click();
@@ -34,6 +37,8 @@ const {chromium}=require('playwright');
    await page.waitForFunction(n=>window.PIT_V5_ARENA_LAB?.mission===10&&window.PIT_V5_ARENA_LAB?.modelState.loaded===n,count,{timeout:90000});
    assert.match(await page.locator('#arenaTitle').textContent(),/Missão 10/);
    assert.equal(await page.locator('[data-fighter]').count(),count);
+   const environment=await page.locator('#arenaStage').getAttribute('data-v5-environment');
+   console.log('SCENERY STATUS '+width+'px: '+environment);
    assert.deepEqual(errors,[],'Unexpected JS error: '+errors.join(' | '));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<15,'Horizontal overflow at '+width+'px: '+overflow);
