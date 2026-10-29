@@ -155,6 +155,9 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const shieldAbsorbed=Math.min(o.shield,amount);o.shield-=shieldAbsorbed;amount-=shieldAbsorbed;
   o.hp=Math.max(0,o.hp-amount);f.damage+=amount;f.attacks++;o.stagger=Math.min(.32,.1+amount*.008);
   log('hit',f,{target:o.id,amount:+amount.toFixed(1),kind,x:o.x,z:o.z});
+  // Limited frontline sustain to counter constant ranged focus in FFA.
+  // Intrinsic provisional rule, NOT one of the 120 designed talent effects.
+  if(f.build.klass==='warrior'&&kind==='melee')f.hp=Math.min(f.stats.hp,f.hp+Math.min(4,amount*.14));
   if(f.build.talents.leech||f.build.talents.vamp)f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
   if(o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
   if(o.hp<=0){o.alive=false;f.kills++;o.animation='defeated';log('knockout',f,{target:o.id,by:f.name})}
@@ -199,6 +202,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    if(!ranged&&d>5.2&&f.rushCooldown<=0){
     f.rush=1.35;
     f.rushCooldown=5.5+rnd()*1.2;
+    if(f.build.klass==='warrior')f.shield=Math.min(f.stats.hp*.24,f.shield+20);
     log('dash',f,{target:target.id,x:f.x,z:f.z});
    }
    const slowFactor=(f.slow?0.58:1)*(f.rush>0?2.75:1);
