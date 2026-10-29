@@ -153,5 +153,11 @@
   });
   draw(false,false);
  }
- window.PIT_GDEVELOP_M04_GUIDE={render,mount,routes,images:img,fallback};
+ // Expose the exact authored step to the projector without cloning a hidden tab or its buttons.
+ function projectorPanel(routeIndex,stepIndex){
+  const route=routes[routeIndex];
+  if(!route||!Number.isInteger(stepIndex)||stepIndex<0||stepIndex>=route.steps.length)return '';
+  return card(route.steps[stepIndex],stepIndex,route.steps.length);
+ }
+ window.PIT_GDEVELOP_M04_GUIDE={render,mount,routes,images:img,fallback,projectorPanel};
 })();
