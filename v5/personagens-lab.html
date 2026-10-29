@@ -1,60 +1,44 @@
 <!doctype html>
 <html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#130e18">
-<meta name="description" content="Prévia V5: 4 classes, 40 identidades visuais e escolha exclusiva de personagem por aluno em turma simulada.">
-<title>Arsenal das Lendas · Escolha seu Herói · Game Jam IA V5</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#120e18">
+<meta name="description" content="Prévia isolada das quatro classes com modelos 3D prontos e animados, da mesma fonte gratuita e CC0.">
+<title>Os Quatro Heróis · Game Jam IA V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./personagens-lab.css">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
-<script src="./avatar-catalog.js"></script><script src="./character-assets.js"></script><script src="./legendary-wardrobe.js"></script>
-<script src="./personagens-lab.js" type="module"></script>
+<script src="./character-assets.js"></script>
+<script type="module" src="./personagens-lab.js"></script>
 </head><body>
 <div class="background" aria-hidden="true"></div>
-<header class="site-header">
- <a class="logo" href="https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/blob/feature/v5-arena-dos-criadores/v5/seletor.html">PIT <span>GAME JAM</span><sup>V5</sup></a>
- <span class="site-label">ARSENAL DAS LENDAS <small>PRÉVIA DE PERSONALIZAÇÃO · SEM INTEGRAÇÃO COM ALUNOS</small></span>
- <a href="https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1" class="back">⚔ Coliseu</a>
-</header>
+<header class="site-header"><a class="logo" href="./seletor.html">PIT <span>GAME JAM</span><sup>V5</sup></a><span class="site-label">OS QUATRO HERÓIS <small>PRÉVIA · MODELOS 3D PRONTOS, SEM MONTAGENS</small></span><a class="back" href="./arena-lab.html?phase2=1">⚔ Coliseu</a></header>
 <main>
- <section class="intro">
-  <div class="eyebrow"><span class="spark">✦</span> UM HERÓI, UMA LENDA, UM CRIADOR <span class="spark">✦</span></div>
-  <h1>Forje sua <em>identidade.</em></h1>
-  <p>Cada aluno recebe uma classe definida pela turma e escolhe um dos dez personagens dela. Cada identidade pode pertencer a apenas um aluno.</p>
-  <div class="scope">LABORATÓRIO ISOLADO · 40 PERSONAGENS 3D MODULARES · 4 BASES DE ROUPA MEDIEVAL CC0 + ARMADURAS, ARMAS E CAPACETES INDIVIDUAIS · BLOQUEIO SIMULADO NESTE NAVEGADOR · NENHUMA ALTERAÇÃO NO XP OU NO JOGO DOS ALUNOS</div>
+ <section class="intro"><div class="eyebrow">✦ CIDADELA DO ECLIPSE · CLASSES ORIGINAIS ✦</div>
+ <h1>Uma classe. <em>Um herói.</em></h1>
+ <p>Quatro classes, três modelos de origem comum e a mesma altura no cenário. Cada aluno se destaca pelos atributos e talentos — não por personagens maiores ou peças sobrepostas.</p>
+ <div class="scope">MODELOS GRATUITOS CC0 · TACTICAL SLASH / KAYKIT · MESMA FAMÍLIA VISUAL · SEM COMPRAS · SEM ALTERAR A PROGRESSÃO DOS ALUNOS</div>
  </section>
  <section class="class-section" aria-labelledby="classesTitle">
-  <div class="section-top"><span class="eyebrow">01 · SELECIONE SEU CAMINHO</span><h2 id="classesTitle">Quatro classes. Infinitas histórias.</h2></div>
-  <div class="class-tabs" id="classTabs" role="group" aria-label="Prévia das quatro classes — classe de cada aluno predefinida"></div>
+  <div class="section-top"><span class="eyebrow">01 · ESCOLHA A CLASSE PARA VISUALIZAR</span><h2 id="classesTitle">Quatro estilos de combate</h2></div>
+  <div class="class-tabs" id="classTabs" role="group" aria-label="Selecionar classe"></div>
  </section>
  <div class="main-grid">
-  <section class="character-panel" aria-labelledby="galleryTitle">
-   <div class="panel-header"><div><span class="eyebrow">02 · O SALÃO DOS ESCOLHIDOS</span><h2 id="galleryTitle">Guerreiros</h2></div><span class="counter" id="availableCount">10 / 10 livres</span></div>
-   <div class="gallery-notice">Cada carta representa uma identidade visual exclusiva da turma: são 10 vagas por classe para uma turma simulada de 30 alunos. <strong>São <strong>40 montagens tridimensionais diferentes</strong> com equipamentos, armaduras, mantos, joias e armas próprios. Reutilizam quatro malhas medievais de base do <a href="https://quaternius.com/packs/modularcharacteroutfitsfantasy.html" target="_blank" rel="noopener noreferrer">Quaternius Standard gratuito (CC0)</a>; não são 40 esculturas humanas independentes. A aparência não altera atributos ou talentos.</div>
-   <div class="gallery" id="avatarGallery" role="group" aria-label="Personagens da classe selecionada"></div>
+  <section class="viewer-panel" aria-labelledby="viewerTitle">
+   <div class="viewer-head"><div><span class="eyebrow">02 · PERSONAGEM 3D ORIGINAL</span><h2 id="viewerTitle">Guerreiro</h2></div><span id="assetStatus" class="asset-status">CARREGANDO GLB</span></div>
+   <div id="avatarStage" class="avatar-stage" role="img" aria-label="Personagem 3D que pode ser girado com o mouse ou com o dedo"><div class="loading" id="loading" role="status">✧ Carregando personagem original...</div></div>
+   <div class="viewer-bottom"><strong id="avatarName">Guerreiro</strong><span id="avatarEquipment">Modelo original CC0</span><small>Arraste para girar · pinça ou roda para zoom · animação original</small></div>
   </section>
-  <aside class="right-rail">
-   <section class="viewer-panel" aria-labelledby="previewTitle">
-    <div class="viewer-head"><div><span class="eyebrow">03 · SUA LENDA EM 3D</span><h2 id="previewTitle">Prévia do personagem</h2></div><span class="asset-status" id="assetStatus">WEBGL</span></div>
-    <div id="avatarStage" class="avatar-stage" aria-label="Modelo tridimensional com rotação por gesto ou mouse" role="img"><div class="loading" id="loading" role="status">✧ Preparando personagem em 3D…</div></div>
-    <div class="viewer-bottom"><strong id="avatarName">Selecione seu herói</strong><span id="avatarEquipment">Equipamento</span><small>Arraste para girar · pinça ou roda para ampliar</small></div>
-   </section>
-   <section class="claim-panel" aria-labelledby="claimTitle">
-    <span class="eyebrow">04 · RESERVA EXCLUSIVA · SIMULAÇÃO</span><h2 id="claimTitle">Escolha seu personagem</h2>
-    <label for="roomCode">Turma de demonstração</label>
-    <input id="roomCode" maxlength="24" value="TURMA-01" autocomplete="off" aria-describedby="storageDisclaimer">
-    <label for="studentSelect">Quem está escolhendo?</label>
-    <select id="studentSelect" aria-label="Aluno de demonstração"></select>
-    <div class="selection" id="selectedSummary">Selecione uma carta disponível para reservar.</div>
-    <button id="claimAvatar" class="reserve" type="button" disabled>✦ Reservar este personagem</button>
-    <button id="releaseAvatar" class="release" type="button">Liberar escolha deste aluno</button>
-    <a id="arenaPreviewChoice" class="arena-preview-choice" href="https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1&amp;avatars=1&amp;count=4&amp;avatar=warrior-01">⚔ Ver este personagem em combate (4 heróis)</a>
-    <div class="alert" id="claimMessage" role="status" aria-live="polite"></div>
-    <p class="fine-print" id="storageDisclaimer">O bloqueio desta prévia funciona entre os alunos simulados no próprio navegador e é sincronizado entre abas do mesmo site. <strong>A reserva definitiva entre celulares diferentes depende de transação no servidor</strong>, planejada para a Fase H.</p>
-   </section>
+  <aside class="details-panel">
+   <span class="eyebrow">03 · IDENTIDADE DE CLASSE</span><h2 id="className">Guerreiro</h2>
+   <p id="classDescription">Força e ataques corpo a corpo.</p>
+   <div class="stat"><span>Altura visual padronizada</span><strong>2,55 unidades</strong></div>
+   <div class="stat"><span>Modelo 3D utilizado</span><strong id="modelFile">player_swordsman.glb</strong></div>
+   <div class="stat"><span>Fonte de todos os heróis</span><strong>Tactical Slash / KayKit</strong></div>
+   <p class="note">O Guerreiro e o Guardião compartilham a malha do Espadachim porque o repositório tem apenas três heróis jogáveis: Espadachim, Arqueiro e Sacerdote. Todos os personagens de uma classe usam o mesmo modelo. A diferenciação do aluno vem de seus talentos e atributos.</p>
+   <a id="arenaPreviewChoice" class="arena-preview-choice" href="./arena-lab.html?phase2=1&amp;count=4">⚔ Testar os quatro heróis na Arena</a>
+   <a class="source-link" href="https://github.com/sion-rgb/tactical-slash/blob/8bf8d835cb7afa7cb3f4d893b0966c6b4e9b7727/THIRD_PARTY_ASSETS.md" target="_blank" rel="noopener noreferrer">Ver origem dos modelos e licença CC0</a>
   </aside>
  </div>
- <footer><a href="https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/blob/feature/v5-arena-dos-criadores/v5/seletor.html">← Código da Forja de classes</a><span>Roupas Quaternius Standard · CC0 · Geometrias de equipamento originais · sem compras</span><a href="https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1">Conhecer o Coliseu →</a></footer>
+ <footer><span>Sem 40 personagens, sem roupas geradas, sem reservas artificiais.</span><a href="./arena-lab.html?phase2=1">Ir ao Coliseu →</a></footer>
 </main>
 </body></html>
