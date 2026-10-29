@@ -1,0 +1,44 @@
+name: V5 arena browser + combat QA
+on:
+  push:
+    branches: [feature/pit-gamejam-v5-arena]
+  pull_request:
+    paths:
+      - 'v5/**'
+      - 'qa/v5-arena-browser.cjs'
+      - '.github/workflows/v5-arena-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Browser dependencies
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Verify V5 skills, attributes, XP and battle
+        run: |
+          node --check v5/rules.js
+          node --check v5/arena.js
+          node --check qa/v5-arena-browser.cjs
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/v5-arena-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-arena-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v5-arena-screenshots
+          path: qa/v5-arena-*.png
+          retention-days: 7
+          if-no-files-found: ignore
