@@ -11,8 +11,14 @@ const {chromium}=require('playwright');
   await page.goto('http://127.0.0.1:8899/v5/index.html?preview=1',{waitUntil:'domcontentloaded',timeout:20000});
   await page.locator('#v5Main').waitFor({state:'visible',timeout:16000});
   assert.equal(await page.locator('#v5HeroName').innerText(),'Aventureiro de demonstração','Preview needs explicit fictional identity');
-  assert.equal(await page.locator('.v5-class').count(),4,'Four classes missing');
+  assert.equal(await page.locator('.v5-class').count(),6,'Six classes missing');
   assert.equal(await page.locator('[data-stat]').count(),8,'Attribute allocation must work');
+  for(const id of ['warrior','guardian','mage','rogue','hunter','necromancer']){
+   await page.locator('[data-class="'+id+'"]').click();
+   assert.equal(await page.locator('#v5Stage').getAttribute('data-v5-asset-class'),id,'Class GLB request not queued: '+id);
+   const dest=await page.locator('#v5ModelOrigin').getAttribute('href');
+   assert(dest.startsWith('https://github.com/'),'Official asset source missing');
+  }
   await page.locator('[data-class="mage"]').click();
   assert.equal(await page.locator('[data-class="mage"]').getAttribute('aria-pressed'),'true','Class swap failed');
   const pointsBefore=await page.locator('#v5Points').textContent();
@@ -32,6 +38,9 @@ const {chromium}=require('playwright');
    throw Error('Three.js stage not available: '+message+'; browser errors: '+errors.join(' | '));
   }
   assert(await page.locator('#v5Stage canvas.v5-webgl').isVisible(),'Real WebGL renderer missing');
+  await page.waitForFunction(()=>document.querySelector('#v5Stage')?.dataset.v5Asset==='loaded',null,{timeout:38000});
+  const animationCount=Number(await page.locator('#v5Stage').getAttribute('data-v5-animation-count'));
+  assert(animationCount>0,'True character GLB lacks animations');
   await page.locator('#v5Practice').click();
   await page.locator('#v5Battle:not([hidden])').waitFor();
   assert.match(await page.locator('#v5BattleTitle').innerText(),/Treino/);
@@ -56,7 +65,7 @@ const {chromium}=require('playwright');
   assert(dims.scroll<=dims.width+10,'Horizontal mobile overflow '+JSON.stringify(dims));
   assert.deepEqual(errors,[],'Browser errors '+errors.join(' | '));
   await page.screenshot({path:'qa/v5-screen-'+viewport.width+'.png',fullPage:true});
-  all.push({width:viewport.width,webGL:true,classes:4,battle:true,stats:true,talents:6,reviewPreview:true});
+  all.push({width:viewport.width,webGL:true,classes:6,battle:true,stats:true,talents:6,reviewPreview:true});
   await page.close();
  }
  const teacher=await browser.newPage({viewport:{width:1280,height:800},reducedMotion:'reduce'});
