@@ -190,6 +190,21 @@ assert(m10Student.includes('Observação e decisão após o playtest'),'M10 stud
 assert(m10Student.includes('correção retestada, backlog ou ausência de falha'),'M10 student presentation does not require a fictional correction');
 assert(m10Teacher.includes('nenhuma alteração após teste sem falha'),'M10 projected teacher rubric recognizes a successful peer test');
 assert(!m10Teacher.includes('correção testada ou backlog justificado.'),'M10 old two-outcome rubric must not reappear');
+
+// M10 projected foundations and timed pitch must agree with M09's three honest
+// outcomes. A peer test without a defect must not force a fictional correction.
+const m10TeacherFoundations=read('v3/teacher-mission-ten-foundations.js');
+const m10TeacherEnv={window:{}};
+vm.runInNewContext(m10TeacherFoundations,m10TeacherEnv,{timeout:3000,filename:'teacher-mission-ten-foundations.js'});
+const m10Projected=m10TeacherEnv.window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS;
+const m10ProjectedHtml=m10Projected.render();
+for(const phrase of ['correção retestada','backlog justificado','nenhuma alteração após teste sem falha']){
+ assert(m10ProjectedHtml.includes(phrase),'M10 projected pitch must accept '+phrase);
+}
+assert(m10Projected.concepts[2].body.includes('nenhuma alteração quando não houve falha'),'M10 technical concept must accept a no-defect playtest');
+assert(!m10ProjectedHtml.includes('e uma correção da Missão 09'),'M10 projected foundations must not demand a fictional correction');
+assert(!m10ProjectedHtml.includes('teste de colega e correção ou backlog'),'M10 timed pitch must not restrict peer-test outcomes');
+
 assert(m10Guide.includes('nenhuma alteração após teste sem falha'),'M10 shared GDevelop guide keeps M09 tri-state outcome');
 
 assert(m10Teacher.includes('CRITÉRIO PÚBLICO'),'M10 projected footer must state student-facing criteria');
