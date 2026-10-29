@@ -45,7 +45,7 @@ function describe(input,engine,vfx){
   primaryAbbr:PATHS[id][dominant][1],secondaryPath:secondary,
   accent,detail,accentHex:hex(accent),detailHex:hex(detail),
   shape,variant,shards:Math.min(3,Math.max(1,families)),families,
-  focus:ATTR.slice().sort((a,b)=>b.attributes[a]-b.attributes[b]||a.localeCompare(b))[0],
+  focus:ATTR.slice().sort((left,right)=>b.attributes[right]-b.attributes[left]||left.localeCompare(right))[0],
   counts:Object.freeze({...counts}),mix:Object.freeze(mix),
   visualId:id+':'+[...b.talents].sort().join('-')+':'+ATTR.map(k=>b.attributes[k]).join('-')
  });
