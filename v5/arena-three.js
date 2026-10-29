@@ -428,6 +428,48 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   specialFxEvents++;container.dataset.v5SpecialFx=String(specialFxEvents);
   burst(x,z,color,9);
  }
+ // C.1: genuine Phase2 actions select motion and bounded 3D VFX.
+ // Real GLB clips are reused; bespoke animation per talent is a later phase.
+ function talentVisual(item,event,position=null,subtle=false){
+  if(!item||item.spectator||!isPhase2()||!event?.talent)return false;
+  const cue=cueFor(item.build.klass,event.talent);
+  if(!cue)return false;
+  if(effects.filter(e=>e.isAbility).length>=visualBudget){
+   talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);return false;
+  }
+  const x=Number.isFinite(position?.x)?position.x:item.mesh.root.position.x;
+  const z=Number.isFinite(position?.z)?position.z:item.mesh.root.position.z;
+  const material=new THREE.MeshBasicMaterial({color:cue.color,transparent:true,opacity:subtle?.48:.85,depthWrite:false,side:THREE.DoubleSide});
+  let geometry,ground=true;
+  switch(cue.style){
+   case 'barrier':geometry=new THREE.IcosahedronGeometry(1.25,1);material.wireframe=true;ground=false;break;
+   case 'arc':geometry=new THREE.TorusGeometry(1.02,.11,7,28,Math.PI*1.55);ground=false;break;
+   case 'bolt':geometry=new THREE.OctahedronGeometry(.69,0);ground=false;break;
+   case 'fire':geometry=new THREE.ConeGeometry(.9,1.7,9);ground=false;break;
+   case 'frost':geometry=new THREE.OctahedronGeometry(.94,1);ground=false;material.wireframe=true;break;
+   case 'heal':geometry=new THREE.TorusGeometry(.85,.09,6,32);break;
+   case 'orbit':geometry=new THREE.TorusGeometry(1.18,.11,7,40);break;
+   case 'arrow':geometry=new THREE.ConeGeometry(.36,1.7,5);ground=false;break;
+   case 'trap':geometry=new THREE.RingGeometry(.56,1.3,30);break;
+   case 'dash':geometry=new THREE.TorusGeometry(.95,.08,6,28);break;
+   case 'radiance':geometry=new THREE.RingGeometry(.85,1.7,36);break;
+   default:geometry=new THREE.RingGeometry(.7,1.3,30);
+  }
+  const mesh=new THREE.Mesh(geometry,material);
+  mesh.position.set(x,ground?.30:1.35,z);
+  if(ground)mesh.rotation.x=-Math.PI/2;
+  else if(cue.style==='arrow')mesh.rotation.z=-Math.PI/2;
+  else if(cue.style==='arc')mesh.rotation.z=Math.PI/4;
+  const baseScale=cue.scale*(subtle?.72:1);
+  mesh.scale.setScalar(baseScale);mesh.userData.velocity=new THREE.Vector3();
+  root.add(mesh);
+  const duration=(reduce?.25:cue.duration)*(subtle?.68:1);
+  effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale});
+  talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
+  container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
+  container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
+  return true;
+ }
  function burst(x,z,color=0xf4bb7e,count=10){
   if(effects.length>140)return;
   for(let i=0;i<count;i++){
