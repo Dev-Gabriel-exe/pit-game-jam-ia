@@ -61,6 +61,7 @@ const effect=(s,id,type)=>s.events.some(e=>e.talent===id&&(!type||e.type===type)
  go(sim,250);
  assert(effect(sim,'A03','charge'),'A03 should charge after 4m travel');
  // Actual incoming melee consumes it.
+ f.stats.speed=0;f.vx=0;f.vz=0;
  e.x=f.x+1.4;e.z=f.z;e.offenseDelay=0;e.basic=0;
  go(sim,250);
  assert(effect(sim,'A03','proc'),'A03 should reduce next incoming impact');
