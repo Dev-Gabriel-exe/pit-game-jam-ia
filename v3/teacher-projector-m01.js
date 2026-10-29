@@ -36,6 +36,29 @@ function pedagogicalDemoSlides(root,mission){
   add('.tm-guide-footer','Referências e limites do tutorial');
   return result.length>=10?result:null;
  }
+ // M01 / Criar: preserve the complete authorial worksheet in the mirrored presentation.
+ // The original generic card extractor misses the seven .tm1-field entries.
+ if(mission===1&&root.querySelector('.tm1-planning')){
+  const fields=[...root.querySelectorAll('.tm1-workfields .tm1-field')];
+  if(fields.length!==7)return null;
+  const result=[];
+  function add(selector,title){
+   const node=root.querySelector(selector);
+   if(node)result.push({title,html:cleanCopy(node)});
+  }
+  add('.tm1-lead','Da ideia à primeira ficha de game design');
+  add('.tm1-paper','Exemplo preenchido: uma ideia verificável');
+  for(let i=0;i<fields.length;i+=2){
+   const group=document.createElement('section');
+   group.className='pit-projector-m01-fields';
+   fields.slice(i,i+2).forEach(field=>group.insertAdjacentHTML('beforeend',cleanCopy(field)));
+   result.push({title:'Ficha autoral · campos '+(i+1)+'–'+Math.min(i+2,fields.length)+' de 7',html:group.outerHTML});
+  }
+  root.querySelectorAll('.tm1-three article').forEach((node,i)=>
+   result.push({title:'A ficha · fragmento '+(i+1)+' de 3',html:cleanCopy(node)}));
+  add('.tm1-key','Próxima missão: reduzir a ideia a um MVP');
+  return result.length===10?result:null;
+ }
  if(mission===3&&root.querySelector('[data-tm3-phase="demo"]')&&firstRun?.projectorPanel&&firstRun.steps?.length===6){
   const result=[];
   for(const [selector,title] of [['.tm3-lead','Do projeto ao primeiro Preview'],['.gd3-heading','Tutorial de GDevelop: seis etapas']]){
