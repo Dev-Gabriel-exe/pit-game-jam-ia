@@ -10,7 +10,7 @@ const STORAGE='pit_v5_hero_'+(SESSION?.studentId||'preview');
 const saved=safeJSON(localStorage.getItem(STORAGE),{})||{};
 const API='https://pit-game-jam-chat.vercel.app/api/classroom?action=';
 const tones=[0xd99d70,0x9f88d6,0x70b894,0x719fc9,0xd46f70,0xcbd0db];
-let officialXp=0,shownXp=0,demoXp=0,view=null,THREE=null,world=null,roster=[],allowSound=false,audio=null,heroMeshes=new Map(),effects=[],sceneFrame=null,previewName=AUTH_NAME||'Aventureiro',running=false,rotate=0,tilt=.63,zoom=28;
+let officialXp=0,shownXp=0,demoXp=0,view=null,THREE=null,loader=null,world=null,roster=[],allowSound=false,audio=null,heroMeshes=new Map(),effects=[],sceneFrame=null,previewName=AUTH_NAME||'Aventureiro',running=false,rotate=0,tilt=.63,zoom=28;
 let player=R.normalize({...saved,name:previewName},0);
 const Sfx={
  enable(){if(!audio){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audio=new AC()} audio?.resume?.()},
@@ -152,7 +152,7 @@ function start(list,label){
 function showHero(){
  if(!view||!THREE)return;
  running=false;world=null;stopSceneMeshes();
- spawn({...R.fighterPreview??{},id:'hero',name:previewName,build:player,x:0,z:0,hp:100,maxHp:100,alive:true,kills:0,walk:0,flash:0,attackPhase:0,angle:0});
+ spawn({id:'hero',name:previewName,build:player,x:0,z:0,hp:100,maxHp:100,alive:true,kills:0,walk:0,flash:0,attackPhase:0,angle:0});
  $('battleStatus').textContent='PERSONAGEM EM EXIBIÇÃO';$('leaderName').textContent=previewName;
  $('matchHint').textContent='Seu herói em 3D; arraste o mapa para mudar o ângulo da câmera.';
  $('scoreboard').replaceChildren();$('aliveCount').textContent='1 HERÓI';$('arenaClock').textContent='00:00';
@@ -206,10 +206,28 @@ function createHeroVisual(build){
  root.userData.parts={arms,legs,weapon,body:bod,ring};
  return root;
 }
+const models={warrior:'minion-a01.glb',arcanist:'minion-b01.glb',hunter:'minion-c01.glb',guardian:'minion-d01.glb'};
+function upgradeGLB(hero,entry){
+ if(!loader)return;
+ const classId=hero.build.classId;
+ const url='https://raw.githubusercontent.com/Ariescar/gobkit-free-assets/main/minion/'+models[classId];
+ loader.load(url,gltf=>{
+  if(heroMeshes.get(hero.id)!==entry)return;
+  const visual=gltf.scene,bounds=new THREE.Box3().setFromObject(visual),size=bounds.getSize(new THREE.Vector3());
+  const scale=2.5/Math.max(.1,size.y);
+  visual.scale.setScalar(scale);
+  const actualBounds=new THREE.Box3().setFromObject(visual);
+  visual.position.y-=actualBounds.min.y;
+  // The rigged GLB replaces a placeholder only after the real model has loaded.
+  entry.parts.body.visible=false;entry.root.add(visual);entry.visual=visual;
+  if(gltf.animations?.length){const mixer=new THREE.AnimationMixer(visual);mixer.clipAction(gltf.animations[0]).play();entry.mixer=mixer}
+ },undefined,()=>{ /* Keep usable procedural fallback when raw.githubusercontent is unreachable. */ });
+}
 function spawn(hero){
  if(!THREE||!view)return;
  const root=createHeroVisual(hero.build);
- root.position.set(hero.x||0,0,hero.z||0);view.scene.add(root);heroMeshes.set(hero.id,{root,parts:root.userData.parts});
+ root.position.set(hero.x||0,0,hero.z||0);view.scene.add(root);
+ const entry={root,parts:root.userData.parts,mixer:null};heroMeshes.set(hero.id,entry);upgradeGLB(hero,entry);
 }
 function effect(x,z,color=0xeab16c,scale=.3){
  if(!THREE||!view||effects.length>140)return;
@@ -221,6 +239,7 @@ function renderUnits(t){
  for(const [id,entry] of heroMeshes){
   const unit=world?.fighters.find(f=>f.id===id);
   const root=entry.root,parts=entry.parts;
+  entry.mixer?.update(.017);
   if(unit){
    root.visible=unit.alive;root.position.set(unit.x,unit.alive?0:-2,unit.z);
    root.rotation.y=unit.angle;
@@ -277,7 +296,7 @@ function animate(t){
 async function initThree(){
  if(!R){fallback('Regras de jogo indisponíveis.');return}
  try{
-  const mod=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');THREE=mod;
+  const mod=await import('three');THREE=mod;
   const canvas=$('arenaCanvas'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
   const small=window.matchMedia('(max-width:600px)').matches;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?1.35:1.7));renderer.shadowMap.enabled=true;
@@ -316,6 +335,7 @@ async function initThree(){
   canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(19,Math.min(43,zoom+Math.sign(e.deltaY)*2))},{passive:false});
   window.addEventListener('pagehide',()=>{cancelAnimationFrame(sceneFrame);renderer.dispose();stopSceneMeshes()});
   showHero();sceneFrame=requestAnimationFrame(animate);
+  import('three/addons/loaders/GLTFLoader.js').then(m=>{loader=new m.GLTFLoader();for(const [id,entry] of heroMeshes){const hero=world?.fighters.find(f=>f.id===id)||{build:player,id};upgradeGLB(hero,entry)}}).catch(()=>write('Prévia 3D geométrica disponível; modelos GLB externos indisponíveis.'));
   write('Cena Three.js carregada. Escolha sua classe e personalize os atributos.');
  }catch(e){console.warn('Arena 3D não foi carregada:',e);fallback('Three.js/WebGL indisponível ou conexão bloqueada. O editor de atributos continua utilizável.')}
 }
