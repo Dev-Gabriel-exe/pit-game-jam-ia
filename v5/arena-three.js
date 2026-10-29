@@ -10,6 +10,8 @@ import {buildEclipseCitadel} from './arena-citadel.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
 const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
+const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
+const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -218,6 +220,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  stormRing.scale.setScalar(18*worldScale);root.add(stormRing);
  const individuals=new Map(),effects=[],labels=new Map();
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
+ let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0;
  const visualBudget=quality==='low'||reduce?9:18;
  const isPhase2=()=>container.dataset.v5CombatEngine==='phase2-m5';
  const cueFor=(klass,id)=>CUES?.[klass]?.find(c=>c.id===id)||null;
@@ -250,9 +253,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    labels.delete(x.id);
   }
   individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();floatingLayer.replaceChildren();floating.clear();floatDebounce.clear();followId=null;
+  availableClips=0;container.dataset.v5GlbClips='0';
   container.dataset.v5Spectators='0';
  }
- function animateModel(item,motion,force=false){
+ function animateModel(item,motion,force=false,clipSpeed=1){
   if(!item.actions||(!force&&item.lastMotion===motion))return;
   const choices={
    idle:[/idle/,/breath/,/stand/],
@@ -269,7 +273,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    matches=[...item.actions].filter(([name])=>regex.test(name)).map(([,action])=>action);
    if(matches.length)break;
   }
-  if(!matches.length)matches=[...item.actions.values()];
+  if(!matches.length){
+   // Missing attack clip: reuse real idle, keep procedural choreography visible.
+   const idle=[...item.actions].find(([name])=>/idle|stand|breath/.test(name));
+   if(idle)matches=[idle[1]];
+   else matches=[...item.actions.values()].slice(0,1);
+   if(force){unmatchedClipEvents++;container.dataset.v5ClipFallbacks=String(unmatchedClipEvents)}
+  }
   if(!matches.length)return;
   const transient=['attack','cast','hit','dodge','block'].includes(motion);
   // Different matching GLB clips are selected for consecutive strikes
@@ -282,17 +292,28 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    chosen.setLoop(transient?THREE.LoopOnce:THREE.LoopRepeat,transient?1:Infinity);
    chosen.clampWhenFinished=transient;
    chosen.reset().fadeIn(.13).play();
-   chosen.timeScale=transient?1.12:1;
+   chosen.timeScale=transient?1.12*Math.max(.65,Math.min(1.4,clipSpeed)):1;
    item.lastAction=chosen;
   }
   item.lastMotion=motion;
  }
- function triggerMotion(item,motion,duration){
+ function triggerMotion(item,motion,duration,clipSpeed=1){
   if(!item||item.spectator||item.dead)return;
   item.overrideMotion=motion;
   item.motionUntil=elapsed+duration;
-  animateModel(item,motion,true);
+  animateModel(item,motion,true,clipSpeed);
   animationEvents++;container.dataset.v5AnimationEvents=String(animationEvents);
+ }
+ function playChoreography(item,cue){
+  if(!item||!cue||!CHOREOGRAPHIES||!isPhase2()||item.dead||item.spectator)return false;
+  const timeline=CHOREOGRAPHIES[item.build.klass]?.[cue.id];if(!timeline)return false;
+  item.choreography={timeline,started:elapsed};item.choreoUntil=elapsed+timeline.duration;
+  triggerMotion(item,timeline.motion,timeline.duration,timeline.speed);
+  choreographyEvents++;
+  container.dataset.v5ChoreographyEvents=String(choreographyEvents);
+  container.dataset.v5ChoreographyLast=timeline.key;
+  container.dataset.v5ChoreographyPose=timeline.pose;
+  return true;
  }
  function addRealCharacter(item){
   const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
@@ -324,6 +345,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(gltf.animations?.length){
     item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
     for(const clip of gltf.animations)item.actions.set(clip.name.toLowerCase(),item.mixer.clipAction(clip));
+    if(item.id!=='preview'){availableClips+=gltf.animations.length;container.dataset.v5GlbClips=String(availableClips)}
     animateModel(item,'idle');
    }
    if(item.id==='preview'){container.dataset.v5Asset='loaded';container.dataset.v5AnimationCount=String(gltf.animations?.length||0)}
@@ -351,7 +373,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
   const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
-  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone()};
+  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0};
   individuals.set(item.id,item);
   addRealCharacter(item);
   return item;
@@ -372,12 +394,15 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5CombatEngine=trial?'phase2-m5':'legacy';
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
-  talentFxEvents=0;talentFxDropped=0;
+  talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;
   container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
   container.dataset.v5TalentFxEvents='0';container.dataset.v5TalentFxDropped='0';
   container.dataset.v5TalentCueLast='';container.dataset.v5TalentCueStyle='';
   container.dataset.v5TalentFxActive='0';
   container.dataset.v5TalentFxCatalog=String(CUES?Object.values(CUES).flat().length:0);
+  container.dataset.v5ChoreographyCatalog=String(CHOREOGRAPHIES?Object.values(CHOREOGRAPHIES).flatMap(x=>Object.keys(x)).length:0);
+  container.dataset.v5ChoreographyEvents='0';container.dataset.v5ChoreographyLast='';
+  container.dataset.v5ChoreographyPose='';container.dataset.v5ClipFallbacks='0';
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
@@ -486,6 +511,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(!seat)return false;
   occupiedSeats.set(unit.id,seat);spectators.add(unit.id);
   unit.spectator=true;unit.dead=true;unit.seat=seat;
+  unit.choreography=null;unit.choreoUntil=0;
   unit.transfer={started:performance.now(),from:unit.mesh.root.position.clone(),duration:1450};
   unit.mesh.circle.visible=false;unit.bar.visible=false;
   unit.nick.classList.add('spectating');unit.nick.textContent='👁 '+unit.name;
@@ -551,7 +577,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     if(ev.type==='prepare'){
      triggerMotion(attacker,'cast',.5);warningFx(attacker);
     }else if(ev.type==='talent'){
-     triggerMotion(attacker,cue?.motion||'cast',cue?.duration||.72);
+     if(!cue||!playChoreography(attacker,cue))triggerMotion(attacker,cue?.motion||'cast',cue?.duration||.72);
      if(!cue)specialFx(attacker);else talentVisual(attacker,ev);
     }else if(ev.type==='shield'){
      triggerMotion(attacker,'block',.58);
@@ -559,7 +585,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     }else if(ev.type==='special'){
      triggerMotion(attacker,'cast',.72);specialFx(attacker);
     }else if(ev.type==='proc'||ev.type==='charge'){
-     if(cue&&ev.type==='proc')talentVisual(attacker,ev,null,true);
+     if(cue&&ev.type==='proc'){
+      if(!attacker?.choreography||elapsed>=attacker.choreoUntil)playChoreography(attacker,cue);
+      talentVisual(attacker,ev,null,true);
+     }
     }else if(ev.type==='trap'||ev.type==='talent-impact'||ev.type==='zone'){
      if(cue)talentVisual(attacker,ev,{x:ev.x,z:ev.z},true);
     }else if(ev.type==='teleport'){
@@ -568,7 +597,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
      triggerMotion(attacker,'attack',.47);
     }else if(ev.type==='hit'){
      if(victim)showCombatText(ev.target,'−'+Math.round(ev.amount||0),'hit');
-     if(ev.kind==='melee')triggerMotion(attacker,'attack',.44);
+     if(ev.kind==='melee'&&(!attacker?.choreography||elapsed>=attacker.choreoUntil))triggerMotion(attacker,'attack',.44);
      if(victim&&!victim.spectator)triggerMotion(victim,'hit',.25);
      if(victim)burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
     }else if(ev.type==='dodge'){
@@ -634,7 +663,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const a=u.mesh.actor,active=!u.dead||u.spectator;
    if(!active)continue;
    const wobble=reduce?0:Math.sin(elapsed*2.7+id.length)*.055;
-   a.position.y=wobble;
+   const choreography=u.choreography&&DIRECTOR?DIRECTOR.sample(u.choreography.timeline,elapsed-u.choreography.started,{reducedMotion:reduce}):null;
+   if(u.choreography&&!choreography?.active)u.choreography=null;
+   // Local actor pose only: never alter simulation positions or collisions.
+   a.position.y=wobble+(choreography?.lift||0);
+   a.position.z=choreography?.forward||0;
+   a.rotation.x=choreography?.pitch||0;a.rotation.z=choreography?.roll||0;
    if(!reduce){u.mesh.arms.forEach((arm,i)=>{arm.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.18});
      u.mesh.legs.forEach((leg,i)=>{leg.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.21});
      if(u.mesh.cape)u.mesh.cape.rotation.x=.14+Math.sin(elapsed*3)*.06;
@@ -656,6 +690,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(e.life<=0){discardEffect(e);effects.splice(i,1)}
   }
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
+  container.dataset.v5ChoreographiesActive=String([...individuals.values()].filter(u=>u.choreography).length);
   if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId);if(f){
     const watching=occupiedSeats.get(followId);
     const target=watching?new THREE.Vector3(watching.x,watching.y+1.4,watching.z):new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
