@@ -76,3 +76,15 @@ Feedback do usuário: câmera cinematográfica melhorou; "Seguir" ainda ficava n
 - Última revisão de animações de habilidade: commit `a56871672dc897ced44653a0e7c175b61d0ad52c`, com pose de ator mais pronunciada e brilho sincronizado com eventos C.2 reais. Mudança somente de renderização, sem mudar física/dano/cooldowns.
 - Deploy isolado estável: `dpl_8P72npQWgVG9fk8KXQBnDUjmFoWB`, Vercel `READY`, alias público `https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1`. Não é a `main`.
 - Regressões: `PIT Game Jam QA` estático aprovou a build. Os testes longos com Playwright/Chromium foram iniciados para a última revisão; não classificar como concluídos antes dos resultados dos jobs `V5 Arena Lab`.
+
+## Laboratório de ritmo — redução reversível de dano (29/10/2026)
+Feedback do usuário: Arcanista parece muito fraco; os confrontos terminam rápido demais; testar reduzir o dano de todos para dar tempo de visualizar talentos, movimento e defesa. **Decisão:** experimento controlado em D (transição para balanceamento E), não alterar classes oficiais ou jogo principal.
+
+- Ambos os motores (`v5/phase2-combat.js` M5 com 120 talentos; `v5/hero-core.js` legado M10) receberam parâmetros opcionais `damageScale` e `mageDamageBonus`, com valores neutros `1` para *todas as chamadas antigas*.
+- Três presets selecionáveis pelo professor na arena de testes, com nova simulação e nova seed quando alternados: `Dano 100% · original`, `Dano 75% · prolongado` **padrão**, `Dano 60% · épico`. Os multiplicadores são aplicados após mitigação, antes dos escudos. O dano da tempestade é mantido (cuidado: não é a mesma escala).
+- Os modos 75% e 60% incluem **hipótese experimental** de 10% de compensação ofensiva somente para o Arcanista; neste modo o dano ofensivo total dele equivale respectivamente a 82,5% e 66% da referência (ainda inferior ao original). Não afirmar que isto corrige classe fraca sem distribuição de vencedores, duração e duração até eliminação. Reverter ou alterar após análise na Fase E.
+- Duração máxima interna da simulação: 95s (100%), 110s (75%), 125s (60%). Isso não altera XP, unlocks, frontend da oficina, HP base, velocidade de animação ou outras fontes de dados.
+- `qa/v5-arena-pacing.cjs`: regressão determinística e comparação de dano nos dois motores, além de relatório estatístico multi-seed 4/30 personagens. **Importante:** escudos temporários no legado podem gerar uma relação *não linear* do dano efetivo no primeiro HP hit; isso é comportamento legítimo do motor, não motivo para esconder defeito.
+- `qa/v5-arena-lab-browser.cjs` verifica o preset padrão e `qa/v5-phase2-browser.cjs` verifica mudança reversível dos três presets.
+- Nova prévia pública isolada: https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1 ; deploy `dpl_FfAKDy1uWsFnXRRGQQiCztxk4w7h`, READY. `main` inalterada.
+- **Próximo:** analisar CI completo (rules + browser) e relatório multi-seed; pedir avaliação do usuário com 4 e 30 personagens. Só declarar resultado de balanceamento depois de análise da distribuição entre classes; nenhuma alteração obrigatória no roadmap de integração.
