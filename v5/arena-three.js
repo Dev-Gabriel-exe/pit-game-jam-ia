@@ -141,34 +141,75 @@ function arenaScenery(scene,ground){
 // Real CC0 GLB architectural pieces from Tactical Slash (KayKit derivatives).
 // Asset provenance: https://github.com/sion-rgb/tactical-slash/blob/main/THIRD_PARTY_ASSETS.md
 // Use source-commit-pinned URLs rather than unlicensed third-party game content.
+// Two independently verified CC0 sources. They are architectural scenery only:
+// the 30-player combat is still owned by the deterministic V5 engine.
+// KayKit: https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0
+// Tactical Slash environment provenance: https://github.com/sion-rgb/tactical-slash/blob/main/THIRD_PARTY_ASSETS.md
 function loadMedievalArchitecture(root,worldScale,quality,container){
- const source='https://raw.githubusercontent.com/sion-rgb/tactical-slash/8bf8d835cb7afa7cb3f4d893b0966c6b4e9b7727/assets/environment/';
+ const low=quality==='low';
+ const stadiumScale=worldScale/2.6;
+ const sources={
+  tactical:'https://raw.githubusercontent.com/sion-rgb/tactical-slash/8bf8d835cb7afa7cb3f4d893b0966c6b4e9b7727/assets/environment/',
+  kaykit:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/'
+ };
+ // The old dungeon scenery was arranged as a ring inside the old small arena.
+ // Push it behind the full-size combat boundary rather than clutter the duels.
  const planned=[
-  {name:'dungeon_wall.glb',count:quality==='low'?18:36,radius:20.1,height:4.6,rotate:true},
-  {name:'dungeon_pillar.glb',count:quality==='low'?12:24,radius:18.5,height:5.7,rotate:false},
-  {name:'dungeon_crate.glb',count:quality==='low'?10:18,radius:16.8,height:1.5,rotate:true}
+  {source:'tactical',file:'dungeon_wall.glb',count:low?12:28,pattern:'ring',radius:20.4*worldScale,size:4.5*worldScale,turn:true},
+  {source:'tactical',file:'dungeon_pillar.glb',count:low?8:16,pattern:'ring',radius:21.5*worldScale,size:5*worldScale},
+  // Ornate real meshes in front of the four existing grandstand walls.
+  // Static stage decoration never adds collision shapes to the combat core.
+  {source:'kaykit',file:'wall_arched.gltf.glb',count:low?4:7,pattern:'sides',depth:58.4,xStep:12.5,size:13.3*stadiumScale},
+  {source:'kaykit',file:'pillar_decorated.gltf.glb',count:low?3:5,pattern:'sides',depth:54.8,xStep:18,size:8.5*stadiumScale},
+  {source:'kaykit',file:'torch_mounted.gltf.glb',count:low?3:7,pattern:'sides',depth:53.0,xStep:13,size:2.2*stadiumScale},
+  {source:'kaykit',file:'rubble_half.gltf.glb',count:low?2:4,pattern:'sides',depth:51.3,xStep:26,size:2.6*stadiumScale}
  ];
+ const distinct=planned.map(cfg=>cfg.file);
  container.dataset.v5Environment='loading';
+ container.dataset.v5EnvironmentSources='Tactical Slash CC0; KayKit Dungeon CC0';
+ container.dataset.v5EnvironmentParts='0';
+ // Each GLB is downloaded ONCE and its geometries/materials are reused.
+ // External files are optional: the fully procedural citadel remains intact.
  Promise.allSettled(planned.map(async cfg=>{
-  const gltf=await loader.loadAsync(source+cfg.name);
+  const gltf=await loader.loadAsync(sources[cfg.source]+cfg.file);
   const raw=gltf.scene;
-  const bounds=new THREE.Box3().setFromObject(raw),size=bounds.getSize(new THREE.Vector3());
-  const longest=Math.max(size.x,size.y,size.z,.01);
-  const group=new THREE.Group();root.add(group);
-  for(let n=0;n<cfg.count;n++){
-   const angle=n/cfg.count*2*Math.PI+(cfg.name.includes('crate')?.27:0);
-   const object=raw.clone(true),scale=cfg.height/longest*worldScale;
+  const bounds=new THREE.Box3().setFromObject(raw);
+  const extent=bounds.getSize(new THREE.Vector3());
+  const longest=Math.max(extent.x,extent.y,extent.z,.01);
+  const scale=cfg.size/longest;
+  const group=new THREE.Group();group.name='cc0-'+cfg.file;
+  let pieces=0;
+  const place=(x,z,yaw)=>{
+   const object=raw.clone(true);
    object.scale.setScalar(scale);
-   object.position.set(Math.cos(angle)*cfg.radius*worldScale,-bounds.min.y*scale,Math.sin(angle)*cfg.radius*worldScale);
-   object.rotation.y=angle+(cfg.rotate?Math.PI/2:0);
-   object.traverse(part=>{if(part.isMesh){part.castShadow=quality!=='low';part.receiveShadow=true}});
-   group.add(object);
+   object.position.set(x,-bounds.min.y*scale,z);
+   object.rotation.y=yaw;
+   object.traverse(part=>{if(part.isMesh){part.castShadow=!low;part.receiveShadow=true}});
+   group.add(object);pieces++;
+  };
+  if(cfg.pattern==='ring'){
+   for(let n=0;n<cfg.count;n++){
+    const a=n/cfg.count*Math.PI*2;
+    place(Math.cos(a)*cfg.radius,Math.sin(a)*cfg.radius,a+(cfg.turn?Math.PI/2:0));
+   }
+  }else{
+   for(let side=0;side<4;side++){
+    const a=side*Math.PI/2;
+    for(let n=0;n<cfg.count;n++){
+     const x=(n-(cfg.count-1)/2)*cfg.xStep*stadiumScale;
+     const z=cfg.depth*stadiumScale;
+     const pos=new THREE.Vector3(x,0,z).applyAxisAngle(new THREE.Vector3(0,1,0),a);
+     place(pos.x,pos.z,a);
+    }
+   }
   }
-  return cfg.name;
+  root.add(group);
+  return {file:cfg.file,pieces};
  })).then(results=>{
-  const successes=results.filter(x=>x.status==='fulfilled').map(x=>x.value);
-  container.dataset.v5Environment=successes.length===planned.length?'loaded':successes.length?'partial':'failed';
-  container.dataset.v5EnvironmentAssets=successes.join(',');
+  const loaded=results.filter(x=>x.status==='fulfilled').map(x=>x.value);
+  container.dataset.v5Environment=loaded.length===distinct.length?'loaded':loaded.length?'partial':'failed';
+  container.dataset.v5EnvironmentAssets=loaded.map(x=>x.file).join(',');
+  container.dataset.v5EnvironmentParts=String(loaded.reduce((sum,x)=>sum+x.pieces,0));
  });
 }
 export function createStage(container,{mode='hero',quality='auto',arenaScale=1,onEvent=()=>{}}={}){
