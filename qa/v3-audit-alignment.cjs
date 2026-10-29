@@ -271,7 +271,7 @@ assert(!m09Review.includes('Confirme os três passos realizados'),'M09 locked re
 assert(m09Review.includes('disabled'),'M09 approved record stays read-only');
 m09Restore.hydrate('m09-original',m09Evidence,'approved');
 assert.equal(m09Restore.load('m09-original').checks.length,3,'M09 existing locally marked checks are not erased');
-// M07/M08/M10 integrity regression: remote evidence carries written answers but
+// M06/M07/M08/M10 integrity regression: remote evidence carries written answers but
 // no trustworthy record of the three manual Preview checkboxes. A submission
 // or approval status must never synthesize test execution on a new device.
 for(const [number,source,globalName,warningClass] of [
