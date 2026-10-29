@@ -17,6 +17,11 @@ const {chromium}=require('playwright');
   for(const id of ['warrior','guardian','mage','rogue','hunter','necromancer']){
    await page.locator('[data-class="'+id+'"]').click();
    assert.equal(await page.locator('#v5Stage').getAttribute('data-v5-asset-class'),id,'Class GLB request not queued: '+id);
+   if(viewport.width===1440){
+    await page.waitForFunction(klass=>{const s=document.querySelector('#v5Stage');return s?.dataset.v5AssetClass===klass&&(s.dataset.v5Asset==='loaded'||s.dataset.v5Asset==='fallback')},id,{timeout:45000});
+    assert.equal(await page.locator('#v5Stage').getAttribute('data-v5-asset'),'loaded','Real animated GLB did not load: '+id);
+    assert(Number(await page.locator('#v5Stage').getAttribute('data-v5-animation-count'))>0,'Model has no embedded clips: '+id);
+   }
    const dest=await page.locator('#v5ModelOrigin').getAttribute('href');
    assert(dest.startsWith('https://github.com/'),'Official asset source missing');
   }
