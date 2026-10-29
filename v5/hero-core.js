@@ -119,17 +119,20 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  // Optional geometric scaling for a 30-participant spectator arena; legacy callers retain 1.
  const scale=clamp(arenaScale,1,5);
  const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
+ const spawnPhase=rnd()*Math.PI*2;
  const fighters=heroes.map((input,i)=>{
   const name=String(input.name||'Aventureiro').slice(0,56),id=String(input.id||('hero-'+i)).slice(0,80);
   if(used.has(id))throw Error('Personagem duplicado.');used.add(id);
   // Trusted caller must canonicalize player build using server-awarded XP.
   const b=canonical(input,name,clamp(input.xp,0,1030)),stats=derived(b);
-  const theta=i*2.3999632297,rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03))*scale;
+  const theta=i*2.3999632297+spawnPhase+(rnd()-.5)*.32;
+  const rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03)+(rnd()-.5)*1.25)*scale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
-   basic:0,special:2+(i%3)*.85,slow:0,animation:'idle'};
+   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0};
  });
  let time=0,seq=0,winner=null,finished=false;
+ const initialCount=fighters.length;
  const events=[];
  const log=(type,f,payload={})=>{const e={seq:++seq,time:+time.toFixed(2),type,hero:f?.id||null,...payload};events.push(e);return e};
  const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({...o,x:o.x*scale,z:o.z*scale,r:o.r*scale}));
@@ -142,8 +145,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   let amount=Math.max(1,dmg-o.stats.defense*.43);
   if(rnd()<f.stats.crit){amount*=1.6;log('critical',f,{target:o.id})}
   if(o.build.talents.last&&o.hp<o.stats.hp*.3)amount*=Math.max(.4,1-o.build.talents.last*.15);
+  // A small agility-driven evasion window introduces reactive defensive play.
+  // Keep it capped; otherwise ranged classes can become untouchable.
+  if(rnd()<Math.min(.13,.025+o.stats.speed*.012)){log('dodge',o,{attacker:f.id});o.stagger=.18;return}
   const shieldAbsorbed=Math.min(o.shield,amount);o.shield-=shieldAbsorbed;amount-=shieldAbsorbed;
-  o.hp=Math.max(0,o.hp-amount);f.damage+=amount;f.attacks++;
+  o.hp=Math.max(0,o.hp-amount);f.damage+=amount;f.attacks++;o.stagger=Math.min(.32,.1+amount*.008);
   log('hit',f,{target:o.id,amount:+amount.toFixed(1),kind,x:o.x,z:o.z});
   if(f.build.talents.leech||f.build.talents.vamp)f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
   if(o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
@@ -160,20 +166,37 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const step=Math.min(.09,Math.max(.001,Number(rawDt)||dt));
   time+=step;const start=events.length;
   const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-18)*(scale===1?.13:.37*scale));
-  for(const f of fighters){
+  // Rotate action order deterministically; the first fighter in the input
+  // must not always enjoy first strike advantage.
+  const startIndex=Math.floor(rnd()*Math.max(1,fighters.length));
+  for(let order=0;order<fighters.length;order++){
+   const f=fighters[(startIndex+order)%fighters.length];
    if(!f.alive)continue;
    f.basic=Math.max(0,f.basic-step);f.special=Math.max(0,f.special-step);
    f.slow=Math.max(0,f.slow-step);
+   f.stagger=Math.max(0,f.stagger-step);
+   f.sidestep=Math.max(0,f.sidestep-step);
    if(f.build.talents.heal)f.hp=Math.min(f.stats.hp,f.hp+step*f.build.talents.heal*.45);
    const enemies=fighters.filter(e=>e.alive&&e!==f);if(!enemies.length)continue;
    enemies.sort((a,b)=>Math.hypot(a.x-f.x,a.z-f.z)-Math.hypot(b.x-f.x,b.z-f.z));
    const target=enemies[0],dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
-   let dir=d>Math.max(1.15,f.stats.range*.82)?1:-.4;
-   if((f.build.klass==='hunter'||f.build.klass==='necromancer')&&d<5)dir=-1;
-   const mv=f.stats.speed*(f.slow?0.55:1)*dir*step;
-   const move=blocked(f,f.x+dx/d*mv,f.z+dz/d*mv);
-   f.x=move.x;f.z=move.z;f.animation='run';
+   // Steering, acceleration, sidesteps and body avoidance replace the old
+   // instant translation straight through another player's position.
+   const ranged=f.stats.range>3;
+   const preferred=ranged?Math.min(f.stats.range*.67,6.6):Math.max(1.25,f.stats.range*.79);
+   const chase=d>preferred+1.2?1:d<preferred-.9?-0.65:0;
+   const strafeSign=(hash(f.id)^seed)&1?1:-1;
+   const strafe=(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
+   const slowFactor=f.slow?0.58:1;
+   const desiredX=(dx/d*chase-dz/d*strafe)*f.stats.speed*slowFactor;
+   const desiredZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*slowFactor;
+   const easing=1-Math.exp(-9*step);
+   f.vx+=(desiredX-f.vx)*easing;
+   f.vz+=(desiredZ-f.vz)*easing;
+   const move=blocked(f,f.x+f.vx*step,f.z+f.vz*step);
+   f.x=move.x;f.z=move.z;
+   f.animation=(Math.hypot(f.vx,f.vz)>.3)?'run':'idle';
    // Arena ring is a soft physical boundary, followed by damage outside the storm.
    const cd=Math.hypot(f.x,f.z);
    if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
@@ -185,7 +208,10 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
      log('launch',f,{target:target.id});
     }else hit(f,target,f.stats.attack,'melee');
    }
-   if(f.special<=0){
+   // Do not cast offensive skills into empty space at 60+ units away.
+   // The legacy special is still class-generic, not one of the 120 talents.
+   const readyForSpecial=f.build.klass==='guardian'||d<=Math.max(f.stats.range+1.3,4.2);
+   if(f.special<=0&&readyForSpecial){
     f.special=f.stats.cooldown+1.4*rnd();f.animation='cast';
     log('special',f,{ability:f.stats.special,x:f.x,z:f.z});
     if(f.build.klass==='mage'){
@@ -211,6 +237,23 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     }
    }
   }
+  // Pairwise collision resolution. O(n²), but 30 players cost only 435
+  // pairs per fixed step and prevents avatars walking through one another.
+  for(let i=0;i<fighters.length;i++){
+   const a=fighters[i];if(!a.alive)continue;
+   for(let j=i+1;j<fighters.length;j++){
+    const b=fighters[j];if(!b.alive)continue;
+    const x=b.x-a.x,z=b.z-a.z,dist=Math.hypot(x,z);
+    const minDistance=1.25;
+    if(dist>=minDistance)continue;
+    const nx=dist>.0001?x/dist:Math.cos((i+j)*2.4),nz=dist>.0001?z/dist:Math.sin((i+j)*2.4);
+    const correction=(minDistance-Math.max(.0001,dist))*.51;
+    a.x-=nx*correction;a.z-=nz*correction;
+    b.x+=nx*correction;b.z+=nz*correction;
+    const ca=blocked(a,a.x,a.z),cb=blocked(b,b.x,b.z);
+    a.x=ca.x;a.z=ca.z;b.x=cb.x;b.z=cb.z;
+   }
+  }
   for(let i=projectiles.length-1;i>=0;i--){
    const p=projectiles[i],target=fighters.find(x=>x.id===p.to);
    if(!target?.alive){projectiles.splice(i,1);continue}
@@ -222,7 +265,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const left=fighters.filter(x=>x.alive);
   if(left.length<=1||time>=limit){
    finished=true;
-   winner=(left.length===1?left[0]:left.slice().sort((a,b)=>b.hp-a.hp||b.kills-a.kills||a.id.localeCompare(b.id))[0])||null;
+   // A timeout must not automatically crown the guardian merely because it
+   // started with the largest *absolute* HP pool. Compare survival fraction,
+   // then combat contribution.
+   winner=(left.length===1?left[0]:left.slice().sort((a,b)=>
+     (b.hp/b.stats.hp-a.hp/a.stats.hp)||b.kills-a.kills||b.damage-a.damage||a.id.localeCompare(b.id))[0])||null;
    log('end',winner,{winner:winner?.id||null,reason:left.length===1?'last-hero':'time-limit'});
   }
   return {finished,winner,events:events.slice(start),time,radius,fighters,projectiles};
