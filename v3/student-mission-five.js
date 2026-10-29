@@ -132,12 +132,13 @@ function parseEvidence(raw){
   ['saved','Salvo em: '],['issue','Correção: ']]){
   const val=get(label);d[f]=val==='Não informada'&&f==='issue'?'':val.slice(0,fields.find(x=>x.key===f).max);
  }
- d.checks=[0,1,2];return d;
+ // Remote evidence has no trustworthy checkbox attestation; keep checks empty.
+ return d;
 }
 function hydrate(session,raw,status){
  const d=parseEvidence(raw);if(!d||!d.condition||!d.positive)return;
- const old=load(session),hasLocal=fields.some(f=>clean(old[f.key]));
- if(status==='submitted'||status==='approved'){save(session,d);return}
+ const old=load(session),hasLocal=fields.some(f=>clean(old[f.key]))||old.checks.length||old.route!==null;
+ // Preserve local answers and manually checked tests even when the server record is approved.
  if(!hasLocal)save(session,d);
 }
 function heading(ctx,phase){
@@ -238,7 +239,7 @@ function review(ctx){
  '<label for="evidenceInput">Evidência estruturada para o professor</label>'+
  '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx))+'</textarea>'+
  '<small>Esta evidência é um relato. Se necessário, demonstre o resultado no Preview.</small></div>'+
- (!v.ok?'<div class="m5s-warning">'+esc(v.label)+'</div>':'')+
+ (!fixed&&!v.ok?'<div class="m5s-warning">'+esc(v.label)+'</div>':'')+
  '<div class="m5s-actions"><button type="button" class="m5s-back" data-m5s-nav="practice" '+(fixed?'disabled':'')+'>‹ CORRIGIR REGISTRO</button>'+
  '<button type="button" class="m5s-primary" id="submitWork" '+(!v.ok||fixed||(!ctx.canSubmit&&!ctx.preview)?'disabled':'')+'>'+
  (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
