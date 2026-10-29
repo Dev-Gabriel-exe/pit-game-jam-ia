@@ -94,6 +94,7 @@ function renderGallery(){
   selected.name+' · '+API.CLASSES[selected.klass].label+' · '+(blocked?'Já reservado':mine?.avatarId===selectedAvatar?'Sua escolha atual':'Disponível para este aluno'):'Selecione um herói';
  $('avatarName').textContent=selected?.name||'Selecione um herói';
  $('avatarEquipment').textContent=selected?selected.armor+' · identidade '+selected.id:'';
+ if(selected)$('arenaPreviewChoice').href='https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1&avatars=1&count=4&avatar='+encodeURIComponent(selected.id);
 }
 function draw(){
  renderClasses();renderGallery();
