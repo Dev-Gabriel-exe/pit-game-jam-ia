@@ -48,7 +48,20 @@ const {chromium}=require('playwright');
     assert(Number(await page.locator('#arenaStage').getAttribute('data-v5-spectators'))>0);
     assert(await page.locator('.arena-nickname.spectating').count()>0,'Spectator nick must stay visible in 3D scene');
     assert.match(await page.locator('#spectatorsCount').textContent(),/[1-9]\d* na arquibancada/);
-    await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5SpecialFx||0)>0&&Number(document.querySelector('#arenaStage')?.dataset.v5AnimationEvents||0)>0,null,{timeout:30000});
+    try{
+      await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5SpecialFx||0)>0&&Number(document.querySelector('#arenaStage')?.dataset.v5AnimationEvents||0)>0,null,{timeout:25000});
+    }catch(error){
+      const debug=await page.evaluate(()=>({
+       flags:{...document.querySelector('#arenaStage')?.dataset},
+       state:document.querySelector('#arenaStatus')?.textContent,
+       specialLog:[...document.querySelectorAll('#battleLog .event')].slice(0,9).map(x=>x.textContent),
+       logLength:document.querySelectorAll('#battleLog .event').length,
+       stageFrames:document.querySelector('#arenaStage canvas')?.width,
+       spotlight:document.querySelector('#spotlightText')?.textContent
+      }));
+      console.error('SPECIAL FX DEBUG '+JSON.stringify({debug,errors}));
+      throw error;
+    }
     console.log('PASS eliminated hero in grandstand, with animated attack/cast reactions and per-class special VFX');
     // No screenshot during a live WebGL duel: headless SwiftShader may stall and falsely fail QA.
    }
