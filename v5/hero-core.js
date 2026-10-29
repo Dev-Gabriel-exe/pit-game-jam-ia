@@ -144,6 +144,9 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  function hit(f,o,dmg,kind){
   if(!o.alive||!f.alive)return;
   let amount=Math.max(1,dmg-o.stats.defense*.43);
+  // Class-intrinsic resistance while closing: being a frontline hero
+  // must be a meaningful strategic option in a 30-player ranged FFA.
+  if((o.build.klass==='warrior'||o.build.klass==='guardian')&&(kind==='ranged'||kind==='multishot'))amount*=.77;
   if(rnd()<f.stats.crit){amount*=1.6;log('critical',f,{target:o.id})}
   if(o.build.talents.last&&o.hp<o.stats.hp*.3)amount*=Math.max(.4,1-o.build.talents.last*.15);
   // A small agility-driven evasion window introduces reactive defensive play.
@@ -193,12 +196,12 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    const strafe=(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
    // Melee fighters need a readable, timed dash to close the gap against
    // permanent kiting. This is movement, not a teleport or hidden talent.
-   if(!ranged&&d>6&&f.rushCooldown<=0){
-    f.rush=.95;
-    f.rushCooldown=6.5+rnd()*1.4;
+   if(!ranged&&d>5.2&&f.rushCooldown<=0){
+    f.rush=1.35;
+    f.rushCooldown=5.5+rnd()*1.2;
     log('dash',f,{target:target.id,x:f.x,z:f.z});
    }
-   const slowFactor=(f.slow?0.58:1)*(f.rush>0?2.0:1);
+   const slowFactor=(f.slow?0.58:1)*(f.rush>0?2.75:1);
    const desiredX=(dx/d*chase-dz/d*strafe)*f.stats.speed*slowFactor;
    const desiredZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*slowFactor;
    const easing=1-Math.exp(-9*step);
