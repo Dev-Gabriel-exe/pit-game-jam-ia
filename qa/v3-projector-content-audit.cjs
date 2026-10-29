@@ -184,6 +184,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   await content.evaluate(el=>{el.style.height='180px';el.style.maxHeight='180px'});
   const beforeCount=await page.locator('#pitProjectorCount').innerText();
   navigationCheck.overflow=await content.evaluate(el=>el.scrollHeight>el.clientHeight+12);
+  navigationCheck.topVisible=await content.evaluate(el=>el.querySelector('.pit-projector-card').getBoundingClientRect().top>=el.getBoundingClientRect().top-2);
+  navigationCheck.hintVisible=await page.locator('#pitProjectorScrollHint').isVisible();
   navigationCheck.privateNotes=await content.locator('.pit-private-teacher-notes').count();
   await page.keyboard.press('PageDown');
   navigationCheck.firstPageScroll=await content.evaluate(el=>el.scrollTop>0);
@@ -220,7 +222,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M07: four GDevelop completion steps projected individually',pass:JSON.stringify(m07?.guideSteps)===JSON.stringify(expected07)},
   {name:'M07: each step has where/action/result/recovery/source without private notes',pass:m07?.m07Sections?.length===4&&m07.m07Sections.every(x=>x.where&&x.action&&x.result&&x.fix&&x.source&&x.image&&x.privateNotes===0)},
   {name:'M07: 2D and 3D routes each project four complete steps',pass:m07RouteChecks.length===2&&m07RouteChecks.every(x=>x.pass)},
-  {name:'720p long tutorials: PageDown scrolls before advancing; next slide starts at top; no private notes',pass:navigationCheck.targetFound&&navigationCheck.overflow&&navigationCheck.firstPageScroll&&navigationCheck.keepsSlide&&navigationCheck.resetOnNext&&navigationCheck.atBottomAdvances&&navigationCheck.privateNotes===0}
+  {name:'720p long tutorials: PageDown scrolls before advancing; next slide starts at top; no private notes',pass:navigationCheck.targetFound&&navigationCheck.overflow&&navigationCheck.topVisible&&navigationCheck.hintVisible&&navigationCheck.firstPageScroll&&navigationCheck.keepsSlide&&navigationCheck.resetOnNext&&navigationCheck.atBottomAdvances&&navigationCheck.privateNotes===0}
  ];
  console.log('PROJECTOR_REGRESSION '+JSON.stringify(projectorChecks));
  console.log('PROJECTOR_SUMMARY '+JSON.stringify({viewport:width+'x'+height,phases:rows.length,errors,fail,smallText:rows.filter(x=>x.smallFontSlides>0).length,scroll:rows.filter(x=>x.slidesWithScroll>0).length,totalScrollSlides:rows.reduce((n,x)=>n+x.slidesWithScroll,0)}));
