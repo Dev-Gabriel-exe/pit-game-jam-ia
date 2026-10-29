@@ -44,6 +44,13 @@ for(const {name,engine,list} of rosters){
  assert.equal(epic.first.hero,original.first.hero);
  const epicRatio=epic.first.amount/original.first.amount;
  if(engine===PHASE2)assert(Math.abs(epicRatio-.60*(hero.build.klass==='mage'?1.10:1))<.055,name+' 60% pace not applied: '+epicRatio);
+ const legendary=getFirstHit(engine,list,{damageScale:.50,mageDamageBonus:1.10});
+ assert.equal(legendary.first.hero,original.first.hero,'Half-damage retains original opening attack order');
+ if(engine===PHASE2){
+  const ratioHalf=legendary.first.amount/original.first.amount;
+  assert(Math.abs(ratioHalf-.50*(hero.build.klass==='mage'?1.10:1))<.055,
+    name+' first real hit must respect half damage, got '+ratioHalf);
+ }
  console.log('PASS pacing '+name+': '+original.first.hero+' 100% '+original.first.amount+
   ' -> long '+long.first.amount+' ('+(ratio*100).toFixed(1)+'%), epic '+epic.first.amount+
   ' ('+(epicRatio*100).toFixed(1)+'%)');
