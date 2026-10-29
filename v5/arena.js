@@ -246,7 +246,7 @@ function animate(t){
  const now=t/1000,dt=Math.min(.05,now-(view.last||now));view.last=now;
  if(running&&world){
   for(let i=0;i<3;i++){
-   if(!world.over)R.step(world,Math.min(.05,dt*3.2));
+   if(!world.over)R.step(world,Math.min(.05,dt*.55));
    for(const ev of world.events){
     if(ev.type==='hit'){effect(ev.x,ev.z,ev.kind==='arcane'?0xa18bf2:0xe9ab66,.14);if(Math.random()<.17)Sfx.play(195,.08,'sawtooth',.027)}
     if(ev.type==='special'){effect(ev.x,ev.z,ev.kind==='arcane'?0x9377e6:0xe7bc77,.65);Sfx.play(365,.22)}
