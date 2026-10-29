@@ -28,8 +28,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    if(!(await page.locator('#pitProjector').count())){rows.push({mission,phase,...before,error:'NO_SLIDES'});continue}
    const slideCount=await page.locator('#pitProjectorCount').innerText();
    const n=Number(slideCount.split('/')[1]?.trim())||1;
-   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[];
-   let demoInteraction=null;
+   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[];
+   let demoInteraction=null,m08Interaction=null;
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
      const card=el.querySelector('.pit-projector-card'),r=el.getBoundingClientRect();
@@ -44,6 +44,27 @@ const {chromium}=require('playwright'),fs=require('node:fs');
        cardWidth:Math.round(card?.getBoundingClientRect().width||0),viewportHeight:Math.round(r.height)};
     });
     slides.push(metrics);
+    if(mission===8&&phase==='briefing'){
+     const briefing=page.locator('#pitProjectorContent [data-pit-projector-briefing]');
+     if(await briefing.count()){
+      m08BriefingSteps.push(await briefing.evaluate(el=>({
+       id:el.dataset.pitProjectorBriefing,
+       text:el.textContent.trim(),
+       privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+      })));
+      if(await briefing.getAttribute('data-pit-projector-briefing')==='M08:simulation'){
+       await page.locator('#pitProjectorContent [data-t8f-action="item"]').click();
+       const before=await page.locator('#pitProjectorContent #t8fStatus').innerText();
+       await page.locator('#pitProjectorContent .t8f-modes label').nth(1).click();
+       await page.locator('#pitProjectorContent [data-t8f-action="item"]').click();
+       const after=await page.locator('#pitProjectorContent #t8fStatus').innerText();
+       await page.locator('#pitProjectorContent [data-t8f-action="door"]').click();
+       const blocked=await page.locator('#pitProjectorContent #t8fStatus').innerText();
+       const state=await page.locator('#pitProjectorContent [data-t8f-scene]').getAttribute('data-t8f-scene');
+       m08Interaction={before,after,blocked,state,pass:before==='SEM FEEDBACK'&&after==='ITEM COLETADO'&&blocked==='PORTA BLOQUEADA'&&state==='polished'};
+      }
+     }
+    }
     if(mission===4&&phase==='review'){
      const review=page.locator('#pitProjectorContent [data-pit-projector-review]');
      if(await review.count())m04ReviewSteps.push(await review.evaluate(el=>({
@@ -121,7 +142,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title}));
   }
@@ -238,6 +259,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  const m04Review=rows.find(x=>x.mission===4&&x.phase==='review');
  const m05=rows.find(x=>x.mission===5&&x.phase==='demo');
  const m05Review=rows.find(x=>x.mission===5&&x.phase==='review');
+ const m08Briefing=rows.find(x=>x.mission===8&&x.phase==='briefing');
  const m07=rows.find(x=>x.mission===7&&x.phase==='demo');
  const expected01=Array.from({length:5},(_,i)=>'M01:'+i),expected03=Array.from({length:6},(_,i)=>'M03:'+i),expected04=Array.from({length:4},(_,i)=>'M04:'+i),expected05=Array.from({length:5},(_,i)=>'M05:'+i),expected07=Array.from({length:4},(_,i)=>'M07:'+i);
  const projectorChecks=[
@@ -258,6 +280,9 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M05: five GDevelop event steps projected separately',pass:JSON.stringify(m05?.guideSteps)===JSON.stringify(expected05)},
   {name:'M05: two actions, expected result, visible recovery, source and no private notes',pass:m05?.m05Sections?.length===5&&m05.m05Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
   {name:'M05: RPG, puzzle and 3D routes each project five complete steps',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
+  {name:'M08 briefing: six concepts, simulator, acceptance and evidence on 11 slides without private notes',pass:m08Briefing?.m08BriefingSteps?.length===11&&JSON.stringify(m08Briefing.m08BriefingSteps.map(x=>x.id))===JSON.stringify(['M08:intro',...Array.from({length:6},(_,i)=>'M08:concept-'+(i+1)),'M08:simulation-intro','M08:simulation','M08:accept','M08:evidence'])&&m08Briefing.m08BriefingSteps.every(x=>x.privateNotes===0)&&(m08Briefing.retainedRatio||0)>.6},
+  {name:'M08 briefing: all UX labels and Preview evidence caveat projected',pass:['AFFORDANCE','INSTRUÇÃO','HUD','CONTRASTE','RESPOSTA AO INPUT','ERRO RECUPERÁVEL'].every((label,i)=>m08Briefing?.m08BriefingSteps?.[i+1]?.text.includes(label))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:accept'&&x.text.includes('antes/depois'))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:evidence'&&x.text.includes('simulação'))},
+  {name:'M08 briefing: cloned before/after simulator responds to radio and actions',pass:m08Briefing?.m08Interaction?.pass===true},
   {name:'M07: four GDevelop completion steps projected individually',pass:JSON.stringify(m07?.guideSteps)===JSON.stringify(expected07)},
   {name:'M07: each step has where/action/result/recovery/source without private notes',pass:m07?.m07Sections?.length===4&&m07.m07Sections.every(x=>x.where&&x.action&&x.result&&x.fix&&x.source&&x.image&&x.privateNotes===0)},
   {name:'M07: 2D and 3D routes each project four complete steps',pass:m07RouteChecks.length===2&&m07RouteChecks.every(x=>x.pass)},
