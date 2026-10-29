@@ -355,4 +355,56 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(mod.load(original).checks.length,3,'M'+number+' preserves locally marked test declarations');
  assert.equal(mod.load(original)[firstField],fixture[firstField],'M'+number+' preserves local written answers');
 }
+// M01-M02 are planning documents, not GDevelop Preview tests. Their evidence
+// has no manual-test checkboxes, but partial remote records must not erase a
+// complete local plan when a submitted/approved record is hydrated.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/mission-one.js'),env,{timeout:3000,filename:'mission-one.js'});
+ const mod=env.window.PIT_MISSION_ONE;
+ const draft={genre:'RPG',title:'Castelo QA',hero:'Uma guardia',action:'Coletar tres chaves',
+  objective:'Destrancar a saida do castelo',victory:'Abrir o portao com tres chaves',
+  feedback:'Exibir mensagem de vitoria'};
+ const set=(id,data)=>env.localStorage.setItem('pit_v3_missao01_rascunho_'+id,JSON.stringify(data));
+ set('m01-original',draft);
+ assert.equal(mod.validate('m01-original').ok,true,'M01 complete original plan valid');
+ const full=mod.evidence('m01-original');
+ mod.hydrate('m01-restored',full,'approved');
+ assert.equal(mod.validate('m01-restored').ok,true,'M01 complete approved plan restores');
+ assert.equal(mod.load('m01-restored').feedback,draft.feedback,'M01 roundtrip retains feedback');
+ const partial=full.replace('Feedback da conquista: '+draft.feedback,'Feedback da conquista: ');
+ set('m01-original',draft);
+ mod.hydrate('m01-original',partial,'approved');
+ assert.equal(mod.load('m01-original').feedback,draft.feedback,'M01 partial approved evidence must not erase local feedback');
+ mod.hydrate('m01-empty',partial,'submitted');
+ assert.equal(mod.load('m01-empty').title,'','M01 partial submitted evidence cannot initialize an invalid plan');
+ mod.hydrate('m01-original',full,'draft');
+ assert.equal(mod.load('m01-original').title,draft.title,'M01 draft local work remains unchanged');
+}
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-two.js'),env,{timeout:3000,filename:'student-mission-two.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_TWO;
+ const draft={scene:'Uma sala do castelo',mechanic:'Coletar chaves e abrir a porta',
+  elements:'Jogador, Chave, Porta',
+  test:'Dado que tenho a chave, quando toco a porta, entao ela abre',
+  later:'Efeitos e mapas adicionais'};
+ mod.save('m02-original',draft);
+ assert.equal(mod.validate('m02-original').ok,true,'M02 complete original MVP valid');
+ const full=mod.evidence('m02-original',{title:'Castelo QA',genre:'RPG'});
+ mod.hydrate('m02-restored',full,'approved');
+ assert.equal(mod.validate('m02-restored').ok,true,'M02 complete approved MVP restores');
+ assert.equal(mod.load('m02-restored').test,draft.test,'M02 roundtrip retains acceptance test');
+ const partial=full.replace('Elementos: '+draft.elements,'Elementos: Jogador, Porta');
+ mod.hydrate('m02-original',partial,'approved');
+ assert.equal(mod.load('m02-original').elements,draft.elements,'M02 partial approved evidence must not erase local elements');
+ mod.hydrate('m02-empty',partial,'submitted');
+ assert.equal(mod.load('m02-empty').scene,'','M02 partial submitted evidence cannot initialize invalid MVP');
+ mod.hydrate('m02-original',full,'draft');
+ assert.equal(mod.load('m02-original').scene,draft.scene,'M02 draft local work remains unchanged');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
