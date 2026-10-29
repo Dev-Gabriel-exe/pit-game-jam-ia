@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T11:24:03.135Z",
+  "last_completed_at": "2026-10-29T12:17:33.551Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-PROJECTOR-CONTENT: verify M01/M03 full tutorial projection and Chrome interaction, then audit M04/M05/M07; pedagogy before aesthetics",
+  "priority": "V4-CROSS-PROJECTOR-CONTENT: M04 full tutorial committed; verify CI then M05/M07 demos; pedagogy before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-PROJECTOR-M01-M03",
+  "last_task": "V4-CROSS-PROJECTOR-M04",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2441,16 +2441,20 @@
   "v4_checkpoint": {
     "task": "V4-CROSS-PROJECTOR-CONTENT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T11:24:03.135Z",
+    "updated_at": "2026-10-29T12:17:33.551Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
       "ef48fc8a556b4430b7835b264c5be464b4da3f67",
       "ec3b82023d0cbea90497096fd9ffa620395e7ed9",
       "607ab60271d3b9bb70c2e933f6118e90832e4fe1",
-      "af0ca4c2199456cf18f1d097eb80398ad5d05ecd"
+      "af0ca4c2199456cf18f1d097eb80398ad5d05ecd",
+      "58768ec199f635e1ee5dedd9f92e3b773641e572",
+      "8511e5c99ffed6944e8d8549fbb9842298c378cb",
+      "eba253b95dcc843ace77f66241c73aabbfc42841",
+      "177f8eebeb8b2ffc9ab2d75e227f3a538988aa28"
     ],
-    "documentation_commit": "e92583cc17280bbb998cb675be23435349edd44d",
+    "documentation_commit": "407dbf3df8c5b6254ba310c7f29e0d3433739782",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2495,13 +2499,49 @@
       {
         "name": "Manual GDevelop GUI, physical mobile, HDMI projection, peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M01/M03 previous projector Chrome 1280/1600/1920",
+        "run_id": 40865003839,
+        "result": "SUCCESS: all three viewport jobs, verified this run"
+      },
+      {
+        "name": "M01/M03 previous Browser QA",
+        "run_id": 40865003827,
+        "result": "SUCCESS verified this run"
+      },
+      {
+        "name": "M04 new projector JavaScript syntax",
+        "result": "PASS: three modified JS files parsed with V8 Function constructor; no browser claim"
+      },
+      {
+        "name": "M04 new static QA",
+        "run_id": 40871942378,
+        "sha": "177f8eebeb8b2ffc9ab2d75e227f3a538988aa28",
+        "result": "SUCCESS verified this run"
+      },
+      {
+        "name": "M04 new projector Chrome 1280/1600/1920",
+        "run_id": 40871942307,
+        "sha": "177f8eebeb8b2ffc9ab2d75e227f3a538988aa28",
+        "result": "IN_PROGRESS at checkpoint; 1600x900 job SUCCESS; other two pending"
+      },
+      {
+        "name": "M04 new Browser QA",
+        "run_id": 40871942332,
+        "sha": "177f8eebeb8b2ffc9ab2d75e227f3a538988aa28",
+        "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "GDevelop GUI, HDMI, physical mobile, human peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify projector Chrome matrix on final code; if passing, audit M04/M05/M07 demo slides for missing step-by-step tutorials and preserve interactivity; pedagogy before visuals",
-    "blocker": "M01/M03 projector fix committed but Chrome projector matrix and Browser QA not yet completed; manual GDevelop/HDMI/mobile/peer NOT_RUN"
+    "next_task": "Confirm final M04 Chrome/Browser QA; repair if failed, then reconstruct M05 and M07 projected GDevelop step sequences",
+    "blocker": "M04 code and regression committed, but final Chrome matrix and Browser QA are pending; manual GDevelop/HDMI/mobile/peer NOT_RUN."
   }
 }
