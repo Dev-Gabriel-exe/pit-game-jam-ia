@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T06:15:21.567Z",
+  "last_completed_at": "2026-10-29T07:19:20.455Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: verify final M03-M05 static/browser CI, fix any regressions, then audit M01-M02 evidence and remaining projection/autonomy gaps before aesthetics",
+  "priority": "V4-CROSS-AUDIT: confirm final M01-M02 static/browser CI and repair failures; then continue 20-face teacher/student projection and evidence audit before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M03-M05-HYDRATE",
+  "last_task": "V4-CROSS-M01-M02-HYDRATE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2404,63 +2404,72 @@
       "task": "V4-CROSS-M03-M05-HYDRATE",
       "commit": "5f5fcd8e938c21fd1a5de061f69baff9bad64ecc",
       "summary": "Corrected M03/M04/M05 remote evidence hydration: text restoration no longer fabricates three manual Preview checks; local drafts including route/checks take precedence; approved/submitted locked review hides misleading checklist warnings. Added VM regression to qa/v3-audit-alignment.cjs and updated legacy M05 expectation. 15/15 static source contract checks PASS on current branch; Node/Chrome CI for new SHA NOT YET VERIFIED. Prior M06 static 40822781236, M06 Browser 40822781309, M07/M08/M10 Browser 40822639529 verified SUCCESS. Manual GDevelop/HDMI/mobile/peer tests NOT_RUN. Original 54/59 unchanged. Subsequent V8 runtime execution of actual M03/M04/M05 modules with simulated storage/evidence: 27/27 assertions PASS; not Chrome/GDevelop."
+    },
+    {
+      "at": "2026-10-29T07:19:20.455Z",
+      "task": "V4-CROSS-M01-M02-HYDRATE",
+      "commit": "0066ddde586c4bd007be51b903fed5d0ef53be48",
+      "summary": "M01/M02 evidence hydration audit: prevent incomplete approved/submitted remote plans from overwriting valid local plans; restore empty optional M02 backlog as empty rather than fabricated 'Não informado'. Added VM regression for complete/partial evidence, draft preservation and optional field. Prior M03-M05 static/browser CI 40828116103/40828116098 SUCCESS. New final M01/M02 CI 40834635167/40834635241 IN_PROGRESS. No manual GDevelop/HDMI/physical mobile/peer testing; 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M03-M05-HYDRATE",
+    "task": "V4-CROSS-M01-M02-HYDRATE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T06:15:21.567Z",
+    "updated_at": "2026-10-29T07:19:20.455Z",
     "code_commits": [
-      "2500e374b42c25d4ef3c1c3379306c85535f135f",
-      "5f284f4ec8de628112d110735fbd3146a58370d8",
-      "2a4fd71b6cc98223d4092d51445b08aed91f44b2",
-      "f8f5127e4763b15cc74df3abe394d6c828c8ec09",
-      "5f5fcd8e938c21fd1a5de061f69baff9bad64ecc"
+      "9b1bf75018f3be27b322edb8eaa5c5fe485b53cc",
+      "1203b559d3d7680bdbce1bac557e416beddf73c3",
+      "eac42a6164f97ebde6fdce0a049dd836636996c3",
+      "fa5290a34838f1dfef3933f11deb9302d449d2f1",
+      "0066ddde586c4bd007be51b903fed5d0ef53be48"
     ],
-    "documentation_commit": "384079d40ef9173a42fea83f9258c318fc4507a4",
+    "documentation_commit": "ed0e78cdb4616ceec8f37387298b092965035f35",
     "tests": [
       {
-        "name": "M06 previous static QA",
-        "run_id": 40822781236,
+        "name": "M03-M05 previous final static QA",
+        "run_id": 40828116103,
         "result": "SUCCESS",
-        "sha": "be4c51cbce190ab5bfc7f316a738241a612152d8"
+        "sha": "b05d4e28c5b0f8d9a3dfd2ebc77acfc37a25a288"
       },
       {
-        "name": "M06 previous Browser QA",
-        "run_id": 40822781309,
+        "name": "M03-M05 previous final Browser QA",
+        "run_id": 40828116098,
         "result": "SUCCESS",
-        "sha": "be4c51cbce190ab5bfc7f316a738241a612152d8"
+        "sha": "b05d4e28c5b0f8d9a3dfd2ebc77acfc37a25a288"
       },
       {
-        "name": "M07/M08/M10 previous Browser QA",
-        "run_id": 40822639529,
+        "name": "M01/M02 source static QA on intermediate code commits",
+        "run_ids": [
+          40834566087,
+          40834569683,
+          40834598131,
+          40834624528
+        ],
         "result": "SUCCESS",
-        "sha": "7772444e848e42345ec9dd6263645e7290b4b5b4"
+        "details": "These runs predate final test commit; do not count as final CI"
       },
       {
-        "name": "M03-M05 static source contract checks",
-        "result": "SUCCESS",
-        "details": "15/15 source assertions after re-fetch, not Node/Chrome execution",
-        "sha": "5f5fcd8e938c21fd1a5de061f69baff9bad64ecc"
+        "name": "M01/M02 final static QA",
+        "run_id": 40834635167,
+        "result": "IN_PROGRESS",
+        "sha": "0066ddde586c4bd007be51b903fed5d0ef53be48"
       },
       {
-        "name": "M03-M05 Node/Chrome CI",
-        "result": "NOT_VERIFIED",
-        "sha": "5f5fcd8e938c21fd1a5de061f69baff9bad64ecc",
-        "details": "No associated runs returned by commit workflow lookup; do not infer success"
+        "name": "M01/M02 final Browser QA",
+        "run_id": 40834635241,
+        "result": "IN_PROGRESS",
+        "sha": "0066ddde586c4bd007be51b903fed5d0ef53be48"
       },
       {
-        "name": "M03-M05 V8 runtime fake-evidence regression",
-        "result": "SUCCESS",
-        "details": "27/27 assertions: valid original, remote text hydration, zero fabricated checks, editable validation, approved locked review, draft warning, local checkmarks and text preserved; simulated localStorage only",
-        "sha": "5f5fcd8e938c21fd1a5de061f69baff9bad64ecc"
+        "name": "GDevelop GUI, physical mobile, HDMI projection, peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Check static and Browser QA for latest branch SHA, repair failures; inspect M01/M02 evidence recovery and teacher projection for remaining fabricated claims",
-    "blocker": "GDevelop GUI, HDMI, physical mobile and peer testing not performed/authorized; CI for latest M03-M05 changes still unverified"
+    "next_task": "Verify final static and Browser QA on latest SHA, repair failures; continue 20-face M01-M10 projected teacher/student audit",
+    "blocker": "Manual GDevelop GUI, HDMI, physical mobile and peer tests remain NOT_RUN; final new-code CI pending"
   }
 }
