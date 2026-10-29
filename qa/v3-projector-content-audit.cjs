@@ -267,13 +267,20 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   if(await page.locator('#pitProjectorContent [data-pit-projector-step="M04:0"]').count()){targetFound=true;break}
   await page.locator('#pitProjectorNext').click();
  }
- const navigationCheck={targetFound,overflow:false,firstPageScroll:false,keepsSlide:false,resetOnNext:false,atBottomAdvances:false,privateNotes:0};
+ const navigationCheck={targetFound,overflow:false,firstPageScroll:false,keepsSlide:false,resetOnNext:false,atBottomAdvances:false,hintVisible:false,hintSyncedAfterRestore:false,privateNotes:0};
  if(targetFound){
   const content=page.locator('#pitProjectorContent');
   await content.evaluate(el=>{el.style.height='180px';el.style.maxHeight='180px'});
   const beforeCount=await page.locator('#pitProjectorCount').innerText();
   navigationCheck.overflow=await content.evaluate(el=>el.scrollHeight>el.clientHeight+12);
   navigationCheck.topVisible=await content.evaluate(el=>el.querySelector('.pit-projector-card').getBoundingClientRect().top>=el.getBoundingClientRect().top-2);
+  // The forced 180px viewport is a resize, not a user scroll. Wait for the
+  // production ResizeObserver to update the hint instead of racing image loads.
+  await page.waitForFunction(()=>{
+   const content=document.getElementById('pitProjectorContent');
+   const hint=document.getElementById('pitProjectorScrollHint');
+   return content&&hint&&content.scrollHeight>content.clientHeight+12&&!hint.hidden;
+  },null,{timeout:2500}).catch(()=>{});
   navigationCheck.hintVisible=await page.locator('#pitProjectorScrollHint').isVisible();
   navigationCheck.privateNotes=await content.locator('.pit-private-teacher-notes').count();
   await page.keyboard.press('PageDown');
@@ -285,6 +292,19 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   await content.evaluate(el=>{el.scrollTop=el.scrollHeight});
   await page.keyboard.press('PageDown');
   navigationCheck.atBottomAdvances=(await page.locator('#pitProjectorCount').innerText())!==nextCount;
+  // Releasing the temporary constraint must also update the hint (no stale
+  // message when switching back to a full-height projected slide).
+  await content.evaluate(el=>{el.style.height='';el.style.maxHeight=''});
+  await page.waitForFunction(()=>{
+   const content=document.getElementById('pitProjectorContent');
+   const hint=document.getElementById('pitProjectorScrollHint');
+   if(!content||!hint)return false;
+   return hint.hidden===(content.scrollHeight<=content.clientHeight+12);
+  },null,{timeout:2500}).catch(()=>{});
+  navigationCheck.hintSyncedAfterRestore=await content.evaluate(el=>{
+   const hint=document.getElementById('pitProjectorScrollHint');
+   return hint.hidden===(el.scrollHeight<=el.clientHeight+12);
+  });
  }
  await page.locator('#pitProjectorClose').click();
  fs.mkdirSync('qa/projector-audit-artifacts',{recursive:true});
@@ -328,7 +348,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M07: four GDevelop completion steps projected individually',pass:JSON.stringify(m07?.guideSteps)===JSON.stringify(expected07)},
   {name:'M07: each step has where/action/result/recovery/source without private notes',pass:m07?.m07Sections?.length===4&&m07.m07Sections.every(x=>x.where&&x.action&&x.result&&x.fix&&x.source&&x.image&&x.privateNotes===0)},
   {name:'M07: 2D and 3D routes each project four complete steps',pass:m07RouteChecks.length===2&&m07RouteChecks.every(x=>x.pass)},
-  {name:'720p long tutorials: PageDown scrolls before advancing; next slide starts at top; no private notes',pass:navigationCheck.targetFound&&navigationCheck.overflow&&navigationCheck.topVisible&&navigationCheck.hintVisible&&navigationCheck.firstPageScroll&&navigationCheck.keepsSlide&&navigationCheck.resetOnNext&&navigationCheck.atBottomAdvances&&navigationCheck.privateNotes===0}
+  {name:'720p long tutorials: PageDown scrolls before advancing; next slide starts at top; no private notes',pass:navigationCheck.targetFound&&navigationCheck.overflow&&navigationCheck.topVisible&&navigationCheck.hintVisible&&navigationCheck.firstPageScroll&&navigationCheck.keepsSlide&&navigationCheck.resetOnNext&&navigationCheck.atBottomAdvances&&navigationCheck.hintSyncedAfterRestore&&navigationCheck.privateNotes===0}
  ];
  console.log('PROJECTOR_REGRESSION '+JSON.stringify(projectorChecks));
  console.log('PROJECTOR_SUMMARY '+JSON.stringify({viewport:width+'x'+height,phases:rows.length,errors,fail,smallText:rows.filter(x=>x.smallFontSlides>0).length,scroll:rows.filter(x=>x.slidesWithScroll>0).length,totalScrollSlides:rows.reduce((n,x)=>n+x.slidesWithScroll,0)}));
