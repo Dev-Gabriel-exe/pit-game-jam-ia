@@ -208,6 +208,11 @@ function reportModels(){
   message('MODELO 3D INDISPONÍVEL');return;
  }
  $models.textContent=count+' / '+expectedCount+' modelos 3D reais carregados';
+ const proof=$('realModelProof');
+ if(proof){
+  proof.dataset.ready=String(count===expectedCount&&expectedCount>0);
+  proof.title=count+' de '+expectedCount+' GLBs oficiais efetivamente carregados nesta partida';
+ }
  if(count===expectedCount&&expectedCount===state.count&&!state.fought&&!state.stage?.playing&&!state.busy){
   return;
  }
