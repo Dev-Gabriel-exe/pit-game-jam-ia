@@ -241,3 +241,11 @@
 - **Regressão:** `qa/v3-projector-content-audit.cjs` agora confere M07 nas três resoluções do workflow, com quatro etapas completas em cada uma das duas rotas e ausência de notas privadas.
 - **Execução nesta rodada:** 3 arquivos JavaScript passaram no parser V8; 73 asserções isoladas do gerador HTML das duas rotas passaram. O teste Chrome/CI novo **não foi executado nem confirmado** nesta sessão; depende da execução do workflow do GitHub Actions. Nenhum GDevelop GUI, HDMI, celular físico ou teste humano foi executado.
 - **Pendências:** confirmar o Chrome nas três resoluções e Browser QA no commit correto, verificar rolagem em 720p e prosseguir com as demais fases de baixa cobertura. A `main` não foi alterada.
+
+
+## Checkpoint 29/10/2026 — M03/Criar na apresentação espelhada
+
+- **Falha concreta:** a extração genérica de cards no `v3/teacher-projector-m01.js` não garantia que os três fragmentos `.tm3-labcard` (projeto/cena, objeto/instância, Preview/salvar) aparecessem integralmente na apresentação. Instruções de recuperação em `<details>` também poderiam permanecer recolhidas durante a explicação.
+- **Correção de código:** projeção dedicada de M03/Criar com introdução, fluxo de entrada/construção/saída, divisão 4+8+6 min, três fragmentos numerados, recuperação de erro visível, alternativa gratuita 2D/3D e critério final. Notas `pit-private-teacher-notes` são excluídas; não são abertas automaticamente. O estúdio de assets interativo continua na tela original, não é falsamente apresentado como interativo em um clone.
+- **Regressão adicionada:** `qa/v3-projector-content-audit.cjs` agora coleta `M03:1`–`M03:3` e verifica instrução no editor, resultado esperado, recuperação visível e ausência de notas privadas. Parse V8 de ambos os JS: **PASS** nesta execução. **Chrome/CI do commit novo: ainda não confirmados**; não alegar cobertura textual ou resultado em 720p antes da execução. Browser QA anterior da M01 (`40910615906`) foi confirmada **SUCCESS** no GitHub.
+- **Não executados:** HDMI físico, interface real do GDevelop, aparelho físico e playtest humano. **Próxima prioridade:** confirmar CI/Chrome da M03 e avançar para M04/Comprovar, M05/Comprovar, M08/Entender e M09/Criar, sem polimento estético antecipado.
