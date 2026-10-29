@@ -616,6 +616,50 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    crown.position.set(x,2.1,z);crown.scale.setScalar(baseScale*.66);
    root.add(crown);decors.push(crown);
   }
+  // Recognizable silhouettes by skill family, rendered ONLY for actual
+  // ability events. A shield, arrow volley and elemental cast must not all
+  // look like the same glowing ground donut.
+  const accent=quality==='low'||reduce?1:3;
+  if(!subtle&&cue.type==='ativo'){
+   const prop=(geometry,px,py,pz,tilt=0)=>{
+    const mat=new THREE.MeshBasicMaterial({color:cue.color,transparent:true,opacity:.82,
+     depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+    const o=new THREE.Mesh(geometry,mat);o.position.set(px,py,pz);o.rotation.z=tilt;
+    o.userData.cueAccent=true;o.userData.baseY=py;
+    root.add(o);decors.push(o);return o;
+   };
+   if(cue.style==='fire'||cue.style==='frost'||cue.style==='bolt'){
+    for(let n=0;n<accent;n++){
+     const a=(n/accent)*Math.PI*2+cue.variant*.4;
+     const geom=cue.style==='fire'?new THREE.ConeGeometry(.24,.95,5):
+      cue.style==='frost'?new THREE.OctahedronGeometry(.38,0):
+      new THREE.TetrahedronGeometry(.39,0);
+     const flare=prop(geom,x+Math.cos(a)*.9,1.65+n*.32,z+Math.sin(a)*.9,.32+n*.13);
+     flare.rotation.y=a;flare.userData.bob=n*.9;
+    }
+   }else if(cue.style==='barrier'){
+    // Four rising ward columns read as genuine protection, not a damage hit.
+    for(let n=0;n<(quality==='low'?2:4);n++){
+     const a=n*Math.PI/2;
+     const ward=prop(new THREE.CylinderGeometry(.09,.18,2.7,5),
+      x+Math.cos(a)*1.2,1.4,z+Math.sin(a)*1.2);
+     ward.userData.bob=n*.6;
+    }
+   }else if(cue.style==='arrow'||cue.style==='arc'){
+    for(let n=0;n<accent;n++){
+     const a=(n-(accent-1)/2)*.53;
+     const arrow=prop(cue.style==='arrow'?
+      new THREE.ConeGeometry(.2,1.85,4):
+      new THREE.TorusGeometry(1.0,.09,5,20,Math.PI*1.2),
+      x+a*1.15,1.65,z+(n%2)*.3);
+     arrow.rotation.z=-Math.PI/2+a*.3;arrow.rotation.y=a;
+     arrow.userData.bob=n*.65;
+    }
+   }else if(cue.style==='rune'||cue.style==='orbit'||cue.style==='radiance'){
+    const a=prop(new THREE.TorusGeometry(1.45,.065,5,40),x,2.5,z,Math.PI/2);
+    a.rotation.x=.53;a.userData.bob=0;
+   }
+  }
   const duration=reduce?.48:(subtle?Math.max(.78,cue.duration*1.45):Math.max(1.45,cue.duration*1.9));
   effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors,subtle});
   talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
@@ -884,9 +928,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     e.mesh.rotation.y+=dt*(e.talentCue?.spin||1.8);
     if(e.decors)for(let i=0;i<e.decors.length;i++){
      const deco=e.decors[i];
-     deco.scale.setScalar((e.baseScale||1)*(i===0?1:.66)*(1+progress*1.1));
-     deco.material.opacity=(i===0?.64:.53)*(1-progress);
-     if(i===1)deco.rotation.y+=dt*(e.talentCue?.spin||2);
+     if(deco.userData.cueAccent){
+      const curve=Math.sin(Math.PI*progress);
+      deco.position.y=deco.userData.baseY+curve*(.5+progress*.9);
+      deco.scale.setScalar((e.baseScale||1)*(.58+.43*curve));
+      deco.material.opacity=.83*(1-progress);
+      if(!reduce)deco.rotation.y+=dt*(e.talentCue?.spin||2)*.55;
+     }else{
+      deco.scale.setScalar((e.baseScale||1)*(i===0?1:.66)*(1+progress*1.1));
+      deco.material.opacity=(i===0?.64:.53)*(1-progress);
+      if(i===1)deco.rotation.y+=dt*(e.talentCue?.spin||2);
+     }
     }
    }else{
     e.mesh.userData.velocity.y-=dt*7;
