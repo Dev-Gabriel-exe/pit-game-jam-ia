@@ -13,10 +13,20 @@
 - Testar desktop e mobile, inclusive WebGL de qualidade reduzida.
 - **Critério de saída:** espetáculo visual coeso, 30 personagens e espectadores legíveis, sem quedas graves de desempenho.
 
+**Direção adicional aprovada em 29/10/2026 — Fase D:**
+- A aparência anterior foi rejeitada: simples, excessivamente geométrica e com pouco senso de escala. Priorizar arcos góticos GLB licenciados, pórticos, ruínas, arquibancadas e materiais elaborados, não apenas ampliar um plano.
+- Aumentar o campo de teste ao máximo já suportado pelo motor (escala 5) antes de mexer nos limites de física. O campo atual é quadrado, visualmente com largura aproximada de 190 unidades (99 × 5 / 2,6), e deve ser avaliado como um Coliseu de grande escala.
+- Marcar visualmente zonas amplas de duelo distribuídas; são **referências artísticas**, não colisores nem chaves obrigatórias.
+- **Não afirmar que um piso maior garante duelos 1×1.** Essa proteção dependerá de spawn, aggro, seleção de alvo e algoritmo de confronto na Fase E.
+- Manter até 30 simultâneos na arena principal; não reduzir o formato sem aprovação.
+- Primeiro incremento implementado: `arena-citadel.js` (cortes visuais de duelo e nova versão do mapa), `arena-three.js` (KayKit Dungeon CC0 + Tactical Slash), `arena-lab.js` (escala 5), `qa/v5-coliseum-scale.cjs`. Os resultados visuais e a estabilidade permanecem sujeitos ao QA do navegador e à aprovação do usuário.
+
 ### E — Mecânicas, física, IA e balanceamento
 - Testar e corrigir colisões, obstáculos, zonas seguras, movimento, esquiva, projéteis, alcance e sincronia entre efeitos e danos reais.
 - Simulações reproduzíveis com várias seeds, classes, talentos e builds mistas; identificar combinações dominantes sem enfraquecer arbitrariamente uma classe.
 - Rever prioridades de IA, contra-ataques, tempo de combate, cancelamento de habilidades e clareza de resultados.
+- Testar distribuição espacial de 30 personagens e **confrontos preferencialmente 1×1**: pares de proximidade com bloqueios temporários de aggro, reação quando há terceiro atacante, recuo/esquiva e cooldown para reacquisição. Evitar forçar exclusividade total (habilidades de área e encontros casuais continuam fazendo parte do RPG). Não escolher vencedor por regra artificial.
+- Combate maior deve ter **tempo para movimentação, perseguição e tática**. Rever abertura do círculo, ritmo da tempestade e tempo limite somente após simulações. A arena grande não pode virar corrida sem contato nem ser comprimida cedo demais.
 - **Critério de saída:** partidas justas, previsíveis sob a mesma seed, compreensíveis e estáveis em 4 e 30 personagens. Não alterar resultados de combates para melhorar a filmagem.
 
 ### F — Direção de câmera cinematográfica automática (NOVA FASE)
@@ -41,6 +51,12 @@
 **Situação atual (antes da F):** `v5/arena-lab.js` já possui um botão experimental "Câmera de combate", que segue periodicamente um personagem em destaque (`spotlight`, intervalo aproximado de 7 s), e `v5/arena-three.js` permite `focusFighter` / `overview`. **Isso ainda não é o diretor cinematográfico descrito acima.** Não declarar a F concluída por causa dessas rotinas existentes.
 
 **Critério de saída da F:** teste real com 30 combatentes, replays sob seeds fixas, múltiplos destaques sem favorecimento, clímax e controles manuais. Câmera não pode alterar os resultados da simulação.
+
+**Complemento aprovado — câmeras por participante (após D/E):**
+- Professor: diretor cinematográfico global e controle manual opcionais.
+- Aluno enquanto vivo: câmera local de terceira pessoa acompanha somente seu personagem; o combate é uma única simulação autoritativa.
+- Ao morrer: personagem vai para arquibancada, a visão local faz transição para a **mesma câmera global** compartilhada pelo professor e demais eliminados; não são diretores independentes.
+- Testar a troca no laboratório antes de integrar turmas reais; replicação autenticada/tempo lógico ficam na Fase H.
 
 ### G — QA final e aprovação da arena
 - Testes de regressão no motor e no navegador: 4/30 personagens, mobile/desktop, GLB, câmera, pausa, reinício e arquibancadas.
