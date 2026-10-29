@@ -289,7 +289,9 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    }
    // A bow/staff cannot fire accurately while sprinting at full velocity.
    // A short, visible aiming commitment gives melee a real closing window.
-   const slowFactor=(f.slow?0.58:1)*(f.rush>0?2.75:1)*(f.aim>0?.22:1);
+   // A nearly 3x free sprint became excessive once obstacle avoidance
+   // started working. The committed rush is now readable and dodgeable.
+   const slowFactor=(f.slow?0.58:1)*(f.rush>0?1.90:1)*(f.aim>0?.22:1);
    const ux=route.direction?.x??dx/d,uz=route.direction?.z??dz/d;
    const desiredX=(ux*chase-uz*strafe)*f.stats.speed*slowFactor;
    const desiredZ=(uz*chase+ux*strafe)*f.stats.speed*slowFactor;
