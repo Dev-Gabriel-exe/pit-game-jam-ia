@@ -13,15 +13,15 @@ const {chromium}=require('playwright');
    assert.equal(await page.locator('#claimAvatar').count(),0,'Old 40-piece booking UI removed');
    const observations={};
    for(const [klass,file] of Object.entries({
-    warrior:'player_swordsman.glb',hunter:'player_archer.glb',
-    mage:'player_priest.glb',guardian:'player_swordsman.glb'
+    warrior:'Barbarian.glb',hunter:'Rogue_Hooded.glb',
+    mage:'Mage.glb',guardian:'Knight.glb'
    })){
     await page.locator('.class-button[data-class="'+klass+'"]').click();
     await page.waitForFunction(k=>{
       const stage=document.querySelector('#avatarStage');
       return stage?.dataset.selectedClass===k&&stage?.dataset.loadState==='ready';
      },klass,{timeout:90000});
-    assert.equal(await page.locator('#avatarStage').getAttribute('data-source-family'),'tactical-slash');
+    assert.equal(await page.locator('#avatarStage').getAttribute('data-source-family'),'kaykit-adventurers');
     assert.equal(await page.locator('#avatarStage').getAttribute('data-model-file'),file);
     const height=Number(await page.locator('#avatarStage').getAttribute('data-model-height'));
     assert(Math.abs(height-2.55)<.035,'All GLBs normalized to same height, got '+height+' '+klass);
@@ -29,11 +29,11 @@ const {chromium}=require('playwright');
     assert(clips>0,'Non-T-pose idle animation exists for '+klass);
     observations[klass]={file,height:+height.toFixed(3),clips};
    }
-   assert.equal(observations.warrior.file,observations.guardian.file);
+   assert.equal(new Set(Object.values(observations).map(x=>x.file)).size,4,'All classes use DIFFERENT 3D characters');
    assert.deepEqual(errors,[],'No JS exceptions: '+errors.join(' | '));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<15,'Mobile horizontal overflow at '+width);
-   console.log('PASS '+width+'px four original free 3D models: '+JSON.stringify(observations));
+   console.log('PASS '+width+'px four distinct official KayKit Adventurers 3D models: '+JSON.stringify(observations));
    await page.close();
   }
  }finally{await browser.close()}
