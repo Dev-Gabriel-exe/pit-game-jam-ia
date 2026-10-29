@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T12:19:25.307Z",
+  "last_completed_at": "2026-10-29T14:20:16.694Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-PROJECTOR-CONTENT: M05 Chrome 3/3 PASS; Browser pending, 720p scroll and M07 guide next",
+  "priority": "V4-CROSS-PROJECTOR-CONTENT: M07 2D/3D steps added; confirm Chrome/Browser CI and reduce 720p scroll before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-PROJECTOR-M05",
+  "last_task": "V4-CROSS-PROJECTOR-M07",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2443,12 +2443,19 @@
       "status": "in_progress",
       "commit": "11237086ce6b5cf310341bd3ddd989a882236b55",
       "summary": "Projected M05 five GDevelop steps per selected route (RPG/puzzle/3D), with visible recovery, sources, local image fallback, three-route Chrome regression. V8 syntax PASS, static CI 40880579845 SUCCESS, projector 40880580062 and Browser 40880579891 IN_PROGRESS. Human GUI/HDMI/mobile/peer NOT_RUN. 54/59 unchanged, main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T14:20:16.694Z",
+      "task": "V4-CROSS-PROJECTOR-M07",
+      "status": "in_progress",
+      "commit": "5ee29e4d4eef6916320141aa3ec8ed6586dc60ea",
+      "summary": "M07 projected 4 complete GDevelop steps for selected 2D or 3D route, image fallback and Chrome regressions. V8 syntax 3/3 and isolated assertions 73/73 PASS; new CI not confirmed; human/GDevelop/HDMI NOT_RUN. 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-CROSS-PROJECTOR-CONTENT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T13:18:00Z",
+    "updated_at": "2026-10-29T14:20:16.694Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2461,9 +2468,13 @@
       "eba253b95dcc843ace77f66241c73aabbfc42841",
       "177f8eebeb8b2ffc9ab2d75e227f3a538988aa28",
       "08c37b782353aa7dcb38e08f97ab9b654be93959",
-      "11237086ce6b5cf310341bd3ddd989a882236b55"
+      "11237086ce6b5cf310341bd3ddd989a882236b55",
+      "1dd7ed2275139750fb6c8e4087816ccd3112cc7a",
+      "087eda6bb44a62ee9b68e4319f8b45708b48a52c",
+      "c5e97bed56739d6b99b33f667827bdf2654ca691",
+      "5ee29e4d4eef6916320141aa3ec8ed6586dc60ea"
     ],
-    "documentation_commit": "407dbf3df8c5b6254ba310c7f29e0d3433739782",
+    "documentation_commit": "2042133285cf30387c1a7a3a6be000b94298b619",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2616,13 +2627,39 @@
         "run_id": 40880580062,
         "sha": "11237086ce6b5cf310341bd3ddd989a882236b55",
         "result": "SUCCESS: 3/3 jobs, 11/11 projector regressions; M05 9 demo slides, 5 scroll at 1280x720, 0 horizontal overflow"
+      },
+      {
+        "name": "M05 Browser QA previous checkpoint",
+        "run_id": 40880579891,
+        "result": "SUCCESS confirmed 2026-10-29 via GitHub connector job"
+      },
+      {
+        "name": "M05 Chrome previous checkpoint",
+        "run_id": 40880580062,
+        "result": "SUCCESS 3/3 jobs confirmed via GitHub connector"
+      },
+      {
+        "name": "M07 projector V8 syntax",
+        "result": "PASS: 3/3 JS sources parsed"
+      },
+      {
+        "name": "M07 2D/3D tutorial HTML isolated assertions",
+        "result": "PASS: 73 assertions across 2 routes x 4 steps, source links, labels, no private notes, invalid inputs"
+      },
+      {
+        "name": "M07 Chrome/Browser QA on new code",
+        "result": "NOT_CONFIRMED: connector returned no workflow runs for commit; no Chrome run claimed"
+      },
+      {
+        "name": "GDevelop GUI, HDMI, physical mobile, human peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M05 Browser QA 40880579891; reduce M04/M05 720p scroll; reconstruct M07 selected 2D/3D steps",
-    "blocker": "M05 Chrome 3/3 success, 5/9 demo slides scroll at 720p; Browser QA pending; six other low-coverage phases; manual GDevelop GUI/HDMI/mobile/peer NOT_RUN"
+    "next_task": "Confirm M07 Chrome 1280/1600/1920 and Browser QA on latest commit; reduce M04/M05/M07 720p scrolling; inspect remaining low-coverage phases",
+    "blocker": "New M07 Chrome/CI not yet confirmed; manual GDevelop GUI/HDMI/mobile/peer NOT_RUN"
   }
 }
