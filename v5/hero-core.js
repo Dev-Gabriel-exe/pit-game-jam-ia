@@ -145,7 +145,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const rad=(5.2+Math.sqrt(i)*(spawnScale>3?1.65:1.03)+(rnd()-.5)*1.25)*spawnScale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,shieldLife:0,alive:true,attacks:0,kills:0,damage:0,
-   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0,eliminatedAt:null};
+   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0,navObstacle:-1,navSide:0,navActive:false,navTurns:0,eliminatedAt:null};
  });
  let time=0,seq=0,winner=null,finished=false;
  const initialCount=fighters.length;
@@ -196,6 +196,43 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    if(d<min){const angle=Math.atan2(dz,dx);return {x:o.x+Math.cos(angle)*min,z:o.z+Math.sin(angle)*min}}}
   return {x,z};
  }
+
+ // Line-of-sight uses inflated collision footprints; 30 fighters share
+ // the same deterministic navigation and obstacle geometry as rendering.
+ function firstBlockingObstacle(x,z,tx,tz){
+  const dx=tx-x,dz=tz-z,l2=dx*dx+dz*dz;if(l2<1e-8)return null;
+  let nearest=null;
+  for(let i=0;i<obstacles.length;i++){
+   const o=obstacles[i],t=clamp(((o.x-x)*dx+(o.z-z)*dz)/l2,0,1);
+   const sx=x+dx*t-o.x,sz=z+dz*t-o.z;
+   if(sx*sx+sz*sz<(o.r+.74)**2&&(!nearest||t<nearest.t))nearest={o,index:i,t};
+  }
+  return nearest;
+ }
+ // Tangential steering with a persistent direction avoids the old
+ // 'charge straight into a wall' and alternating-left/right oscillation.
+ function navigation(f,target){
+  const blocker=firstBlockingObstacle(f.x,f.z,target.x,target.z);
+  if(!blocker){
+   f.navObstacle=-1;f.navSide=0;f.navActive=false;
+   return {blocked:false,direction:null};
+  }
+  const {o,index}=blocker,rx=f.x-o.x,rz=f.z-o.z;
+  const distance=Math.max(.0001,Math.hypot(rx,rz)),radius=o.r+.56;
+  if(f.navObstacle!==index){
+   const cross=rx*(target.z-o.z)-rz*(target.x-o.x);
+   f.navSide=Math.abs(cross)>.15?(cross>0?1:-1):(((hash(f.id)^seed^index)&1)?1:-1);
+   f.navObstacle=index;f.navActive=false;f.navTurns++;
+  }
+  if(distance<radius+2.8)f.navActive=true;
+  if(distance>radius+8)f.navActive=false;
+  if(!f.navActive)return {blocked:true,direction:null};
+  const ux=rx/distance,uz=rz/distance;
+  const radial=clamp((radius+1.05-distance)*.80,-.16,1.2);
+  const nx=f.navSide*(-uz)+radial*ux,nz=f.navSide*ux+radial*uz;
+  const len=Math.max(.0001,Math.hypot(nx,nz));
+  return {blocked:true,direction:{x:nx/len,z:nz/len}};
+ }
  function update(rawDt=dt){
   if(finished)return {finished,winner,events:[]};
   const step=Math.min(.09,Math.max(.001,Number(rawDt)||dt));
@@ -229,16 +266,17 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    enemies.sort((a,b)=>Math.hypot(a.x-f.x,a.z-f.z)-Math.hypot(b.x-f.x,b.z-f.z));
    const target=enemies[0],dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
+   const route=navigation(f,target);
    // Steering, acceleration, sidesteps and body avoidance replace the old
    // instant translation straight through another player's position.
    const ranged=f.stats.range>3;
    const preferred=ranged?Math.min(f.stats.range*.67,6.6):Math.max(1.25,f.stats.range*.79);
-   const chase=d>preferred+1.2?1:d<preferred-.9?-0.65:0;
+   const chase=route.blocked?1:d>preferred+1.2?1:d<preferred-.9?-0.65:0;
    const strafeSign=(hash(f.id)^seed)&1?1:-1;
-   const strafe=(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
+   const strafe=route.direction?0:(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
    // Melee fighters need a readable, timed dash to close the gap against
    // permanent kiting. This is movement, not a teleport or hidden talent.
-   if(!ranged&&d>5.2&&f.rushCooldown<=0){
+   if(!ranged&&!route.blocked&&d>5.2&&f.rushCooldown<=0){
     f.rush=1.35;
     f.rushCooldown=5.5+rnd()*1.2;
     if(f.build.klass==='warrior')f.shield=Math.min(f.stats.hp*.24,f.shield+20);
@@ -248,8 +286,9 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    // A bow/staff cannot fire accurately while sprinting at full velocity.
    // A short, visible aiming commitment gives melee a real closing window.
    const slowFactor=(f.slow?0.58:1)*(f.rush>0?2.75:1)*(f.aim>0?.22:1);
-   const desiredX=(dx/d*chase-dz/d*strafe)*f.stats.speed*slowFactor;
-   const desiredZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*slowFactor;
+   const ux=route.direction?.x??dx/d,uz=route.direction?.z??dz/d;
+   const desiredX=(ux*chase-uz*strafe)*f.stats.speed*slowFactor;
+   const desiredZ=(uz*chase+ux*strafe)*f.stats.speed*slowFactor;
    const easing=1-Math.exp(-9*step);
    f.vx+=(desiredX-f.vx)*easing;
    f.vz+=(desiredZ-f.vz)*easing;

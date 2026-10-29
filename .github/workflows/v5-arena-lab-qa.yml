@@ -8,6 +8,7 @@ on:
       - 'v5/arena-citadel.js'
       - 'v5/hero-core.js'
       - 'qa/v5-arena-physics-fairness.cjs'
+      - 'qa/v5-arena-navigation.cjs'
       - 'qa/v5-arena-balance-matrix.cjs'
       - 'qa/v5-arena-lab*'
       - '.github/workflows/v5-arena-lab-qa.yml'
@@ -26,8 +27,10 @@ jobs:
           node --check v5/arena-citadel.js
           node --check qa/v5-arena-lab.cjs
           node --check qa/v5-arena-lab-browser.cjs
+          node --check qa/v5-arena-navigation.cjs
           node --check qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-lab.cjs
+          node qa/v5-arena-navigation.cjs
           node qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-balance-matrix.cjs
   browser:
