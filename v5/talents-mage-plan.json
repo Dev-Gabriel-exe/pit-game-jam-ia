@@ -1,0 +1,427 @@
+{
+  "schema": "pit-v5-talent-planning-v1",
+  "klass": "mage",
+  "status": "planning-only",
+  "talents": [
+    {
+      "id": "E01",
+      "name": "Lança de Cinzas",
+      "tree": "Elemental",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "145% ataque mágico; CD 9 s, alcance 9 m",
+      "animation": {
+        "id": "mage_e01",
+        "storyboard": "Gira cajado, lança brasa espiral, explosão de cinzas no alvo"
+      },
+      "synergyAndCounter": "E02 aplica pressão; escudos e esquiva de projéteis"
+    },
+    {
+      "id": "E02",
+      "name": "Combustão Residual",
+      "tree": "Elemental",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Ao acertar fogo aplica queimadura de 3% do ataque mágico/s por 3 s; uma por alvo, trava 10 s",
+      "animation": {
+        "id": "mage_e02",
+        "storyboard": "Símbolo incandescente sob alvo libera três pulsos de fagulhas"
+      },
+      "synergyAndCounter": "E01 e E10; purificação e resistência"
+    },
+    {
+      "id": "E03",
+      "name": "Prisão de Gelo",
+      "tree": "Elemental",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "80% ataque mágico + lentidão 25% por 2 s; CD 17 s",
+      "animation": {
+        "id": "mage_e03",
+        "storyboard": "Crava cajado, cristal azul envolve tornozelos e se parte"
+      },
+      "synergyAndCounter": "E04 ganha dano; mobilidade e redução de controle"
+    },
+    {
+      "id": "E04",
+      "name": "Estilhaço Polar",
+      "tree": "Elemental",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "125% ataque mágico + 15% contra alvo lento; CD 11 s",
+      "animation": {
+        "id": "mage_e04",
+        "storyboard": "Abre a mão, cinco agulhas de gelo convergem no alvo"
+      },
+      "synergyAndCounter": "E03; escudos"
+    },
+    {
+      "id": "E05",
+      "name": "Pele Vulcânica",
+      "tree": "Elemental",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "INT",
+      "effect": "Ao receber golpe próximo: escudo de 10 por 2 s + resposta de 35% do ataque mágico; trava 18 s",
+      "animation": {
+        "id": "mage_e05",
+        "storyboard": "Crosta de lava racha no manto e expele onda de calor"
+      },
+      "synergyAndCounter": "R07; atacantes à distância"
+    },
+    {
+      "id": "E06",
+      "name": "Tempestade Estática",
+      "tree": "Elemental",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "85% ataque mágico no alvo e 55% num segundo a até 4 m; apenas um salto; CD 21 s",
+      "animation": {
+        "id": "mage_e06",
+        "storyboard": "Raio zigue-zague salta uma vez entre dois inimigos"
+      },
+      "synergyAndCounter": "A07; alvos isolados"
+    },
+    {
+      "id": "E07",
+      "name": "Olho da Tormenta",
+      "tree": "Elemental",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Após duas ativas, próxima ativa ofensiva ganha 8% dano; uma carga, trava 12 s",
+      "animation": {
+        "id": "mage_e07",
+        "storyboard": "Anel elétrico orbita a cabeça e descarrega no cajado"
+      },
+      "synergyAndCounter": "E06 + A01; interrupções"
+    },
+    {
+      "id": "E08",
+      "name": "Névoa de Inverno",
+      "tree": "Elemental",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Ao sofrer lentidão reduz duração 50% e recua 1 m se houver espaço; trava 19 s",
+      "animation": {
+        "id": "mage_e08",
+        "storyboard": "Corpo vira neve translúcida, reaparece com pegadas de gelo"
+      },
+      "synergyAndCounter": "E03; ataques de longo alcance"
+    },
+    {
+      "id": "E09",
+      "name": "Núcleo Incandescente",
+      "tree": "Elemental",
+      "type": "passivo",
+      "primary": "VIT",
+      "secondary": "INT",
+      "effect": "Primeira vez abaixo de 40% HP: próxima magia ofensiva +12% dano; uma vez por duelo",
+      "animation": {
+        "id": "mage_e09",
+        "storyboard": "Coração de brasas acende no peito e migra ao cajado"
+      },
+      "synergyAndCounter": "E10; execução antes do disparo"
+    },
+    {
+      "id": "E10",
+      "name": "Cometa Carmesim",
+      "tree": "Elemental",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "155% ataque mágico em raio 2 m após aviso 0,7 s; CD 25 s",
+      "animation": {
+        "id": "mage_e10",
+        "storyboard": "Aponta ao céu, marcador vermelho brilha e cometa cai com cauda de cinzas"
+      },
+      "synergyAndCounter": "E03; deslocamento após marcador"
+    },
+    {
+      "id": "R01",
+      "name": "Selo de Proteção",
+      "tree": "Rúnico",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Escudo 18 + 1,4 por DEF + 0,6 por INT investidos, dura 4 s; CD 13 s",
+      "animation": {
+        "id": "mage_r01",
+        "storyboard": "Duas mãos fecham losango de runas translúcidas ao redor do mago"
+      },
+      "synergyAndCounter": "R06; quebra de escudos"
+    },
+    {
+      "id": "R02",
+      "name": "Inscrição Dolorosa",
+      "tree": "Rúnico",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "Duas magias diferentes no mesmo alvo preparam +9% dano para próxima magia; trava 10 s",
+      "animation": {
+        "id": "mage_r02",
+        "storyboard": "Três letras arcanas surgem sobre alvo e terceira explode"
+      },
+      "synergyAndCounter": "E01 + E04; troca frequente de alvos"
+    },
+    {
+      "id": "R03",
+      "name": "Runa da Repulsão",
+      "tree": "Rúnico",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "65% ataque mágico num raio de 2,5 m e empurra 1,5 m; CD 18 s",
+      "animation": {
+        "id": "mage_r03",
+        "storyboard": "Carimba runa no chão, círculos concêntricos empurram inimigos"
+      },
+      "synergyAndCounter": "A02; combatentes à distância"
+    },
+    {
+      "id": "R04",
+      "name": "Mente Blindada",
+      "tree": "Rúnico",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Após receber habilidade reduz 12% da próxima habilidade inimiga por até 4 s; trava 12 s",
+      "animation": {
+        "id": "mage_r04",
+        "storyboard": "Glifos sobre a testa se unem em viseira luminosa"
+      },
+      "synergyAndCounter": "R01; ataques básicos contínuos"
+    },
+    {
+      "id": "R05",
+      "name": "Corte de Mana",
+      "tree": "Rúnico",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "FOR",
+      "effect": "Corte arcano até 4 m causa 100% ataque mágico e atrasa em 0,8 s próxima habilidade ofensiva inimiga; CD 15 s",
+      "animation": {
+        "id": "mage_r05",
+        "storyboard": "Cajado vira lâmina luminosa, corta símbolo flutuante"
+      },
+      "synergyAndCounter": "R03; inimigos distantes"
+    },
+    {
+      "id": "R06",
+      "name": "Reflexo Prismático",
+      "tree": "Rúnico",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Escudo absorve dano: devolve 35% ataque mágico a atacante até 7 m, nunca reflete reflexos; trava 20 s",
+      "animation": {
+        "id": "mage_r06",
+        "storyboard": "Barreira refrata triângulo de luz que retorna ao agressor"
+      },
+      "synergyAndCounter": "R01; antiescudos"
+    },
+    {
+      "id": "R07",
+      "name": "Tecelagem de Runas",
+      "tree": "Rúnico",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Ao criar escudo, regenera 1,5% do HP máximo por 5 s, sem acumular; trava 15 s",
+      "animation": {
+        "id": "mage_r07",
+        "storyboard": "Fios dourados costuram a superfície da barreira"
+      },
+      "synergyAndCounter": "R01 e E05; dano explosivo"
+    },
+    {
+      "id": "R08",
+      "name": "Marca Desarmônica",
+      "tree": "Rúnico",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "85% ataque mágico + -10% dano de habilidades inimigas por 3 s, não soma debuff; CD 22 s",
+      "animation": {
+        "id": "mage_r08",
+        "storyboard": "Runa rachada gira ao contrário acima do alvo emitindo vibrações"
+      },
+      "synergyAndCounter": "R04; golpes básicos"
+    },
+    {
+      "id": "R09",
+      "name": "Última Equação",
+      "tree": "Rúnico",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Primeira vez abaixo de 30% HP cria escudo de 12% HP máximo por 3 s; uma vez por duelo",
+      "animation": {
+        "id": "mage_r09",
+        "storyboard": "Círculo numérico fecha domo estrelado instantâneo"
+      },
+      "synergyAndCounter": "A09; dano antiescudo"
+    },
+    {
+      "id": "R10",
+      "name": "Grande Mandala",
+      "tree": "Rúnico",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "90% ataque mágico em raio 3 m + escudo 8 por 4 s após aviso 0,5 s; CD 27 s",
+      "animation": {
+        "id": "mage_r10",
+        "storyboard": "Desenha oito anéis de runa que se fecham numa coluna de luz"
+      },
+      "synergyAndCounter": "E03; mobilidade"
+    },
+    {
+      "id": "A01",
+      "name": "Pulso Estelar",
+      "tree": "Astral",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "115% ataque mágico em projétil de alcance 10 m; CD 8 s",
+      "animation": {
+        "id": "mage_a01",
+        "storyboard": "Cajado toca estrela flutuante que dispara raio pontilhado azul"
+      },
+      "synergyAndCounter": "E07; defesas contra projéteis"
+    },
+    {
+      "id": "A02",
+      "name": "Passagem Etérea",
+      "tree": "Astral",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Teleporta 3 m para posição livre; próxima magia em 2 s ganha +7% dano; CD 19 s",
+      "animation": {
+        "id": "mage_a02",
+        "storyboard": "Corpo vira partículas constelares e reaparece por dobra circular"
+      },
+      "synergyAndCounter": "E10; rastreamento à distância"
+    },
+    {
+      "id": "A03",
+      "name": "Órbita Protetora",
+      "tree": "Astral",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Após mover 4 m no combate, próximo impacto recebido -10%; uma carga, trava 14 s",
+      "animation": {
+        "id": "mage_a03",
+        "storyboard": "Dois satélites de luz orbitam ombro e colidem no golpe"
+      },
+      "synergyAndCounter": "A02; lentidão e perseguição"
+    },
+    {
+      "id": "A04",
+      "name": "Gravidade Menor",
+      "tree": "Astral",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "50% ataque mágico em zona raio 2 m + lentidão 20% por 2 s; CD 17 s",
+      "animation": {
+        "id": "mage_a04",
+        "storyboard": "Inclina cajado, campo violeta deforma solo como lente"
+      },
+      "synergyAndCounter": "E10; teleporte de fuga"
+    },
+    {
+      "id": "A05",
+      "name": "Eco Astral",
+      "tree": "Astral",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "Ao acertar ativa de alvo único, cópia causa 25% do dano efetivo; não gera eco, trava 13 s",
+      "animation": {
+        "id": "mage_a05",
+        "storyboard": "Imagem astral do mago repete gesto com 0,3 s de atraso"
+      },
+      "synergyAndCounter": "A01; escudos e reduções"
+    },
+    {
+      "id": "A06",
+      "name": "Escudo de Fase",
+      "tree": "Astral",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Golpe que retiraria >=20% do HP máximo sofre redução de 20%; trava 21 s",
+      "animation": {
+        "id": "mage_a06",
+        "storyboard": "Corpo fica translúcido e produz dois contornos defasados"
+      },
+      "synergyAndCounter": "A02; múltiplos golpes leves"
+    },
+    {
+      "id": "A07",
+      "name": "Foco Celeste",
+      "tree": "Astral",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Após 4 s sem sofrer dano, próxima ofensiva recebe +10%; uma carga, trava 11 s",
+      "animation": {
+        "id": "mage_a07",
+        "storyboard": "Constelação se alinha atrás do cajado antes do disparo"
+      },
+      "synergyAndCounter": "E06 e A01; pressão de curto alcance"
+    },
+    {
+      "id": "A08",
+      "name": "Arco de Horizonte",
+      "tree": "Astral",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "Feixe linear 130% ataque mágico até 8 m após preparo 0,45 s; CD 16 s",
+      "animation": {
+        "id": "mage_a08",
+        "storyboard": "Traça horizonte no ar, abre faixa reta de luz com ondas"
+      },
+      "synergyAndCounter": "A04; movimentação lateral"
+    },
+    {
+      "id": "A09",
+      "name": "Véu de Retirada",
+      "tree": "Astral",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "DES",
+      "effect": "Primeira vez abaixo de 35% HP recua 2 m e ganha 12% velocidade por 3 s; uma vez por duelo",
+      "animation": {
+        "id": "mage_a09",
+        "storyboard": "Manto se fragmenta em poeira cósmica e dois passos de estrela"
+      },
+      "synergyAndCounter": "R09; reaproximação rápida"
+    },
+    {
+      "id": "A10",
+      "name": "Supernova Silenciosa",
+      "tree": "Astral",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Pulso 135% ataque mágico em raio 2,5 m e escudo 10 por 3 s, prepara 0,6 s; CD 30 s",
+      "animation": {
+        "id": "mage_a10",
+        "storyboard": "Esfera emerge do peito e estoura em halo estrelado que se recompõe"
+      },
+      "synergyAndCounter": "A02; atacantes distantes"
+    }
+  ]
+}
