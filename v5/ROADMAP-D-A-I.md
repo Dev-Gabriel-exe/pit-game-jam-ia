@@ -1,3 +1,5 @@
+> **REVISÃO DE PERSONAGENS (29/10/2026):** O usuário rejeitou os 40 personagens modulares devido à sobreposição visual e escolheu quatro modelos de uma única fonte CC0, Tactical Slash: espadachim para Guerreiro/Guardião, sacerdote para Arcanista e o arqueiro original para Caçador. A prévia do Arsenal dos quatro heróis substitui o catálogo de 40. Altura visual normalizada a 2,55 e sete animações por GLB, validadas em desktop e mobile. **A correção prevalece sobre os checkpoints anteriores de 40 opções.** A arena, talentos e mecânicas continuam preservados; F/G/H/I pendentes.
+
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
 **Status em 29/10/2026:** Fase D aprovada **visualmente pelo usuário** para avançar, porém validação completa de GPU/mobile permanece na Fase G. **Fase E em execução** (mecânica/IA/balanceamento); F diretor automático, G, H e I ainda pendentes.
