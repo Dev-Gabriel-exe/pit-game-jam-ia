@@ -56,8 +56,10 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free'}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct'}={}){
  const spreadAggro=engagementMode==='spaced';
+ // Experimental E navigation: legacy direct movement remains the default.
+ const obstacleSteering=navigationMode==='steer';
  const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
  const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
  const stormStart=clamp(Number(stormDelay)||18,18,50);
@@ -86,9 +88,44 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    guardUntil:0,t09Until:0,t09Power:0,t10Until:0,a09Until:0,healWindow:[],poisonUntil:0,poisonPower:0,poisonOwner:null,
    reverseUntil:0,t04Until:0,s01Until:0,a03Travel:0,a03LastX:null,a03LastZ:null,a02BoostUntil:0,r04Until:0,d04Charge:0,speedUntil:0,d06Until:0,d07WeakUntil:0,d07WeakPower:0,r08Until:0,r08Power:0,
    burning:0,burnPower:0,burnOwner:null,movingTime:0,stationaryTime:0,lastTarget:null,
+   navObstacle:-1,navSide:0,navActive:false,navTurns:0,
    lastHitAt:-999,hitWindow:[],prevX:null,prevZ:null,eliminatedAt:null};
  });
  const byId=new Map(fighters.map(f=>[f.id,f]));
+ // Fase E: deterministic tangential navigation reuses collider footprints.
+ // Only changes the route while pursuing; never changes HP, abilities, or targeting.
+ function firstBlockingObstacle(x,z,tx,tz){
+  const dx=tx-x,dz=tz-z,l2=dx*dx+dz*dz;
+  if(l2<1e-8)return null;
+  let nearest=null;
+  for(let index=0;index<obstacles.length;index++){
+   const o=obstacles[index],t=clamp(((o.x-x)*dx+(o.z-z)*dz)/l2,0,1);
+   const sx=x+dx*t-o.x,sz=z+dz*t-o.z;
+   if(sx*sx+sz*sz<(o.r+.74)**2&&(!nearest||t<nearest.t))nearest={o,index,t};
+  }
+  return nearest;
+ }
+ function steeringDirection(f,target){
+  const blocker=firstBlockingObstacle(f.x,f.z,target.x,target.z);
+  if(!blocker){f.navObstacle=-1;f.navSide=0;f.navActive=false;return null}
+  const {o,index}=blocker,rx=f.x-o.x,rz=f.z-o.z;
+  const distance=Math.max(.0001,Math.hypot(rx,rz)),radius=o.r+.56;
+  if(f.navObstacle!==index){
+   const cross=rx*(target.z-o.z)-rz*(target.x-o.x);
+   // A fixed hero/seed parity breaks symmetrical head-on approaches.
+   const parity=([...(f.id)].reduce((v,c)=>v+c.charCodeAt(0),seed^index)&1);
+   f.navSide=Math.abs(cross)>.15?(cross>0?1:-1):(parity?1:-1);
+   f.navObstacle=index;f.navActive=false;f.navTurns++;
+  }
+  if(distance<radius+2.8)f.navActive=true;
+  if(distance>radius+8)f.navActive=false;
+  if(!f.navActive)return null;
+  const ux=rx/distance,uz=rz/distance;
+  const radial=clamp((radius+1.05-distance)*.80,-.16,1.2);
+  const nx=f.navSide*(-uz)+radial*ux,nz=f.navSide*ux+radial*uz;
+  const length=Math.max(.0001,Math.hypot(nx,nz));
+  return {x:nx/length,z:nz/length};
+ }
  const has=(f,id)=>f.build.talents.includes(id);
  function use(f,id,target=null){
   f.cooldowns[id]=ALL[f.build.klass].find(t=>t.id===id).cooldown;
@@ -945,8 +982,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      (f.a09Until>time?1+.12*effectiveness(f,'A09'):1)*
      (has(f,'S07')&&f.hp/f.stats.hp<.50?1+.10*effectiveness(f,'S07'):1)*
      (has(f,'D08')&&f.hp/f.stats.hp>.60?1+.08*effectiveness(f,'D08'):1);
-   const goalVX=(dx/d*chase-dz/d*strafe)*f.stats.speed*penalty;
-   const goalVZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*penalty;
+   const route=obstacleSteering&&chase>0?steeringDirection(f,target):null;
+   const ux=route?.x??dx/d,uz=route?.z??dz/d;
+   const goalVX=(ux*chase-uz*strafe)*f.stats.speed*penalty;
+   const goalVZ=(uz*chase+ux*strafe)*f.stats.speed*penalty;
    const smoothing=1-Math.exp(-8*step);
    f.vx+=(goalVX-f.vx)*smoothing;f.vz+=(goalVZ-f.vz)*smoothing;
    if(has(f,'S07')&&f.hp/f.stats.hp<.50&&!f.passives.s07Seen){
