@@ -851,9 +851,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const choreography=u.choreography&&DIRECTOR?DIRECTOR.sample(u.choreography.timeline,elapsed-u.choreography.started,{reducedMotion:reduce}):null;
    if(u.choreography&&!choreography?.active)u.choreography=null;
    // Local actor pose only: never alter simulation positions or collisions.
-   a.position.y=wobble+(choreography?.lift||0);
-   a.position.z=choreography?.forward||0;
-   a.rotation.x=choreography?.pitch||0;a.rotation.z=choreography?.roll||0;
+   // Make genuine talent poses readable in an isometric/third-person view.
+   // Only render transforms change: engine collision and attack range stay exact.
+   a.position.y=wobble+(choreography?.lift||0)*1.5;
+   a.position.z=(choreography?.forward||0)*2;
+   a.rotation.x=THREE.MathUtils.clamp((choreography?.pitch||0)*2,-.64,.64);
+   a.rotation.z=THREE.MathUtils.clamp((choreography?.roll||0)*2,-.58,.58);
    // Hit-stop/recoil only when the *engine* confirms HP damage (not on shields).
    if(!reduce&&u.hitReaction){
     const age=elapsed-u.hitReaction.started;
@@ -866,7 +869,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
      if(u.mesh.cape)u.mesh.cape.rotation.x=.14+Math.sin(elapsed*3)*.06;
    }
    u.mesh.circle.material.emissive=new THREE.Color(PALETTES[u.build.appearance.palette]||0xc58865);
-   u.mesh.circle.material.emissiveIntensity=.25+Math.sin(elapsed*2)*.1;
+   u.mesh.circle.material.emissiveIntensity=.25+Math.sin(elapsed*2)*.1+(choreography?.glow||0)*.9;
   }
   for(let i=effects.length-1;i>=0;i--){
    const e=effects[i];e.life-=dt;e.mesh.position.addScaledVector(e.mesh.userData.velocity,dt);
