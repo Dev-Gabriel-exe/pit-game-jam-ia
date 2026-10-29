@@ -10,6 +10,7 @@ const {chromium}=require('playwright');
    await page.goto('http://127.0.0.1:8899/v5/personagens-lab.html',{waitUntil:'domcontentloaded',timeout:40000});
    await page.waitForFunction(()=>window.PIT_V5_SIMPLE_HERO_LAB?.glReady,null,{timeout:30000});
    assert.equal(await page.locator('.class-button').count(),4);
+   assert.equal(await page.locator('.hero-model-card').count(),4,'four visible comparison models');
    assert.equal(await page.locator('#claimAvatar').count(),0,'Old 40-piece booking UI removed');
    const observations={};
    for(const [klass,file] of Object.entries({
@@ -30,6 +31,9 @@ const {chromium}=require('playwright');
     observations[klass]={file,height:+height.toFixed(3),clips};
    }
    assert.equal(new Set(Object.values(observations).map(x=>x.file)).size,4,'All classes use DIFFERENT 3D characters');
+   await page.waitForFunction(()=>[...document.querySelectorAll('.hero-model-card img')].every(img=>img.complete&&img.naturalWidth>=200&&img.src.startsWith('data:image/')),null,{timeout:110000});
+   assert.equal(await page.locator('.hero-model-card img[data-model]').count(),4);
+   if(width===390)await page.screenshot({path:'qa/v5-kaykit-four-models-mobile.png',fullPage:true,animations:'disabled'});
    assert.deepEqual(errors,[],'No JS exceptions: '+errors.join(' | '));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<15,'Mobile horizontal overflow at '+width);
