@@ -130,7 +130,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03)+(rnd()-.5)*1.25)*scale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
-   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2};
+   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false};
  });
  let time=0,seq=0,winner=null,finished=false;
  const initialCount=fighters.length;
@@ -229,7 +229,13 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    // Do not cast offensive skills into empty space at 60+ units away.
    // The legacy special is still class-generic, not one of the 120 talents.
    const readyForSpecial=f.build.klass==='guardian'||d<=Math.max(f.stats.range+1.3,4.2);
+   if(f.special<=.55&&f.special>0&&readyForSpecial&&!f.telegraph){
+    // Advance notice: observers can see where a dangerous ability comes from.
+    // Does not secretly change damage/targeting rules.
+    f.telegraph=true;log('prepare',f,{ability:f.stats.special,target:target.id,x:f.x,z:f.z});
+   }
    if(f.special<=0&&readyForSpecial){
+    f.telegraph=false;
     f.special=f.stats.cooldown+1.4*rnd();f.animation='cast';
     log('special',f,{ability:f.stats.special,x:f.x,z:f.z});
     if(f.build.klass==='mage'){
