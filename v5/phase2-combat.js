@@ -508,7 +508,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   }
  }
  function projectile(f,target,damage,skill,options={}){
-  commitRanged(f,skill?.62:.72);
+  commitRanged(f,skill?.35:.48);
   if(has(f,'P08')&&f.passives.p08RangeReady){
    f.passives.p08RangeReady=false;emit('proc',f,{talent:'P08',target:target.id,kind:'range'});
   }
@@ -606,7 +606,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   return bonus;
  }
  function prepareAoE(f,target,id,damage,delay,impacts,radius){
-  commitRanged(f,.72);
+  commitRanged(f,.45);
   const center={x:target.x,z:target.z};
   emit('prepare',f,{ability:ALL[f.build.klass].find(t=>t.id===id).name,target:target.id,x:center.x,z:center.z,duration:delay});
   for(let i=0;i<impacts;i++)pending.push({owner:f.id,talent:id,x:center.x,z:center.z,
@@ -994,7 +994,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      (f.a09Until>time?1+.12*effectiveness(f,'A09'):1)*
      (has(f,'S07')&&f.hp/f.stats.hp<.50?1+.10*effectiveness(f,'S07'):1)*
      (has(f,'D08')&&f.hp/f.stats.hp>.60?1+.08*effectiveness(f,'D08'):1)*
-     (rangedRecovery&&f.shotRecovery>0?.24:1);
+     (rangedRecovery&&f.shotRecovery>0?.60:1);
    const route=obstacleSteering&&chase>0?steeringDirection(f,target):null;
    const ux=route?.x??dx/d,uz=route?.z??dz/d;
    const goalVX=(ux*chase-uz*strafe)*f.stats.speed*penalty;
