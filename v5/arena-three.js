@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
+import {buildEclipseCitadel} from './arena-citadel.js';
 const CORE=window.PIT_V5_CORE, ASSETS=window.PIT_V5_ASSETS||{};
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
@@ -180,7 +181,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  renderer.setClearColor(0x09070f,1);
  container.replaceChildren(renderer.domElement);renderer.domElement.className='v5-webgl';
  const scene=new THREE.Scene();scene.background=new THREE.Color(worldScale>1.3?0x17121c:0x09070f);scene.fog=new THREE.FogExp2(0x17121c,worldScale>1.3?.004:.018);
- const camera=new THREE.PerspectiveCamera(41,1,.15,180);
+ const camera=new THREE.PerspectiveCamera(41,1,.15,330);
  camera.position.set(0,17,27);camera.lookAt(0,1,0);
  const controls=new OrbitControls(camera,renderer.domElement);
  controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=48*worldScale;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
@@ -197,8 +198,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  scene.add(moon);
  const amber=new THREE.PointLight(0xd66c38,42,29);amber.position.set(12,11,-8);scene.add(amber);
  const root=new THREE.Group();scene.add(root);
- const world=arenaScenery(scene,root);world.map.scale.setScalar(worldScale);
- if(worldScale>1.3)loadMedievalArchitecture(root,worldScale,quality,container);
+ const world=worldScale>1.3?buildEclipseCitadel(root,{quality}):arenaScenery(scene,root);
+ if(worldScale>1.3){container.dataset.v5Map=world.mapType;loadMedievalArchitecture(root,worldScale,quality,container)}
+ else container.dataset.v5Map='original-ring-1';
  const individuals=new Map(),effects=[],labels=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
@@ -307,7 +309,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
-  camera.position.set(0,26*worldScale,37*worldScale);controls.target.set(0,.2,0);controls.update();
+  camera.position.set(0,worldScale>1.3?76:26,worldScale>1.3?112:37);controls.target.set(0,.2,0);controls.update();
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
@@ -334,7 +336,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(!f.alive){unit.mesh.actor.rotation.z=THREE.MathUtils.lerp(unit.mesh.actor.rotation.z,-1.2,.07);unit.mesh.circle.visible=false}
  }
  function overview(){
-  followId=null;camera.position.set(0,26*worldScale,37*worldScale);controls.target.set(0,.2,0);controls.update();
+  followId=null;camera.position.set(0,worldScale>1.3?76:26,worldScale>1.3?112:37);controls.target.set(0,.2,0);controls.update();
  }
  function focusFighter(id){
   const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
