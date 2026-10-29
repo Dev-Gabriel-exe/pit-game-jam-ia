@@ -16,8 +16,10 @@ const IDENTITY=window.PIT_V5_BUILD_IDENTITY;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
- if(!cache.has(klass))cache.set(klass,new Promise((resolve,reject)=>loader.load(asset.model,resolve,undefined,reject)).catch(err=>{cache.delete(klass);throw err}));
- return cache.get(klass);
+ // Warrior and Guardian intentionally share ONE swordsman GLB; cache by URL.
+ const key=asset.model;
+ if(!cache.has(key))cache.set(key,new Promise((resolve,reject)=>loader.load(key,resolve,undefined,reject)).catch(err=>{cache.delete(key);throw err}));
+ return cache.get(key);
 }
 const MATERIAL={
  floor:new THREE.MeshStandardMaterial({color:0x25222b,roughness:.95,metalness:.04}),
@@ -420,6 +422,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    // Class-independent 2.55m rendered height; previous max scale=3 caused
    // real GLB rigs to look dramatically different from the hunter on mobile.
    const factor=2.55/measure.y;
+   // A 2.55m source-agnostic character height, independent of combat stats.
+   // No extra modular outfits, helmets, fake limbs or overlaid T-poses.
    model.scale.setScalar(factor);
    model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
    const tint=new THREE.Color(item.identity?.accent||PALETTES[item.build.appearance.palette]||PALETTES.ember);
@@ -436,6 +440,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const actor=item.mesh.actor;for(const child of actor.children)child.visible=false;
    actor.visible=true;
    actor.add(model);item.modelRoot=model;item.personalMaterials=personalMaterials;
+   if(item.id!=='preview'){
+    container.dataset.v5RigFamily='tactical-slash-cc0';
+    container.dataset.v5RigHeight='2.55';
+   }
    if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
    if(gltf.animations?.length){
     item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
