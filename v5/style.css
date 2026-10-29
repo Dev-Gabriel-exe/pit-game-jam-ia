@@ -64,3 +64,20 @@ a{color:#f3ca93}a:focus-visible,button:focus-visible,input:focus-visible,select:
 .v5-columns.v5-teacher .v5-theater{width:100%}
 .v5-columns.v5-teacher .v5-stage{height:clamp(470px,68vh,840px)}
 .v5-columns.v5-teacher .v5-middle{width:100%}
+
+/* V5: a real model for each of the six class archetypes */
+.v5-class-intro{font:500 13px/1.45 "Source Sans 3","Segoe UI",sans-serif;color:#cfb9a7;margin:0 0 12px}
+.v5-class-intro strong{color:#f7d9a3}
+.v5-classes{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.v5-class{min-height:111px;padding:12px 7px;gap:6px;align-content:center}
+.v5-class b{font-size:30px;line-height:1}
+.v5-class span{font:760 14px/1.15 "Cinzel",Georgia,serif}
+.v5-class small{font:550 11px/1.3 "Source Sans 3","Segoe UI",sans-serif;color:#d2baa7;display:block}
+.v5-class[aria-pressed=true] small{color:#f6d3ad}
+.v5-model-source{display:grid;gap:6px;margin:14px 0 19px;padding:12px 14px;border:1px solid #936744;border-radius:9px;background:#241a1b;font:500 12px/1.5 "Source Sans 3","Segoe UI",sans-serif;color:#d4c2b2}
+.v5-model-source strong{font-weight:650;color:#efcfab}
+.v5-model-source a{color:#ffd197;text-underline-offset:3px}
+#v5Stage[data-v5-asset=loaded] .v5-webgl{outline:1px solid #6da67d50;outline-offset:-2px}
+@media(max-width:1250px){.v5-class span{font-size:12px}.v5-class small{font-size:10px}}
+@media(max-width:480px){.v5-class{min-height:103px;padding:9px 6px}.v5-classes{gap:7px}.v5-model-source{margin-bottom:15px}}
+@media(prefers-reduced-motion:reduce){.v5-class{transition:none!important}}
