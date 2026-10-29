@@ -1,3 +1,11 @@
+# HISTÓRICO ARQUIVADO — EXPERIMENTO DE 40 PERSONAGENS CANCELADO
+
+**29/10/2026 — decisão posterior do usuário:** voltar aos quatro personagens originais. O experimento de montagem Quaternius mostrou corpos sobrepostos e T-pose, e foi retirado do código executado. `avatar-catalog.js`, `legendary-wardrobe.js` e respectivos testes foram excluídos da branch, preservados somente no histórico Git. **Não aplicar o plano abaixo.**
+
+A nova origem é o mesmo repositório do arqueiro aprovado: https://github.com/sion-rgb/tactical-slash. Classes: Guerreiro e Guardião = `player_swordsman.glb`, Arcanista = `player_priest.glb`, Caçador = `player_archer.glb`. Todos usam altura 2,55; cada GLB possui sete animações. Os testes 390px/1200px passaram: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40965145406.
+
+---
+
 # V5 — Arsenal gratuito: 40 opções, 10 por classe
 
 Estado: **protótipo isolado**, sem turma real e sem modelos pagos. Data: 29/10/2026.
