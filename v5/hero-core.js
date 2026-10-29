@@ -111,8 +111,8 @@ function derived(b){
  const powerScaling=b.klass==='hunter'?1.08:b.klass==='mage'?1.25:b.klass==='warrior'?1.55:1.4;
  // Mage's basic bolt must not multiply Spirit twice. High Spirit builds
  // remain stronger, but sacrifice HP and must time area spells to win.
- const spiritScaling=b.klass==='mage'?.62:(.55+c.magic*.08);
- let atk=c.attack+s('power')*powerScaling+s('spirit')*spiritScaling+(b.klass==='hunter'?s('agility')*.30:0);
+ const spiritScaling=b.klass==='mage'?.65:(.55+c.magic*.08);
+ let atk=c.attack+s('power')*powerScaling+s('spirit')*spiritScaling+(b.klass==='hunter'?s('agility')*.18:0);
  atk*=1+r('fury')*.12+r('rune')*.12+r('hex')*.10+r('execute')*.07;
  const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5+r('dodge')*1.5+r('bones')*1.3;
  const range=c.range+r('eagle')*.8;
@@ -228,7 +228,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
    if(d<=f.stats.range&&f.basic<=0){
     // Archery costs time to draw and aim; no free +50% DPS from range.
-    f.basic=(f.build.klass==='hunter'?1.27:f.build.klass==='mage'?1.22:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
+    f.basic=(f.build.klass==='hunter'?1.27:f.build.klass==='mage'?1.18:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
     f.animation='attack';
     if(f.stats.range>3){
      f.aim=f.build.klass==='hunter'?.46:.32;
