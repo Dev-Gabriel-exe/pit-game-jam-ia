@@ -109,7 +109,10 @@ function derived(b){
  // Strength must improve every build, but ranged sustained DPS pays for
  // range/safety. Melee frontliners receive a slightly better power coefficient.
  const powerScaling=b.klass==='hunter'?1.08:b.klass==='mage'?1.25:b.klass==='warrior'?1.55:1.4;
- let atk=c.attack+s('power')*powerScaling+s('spirit')*.55+(c.magic*s('spirit')*.08);
+ // Mage's basic bolt must not multiply Spirit twice. High Spirit builds
+ // remain stronger, but sacrifice HP and must time area spells to win.
+ const spiritScaling=b.klass==='mage'?.68:(.55+c.magic*.08);
+ let atk=c.attack+s('power')*powerScaling+s('spirit')*spiritScaling;
  atk*=1+r('fury')*.12+r('rune')*.12+r('hex')*.10+r('execute')*.07;
  const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5+r('dodge')*1.5+r('bones')*1.3;
  const range=c.range+r('eagle')*.8;
@@ -235,7 +238,10 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    }
    // Do not cast offensive skills into empty space at 60+ units away.
    // The legacy special is still class-generic, not one of the 120 talents.
-   const readyForSpecial=f.build.klass==='guardian'||d<=Math.max(f.stats.range+1.3,4.2);
+   // Do not consume a Warrior's seismic strike when the opponent is
+   // outside its actual splash radius; this previously wasted most casts.
+   const readyForSpecial=f.build.klass==='guardian'||
+    (f.build.klass==='warrior'?d<=3.05:d<=Math.max(f.stats.range+1.3,4.2));
    if(f.special<=.55&&f.special>0&&readyForSpecial&&!f.telegraph){
     // Advance notice: observers can see where a dangerous ability comes from.
     // Does not secretly change damage/targeting rules.
@@ -257,8 +263,17 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
       areaHit(f,4.0+f.build.talents.grave*.65,f.stats.attack*(1.15+f.build.talents.harvest*.14));
       f.hp=Math.min(f.stats.hp,f.hp+7+f.build.talents.drain*5);
     }else if(f.build.klass==='guardian'){
-      f.shield+=15+f.build.talents.aegis*10;
-      areaHit(f,3+f.build.talents.taunt*.6,f.stats.attack*.7);
+      // The Guardian's close-range pulse needs an actual control effect
+      // to compete with mobile ranged units. Shield remains capped.
+      f.shield=Math.min(f.stats.hp*.35,f.shield+16+f.build.talents.aegis*10);
+      const impactRadius=3.35+f.build.talents.taunt*.6;
+      areaHit(f,impactRadius,f.stats.attack*1.03);
+      for(const other of fighters){
+       if(other.alive&&other!==f&&Math.hypot(other.x-f.x,other.z-f.z)<impactRadius){
+        other.slow=Math.max(other.slow,1.5);
+        log('slow',f,{target:other.id,seconds:1.5});
+       }
+      }
     }else{
       // Flecha dupla is a multi-target zoning tool, not two 115%-damage
       // missiles into the same victim every 8 s. No bonus on lone target.
