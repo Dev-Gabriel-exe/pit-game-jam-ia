@@ -7,7 +7,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
-const CORE=window.PIT_V5_CORE, ASSETS=window.PIT_V5_ASSETS||{};
+const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -355,10 +355,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   return item;
  }
  function fighters(list,{seed=48211,limit=70}={}){
-  clearHeroes();const normalized=list.map((entry,i)=>({
+  clearHeroes();const trial=!!PHASE2&&list.every(entry=>entry.build?.schema===PHASE2.VERSION);
+  const normalized=trial?list.map((entry,i)=>({build:entry.build,id:String(entry.id??i),name:entry.name,approvedMissions:entry.build.approvedMissions})):list.map((entry,i)=>({
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
-  simulation=CORE.battle(normalized,{seed,limit,arenaScale:worldScale});
+  simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale});
+  container.dataset.v5CombatEngine=trial?'phase2-m5':'legacy';
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
   container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
@@ -492,6 +494,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     if(ev.type==='prepare'){
      triggerMotion(attacker,'cast',.5);
      warningFx(attacker);
+    }else if(ev.type==='talent'||ev.type==='shield'){
+     triggerMotion(attacker,'cast',.72);
+     specialFx(attacker);
     }else if(ev.type==='special'){
      triggerMotion(attacker,'cast',.72);
      specialFx(attacker);

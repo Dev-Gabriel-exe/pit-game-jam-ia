@@ -5,7 +5,7 @@
  */
 import {createStage} from './arena-three.js';
 import * as THREE from 'three';
-const CORE=window.PIT_V5_CORE;
+const CORE=window.PIT_V5_CORE,PHASE2=window.PIT_V5_PHASE2;
 const CATALOG=window.PIT_V5_FASE1||[];
 const $=id=>document.getElementById(id);
 const palette={warrior:'ember',mage:'amethyst',hunter:'jade',guardian:'azure'};
@@ -14,10 +14,17 @@ const glyph={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
 const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
-const state={mission:5,count:30,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
+const state={mission:5,count:30,phase2:new URLSearchParams(location.search).get('phase2')==='1',stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
+ if(state.phase2){
+  if(mission!==5||!PHASE2)throw Error('Motor B.1 aceita apenas missão 5');
+  return Array.from({length:count},(_,i)=>{
+   const klass=expected[i%4],label=count===4?names[klass]:(names[klass].split(' ')[0]+' '+String(i+1).padStart(2,'0'));
+   return {id:'phase2-'+i+'-'+klass,name:label,build:PHASE2.exampleBuild(klass,label,5),approvedMissions:5};
+  });
+ }
  // The first M5/M10 lab deliberately uses 10/20 points ONLY,
  // not the historical 6 free points nor peer-review bonus XP.
  const presets={
@@ -106,7 +113,13 @@ function spotlight(text,detail,id,kind,priority,eventTime){
 function onEvent(event){
  const t=Number(event.time)||0;
  const hero=heroName(event.hero),target=heroName(event.target);
- if(event.type==='prepare'){
+ if(event.type==='talent'){
+  const name=event.name||event.talent;
+  spotlight('✦ '+hero+' usou '+name,'Talento '+event.talent+' · Missão 5',event.hero,'special',3,t);
+  appendLog('✦ '+hero+' ativou '+name+' ('+event.talent+')','special');
+ }else if(event.type==='proc'||event.type==='charge'){
+  if(t-state.lastHitLog>1){appendLog('✧ '+hero+' '+(event.type==='charge'?'carregou ':'ativou ')+event.talent,'special');state.lastHitLog=t}
+ }else if(event.type==='prepare'){
   spotlight('⚠ '+hero+' prepara '+(event.ability||'especial'),'Ataque iminente — observe a animação',event.hero,'special',2,t);
   if(t-state.lastHitLog>1.0){
    appendLog('⚠ '+hero+' está preparando '+(event.ability||'especial'),'special');
@@ -191,14 +204,20 @@ function initRound(){
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('actionCamera').disabled=false;
- const mission=state.mission;
+ const mission=state.mission,trial=state.phase2&&mission===5;
+ const toggle=$('phase2Mode');
+ toggle.setAttribute('aria-pressed',String(trial));
+ toggle.innerHTML=trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.1</small>':'<strong>✦ Experimentar 20 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
+ $('engineModeInfo').textContent=trial?
+  'MOTOR B.1 · 20 efeitos executáveis, 5 por classe; 5 atributos e 10 pontos na missão 5. Ainda sem animações exclusivas, servidor, avaliação ou arena final.':
+  'Motor legado · os 120 talentos finais ainda não foram integrados; modo experimental B.1 disponível.';
  state.round++;
  const random=new Uint32Array(1);
  if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(random);
  else random[0]=Math.floor(Math.random()*0xffffffff);
  state.seed=(random[0]||1)>>>0;
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
- const prefix=mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
+ const prefix=trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
  const gameInfo=$('matchInfo');if(gameInfo)gameInfo.textContent='PARTIDA '+state.round+' · SEED '+state.seed;
  message('CARREGANDO '+state.count+' HERÓIS');
  state.roster=roster(mission,state.count);
@@ -236,10 +255,16 @@ document.querySelectorAll('.milestone').forEach(button=>{
  button.addEventListener('click',()=>{
   const next=Number(button.dataset.mission);
   if(state.mission===next)return;
-  state.mission=next;
+  state.mission=next;if(next===10)state.phase2=false;
   document.querySelectorAll('.milestone').forEach(x=>x.setAttribute('aria-pressed',String(Number(x.dataset.mission)===next)));
   initRound();
  });
+});
+$('phase2Mode').addEventListener('click',()=>{
+ if(!PHASE2)return;
+ state.phase2=!state.phase2;
+ if(state.phase2){state.mission=5;document.querySelectorAll('.milestone').forEach(x=>x.setAttribute('aria-pressed',String(Number(x.dataset.mission)===5)))}
+ initRound();
 });
 $('startBattle').addEventListener('click',begin);
 $('pauseBattle').addEventListener('click',pause);
@@ -296,6 +321,8 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get finished(){return !!state.stage?.simulation?.finished},
  get winner(){return state.stage?.simulation?.result()?.winner||null},
  get previewOnly(){return true},
+ get phase2(){return state.phase2},
+ get combatEngine(){return $('arenaStage').dataset.v5CombatEngine||'uninitialized'},
  get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'},
  get seed(){return state.seed},
  get round(){return state.round}

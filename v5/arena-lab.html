@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./arena-lab.css">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
-<script src="./hero-core.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
+<script src="./hero-core.js"></script><script src="./phase2-combat.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
 <script src="./arena-lab.js" type="module"></script>
 </head>
 <body>
@@ -23,13 +23,13 @@
   <span class="eyebrow">✧ NOVA ARENA · CIDADELA DO ECLIPSE ✧</span>
   <h1>30 heróis. <em>Uma grande batalha.</em></h1>
   <p>Um campo de batalha monumental, com arquibancadas reais: todo herói eliminado se transforma em espectador e continua visível com o seu nick acima da cabeça.</p>
-  <div class="disclaimer"><strong>LABORATÓRIO ISOLADO</strong> · Combate com o motor legado V5. Os 120 talentos planejados, os cinco atributos novos e o bloqueio da final <strong>ainda não estão integrados</strong>. Nenhuma vitória dá XP, altera notas ou bloqueia talentos.</div>
+  <div class="disclaimer"><strong>LABORATÓRIO ISOLADO</strong> · <span id="engineModeInfo">Motor legado; modo experimental B.1 de 20 talentos selecionável. Sem integração com alunos, animações exclusivas ou bloqueio da final.</span> Nenhuma vitória dá XP, altera notas ou bloqueia talentos.</div>
  </section>
  <nav class="milestones" aria-label="Simulação de marco da oficina">
   <button class="milestone" data-mission="5" aria-pressed="true" type="button"><span class="number">05</span><span><strong>Primeira prova</strong><small>500 XP · confronto de treino · build editável</small></span><span class="tag">TESTE</span></button>
   <button class="milestone" data-mission="10" aria-pressed="false" type="button"><span class="number">10</span><span><strong>Último desafio</strong><small>1.000 XP · prévia visual da final</small></span><span class="tag">SIMULAÇÃO</span></button>
  </nav>
- <div class="roster-controls" role="group" aria-label="Quantidade de combatentes na arena"><span class="eyebrow">FORMATO DO CONFRONTO</span><button type="button" class="roster-mode" data-roster="30" aria-pressed="true"><strong>30 HERÓIS</strong><small>COLISEU DA TURMA</small></button><button type="button" class="roster-mode" data-roster="4" aria-pressed="false"><strong>4 HERÓIS</strong><small>ZOOM NO COMBATE</small></button><span class="roster-note">Personagens de demonstração, sem dados reais dos alunos</span></div>
+ <div class="roster-controls" role="group" aria-label="Quantidade de combatentes na arena"><span class="eyebrow">FORMATO DO CONFRONTO</span><button type="button" class="roster-mode" data-roster="30" aria-pressed="true"><strong>30 HERÓIS</strong><small>COLISEU DA TURMA</small></button><button type="button" class="roster-mode" data-roster="4" aria-pressed="false"><strong>4 HERÓIS</strong><small>ZOOM NO COMBATE</small></button><button type="button" id="phase2Mode" class="roster-mode" aria-pressed="false"><strong>✦ Experimentar 20 talentos</strong><small>MISSÃO 5 · B.1</small></button><span class="roster-note">Personagens fictícios, sem dados reais dos alunos</span></div>
  <div class="layout">
   <section class="theater">
    <div class="theater-head"><div><span class="eyebrow">01 · CIDADELA DO ECLIPSE · CAMPO AMPLIADO</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><div class="combat-stats"><span id="aliveCount" class="counter alive">30 em combate</span><span id="spectatorsCount" class="counter audience">0 na arquibancada</span><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div></div>
@@ -58,7 +58,7 @@
   </section>
   <aside class="side">
    <section class="panel scoreboard"><span class="eyebrow">02 · DESAFIANTES</span><h2>Os Combatentes</h2>
-     <p>Os 30 aventureiros são fictícios, divididos entre as quatro classes aprovadas. Os eliminados são transferidos para a arquibancada e não atacam mais. Os 120 talentos ainda estão em desenvolvimento.</p>
+     <p>Os 30 aventureiros são fictícios, divididos entre as quatro classes aprovadas. Os eliminados são transferidos para a arquibancada e não atacam mais. Os primeiros 20 talentos podem ser testados no modo M5; os demais 100 e suas animações exclusivas ainda estão em desenvolvimento.</p>
      <div id="fighters" class="fighters" role="list"></div>
      <div class="result" id="result" role="status">Ainda não há vencedor. Prepare o coliseu.</div>
    </section>
