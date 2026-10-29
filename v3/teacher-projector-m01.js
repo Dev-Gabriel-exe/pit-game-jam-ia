@@ -185,7 +185,23 @@ function pedagogicalDemoSlides(root,mission){
      explanation.append(label,...[...diagnostic.querySelectorAll('p')].map(p=>p.cloneNode(true)));
      diagnostic.replaceWith(explanation);
     }
-    result.push({title:'Passo '+(i+1)+' · '+route.steps[i].title,html:wrapper.outerHTML});
+    // 720p: show where/how and result/recovery on distinct slides, never shrink away the teaching text.
+    const verification=document.createElement('section');
+    verification.className='pit-projector-g4-verify';
+    verification.dataset.pitProjectorVerify='M04:'+i;
+    const verifyTitle=document.createElement('h3');
+    verifyTitle.textContent='Conferência '+(i+1)+' de 4 · '+route.steps[i].title;
+    verification.append(verifyTitle);
+    for(const selector of ['.g4-result','.pit-projector-diagnostic','.g4-source-link']){
+     const node=wrapper.querySelector(selector);
+     if(node){verification.append(node.cloneNode(true));node.remove();}
+    }
+    const previewNote=document.createElement('p');
+    previewNote.className='pit-projector-g4-verify-reminder';
+    previewNote.textContent='Teste no Preview do seu próprio jogo e registre o resultado real. A captura da documentação não comprova o funcionamento.';
+    verification.append(previewNote);
+    result.push({title:'Passo '+(i+1)+' · Onde clicar e o que fazer',html:wrapper.outerHTML});
+    result.push({title:'Passo '+(i+1)+' · Resultado e recuperação',html:verification.outerHTML});
    }
    const footer=root.querySelector('#g4Tutorial .g4-footer');
    if(footer)result.push({title:'Critério de conclusão e documentação',html:cleanCopy(footer)});
