@@ -75,13 +75,13 @@ for(const mode of modes){
   console.log('BALANCE MATRIX '+mode.name+' M'+mission+' '+JSON.stringify({wins:ordered,uniqueWinners:winnerIds.size,kills,damage:totalDamage,finishReasons}));
   assert(winnerIds.size>=Math.min(3,mode.seeds),'Winners always same ID: '+mode.name+'/'+mission);
   // This workshop has ~30 students. The 30-player game is the release gate:
-  // no class can take >60% of wins under varied builds. Four-player mode
+  // no class can take >55% of wins under varied builds. Four-player mode
   // is a spectator preview with a different metagame: report its deficiencies
   // explicitly, do not silently calibrate the main game for only 4 fighters.
-  if(mode.count===30&&Math.max(...Object.values(wins))>Math.ceil(mode.seeds*.60))
+  if(mode.count===30&&Math.max(...Object.values(wins))>Math.ceil(mode.seeds*.55))
    violations.push('One class dominates '+mode.name+' M'+mission+': '+JSON.stringify(wins));
-  if(mode.count===30&&Object.values(wins).filter(v=>v>0).length<3)
-   violations.push('Too few viable classes '+mode.name+' M'+mission+': '+JSON.stringify(wins));
+  if(mode.count===30&&Object.values(wins).filter(v=>v>=2).length<4)
+   violations.push('Class below two wins '+mode.name+' M'+mission+': '+JSON.stringify(wins));
   if(mode.count===4&&Math.max(...Object.values(wins))>Math.ceil(mode.seeds*.60))
    console.warn('KNOWN 4-HERO BALANCE WARNING '+mode.name+' M'+mission+' '+JSON.stringify(wins));
  }
