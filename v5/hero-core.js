@@ -231,7 +231,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     f.basic=(f.build.klass==='hunter'?1.27:f.build.klass==='mage'?1.18:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
     f.animation='attack';
     if(f.stats.range>3){
-     f.aim=f.build.klass==='hunter'?.46:.32;
+     f.aim=f.build.klass==='hunter'?.46:f.build.klass==='mage'?.44:.32;
      projectiles.push({id:++projectileSeq,x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack*(f.build.klass==='hunter'?.87:1),kind:'ranged',age:0});
      log('launch',f,{target:target.id});
     }else hit(f,target,f.stats.attack,'melee');
