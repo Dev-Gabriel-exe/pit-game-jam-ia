@@ -37,3 +37,9 @@ jobs:
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           sleep 2
           node qa/v5-four-classes-browser.cjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: v5-four-hero-model-comparison
+          path: qa/v5-kaykit-four-models-mobile.png
+          if-no-files-found: ignore
