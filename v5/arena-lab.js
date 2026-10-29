@@ -15,6 +15,8 @@ const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
 const params=new URLSearchParams(location.search);
+// Experimental M5-only comparison; absent query retains established movement.
+const experimentalSteering=params.get('nav')==='steer';
 const importedBuild=(()=>{
  try{
   const raw=params.get('draft');
@@ -276,7 +278,8 @@ function initRound({sameSeed=false}={}){
    damageScale:damageMode.scale,mageDamageBonus:damageMode.mageBonus,
    stormDelay:damageMode.scale===1?18:damageMode.scale===.75?28:damageMode.scale===.60?34:40,
    stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:damageMode.scale===.60?.60:.55,
-   engagementMode:trial?'spaced':'free'});
+   engagementMode:trial?'spaced':'free',
+   navigationMode:trial&&experimentalSteering?'steer':'direct'});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   $('cinematicCamera').setAttribute('aria-pressed','true');
