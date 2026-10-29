@@ -37,6 +37,7 @@ on:
       - 'qa/v5-arena-pacing.cjs'
       - 'qa/v5-engagement-spread.cjs'
       - 'v5/avatar-catalog.js'
+      - 'v5/legendary-wardrobe.js'
       - 'v5/personagens-lab.*'
       - 'qa/v5-avatar-*.cjs'
       - '.github/workflows/v5-arena-lab-qa.yml'
@@ -79,6 +80,7 @@ jobs:
           node --check qa/v5-arena-pacing.cjs
           node --check qa/v5-engagement-spread.cjs
           node --check v5/avatar-catalog.js
+          node --check v5/legendary-wardrobe.js
           node --check v5/personagens-lab.js
           node --check qa/v5-avatar-catalog.cjs
           node --check qa/v5-avatar-gallery-browser.cjs
