@@ -24,7 +24,7 @@ const importedBuild=(()=>{
   return PHASE2.canonical({...input,name:'Minha build de teste'},5);
  }catch{return null}
 })();
-const state={mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
+const state={mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
@@ -111,7 +111,7 @@ function heroName(id){
 function spotlight(text,detail,id,kind,priority,eventTime){
  // A dozen ordinary hits at once should never obscure a knockout or skill.
  const t=Number(eventTime)||0;
- if(priority<state.spotPriority&&t-state.spotTime<1.3)return;
+ if(priority<state.spotPriority&&t-state.spotTime<(state.spotPriority>=3?2.4:1.3))return;
  const element=$('battleSpotlight');
  element.dataset.type=kind;
  $('spotlightText').textContent=text;
@@ -131,6 +131,10 @@ function onEvent(event){
   const name=event.name||event.talent;
   spotlight('✦ '+hero+' usou '+name,'Talento '+event.talent+' · Missão 5',event.hero,'special',3,t);
   appendLog('✦ '+hero+' ativou '+name+' ('+event.talent+')','special');
+  state.abilityCount++;
+  $('talentLast').textContent=name+' · '+hero;
+  $('talentCount').textContent=state.abilityCount+' '+(state.abilityCount===1?'talento ativado':'talentos ativados');
+  $('talentTelemetry').dataset.active='true';
  }else if(event.type==='proc'||event.type==='charge'){
   if(t-state.lastHitLog>1){appendLog('✧ '+hero+' '+(event.type==='charge'?'carregou ':'ativou ')+event.talent,'special');state.lastHitLog=t}
  }else if(event.type==='prepare'){
@@ -211,6 +215,10 @@ function initRound(){
  state.stage.pause();
  state.fought=false;state.result=null;state.busy=true;state.speed=1;
  state.spotId=null;state.spotPriority=0;state.spotTime=-999;state.lastHitLog=-999;state.lastCameraTime=-999;
+ state.abilityCount=0;
+ $('talentTelemetry').dataset.active='false';
+ $('talentLast').textContent='Aguardando uma habilidade real';
+ $('talentCount').textContent='0 talentos ativados';
  $('battleSpotlight').dataset.type='ready';$('spotlightText').textContent='Aguardando início do confronto';$('spotlightSource').textContent='Os golpes, habilidades e eliminações aparecem aqui.';
  $('combatClock').textContent='00:00';$('followSpotlight').disabled=true;
  state.stage.setSpeed(1);
@@ -360,6 +368,7 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get phase2(){return state.phase2},
  get combatEngine(){return $('arenaStage').dataset.v5CombatEngine||'uninitialized'},
  get talentEvents(){return state.stage?.simulation?.events?.filter(e=>e.type==='talent').length||0},
+ get abilityCount(){return state.abilityCount},
  get selectedTalents(){return state.roster.map(x=>({klass:x.build.klass,ids:x.build.talents||[]}))},
  get customBuildLoaded(){return !!state.customBuild},
  get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'},
