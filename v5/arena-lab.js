@@ -31,7 +31,7 @@ const PACES=[
  {scale:.60,mageBonus:1.10,label:'Dano 60% · épico'},
  {scale:.50,mageBonus:1.10,label:'Dano 50% · lendário'}
 ];
-const state={damageIndex:3,mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
+const state={damageIndex:3,mission:5,count:importedBuild||params.get('count')==='4'?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
