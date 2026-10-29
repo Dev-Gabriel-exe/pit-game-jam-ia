@@ -56,7 +56,8 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free'}={}){
+ const spreadAggro=engagementMode==='spaced';
  const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
  const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
  const stormStart=clamp(Number(stormDelay)||18,18,50);
@@ -857,6 +858,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   const step=clamp(Number(rawStep)||.05,.001,.09),start=events.length;
   time+=step;
   const alive=()=>fighters.filter(f=>f.alive);
+  // Per-frame soft reservations: reduce 3-on-1 dogpiles when comparably
+  // close rivals are available. Not a forced duel or protected 1x1 arena.
+  const aggroReservations=new Map();
   const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-stormStart)*(.35*scale*shrinkFactor));
   for(const f of fighters){
    if(!f.alive)continue;
@@ -908,7 +912,22 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    const enemies=alive().filter(e=>e!==f);
    if(!enemies.length)continue;
    let target=enemies[0];
-   for(const e of enemies)if(dist(f,e)<dist(f,target))target=e;
+   if(spreadAggro){
+    let best=Infinity;
+    for(const rival of enemies){
+     const distance=dist(f,rival);
+     // Never redirect a fighter across half the map merely to avoid a duel.
+     // Reciprocal engagement and recent target continuity reduce oscillation.
+     const load=aggroReservations.get(rival.id)||0;
+     const crowdPenalty=Math.min(2,load)*Math.min(4.0,Math.max(1.7,f.stats.range*.42));
+     const continuity=f.lastTarget===rival.id?1.15:0;
+     const reciprocal=rival.lastTarget===f.id?1.25:0;
+     const score=distance+crowdPenalty-continuity-reciprocal;
+     if(score<best-1e-7){best=score;target=rival}
+    }
+    aggroReservations.set(target.id,(aggroReservations.get(target.id)||0)+1);
+    f.lastTarget=target.id;
+   }else for(const rival of enemies)if(dist(f,rival)<dist(f,target))target=rival;
    const dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
    const preferred=f.stats.range>3?Math.min(f.stats.range*.65,6.0):1.65;
