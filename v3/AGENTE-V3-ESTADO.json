@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T19:26:45.781Z",
+  "last_completed_at": "2026-10-29T20:18:39.238Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Chrome/static/Browser QA for M08/Entender projection on current branch; then M09/Criar low coverage and M04/M05 720p long slides",
+  "priority": "Confirm Chrome/static/Browser QA for M09/Criar and M08/Entender on current branch; then reduce M04/M05 720p long slides while preserving all tutorial steps",
   "current_phase": "MISSOES",
-  "last_task": "V4-M08-BRIEFING-PROJECTION-COVERAGE",
+  "last_task": "V4-M09-PRACTICE-PROJECTION-COVERAGE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2513,12 +2513,19 @@
       "status": "in_progress",
       "commit": "811cd5003c880af830613d9a854a4a5c7fe5ecba",
       "summary": "Restored M08/Entender into 11 projected slides, all six UX concepts, interactive before/after simulator and explicit Preview caveat; excluded private notes. Added Chrome assertions for coverage and live radio/button interactions. Three JS files parsed in V8; previous M04 Chrome and Browser CI SUCCESS. New M08 CI/Chrome NOT_CONFIRMED; physical/human tests NOT_RUN. Roadmap 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T20:18:39.238Z",
+      "task": "V4-M09-PRACTICE-PROJECTION-COVERAGE",
+      "status": "in_progress",
+      "commit": "cd13f9901a8747a37808bc758591caa7b3f3aff8",
+      "summary": "Recovered M09/Criar projected lesson as five public slides: 16-minute protocol, three real peer-test steps and evidence checklist; excluded HDMI-off private notes. CSS ensures one readable practice card per slide. Added two Chrome assertions, V8 parsing and 12 isolated source/render checks PASS. Chrome/CI not confirmed, human/physical tests NOT_RUN. Roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M08-BRIEFING-PROJECTION-COVERAGE",
+    "task": "V4-M09-PRACTICE-PROJECTION-COVERAGE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T19:26:45.781Z",
+    "updated_at": "2026-10-29T20:18:39.238Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2552,9 +2559,13 @@
       "b8fb9d9089854d8f0a6ea678637e6975a8d3fbdc",
       "7bde9d55f683e375f0ab12ff925812518891ed5e",
       "40f24dee2b6eed29efb8de83401e4ad8b89b6f4f",
-      "811cd5003c880af830613d9a854a4a5c7fe5ecba"
+      "811cd5003c880af830613d9a854a4a5c7fe5ecba",
+      "053883fcd6059c4ff23327e2594908f0f830da27",
+      "852b4701b6bad9e25bc6ed1f6e281c54e36d0c12",
+      "443b44d179e58e2b3206519d3d22f524d51d8e26",
+      "cd13f9901a8747a37808bc758591caa7b3f3aff8"
     ],
-    "documentation_commit": "cf2c82a9dbfe9c5082fac7bb3350a7c26fdc6b4b",
+    "documentation_commit": "3c1eeec6fa962a6377bf0dd77073c0af17f92764",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2935,6 +2946,20 @@
       },
       {
         "name": "GDevelop GUI, HDMI, physical mobile, peer playtest",
+        "result": "NOT_RUN"
+      },
+      {
+        "name": "M09 practice isolated V8 render/source checks",
+        "sha": "cd13f9901a8747a37808bc758591caa7b3f3aff8",
+        "result": "PASS 12/12 checks: private notes closed and absent from student, three public steps, evidence fields, GDevelop link, manual test caveat, invalid empty draft, projector branch and regression hooks. Both projector and Chrome QA scripts parse in V8; no Chrome execution claimed."
+      },
+      {
+        "name": "M09/M08 current GitHub CI",
+        "sha": "cd13f9901a8747a37808bc758591caa7b3f3aff8",
+        "result": "NOT_CONFIRMED: commit workflow-run query returned no PR-triggered runs; static/Chrome/Browser QA on current SHA not observed."
+      },
+      {
+        "name": "GDevelop GUI, HDMI, physical mobile, observed peer playtest",
         "result": "NOT_RUN"
       }
     ],
