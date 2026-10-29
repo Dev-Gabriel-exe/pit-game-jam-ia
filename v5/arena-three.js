@@ -255,7 +255,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   const transient=['attack','cast','hit','dodge'].includes(motion);
   // Different matching GLB clips are selected for consecutive strikes
   // instead of repeating just the first "Attack" animation forever.
-  const variant=force&&transient?++item.variantCursor||1:(item.variantCursor||0);
+  const variant=force&&transient?(item.variantCursor=(item.variantCursor||0)+1):(item.variantCursor||0);
   const chosen=matches[variant%matches.length];
   if(item.lastAction!==chosen||force){
    if(item.lastAction&&item.lastAction!==chosen)item.lastAction.fadeOut(.13);
@@ -455,7 +455,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
      triggerMotion(attacker,'attack',.47);
     }else if(ev.type==='hit'){
      if(ev.kind==='melee')triggerMotion(attacker,'attack',.44);
-     if(victim&&!victim.spectator&&victim.motionUntil<elapsed+.12)triggerMotion(victim,'hit',.25);
+     if(victim&&!victim.spectator)triggerMotion(victim,'hit',.25);
      if(victim)burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
     }else if(ev.type==='dodge'){
      triggerMotion(attacker,'dodge',.43);
