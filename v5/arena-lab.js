@@ -267,7 +267,9 @@ function initRound({sameSeed=false}={}){
   const damageMode=PACES[state.damageIndex];
   const battleLimit=damageMode.scale===1?95:damageMode.scale===.75?110:125;
   state.stage.fighters(state.roster,{seed:state.seed,limit:battleLimit,
-   damageScale:damageMode.scale,mageDamageBonus:damageMode.mageBonus});
+   damageScale:damageMode.scale,mageDamageBonus:damageMode.mageBonus,
+   stormDelay:damageMode.scale===1?18:damageMode.scale===.75?28:34,
+   stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:.60});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   $('cinematicCamera').setAttribute('aria-pressed','true');
