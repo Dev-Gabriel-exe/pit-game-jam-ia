@@ -36,7 +36,9 @@ function hydrate(session,serverEvidence,status){
  parsed.objective=take('Objetivo do jogador: ');
  parsed.victory=take('Condição de conclusão: ');
  parsed.feedback=take('Feedback da conquista: ');
- if(parsed.title&&parsed.genre&&parsed.action)save(session,parsed);
+ // Nunca substituir uma ficha local por uma evidencia remota incompleta ou truncada.
+  // Em uma entrega valida, todos os campos obrigatorios e o genero precisam sobreviver ao roundtrip.
+  if(GENRES.includes(parsed.genre)&&parsed.genre&&FIELDS.every(f=>parsed[f.id].trim().length>=f.min&&parsed[f.id].length<=f.max))save(session,parsed);
 }
 function stepProgress(draft){
  return [
