@@ -1,7 +1,7 @@
 /* Cinematic projection for all ten teacher missions; one content card per slide. */
 (function(){
 'use strict';
-let index=0,slides=[],overlay=null,origin=null;
+let index=0,slides=[],overlay=null,origin=null,projectorResizeObserver=null;
 const CARD_SELECTOR=['.tm1-hero-line','.tm1-concept','.tm1-key','.tm2-intro','.tm2-concept','.tm2-requirement','.tm3-lead','.tm3-concept','.tm3-principle','.tm3-comparison','.tm4f-card','.tm5-concept','.f6-card','.f6-scope','[class*="-concept-card"]','[class*="-theory-card"]','.t7f-concepts > *','.t8f-concepts > *','.t9-concepts > *','.t10-concepts > *','article','[class*="-card"]'].join(',');
 function missionNumber(){const match=($('missionNumber')?.textContent||'').match(/MISSÃO\s+(\d+)/i);return match?Number(match[1]):0;}
 const $=id=>document.getElementById(id);
@@ -481,7 +481,12 @@ function render(){
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;
  $('pitProjectorProgress').style.width=((index+1)/slides.length*100)+'%';
 }
-function close(){if(!overlay)return;overlay.remove();overlay=null;document.body.classList.remove('pit-projecting');origin?.focus();}
+function close(){
+ if(!overlay)return;
+ projectorResizeObserver?.disconnect();projectorResizeObserver=null;
+ window.removeEventListener('resize',updateScrollHint);
+ overlay.remove();overlay=null;document.body.classList.remove('pit-projecting');origin?.focus();
+}
 function move(step){index=Math.max(0,Math.min(slides.length-1,index+step));render();}
 function open(){
  if(!eligible())return;
@@ -491,7 +496,15 @@ function open(){
  overlay.innerHTML='<div class="pit-projector-top"><div><small>✦ PIT GAME JAM IA · MISSÃO <span id="pitProjectorMission"></span></small><h1 id="pitProjectorTitle"></h1></div><button id="pitProjectorClose" type="button">✕ Encerrar apresentação</button></div><main id="pitProjectorContent" class="pit-projector-slide"></main><footer class="pit-projector-footer"><button id="pitProjectorPrev" type="button">← Anterior</button><div class="pit-projector-meter"><span id="pitProjectorCount"></span><small id="pitProjectorScrollHint" role="status" aria-live="polite" hidden></small><div><i id="pitProjectorProgress"></i></div></div><button id="pitProjectorNext" type="button">Próximo →</button></footer>';
  document.body.appendChild(overlay);document.body.classList.add('pit-projecting');$('pitProjectorMission').textContent=String(missionNumber()).padStart(2,'0');
  $('pitProjectorClose').onclick=close;$('pitProjectorPrev').onclick=()=>move(-1);$('pitProjectorNext').onclick=()=>move(1);
- $('pitProjectorContent').addEventListener('scroll',updateScrollHint,{passive:true});render();$('pitProjectorClose').focus();
+ const content=$('pitProjectorContent');
+ content.addEventListener('scroll',updateScrollHint,{passive:true});
+ // HDMI/projector resolution changes and dynamic content heights must refresh the reading hint.
+ if(typeof ResizeObserver==='function'){
+  projectorResizeObserver=new ResizeObserver(updateScrollHint);
+  projectorResizeObserver.observe(content);
+ }
+ window.addEventListener('resize',updateScrollHint);
+ render();$('pitProjectorClose').focus();
 }
 document.addEventListener('keydown',e=>{if(!overlay)return;if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'){e.preventDefault();move(1)}
  else if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}
