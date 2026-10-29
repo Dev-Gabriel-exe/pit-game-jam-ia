@@ -12,17 +12,14 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('#phase2Mode').getAttribute('aria-pressed'),'true');
   assert.equal(await page.locator('[data-fighter]').count(),30);
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.phase2),true);
-  assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),'0.6');
+  assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),'0.5');
   const comparisonSeed=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed);
-  await page.locator('#damagePace').click();
-  assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),'1');
-  assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-damage-scale'),'1');
-  await page.locator('#damagePace').click();
-  assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),'0.75');
-  assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-damage-scale'),'0.75');
-  await page.locator('#damagePace').click();
-  assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-damage-scale'),'0.6');
-  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed),comparisonSeed,'Damage toggle must replay same seed for fair comparison');
+  for(const pace of ['1','0.75','0.6','0.5']){
+   await page.locator('#damagePace').click();
+   assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),pace);
+   assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-damage-scale'),pace);
+  }
+  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed),comparisonSeed,'Damage toggle must replay the same seed');
   const budgets=await page.evaluate(()=>{
    const x=window.PIT_V5_PHASE2;
    return ['warrior','mage','hunter','guardian'].map(c=>{
