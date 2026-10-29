@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T08:18:04.801Z",
+  "last_completed_at": "2026-10-29T09:13:37.993Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: confirm corrected M10 Browser QA SHA 334979e, then audit other projected teacher slides against student legitimate outcomes; pedagogy before aesthetics",
+  "priority": "V4-CROSS-AUDIT: confirm M08 static/Browser QA on final code, then continue literal teacher/student acceptance criteria; pedagogy before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M10-PITCH",
+  "last_task": "V4-CROSS-M08-TARGET-SCREEN",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2416,49 +2416,50 @@
       "task": "V4-CROSS-M10-PITCH",
       "commit": "334979ea2c4d20508a0710257f1e366acc1f07b8",
       "summary": "Cross-audit found M10 projected teacher concept and timed pitch required correction/backlog from M09 despite legitimate no-defect playtest accepted by M09 and M10 student/rubric. Updated teacher foundations to allow retested fix, justified backlog, or no change after no defect; added real VM/render regression. First static CI 40841041474 failed due test harness vm temporal dead zone; fixed 334979e. Corrected static CI 40841100397 SUCCESS; Browser QA 40841100405 pending. Prior M01/M02 static 40834635167 and Browser 40834635241 SUCCESS. GDevelop GUI/HDMI/physical mobile/peer NOT_RUN; 54/59 unchanged; main untouched."
+    },
+    {
+      "at": "2026-10-29T09:13:37.993Z",
+      "task": "V4-CROSS-M08-TARGET-SCREEN",
+      "commit": "27450669f0f42cc99748070397d1e6ff390d6fe0",
+      "summary": "Confirmed M10 Browser QA 40841100405 SUCCESS. M08 projected teacher rubric required narrow-screen/mobile test even for desktop-only games, while student guide omitted it. Aligned teacher public rubric/private guidance and student numbered practice to target resolution; narrow Preview optional for mobile-targeted games, no physical-device claim. Added 7 static regression assertions. Direct V8 checks: 10/10 source contracts and 3/3 JS syntax PASS. New M08 GitHub CI not yet confirmed. Human GDevelop GUI/HDMI/mobile/peer NOT_RUN. Original 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M10-PITCH",
+    "task": "V4-CROSS-M08-TARGET-SCREEN",
     "status": "in_progress",
-    "updated_at": "2026-10-29T08:18:04.801Z",
+    "updated_at": "2026-10-29T09:13:37.993Z",
     "code_commits": [
-      "d5658ceff1481bd741e2dcfd87d5b460ca9f3b5f",
-      "7bcf3532f9ce35261c732dbca8c2a6ad53102b0c",
-      "334979ea2c4d20508a0710257f1e366acc1f07b8"
+      "223c54ab661fedf2fe7f2ed0a78661cef15051eb",
+      "c38bae855a4662ce3ee130530d59f1d643206cf0",
+      "27450669f0f42cc99748070397d1e6ff390d6fe0"
     ],
-    "documentation_commit": "2baf064550e3b2bb41a8d3fdb1a2b83c992d52c1",
+    "documentation_commit": "63c671c677b65db26bd9a0476bbaedc2a8b5964f",
     "tests": [
       {
-        "name": "M01/M02 previous final static QA",
-        "run_id": 40834635167,
-        "result": "SUCCESS",
-        "sha": "0066ddde586c4bd007be51b903fed5d0ef53be48"
-      },
-      {
-        "name": "M01/M02 previous final Browser QA",
-        "run_id": 40834635241,
-        "result": "SUCCESS",
-        "sha": "0066ddde586c4bd007be51b903fed5d0ef53be48"
-      },
-      {
-        "name": "M10 projected pitch first static QA",
-        "run_id": 40841041474,
-        "result": "FAILURE",
-        "sha": "7bcf3532f9ce35261c732dbca8c2a6ad53102b0c",
-        "details": "New regression referenced vm before declaration (test harness bug); corrected in 334979e"
-      },
-      {
-        "name": "M10 projected pitch corrected static QA",
+        "name": "M10 previous final static QA",
         "run_id": 40841100397,
         "result": "SUCCESS",
         "sha": "334979ea2c4d20508a0710257f1e366acc1f07b8"
       },
       {
-        "name": "M10 projected pitch corrected Browser QA",
+        "name": "M10 previous final Browser QA",
         "run_id": 40841100405,
-        "result": "IN_PROGRESS",
+        "result": "SUCCESS",
         "sha": "334979ea2c4d20508a0710257f1e366acc1f07b8"
+      },
+      {
+        "name": "M08 direct source alignment contracts",
+        "result": "PASS 10/10",
+        "sha": "27450669f0f42cc99748070397d1e6ff390d6fe0"
+      },
+      {
+        "name": "M08 JS syntax V8",
+        "result": "PASS 3/3",
+        "sha": "27450669f0f42cc99748070397d1e6ff390d6fe0"
+      },
+      {
+        "name": "M08 GitHub CI",
+        "result": "NOT_YET_VERIFIED"
       },
       {
         "name": "GDevelop GUI, physical mobile, HDMI projection, peer playtest",
@@ -2469,7 +2470,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify corrected M10 Browser QA, then continue teacher/student literal audit for remaining projected acceptance contradictions",
-    "blocker": "Physical GDevelop, HDMI, mobile and human peer tests NOT_RUN; final corrected Browser QA pending"
+    "next_task": "Confirm CI of M08 final code and audit further literal teacher/student contradictions",
+    "blocker": "Physical GDevelop, HDMI, mobile and human peer tests NOT_RUN; M08 CI not yet verified"
   }
 }
