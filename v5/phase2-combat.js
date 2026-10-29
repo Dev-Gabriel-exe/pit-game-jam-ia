@@ -701,14 +701,31 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(!owner||!owner.alive||zone.until<=time){zones.splice(i,1);continue}
    for(const victim of fighters){
     if(!victim.alive||victim===owner||dist(zone,victim)>zone.r)continue;
-    if(zone.talent==='E01'&&!zone.triggered){
+    if(['E01','E08','E10'].includes(zone.talent)&&!zone.triggered){
+     if(zone.talent==='E08'){
+      zone.triggered=true;
+      applyHit(owner,victim,owner.stats.attack*.70*effectiveness(owner,'E08'),{kind:'special',skill:'E08'});
+      emit('trap',owner,{talent:'E08',target:victim.id});
+     }
+     if(zone.talent==='E10'){
+      zone.triggered=true;
+      for(const hit of fighters)if(hit.alive&&hit!==owner&&dist(zone,hit)<=2)
+       applyHit(owner,hit,owner.stats.attack*1.15*effectiveness(owner,'E10'),{kind:'special',skill:'E10'});
+      emit('trap',owner,{talent:'E10',target:victim.id});
+     }
+     if(zone.talent==='E01'){
      zone.triggered=true;
      const inflicted=applyHit(owner,victim,owner.stats.attack*.90*effectiveness(owner,'E01'),{kind:'special',skill:'E01'});
      if(inflicted>0&&victim.alive)applySlow(victim,.20,2,owner);
      emit('trap',owner,{talent:'E01',target:victim.id});
      if(inflicted>0&&victim.alive&&has(owner,'E03')&&(owner.cooldowns.E03||0)<=0){
       owner.cooldowns.E03=12;victim.poisonUntil=time+3;victim.poisonPower=owner.stats.attack*.025*effectiveness(owner,'E03');
-      victim.poisonOwner=owner.id;emit('proc',owner,{talent:'E03',target:victim.id});
+      victim.poisonOwner=owner.id;reactAilment(victim);emit('proc',owner,{talent:'E03',target:victim.id});
+     }
+     }
+     if(has(owner,'E09')&&!owner.passives.e09NetUsed){
+      owner.passives.e09NetUsed=true;owner.passives.e09NetReady=true;
+      emit('charge',owner,{talent:'E09',target:victim.id});
      }
      break;
     }
@@ -782,7 +799,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
       }
      }
      if(amount>0&&effect.r08Weak&&source&&victim.alive){
-      victim.r08Until=time+3;victim.r08Power=Math.max(victim.r08Power,effect.r08Weak);
+      victim.r08Power=victim.r08Until>time?Math.max(victim.r08Power,effect.r08Weak):effect.r08Weak;victim.r08Until=time+3;
       emit('debuff',source,{target:victim.id,kind:'skill-weak',seconds:3,talent:'R08'});
      }
      if(amount>0&&effect.slow)applySlow(victim,effect.slow,effect.duration,source);
