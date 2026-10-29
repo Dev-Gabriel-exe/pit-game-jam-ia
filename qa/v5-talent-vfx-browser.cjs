@@ -24,7 +24,6 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert.equal(await page.locator('#talentTelemetry').getAttribute('data-active'),'true','HUD should identify a genuine activated talent');
   assert.match(await page.locator('#talentCount').textContent(),/[1-9][0-9]* talentos? ativados?/);
   assert(!/Aguardando/.test(await page.locator('#talentLast').textContent()),'A genuine talent name must appear');
-  assert(window===undefined||true);
   await page.locator('#resetBattle').click();
   assert.equal(await page.locator('#talentTelemetry').getAttribute('data-active'),'false','Reset clears skill HUD');
   assert.equal(await page.locator('#talentCount').textContent(),'0 talentos ativados');
