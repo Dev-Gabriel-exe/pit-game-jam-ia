@@ -148,6 +148,17 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  const log=(type,f,payload={})=>{const e={seq:++seq,time:+time.toFixed(2),type,hero:f?.id||null,...payload};events.push(e);return e};
  const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({...o,x:o.x*scale,z:o.z*scale,r:o.r*scale}));
  const projectiles=[];let projectileSeq=0;
+ function shoot(f,target,speed,damage,kind,y){
+  // Snapshot the target's velocity once, at release. A projectile must travel
+  // through the arena and be dodgeable, not curve infinitely to track a hero.
+  const distance=Math.max(.0001,Math.hypot(target.x-f.x,target.z-f.z));
+  const lead=Math.min(.5,distance/speed*.75);
+  const dx=(target.x+target.vx*lead)-f.x,dz=(target.z+target.vz*lead)-f.z;
+  const len=Math.max(.0001,Math.hypot(dx,dz));
+  projectiles.push({id:++projectileSeq,x:f.x,y,z:f.z,
+    vx:dx/len*speed,vz:dz/len*speed,
+    from:f.id,to:target.id,speed,damage,kind,age:0});
+ }
  const areaHit=(f,radius,damage,except=null)=>{
   for(const o of fighters)if(o.alive&&o!==f&&o!==except&&Math.hypot(o.x-f.x,o.z-f.z)<radius)hit(f,o,damage,'special');
  };
@@ -245,7 +256,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     f.animation='attack';
     if(f.stats.range>3){
      f.aim=f.build.klass==='hunter'?.46:f.build.klass==='mage'?.44:.32;
-     projectiles.push({id:++projectileSeq,x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack*(f.build.klass==='hunter'?.87:1),kind:'ranged',age:0});
+     shoot(f,target,16,f.stats.attack*(f.build.klass==='hunter'?.87:1),'ranged',1.6);
      log('launch',f,{target:target.id});
     }else hit(f,target,f.stats.attack,'melee');
    }
@@ -300,7 +311,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
       const count=Math.min(targets.length,2+f.build.talents.multishot);
       for(let n=0;n<count;n++){
        const chosen=targets[n];
-       projectiles.push({id:++projectileSeq,x:f.x,y:1.65,z:f.z,from:f.id,to:chosen.id,speed:18,damage:f.stats.attack*(n===0?.88:.61),kind:'multishot',age:0});
+       shoot(f,chosen,18,f.stats.attack*(n===0?.88:.61),'multishot',1.65);
       }
       if(f.build.talents.trap)target.slow=2+f.build.talents.trap;
     }
@@ -326,20 +337,26 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   for(let i=projectiles.length-1;i>=0;i--){
    const p=projectiles[i],target=fighters.find(x=>x.id===p.to);
    if(!target?.alive){projectiles.splice(i,1);continue}
-   const dx=target.x-p.x,dz=target.z-p.z,d=Math.max(.00001,Math.hypot(dx,dz));
-   const v=p.speed*step,prevX=p.x,prevZ=p.z;
-   p.x+=dx/d*v;p.z+=dz/d*v;p.age+=step;
+   const prevX=p.x,prevZ=p.z;
+   p.x+=p.vx*step;p.z+=p.vz*step;p.age+=step;
+   const segX=p.x-prevX,segZ=p.z-prevZ,len2=Math.max(.00001,segX*segX+segZ*segZ);
+   const hitT=clamp(((target.x-prevX)*segX+(target.z-prevZ)*segZ)/len2,0,1);
+   const closestX=prevX+segX*hitT,closestZ=prevZ+segZ*hitT;
+   const targetDistance=Math.hypot(target.x-closestX,target.z-closestZ);
    // The same collision radii used by walking actors now block arrows/spells.
    // Deterministic segment-vs-circle checks prevent shooting through pillars.
    let obstructed=false;
    for(const obstacle of obstacles){
-    const segX=p.x-prevX,segZ=p.z-prevZ,len2=Math.max(.00001,segX*segX+segZ*segZ);
     const t=clamp(((obstacle.x-prevX)*segX+(obstacle.z-prevZ)*segZ)/len2,0,1);
     const qx=prevX+segX*t,qz=prevZ+segZ*t;
     if(Math.hypot(qx-obstacle.x,qz-obstacle.z)<obstacle.r+.2){obstructed=true;break}
    }
    if(obstructed){projectiles.splice(i,1);continue}
-   if(d<=v+.7){const from=fighters.find(x=>x.id===p.from);if(from?.alive)hit(from,target,p.damage,p.kind);projectiles.splice(i,1)}
+   if(targetDistance<=.85){
+    const from=fighters.find(x=>x.id===p.from);
+    if(from?.alive)hit(from,target,p.damage,p.kind);
+    projectiles.splice(i,1);
+   }
    else if(p.age>3)projectiles.splice(i,1);
   }
   const left=fighters.filter(x=>x.alive);
