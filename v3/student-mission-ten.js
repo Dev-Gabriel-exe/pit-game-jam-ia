@@ -23,9 +23,9 @@ const accessPlaceholder=route=>({
 }[route]||'Descreva o acesso ao jogo');
 function evidence(s){const d=load(s);return ['M10 | '+d.route,...fields.map(f=>names[f.id]+': '+clean(d[f.id]))].join('\n')}
 function parseEvidence(s){if(typeof s!=='string'||!s.startsWith('M10 | '))return null;const d=blank(),lines=s.split(/\r?\n/),route=lines[0].slice(6).trim();if(routes.includes(route))d.route=route;const inv=Object.fromEntries(Object.entries(names).map(([k,v])=>[v,k]));for(const line of lines.slice(1)){const n=line.indexOf(': ');if(n<0)continue;const id=inv[line.slice(0,n)],f=fields.find(x=>x.id===id);if(f)d[id]=line.slice(n+2).slice(0,f.max)}return d}
-function hydrate(s,e,status){const d=parseEvidence(e);if(!d)return;if(fields.some(f=>load(s)[f.id].trim()))return;d.checks=['submitted','approved'].includes(status)?[0,1,2]:[];save(s,d)}
+function hydrate(s,e,status){const d=parseEvidence(e);if(!d)return;if(fields.some(f=>load(s)[f.id].trim()))return;d.checks=[];save(s,d)}
 function profile(c){const i=c.idea||{};return {title:clean(i.title)||'seu jogo',genre:clean(i.genre)||'gênero autoral'}}
-function render(c){const d=load(c.session),p=profile(c),locked=['submitted','approved'].includes(c.status),v=validate(c.session);
+function render(c){const d=load(c.session),p=profile(c),locked=['submitted','approved'].includes(c.status),v=locked?{ok:true}:validate(c.session);
 const head='<header><small>MISSÃO 10 / 10 · LANÇAMENTO · 30 MIN</small><h2>Seu jogo merece ser jogado.</h2><p>'+esc(p.title)+' · '+esc(p.genre)+'</p></header>';
 const brief='<section class="m10s-brief"><h3>Uma demonstração técnica de até dois minutos.</h3><p>Mostre início, mecânica, regra, conclusão e playtest. Salve o projeto editável; link público é opcional, sem pagamento.</p><button type="button" data-m10s-nav="practice">PREPARAR LANÇAMENTO ›</button></section>';
 const guide=window.PIT_GDEVELOP_M10_GUIDE?window.PIT_GDEVELOP_M10_GUIDE.render(routes.indexOf(d.route)):'<p>Guia indisponível. Use Preview local.</p>';
