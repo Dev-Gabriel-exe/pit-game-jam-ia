@@ -60,3 +60,20 @@ Branch: `feature/v5-arena-dos-criadores`. Não integrar `main` antes da revisão
 
 ## Fases
 Esse trabalho é uma **subfase visual retroativa D** aprovada para seguir na mesma branch, em paralelo ao E, sem pular F câmera, G QA nem H integração servidor. Ativar bloqueio entre alunos verdadeiros **somente** em H, depois que E/F/G forem validados.
+
+
+## Implementação posterior — 40 personagens 3D modulares concluídos na prévia
+
+**Data:** 29/10/2026. **Branch:** `feature/v5-arena-dos-criadores`. Não fazer merge na `main`.
+
+- `v5/legendary-wardrobe.js`: geração determinística de **40 montagens 3D completas**, dez por classe. Armaduras de torso e pernas, ombreiras de quatro formatos, capacetes/capuzes de cinco formatos, mantos, emblemas, cristais e armas físicas (espadas simples/duplas/pesadas, machados, martelos, lanças, arcos, bestas, escudos, cajados, orbes, livros). Cada combinação tem posição e malha própria; não se limita a recolorir o GLB.
+- Fonte das quatro roupas-base: **Quaternius Modular Character Outfits – Fantasy [Standard]**, preservado no repositório público `agentkaerf/FreeModels`, commit `db3df04d1e4714298a09510b26fb6de6645138a2`, diretório `Exports/glTF (Godot-Unreal)/Outfits/`. Roupas reais disponibilizadas na edição grátis: `Male_Ranger.gltf`, `Female_Ranger.gltf`, `Male_Peasant.gltf`, `Female_Peasant.gltf`. Imagens e buffers são carregados junto com os glTFs. Licença das roupas-base: **CC0** conforme autora e README do arquivo de distribuição.
+- `v5/personagens-lab.js`: troca do modelo real por variação; geometria e materiais do traje reconstruídos para cada avatar; altura normalizada a 2,6; carregamento glTF sob demanda com cache e fallback KayKit CC0 se o host externo ficar indisponível.
+- `v5/arena-three.js`: **modo opcional** `?phase2=1&avatars=1&count=4&avatar=mage-04` mostra o traje selecionado no Coliseu 4 jogadores, sem alterar HP, IA, talentos ou progressão. As 30 peças simultâneas **não foram aprovadas para performance**; não afirmar FPS em celulares ou implantação multiusuário.
+- Não são 40 corpos/rigs distintos baixados: são **40 personagens 3D montados com quatro bases de roupa licenciadas e dezenas de peças geométricas de equipamento diferentes**, como autorizado pelo conceito de modelos modulares gratuitos.
+- `qa/v5-wardrobe-catalog.cjs` e `qa/v5-wardrobe-browser.cjs`: garantem 40 receitas não idênticas, ao menos 35 objetos reais de equipamentos por avatar e carregamento WebGL no mobile. `qa/v5-avatar-combat-browser.cjs`: regressão do modo arena 4, com prazo maior por conta do download e Shader Software.
+- Resultado anterior confirmado: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40960192884 — catálogo e navegador aprovaram os **40 personagens construídos**. A bateria nova com a integração de arena deve ser conferida na execução de https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions.
+- URLs do demonstrador (Vercel READY, domínio público): 
+  - Arsenal: https://pit-v5-arsenal-demo.vercel.app/v5/personagens-lab.html
+  - Coliseu com modelos opcionais: https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1&avatars=1&count=4&avatar=mage-04
+- **Próxima etapa estética:** artes das cartas e otimização de renderização de 30 personagens, animações sincronizadas e VFX artísticos por talento; só sincronizar reservas entre diferentes celulares na Fase H via banco/autoridade única.
