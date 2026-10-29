@@ -24,7 +24,8 @@ function save(session,data){try{localStorage.setItem(key(session),JSON.stringify
 function parseEvidence(raw){
  if(typeof raw!=='string'||!raw.startsWith('MISSÃO 02 — MVP EM FOCO'))return null;
  const lines=raw.split('\n'),take=prefix=>{const line=lines.find(l=>l.startsWith(prefix));return line?line.slice(prefix.length).trim():''};
- return {scene:take('Cena: '),mechanic:take('Mecânica: '),elements:take('Elementos: '),test:take('Teste: '),later:take('Depois: ')};
+ const later=take('Depois: ');
+  return {scene:take('Cena: '),mechanic:take('Mecânica: '),elements:take('Elementos: '),test:take('Teste: '),later:later==='Não informado'?'':later};
 }
 function hydrate(session,raw,status){
  const obj=parseEvidence(raw);if(!obj)return;
