@@ -127,13 +127,17 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  const scale=clamp(arenaScale,1,5);
  const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
  const spawnPhase=rnd()*Math.PI*2;
+ // In 4-player previews a 170m court spreads melee and ranged so far
+ // apart that kiting becomes decisive before the first skill fires.
+ // Keep the visual coliseum, but start four heroes in a tighter combat zone.
+ const spawnScale=heroes.length<=4?Math.min(scale,2.25):scale;
  const fighters=heroes.map((input,i)=>{
   const name=String(input.name||'Aventureiro').slice(0,56),id=String(input.id||('hero-'+i)).slice(0,80);
   if(used.has(id))throw Error('Personagem duplicado.');used.add(id);
   // Trusted caller must canonicalize player build using server-awarded XP.
   const b=canonical(input,name,clamp(input.xp,0,1030)),stats=derived(b);
   const theta=i*2.3999632297+spawnPhase+(rnd()-.5)*.32;
-  const rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03)+(rnd()-.5)*1.25)*scale;
+  const rad=(5.2+Math.sqrt(i)*(spawnScale>3?1.65:1.03)+(rnd()-.5)*1.25)*spawnScale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
    basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0,eliminatedAt:null};
@@ -214,6 +218,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     f.rush=1.35;
     f.rushCooldown=5.5+rnd()*1.2;
     if(f.build.klass==='warrior')f.shield=Math.min(f.stats.hp*.24,f.shield+20);
+    else if(f.build.klass==='guardian')f.shield=Math.min(f.stats.hp*.30,f.shield+10);
     log('dash',f,{target:target.id,x:f.x,z:f.z});
    }
    // A bow/staff cannot fire accurately while sprinting at full velocity.
@@ -261,7 +266,9 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     log('special',f,{ability:f.stats.special,x:f.x,z:f.z});
     if(f.build.klass==='mage'){
       areaHit(f,3.5+f.build.talents.nova*.75,f.stats.attack*1.18);
-      if(f.build.talents.ward)f.shield+=8*f.build.talents.ward;
+      // Shields from repeated mage casts must not stack without limit.
+      // Cap includes every source, consistent with the V5 phase-2 specification.
+      if(f.build.talents.ward)f.shield=Math.min(f.stats.hp*.30,f.shield+8*f.build.talents.ward);
       if(f.build.talents.meteor)areaHit(f,5.5,f.stats.attack*.5);
     }else if(f.build.klass==='warrior')areaHit(f,3,f.stats.attack*1.8);
     else if(f.build.klass==='rogue'){
@@ -273,7 +280,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     }else if(f.build.klass==='guardian'){
       // The Guardian's close-range pulse needs an actual control effect
       // to compete with mobile ranged units. Shield remains capped.
-      f.shield=Math.min(f.stats.hp*.35,f.shield+16+f.build.talents.aegis*10);
+      f.shield=Math.min(f.stats.hp*.30,f.shield+16+f.build.talents.aegis*10);
       const impactRadius=3.35+f.build.talents.taunt*.6;
       areaHit(f,impactRadius,f.stats.attack*1.03);
       for(const other of fighters){
