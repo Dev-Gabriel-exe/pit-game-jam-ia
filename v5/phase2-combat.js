@@ -928,6 +928,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
     aggroReservations.set(target.id,(aggroReservations.get(target.id)||0)+1);
     f.lastTarget=target.id;
    }else for(const rival of enemies)if(dist(f,rival)<dist(f,target))target=rival;
+   // Expose the selected opponent in both modes for deterministic crowding QA.
+   f.lastTarget=target.id;
    const dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
    const preferred=f.stats.range>3?Math.min(f.stats.range*.65,6.0):1.65;
