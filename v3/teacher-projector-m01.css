@@ -124,3 +124,6 @@ body.pit-projecting{overflow:hidden!important}
  #pitProjector .pit-projector-slide{padding:1.5vh 5vw}
  #pitProjector .pit-projector-footer button,#pitProjector .pit-projector-top button{padding:8px 14px}
 }
+
+/* Safe alignment prevents the first lines of an oversized tutorial from being clipped above the scroll area. */
+#pitProjector .pit-projector-slide{align-items:safe center;justify-content:safe center}
