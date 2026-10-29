@@ -28,7 +28,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    if(!(await page.locator('#pitProjector').count())){rows.push({mission,phase,...before,error:'NO_SLIDES'});continue}
    const slideCount=await page.locator('#pitProjectorCount').innerText();
    const n=Number(slideCount.split('/')[1]?.trim())||1;
-   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[];
+   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[];
    let demoInteraction=null;
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
@@ -47,6 +47,14 @@ const {chromium}=require('playwright'),fs=require('node:fs');
     if(mission===4&&phase==='review'){
      const review=page.locator('#pitProjectorContent [data-pit-projector-review]');
      if(await review.count())m04ReviewSteps.push(await review.evaluate(el=>({
+      id:el.dataset.pitProjectorReview,
+      text:el.textContent.trim(),
+      privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+     })));
+    }
+    if(mission===5&&phase==='review'){
+     const review=page.locator('#pitProjectorContent [data-pit-projector-review]');
+     if(await review.count())m05ReviewSteps.push(await review.evaluate(el=>({
       id:el.dataset.pitProjectorReview,
       text:el.textContent.trim(),
       privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
@@ -113,7 +121,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title}));
   }
@@ -229,6 +237,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  const m04=rows.find(x=>x.mission===4&&x.phase==='demo');
  const m04Review=rows.find(x=>x.mission===4&&x.phase==='review');
  const m05=rows.find(x=>x.mission===5&&x.phase==='demo');
+ const m05Review=rows.find(x=>x.mission===5&&x.phase==='review');
  const m07=rows.find(x=>x.mission===7&&x.phase==='demo');
  const expected01=Array.from({length:5},(_,i)=>'M01:'+i),expected03=Array.from({length:6},(_,i)=>'M03:'+i),expected04=Array.from({length:4},(_,i)=>'M04:'+i),expected05=Array.from({length:5},(_,i)=>'M05:'+i),expected07=Array.from({length:4},(_,i)=>'M07:'+i);
  const projectorChecks=[
@@ -244,6 +253,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M04: all four steps of selected GDevelop route projected separately',pass:JSON.stringify(m04?.guideSteps)===JSON.stringify(expected04)},
   {name:'M04: each step includes action, result, recovery, and source without private notes',pass:m04?.m04Sections?.length===4&&m04.m04Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
   {name:'M04: platform, puzzle, and 3D routes each project all four complete steps',pass:m04RouteChecks.length===3&&m04RouteChecks.every(x=>x.pass)},
+  {name:'M05 review: intro, four rubric criteria, decisions and evidence caveat on separate slides',pass:m05Review?.m05ReviewSteps?.length===7&&JSON.stringify(m05Review.m05ReviewSteps.map(x=>x.id))===JSON.stringify(['M05:intro','M05:rubric-1','M05:rubric-2','M05:rubric-3','M05:rubric-4','M05:decision','M05:record'])&&m05Review.m05ReviewSteps.every(x=>x.privateNotes===0)&&(m05Review.retainedRatio||0)>.5},
+  {name:'M05 review: real Preview checks, approval/revision and no automatic GDevelop validation',pass:!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:intro'&&x.text.includes('Preview'))&&['EVENTO','AÇÃO E ESTADO','ACEITE 3×','CONTINUIDADE'].every((label,i)=>m05Review?.m05ReviewSteps?.[i+1]?.text.includes(label))&&!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:decision'&&x.text.includes('APROVAR')&&x.text.includes('SOLICITAR REVISÃO'))&&!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:record'&&x.text.includes('não valida automaticamente')&&x.text.includes('evidência permanece autodeclaratória'))},
   {name:'M05: five GDevelop event steps projected separately',pass:JSON.stringify(m05?.guideSteps)===JSON.stringify(expected05)},
   {name:'M05: two actions, expected result, visible recovery, source and no private notes',pass:m05?.m05Sections?.length===5&&m05.m05Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
   {name:'M05: RPG, puzzle and 3D routes each project five complete steps',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
