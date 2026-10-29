@@ -150,7 +150,7 @@ function start(list,label){
  scoreboard();
 }
 function showHero(){
- if(!sceneFrame)return;
+ if(!view||!THREE)return;
  running=false;world=null;stopSceneMeshes();
  spawn({...R.fighterPreview??{},id:'hero',name:previewName,build:player,x:0,z:0,hp:100,maxHp:100,alive:true,kills:0,walk:0,flash:0,attackPhase:0,angle:0});
  $('battleStatus').textContent='PERSONAGEM EM EXIBIÇÃO';$('leaderName').textContent=previewName;
