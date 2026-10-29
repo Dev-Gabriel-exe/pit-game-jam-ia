@@ -275,6 +275,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();let followId=null;
+ // Stage-only diagnostics: avoid overclaiming that a successful browser load
+ // proves 30-player GPU performance on actual phones.
+ let monitorFrames=0,monitorStarted=performance.now();
+ container.dataset.v5QualityMode=quality;
+ container.dataset.v5FrameRate='measuring';
+ container.dataset.v5DrawCalls='0';
+ container.dataset.v5Triangles='0';
  function discardEffect(e){root.remove(e.mesh);e.mesh.geometry?.dispose?.();if(Array.isArray(e.mesh.material))e.mesh.material.forEach(m=>m.dispose?.());else e.mesh.material?.dispose?.()}
  function clearVisuals(){for(const e of effects)discardEffect(e);effects.length=0}
  function clearHeroes(){
@@ -837,6 +844,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    fl.node.style.transform='translate(-50%,-50%) translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
   }
   renderer.render(scene,camera);
+  monitorFrames++;
+  const monitorNow=performance.now(),monitorSpan=monitorNow-monitorStarted;
+  if(monitorSpan>=950){
+   container.dataset.v5FrameRate=String(Math.round(monitorFrames*1000/monitorSpan));
+   container.dataset.v5DrawCalls=String(renderer.info.render.calls);
+   container.dataset.v5Triangles=String(renderer.info.render.triangles);
+   monitorFrames=0;monitorStarted=monitorNow;
+  }
  }
  renderer.setAnimationLoop(loop);
  const onVisibility=()=>{if(document.hidden)pause()};
