@@ -74,7 +74,8 @@ function sample(rosterCount,scale,seed){
    approvedMissions:5};
  });
  const sim=PHASE2.battle(list,{seed,arenaScale:5,limit:scale===1?95:110,
-  damageScale:scale,mageDamageBonus:scale===1?1:1.1});
+  damageScale:scale,mageDamageBonus:scale===1?1:1.1,
+  stormDelay:scale===1?18:28,stormRateFactor:scale===1?1:.70});
  const result=sim.run(2400);
  const first=result.events.find(e=>e.type==='knockout'||e.type==='storm');
  return {time:result.time,firstKo:first?.time??null,winner:result.winner?.klass||'none',
