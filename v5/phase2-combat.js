@@ -56,9 +56,11 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1}={}){
  const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
  const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
+ const stormStart=clamp(Number(stormDelay)||18,18,50);
+ const shrinkFactor=clamp(Number(stormRateFactor)||1,.4,1);
  if(!Array.isArray(entries)||entries.length<2||entries.length>30)throw Error('Arena experimental aceita 2 a 30 heróis');
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
@@ -855,7 +857,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   const step=clamp(Number(rawStep)||.05,.001,.09),start=events.length;
   time+=step;
   const alive=()=>fighters.filter(f=>f.alive);
-  const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-18)*(.35*scale));
+  const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-stormStart)*(.35*scale*shrinkFactor));
   for(const f of fighters){
    if(!f.alive)continue;
    f.gcd=Math.max(0,f.gcd-step);f.basic=Math.max(0,f.basic-step);
