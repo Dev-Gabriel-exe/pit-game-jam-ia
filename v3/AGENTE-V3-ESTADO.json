@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-PROJECTOR-CI: confirm new Chrome scrolling regression 1280/1600/1920 and Browser QA; then split oversized M04/M05 slides and audit low-coverage phases",
+  "priority": "Check Browser QA 40900326551 and latest checkpoint CI; split M04/M05 oversized projector steps into readable screens without dropping where/action/result/recovery/source; inspect six low-coverage phases",
   "current_phase": "MISSOES",
   "last_task": "V4-CROSS-PROJECTOR-OVERFLOW-KEYBOARD",
   "completed_count": 54,
@@ -2457,6 +2457,13 @@
       "status": "in_progress",
       "commit": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
       "summary": "Found projector PageDown skipped unread parts of long GDevelop tutorial slides; vertical centering could clip the first lines. Added PageDown/PageUp scroll-first navigation, reset on slide change, accessible overflow hint, safe center alignment and compact 720p chrome without shrinking tutorial body. Added deterministic Chrome regression for overflow/keyboard/top visibility/private notes, documented limitations. Static QA 40900307916 SUCCESS on prior CSS commit; new 6fbbbb7 static 40900326543, projector 40900326757 and Browser 40900326551 IN_PROGRESS at checkpoint. Prior 2a1b2d projector 40900268316 SUCCESS. No manual HDMI/GDevelop GUI/mobile/peer. 54/59 unchanged, main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T15:19:35Z",
+      "task": "V4-CROSS-PROJECTOR-OVERFLOW-KEYBOARD",
+      "status": "in_progress",
+      "commit": "5b0234cffaf415d7861e1169c5089c069cdd6df3",
+      "summary": "Verified GitHub Chrome projector audit 40900326757 SUCCESS 3/3 viewport jobs and 15/15 assertions including keyboard scroll-first, top visibility, next-slide reset and private-note exclusion. Static QA 40900326543 SUCCESS. 720p M04 4/7 and M05 5/9 still scroll; M07 0/7. Browser QA 40900326551 IN_PROGRESS; manual HDMI/GDevelop GUI/mobile/peer NOT_RUN. Next: split dense slides and inspect six low-coverage phases; 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
@@ -2486,7 +2493,7 @@
       "9d3d825dc37b7b25a5cba6b28ab93f57e79b028f",
       "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582"
     ],
-    "documentation_commit": "4357929108ba8625e79399c7cafa44bd02a21a39",
+    "documentation_commit": "5b0234cffaf415d7861e1169c5089c069cdd6df3",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2708,13 +2715,25 @@
       {
         "name": "Human GDevelop GUI, HDMI, physical mobile, observed peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "Final Chrome projector 3-viewport audit",
+        "sha": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
+        "run_id": 40900326757,
+        "result": "SUCCESS: Chrome 1280x720, 1600x900, 1920x1080; 15/15 projector regressions PASS; 720p M04 4/7 scrolling, M05 5/9, M07 0/7; six phases below 40% text ratio"
+      },
+      {
+        "name": "Final projector code static QA",
+        "sha": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
+        "run_id": 40900326543,
+        "result": "SUCCESS confirmed"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm final Chrome 3-viewports/Browser/static on 6fbbbb7; fix regressions if any; then reduce M04/M05/M07 720p scroll and review six low-coverage mission phases",
-    "blocker": "CI for final overflow regression not confirmed at checkpoint; human GDevelop GUI, HDMI, physical mobile and peer playtest remain NOT_RUN"
+    "next_task": "Check Browser QA 40900326551 and latest checkpoint CI; split M04/M05 oversized projector steps into readable screens without dropping where/action/result/recovery/source; inspect six low-coverage phases",
+    "blocker": "Browser QA final code still IN_PROGRESS at last read; physical HDMI, GDevelop GUI, mobile and peer playtest NOT_RUN"
   }
 }
