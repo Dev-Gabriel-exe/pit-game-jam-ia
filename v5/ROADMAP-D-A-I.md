@@ -88,3 +88,10 @@ A ordem de trabalho é **D → E → F → G → H → I**. Se for detectado pro
 - Arena/Three.js: `v5/arena-three.js`, `v5/arena-citadel.js`.
 - Protótipo da câmera existente: `v5/arena-lab.js`, `focusFighter`, `overview`.
 - Talentos e identidades: `v5/talent-vfx.js`, `v5/talent-choreography.js`, `v5/build-identity.js`.
+
+
+### Complemento visual aprovado para a V5 (subfase D de personagens)
+- Após pedido do usuário, criados **40 personagens 3D modulares grátis**: dez visuais por classe, quatro malhas de roupas CC0 Quaternius como base, armas/capacetes/armaduras 3D diferentes. Detalhes em `v5/PERSONAGENS-GRATUITOS-40-PLANO.md`.
+- Demo isolada de escolha exclusiva: `v5/personagens-lab.html`; modo opcional `?avatars=1&count=4` no Coliseu. **Ainda não é seleção persistida entre dispositivos nem sincronização de alunos reais.**
+- Não confundir **40 aparências** com **40 rigs originalmente esculpidos** ou 40 animações exclusivas.
+- **Fase E** balanceamento segue não homologada; **F** direção de câmera automática, **G** FPS/QA mobile 30 pessoas, **H** integração real e reservas atômicas, **I** merge para `main` mediante autorização continuam pendentes.
