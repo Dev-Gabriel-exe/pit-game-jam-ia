@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T04:12:18.359Z",
+  "last_completed_at": "2026-10-29T05:19:01.616Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: verify CI for M09 evidence hydration; inspect M07/M08 and M10 restored manual test checkmarks without fabricating test history",
+  "priority": "V4-CROSS-AUDIT: confirm Browser QA for M07/M08/M10 restored evidence; continue evidence truthfulness audit across M01-M06 and test projector safety",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M09-HYDRATE",
+  "last_task": "V4-CROSS-M07-M08-M10-HYDRATE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2386,60 +2386,65 @@
       "task": "V4-CROSS-M09-HYDRATE",
       "commit": "8e8988e378fd948b3e871c67da746a140df72b95",
       "summary": "Found M09 hydrate auto-checking all three peer-playtest declarations from submitted/approved status, which is not proof of human test. Changed restore to keep checkbox state empty unless previously recorded locally; locked review avoids false invalid-warning. Added seven QA assertions. JS V8 compile + simulated evidence roundtrip PASS. Prior M10 static/browser CI 40811261322/40811261384 SUCCESS. New M09 static/browser CI 40816390231/40816390193 IN_PROGRESS. No human/physical/HDMI test. Roadmap 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-29T05:19:01.616Z",
+      "task": "V4-CROSS-M07-M08-M10-HYDRATE",
+      "commit": "7772444e848e42345ec9dd6263645e7290b4b5b4",
+      "summary": "Cross-audit found M07/M08/M10 hydrate automatically checked three manual Preview test declarations for submitted/approved evidence. Restores now keep written evidence but do not fabricate checkmarks; locked reviews suppress misleading validation warnings; local checkmarks preserved. Added Node VM regression in qa/v3-audit-alignment.cjs and updated legacy M07 test. Intermediate static QA failed due old assertion, final static QA 40822639640 SUCCESS, Browser QA 40822639529 IN_PROGRESS. Prior M09 static/browser 40816390231/40816390193 SUCCESS. No manual GDevelop/HDMI/physical mobile/peer test; original 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M09-HYDRATE",
+    "task": "V4-CROSS-M07-M08-M10-HYDRATE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T04:12:18.359Z",
+    "updated_at": "2026-10-29T05:19:01.616Z",
     "code_commits": [
-      "fa7933c7a96841ec5fa5d5f737357ad9fb36a8f1",
-      "8e8988e378fd948b3e871c67da746a140df72b95"
+      "f81f68b6c9aea5336752777b2c016548c4807235",
+      "d6b18246dfd6d3ea3ff8725cc4d9cb651896aa13",
+      "822d88f0f8b99c54baf7c149e39be8211648c9a4",
+      "198da5c4acb5764ec9d39fb24f1308aed69b212b",
+      "7772444e848e42345ec9dd6263645e7290b4b5b4"
     ],
-    "documentation_commit": "9f85fdb7bb81c46ba7bc63f9887d2520891a05f8",
+    "documentation_commit": "f30a08617ea73a2fd3e8d0ab7e97f8359d459363",
     "tests": [
       {
-        "name": "Prior M10 route-aware hint static QA",
-        "run_id": 40811261322,
-        "result": "SUCCESS",
-        "sha": "6f40718ce1849112ab01f00a23233fb76025c8f2"
-      },
-      {
-        "name": "Prior M10 route-aware hint Browser QA",
-        "run_id": 40811261384,
-        "result": "SUCCESS",
-        "sha": "6f40718ce1849112ab01f00a23233fb76025c8f2"
-      },
-      {
-        "name": "M09 hydration JS V8 compile and simulated localStorage restore",
-        "result": "PASS",
-        "sha": "fa7933c7a96841ec5fa5d5f737357ad9fb36a8f1",
-        "details": "Submitted/approved status no longer auto-marks three peer-playtest checkboxes; fields restored; locked review no false validation warning"
-      },
-      {
-        "name": "M09 restored evidence regression source",
-        "result": "PARSE_PASS_CI_PENDING",
-        "sha": "8e8988e378fd948b3e871c67da746a140df72b95",
-        "details": "7 additional assertions; full Node CI and browser QA not yet confirmed"
-      },
-      {
-        "name": "M09 final static QA",
+        "name": "Prior M09 static QA",
         "run_id": 40816390231,
         "result": "SUCCESS",
         "sha": "8e8988e378fd948b3e871c67da746a140df72b95"
       },
       {
-        "name": "M09 final Browser QA",
+        "name": "Prior M09 Browser QA",
         "run_id": 40816390193,
-        "result": "IN_PROGRESS",
+        "result": "SUCCESS",
         "sha": "8e8988e378fd948b3e871c67da746a140df72b95"
+      },
+      {
+        "name": "Intermediate static QA on M07/M08/M10",
+        "run_id": 40822612411,
+        "result": "FAILURE",
+        "sha": "198da5c4acb5764ec9d39fb24f1308aed69b212b",
+        "details": "Legacy M07 test incorrectly expected three automatic restored checkmarks; corrected in 7772444e"
+      },
+      {
+        "name": "M07/M08/M10 final static QA",
+        "run_id": 40822639640,
+        "result": "SUCCESS",
+        "sha": "7772444e848e42345ec9dd6263645e7290b4b5b4",
+        "details": "Node QA includes restored checkbox regression in qa/v3-audit-alignment.cjs and corrected M07 legacy test"
+      },
+      {
+        "name": "M07/M08/M10 Browser QA",
+        "run_id": 40822639529,
+        "result": "IN_PROGRESS",
+        "sha": "7772444e848e42345ec9dd6263645e7290b4b5b4"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify static/browser CI at 8e8988e or newer checkpoint; audit M07/M08 restored checkboxes and apply the same integrity guard where warranted",
-    "blocker": "No code blocker; real peer playtest, GDevelop GUI, physical mobile, HDMI projection remain NOT_RUN"
+    "next_task": "Confirm Browser QA at 7772444e or newer; audit M01-M06 restored evidence and remaining projected teacher instructions",
+    "blocker": "No code blocker; real GDevelop GUI, HDMI, physical mobile, peer playtest and real classroom remain NOT_RUN"
   }
 }
