@@ -37,6 +37,12 @@
     <div id="arenaStage" class="stage" aria-label="Arena tridimensional com até 30 personagens reais em combate">
       <div class="stage-loading" id="stageLoading" role="status">✦ Invocando o coliseu 3D...</div>
     </div>
+    <div class="battle-spotlight" id="battleSpotlight" role="status" aria-live="off">
+      <div class="spotlight-heading">⚔ DESTAQUE DO COMBATE <span id="combatClock">00:00</span></div>
+      <div id="spotlightText" class="spotlight-text">Selecione um combatente ou inicie a partida para acompanhar os golpes.</div>
+      <div class="spotlight-detail"><span id="spotlightSource">Dano · Habilidades · Eliminações</span><button type="button" id="followSpotlight" disabled>◎ Seguir</button></div>
+    </div>
+    <div class="battle-legend" aria-label="Cores do combate"> <span><b class="legend-dot hit"></b>Dano</span><span><b class="legend-dot dodge"></b>Esquiva</span><span><b class="legend-dot skill"></b>Especial</span><span><b class="legend-dot elimination"></b>Eliminado</span></div>
     <div class="stage-flair" aria-hidden="true"><span>✦</span> CIDADELA DO ECLIPSE · 30 HERÓIS <span>✦</span></div>
    </div>
    <div class="controls">
@@ -44,6 +50,7 @@
      <button id="pauseBattle" type="button" disabled>Ⅱ Pausar</button>
      <button id="resetBattle" type="button" disabled>↻ Reiniciar</button>
      <button id="overviewCamera" type="button" disabled>◎ Visão geral</button>
+     <button id="actionCamera" type="button" disabled aria-pressed="false">◉ Câmera de combate</button>
      <button id="expandStage" type="button" aria-pressed="false">⛶ Ampliar arena</button>
      <button id="speedBattle" type="button" disabled>Velocidade ×1</button>
    </div>
@@ -55,7 +62,7 @@
      <div id="fighters" class="fighters" role="list"></div>
      <div class="result" id="result" role="status">Ainda não há vencedor. Prepare o coliseu.</div>
    </section>
-   <section class="panel logpanel"><span class="eyebrow">03 · CRÔNICAS DA BATALHA</span><h2>O que aconteceu</h2>
+   <section class="panel logpanel"><span class="eyebrow">03 · CRÔNICAS DA BATALHA</span><h2>O que aconteceu</h2><p class="log-hint">As ações mostram atacante, alvo, dano real e habilidade. Toque em <strong>Seguir</strong> para focar um participante.</p>
      <div id="battleLog" class="battle-log" role="log" aria-live="polite"><p>As ações aparecerão aqui quando a batalha começar.</p></div>
    </section>
   </aside>
