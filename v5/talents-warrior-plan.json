@@ -1,0 +1,427 @@
+{
+  "schema": "pit-v5-talent-planning-v1",
+  "klass": "warrior",
+  "status": "planning-only",
+  "talents": [
+    {
+      "id": "B01",
+      "name": "Golpe do Carrasco",
+      "tree": "Brutalidade",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "DES",
+      "effect": "Golpe de 155% do ataque; CD 8 s",
+      "animation": {
+        "id": "warrior_b01",
+        "storyboard": "Ergue o machado com as duas mãos, golpe vertical, brasas no impacto."
+      },
+      "synergyAndCounter": "B03 facilita alcance; esquiva reduz impacto"
+    },
+    {
+      "id": "B02",
+      "name": "Sangue Quente",
+      "tree": "Brutalidade",
+      "type": "passivo",
+      "primary": "FOR",
+      "secondary": "VIT",
+      "effect": "Após 2 golpes acertados, próximo ataque básico +12%; trava 10 s",
+      "animation": {
+        "id": "warrior_b02",
+        "storyboard": "Veias vermelhas acendem no cabo do machado e descarregam no terceiro golpe."
+      },
+      "synergyAndCounter": "D04 melhora cadência; kite quebra sequência"
+    },
+    {
+      "id": "B03",
+      "name": "Fenda Sísmica",
+      "tree": "Brutalidade",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "DEF",
+      "effect": "120% do ataque em cone de 3 m + lentidão de 20% por 1,2 s; CD 14 s",
+      "animation": {
+        "id": "warrior_b03",
+        "storyboard": "Machado rompe o chão, fenda abre em leque com poeira e lascas."
+      },
+      "synergyAndCounter": "D10 completa combo; mobilidade evita fissura"
+    },
+    {
+      "id": "B04",
+      "name": "Ímpeto Predador",
+      "tree": "Brutalidade",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "Após se deslocar rumo ao alvo por 2 s, próximo golpe +16%; trava 12 s",
+      "animation": {
+        "id": "warrior_b04",
+        "storyboard": "Rastro rubro nos pés e projeção do corpo para frente."
+      },
+      "synergyAndCounter": "D08 acelera aproximação; controle impede avanço"
+    },
+    {
+      "id": "B05",
+      "name": "Rugido da Ruína",
+      "tree": "Brutalidade",
+      "type": "ativo",
+      "primary": "VIT",
+      "secondary": "FOR",
+      "effect": "75% do ataque em raio 2,5 m e -10% dano do alvo por 3 s; CD 18 s",
+      "animation": {
+        "id": "warrior_b05",
+        "storyboard": "Grito com onda circular de runas vermelhas."
+      },
+      "synergyAndCounter": "T04 reduz retorno; inimigos à distância"
+    },
+    {
+      "id": "B06",
+      "name": "Sede de Batalha",
+      "tree": "Brutalidade",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "FOR",
+      "effect": "Cura 6% do dano efetivamente causado; teto 4% da vida máxima a cada 5 s",
+      "animation": {
+        "id": "warrior_b06",
+        "storyboard": "Filamentos carmesins conectam inimigo e peito ao curar."
+      },
+      "synergyAndCounter": "B10 sustenta risco; ant cura reduz ganho"
+    },
+    {
+      "id": "B07",
+      "name": "Golpe de Exaustão",
+      "tree": "Brutalidade",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "DES",
+      "effect": "115% do ataque e posterga em 1 s próxima habilidade ofensiva inimiga; CD 12 s; não acumula",
+      "animation": {
+        "id": "warrior_b07",
+        "storyboard": "Corte diagonal com faísca na arma inimiga e recuo de ombro."
+      },
+      "synergyAndCounter": "D09 contragolpes; habilidades instantâneas"
+    },
+    {
+      "id": "B08",
+      "name": "Ira Contida",
+      "tree": "Brutalidade",
+      "type": "passivo",
+      "primary": "VIT",
+      "secondary": "INT",
+      "effect": "Ao cair abaixo de 45% da vida pela primeira vez, +10% dano por 6 s; uma vez por duelo",
+      "animation": {
+        "id": "warrior_b08",
+        "storyboard": "Armadura pulsa como brasa, com fumaça quente nos ombros."
+      },
+      "synergyAndCounter": "B10 virada; execução antes da ativação"
+    },
+    {
+      "id": "B09",
+      "name": "Ruptura Brutal",
+      "tree": "Brutalidade",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "DEF",
+      "effect": "140% ataque; +75% de dano adicional apenas contra escudos, não contra vida; CD 20 s",
+      "animation": {
+        "id": "warrior_b09",
+        "storyboard": "Corte horizontal com estilhaços luminosos de barreira."
+      },
+      "synergyAndCounter": "T10 enfrenta barreira; alvos sem escudo"
+    },
+    {
+      "id": "B10",
+      "name": "Última Investida",
+      "tree": "Brutalidade",
+      "type": "reativo",
+      "primary": "FOR",
+      "secondary": "VIT",
+      "effect": "Uma vez por duelo, ao cair abaixo de 25% da vida, avança até 3 m e causa 120% ataque; nunca ressuscita",
+      "animation": {
+        "id": "warrior_b10",
+        "storyboard": "Salto curto cinematográfico, arco rubro e aterrissagem com tremor."
+      },
+      "synergyAndCounter": "B08 sinergia de risco; desarme e fuga"
+    },
+    {
+      "id": "D01",
+      "name": "Corte Relâmpago",
+      "tree": "Duelista",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "2 golpes de 48% cada, total 96%; CD 6 s",
+      "animation": {
+        "id": "warrior_d01",
+        "storyboard": "Dois cortes em X com dois rastros prateados independentes."
+      },
+      "synergyAndCounter": "D04 gera impactos; escudo e defesa"
+    },
+    {
+      "id": "D02",
+      "name": "Passo Lateral",
+      "tree": "Duelista",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Reduz 30% de um ataque direcionado e desloca 1 m ao lado; trava 14 s",
+      "animation": {
+        "id": "warrior_d02",
+        "storyboard": "Esquiva lateral com silhueta residual azul."
+      },
+      "synergyAndCounter": "D09 oportuniza resposta; golpes em área"
+    },
+    {
+      "id": "D03",
+      "name": "Lâmina Reversa",
+      "tree": "Duelista",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Golpe 75%; se atingido nos 2 s seguintes, devolve 65% uma vez; CD 9 s",
+      "animation": {
+        "id": "warrior_d03",
+        "storyboard": "Guarda invertida, giro do punho e resposta ascendente."
+      },
+      "synergyAndCounter": "T08 reatividade; adversário pode aguardar"
+    },
+    {
+      "id": "D04",
+      "name": "Cadência da Guerra",
+      "tree": "Duelista",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "Após 3 impactos próprios, próximo ataque básico 15% mais rápido; trava 8 s",
+      "animation": {
+        "id": "warrior_d04",
+        "storyboard": "Três fagulhas no gume marcando ritmo, seguidas de aceleração."
+      },
+      "synergyAndCounter": "D01 acelera cadência; interrupções"
+    },
+    {
+      "id": "D05",
+      "name": "Ponta Precisa",
+      "tree": "Duelista",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "125% ataque ignorando 12% da mitigação defensiva; CD 12 s",
+      "animation": {
+        "id": "warrior_d05",
+        "storyboard": "Estocada reta com foco branco na ponta do aço."
+      },
+      "synergyAndCounter": "B09 separa anti defesa e anti escudo; barreira absorve"
+    },
+    {
+      "id": "D06",
+      "name": "Reflexo Treinado",
+      "tree": "Duelista",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Após bloquear ou reduzir golpe, -8% de dano recebido por 3 s; trava 11 s",
+      "animation": {
+        "id": "warrior_d06",
+        "storyboard": "Braçadeiras emitem círculos azuis sobrepostos."
+      },
+      "synergyAndCounter": "D02 e G07 proteção; dano ao longo do tempo"
+    },
+    {
+      "id": "D07",
+      "name": "Finta do Escorpião",
+      "tree": "Duelista",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "85% ataque; enfraquece em 12% próximo ataque inimigo em 3 s; CD 16 s",
+      "animation": {
+        "id": "warrior_d07",
+        "storyboard": "Falsa estocada, mudança de base e corte na direção oposta."
+      },
+      "synergyAndCounter": "B07 atrasa ciclos; ataques básicos"
+    },
+    {
+      "id": "D08",
+      "name": "Jogo de Pés",
+      "tree": "Duelista",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "VIT",
+      "effect": "Acima de 60% da vida, +8% velocidade de movimento; não acelera ataques",
+      "animation": {
+        "id": "warrior_d08",
+        "storyboard": "Passadas circulares e pegadas azuis no solo."
+      },
+      "synergyAndCounter": "B04 ganha acesso; lentidão corta rota"
+    },
+    {
+      "id": "D09",
+      "name": "Contra-Medida",
+      "tree": "Duelista",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Ao sofrer golpe pesado (130%+ do ataque básico inimigo), resposta de 70% em alcance; trava 15 s",
+      "animation": {
+        "id": "warrior_d09",
+        "storyboard": "Parada curta, faísca em meia-lua e contracorte direto."
+      },
+      "synergyAndCounter": "D02 reduz perigo; alvos distantes"
+    },
+    {
+      "id": "D10",
+      "name": "Dança das Lâminas",
+      "tree": "Duelista",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "3 golpes de 55% cada, total 165%; sequência interrompível ao sair do alcance; CD 23 s",
+      "animation": {
+        "id": "warrior_d10",
+        "storyboard": "Três giros com trilhas concêntricas, cada impacto sincronizado."
+      },
+      "synergyAndCounter": "B03 facilita sequência; sair do alcance cancela"
+    },
+    {
+      "id": "T01",
+      "name": "Guarda Alta",
+      "tree": "Bastião",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Escudo absorve 20 + 1,5 por DEF + 0,6 por VIT, dura até 4 s; CD 12 s",
+      "animation": {
+        "id": "warrior_t01",
+        "storyboard": "Machado se cruza em guarda e forma placa de luz âmbar."
+      },
+      "synergyAndCounter": "T03 devolve dano; ruptura de escudos"
+    },
+    {
+      "id": "T02",
+      "name": "Pele de Ferro",
+      "tree": "Bastião",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Após 5 s sem sofrer dano, próximo impacto é reduzido 18%; reinicia ao sofrer dano",
+      "animation": {
+        "id": "warrior_t02",
+        "storyboard": "Metal escurece e emite lampejo frio no bloqueio."
+      },
+      "synergyAndCounter": "T04 resistência; dano constante"
+    },
+    {
+      "id": "T03",
+      "name": "Rebote de Aço",
+      "tree": "Bastião",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "FOR",
+      "effect": "Quando escudo de talento absorve dano, devolve 45% do ataque se em alcance; CD 14 s",
+      "animation": {
+        "id": "warrior_t03",
+        "storyboard": "Fragmentos dourados projetados do escudo ao agressor."
+      },
+      "synergyAndCounter": "T01/T10 ativam; ataques distantes"
+    },
+    {
+      "id": "T04",
+      "name": "Postura de Muralha",
+      "tree": "Bastião",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "+15% mitigação por 5 s, mas -10% movimento; CD 18 s",
+      "animation": {
+        "id": "warrior_t04",
+        "storyboard": "Pés fincados, joelho flexionado e placas pétreas giratórias."
+      },
+      "synergyAndCounter": "T05 pressão em área; kite"
+    },
+    {
+      "id": "T05",
+      "name": "Brado Protetor",
+      "tree": "Bastião",
+      "type": "ativo",
+      "primary": "VIT",
+      "secondary": "INT",
+      "effect": "75% ataque em raio 2 m, -10% dano do alvo por 3 s; CD 20 s",
+      "animation": {
+        "id": "warrior_t05",
+        "storyboard": "Batida da mão no peito e onda luminosa dourada."
+      },
+      "synergyAndCounter": "B05 é mesma categoria de debuff, só maior vale"
+    },
+    {
+      "id": "T06",
+      "name": "Vontade Inabalável",
+      "tree": "Bastião",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Ao sofrer lentidão, reduz duração em 60% e ganha escudo de 6 por 2 s; CD 15 s",
+      "animation": {
+        "id": "warrior_t06",
+        "storyboard": "Quebra correntes luminosas, pulsação verde-dourada."
+      },
+      "synergyAndCounter": "D08 mantém mobilidade; ataque puro"
+    },
+    {
+      "id": "T07",
+      "name": "Arma Blindada",
+      "tree": "Bastião",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "FOR",
+      "effect": "A cada 3 ataques básicos completados, ganha escudo de 6 por 3 s; trava 10 s; máximo 1 deste tipo",
+      "animation": {
+        "id": "warrior_t07",
+        "storyboard": "Três runas se acendem no punho do machado."
+      },
+      "synergyAndCounter": "T03 converte proteção; ataques espaçados"
+    },
+    {
+      "id": "T08",
+      "name": "Retaliação Precisa",
+      "tree": "Bastião",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "DES",
+      "effect": "Se sofreu ataque nos últimos 3 s, 135% ataque; caso contrário 90%; CD 13 s",
+      "animation": {
+        "id": "warrior_t08",
+        "storyboard": "Guarda recolhida, avanço curto e corte refletido em luz branca."
+      },
+      "synergyAndCounter": "D03 combo reativo; inimigo recua"
+    },
+    {
+      "id": "T09",
+      "name": "Sangue Frio",
+      "tree": "Bastião",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Ao receber escudo de talento, regenera 2% da vida máxima por 6 s; não acumula; CD 15 s",
+      "animation": {
+        "id": "warrior_t09",
+        "storyboard": "Vapor azul-frio rodeia torso e elmo."
+      },
+      "synergyAndCounter": "T01 ativa cura controlada; anti cura"
+    },
+    {
+      "id": "T10",
+      "name": "Juramento de Ferro",
+      "tree": "Bastião",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Escudo absorve 38 + 2 por DEF + 0,8 por VIT durante 4 s; -15% dano ofensivo enquanto ativo; CD 28 s",
+      "animation": {
+        "id": "warrior_t10",
+        "storyboard": "Ajoelha, ergue arma e invoca cúpula de placas com runa central."
+      },
+      "synergyAndCounter": "T03 devolve; B09 rompe escudos"
+    }
+  ]
+}
