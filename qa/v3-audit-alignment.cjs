@@ -406,5 +406,11 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(mod.load('m02-empty').scene,'','M02 partial submitted evidence cannot initialize invalid MVP');
  mod.hydrate('m02-original',full,'draft');
  assert.equal(mod.load('m02-original').scene,draft.scene,'M02 draft local work remains unchanged');
+ const noBacklog={...draft,later:''};
+ mod.save('m02-no-backlog',noBacklog);
+ const optionalRemote=mod.evidence('m02-no-backlog',{title:'Castelo QA',genre:'RPG'});
+ assert(optionalRemote.includes('Depois: Não informado'),'M02 optional field serialized as explicitly not informed');
+ mod.hydrate('m02-optional-restored',optionalRemote,'approved');
+ assert.equal(mod.load('m02-optional-restored').later,'','M02 empty optional backlog remains empty after restore');
 }
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
