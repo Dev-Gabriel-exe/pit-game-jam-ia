@@ -34,6 +34,7 @@ for(let i=0;i<10;i++){
   assert.match(await page.locator('#xpText').innerText(),/200/);
   const skill=page.locator('.talent').first();
   await skill.locator('button[aria-label^="Melhorar"]').click();
+  console.log('TALENT AFTER CLICK',await page.locator('#talentRemaining').innerText(),await page.evaluate(()=>localStorage.getItem('pit_v5_hero_preview')));
   assert.match(await page.locator('#talentRemaining').innerText(),/0 talento/);
   const name=await page.locator('#heroName').inputValue();
   assert(name.length>0);
