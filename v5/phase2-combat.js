@@ -56,10 +56,12 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct'}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none'}={}){
  const spreadAggro=engagementMode==='spaced';
  // Experimental E navigation: legacy direct movement remains the default.
  const obstacleSteering=navigationMode==='steer';
+ // Experimental Fase E: ranged attacks trade continuous kiting for a recoverable firing window.
+ const rangedRecovery=rangedCommitment==='recovery';
  const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
  const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
  const stormStart=clamp(Number(stormDelay)||18,18,50);
@@ -88,7 +90,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    guardUntil:0,t09Until:0,t09Power:0,t10Until:0,a09Until:0,healWindow:[],poisonUntil:0,poisonPower:0,poisonOwner:null,
    reverseUntil:0,t04Until:0,s01Until:0,a03Travel:0,a03LastX:null,a03LastZ:null,a02BoostUntil:0,r04Until:0,d04Charge:0,speedUntil:0,d06Until:0,d07WeakUntil:0,d07WeakPower:0,r08Until:0,r08Power:0,
    burning:0,burnPower:0,burnOwner:null,movingTime:0,stationaryTime:0,lastTarget:null,
-   navObstacle:-1,navSide:0,navActive:false,navTurns:0,
+   navObstacle:-1,navSide:0,navActive:false,navTurns:0,shotRecovery:0,
    lastHitAt:-999,hitWindow:[],prevX:null,prevZ:null,eliminatedAt:null};
  });
  const byId=new Map(fighters.map(f=>[f.id,f]));
@@ -498,7 +500,15 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   }
   return inflicted;
  }
+ function commitRanged(f,seconds){
+  if(!rangedRecovery||!['hunter','mage'].includes(f.build.klass))return;
+  if(f.shotRecovery<seconds){
+   f.shotRecovery=seconds;
+   emit('aim-recovery',f,{duration:seconds});
+  }
+ }
  function projectile(f,target,damage,skill,options={}){
+  commitRanged(f,skill?.62:.72);
   if(has(f,'P08')&&f.passives.p08RangeReady){
    f.passives.p08RangeReady=false;emit('proc',f,{talent:'P08',target:target.id,kind:'range'});
   }
@@ -596,6 +606,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   return bonus;
  }
  function prepareAoE(f,target,id,damage,delay,impacts,radius){
+  commitRanged(f,.72);
   const center={x:target.x,z:target.z};
   emit('prepare',f,{ability:ALL[f.build.klass].find(t=>t.id===id).name,target:target.id,x:center.x,z:center.z,duration:delay});
   for(let i=0;i<impacts;i++)pending.push({owner:f.id,talent:id,x:center.x,z:center.z,
@@ -904,6 +915,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    f.gcd=Math.max(0,f.gcd-step);f.basic=Math.max(0,f.basic-step);
    f.slow=Math.max(0,f.slow-step);f.weak=Math.max(0,f.weak-step);f.fortress=Math.max(0,f.fortress-step);
    f.offenseDelay=Math.max(0,f.offenseDelay-step);
+   if(rangedRecovery)f.shotRecovery=Math.max(0,f.shotRecovery-step);
    f.rage=Math.max(0,f.rage-step);
    if(f.t09Until>time)heal(f,f.t09Power*step,'T09');
    if(f.passives.t07Active&&(f.passives.t07Until<=time||f.shield<=0))f.passives.t07Active=false;
@@ -981,7 +993,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      (f.speedUntil>time?1+.10*effectiveness(f,'E02'):1)*
      (f.a09Until>time?1+.12*effectiveness(f,'A09'):1)*
      (has(f,'S07')&&f.hp/f.stats.hp<.50?1+.10*effectiveness(f,'S07'):1)*
-     (has(f,'D08')&&f.hp/f.stats.hp>.60?1+.08*effectiveness(f,'D08'):1);
+     (has(f,'D08')&&f.hp/f.stats.hp>.60?1+.08*effectiveness(f,'D08'):1)*
+     (rangedRecovery&&f.shotRecovery>0?.24:1);
    const route=obstacleSteering&&chase>0?steeringDirection(f,target):null;
    const ux=route?.x??dx/d,uz=route?.z??dz/d;
    const goalVX=(ux*chase-uz*strafe)*f.stats.speed*penalty;
