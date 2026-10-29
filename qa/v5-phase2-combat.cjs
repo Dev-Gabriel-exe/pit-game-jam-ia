@@ -1,14 +1,14 @@
 'use strict';
-/* Real Phase 2 B.1 effects only, separate from 392 legacy physics tests. */
+/* Phase B.1 baseline regression plus expanded B.2 catalog. */
 const assert=require('node:assert/strict');
 const P=require('../v5/phase2-combat.js');
 const fs=require('node:fs');
 const path=require('node:path');
 const classes=['warrior','mage','hunter','guardian'];
 assert.deepEqual(P.ATTR,['FOR','DES','INT','VIT','DEF']);
-assert.equal(Object.values(P.TALENTS).flat().length,20);
+assert.equal(Object.values(P.TALENTS).flat().length,40);
 for(const klass of classes){
- const approved=JSON.parse(fs.readFileSync(path.join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents.slice(0,5);
+ const approved=JSON.parse(fs.readFileSync(path.join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents.slice(0,10);
  assert.deepEqual(P.TALENTS[klass].map(t=>t.id),approved.map(t=>t.id),'IDs do not follow approved source for '+klass);
  for(const [i,t]of P.TALENTS[klass].entries()){
   assert.equal(t.name,approved[i].name);
@@ -113,4 +113,4 @@ for(let seed=1;seed<=12;seed++){
 assert(winClasses.size>=2,'No winner diversity in experimental cohort');
 assert.equal(allTalentIds.size,20,'All 20 talents must trigger naturally in 30-hero simulations: '+JSON.stringify([...allTalentIds]));
 console.log('PHASE2 12x30 BOT AUDIT '+JSON.stringify({talentsObserved:[...allTalentIds].sort(),eventKinds:[...eventKinds].sort(),winnerClasses:[...winClasses]}));
-console.log('PASS V5 B.1: 20 catalog-faithful executable M5 talents, authorized budgets, deterministic simulation, and 30-bot battles. No server lock or 120 animations claimed.');
+console.log('PASS V5 B.1 regression with B.2 40-talent catalog: original 20 effects, M5 point budget, deterministic 30-bot battles. No server lock or exclusive animations claimed.');

@@ -1,10 +1,10 @@
-/* V5 Phase B.1 — executable M5 sandbox, 20 distinct talents.
+/* V5 Phase B.2 — executable M5 sandbox, 40 distinct talents.
  * Isolated from legacy V5 and student/server state. No XP or grading writes.
  * UMD: Node test runner and same browser GLB rendering pipeline.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.PIT_V5_PHASE2=api})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
-const VERSION='phase2-m5-trial-v1';
+const VERSION='phase2-m5-trial-v1'; // Preserve existing saved lab schema; B.2 only expands allowed picks.
 const ATTR=['FOR','DES','INT','VIT','DEF'];
 const CLASSES={
  warrior:{name:'Guerreiro',hp:137,atk:16.5,def:6.5,speed:4.5,range:2.6,palette:'ember'},
@@ -13,10 +13,10 @@ const CLASSES={
  guardian:{name:'Guardião',hp:140,atk:13.1,def:9,speed:3.9,range:2.6,palette:'azure'}
 };
 const TALENTS={
- warrior:[['B01','Golpe do Carrasco','ativo','FOR','DES',8],['B02','Sangue Quente','passivo','FOR','VIT',10],['B03','Fenda Sísmica','ativo','FOR','DEF',14],['B04','Ímpeto Predador','passivo','DES','FOR',12],['B05','Rugido da Ruína','ativo','VIT','FOR',18]],
- mage:[['E01','Lança de Cinzas','ativo','INT','DES',9],['E02','Combustão Residual','passivo','INT','VIT',10],['E03','Prisão de Gelo','ativo','INT','DEF',17],['E04','Estilhaço Polar','ativo','INT','DES',11],['E05','Pele Vulcânica','reativo','VIT','INT',18]],
- hunter:[['P01','Flecha Perfurante','ativo','DES','FOR',10],['P02','Mira Firme','passivo','DES','INT',10],['P03','Tiro Duplo','ativo','DES','FOR',8],['P04','Olhar Predador','passivo','DES','INT',12],['P05','Flecha Marcadora','ativo','DES','INT',15]],
- guardian:[['G01','Escudo da Alvorada','ativo','DEF','VIT',14],['G02','Armadura Consagrada','passivo','DEF','VIT',12],['G03','Retorno da Égide','reativo','DEF','FOR',18],['G04','Postura da Cidadela','ativo','DEF','VIT',20],['G05','Aço Resiliente','passivo','VIT','DEF',16]]
+ warrior:[['B01','Golpe do Carrasco','ativo','FOR','DES',8],['B02','Sangue Quente','passivo','FOR','VIT',10],['B03','Fenda Sísmica','ativo','FOR','DEF',14],['B04','Ímpeto Predador','passivo','DES','FOR',12],['B05','Rugido da Ruína','ativo','VIT','FOR',18],['B06','Sede de Batalha','reativo','VIT','FOR',5],['B07','Golpe de Exaustão','ativo','FOR','DES',12],['B08','Ira Contida','passivo','VIT','INT',0],['B09','Ruptura Brutal','ativo','FOR','DEF',20],['B10','Última Investida','reativo','FOR','VIT',0]],
+ mage:[['E01','Lança de Cinzas','ativo','INT','DES',9],['E02','Combustão Residual','passivo','INT','VIT',10],['E03','Prisão de Gelo','ativo','INT','DEF',17],['E04','Estilhaço Polar','ativo','INT','DES',11],['E05','Pele Vulcânica','reativo','VIT','INT',18],['E06','Tempestade Estática','ativo','INT','DES',21],['E07','Olho da Tormenta','passivo','DES','INT',12],['E08','Névoa de Inverno','reativo','DEF','INT',19],['E09','Núcleo Incandescente','passivo','VIT','INT',0],['E10','Cometa Carmesim','ativo','INT','VIT',25]],
+ hunter:[['P01','Flecha Perfurante','ativo','DES','FOR',10],['P02','Mira Firme','passivo','DES','INT',10],['P03','Tiro Duplo','ativo','DES','FOR',8],['P04','Olhar Predador','passivo','DES','INT',12],['P05','Flecha Marcadora','ativo','DES','INT',15],['P06','Disparo de Ruptura','ativo','FOR','DES',19],['P07','Pulsação da Corda','passivo','DES','FOR',10],['P08','Olho do Caçador','reativo','DES','DEF',18],['P09','Tiro de Interrupção','reativo','DES','INT',21],['P10','Chuva de Setas','ativo','DES','VIT',25]],
+ guardian:[['G01','Escudo da Alvorada','ativo','DEF','VIT',14],['G02','Armadura Consagrada','passivo','DEF','VIT',12],['G03','Retorno da Égide','reativo','DEF','FOR',18],['G04','Postura da Cidadela','ativo','DEF','VIT',20],['G05','Aço Resiliente','passivo','VIT','DEF',16],['G06','Rota de Guarda','ativo','DEF','DES',17],['G07','Reflexo da Sentinela','reativo','DES','DEF',15],['G08','Peso da Armadura','passivo','DEF','FOR',10],['G09','Vigília de Pedra','ativo','VIT','DEF',24],['G10','Bastião Solar','ativo','DEF','INT',28]]
 };
 const ALL=Object.fromEntries(Object.entries(TALENTS).map(([klass,items])=>[klass,items.map(([id,name,type,primary,secondary,cooldown])=>Object.freeze({id,name,type,primary,secondary,cooldown,animationId:klass.toLowerCase()+'_'+id.toLowerCase()}))]));
 const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
@@ -43,12 +43,14 @@ function canonical(input,approvedMissions=5){
   name:String(input.name||'Aventureiro').slice(0,56),
   appearance:{palette:CLASSES[klass].palette,weapon:{warrior:'axe',mage:'staff',hunter:'bow',guardian:'blade'}[klass],helmet:1,cape:true}};
 }
-function exampleBuild(klass,name,mission=5){
+function exampleBuild(klass,name,mission=5,variant=0){
  const selections={warrior:{FOR:5,DES:3,VIT:2},mage:{INT:6,DES:2,DEF:2},hunter:{DES:6,FOR:2,INT:2},guardian:{DEF:6,VIT:3,FOR:1}};
  const pointPool=mission*2, attributes=Object.fromEntries(ATTR.map(k=>[k,0]));
  let left=pointPool;
  for(const [k,v]of Object.entries(selections[klass]||{})){const n=Math.min(left,v);attributes[k]=n;left-=n}
- return canonical({klass,name,attributes,talents:ALL[klass].slice(0,mission).map(t=>t.id)},mission);
+ const variants=[[0,1,2,3,4],[5,6,7,8,9],[0,2,5,7,9]];
+ const picks=(variants[((variant%3)+3)%3]||variants[0]).slice(0,mission).map(i=>ALL[klass][i].id);
+ return canonical({klass,name,attributes,talents:picks},mission);
 }
 function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
@@ -58,6 +60,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  if(!Array.isArray(entries)||entries.length<2||entries.length>30)throw Error('Arena experimental aceita 2 a 30 heróis');
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
+ const pending=[];
  const emit=(type,f,extra={})=>{const e={type,hero:f?.id||null,time:+time.toFixed(2),seq:++sequence,...extra};events.push(e);return e};
  const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({x:o.x*scale,z:o.z*scale,r:o.r*scale}));
  const fighters=entries.map((entry,i)=>{
@@ -73,7 +76,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,vx:0,vz:0,face:theta,animation:'idle',
    hp,shield:0,shieldUntil:0,alive:true,kills:0,damage:0,attacks:0,
    basic:r()*.45,gcd:0,cooldowns:{},usage:{},passives:{},slow:0,slowPower:0,
-   weak:0,weakPower:0,fortress:0,markBy:null,markUntil:0,
+   weak:0,weakPower:0,fortress:0,markBy:null,markUntil:0,offenseDelay:0,rage:0,solarUntil:0,
+   regenUntil:0,regenPower:0,guardUntil:0,healWindow:[],
    burning:0,burnPower:0,burnOwner:null,movingTime:0,stationaryTime:0,lastTarget:null,
    lastHitAt:-999,hitWindow:[],eliminatedAt:null};
  });
@@ -90,8 +94,29 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   f.shieldUntil=Math.max(f.shieldUntil,time+seconds);
   emit('shield',f,{amount:+amount.toFixed(2),total:+f.shield.toFixed(2)});
  }
+ function clearPosition(f,dx,dz,step){
+  const goal={x:f.x+dx*step,z:f.z+dz*step};
+  const blocked=obstacles.some(o=>Math.hypot(goal.x-o.x,goal.z-o.z)<o.r+.6);
+  if(!blocked){f.x=goal.x;f.z=goal.z;return true}
+  return false;
+ }
+ function heal(f,amount,talent){
+  // 10% HP per rolling 15s, shared by regenerative talents, never over-heal.
+  f.healWindow=f.healWindow.filter(x=>time-x.time<15);
+  const spent=f.healWindow.reduce((a,b)=>a+b.amount,0);
+  const allowed=Math.max(0,Math.min(amount,f.stats.hp*.10-spent,f.stats.hp-f.hp));
+  if(allowed>1e-8){f.hp+=allowed;f.healWindow.push({time,amount:allowed});emit('heal',f,{amount:+allowed.toFixed(2),talent});}
+  return allowed;
+ }
  function applySlow(f,fraction,duration,owner){
   if(!f.alive)return;
+  if(owner&&has(f,'E08')&&(f.cooldowns.E08||0)<=0){
+   f.cooldowns.E08=19;
+   duration*=1-.5*effectiveness(f,'E08');
+   const dx=f.x-owner.x,dz=f.z-owner.z,d=Math.max(.001,Math.hypot(dx,dz));
+   clearPosition(f,dx/d,dz/d,1*effectiveness(f,'E08'));
+   emit('proc',f,{talent:'E08',target:owner.id});
+  }
   if(f.slowPower<fraction||f.slow<=0)f.slowPower=fraction;
   f.slow=Math.max(f.slow,duration);
   emit('debuff',owner,{target:f.id,kind:'slow',fraction,duration});
@@ -102,18 +127,33 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   if(killer&&killer!==f){killer.kills++;emit('knockout',killer,{target:f.id,by:killer.name})}
   else emit('storm',f,{target:f.id});
  }
- function applyHit(attacker,target,raw,{kind='basic',skill=null,ignoreDefense=0,fire=false,reflect=false}={}){
+ function applyHit(attacker,target,raw,{kind='basic',skill=null,ignoreDefense=0,fire=false,reflect=false,shieldBonus=0}={}){
   if(!target?.alive||!attacker||(!attacker.alive&&!reflect))return 0;
   let amount=Math.max(0,raw);
   const defenseFactor=Math.max(.35,1-(target.stats.defense*(1-ignoreDefense))*.025);
   amount*=defenseFactor;
   if(target.fortress>0)amount*=.82;
+  if(!reflect&&target.guardUntil>time&&target.passives.g06GuardReady){
+   amount*=1-.12*effectiveness(target,'G06');target.passives.g06GuardReady=false;target.guardUntil=0;
+   emit('proc',target,{talent:'G06',target:attacker.id});
+  }
+  if(!reflect&&kind==='melee'&&has(target,'G07')&&(target.cooldowns.G07||0)<=0){
+   amount*=1-.20*effectiveness(target,'G07');target.cooldowns.G07=15;
+   emit('proc',target,{talent:'G07',target:attacker.id});
+  }
+  if(!reflect&&has(target,'G08')&&target.passives.g08Until>time)amount*=1-.08*effectiveness(target,'G08');
+  if(!reflect&&kind==='ranged'&&dist(attacker,target)>6&&has(target,'P08')&&(target.cooldowns.P08||0)<=0){
+   amount*=1-.15*effectiveness(target,'P08');target.cooldowns.P08=18;target.passives.p08RangeReady=true;
+   emit('proc',target,{talent:'P08',target:attacker.id});
+  }
   if(target.passives.g02Ready&&has(target,'G02')&&!reflect){
    amount*=1-.12*effectiveness(target,'G02');
    target.passives.g02Ready=false;target.cooldowns.G02=12;
    emit('proc',target,{talent:'G02',target:attacker.id});
   }
   if(attacker.weak>0)amount*=1-attacker.weakPower;
+  if(attacker.solarUntil>time&&attacker.shield>0)amount*=.88;
+  if(attacker.rage>0)amount*=1+.10*effectiveness(attacker,'B08');
   if(!reflect&&r()<attacker.stats.crit)amount*=1.5;
   // P04 and P05 are one-charge, scoped to the hero that owns the effect.
   if(!reflect&&kind==='basic'&&has(attacker,'P04')&&attacker.passives.p04Ready){
@@ -125,15 +165,44 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',attacker,{talent:'P05',target:target.id});
   }
   // E05 creates protection after being hit: the current impact remains real.
-  const shieldTaken=Math.min(target.shield,amount);target.shield-=shieldTaken;
-  const inflicted=Math.max(0,amount-shieldTaken);
+  // Extra anti-shield damage never spills into HP: calculate normal HP
+  // penetration separately, independent of the added barrier-only portion.
+  const originalShield=target.shield;
+  const normalAbsorption=Math.min(originalShield,amount);
+  const shieldTaken=Math.min(originalShield,amount*(1+shieldBonus));
+  target.shield-=shieldTaken;
+  const inflicted=Math.max(0,amount-normalAbsorption);
   target.hp=Math.max(0,target.hp-inflicted);
   attacker.damage+=inflicted;attacker.attacks++;
   target.lastHitAt=time;
   target.hitWindow.push({time,value:inflicted});
   target.hitWindow=target.hitWindow.filter(h=>time-h.time<=3);
   emit('hit',attacker,{target:target.id,amount:+inflicted.toFixed(2),absorbed:+shieldTaken.toFixed(2),kind,skill});
+  // B06: 6% effective damage converted into healing, with an additional
+  // per-five-second 4% HP cap (and the shared global healing cap).
+  if(!reflect&&has(attacker,'B06')&&inflicted>0){
+   if(!attacker.passives.b06Window||time-attacker.passives.b06Window>=5){
+    attacker.passives.b06Window=time;attacker.passives.b06Spent=0;
+   }
+   const healCap=Math.max(0,attacker.stats.hp*.04-(attacker.passives.b06Spent||0));
+   const gained=heal(attacker,Math.min(healCap,inflicted*.06*effectiveness(attacker,'B06')),'B06');
+   attacker.passives.b06Spent=(attacker.passives.b06Spent||0)+gained;
+   if(gained>0)emit('proc',attacker,{talent:'B06',target:target.id});
+  }
   if(target.hp<=0){endHero(target,attacker);return inflicted}
+  if(has(target,'B08')&&!target.passives.b08Used&&target.hp/target.stats.hp<.45){
+   target.passives.b08Used=true;target.rage=6;emit('proc',target,{talent:'B08',target:attacker.id});
+  }
+  if(has(target,'E09')&&!target.passives.e09Used&&target.hp/target.stats.hp<.4){
+   target.passives.e09Used=true;target.passives.e09Ready=true;emit('charge',target,{talent:'E09'});
+  }
+  if(!reflect&&has(target,'B10')&&!target.passives.b10Used&&target.hp/target.stats.hp<.25){
+   target.passives.b10Used=true;
+   const dx=attacker.x-target.x,dz=attacker.z-target.z,d=Math.max(.001,Math.hypot(dx,dz));
+   clearPosition(target,dx/d,dz/d,Math.min(3,Math.max(0,d-1.4)));
+   emit('proc',target,{talent:'B10',target:attacker.id});
+   if(attacker.alive&&dist(target,attacker)<=3.2)applyHit(target,attacker,target.stats.attack*1.2*effectiveness(target,'B10'),{kind:'special',skill:'B10',reflect:true});
+  }
   if(has(target,'G02')&&!target.passives.g02Start)target.passives.g02Start=time;
   if(has(target,'G05')&&(target.cooldowns.G05||0)<=0&&target.hitWindow.reduce((s,h)=>s+h.value,0)>.15*target.stats.hp){
    target.cooldowns.G05=16;shield(target,7*effectiveness(target,'G05'),3);
@@ -157,6 +226,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   return inflicted;
  }
  function projectile(f,target,damage,skill,options={}){
+  if(has(f,'P08')&&f.passives.p08RangeReady){
+   f.passives.p08RangeReady=false;emit('proc',f,{talent:'P08',target:target.id,kind:'range'});
+  }
   const dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
   projectiles.push({id:++pid,x:f.x,z:f.z,y:1.6,from:f.id,to:target.id,vx:dx/d*20,vz:dz/d*20,
    kind:'talent',damage,skill,options,age:0});
@@ -177,13 +249,48 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',f,{talent:'P02',target:target.id});
   }
   f.basic=klass==='hunter'?1.23:klass==='mage'?1.16:1.02;
+  if(has(f,'P07')&&f.passives.p07Ready){
+   f.basic*=1-.10*effectiveness(f,'P07');
+   f.passives.p07Ready=false;f.cooldowns.P07=10;
+   emit('proc',f,{talent:'P07',target:target.id});
+  }
   f.animation='attack';
   if(kind==='ranged')projectile(f,target,amount,null,{kind:'basic'});
   else{applyHit(f,target,amount,{kind:'basic'});
+   if(has(f,'G08')&&(f.cooldowns.G08||0)<=0){
+    f.passives.g08Count=(f.passives.g08Count||0)+1;
+    if(f.passives.g08Count>=3){
+     f.passives.g08Count=0;f.passives.g08Until=time+3;f.cooldowns.G08=10;emit('proc',f,{talent:'G08'});
+    }
+   }
    if(has(f,'B02')&&(f.cooldowns.B02||0)<=0){
     f.passives.b02Count=(f.passives.b02Count||0)+1;
     if(f.passives.b02Count>=2){f.passives.b02Count=0;f.passives.b02Ready=true;emit('charge',f,{talent:'B02'})}
    }
+  }
+ }
+ function spellBonus(f){
+  let bonus=1;
+  if(has(f,'E07')&&f.passives.e07Ready){
+   bonus+=.08*effectiveness(f,'E07');f.passives.e07Ready=false;f.cooldowns.E07=12;
+   emit('proc',f,{talent:'E07'});
+  }
+  if(has(f,'E09')&&f.passives.e09Ready){
+   bonus+=.12*effectiveness(f,'E09');f.passives.e09Ready=false;
+   emit('proc',f,{talent:'E09'});
+  }
+  return bonus;
+ }
+ function prepareAoE(f,target,id,damage,delay,impacts,radius){
+  const center={x:target.x,z:target.z};
+  emit('prepare',f,{ability:ALL[f.build.klass].find(t=>t.id===id).name,target:target.id,x:center.x,z:center.z,duration:delay});
+  for(let i=0;i<impacts;i++)pending.push({owner:f.id,talent:id,x:center.x,z:center.z,
+    damage,impactAt:time+delay+i*.15,radius});
+  // P09 interrupts only telegraphed casts, never instant abilities.
+  for(const watcher of fighters){
+   if(!watcher.alive||watcher===f||!has(watcher,'P09')||(watcher.cooldowns.P09||0)>0||dist(watcher,f)>8)continue;
+   watcher.cooldowns.P09=21;emit('proc',watcher,{talent:'P09',target:f.id});
+   projectile(watcher,f,watcher.stats.attack*.55*effectiveness(watcher,'P09'),'P09',{interrupt:true});
   }
  }
  function act(f,target,d){
@@ -193,9 +300,32 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   // Contextual priority; each cast is a *real* ability with its own CD.
   if(klass==='guardian'){
    if(ready(f,'G01')&&(f.shield<4||f.hp<f.stats.hp*.7)){use(f,'G01');const a=f.build.attributes;shield(f,20+1.5*a.DEF+.5*a.VIT,4);return true}
+   if(ready(f,'G10')&&f.shield<3&&(f.hp<f.stats.hp*.82||d<7)){
+    use(f,'G10');const a=f.build.attributes;shield(f,35+1.7*a.DEF+.6*a.INT,4);f.solarUntil=time+4;return true;
+   }
+   if(ready(f,'G09')&&f.hp<f.stats.hp*.8&&f.regenUntil<=time){
+    use(f,'G09');f.regenUntil=time+4;f.regenPower=f.stats.hp*.04*scaleSkill('G09')/4;return true;
+   }
+   if(ready(f,'G06')&&d>2&&d<8){
+    use(f,'G06',target);const dx=target.x-f.x,dz=target.z-f.z;
+    clearPosition(f,dx/d,dz/d,Math.min(2,d-1.4));
+    f.guardUntil=time+3;f.passives.g06GuardReady=true;return true;
+   }
    if(ready(f,'G04')&&d<7&&f.fortress<=0){use(f,'G04');f.fortress=4;return true}
   }
   if(klass==='warrior'){
+   if(f.offenseDelay>0)return false;
+   if(ready(f,'B09')&&d<=f.stats.range){
+    use(f,'B09',target);
+    applyHit(f,target,atk*1.40*scaleSkill('B09'),{kind:'special',skill:'B09',shieldBonus:.75});
+    return true;
+   }
+   if(ready(f,'B07')&&d<=f.stats.range){
+    use(f,'B07',target);
+    applyHit(f,target,atk*1.15*scaleSkill('B07'),{kind:'special',skill:'B07'});
+    if(target.alive){target.offenseDelay=Math.max(target.offenseDelay,1);emit('debuff',f,{target:target.id,kind:'offense-delay',seconds:1})}
+    return true;
+   }
    if(ready(f,'B03')&&d<3.3){
     use(f,'B03',target);
     for(const e of fighters)if(e.alive&&e!==f&&dist(f,e)<3){
@@ -211,11 +341,26 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(ready(f,'B01')&&d<f.stats.range){use(f,'B01',target);applyHit(f,target,atk*1.55*scaleSkill('B01'),{kind:'special',skill:'B01'});return true}
   }
   if(klass==='mage'){
-   if(ready(f,'E03')&&d<=8.5&&target.slow<=0){use(f,'E03',target);projectile(f,target,atk*.8*scaleSkill('E03'),'E03',{slow:.25,duration:2});return true}
-   if(ready(f,'E04')&&d<=8.5&&target.slow>0){use(f,'E04',target);projectile(f,target,atk*1.25*scaleSkill('E04')*(target.slow>0?1.15:1),'E04');return true}
-   if(ready(f,'E01')&&d<=9){use(f,'E01',target);projectile(f,target,atk*1.45*scaleSkill('E01'),'E01',{fire:true});return true}
+   if(f.offenseDelay>0)return false;
+   if(ready(f,'E10')&&d<=9){
+    const buff=spellBonus(f);use(f,'E10',target);prepareAoE(f,target,'E10',atk*1.55*scaleSkill('E10')*buff,.7,1,2);return true;
+   }
+   if(ready(f,'E06')&&d<=8.5){
+    const buff=spellBonus(f);use(f,'E06',target);
+    projectile(f,target,atk*.85*scaleSkill('E06')*buff,'E06',{chain:atk*.55*scaleSkill('E06')*buff});return true;
+   }
+   if(ready(f,'E03')&&d<=8.5&&target.slow<=0){const buff=spellBonus(f);use(f,'E03',target);projectile(f,target,atk*.8*scaleSkill('E03')*buff,'E03',{slow:.25,duration:2});return true}
+   if(ready(f,'E04')&&d<=8.5&&target.slow>0){const buff=spellBonus(f);use(f,'E04',target);projectile(f,target,atk*1.25*scaleSkill('E04')*(target.slow>0?1.15:1)*buff,'E04');return true}
+   if(ready(f,'E01')&&d<=9){const buff=spellBonus(f);use(f,'E01',target);projectile(f,target,atk*1.45*scaleSkill('E01')*buff,'E01',{fire:true});return true}
   }
   if(klass==='hunter'){
+   if(f.offenseDelay>0)return false;
+   if(ready(f,'P10')&&d<=f.stats.range){
+    use(f,'P10',target);prepareAoE(f,target,'P10',atk*.48*scaleSkill('P10'),.7,3,2);return true;
+   }
+   if(ready(f,'P06')&&d<=f.stats.range){
+    use(f,'P06',target);projectile(f,target,atk*1.25*scaleSkill('P06'),'P06',{shieldBonus:.60});return true;
+   }
    if(ready(f,'P05')&&d<=f.stats.range&&!target.markBy){use(f,'P05',target);projectile(f,target,atk*scaleSkill('P05'),'P05',{mark:true});return true}
    if(ready(f,'P01')&&d<=f.stats.range){use(f,'P01',target);projectile(f,target,atk*1.4*scaleSkill('P01'),'P01',{ignoreDefense:.10});return true}
    if(ready(f,'P03')&&d<=f.stats.range){use(f,'P03',target);for(let n=0;n<2;n++)projectile(f,target,atk*.58*scaleSkill('P03'),'P03');return true}
@@ -232,6 +377,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(!f.alive)continue;
    f.gcd=Math.max(0,f.gcd-step);f.basic=Math.max(0,f.basic-step);
    f.slow=Math.max(0,f.slow-step);f.weak=Math.max(0,f.weak-step);f.fortress=Math.max(0,f.fortress-step);
+   f.offenseDelay=Math.max(0,f.offenseDelay-step);
+   f.rage=Math.max(0,f.rage-step);
+   if(f.regenUntil>time){heal(f,f.regenPower*step,'G09')}
+   if(f.solarUntil<=time)f.solarUntil=0;
    for(const id of Object.keys(f.cooldowns))f.cooldowns[id]=Math.max(0,f.cooldowns[id]-step);
    if(f.shieldUntil<=time){f.shield=0;f.shieldUntil=0}
    if(f.slow<=0)f.slowPower=0;if(f.weak<=0)f.weakPower=0;
@@ -257,7 +406,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
     &&d>4&&d<=f.stats.range+.5;
    const chase=holdForAim?0:d>preferred+1?1:d<preferred-.7?-.6:0;
    const strafe=holdForAim?0:(d<preferred+5?.21:0)*((f.id.length+seed)%2?-1:1);
-   const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1);
+   const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1)*(f.regenUntil>time?.88:1);
    const goalVX=(dx/d*chase-dz/d*strafe)*f.stats.speed*penalty;
    const goalVZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*penalty;
    const smoothing=1-Math.exp(-8*step);
@@ -283,6 +432,18 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(Math.hypot(f.x,f.z)>radius){const excess=Math.hypot(f.x,f.z)-radius;f.hp=Math.max(0,f.hp-step*(4+excess*4));endHero(f,null);if(!f.alive)continue}
    if(!act(f,target,d)&&d<=f.stats.range&&f.basic<=0)basicAttack(f,target);
   }
+  // A warning gives time to leave the marked area. Damage is applied only
+  // at impact time, against the fighters physically inside its radius.
+  for(let i=pending.length-1;i>=0;i--){
+   const p=pending[i];if(time+1e-8<p.impactAt)continue;
+   pending.splice(i,1);
+   const caster=byId.get(p.owner);
+   if(!caster)continue;
+   emit('talent-impact',caster,{talent:p.talent,x:p.x,z:p.z});
+   for(const victim of fighters)if(victim.alive&&victim!==caster&&Math.hypot(victim.x-p.x,victim.z-p.z)<=p.radius){
+    applyHit(caster,victim,p.damage,{kind:'special',skill:p.talent,reflect:!caster.alive});
+   }
+  }
   // Physical projectile segments, pillars first, interception by any unit.
   for(let i=projectiles.length-1;i>=0;i--){
    const p=projectiles[i],dx=p.vx*step,dz=p.vz*step,sx=p.x,sz=p.z;
@@ -304,7 +465,25 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
     if(stone)emit('blocked',byId.get(p.from),{talent:p.skill,kind:'pillar'});
     if(victim){
      const source=byId.get(p.from),effect=p.options;
-     const amount=applyHit(source,victim,p.damage,{kind:effect.kind||'ranged',skill:p.skill,ignoreDefense:effect.ignoreDefense||0,fire:effect.fire||false,reflect:!source?.alive});
+     const amount=applyHit(source,victim,p.damage,{kind:effect.kind||'ranged',skill:p.skill,ignoreDefense:effect.ignoreDefense||0,fire:effect.fire||false,reflect:!source?.alive,shieldBonus:effect.shieldBonus||0});
+     if(amount>0&&effect.chain&&source){
+      let secondary=null;
+      for(const candidate of fighters)if(candidate.alive&&candidate!==victim&&candidate!==source&&dist(candidate,victim)<=4){
+       if(!secondary||dist(candidate,victim)<dist(secondary,victim))secondary=candidate;
+      }
+      if(secondary){applyHit(source,secondary,effect.chain,{kind:'special',skill:'E06',reflect:!source.alive});
+       emit('chain',source,{target:secondary.id,from:victim.id,talent:'E06'})}
+     }
+     if(effect.interrupt&&source&&victim.alive){
+      for(const pnd of pending)if(pnd.owner===victim.id&&pnd.impactAt>time)pnd.impactAt+=.5;
+      emit('interrupt',source,{target:victim.id,talent:'P09'});
+     }
+     if(amount>0&&source&&has(source,'P07')&&(source.cooldowns.P07||0)<=0&&source.build.klass==='hunter'){
+      source.passives.p07Hits=(source.passives.p07Hits||0)+1;
+      if(source.passives.p07Hits>=3&&!source.passives.p07Ready){
+       source.passives.p07Hits=0;source.passives.p07Ready=true;emit('charge',source,{talent:'P07'});
+      }
+     }
      if(amount>0&&effect.slow)applySlow(victim,effect.slow,effect.duration,source);
      if(amount>0&&effect.mark){victim.markBy=source.id;victim.markUntil=time+4;emit('mark',source,{target:victim.id,talent:'P05'})}
      if(amount>0&&source&&has(source,'P04')&&(source.cooldowns.P04||0)<=0){
