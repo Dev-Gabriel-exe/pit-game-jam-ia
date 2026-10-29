@@ -14,9 +14,9 @@ function entry(klass,i,variant=0){
     build:Engine.exampleBuild(klass,klass+' '+i,5,variant)};
 }
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
-function measure(classes,seed,variants,checkReplay=false){
+function measure(classes,seed,variants,checkReplay=false,navigationMode='direct'){
   const roster=classes.map((klass,i)=>entry(klass,i,variants[i]||0));
-  const sim=Engine.battle(roster,{...OPTIONS,seed});
+  const sim=Engine.battle(roster,{...OPTIONS,seed,navigationMode});
   const firstThreat=Object.fromEntries(sim.fighters.map(f=>[f.id,null]));
   const firstActualHit=Object.fromEntries(sim.fighters.map(f=>[f.id,null]));
   const firstClose=Object.fromEntries(sim.fighters.filter(f=>f.stats.range<=3)
@@ -58,7 +58,7 @@ function measure(classes,seed,variants,checkReplay=false){
     assert(Number.isFinite(f.hp)&&Number.isFinite(f.x)&&Number.isFinite(f.z),'Geometria ou HP NaN');
   }
   if(checkReplay){
-    const again=Engine.battle(roster,{...OPTIONS,seed}).run(3000);
+    const again=Engine.battle(roster,{...OPTIONS,seed,navigationMode}).run(3000);
     assert.deepEqual(result,again,'Seed e builds iguais devem preservar resultado completo');
   }
   const winner=result.winner.klass;
@@ -105,8 +105,8 @@ function aggregate(matrix){
   return out;
 }
 function scenario(label,builders){
-  const games=builders.map(({classes,seed,variants},i)=>{
-    const g=measure(classes,seed,variants,i===0);
+  const games=builders.map(({classes,seed,variants,navigationMode},i)=>{
+    const g=measure(classes,seed,variants,i===0,navigationMode);
     g.classes=classes;return g;
   });
   console.log('E TANK BENCHMARK '+label+' '+JSON.stringify(aggregate(games)));
@@ -128,5 +128,21 @@ for(const n of [4,30]){
     builders.push({classes,variants:classes.map((_,j)=>(j+i*2)%11),seed:51117+i*1601});
   }
   scenario(n+' heroes / builds e spawns rotacionados',builders);
+}
+// Same-roster observation for obstacle steering; not an automatic balance gate.
+for(const [melee,ranged] of [['warrior','hunter'],['guardian','hunter'],['guardian','mage']]){
+ const builders=[];
+ for(let i=0;i<12;i++)builders.push({classes:i%2?[ranged,melee]:[melee,ranged],
+  variants:i%3?[i%11,(i+3)%11]:[0,0],seed:73001+2297*i,navigationMode:'steer'});
+ scenario('STEER '+melee+' x '+ranged,builders);
+}
+for(const n of [4,30]){
+ const builders=[];
+ for(let i=0;i<12;i++){
+  const classes=Array.from({length:n},(_,j)=>CLASSES[(j+i)%4]);
+  builders.push({classes,variants:classes.map((_,j)=>(j+i*2)%11),seed:51117+i*1601,
+   navigationMode:'steer'});
+ }
+ scenario('STEER '+n+' heroes',builders);
 }
 console.log('PASS Fase E tank diagnostics: determinismo, limites, 4/30 e confrontos pareados. Estatística diagnóstica, NÃO aprovação de fairness.');
