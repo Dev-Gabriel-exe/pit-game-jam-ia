@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T10:16:38.531Z",
+  "last_completed_at": "2026-10-29T11:24:03.135Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-PROJECTOR-CONTENT: audit real presentation coverage (M01/M03 demos), slide completeness and interactive examples; pedagogy before aesthetics",
+  "priority": "V4-CROSS-PROJECTOR-CONTENT: verify M01/M03 full tutorial projection and Chrome interaction, then audit M04/M05/M07; pedagogy before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M08-CI-CONTRACT",
+  "last_task": "V4-CROSS-PROJECTOR-M01-M03",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2429,45 +2429,67 @@
       "status": "done",
       "commit": "33046130d2549a74a568b8c82ae7169642ff7102",
       "note": "Fixed stale M08 mobile-title acceptance assertion after target-screen rubric change; QA run 40856157541 success; browser pending. Next: projector coverage."
+    },
+    {
+      "at": "2026-10-29T11:24:03.135Z",
+      "task": "V4-CROSS-PROJECTOR-M01-M03",
+      "status": "in_progress",
+      "commit": "af0ca4c2199456cf18f1d097eb80398ad5d05ecd",
+      "note": "M01 projected state simulator restored with independent local handlers and five full event-guide steps; M03 first-run guide expanded to six complete steps; image fallback labeled, projection CSS adjusted, Chrome regression at three viewports added. V8 syntax PASS, static QA 40865003847 SUCCESS; projector audit 40865003839 QUEUED, Browser QA 40865003827 IN_PROGRESS. Manual GDevelop/HDMI/mobile/peer NOT_RUN. 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-CROSS-PROJECTOR-CONTENT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T10:16:38.531Z",
+    "updated_at": "2026-10-29T11:24:03.135Z",
     "code_commits": [
-      "33046130d2549a74a568b8c82ae7169642ff7102"
+      "f22d97d179f63e82eba51a6212f7c93b9edd9802",
+      "5a074143cbf9833ebad64543e85da2e9465fa094",
+      "ef48fc8a556b4430b7835b264c5be464b4da3f67",
+      "ec3b82023d0cbea90497096fd9ffa620395e7ed9",
+      "607ab60271d3b9bb70c2e933f6118e90832e4fe1",
+      "af0ca4c2199456cf18f1d097eb80398ad5d05ecd"
     ],
-    "documentation_commit": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
+    "documentation_commit": "e92583cc17280bbb998cb675be23435349edd44d",
     "tests": [
       {
-        "name": "M08 static QA prior code",
-        "run_id": 40847981578,
-        "sha": "5ae815e3048560fd3c54b8421c071b68d23880be",
-        "result": "FAIL: stale title /MOBILE/ expectation in qa/v3-m08-acceptance.cjs"
+        "name": "Previous M08 Browser QA",
+        "run_id": 40856157563,
+        "sha": "33046130d2549a74a568b8c82ae7169642ff7102",
+        "result": "SUCCESS confirmed on 2026-10-29"
       },
       {
-        "name": "M08 updated acceptance contract static QA",
-        "run_id": 40856157541,
-        "sha": "33046130d2549a74a568b8c82ae7169642ff7102",
+        "name": "Previous checkpoint static QA",
+        "run_id": 40856233174,
+        "sha": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
+        "result": "SUCCESS confirmed on 2026-10-29"
+      },
+      {
+        "name": "Previous checkpoint Browser QA",
+        "run_id": 40856233410,
+        "sha": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
+        "result": "SUCCESS confirmed on 2026-10-29"
+      },
+      {
+        "name": "Projector M01/M03 JavaScript syntax in V8",
+        "result": "PASS: gdevelop-first-run.js, teacher-gdevelop-guide.js, teacher-projector-m01.js, qa/v3-projector-content-audit.cjs compiled by Function constructor after edits; not browser runtime"
+      },
+      {
+        "name": "Projector regression Chrome 1280/1600/1920",
+        "run_id": 40865003839,
+        "sha": "af0ca4c2199456cf18f1d097eb80398ad5d05ecd",
+        "result": "QUEUED at checkpoint; 5 new regression assertions require result confirmation"
+      },
+      {
+        "name": "New code static QA",
+        "run_id": 40865003847,
+        "sha": "af0ca4c2199456cf18f1d097eb80398ad5d05ecd",
         "result": "SUCCESS"
       },
       {
-        "name": "M08 updated acceptance contract Browser QA",
-        "run_id": 40856157563,
-        "sha": "33046130d2549a74a568b8c82ae7169642ff7102",
-        "result": "IN_PROGRESS at checkpoint"
-      },
-      {
-        "name": "Documentation commit static QA",
-        "run_id": 40856233174,
-        "sha": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
-        "result": "IN_PROGRESS at checkpoint"
-      },
-      {
-        "name": "Documentation commit Browser QA",
-        "run_id": 40856233410,
-        "sha": "cc0ebd3987b77c7acc6913f9fcf2ab2033dc5c3f",
+        "name": "New code Browser QA",
+        "run_id": 40865003827,
+        "sha": "af0ca4c2199456cf18f1d097eb80398ad5d05ecd",
         "result": "IN_PROGRESS at checkpoint"
       },
       {
@@ -2479,7 +2501,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify CI on latest checkpoint and implement a small, measurable fix for projector pedagogical coverage, prioritizing M01/M03 demonstration/tutorial slides",
-    "blocker": "Projector audit documents 9/40 phases under 40% retained text and cloned interactive controls without handlers; manual human validation remains NOT_RUN."
+    "next_task": "Verify projector Chrome matrix on final code; if passing, audit M04/M05/M07 demo slides for missing step-by-step tutorials and preserve interactivity; pedagogy before visuals",
+    "blocker": "M01/M03 projector fix committed but Chrome projector matrix and Browser QA not yet completed; manual GDevelop/HDMI/mobile/peer NOT_RUN"
   }
 }
