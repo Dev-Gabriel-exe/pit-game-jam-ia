@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T02:16:00Z",
+  "last_completed_at": "2026-10-29T03:17:37.829Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: confirm 806fd214e static/browser QA and inspect M01–M10 remaining evidence, projected criteria and navigation",
+  "priority": "V4-CROSS-AUDIT: verify final CI for M10 access-route hints; inspect M01–M10 remaining evidence and projected-teacher alignment",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M09-M10-CONTRACT",
+  "last_task": "V4-CROSS-M10-ACCESS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2374,89 +2374,55 @@
       "task": "V4-CROSS-M09-M10-PROJECTION",
       "commit": "806fd214e71c7ecac872bda99ef73bb37390e438",
       "summary": "Follow-up cross-audit: projected M09 practice still offered only correction/backlog and visible M09/M10 footer text instructed teacher to request Preview/register approval. Made M09 third option explicit and neutralized teacher-facing operational instructions in projected footers; kept private procedures in default-closed paper notes. Added alignment assertions. 3/3 JS syntax checks and 4 in-memory projected render checks PASS. Prior b4991835 static CI 40805081107 SUCCESS; browser CI 40805081082 IN_PROGRESS. New 806fd214e static CI 40805185850 and browser CI 40805185799 IN_PROGRESS. No manual GDevelop/HDMI/mobile/peer testing. 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-29T03:17:37.829Z",
+      "task": "V4-CROSS-M10-ACCESS",
+      "commit": "6f40718ce1849112ab01f00a23233fb76025c8f2",
+      "summary": "Audited M10 student handoff and found a generic access field that did not tell students what to enter for Preview local, exported Web or gd.games; added route-aware hints, examples and aria-describedby, with live updates on guide tab changes. Added VM regression to qa/v3-audit-alignment.cjs; 13/13 V8 source/runtime assertions PASS on fetched branch files. Prior 806fd214e CI static 40805185850 and browser 40805185799 SUCCESS. New final SHA CI not yet verified. GDevelop GUI, physical mobile, HDMI and peer playtest NOT_RUN. Original roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M09-M10-PROJECTION",
+    "task": "V4-CROSS-M10-ACCESS",
     "status": "in_progress",
-    "updated_at": "2026-10-29T02:16:00Z",
+    "updated_at": "2026-10-29T03:17:37.829Z",
     "code_commits": [
-      "b49918350535f5a2a240b21ae6df4430133bb65e",
-      "806fd214e71c7ecac872bda99ef73bb37390e438"
+      "7200847c949c9dcdcba21de42850135c19470b80",
+      "79a26667843fa17f688c13105b8e7de9b74177f9",
+      "6f40718ce1849112ab01f00a23233fb76025c8f2"
     ],
     "tests": [
       {
-        "name": "M09 prior final static QA",
-        "run_id": 40799497921,
-        "result": "SUCCESS",
-        "sha": "463e8253"
-      },
-      {
-        "name": "M09 prior final browser QA",
-        "run_id": 40799497847,
-        "result": "SUCCESS",
-        "sha": "463e8253"
-      },
-      {
-        "name": "M09 previous checkpoint static QA",
-        "run_id": 40799524791,
-        "result": "SUCCESS",
-        "sha": "a31ac2f5"
-      },
-      {
-        "name": "M09 previous checkpoint browser QA",
-        "run_id": 40799524823,
-        "result": "SUCCESS",
-        "sha": "a31ac2f5"
-      },
-      {
-        "name": "M09→M10 source syntax and in-memory teacher render",
-        "result": "PASS",
-        "sha": "b4991835",
-        "details": "5/5 JS parse checks and source/render assertions in JS isolate; not browser or GDevelop"
-      },
-      {
-        "name": "M09→M10 CI static QA",
-        "run_id": 40805081107,
-        "result": "IN_PROGRESS",
-        "sha": "b4991835"
-      },
-      {
-        "name": "M09→M10 CI browser QA",
-        "run_id": 40805081082,
-        "result": "IN_PROGRESS",
-        "sha": "b4991835"
-      },
-      {
-        "name": "M09/M10 projected teacher JS syntax and render",
-        "result": "PASS",
-        "sha": "806fd214",
-        "details": "3/3 parse checks, 4 in-memory render assertions; not physical HDMI or browser"
-      },
-      {
-        "name": "M09→M10 b499 static QA",
-        "run_id": 40805081107,
-        "result": "SUCCESS",
-        "sha": "b4991835"
-      },
-      {
-        "name": "M09/M10 projection static QA",
+        "name": "Prior M09/M10 projection static QA",
         "run_id": 40805185850,
-        "result": "IN_PROGRESS",
-        "sha": "806fd214"
+        "result": "SUCCESS",
+        "sha": "806fd214e"
       },
       {
-        "name": "M09/M10 projection browser QA",
+        "name": "Prior M09/M10 projection browser QA",
         "run_id": 40805185799,
-        "result": "IN_PROGRESS",
-        "sha": "806fd214"
+        "result": "SUCCESS",
+        "sha": "806fd214e"
+      },
+      {
+        "name": "M10 access-route JS source/render/validation assertions",
+        "result": "PASS",
+        "count": "13/13",
+        "sha": "6f40718c",
+        "details": "Actual student module parsed and executed in V8; local/web/gd hints, aria, valid URL, invalid local description and token-bearing URL; not Node CI or browser"
+      },
+      {
+        "name": "M10 new final static/browser CI",
+        "result": "NOT_VERIFIED",
+        "sha": "6f40718c",
+        "details": "No GitHub Actions run IDs available via current connector; do not infer PASS from prior commits"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify CI on 806fd214e and checkpoint SHA; continue M01–M10 evidence and projected-teacher alignment",
+    "next_task": "Verify static/browser CI for 6f40718c or newer checkpoint SHA; inspect student M01–M10 evidence/teacher criteria with priority on real delivery instructions",
     "blocker": "No code blocker; GDevelop GUI, physical mobile, HDMI projection and real peer playtest NOT_RUN"
   }
 }
