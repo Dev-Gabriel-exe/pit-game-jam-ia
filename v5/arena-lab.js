@@ -44,7 +44,7 @@ function updateScoreboard(){
   return '<div role="listitem" class="fighter '+(f.alive?'':'defeated')+'" data-fighter="'+esc(f.build.klass)+'">'+
    '<div class="name"><strong>'+glyph[f.build.klass]+' '+esc(f.name)+'</strong><span>'+Math.ceil(val)+' / '+max+' HP</span></div>'+
    '<div class="bar"><span style="width:'+Math.max(0,Math.min(100,val/max*100)).toFixed(1)+'%"></span></div>'+
-   '<div class="small"><span>'+esc(CORE.CLASS[f.build.klass].label)+'</span><span>'+Math.round(f.damage||0)+' dano · '+f.kills+' abates</span></div></div>';
+   '<div class="small"><span>'+esc(CORE.CLASS[f.build.klass].label)+' · '+Math.round(f.damage||0)+' dano</span><button type="button" data-focus="'+esc(f.id)+'" aria-label="Seguir '+esc(f.name)+'">◉ Seguir</button></div></div>';
  }).join('');
 }
 function appendLog(content,klass='hit'){
@@ -103,7 +103,7 @@ function initRound(){
  $('speedBattle').textContent='Velocidade ×1';
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
- $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;
+ $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;
  const mission=state.mission;
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
  const prefix=mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
@@ -151,6 +151,8 @@ document.querySelectorAll('.milestone').forEach(button=>{
 $('startBattle').addEventListener('click',begin);
 $('pauseBattle').addEventListener('click',pause);
 $('resetBattle').addEventListener('click',initRound);
+$('overviewCamera').addEventListener('click',()=>state.stage?.overview());
+$('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn)state.stage?.focusFighter(btn.dataset.focus);});
 $('speedBattle').addEventListener('click',()=>{
  if(!state.stage)return;
  state.speed=state.speed===1?1.5:state.speed===1.5?2:state.speed===2?3:1;
