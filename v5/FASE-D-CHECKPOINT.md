@@ -43,7 +43,7 @@ Capturas reais do usuário apontaram: cenário simples demais, câmera alta/afas
 - Demonstrador atualizado no Vercel (projeto **isolado** `pit-v5-coliseu-demo`, não é `main`): **https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1**. Deploy alvo `dpl_ARmMRynQTh7XyqHAPZCQdGbeDXpV` confirmado READY, a URL principal respondeu publicamente.
 
 **O que NÃO está concluído:** inspeção humana dos materiais e iluminação; medição real de FPS no celular do usuário; ajustes de IA/justiça 1×1 (Fase E); diretor de câmera automático e câmera individual por aluno (Fase F); merge.
-**Nota sobre QA:** commits intermediários falharam no browser devido ao teste antigo esperar nome de mapa v3; o teste foi atualizado para v4. Verificar o último workflow antes de declarar homologado.
+**QA atualizado:** workflow da Arena V5 em `e47b15b0644abcc77038b74be42c8559d12b55c8` passou nos jobs `rules` e `browser` (https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40945083194). Carregamento CC0 `loaded`, 30 heróis desktop, 4 heróis mobile, arquibancadas, B.6 120 talentos e C.1/C.2/C.3 aprovados em automação. **Screenshot no SwiftShader falhou por timeout**: aprovação humana da estética e medição FPS continuam pendentes.
 
 ## Continuidade e evidências
 - Workflow: `.github/workflows/v5-arena-lab-qa.yml`.
