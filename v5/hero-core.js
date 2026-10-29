@@ -6,10 +6,10 @@
 'use strict';
 const VERSION=5;
 const CLASS={
- warrior:{label:'Bárbaro',icon:'⚒',color:'#e4a266',hp:120,speed:3.5,range:1.9,attack:14,defense:6,magic:0,ability:'Golpe sísmico'},
- mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:78,speed:3.6,range:9.1,attack:14,defense:2,magic:7,ability:'Explosão arcana'},
- hunter:{label:'Patrulheiro',icon:'➶',color:'#98d4a1',hp:88,speed:4.6,range:10.3,attack:13,defense:3,magic:1,ability:'Flecha múltipla'},
- guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:135,speed:3.1,range:2.0,attack:11,defense:10,magic:2,ability:'Fortaleza'},
+ warrior:{label:'Bárbaro',icon:'⚒',color:'#e4a266',hp:125,speed:4.25,range:2.25,attack:14.5,defense:6,magic:0,ability:'Golpe sísmico'},
+ mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:80,speed:3.55,range:8.7,attack:13.5,defense:2,magic:7,ability:'Explosão arcana'},
+ hunter:{label:'Patrulheiro',icon:'➶',color:'#98d4a1',hp:90,speed:4.3,range:9.8,attack:12.6,defense:3,magic:1,ability:'Flecha múltipla'},
+ guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:130,speed:3.8,range:2.25,attack:12.6,defense:9,magic:2,ability:'Fortaleza'},
  rogue:{label:'Ladino',icon:'⟡',color:'#c79dcc',hp:87,speed:5.0,range:1.9,attack:13.7,defense:3.5,magic:1,ability:'Emboscada'},
  necromancer:{label:'Necromante',icon:'☠',color:'#a79bbf',hp:83,speed:3.5,range:8.3,attack:13,defense:2.5,magic:6,ability:'Chamado das Sombras'}
 };
@@ -105,7 +105,8 @@ function derived(b){
  const s=k=>int(a[k],0,30),r=k=>int(t[k],0,3);
  let hp=c.hp+s('vitality')*11+(r('stamina')*15)+(r('aegis')*11)+r('bones')*8;
  let speed=c.speed+s('agility')*.09+r('dash')*.22+r('shadow')*.18;
- let atk=c.attack+s('power')*1.4+s('spirit')*.65+(c.magic*s('spirit')*.22);
+ // Previously magic*spirit*.22 inflated Arcanista damage far above melee.
+ let atk=c.attack+s('power')*1.4+s('spirit')*.55+(c.magic*s('spirit')*.08);
  atk*=1+r('fury')*.12+r('rune')*.12+r('hex')*.10+r('execute')*.07;
  const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5+r('dodge')*1.5+r('bones')*1.3;
  const range=c.range+r('eagle')*.8;
@@ -129,7 +130,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03)+(rnd()-.5)*1.25)*scale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
-   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0};
+   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2};
  });
  let time=0,seq=0,winner=null,finished=false;
  const initialCount=fighters.length;
@@ -176,6 +177,8 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    f.slow=Math.max(0,f.slow-step);
    f.stagger=Math.max(0,f.stagger-step);
    f.sidestep=Math.max(0,f.sidestep-step);
+   f.rush=Math.max(0,f.rush-step);
+   f.rushCooldown=Math.max(0,f.rushCooldown-step);
    if(f.build.talents.heal)f.hp=Math.min(f.stats.hp,f.hp+step*f.build.talents.heal*.45);
    const enemies=fighters.filter(e=>e.alive&&e!==f);if(!enemies.length)continue;
    enemies.sort((a,b)=>Math.hypot(a.x-f.x,a.z-f.z)-Math.hypot(b.x-f.x,b.z-f.z));
@@ -188,7 +191,14 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    const chase=d>preferred+1.2?1:d<preferred-.9?-0.65:0;
    const strafeSign=(hash(f.id)^seed)&1?1:-1;
    const strafe=(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
-   const slowFactor=f.slow?0.58:1;
+   // Melee fighters need a readable, timed dash to close the gap against
+   // permanent kiting. This is movement, not a teleport or hidden talent.
+   if(!ranged&&d>6&&f.rushCooldown<=0){
+    f.rush=.95;
+    f.rushCooldown=6.5+rnd()*1.4;
+    log('dash',f,{target:target.id,x:f.x,z:f.z});
+   }
+   const slowFactor=(f.slow?0.58:1)*(f.rush>0?2.0:1);
    const desiredX=(dx/d*chase-dz/d*strafe)*f.stats.speed*slowFactor;
    const desiredZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*slowFactor;
    const easing=1-Math.exp(-9*step);
