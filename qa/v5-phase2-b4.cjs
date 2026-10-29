@@ -73,7 +73,7 @@ const seen=(sim,id,kind)=>sim.events.some(e=>e.talent===id&&(!kind||e.type===kin
 }
 {
  const {sim,f,e}=duel('hunter',['E06','E07','E08','E09','E10'],'warrior');
- f.hp=f.stats.hp*.49;e.stats.attack=5;
+ f.hp=f.stats.hp*.405;e.stats.attack=5; // First real melee impact must cross the 40% threshold
  go(sim,600);
  assert(seen(sim,'E10','talent')&&seen(sim,'E10','trap'),'E10 must place and detonate a mine');
  assert(seen(sim,'E09','charge'),'E09 must charge on the first triggered trap');
