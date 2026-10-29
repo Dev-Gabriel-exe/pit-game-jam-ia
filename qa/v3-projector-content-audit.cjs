@@ -28,7 +28,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    if(!(await page.locator('#pitProjector').count())){rows.push({mission,phase,...before,error:'NO_SLIDES'});continue}
    const slideCount=await page.locator('#pitProjectorCount').innerText();
    const n=Number(slideCount.split('/')[1]?.trim())||1;
-   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[];
+   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[];
    let demoInteraction=null;
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
@@ -44,6 +44,14 @@ const {chromium}=require('playwright'),fs=require('node:fs');
        cardWidth:Math.round(card?.getBoundingClientRect().width||0),viewportHeight:Math.round(r.height)};
     });
     slides.push(metrics);
+    if(mission===4&&phase==='review'){
+     const review=page.locator('#pitProjectorContent [data-pit-projector-review]');
+     if(await review.count())m04ReviewSteps.push(await review.evaluate(el=>({
+      id:el.dataset.pitProjectorReview,
+      text:el.textContent.trim(),
+      privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+     })));
+    }
     if(mission===3&&phase==='practice'){
      const lab=page.locator('#pitProjectorContent [data-pit-projector-lab]');
      if(await lab.count())m03PracticeSteps.push(await lab.evaluate(el=>({
@@ -105,7 +113,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title}));
   }
@@ -219,6 +227,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  const m01=rows.find(x=>x.mission===1&&x.phase==='demo');
  const m03=rows.find(x=>x.mission===3&&x.phase==='demo');
  const m04=rows.find(x=>x.mission===4&&x.phase==='demo');
+ const m04Review=rows.find(x=>x.mission===4&&x.phase==='review');
  const m05=rows.find(x=>x.mission===5&&x.phase==='demo');
  const m07=rows.find(x=>x.mission===7&&x.phase==='demo');
  const expected01=Array.from({length:5},(_,i)=>'M01:'+i),expected03=Array.from({length:6},(_,i)=>'M03:'+i),expected04=Array.from({length:4},(_,i)=>'M04:'+i),expected05=Array.from({length:5},(_,i)=>'M05:'+i),expected07=Array.from({length:4},(_,i)=>'M07:'+i);
@@ -230,6 +239,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M01 projected state simulator: collect, blocked door, then win',pass:m01?.demoInteraction?.pass===true},
   {name:'M01 demo contains substantial material',pass:(m01?.slides||0)>=10&&(m01?.retainedRatio||0)>.4},
   {name:'M03 demo contains substantial material',pass:(m03?.slides||0)>=8&&(m03?.retainedRatio||0)>.4},
+  {name:'M04 review: introduction, four criteria, decision and evidence are separate slides without private notes',pass:m04Review?.m04ReviewSteps?.length===7&&JSON.stringify(m04Review.m04ReviewSteps.map(x=>x.id))===JSON.stringify(['M04:intro','M04:rubric-1','M04:rubric-2','M04:rubric-3','M04:rubric-4','M04:decision','M04:record'])&&m04Review.m04ReviewSteps.every(x=>x.privateNotes===0)&&(m04Review.retainedRatio||0)>.5},
+  {name:'M04 review: public criteria and assessment limits remain projected',pass:!!m04Review?.m04ReviewSteps?.find(x=>x.id==='M04:intro'&&x.text.includes('evidência'))&&['ENTRADA','LIMITE','REPRODUTIBILIDADE','PERSISTÊNCIA'].every((label,i)=>m04Review?.m04ReviewSteps?.[i+1]?.text.includes(label))&&!!m04Review?.m04ReviewSteps?.find(x=>x.id==='M04:decision'&&x.text.includes('APROVAR')&&x.text.includes('SOLICITAR REVISÃO'))&&!!m04Review?.m04ReviewSteps?.find(x=>x.id==='M04:record'&&x.text.includes('painel de acompanhamento')&&x.text.includes('declaração do aluno'))},
   {name:'M04: all four steps of selected GDevelop route projected separately',pass:JSON.stringify(m04?.guideSteps)===JSON.stringify(expected04)},
   {name:'M04: each step includes action, result, recovery, and source without private notes',pass:m04?.m04Sections?.length===4&&m04.m04Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
   {name:'M04: platform, puzzle, and 3D routes each project all four complete steps',pass:m04RouteChecks.length===3&&m04RouteChecks.every(x=>x.pass)},
