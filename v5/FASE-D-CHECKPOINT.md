@@ -25,6 +25,13 @@ Data: 2026-10-29. Branch exclusiva: `feature/v5-arena-dos-criadores`. **Não apr
 - O próximo desenvolvimento permanece em D: avaliar arte/escala real por screenshot e browser, ajustar recursos, otimizar draw calls e legibilidade; só após aprovação passar à E. Não reescrever as classes, talentos ou missões.
 - O objetivo do usuário é Coliseu gótico **maior e visualmente rico**, com espaço e tempo para observar movimentação, cenas legíveis para cerca de 30 alunos e menor chance de ataques simultâneos injustos. Fase F: professor acompanha global, aluno vivo em terceira pessoa, aluno morto vê o mesmo feed de câmera do professor.
 
+## Primeira prévia navegável e verificação
+- Ambiente **separado do site principal**: https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1
+- Deploy da versão visual em commit `9b6708d86149ba2aa7d9569225aa1a3e09fc5aab`. Deploy Vercel `dpl_6B9B3Lt4evpgpkaCxyoXLtKDLoTc` com estado READY e URL pública confirmada por fetch HTML. Não é merge na main.
+- Workflow https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40939963268 passou nas regras e navegador. A interface carregou 30 heróis em desktop (1440 px), 4 em mobile (390 px), arquibancadas e recursos GLB adicionais (`SCENERY STATUS: loaded`). Screenshot WebGL em SwiftShader expirou, **portanto não equivale a inspeção visual humana**.
+- Observabilidade acrescentada após a prévia inicial (`v5FrameRate`, `v5DrawCalls`, `v5Triangles`, `v5QualityMode`). Deve ser confirmada por workflow posterior e medição em GPU real.
+- **Aguardando validação estética do usuário**, antes de declarar Fase D encerrada.
+
 ## Continuidade e evidências
 - Workflow: `.github/workflows/v5-arena-lab-qa.yml`.
 - Stage: `v5/arena-lab.html?phase2=1` (em ambiente da branch que de fato esteja publicado).
