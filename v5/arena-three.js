@@ -160,9 +160,13 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  const root=new THREE.Group();scene.add(root);
  arenaScenery(scene,root);
  const individuals=new Map(),effects=[],labels=new Map();
+ let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();
  function clearHeroes(){
+  modelLoadedCount=0;modelErrorCount=0;
+  delete container.dataset.v5ModelsLoaded;delete container.dataset.v5ModelsFailed;
+  delete container.dataset.v5ModelsExpected;
   for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();
   for(const x of individuals.values()){
    x.mixer?.stopAllAction();if(x.modelRoot)x.mixer?.uncacheRoot(x.modelRoot);
@@ -218,6 +222,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
    // Keep original procedural mesh as offline fallback, but do not overlay it.
    const actor=item.mesh.actor;for(const child of actor.children)child.visible=false;
    actor.add(model);item.modelRoot=model;item.personalMaterials=personalMaterials;
+   if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
    if(gltf.animations?.length){
     item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
     for(const clip of gltf.animations)item.actions.set(clip.name.toLowerCase(),item.mixer.clipAction(clip));
@@ -228,6 +233,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
    if(item.id==='preview'&&individuals.get(item.id)===item){
     container.dataset.v5Asset='fallback';container.dataset.v5AssetError=String(err.message||err).slice(0,140);
    }
+   if(item.id!=='preview'&&individuals.get(item.id)===item){modelErrorCount++;container.dataset.v5ModelsFailed=String(modelErrorCount)}
    console.warn('[V5] GLB indisponível, preservado herói procedural:',klass,err.message||err);
   });
  }
@@ -256,6 +262,8 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
   simulation=CORE.battle(normalized,{seed,limit});
+  container.dataset.v5ModelsExpected=String(simulation.fighters.length);
+  container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
   camera.position.set(0,26,37);controls.target.set(0,.2,0);controls.update();
   elapsed=0;accumulator=0;playing=false;
