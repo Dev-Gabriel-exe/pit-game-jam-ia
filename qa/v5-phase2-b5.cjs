@@ -57,6 +57,7 @@ const effect=(s,id,type)=>s.events.some(e=>e.talent===id&&(!type||e.type===type)
 }
 {
  const {sim,f,e}=duel('mage',['A03'],'guardian',[],9);
+ f.x=-7;f.z=4;e.x=2;e.z=4; // Stay within the storm ring during the 4m movement trial.
  f.stats.speed=5;e.basic=999;e.offenseDelay=999;
  go(sim,250);
  assert(effect(sim,'A03','charge'),'A03 should charge after 4m travel');
