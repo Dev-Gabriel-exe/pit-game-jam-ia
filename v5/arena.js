@@ -149,8 +149,12 @@ function start(list,label){
  write('⚔ '+label+' iniciada com '+world.fighters.length+' heróis.');Sfx.play(180,.35,'sawtooth',.055);
  scoreboard();
 }
+let previewSignature='';
 function showHero(){
  if(!view||!THREE)return;
+ const signature=player.classId+':'+Object.values(player.appearance).join(':');
+ if(!running&&world===null&&heroMeshes.has('hero')&&signature===previewSignature){$('leaderName').textContent=previewName;return;}
+ previewSignature=signature;
  running=false;world=null;stopSceneMeshes();
  spawn({id:'hero',name:previewName,build:player,x:0,z:0,hp:100,maxHp:100,alive:true,kills:0,walk:0,flash:0,attackPhase:0,angle:0});
  $('battleStatus').textContent='PERSONAGEM EM EXIBIÇÃO';$('leaderName').textContent=previewName;
