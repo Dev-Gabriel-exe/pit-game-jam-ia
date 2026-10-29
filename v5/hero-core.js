@@ -178,7 +178,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   if(finished)return {finished,winner,events:[]};
   const step=Math.min(.09,Math.max(.001,Number(rawDt)||dt));
   time+=step;const start=events.length;
-  const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-18)*(scale===1?.13:.37*scale));
+  // The small spectator mode needs a faster contracting arena; otherwise
+  // ranged characters kite forever around a huge empty perimeter.
+  // For 30 participants, keep the large court and its original shrink pace.
+  const stormRate=fighters.length<=4?.23:(scale===1?.13:.37*scale);
+  const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-18)*stormRate);
   // Rotate action order deterministically; the first fighter in the input
   // must not always enjoy first strike advantage.
   const startIndex=Math.floor(rnd()*Math.max(1,fighters.length));
