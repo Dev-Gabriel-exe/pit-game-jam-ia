@@ -234,20 +234,45 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();followId=null;
   container.dataset.v5Spectators='0';
  }
- function animateModel(item,motion){
-  if(!item.actions||item.lastMotion===motion)return;
+ function animateModel(item,motion,force=false){
+  if(!item.actions||(!force&&item.lastMotion===motion))return;
   const choices={
    idle:[/idle/,/breath/,/stand/],
    run:[/run/,/walk/,/move/],
    attack:[/attack/,/slash/,/punch/,/sword/,/bow/,/shoot/],
    cast:[/spell/,/cast/,/magic/,/attack/],
+   hit:[/hit/,/hurt/,/damage/,/react/,/block/],
+   dodge:[/dodge/,/roll/,/evade/,/jump/,/run/],
    defeated:[/death/,/die/,/dead/,/hit/,/idle/]
   }[motion]||[/idle/];
-  let choice;for(const regexp of choices){choice=[...item.actions].find(([name])=>regexp.test(name))?.[1];if(choice)break}
-  choice||=item.actions.values().next().value;
-  if(!choice)return;
-  if(item.lastAction!==choice){item.lastAction?.fadeOut(.2);choice.reset().fadeIn(.2).play();item.lastAction=choice}
+  let matches=[];
+  for(const regex of choices){
+   matches=[...item.actions].filter(([name])=>regex.test(name)).map(([,action])=>action);
+   if(matches.length)break;
+  }
+  if(!matches.length)matches=[...item.actions.values()];
+  if(!matches.length)return;
+  const transient=['attack','cast','hit','dodge'].includes(motion);
+  // Different matching GLB clips are selected for consecutive strikes
+  // instead of repeating just the first "Attack" animation forever.
+  const variant=force&&transient?++item.variantCursor||1:(item.variantCursor||0);
+  const chosen=matches[variant%matches.length];
+  if(item.lastAction!==chosen||force){
+   if(item.lastAction&&item.lastAction!==chosen)item.lastAction.fadeOut(.13);
+   chosen.enabled=true;
+   chosen.setLoop(transient?THREE.LoopOnce:THREE.LoopRepeat,transient?1:Infinity);
+   chosen.clampWhenFinished=transient;
+   chosen.reset().fadeIn(.13).play();
+   chosen.timeScale=transient?1.12:1;
+   item.lastAction=chosen;
+  }
   item.lastMotion=motion;
+ }
+ function triggerMotion(item,motion,duration){
+  if(!item||item.spectator||item.dead)return;
+  item.overrideMotion=motion;
+  item.motionUntil=elapsed+duration;
+  animateModel(item,motion,true);
  }
  function addRealCharacter(item){
   const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
@@ -334,6 +359,31 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  function resume(){if(simulation&&!simulation.finished){playing=true;physicsLast=performance.now();simulateStep(.20)}}
  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
+ function specialFx(item){
+  if(!item||effects.length>90)return;
+  const klass=item.build.klass;
+  const color={warrior:0xf5a45d,mage:0xa88aff,hunter:0x70dda2,guardian:0x83d7ed}[klass]||0xd5a876;
+  const x=item.mesh.root.position.x,z=item.mesh.root.position.z;
+  const material=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.78,depthWrite:false,side:THREE.DoubleSide});
+  let mesh;
+  if(klass==='guardian'){
+   mesh=new THREE.Mesh(new THREE.SphereGeometry(1.5,16,12),material);
+   material.wireframe=true;mesh.position.set(x,1.55,z);
+  }else if(klass==='mage'){
+   mesh=new THREE.Mesh(new THREE.TorusGeometry(2.7,.13,8,42),material);
+   mesh.rotation.x=-Math.PI/2;mesh.position.set(x,.33,z);
+  }else if(klass==='hunter'){
+   mesh=new THREE.Mesh(new THREE.ConeGeometry(1.1,4.1,3),material);
+   mesh.rotation.x=Math.PI/2;mesh.position.set(x,1.6,z);
+   mesh.rotation.y=item.mesh.actor.rotation.y;
+  }else{
+   mesh=new THREE.Mesh(new THREE.RingGeometry(1.35,2.8,40),material);
+   mesh.rotation.x=-Math.PI/2;mesh.position.set(x,.42,z);
+  }
+  root.add(mesh);mesh.userData.velocity=new THREE.Vector3();
+  effects.push({mesh,life:.85,maxLife:.85,isAbility:true});
+  burst(x,z,color,9);
+ }
  function burst(x,z,color=0xf4bb7e,count=10){
   if(effects.length>140)return;
   for(let i=0;i<count;i++){
@@ -366,7 +416,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(!unit.spectator){
    unit.mesh.root.position.set(f.x,Math.max(0,f.y||0),f.z);
    unit.mesh.actor.rotation.y=f.face;
-   animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
+   if(unit.overrideMotion&&elapsed<unit.motionUntil){
+    // Keep one-shot clips visible until the strike/reaction concludes.
+   }else{
+    unit.overrideMotion=null;
+    animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
+   }
    if(!f.alive){unit.mesh.circle.visible=false}
   }
  }
@@ -392,9 +447,19 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    accumulator-=.05;
    const result=simulation.update(.05);
    for(const ev of result.events){
-    if(ev.type==='hit'||ev.type==='special'){
-     const unit=individuals.get(ev.target||ev.hero);
-     if(unit)burst(unit.mesh.root.position.x,unit.mesh.root.position.z,ev.type==='special'?0xb98ef1:0xf4ae7e,ev.type==='special'?17:5);
+    const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
+    if(ev.type==='special'){
+     triggerMotion(attacker,'cast',.72);
+     specialFx(attacker);
+    }else if(ev.type==='launch'){
+     triggerMotion(attacker,'attack',.47);
+    }else if(ev.type==='hit'){
+     if(ev.kind==='melee')triggerMotion(attacker,'attack',.44);
+     if(victim&&!victim.spectator&&victim.motionUntil<elapsed+.12)triggerMotion(victim,'hit',.25);
+     if(victim)burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
+    }else if(ev.type==='dodge'){
+     triggerMotion(attacker,'dodge',.43);
+     if(attacker)burst(attacker.mesh.root.position.x,attacker.mesh.root.position.z,0x7ad1e2,5);
     }
     if(ev.type==='knockout'||ev.type==='storm')sendToGrandstand(ev.target||ev.hero,ev.type);
     onEvent(ev);
@@ -458,8 +523,15 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   }
   for(let i=effects.length-1;i>=0;i--){
    const e=effects[i];e.life-=dt;e.mesh.position.addScaledVector(e.mesh.userData.velocity,dt);
-   e.mesh.userData.velocity.y-=dt*7;
-   e.mesh.scale.setScalar(Math.max(.01,e.life));
+   if(e.isAbility){
+    const progress=1-e.life/e.maxLife;
+    e.mesh.scale.setScalar(.7+progress*2.3);
+    e.mesh.material.opacity=.78*(1-progress);
+    e.mesh.rotation.y+=dt*1.8;
+   }else{
+    e.mesh.userData.velocity.y-=dt*7;
+    e.mesh.scale.setScalar(Math.max(.01,e.life));
+   }
    if(e.life<=0){root.remove(e.mesh);e.mesh.geometry.dispose();e.mesh.material.dispose();effects.splice(i,1)}
   }
   if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId);if(f){
