@@ -13,6 +13,7 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('#v5HeroName').innerText(),'Aventureiro de demonstração','Preview needs explicit fictional identity');
   assert.equal(await page.locator('.v5-class').count(),6,'Six classes missing');
   assert.equal(await page.locator('[data-stat]').count(),8,'Attribute allocation must work');
+  await page.waitForFunction(()=>Boolean(window.PIT_V5_APP.state.stage),null,{timeout:30000});
   for(const id of ['warrior','guardian','mage','rogue','hunter','necromancer']){
    await page.locator('[data-class="'+id+'"]').click();
    assert.equal(await page.locator('#v5Stage').getAttribute('data-v5-asset-class'),id,'Class GLB request not queued: '+id);
