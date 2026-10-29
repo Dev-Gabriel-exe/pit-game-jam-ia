@@ -12,7 +12,7 @@ assert.equal(m.load('ficticioB').start,'');
 const evidence=m.evidence('ficticioA');
 assert.ok(evidence.includes('SE:')&&evidence.includes('ENTÃO:')&&evidence.includes('Negativo:'));
 assert.equal(m.parseEvidence(evidence).route,'3d');
-m.hydrate('ficticioC',evidence,'submitted');assert.equal(m.load('ficticioC').checks.length,3);
+m.hydrate('ficticioC',evidence,'submitted');assert.equal(m.load('ficticioC').checks.length,0,'remote submission cannot prove manual Preview checks');assert.equal(m.load('ficticioC').condition,d.condition,'written evidence still restores');
 m.hydrate('ficticioA','M07 | 2d\nInício: sobrescrito','submitted');assert.equal(m.load('ficticioA').route,'3d');
 assert.equal(m.routeFor({rule:{route:2}},m.load('novo')),1);
 assert.equal(m.routeFor({playable:{route:3}},m.load('novo')),1);
