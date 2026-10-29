@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d0b12">
 <meta name="description" content="Protótipo isolado da Arena dos Criadores: combate automático 3D com modelos reais e personagens de treino.">
-<title>Arena dos Criadores · Protótipo de Combate V5</title>
+<title>Cidadela do Eclipse · Arena 30 Heróis | Game Jam V5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,30 +20,31 @@
  <a class="back" href="./seletor.html">← Seleção de heróis</a></header>
 <main>
  <section class="intro">
-  <span class="eyebrow">✧ O CAMPO DE PROVA ✧</span>
-  <h1>A estratégia encontra <em>seu destino.</em></h1>
-  <p>Assista a até 30 personagens 3D reais lutando num coliseu ampliado, com arquitetura modular CC0. Este é o primeiro teste do palco e do combate, separado dos dados dos alunos.</p>
+  <span class="eyebrow">✧ NOVA ARENA · CIDADELA DO ECLIPSE ✧</span>
+  <h1>30 heróis. <em>Uma grande batalha.</em></h1>
+  <p>Um castelo medieval inteiramente novo, com muralhas, torres, portões, arquibancadas e 30 aventureiros 3D. Explore a arena em visão panorâmica ou acompanhe um herói.</p>
   <div class="disclaimer"><strong>LABORATÓRIO ISOLADO</strong> · Combate com o motor legado V5. Os 120 talentos planejados, os cinco atributos novos e o bloqueio da final <strong>ainda não estão integrados</strong>. Nenhuma vitória dá XP, altera notas ou bloqueia talentos.</div>
  </section>
  <nav class="milestones" aria-label="Simulação de marco da oficina">
   <button class="milestone" data-mission="5" aria-pressed="true" type="button"><span class="number">05</span><span><strong>Primeira prova</strong><small>500 XP · confronto de treino · build editável</small></span><span class="tag">TESTE</span></button>
   <button class="milestone" data-mission="10" aria-pressed="false" type="button"><span class="number">10</span><span><strong>Último desafio</strong><small>1.000 XP · prévia visual da final</small></span><span class="tag">SIMULAÇÃO</span></button>
  </nav>
- <div class="roster-controls" role="group" aria-label="Quantidade de combatentes na arena"><span class="eyebrow">FORMATO DO CONFRONTO</span><button type="button" class="roster-mode" data-roster="4" aria-pressed="false">⚔ 4 heróis · foco de combate</button><button type="button" class="roster-mode" data-roster="30" aria-pressed="true">✦ 30 heróis · arena da turma</button><span class="roster-note">Personagens de demonstração, sem dados reais dos alunos</span></div>
+ <div class="roster-controls" role="group" aria-label="Quantidade de combatentes na arena"><span class="eyebrow">FORMATO DO CONFRONTO</span><button type="button" class="roster-mode" data-roster="30" aria-pressed="true"><strong>30 HERÓIS</strong><small>COLISEU DA TURMA</small></button><button type="button" class="roster-mode" data-roster="4" aria-pressed="false"><strong>4 HERÓIS</strong><small>ZOOM NO COMBATE</small></button><span class="roster-note">Personagens de demonstração, sem dados reais dos alunos</span></div>
  <div class="layout">
   <section class="theater">
-   <div class="theater-head"><div><span class="eyebrow">01 · O COLISEU</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div>
+   <div class="theater-head"><div><span class="eyebrow">01 · CIDADELA DO ECLIPSE</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div>
    <div class="stage-wrap">
     <div id="arenaStage" class="stage" aria-label="Arena tridimensional com até 30 personagens reais em combate">
       <div class="stage-loading" id="stageLoading" role="status">✦ Invocando o coliseu 3D...</div>
     </div>
-    <div class="stage-flair" aria-hidden="true"><span>✦</span> ARENA DOS CRIADORES <span>✦</span></div>
+    <div class="stage-flair" aria-hidden="true"><span>✦</span> CIDADELA DO ECLIPSE · 30 HERÓIS <span>✦</span></div>
    </div>
    <div class="controls">
      <button id="startBattle" type="button" class="cta" disabled>▶ Iniciar confronto</button>
      <button id="pauseBattle" type="button" disabled>Ⅱ Pausar</button>
      <button id="resetBattle" type="button" disabled>↻ Reiniciar</button>
      <button id="overviewCamera" type="button" disabled>◎ Visão geral</button>
+     <button id="expandStage" type="button" aria-pressed="false">⛶ Ampliar arena</button>
      <button id="speedBattle" type="button" disabled>Velocidade ×1</button>
    </div>
    <div class="theater-foot"><span id="modelReport" role="status">Carregando modelos GLB...</span><span>Arraste para girar a câmera · roda ou pinça para zoom</span></div>
