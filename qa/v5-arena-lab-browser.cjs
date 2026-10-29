@@ -19,6 +19,7 @@ const {chromium}=require('playwright');
    }
    assert.equal(await page.locator('#arenaStage canvas').count(),1);
    assert.equal(await page.locator('[data-fighter]').count(),4);
+   await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,null,{timeout:10000});
    assert.equal(await page.locator('#startBattle').isDisabled(),false);
    await page.locator('#startBattle').click();
    await page.waitForFunction(()=>document.querySelector('#arenaStatus')?.dataset.status==='running',{timeout:15000});
