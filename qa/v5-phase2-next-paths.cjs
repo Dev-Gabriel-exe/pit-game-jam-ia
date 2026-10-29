@@ -46,7 +46,7 @@ for(const [k,enemy,dist] of [['warrior','guardian',2],['mage','warrior',2],['hun
  if(k==='warrior'){
   for(const id of ['D01','D03','D05'])assert(sim.events.some(x=>x.type==='talent'&&x.talent===id),id+' not cast');
   for(const id of ['D02','D04'])assert(seen(sim,id).some(x=>x.type==='proc'||x.type==='charge'),id+' did not react');
-  assert(seen(sim,'D01').filter(x=>x.type==='hit').length>=2,'D01 must strike twice');
+  assert(sim.events.filter(x=>x.type==='hit'&&x.skill==='D01').length>=2,'D01 must strike twice');
  }
  if(k==='mage'){
   for(const id of ['R01','R03','R05'])assert(sim.events.some(x=>x.type==='talent'&&x.talent===id),id+' not cast');
