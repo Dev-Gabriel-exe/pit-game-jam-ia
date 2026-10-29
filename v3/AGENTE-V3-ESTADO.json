@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T02:14:00Z",
+  "last_completed_at": "2026-10-29T02:16:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: verify CI for M09→M10 three-outcome handoff, then inspect M01–M10 remaining evidence/teacher criteria",
+  "priority": "V4-CROSS-AUDIT: confirm 806fd214e static/browser QA and inspect M01–M10 remaining evidence, projected criteria and navigation",
   "current_phase": "MISSOES",
   "last_task": "V4-CROSS-M09-M10-CONTRACT",
   "completed_count": 54,
@@ -2368,14 +2368,21 @@
       "task": "V4-CROSS-M09-M10-CONTRACT",
       "commit": "b49918350535f5a2a240b21ae6df4430133bb65e",
       "summary": "Cross-audit identified M10 projected rubric/student launch/guide still required correction or backlog despite M09 allowing a real no-defect playtest; legacy M09 required fictional bug and peer name, legacy M10 pitch required AI despite M06 optional AI. Fixed v2/missions.js, M10 student, teacher and GDevelop guide; added QA regression assertions and audit record. 5/5 JS syntax checks and in-memory M09→M10 contract/render checks PASS; prior M09 final static/browser CI 40799497921/40799497847 SUCCESS, prior checkpoint static/browser 40799524791/40799524823 SUCCESS. New commit b4991835 static 40805081107 and browser 40805081082 IN_PROGRESS at checkpoint. No GDevelop GUI, HDMI, physical mobile or human playtest. Original 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-29T02:16:00Z",
+      "task": "V4-CROSS-M09-M10-PROJECTION",
+      "commit": "806fd214e71c7ecac872bda99ef73bb37390e438",
+      "summary": "Follow-up cross-audit: projected M09 practice still offered only correction/backlog and visible M09/M10 footer text instructed teacher to request Preview/register approval. Made M09 third option explicit and neutralized teacher-facing operational instructions in projected footers; kept private procedures in default-closed paper notes. Added alignment assertions. 3/3 JS syntax checks and 4 in-memory projected render checks PASS. Prior b4991835 static CI 40805081107 SUCCESS; browser CI 40805081082 IN_PROGRESS. New 806fd214e static CI 40805185850 and browser CI 40805185799 IN_PROGRESS. No manual GDevelop/HDMI/mobile/peer testing. 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M09-M10-CONTRACT",
+    "task": "V4-CROSS-M09-M10-PROJECTION",
     "status": "in_progress",
-    "updated_at": "2026-10-29T02:14:00Z",
+    "updated_at": "2026-10-29T02:16:00Z",
     "code_commits": [
-      "b49918350535f5a2a240b21ae6df4430133bb65e"
+      "b49918350535f5a2a240b21ae6df4430133bb65e",
+      "806fd214e71c7ecac872bda99ef73bb37390e438"
     ],
     "tests": [
       {
@@ -2419,13 +2426,37 @@
         "run_id": 40805081082,
         "result": "IN_PROGRESS",
         "sha": "b4991835"
+      },
+      {
+        "name": "M09/M10 projected teacher JS syntax and render",
+        "result": "PASS",
+        "sha": "806fd214",
+        "details": "3/3 parse checks, 4 in-memory render assertions; not physical HDMI or browser"
+      },
+      {
+        "name": "M09→M10 b499 static QA",
+        "run_id": 40805081107,
+        "result": "SUCCESS",
+        "sha": "b4991835"
+      },
+      {
+        "name": "M09/M10 projection static QA",
+        "run_id": 40805185850,
+        "result": "IN_PROGRESS",
+        "sha": "806fd214"
+      },
+      {
+        "name": "M09/M10 projection browser QA",
+        "run_id": 40805185799,
+        "result": "IN_PROGRESS",
+        "sha": "806fd214"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify b4991835 static/browser CI and update checkpoint; continue transverse M01–M10 evidence audit",
+    "next_task": "Verify CI on 806fd214e and checkpoint SHA; continue M01–M10 evidence and projected-teacher alignment",
     "blocker": "No code blocker; GDevelop GUI, physical mobile, HDMI projection and real peer playtest NOT_RUN"
   }
 }
