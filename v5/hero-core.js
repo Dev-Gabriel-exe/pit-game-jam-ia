@@ -145,7 +145,8 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const rad=(5.2+Math.sqrt(i)*(spawnScale>3?1.65:1.03)+(rnd()-.5)*1.25)*spawnScale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,shieldLife:0,alive:true,attacks:0,kills:0,damage:0,
-   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0,navObstacle:-1,navSide:0,navActive:false,navTurns:0,eliminatedAt:null};
+   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0,navObstacle:-1,navSide:0,navActive:false,navTurns:0,
+    targetId:null,targetLock:0,lastAttacker:null,underFire:0,eliminatedAt:null};
  });
  let time=0,seq=0,winner=null,finished=false;
  const initialCount=fighters.length;
@@ -175,6 +176,8 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   // Class-intrinsic resistance while closing: being a frontline hero
   // must be a meaningful strategic option in a 30-player ranged FFA.
   if((o.build.klass==='warrior'||o.build.klass==='guardian')&&(kind==='ranged'||kind==='multishot'))amount*=.77;
+  // A struck hero briefly tracks its aggressor, with no damage/armor bonus.
+  o.lastAttacker=f.id;o.underFire=1.4;
   if(rnd()<f.stats.crit){amount*=1.6;log('critical',f,{target:o.id})}
   if(o.build.talents.last&&o.hp<o.stats.hp*.3)amount*=Math.max(.4,1-o.build.talents.last*.15);
   // A small agility-driven evasion window introduces reactive defensive play.
@@ -233,6 +236,41 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const len=Math.max(.0001,Math.hypot(nx,nz));
   return {blocked:true,direction:{x:nx/len,z:nz/len}};
  }
+
+ // Prefer reachable enemies and react to a recent aggressor, without
+ // teleporting, class-specific win weights or changing attack damage.
+ // Stickiness avoids camera-jarring target flips as fighters cross paths.
+ function selectTarget(f,enemies){
+  const nearest=enemies.reduce((best,e)=>Math.hypot(e.x-f.x,e.z-f.z)<Math.hypot(best.x-f.x,best.z-f.z)?e:best,enemies[0]);
+  const nearDist=Math.hypot(nearest.x-f.x,nearest.z-f.z);
+  const current=enemies.find(e=>e.id===f.targetId);
+  const score=e=>{
+   const dist=Math.hypot(e.x-f.x,e.z-f.z);
+   const blocked=firstBlockingObstacle(f.x,f.z,e.x,e.z);
+   const coverPenalty=blocked?Math.min(2.0,f.stats.range*.24):0;
+   const focusBonus=current?.id===e.id?.8:0;
+   const threatBonus=f.underFire>0&&f.lastAttacker===e.id?.9:0;
+   return dist+coverPenalty-focusBonus-threatBonus;
+  };
+  let target=current&&Math.hypot(current.x-f.x,current.z-f.z)<=nearDist+3.5?current:nearest;
+  if(f.targetLock<=0||!current||!current.alive){
+   let bestScore=score(target);
+   // Never acquire a distant weak target across the stadium; score only
+   // opponents in an approachable band around the nearest enemy.
+   for(const e of enemies){
+    if(Math.hypot(e.x-f.x,e.z-f.z)>nearDist+3.5)continue;
+    const s=score(e);
+    if(s<bestScore-1e-7||(Math.abs(s-bestScore)<=1e-7&&e.id<target.id)){
+     target=e;bestScore=s;
+    }
+   }
+  }
+  if(f.targetId!==target.id){
+   f.targetId=target.id;f.targetLock=.75;
+   log('target',f,{target:target.id});
+  }
+  return target;
+ }
  function update(rawDt=dt){
   if(finished)return {finished,winner,events:[]};
   const step=Math.min(.09,Math.max(.001,Number(rawDt)||dt));
@@ -261,23 +299,28 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    f.rush=Math.max(0,f.rush-step);
    f.rushCooldown=Math.max(0,f.rushCooldown-step);
    f.aim=Math.max(0,f.aim-step);
+   f.targetLock=Math.max(0,f.targetLock-step);
+   f.underFire=Math.max(0,f.underFire-step);
    if(f.build.talents.heal)f.hp=Math.min(f.stats.hp,f.hp+step*f.build.talents.heal*.45);
    const enemies=fighters.filter(e=>e.alive&&e!==f);if(!enemies.length)continue;
-   enemies.sort((a,b)=>Math.hypot(a.x-f.x,a.z-f.z)-Math.hypot(b.x-f.x,b.z-f.z));
-   const target=enemies[0],dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
+   enemies.sort((a,b)=>Math.hypot(a.x-f.x,a.z-f.z)-Math.hypot(b.x-f.x,b.z-f.z)||a.id.localeCompare(b.id));
+   const target=selectTarget(f,enemies),dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
    const route=navigation(f,target);
    // Steering, acceleration, sidesteps and body avoidance replace the old
    // instant translation straight through another player's position.
    const ranged=f.stats.range>3;
-   const preferred=ranged?Math.min(f.stats.range*.67,6.6):Math.max(1.25,f.stats.range*.79);
+   // Low-health ranged heroes take a modest defensive step after being hit,
+   // at the price of temporarily giving up optimal firing distance.
+   const cautious=ranged&&f.underFire>0&&f.hp/f.stats.hp<.42;
+   const preferred=(ranged?Math.min(f.stats.range*.67,6.6):Math.max(1.25,f.stats.range*.79))+(cautious?1.15:0);
    // Preserve ranged spacing: seeing a blocked route is not a reason for
    // an Arcanist or Hunter to charge directly into a melee fighter. Only
    // frontliners commit fully to closing obstructed gaps.
    const ordinaryChase=d>preferred+1.2?1:d<preferred-.9?-0.65:0;
    const chase=route.blocked&&!ranged?1:ordinaryChase;
    const strafeSign=(hash(f.id)^seed)&1?1:-1;
-   const strafe=route.direction?0:(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
+   const strafe=route.direction?0:(d<preferred+5&&d>1.5?(cautious?.35:.27):0)*strafeSign;
    // Melee fighters need a readable, timed dash to close the gap against
    // permanent kiting. This is movement, not a teleport or hidden talent.
    if(!ranged&&!route.blocked&&d>5.2&&f.rushCooldown<=0){
