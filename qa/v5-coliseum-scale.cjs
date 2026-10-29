@@ -17,6 +17,11 @@ assert.match(citadel,/CylinderGeometry\(1\.42,1\.42,\.13,6,1\)/,'Piso hexagonal 
 assert.match(citadel,/stained-glass-gothic/,'Vitrais góticos presentes na arena');
 assert.match(renderer,/function cinematic\(\)/,'Câmera de aproximação disponível');
 assert.match(renderer,/v5VisibleNicks/,'Cotas de nomes visíveis devem existir');
+assert.match(renderer,/function followPose\(f,hero\)/,'Follow camera requires a real hero facing vector');
+assert.match(renderer,/v5FollowBackDot/,'Follow camera must expose rear-camera QA');
+assert.match(renderer,/Math\.max\(1\.45,cue\.duration\*1\.9\)/,'Active talents need sustained visible cues');
+assert.match(renderer,/new THREE\.TorusGeometry\(1\.65,\.12/,'Real skills should show a second glowing ring');
+
 assert.match(lab,/arenaScale:5,onEvent/);
 const klasses=['warrior','mage','hunter','guardian'];
 const roster=Array.from({length:30},(_,i)=>{
