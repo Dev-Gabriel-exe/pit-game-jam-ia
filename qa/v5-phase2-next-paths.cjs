@@ -5,11 +5,11 @@ const fs=require('node:fs'),path=require('node:path');
 const P=require('../v5/phase2-combat.js');
 const classes=['warrior','mage','hunter','guardian'];
 const additions={warrior:['D01','D02','D03','D04','D05'],mage:['R01','R02','R03','R04','R05'],hunter:['E01','E02','E03','E04','E05'],guardian:['L01','L02','L03','L04','L05']};
-assert.equal(Object.values(P.TALENTS).flat().length,80);
+assert.equal(Object.values(P.TALENTS).flat().length,100);
 for(const klass of classes){
  const planned=JSON.parse(fs.readFileSync(path.join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents;
  const skills=P.TALENTS[klass];
- assert.equal(skills.length,20);
+ assert.equal(skills.length,25);
  assert.deepEqual(skills.slice(10,15).map(t=>t.id),additions[klass]);
  for(let i=10;i<15;i++){
   const t=skills[i],source=planned[i];

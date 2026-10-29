@@ -10,10 +10,10 @@ const fresh={
  hunter:['E06','E07','E08','E09','E10'],
  guardian:['L06','L07','L08','L09','L10']
 };
-assert.equal(Object.values(P.TALENTS).flat().length,80);
+assert.equal(Object.values(P.TALENTS).flat().length,100);
 for(const klass of classes){
  const planned=JSON.parse(fs.readFileSync(path.join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents;
- assert.equal(P.TALENTS[klass].length,20);
+ assert.equal(P.TALENTS[klass].length,25);
  assert.deepEqual(P.TALENTS[klass].slice(15,20).map(t=>t.id),fresh[klass]);
  for(let i=15;i<20;i++){
   const a=P.TALENTS[klass][i],b=planned[i];
@@ -115,4 +115,4 @@ for(let seed=1;seed<=12;seed++){
  assert(sim.fighters.every(f=>Number.isFinite(f.hp)&&Number.isFinite(f.x)&&Number.isFinite(f.z)&&
   Number.isFinite(f.shield)&&f.shield<=f.stats.hp*.3+1e-6),'Invalid combat state on B4 seed '+seed);
 }
-console.log('PASS V5 B.4: 80 planned catalog matches, 20 additional executable rules, M5 mixed builds, timed/defensive skills and 12 30-bot simulations.');
+console.log('PASS V5 B.4 regression within 100-talent catalog, 20 additional executable rules, M5 mixed builds, timed/defensive skills and 12 30-bot simulations.');
