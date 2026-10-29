@@ -36,6 +36,9 @@ on:
       - 'qa/v5-coliseum-scale.cjs'
       - 'qa/v5-arena-pacing.cjs'
       - 'qa/v5-engagement-spread.cjs'
+      - 'v5/avatar-catalog.js'
+      - 'v5/personagens-lab.*'
+      - 'qa/v5-avatar-*.cjs'
       - '.github/workflows/v5-arena-lab-qa.yml'
   workflow_dispatch:
 permissions:
@@ -75,9 +78,14 @@ jobs:
           node --check qa/v5-coliseum-scale.cjs
           node --check qa/v5-arena-pacing.cjs
           node --check qa/v5-engagement-spread.cjs
+          node --check v5/avatar-catalog.js
+          node --check v5/personagens-lab.js
+          node --check qa/v5-avatar-catalog.cjs
+          node --check qa/v5-avatar-gallery-browser.cjs
           node qa/v5-coliseum-scale.cjs
           node qa/v5-arena-pacing.cjs
           node qa/v5-engagement-spread.cjs
+          node qa/v5-avatar-catalog.cjs
           node qa/v5-arena-lab.cjs
           node qa/v5-arena-navigation.cjs
           node qa/v5-arena-targeting.cjs
@@ -110,6 +118,7 @@ jobs:
           node qa/v5-talent-vfx-browser.cjs
           node qa/v5-talent-choreography-browser.cjs
           node qa/v5-build-identity-browser.cjs
+          node qa/v5-avatar-gallery-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
