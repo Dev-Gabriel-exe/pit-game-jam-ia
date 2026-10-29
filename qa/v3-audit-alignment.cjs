@@ -118,6 +118,15 @@ assert(!m08Guide.includes('PROFESSOR · DEMONSTRAÇÃO'),'M08 student cannot see
 assert(m08Student.includes('https://editor.gdevelop.io/'),'M08 student editor handoff');
 assert(m08Student.includes('não abre nem importa seu projeto automaticamente'),'M08 link cannot imply automatic GDevelop loading');
 assert(m08Student.includes('aplicativo GDevelop já instalado'),'M08 student offline fallback');
+
+assert(m08Student.includes('Confira texto, HUD e controles na resolução para a qual criou o jogo.'),'M08 student must check target resolution');
+assert(m08Student.includes('Se o destino inclui celular, redimensione a janela do Preview'),'M08 student optional narrow-screen path');
+assert(m08Student.includes('isso não equivale a teste em celular físico'),'M08 student must distinguish resized Preview from physical device');
+assert(m08Validation.includes('LEGIBILIDADE NA TELA-ALVO'),'M08 projected rubric cannot require mobile for desktop-only games');
+assert(m08Validation.includes('Se o jogo também é para celular, redimensionar a janela'),'M08 teacher rubric must agree with optional mobile path');
+assert(m08Validation.includes('Teste em celular físico não é requisito desta oficina.'),'M08 teacher rubric cannot silently demand physical device');
+assert(m08Validation.includes('na resolução-alvo (e em tela estreita quando aplicável)'),'M08 practice/teacher-only notes must agree on device target');
+
 assert(!m08Student.includes('pit-private-teacher-notes'),'M08 student must not receive teacher private notes');
 assert.equal((m08Validation.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M08 practice and review must have private panels');
 assert.equal((m08Validation.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M08 panels must use shared CSS');
