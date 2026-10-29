@@ -32,6 +32,7 @@ function buildTabs(){
 function select(klass){
  if(!defs[klass])return;
  selected=klass;buildTabs();
+ for(const card of document.querySelectorAll('.hero-model-card'))card.setAttribute('aria-pressed',String(card.dataset.class===klass));
  $('viewerTitle').textContent=defs[klass].name;
  $('className').textContent=defs[klass].name;
  $('classDescription').textContent=defs[klass].description;
@@ -39,6 +40,78 @@ function select(klass){
  $('modelFile').textContent=A[klass].model.split('/').pop();
  $('avatarEquipment').textContent=A[klass].label+' · '+A[klass].weapon+' · original';
  if(glReady)show(klass);
+}
+
+async function generateRealModelGallery(){
+ const host=$('fourHeroesGallery');
+ if(!host)return;
+ // One temporary, shared WebGL renderer makes all four images from the
+ // actual official GLBs. Unlike generic card art, it proves the asset visually.
+ const rows=Object.entries(defs);
+ host.replaceChildren();
+ const buttons=new Map();
+ for(const [klass,info] of rows){
+  const button=document.createElement('button');button.type='button';
+  button.className='hero-model-card';button.dataset.class=klass;
+  button.setAttribute('aria-pressed',String(klass===selected));
+  const pic=document.createElement('img');pic.alt='Modelo '+info.name+' do KayKit Adventurers';
+  const name=document.createElement('strong');name.className='hero-name';name.textContent=info.name;
+  const model=document.createElement('small');model.textContent=A[klass].label+' · '+A[klass].model.split('/').pop();
+  const state=document.createElement('span');state.className='hero-status';state.textContent='CARREGANDO GLB…';
+  button.append(pic,name,model,state);
+  button.addEventListener('click',()=>select(klass));
+  host.append(button);
+  buttons.set(klass,{button,pic,state});
+ }
+ let renderer;
+ try{
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'low-power'});
+  renderer.setPixelRatio(1);renderer.setSize(256,320,false);
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;
+  const scene=new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xe2d8ef,0x59445c,2.7));
+  const light=new THREE.DirectionalLight(0xffe1bc,3.2);light.position.set(-4,7,6);scene.add(light);
+  const back=new THREE.DirectionalLight(0xb7a5f0,2);back.position.set(4,4,-5);scene.add(back);
+  const stage=new THREE.Group();scene.add(stage);
+  const floor=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.23,.12,32),
+   new THREE.MeshStandardMaterial({color:0x36283d,metalness:.28,roughness:.72}));
+  floor.position.y=-.09;scene.add(floor);
+  const camera=new THREE.PerspectiveCamera(40,256/320,.1,50);
+  camera.position.set(3.3,2.7,5.5);camera.lookAt(0,1.33,0);
+  for(const [klass] of rows){
+   const ui=buttons.get(klass);
+   try{
+    const gltf=await load(A[klass].model);
+    stage.clear();
+    const avatar=cloneSkinned(gltf.scene);avatar.updateMatrixWorld(true);
+    const box=new THREE.Box3().setFromObject(avatar);
+    const h=box.getSize(new THREE.Vector3()).y,c=box.getCenter(new THREE.Vector3());
+    if(!(h>.05))throw Error('Malha GLB inválida');
+    const factor=2.55/h;
+    avatar.scale.setScalar(factor);avatar.position.set(-c.x*factor,-box.min.y*factor,-c.z*factor);
+    stage.add(avatar);
+    if(gltf.animations?.length){
+     const idle=gltf.animations.find(x=>/idle|stand|breath/i.test(x.name))||gltf.animations[0];
+     const mixer=new THREE.AnimationMixer(avatar);
+     mixer.clipAction(idle).play();mixer.update(.34);
+    }
+    renderer.render(scene,camera);
+    ui.pic.src=renderer.domElement.toDataURL('image/png');
+    ui.pic.dataset.model=klass;
+    ui.state.textContent='MODELO ORIGINAL · '+gltf.animations.length+' ANIMAÇÕES';
+   }catch(err){
+    ui.state.textContent='PRÉVIA NÃO CARREGADA';
+    console.warn('[V5] mini preview unavailable',klass,err);
+   }
+  }
+ }catch(err){
+  console.warn('[V5] side-by-side preview unavailable',err);
+  for(const ui of buttons.values())ui.state.textContent='Prévia 3D individual disponível abaixo';
+ }finally{
+  renderer?.dispose();
+  renderer?.forceContextLoss?.();
+ }
 }
 function load(url){
  if(!cache.has(url))cache.set(url,loader.loadAsync(url).catch(e=>{cache.delete(url);throw e}));
@@ -133,4 +206,4 @@ window.PIT_V5_SIMPLE_HERO_LAB=Object.freeze({
  get selectedModel(){return A[selected].model},
  get animationCount(){return Number($('avatarStage').dataset.clips||0)}
 });
-initWebGL();select(selected);
+initWebGL();select(selected);generateRealModelGallery();
