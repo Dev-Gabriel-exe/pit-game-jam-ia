@@ -106,7 +106,13 @@ function spotlight(text,detail,id,kind,priority,eventTime){
 function onEvent(event){
  const t=Number(event.time)||0;
  const hero=heroName(event.hero),target=heroName(event.target);
- if(event.type==='hit'){
+ if(event.type==='prepare'){
+  spotlight('⚠ '+hero+' prepara '+(event.ability||'especial'),'Ataque iminente — observe a animação',event.hero,'special',2,t);
+  if(t-state.lastHitLog>1.0){
+   appendLog('⚠ '+hero+' está preparando '+(event.ability||'especial'),'special');
+   state.lastHitLog=t;
+  }
+ }else if(event.type==='hit'){
   const kind=event.kind==='melee'?'golpe corpo a corpo':
    event.kind==='multishot'?'flecha dupla':'projétil';
   const points=Math.round(event.amount||0);
