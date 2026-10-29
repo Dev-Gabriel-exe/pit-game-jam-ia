@@ -33,7 +33,7 @@ const {chromium}=require('playwright');
    await page.locator('[data-mission="10"]').click();
    await page.waitForFunction(n=>window.PIT_V5_ARENA_LAB?.mission===10&&window.PIT_V5_ARENA_LAB?.modelState.loaded===n,count,{timeout:90000});
    assert.match(await page.locator('#arenaTitle').textContent(),/Missão 10/);
-   assert.equal(await page.locator('[data-fighter]').count(),4);
+   assert.equal(await page.locator('[data-fighter]').count(),count);
    assert.deepEqual(errors,[],'Unexpected JS error: '+errors.join(' | '));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<15,'Horizontal overflow at '+width+'px: '+overflow);
