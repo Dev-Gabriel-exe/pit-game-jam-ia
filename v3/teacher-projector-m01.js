@@ -252,6 +252,41 @@ function pedagogicalDemoSlides(root,mission){
    return result.length>=guide.guideSteps.length+2?result:null;
   }
  }
+ // M09/Criar: restore the public peer-playtest protocol and evidence; never HDMI-off notes.
+ if(mission===9&&root.querySelector('#t9vRoot .t9v-work')){
+  const source=root.querySelector('#t9vRoot');
+  const tasks=[...source.querySelectorAll('.t9v-work > article')];
+  if(tasks.length===3){
+   const result=[];
+   function add(node,title,id,asTask){
+    if(!node)return;
+    const wrapper=document.createElement('section');
+    wrapper.className='t9v-root pit-projector-m09-practice';
+    wrapper.dataset.pitProjectorPractice='M09:'+id;
+    if(asTask){
+     const work=document.createElement('div');
+     work.className='t9v-work';
+     work.innerHTML=cleanCopy(node);
+     wrapper.append(work);
+    }else wrapper.innerHTML=cleanCopy(node);
+    result.push({title,html:wrapper.outerHTML});
+   }
+   add(source.querySelector('header'),'Playtest cruzado: observação real em 16 minutos','intro',false);
+   tasks.forEach((task,i)=>add(task,'Playtest · etapa '+(i+1)+' de 3 · '+(task.querySelector('h3')?.textContent||'Prática'),'step-'+(i+1),true));
+   const evidence=document.createElement('section');
+   evidence.className='t9v-root pit-projector-m09-practice';
+   evidence.dataset.pitProjectorPractice='M09:evidence';
+   const heading=document.createElement('h3');
+   heading.textContent='O que o aluno registra como evidência';
+   const checklist=document.createElement('p');
+   checklist.textContent='Testador anônimo · Hipótese · Tarefa · Esperado · Observado · Reprodução · Impacto · Decisão · Projeto editável.';
+   evidence.append(heading,checklist);
+   const footer=source.querySelector('footer');
+   if(footer)evidence.insertAdjacentHTML('beforeend',cleanCopy(footer));
+   result.push({title:'Evidência observável, sem inventar testes',html:evidence.outerHTML});
+   return result.length===5?result:null;
+  }
+ }
  // M08/Entender: preserve all six UX concepts and the interactive before/after comparison.
  if(mission===8&&root.querySelector('#t8Foundations')){
   const source=root.querySelector('#t8Foundations'),concepts=[...source.querySelectorAll('.t8f-concepts > article')];
