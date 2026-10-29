@@ -59,7 +59,7 @@ for(const mode of modes){
   for(let i=0;i<mode.seeds;i++){
    const seed=(mission*991+mode.count*713+i*19357)>>>0;
    const lineup=makeRoster(mission,mode.count,i%4,mode.scenario);
-   const sim=CORE.battle(lineup,{seed,arenaScale:mode.count>4?4.4:1,limit:95});
+   const sim=CORE.battle(lineup,{seed,arenaScale:4.4,limit:95}); // matches the actual V5 lab's 4/30-player map
    const result=sim.run(2500);
    assert(result.finished&&result.winner,'no winner '+mode.name+'/'+mission+'/'+i);
    wins[result.winner.klass]++;winnerIds.add(result.winner.id);
