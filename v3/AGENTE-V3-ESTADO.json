@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T16:22:00Z",
+  "last_completed_at": "2026-10-29T16:23:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Chrome projector audit 40910615911, Browser QA 40910615906 and static QA 40910616007; then M03/Criar low coverage and M04/M05 oversized slides",
+  "priority": "Confirm Browser QA 40910615906; recover M03/Criar, M04/Comprovar, M05/Comprovar, M08/Entender, M09/Criar low-coverage projected content; then split M04/M05 oversized slides",
   "current_phase": "MISSOES",
   "last_task": "V4-M01-PRACTICE-PROJECTION-COVERAGE",
   "completed_count": 54,
@@ -2478,12 +2478,19 @@
       "status": "in_progress",
       "commit": "6193224b5ef0973d2a47cbfaedb3c4b2df138b30",
       "summary": "Chrome revealed initial M01 selector targeted legacy edition: regression failed 40910382601 (0.09 coverage). Corrected active university edition .tm-pro-spec-row, added eight slides and scoped CSS. Chrome at b6dc463 measured 0.62 retention and one scrolling slide at 720p, but full run failed outdated test selector. Updated regression dd6dcf3 for seven real labels and >0.50 coverage; final CI 40910615911/40910615906/40910616007 pending. Human tests NOT_RUN; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T16:23:00Z",
+      "task": "V4-M01-PRACTICE-PROJECTION-COVERAGE",
+      "status": "in_progress",
+      "commit": "f706929ebf8a2001c0ac8d93a093d8d5c50a7a85",
+      "summary": "Confirmed fixed live M01 university projector Chrome audit 40910615911 SUCCESS 3/3 viewports, 16/16 regressions. 720p M01 practice now 8 slides/0.62 retention, 7 fields, 1 scrolling slide, zero horizontal overflow. Static QA 40910616007 SUCCESS. Browser QA 40910615906 pending. Five other low-coverage phases and M04/M05 oversized slides remain. No manual GDevelop/HDMI/mobile/peer, no main changes; 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-M01-PRACTICE-PROJECTION-COVERAGE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T16:22:00Z",
+    "updated_at": "2026-10-29T16:23:00Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2513,7 +2520,7 @@
       "2e37bdc53f4377c62011dc1060ffe1f3cb7f8ba2",
       "dd6dcf3761345f7ce98019fbfefa034a360be0d6"
     ],
-    "documentation_commit": "6193224b5ef0973d2a47cbfaedb3c4b2df138b30",
+    "documentation_commit": "f706929ebf8a2001c0ac8d93a093d8d5c50a7a85",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2809,13 +2816,31 @@
         "run_id": 40910616007,
         "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
         "result": "QUEUED at checkpoint"
+      },
+      {
+        "name": "M01 active university projector Chrome 3 viewports",
+        "run_id": 40910615911,
+        "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
+        "result": "SUCCESS 3/3 Chrome jobs, 16/16 regressions; 1280x720 M01 practice 8 slides, 0.62 retention, 1 scroll, 0 horizontal overflow; 7/7 authorial fields"
+      },
+      {
+        "name": "M01 active university static QA",
+        "run_id": 40910616007,
+        "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
+        "result": "SUCCESS confirmed"
+      },
+      {
+        "name": "M01 active university Browser QA",
+        "run_id": 40910615906,
+        "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
+        "result": "IN_PROGRESS at checkpoint; no pass claimed"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm Chrome projector audit 40910615911, Browser QA 40910615906 and static QA 40910616007; then M03/Criar low coverage and M04/M05 oversized slides",
-    "blocker": "New regression not yet confirmed by CI; 1 M01 practice slide still scrolls in 720p; manual HDMI/GDevelop GUI/mobile/peer NOT_RUN"
+    "next_task": "Confirm Browser QA 40910615906; recover M03/Criar, M04/Comprovar, M05/Comprovar, M08/Entender, M09/Criar low-coverage projected content; then split M04/M05 oversized slides",
+    "blocker": "Browser QA still in progress; five low-coverage phases and 720p scrolling remain; manual HDMI/GDevelop GUI/mobile/peer NOT_RUN"
   }
 }
