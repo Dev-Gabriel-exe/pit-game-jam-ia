@@ -1,6 +1,6 @@
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
-**Status:** planejamento validado; nenhuma fase abaixo é considerada concluída por estar descrita aqui.
+**Status em 29/10/2026:** Fase D aprovada **visualmente pelo usuário** para avançar, porém validação completa de GPU/mobile permanece na Fase G. **Fase E em execução** (mecânica/IA/balanceamento); F diretor automático, G, H e I ainda pendentes.
 **Branch de trabalho:** `feature/v5-arena-dos-criadores`. **Não fazer merge na `main`** antes da aprovação final.
 **Contexto pronto:** motor experimental de 120 talentos (B.6), efeitos (C.1), coreografias (C.2), identidade visual das builds (C.3).
 
@@ -28,6 +28,11 @@
 - Testar distribuição espacial de 30 personagens e **confrontos preferencialmente 1×1**: pares de proximidade com bloqueios temporários de aggro, reação quando há terceiro atacante, recuo/esquiva e cooldown para reacquisição. Evitar forçar exclusividade total (habilidades de área e encontros casuais continuam fazendo parte do RPG). Não escolher vencedor por regra artificial.
 - Combate maior deve ter **tempo para movimentação, perseguição e tática**. Rever abertura do círculo, ritmo da tempestade e tempo limite somente após simulações. A arena grande não pode virar corrida sem contato nem ser comprimida cedo demais.
 - **Critério de saída:** partidas justas, previsíveis sob a mesma seed, compreensíveis e estáveis em 4 e 30 personagens. Não alterar resultados de combates para melhorar a filmagem.
+
+**Checkpoint inicial E — ver `v5/FASE-E-CHECKPOINT.md`:** 
+- Com 50% de dano e tempestade mais branda, mediu-se média de **71,4s e 175 eventos de talento** em 30 jogadores (6 seeds) contra **48,6s e 112 eventos** no padrão (amostra pequena).
+- A seleção opt-in `spaced` reduziu quadros com 3+ pessoas visando o mesmo herói de **15,8% para 3,0%** em 30 participantes (10 seeds), mas não corrigiu a ausência de vitórias de Guerreiro e Guardião.
+- Manter o motor livre intacto por padrão. Continuar medindo classes, builds e tempo de aproximação; não declarar equilíbrio com métricas parciais.
 
 ### F — Direção de câmera cinematográfica automática (NOVA FASE)
 **Objetivo:** permitir ao professor apresentar o torneio sem precisar manipular a câmera por gestos.
