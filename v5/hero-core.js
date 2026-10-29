@@ -127,7 +127,9 @@ function derived(b){
 }
 function mulberry(seed){let v=(seed|0)>>>0;return ()=>{v+=0x6D2B79F5;let t=v;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
 function hash(s){let h=2166136261;for(const char of String(s)){h^=char.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
-function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
+function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1,damageScale=1,mageDamageBonus=1}={}){
+ const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
+ const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
  // Optional geometric scaling for a 30-participant spectator arena; legacy callers retain 1.
  const scale=clamp(arenaScale,1,5);
  const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
@@ -183,6 +185,8 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   // A small agility-driven evasion window introduces reactive defensive play.
   // Keep it capped; otherwise ranged classes can become untouchable.
   if(rnd()<Math.min(.13,.025+o.stats.speed*.012)){log('dodge',o,{attacker:f.id});o.stagger=.18;return}
+  // Isolated V5 lab pacing, defaults to 1 for all existing game callers.
+  amount*=pace*(f.build.klass==='mage'?mageBonus:1);
   const shieldAbsorbed=Math.min(o.shield,amount);o.shield-=shieldAbsorbed;amount-=shieldAbsorbed;
   o.hp=Math.max(0,o.hp-amount);f.damage+=amount;f.attacks++;o.stagger=Math.min(.32,.1+amount*.008);
   log('hit',f,{target:o.id,amount:+amount.toFixed(1),kind,x:o.x,z:o.z});
