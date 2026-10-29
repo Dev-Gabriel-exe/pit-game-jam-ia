@@ -30,11 +30,14 @@ function parseEvidence(raw){
  const d=blank();d.project=find('Projeto: ');d.scene=find('Cena: ');d.object=find('Objeto: ');
  const type=find('Tipo: ');if(['2D Sprite','3D Box/Modelo'].includes(type))d.objectType=type;
  d.source=find('Recurso: ');d.preview=find('Preview: ');d.saved=find('Salvo em: ');d.fix=find('Diagnóstico: ');
- d.checks=[0,1,2];return d;
+ // Remote evidence contains text, not a verifiable record of manual Preview checks.
+ return d;
 }
 function hydrate(id,raw,status){
  const d=parseEvidence(raw);if(!d||!d.project||!d.scene)return;
- if(Object.values(load(id)).some(v=>typeof v==='string'&&v.trim())&&!['approved','submitted'].includes(status))return;
+ const old=load(id);
+ // A local draft (including checkbox declarations) takes precedence over a remote text snapshot.
+ if(FIELDS.some(f=>clean(old[f.key]))||old.checks.length)return;
  save(id,d);
 }
 function validity(d){
@@ -163,7 +166,7 @@ function review(ctx){
  '<div><span>'+label+'</span><p>'+esc(v||'Não informado')+'</p></div>').join('')+'</div>'+
  '<label for="evidenceInput">Evidência enviada para avaliação</label><textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx.idea))+'</textarea>'+
  '<small>O professor receberá somente os dados declarados aqui. O site não consegue verificar automaticamente seu Preview.</small></div>'+
- (!v.ok?'<div class="m3-notice">Antes de enviar: '+esc(v.label)+'</div>':'')+
+ (!submitted&&!v.ok?'<div class="m3-notice">Antes de enviar: '+esc(v.label)+'</div>':'')+
  '<div class="m3-actions"><button type="button" data-m3-action="back" class="m3-back" '+(submitted?'disabled':'')+'>‹ REVISAR PROJETO</button>'+
  '<button type="button" id="submitWork" class="m3-primary" '+(!v.ok||submitted||!ctx.canSubmit?'disabled':'')+'>'+
  (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
