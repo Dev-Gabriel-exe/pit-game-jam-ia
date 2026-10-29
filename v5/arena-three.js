@@ -220,7 +220,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  stormRing.scale.setScalar(18*worldScale);root.add(stormRing);
  const individuals=new Map(),effects=[],labels=new Map();
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
- let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0;
+ let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0,hitReactions=0;
  const visualBudget=quality==='low'||reduce?9:18;
  const isPhase2=()=>container.dataset.v5CombatEngine==='phase2-m5';
  const cueFor=(klass,id)=>CUES?.[klass]?.find(c=>c.id===id)||null;
@@ -293,6 +293,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    chosen.clampWhenFinished=transient;
    chosen.reset().fadeIn(.13).play();
    chosen.timeScale=transient?1.12*Math.max(.65,Math.min(1.4,clipSpeed)):1;
+   if(item.id!=='preview')container.dataset.v5LastGlbClip=[...item.actions].find(([,action])=>action===chosen)?.[0]||'unknown';
    item.lastAction=chosen;
   }
   item.lastMotion=motion;
@@ -373,7 +374,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
   const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
-  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0};
+  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone(),choreography:null,choreoUntil:0,hitReaction:null};
   individuals.set(item.id,item);
   addRealCharacter(item);
   return item;
@@ -394,7 +395,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5CombatEngine=trial?'phase2-m5':'legacy';
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
-  talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;
+  talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;hitReactions=0;
   container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
   container.dataset.v5TalentFxEvents='0';container.dataset.v5TalentFxDropped='0';
   container.dataset.v5TalentCueLast='';container.dataset.v5TalentCueStyle='';
@@ -403,6 +404,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5ChoreographyCatalog=String(CHOREOGRAPHIES?Object.values(CHOREOGRAPHIES).flatMap(x=>Object.keys(x)).length:0);
   container.dataset.v5ChoreographyEvents='0';container.dataset.v5ChoreographyLast='';
   container.dataset.v5ChoreographyPose='';container.dataset.v5ClipFallbacks='0';
+  container.dataset.v5HitReactions='0';container.dataset.v5LastGlbClip='';
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
@@ -511,7 +513,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(!seat)return false;
   occupiedSeats.set(unit.id,seat);spectators.add(unit.id);
   unit.spectator=true;unit.dead=true;unit.seat=seat;
-  unit.choreography=null;unit.choreoUntil=0;
+  unit.choreography=null;unit.choreoUntil=0;unit.hitReaction=null;
   unit.transfer={started:performance.now(),from:unit.mesh.root.position.clone(),duration:1450};
   unit.mesh.circle.visible=false;unit.bar.visible=false;
   unit.nick.classList.add('spectating');unit.nick.textContent='👁 '+unit.name;
@@ -598,7 +600,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     }else if(ev.type==='hit'){
      if(victim)showCombatText(ev.target,'−'+Math.round(ev.amount||0),'hit');
      if(ev.kind==='melee'&&(!attacker?.choreography||elapsed>=attacker.choreoUntil))triggerMotion(attacker,'attack',.44);
-     if(victim&&!victim.spectator)triggerMotion(victim,'hit',.25);
+     if(victim&&!victim.spectator){
+      if((ev.amount||0)>0&&!victim.dead){
+       const power=Math.min(1.15,.22+(ev.amount||0)/28);
+       victim.hitReaction={started:elapsed,power,side:ev.hero===ev.target?1:(ev.hero?.length%2?1:-1)};
+       hitReactions++;container.dataset.v5HitReactions=String(hitReactions);
+      }
+      if(!victim.choreography||elapsed>=victim.choreoUntil)triggerMotion(victim,'hit',.25);
+     }
      if(victim)burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
     }else if(ev.type==='dodge'){
      showCombatText(ev.hero,'ESQUIVA','dodge');
@@ -669,6 +678,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    a.position.y=wobble+(choreography?.lift||0);
    a.position.z=choreography?.forward||0;
    a.rotation.x=choreography?.pitch||0;a.rotation.z=choreography?.roll||0;
+   // Hit-stop/recoil only when the *engine* confirms HP damage (not on shields).
+   if(!reduce&&u.hitReaction){
+    const age=elapsed-u.hitReaction.started;
+    if(age>=.24)u.hitReaction=null;
+    else {const power=(1-age/.24)*u.hitReaction.power;
+     a.rotation.x+=power*.19;a.rotation.z+=power*.075*u.hitReaction.side;}
+   }
    if(!reduce){u.mesh.arms.forEach((arm,i)=>{arm.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.18});
      u.mesh.legs.forEach((leg,i)=>{leg.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.21});
      if(u.mesh.cape)u.mesh.cape.rotation.x=.14+Math.sin(elapsed*3)*.06;
