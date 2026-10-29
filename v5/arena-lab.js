@@ -217,7 +217,7 @@ function initRound(){
  $('speedBattle').textContent='Velocidade ×1';
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
- $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('actionCamera').disabled=false;
+ $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('cinematicCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission,trial=state.phase2&&mission===5;
  const toggle=$('phase2Mode');
  const sets=['Brutalidade / Elemental','Alternativos I','Mistos I','Caminhos II','Mistos II','Caminhos III','Mistos III','Caminhos IV','Mistos IV','Caminhos V','Mistos V'];
@@ -241,8 +241,10 @@ function initRound(){
  message('CARREGANDO '+state.count+' HERÓIS');
  state.roster=roster(mission,state.count);
  try{state.stage.fighters(state.roster,{seed:state.seed,limit:95});
-  // Close-in spectator camera for four characters. The full coliseum remains orbitable.
-  state.stage.camera.position.set(0,state.count===30?128:22,state.count===30?190:36);}
+  // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
+  state.stage.cinematic();
+  $('cinematicCamera').setAttribute('aria-pressed','true');
+  $('overviewCamera').setAttribute('aria-pressed','false');}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
  if($('stageLoading'))$('stageLoading').hidden=true;
  updateScoreboard();$models.textContent=prefix+' Carregando modelos CC0 reais...';
@@ -294,7 +296,16 @@ $('startBattle').addEventListener('click',begin);
 $('pauseBattle').addEventListener('click',pause);
 $('resetBattle').addEventListener('click',initRound);
 $('overviewCamera').addEventListener('click',()=>{
- state.director=false;$('actionCamera').setAttribute('aria-pressed','false');state.stage?.overview();
+ state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
+ $('cinematicCamera').setAttribute('aria-pressed','false');
+ $('overviewCamera').setAttribute('aria-pressed','true');
+ state.stage?.overview();
+});
+$('cinematicCamera').addEventListener('click',()=>{
+ state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
+ $('overviewCamera').setAttribute('aria-pressed','false');
+ $('cinematicCamera').setAttribute('aria-pressed','true');
+ state.stage?.cinematic();
 });
 $('followSpotlight').addEventListener('click',()=>{if(state.spotId)state.stage?.focusFighter(state.spotId)});
 $('actionCamera').addEventListener('click',()=>{
