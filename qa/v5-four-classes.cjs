@@ -22,4 +22,7 @@ assert(!/WARDROBE|Quaternius|SHOWCASE|armor\.root/.test(arena),'No improvised ar
 assert(!/WARDROBE|Quaternius|legendary-wardrobe|avatar-catalog|reservar|Reserva exclusiva/i.test(viewer+html),
  'No modular armory or synthetic avatar reservation');
 assert.match(viewer,/mixer\.clipAction\(idle\)/,'Native GLB idle animation plays');
+assert.match(viewer,/generateRealModelGallery/,'Gallery renders side-by-side pictures from real GLB files');
+assert(!/mat\.color\.lerp\(tint/.test(arena),'Do not wash away original model colours with build tint');
+assert.match(arena,/crest\.visible=false/,'Large floating insignia must not obscure the characters');
 console.log('PASS four unique official KayKit Adventurers 1.0 character GLBs (Barbarian/Mage/Rogue_Hooded/Knight), CC0, same size, native animation');
