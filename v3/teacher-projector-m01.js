@@ -51,17 +51,50 @@ function pedagogicalDemoSlides(root,mission){
   if(footer)result.push({title:'Conferência final do Preview',html:cleanCopy(footer)});
   return result.length>=8?result:null;
  }
+ if(mission===4&&root.querySelector('#g4Tutorial')){
+  const guide=window.PIT_GDEVELOP_M04_GUIDE;
+  if(guide?.projectorPanel&&guide.routes?.length){
+   const selected=Number(root.querySelector('#g4Tutorial [data-g4-route][aria-selected="true"]')?.dataset.g4Route??0);
+   const routeIndex=Number.isInteger(selected)&&guide.routes[selected]?selected:0;
+   const route=guide.routes[routeIndex],result=[];
+   const heading=root.querySelector('#g4Tutorial .g4-heading');
+   if(heading)result.push({title:'Primeiro jogável: movimento e limites',html:cleanCopy(heading)});
+   const intro=document.createElement('section');intro.className='pit-projector-route-intro';
+   const title=document.createElement('h3');title.textContent='Rota escolhida: '+route.label;
+   const description=document.createElement('p');description.textContent=route.intro;
+   const criterion=document.createElement('p');criterion.textContent='Objetivo: entrada funcional, um limite observável e três verificações no Preview. As outras rotas são alternativas, não tarefas adicionais.';
+   intro.append(title,description,criterion);
+   result.push({title:'Rota de construção: '+route.label,html:intro.outerHTML});
+   for(let i=0;i<route.steps.length;i++){
+    const wrapper=document.createElement('section');
+    wrapper.className='pit-projector-tutorial-step pit-projector-g4-step';
+    wrapper.dataset.pitProjectorStep='M04:'+i;
+    wrapper.innerHTML=guide.projectorPanel(routeIndex,i);
+    const diagnostic=wrapper.querySelector('details.g4-diagnostic');
+    if(diagnostic){
+     const explanation=document.createElement('div');explanation.className='g4-diagnostic pit-projector-diagnostic';
+     const label=document.createElement('strong');label.textContent='SE NÃO FUNCIONAR';
+     explanation.append(label,...[...diagnostic.querySelectorAll('p')].map(p=>p.cloneNode(true)));
+     diagnostic.replaceWith(explanation);
+    }
+    result.push({title:'Passo '+(i+1)+' · '+route.steps[i].title,html:wrapper.outerHTML});
+   }
+   const footer=root.querySelector('#g4Tutorial .g4-footer');
+   if(footer)result.push({title:'Critério de conclusão e documentação',html:cleanCopy(footer)});
+   return result.length>=route.steps.length+2?result:null;
+  }
+ }
  return null;
 }
 function activateProjectorControls(content){
  // Cloned tutorial images do not inherit the original tab component's error listeners.
- content.querySelectorAll('[data-gd3-image],[data-tm-guide-image]').forEach(img=>{
+ content.querySelectorAll('[data-gd3-image],[data-tm-guide-image],[data-g4-image]').forEach(img=>{
   const fallback=()=>{
    if(img.dataset.pitProjectorFallback)return;
    img.dataset.pitProjectorFallback='1';
-   img.src=img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
+   img.src=img.hasAttribute('data-g4-image')?(window.PIT_GDEVELOP_M04_GUIDE?.fallback||'./v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg'):img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
    img.alt='Diagrama didático autoral em português; captura externa indisponível';
-   const caption=img.closest('.gd3-picture,.tm-guide-image')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span');
+   const caption=img.closest('.gd3-picture,.tm-guide-image,.g4-step-picture')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span,.g4-picture-label span');
    if(caption)caption.textContent='DIAGRAMA AUTORAL · CAPTURA INDISPONÍVEL';
   };
   img.addEventListener('error',fallback);
