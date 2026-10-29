@@ -1,10 +1,10 @@
-/* V5 Phase B.2 — executable M5 sandbox, 40 distinct talents.
+/* V5 Phase B.3 — executable M5 sandbox, 60 distinct talents.
  * Isolated from legacy V5 and student/server state. No XP or grading writes.
  * UMD: Node test runner and same browser GLB rendering pipeline.
  */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.PIT_V5_PHASE2=api})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
-const VERSION='phase2-m5-trial-v1'; // Preserve existing saved lab schema; B.2 only expands allowed picks.
+const VERSION='phase2-m5-trial-v1'; // Preserve demo save schema; B.3 expands catalog selections.
 const ATTR=['FOR','DES','INT','VIT','DEF'];
 const CLASSES={
  warrior:{name:'Guerreiro',hp:137,atk:16.5,def:6.5,speed:4.5,range:2.6,palette:'ember'},
@@ -13,10 +13,10 @@ const CLASSES={
  guardian:{name:'Guardião',hp:140,atk:13.1,def:9,speed:3.9,range:2.6,palette:'azure'}
 };
 const TALENTS={
- warrior:[['B01','Golpe do Carrasco','ativo','FOR','DES',8],['B02','Sangue Quente','passivo','FOR','VIT',10],['B03','Fenda Sísmica','ativo','FOR','DEF',14],['B04','Ímpeto Predador','passivo','DES','FOR',12],['B05','Rugido da Ruína','ativo','VIT','FOR',18],['B06','Sede de Batalha','reativo','VIT','FOR',5],['B07','Golpe de Exaustão','ativo','FOR','DES',12],['B08','Ira Contida','passivo','VIT','INT',0],['B09','Ruptura Brutal','ativo','FOR','DEF',20],['B10','Última Investida','reativo','FOR','VIT',0]],
- mage:[['E01','Lança de Cinzas','ativo','INT','DES',9],['E02','Combustão Residual','passivo','INT','VIT',10],['E03','Prisão de Gelo','ativo','INT','DEF',17],['E04','Estilhaço Polar','ativo','INT','DES',11],['E05','Pele Vulcânica','reativo','VIT','INT',18],['E06','Tempestade Estática','ativo','INT','DES',21],['E07','Olho da Tormenta','passivo','DES','INT',12],['E08','Névoa de Inverno','reativo','DEF','INT',19],['E09','Núcleo Incandescente','passivo','VIT','INT',0],['E10','Cometa Carmesim','ativo','INT','VIT',25]],
- hunter:[['P01','Flecha Perfurante','ativo','DES','FOR',10],['P02','Mira Firme','passivo','DES','INT',10],['P03','Tiro Duplo','ativo','DES','FOR',8],['P04','Olhar Predador','passivo','DES','INT',12],['P05','Flecha Marcadora','ativo','DES','INT',15],['P06','Disparo de Ruptura','ativo','FOR','DES',19],['P07','Pulsação da Corda','passivo','DES','FOR',10],['P08','Olho do Caçador','reativo','DES','DEF',18],['P09','Tiro de Interrupção','reativo','DES','INT',21],['P10','Chuva de Setas','ativo','DES','VIT',25]],
- guardian:[['G01','Escudo da Alvorada','ativo','DEF','VIT',14],['G02','Armadura Consagrada','passivo','DEF','VIT',12],['G03','Retorno da Égide','reativo','DEF','FOR',18],['G04','Postura da Cidadela','ativo','DEF','VIT',20],['G05','Aço Resiliente','passivo','VIT','DEF',16],['G06','Rota de Guarda','ativo','DEF','DES',17],['G07','Reflexo da Sentinela','reativo','DES','DEF',15],['G08','Peso da Armadura','passivo','DEF','FOR',10],['G09','Vigília de Pedra','ativo','VIT','DEF',24],['G10','Bastião Solar','ativo','DEF','INT',28]]
+ warrior:[['B01','Golpe do Carrasco','ativo','FOR','DES',8],['B02','Sangue Quente','passivo','FOR','VIT',10],['B03','Fenda Sísmica','ativo','FOR','DEF',14],['B04','Ímpeto Predador','passivo','DES','FOR',12],['B05','Rugido da Ruína','ativo','VIT','FOR',18],['B06','Sede de Batalha','reativo','VIT','FOR',5],['B07','Golpe de Exaustão','ativo','FOR','DES',12],['B08','Ira Contida','passivo','VIT','INT',0],['B09','Ruptura Brutal','ativo','FOR','DEF',20],['B10','Última Investida','reativo','FOR','VIT',0],['D01','Corte Relâmpago','ativo','DES','FOR',6],['D02','Passo Lateral','reativo','DES','DEF',14],['D03','Lâmina Reversa','ativo','DES','INT',9],['D04','Cadência da Guerra','passivo','DES','FOR',8],['D05','Ponta Precisa','ativo','DES','FOR',12]],
+ mage:[['E01','Lança de Cinzas','ativo','INT','DES',9],['E02','Combustão Residual','passivo','INT','VIT',10],['E03','Prisão de Gelo','ativo','INT','DEF',17],['E04','Estilhaço Polar','ativo','INT','DES',11],['E05','Pele Vulcânica','reativo','VIT','INT',18],['E06','Tempestade Estática','ativo','INT','DES',21],['E07','Olho da Tormenta','passivo','DES','INT',12],['E08','Névoa de Inverno','reativo','DEF','INT',19],['E09','Núcleo Incandescente','passivo','VIT','INT',0],['E10','Cometa Carmesim','ativo','INT','VIT',25],['R01','Selo de Proteção','ativo','DEF','INT',13],['R02','Inscrição Dolorosa','passivo','INT','DEF',10],['R03','Runa da Repulsão','ativo','INT','DES',18],['R04','Mente Blindada','passivo','DEF','VIT',12],['R05','Corte de Mana','ativo','INT','FOR',15]],
+ hunter:[['P01','Flecha Perfurante','ativo','DES','FOR',10],['P02','Mira Firme','passivo','DES','INT',10],['P03','Tiro Duplo','ativo','DES','FOR',8],['P04','Olhar Predador','passivo','DES','INT',12],['P05','Flecha Marcadora','ativo','DES','INT',15],['P06','Disparo de Ruptura','ativo','FOR','DES',19],['P07','Pulsação da Corda','passivo','DES','FOR',10],['P08','Olho do Caçador','reativo','DES','DEF',18],['P09','Tiro de Interrupção','reativo','DES','INT',21],['P10','Chuva de Setas','ativo','DES','VIT',25],['E01','Armadilha de Espinhos','ativo','INT','DES',17],['E02','Passo de Sombra','ativo','DES','VIT',18],['E03','Venenos de Caça','passivo','INT','DES',12],['E04','Isca do Deserto','ativo','INT','VIT',20],['E05','Corda de Aprisionamento','ativo','DES','INT',15]],
+ guardian:[['G01','Escudo da Alvorada','ativo','DEF','VIT',14],['G02','Armadura Consagrada','passivo','DEF','VIT',12],['G03','Retorno da Égide','reativo','DEF','FOR',18],['G04','Postura da Cidadela','ativo','DEF','VIT',20],['G05','Aço Resiliente','passivo','VIT','DEF',16],['G06','Rota de Guarda','ativo','DEF','DES',17],['G07','Reflexo da Sentinela','reativo','DES','DEF',15],['G08','Peso da Armadura','passivo','DEF','FOR',10],['G09','Vigília de Pedra','ativo','VIT','DEF',24],['G10','Bastião Solar','ativo','DEF','INT',28],['L01','Bênção da Aurora','ativo','INT','VIT',19],['L02','Luz Persistente','passivo','INT','VIT',12],['L03','Fagulha Reparadora','passivo','VIT','INT',15],['L04','Clarão Purificador','ativo','INT','DEF',16],['L05','Voto da Luz','ativo','INT','DEF',15]]
 };
 const ALL=Object.fromEntries(Object.entries(TALENTS).map(([klass,items])=>[klass,items.map(([id,name,type,primary,secondary,cooldown])=>Object.freeze({id,name,type,primary,secondary,cooldown,animationId:klass.toLowerCase()+'_'+id.toLowerCase()}))]));
 const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
@@ -48,8 +48,8 @@ function exampleBuild(klass,name,mission=5,variant=0){
  const pointPool=mission*2, attributes=Object.fromEntries(ATTR.map(k=>[k,0]));
  let left=pointPool;
  for(const [k,v]of Object.entries(selections[klass]||{})){const n=Math.min(left,v);attributes[k]=n;left-=n}
- const variants=[[0,1,2,3,4],[5,6,7,8,9],[0,2,5,7,9]];
- const picks=(variants[((variant%3)+3)%3]||variants[0]).slice(0,mission).map(i=>ALL[klass][i].id);
+ const variants=[[0,1,2,3,4],[5,6,7,8,9],[0,2,5,7,9],[10,11,12,13,14],[0,6,10,12,14]];
+ const picks=variants[((variant%variants.length)+variants.length)%variants.length].slice(0,mission).map(i=>ALL[klass][i].id);
  return canonical({klass,name,attributes,talents:picks},mission);
 }
 function effectiveness(f,id){
@@ -60,7 +60,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  if(!Array.isArray(entries)||entries.length<2||entries.length>30)throw Error('Arena experimental aceita 2 a 30 heróis');
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
- const pending=[];
+ const pending=[],zones=[];
  const emit=(type,f,extra={})=>{const e={type,hero:f?.id||null,time:+time.toFixed(2),seq:++sequence,...extra};events.push(e);return e};
  const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({x:o.x*scale,z:o.z*scale,r:o.r*scale}));
  const fighters=entries.map((entry,i)=>{
@@ -77,7 +77,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    hp,shield:0,shieldUntil:0,alive:true,kills:0,damage:0,attacks:0,
    basic:r()*.45,gcd:0,cooldowns:{},usage:{},passives:{},slow:0,slowPower:0,
    weak:0,weakPower:0,fortress:0,markBy:null,markUntil:0,offenseDelay:0,rage:0,solarUntil:0,
-   regenUntil:0,regenPower:0,guardUntil:0,healWindow:[],
+   regenUntil:0,regenPower:0,lightRegenUntil:0,lightRegenPower:0,
+   guardUntil:0,healWindow:[],poisonUntil:0,poisonPower:0,poisonOwner:null,
+   reverseUntil:0,r04Until:0,d04Charge:0,speedUntil:0,
    burning:0,burnPower:0,burnOwner:null,movingTime:0,stationaryTime:0,lastTarget:null,
    lastHitAt:-999,hitWindow:[],eliminatedAt:null};
  });
@@ -113,7 +115,12 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   f.healWindow=f.healWindow.filter(x=>time-x.time<15);
   const spent=f.healWindow.reduce((a,b)=>a+b.amount,0);
   const allowed=Math.max(0,Math.min(amount,f.stats.hp*.10-spent,f.stats.hp-f.hp));
-  if(allowed>1e-8){f.hp+=allowed;f.healWindow.push({time,amount:allowed});emit('heal',f,{amount:+allowed.toFixed(2),talent});}
+  if(allowed>1e-8){
+   f.hp+=allowed;f.healWindow.push({time,amount:allowed});emit('heal',f,{amount:+allowed.toFixed(2),talent});
+   if(has(f,'L02')&&(f.cooldowns.L02||0)<=0&&!f.passives.l02Ready){
+    f.passives.l02Ready=true;emit('charge',f,{talent:'L02'});
+   }
+  }
   return allowed;
  }
  function applySlow(f,fraction,duration,owner){
@@ -129,6 +136,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   f.slow=Math.max(f.slow,duration);
   emit('debuff',owner,{target:f.id,kind:'slow',fraction,duration});
  }
+ function staggeredSideStep(f,owner,meters){
+  const dx=owner.x-f.x,dz=owner.z-f.z,dd=Math.max(.001,Math.hypot(dx,dz));
+  // Try either perpendicular; never jump into a pillar.
+  return clearPosition(f,-dz/dd,dx/dd,meters)||clearPosition(f,dz/dd,-dx/dd,meters);
+ }
  function endHero(f,killer){
   if(!f.alive||f.hp>0)return;
   f.hp=0;f.alive=false;f.animation='defeated';f.eliminatedAt=time;
@@ -138,6 +150,12 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  function applyHit(attacker,target,raw,{kind='basic',skill=null,ignoreDefense=0,fire=false,reflect=false,shieldBonus=0}={}){
   if(!target?.alive||!attacker||(!attacker.alive&&!reflect))return 0;
   let amount=Math.max(0,raw);
+  // Warrior Duelist D02 works only against directed attacks, never AoE or
+  // reflection. The side step is collision-checked.
+  if(!reflect&&['melee','ranged'].includes(kind)&&has(target,'D02')&&(target.cooldowns.D02||0)<=0){
+   amount*=1-.30*effectiveness(target,'D02');target.cooldowns.D02=14;
+   staggeredSideStep(target,attacker,1);emit('proc',target,{talent:'D02',target:attacker.id});
+  }
   const defenseFactor=Math.max(.35,1-(target.stats.defense*(1-ignoreDefense))*.025);
   amount*=defenseFactor;
   if(target.fortress>0)amount*=.82;
@@ -150,6 +168,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',target,{talent:'G07',target:attacker.id});
   }
   if(!reflect&&has(target,'G08')&&target.passives.g08Until>time)amount*=1-.08*effectiveness(target,'G08');
+  if(!reflect&&skill&&target.r04Until>time&&has(target,'R04')){
+   amount*=1-.12*effectiveness(target,'R04');target.r04Until=0;
+   emit('proc',target,{talent:'R04',target:attacker.id});
+  }
   if(!reflect&&kind==='ranged'&&dist(attacker,target)>6&&has(target,'P08')&&(target.cooldowns.P08||0)<=0){
    amount*=1-.15*effectiveness(target,'P08');target.cooldowns.P08=18;target.passives.p08RangeReady=true;
    emit('proc',target,{talent:'P08',target:attacker.id});
@@ -162,6 +184,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   if(attacker.weak>0)amount*=1-attacker.weakPower;
   if(attacker.solarUntil>time&&attacker.shield>0)amount*=.88;
   if(attacker.rage>0)amount*=1+.10*effectiveness(attacker,'B08');
+  if(!reflect&&kind==='melee'&&has(attacker,'L02')&&attacker.passives.l02Ready){
+   amount*=1+.09*effectiveness(attacker,'L02');
+   attacker.passives.l02Ready=false;attacker.cooldowns.L02=12;
+   emit('proc',attacker,{talent:'L02',target:target.id});
+  }
   if(!reflect&&r()<attacker.stats.crit)amount*=1.5;
   // P04 and P05 are one-charge, scoped to the hero that owns the effect.
   if(!reflect&&kind==='basic'&&has(attacker,'P04')&&attacker.passives.p04Ready){
@@ -181,6 +208,23 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   target.shield-=shieldTaken;
   const inflicted=Math.max(0,amount-normalAbsorption);
   target.hp=Math.max(0,target.hp-inflicted);
+  // D04 builds on *successful own impacts*, including both D01 hits.
+  if(!reflect&&inflicted>0&&has(attacker,'D04')&&!attacker.passives.d04Ready&&(attacker.cooldowns.D04||0)<=0&&skill!=='poison'){
+   attacker.passives.d04Hits=(attacker.passives.d04Hits||0)+1;
+   if(attacker.passives.d04Hits>=3){
+    attacker.passives.d04Hits=0;attacker.passives.d04Ready=true;emit('charge',attacker,{talent:'D04'});
+   }
+  }
+  // R02 must connect two *different* offensive spells to the same enemy.
+  if(!reflect&&inflicted>0&&has(attacker,'R02')&&attacker.build.klass==='mage'&&
+    ['E01','E03','E04','E06','E10','R03','R05'].includes(skill)&&
+    (attacker.cooldowns.R02||0)<=0&&!attacker.passives.r02Ready){
+   if(attacker.passives.r02Target!==target.id){
+    attacker.passives.r02Target=target.id;attacker.passives.r02Last=skill;
+   }else if(attacker.passives.r02Last!==skill){
+    attacker.passives.r02Ready=true;emit('charge',attacker,{talent:'R02',target:target.id});
+   }
+  }
   attacker.damage+=inflicted;attacker.attacks++;
   target.lastHitAt=time;
   target.hitWindow.push({time,value:inflicted});
@@ -197,7 +241,19 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    attacker.passives.b06Spent=(attacker.passives.b06Spent||0)+gained;
    if(gained>0)emit('proc',attacker,{talent:'B06',target:target.id});
   }
+  if(!reflect&&shieldTaken>0&&has(target,'L03')&&(target.cooldowns.L03||0)<=0){
+   target.cooldowns.L03=15;heal(target,target.stats.hp*.015*effectiveness(target,'L03'),'L03');
+   emit('proc',target,{talent:'L03',target:attacker.id});
+  }
+  if(!reflect&&target.reverseUntil>time&&attacker.alive){
+   target.reverseUntil=0;emit('proc',target,{talent:'D03',target:attacker.id});
+   applyHit(target,attacker,target.stats.attack*.65*effectiveness(target,'D03'),{kind:'retaliation',skill:'D03',reflect:true});
+  }
   if(target.hp<=0){endHero(target,attacker);return inflicted}
+  if(!reflect&&skill&&has(target,'R04')&&(target.cooldowns.R04||0)<=0&&target.r04Until<=time){
+   target.r04Until=time+4;target.cooldowns.R04=12;
+   emit('charge',target,{talent:'R04',target:attacker.id});
+  }
   if(has(target,'B08')&&!target.passives.b08Used&&target.hp/target.stats.hp<.45){
    target.passives.b08Used=true;target.rage=6;emit('proc',target,{talent:'B08',target:attacker.id});
   }
@@ -257,6 +313,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',f,{talent:'P02',target:target.id});
   }
   f.basic=klass==='hunter'?1.23:klass==='mage'?1.16:1.02;
+  if(has(f,'D04')&&f.passives.d04Ready){
+   f.basic*=1-.15*effectiveness(f,'D04');f.passives.d04Ready=false;f.cooldowns.D04=8;
+   emit('proc',f,{talent:'D04',target:target.id});
+  }
   if(has(f,'P07')&&f.passives.p07Ready){
    f.basic*=1-.10*effectiveness(f,'P07');
    f.passives.p07Ready=false;f.cooldowns.P07=10;
@@ -283,6 +343,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    bonus+=.08*effectiveness(f,'E07');f.passives.e07Ready=false;f.cooldowns.E07=12;
    emit('proc',f,{talent:'E07'});
   }
+  if(has(f,'R02')&&f.passives.r02Ready){
+   bonus+=.09*effectiveness(f,'R02');f.passives.r02Ready=false;f.passives.r02Target=null;
+   f.passives.r02Last=null;f.cooldowns.R02=10;emit('proc',f,{talent:'R02'});
+  }
   if(has(f,'E09')&&f.passives.e09Ready){
    bonus+=.12*effectiveness(f,'E09');f.passives.e09Ready=false;
    emit('proc',f,{talent:'E09'});
@@ -307,6 +371,17 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   const klass=f.build.klass;
   // Contextual priority; each cast is a *real* ability with its own CD.
   if(klass==='guardian'){
+   if(ready(f,'L01')&&f.hp<f.stats.hp*.87&&f.lightRegenUntil<=time){
+    use(f,'L01');f.lightRegenUntil=time+3;f.lightRegenPower=f.stats.hp*.06*scaleSkill('L01')/3;return true;
+   }
+   if(ready(f,'L04')&&d<3){
+    use(f,'L04',target);applyHit(f,target,atk*.70*scaleSkill('L04'),{kind:'special',skill:'L04'});
+    f.slow*=.5;return true;
+   }
+   if(ready(f,'L05')&&d<f.stats.range){
+    use(f,'L05',target);applyHit(f,target,atk*.90*scaleSkill('L05'),{kind:'special',skill:'L05'});
+    shield(f,8*scaleSkill('L05'),3);return true;
+   }
    if(ready(f,'G01')&&(f.shield<4||f.hp<f.stats.hp*.7)){use(f,'G01');const a=f.build.attributes;shield(f,20+1.5*a.DEF+.5*a.VIT,4);return true}
    if(ready(f,'G10')&&f.shield<3&&(f.hp<f.stats.hp*.82||d<7)){
     use(f,'G10');const a=f.build.attributes;shield(f,35+1.7*a.DEF+.6*a.INT,4);f.solarUntil=time+4;return true;
@@ -323,6 +398,20 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   if(klass==='warrior'){
    if(f.offenseDelay>0)return false;
+   if(ready(f,'D03')&&d<f.stats.range){
+    use(f,'D03',target);
+    applyHit(f,target,atk*.75*scaleSkill('D03'),{kind:'special',skill:'D03'});
+    f.reverseUntil=time+2;return true;
+   }
+   if(ready(f,'D05')&&d<f.stats.range){
+    use(f,'D05',target);
+    applyHit(f,target,atk*1.25*scaleSkill('D05'),{kind:'special',skill:'D05',ignoreDefense:.12});return true;
+   }
+   if(ready(f,'D01')&&d<f.stats.range){
+    use(f,'D01',target);
+    for(let n=0;n<2;n++)if(target.alive)applyHit(f,target,atk*.48*scaleSkill('D01'),{kind:'melee',skill:'D01'});
+    return true;
+   }
    if(ready(f,'B09')&&d<=f.stats.range){
     use(f,'B09',target);
     applyHit(f,target,atk*1.40*scaleSkill('B09'),{kind:'special',skill:'B09',shieldBonus:.75});
@@ -349,7 +438,25 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(ready(f,'B01')&&d<f.stats.range){use(f,'B01',target);applyHit(f,target,atk*1.55*scaleSkill('B01'),{kind:'special',skill:'B01'});return true}
   }
   if(klass==='mage'){
+   if(ready(f,'R01')&&f.shield<2){
+    use(f,'R01');const a=f.build.attributes;shield(f,18+1.4*a.DEF+.6*a.INT,4);return true;
+   }
    if(f.offenseDelay>0)return false;
+   if(ready(f,'R03')&&d<=2.5){
+    const buff=spellBonus(f);use(f,'R03',target);
+    for(const e of fighters)if(e.alive&&e!==f&&dist(f,e)<=2.5){
+     applyHit(f,e,atk*.65*scaleSkill('R03')*buff,{kind:'special',skill:'R03'});
+     const dx=e.x-f.x,dz=e.z-f.z,dd=Math.max(.001,Math.hypot(dx,dz));
+     if(e.alive)clearPosition(e,dx/dd,dz/dd,1.5);
+    }
+    return true;
+   }
+   if(ready(f,'R05')&&d<=4){
+    const buff=spellBonus(f);use(f,'R05',target);
+    applyHit(f,target,atk*scaleSkill('R05')*buff,{kind:'special',skill:'R05'});
+    if(target.alive){target.offenseDelay=Math.max(target.offenseDelay,.8);emit('debuff',f,{target:target.id,kind:'offense-delay',seconds:.8})}
+    return true;
+   }
    if(ready(f,'E10')&&d<=9){
     const buff=spellBonus(f);use(f,'E10',target);prepareAoE(f,target,'E10',atk*1.55*scaleSkill('E10')*buff,.7,1,2);return true;
    }
@@ -363,6 +470,25 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   if(klass==='hunter'){
    if(f.offenseDelay>0)return false;
+   if(ready(f,'E02')&&d<=12){
+    use(f,'E02');staggeredSideStep(f,target,3);
+    f.speedUntil=time+2;return true;
+   }
+   if(ready(f,'E01')&&d<=8){
+    use(f,'E01',target);
+    zones.push({owner:f.id,talent:'E01',x:target.x,z:target.z,r:1.5,until:time+8,triggered:false});
+    emit('zone',f,{talent:'E01',x:target.x,z:target.z,radius:1.5,duration:8});return true;
+   }
+   if(ready(f,'E04')&&d<=9){
+    use(f,'E04',target);
+    zones.push({owner:f.id,talent:'E04',x:target.x,z:target.z,r:2,until:time+7,last:{}});
+    emit('zone',f,{talent:'E04',x:target.x,z:target.z,radius:2,duration:7});return true;
+   }
+   if(ready(f,'E05')&&d<=7){
+    use(f,'E05',target);
+    projectile(f,target,atk*.75*scaleSkill('E05'),'E05',{slow:.25,duration:1.5});
+    return true;
+   }
    const shotRange=f.stats.range*(f.passives.p08RangeReady?1+.08*scaleSkill('P08'):1);
    if(ready(f,'P10')&&d<=shotRange){
     use(f,'P10',target);prepareAoE(f,target,'P10',atk*.48*scaleSkill('P10'),.7,3,2);return true;
@@ -389,6 +515,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    f.offenseDelay=Math.max(0,f.offenseDelay-step);
    f.rage=Math.max(0,f.rage-step);
    if(f.regenUntil>time){heal(f,f.regenPower*step,'G09')}
+   if(f.lightRegenUntil>time){heal(f,f.lightRegenPower*step,'L01')}
+   if(f.poisonUntil>time){
+    const poisonOwner=byId.get(f.poisonOwner);
+    if(poisonOwner&&poisonOwner.alive)applyHit(poisonOwner,f,f.poisonPower*step,{kind:'poison',skill:'E03',reflect:true});
+   }
    if(f.solarUntil<=time)f.solarUntil=0;
    for(const id of Object.keys(f.cooldowns))f.cooldowns[id]=Math.max(0,f.cooldowns[id]-step);
    if(f.shieldUntil<=time){f.shield=0;f.shieldUntil=0}
@@ -415,7 +546,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
     &&d>4&&d<=f.stats.range+.5;
    const chase=holdForAim?0:d>preferred+1?1:d<preferred-.7?-.6:0;
    const strafe=holdForAim?0:(d<preferred+5?.21:0)*((f.id.length+seed)%2?-1:1);
-   const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1)*(f.regenUntil>time?.88:1);
+   const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1)*(f.regenUntil>time?.88:1)*
+     (f.speedUntil>time?1+.10*effectiveness(f,'E02'):1);
    const goalVX=(dx/d*chase-dz/d*strafe)*f.stats.speed*penalty;
    const goalVZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*penalty;
    const smoothing=1-Math.exp(-8*step);
@@ -441,6 +573,30 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(Math.hypot(f.x,f.z)>radius){const excess=Math.hypot(f.x,f.z)-radius;f.hp=Math.max(0,f.hp-step*(4+excess*4));endHero(f,null);if(!f.alive)continue}
    const basicRange=f.stats.range*(has(f,'P08')&&f.passives.p08RangeReady?1+.08*effectiveness(f,'P08'):1);
    if(!act(f,target,d)&&d<=basicRange&&f.basic<=0)basicAttack(f,target);
+  }
+  // Fixed-position traps and lures operate in the same world as the heroes.
+  for(let i=zones.length-1;i>=0;i--){
+   const zone=zones[i],owner=byId.get(zone.owner);
+   if(!owner||!owner.alive||zone.until<=time){zones.splice(i,1);continue}
+   for(const victim of fighters){
+    if(!victim.alive||victim===owner||dist(zone,victim)>zone.r)continue;
+    if(zone.talent==='E01'&&!zone.triggered){
+     zone.triggered=true;
+     const inflicted=applyHit(owner,victim,owner.stats.attack*.90*effectiveness(owner,'E01'),{kind:'special',skill:'E01'});
+     if(inflicted>0&&victim.alive)applySlow(victim,.20,2,owner);
+     emit('trap',owner,{talent:'E01',target:victim.id});
+     if(inflicted>0&&victim.alive&&has(owner,'E03')&&(owner.cooldowns.E03||0)<=0){
+      owner.cooldowns.E03=12;victim.poisonUntil=time+3;victim.poisonPower=owner.stats.attack*.025*effectiveness(owner,'E03');
+      victim.poisonOwner=owner.id;emit('proc',owner,{talent:'E03',target:victim.id});
+     }
+     break;
+    }
+    if(zone.talent==='E04'&&(!zone.last[victim.id]||time-zone.last[victim.id]>=1.4)){
+     zone.last[victim.id]=time;applySlow(victim,.12,2,owner);
+     emit('zone-effect',owner,{talent:'E04',target:victim.id});
+    }
+   }
+   if(zone.triggered)zones.splice(i,1);
   }
   // A warning gives time to leave the marked area. Damage is applied only
   // at impact time, against the fighters physically inside its radius.

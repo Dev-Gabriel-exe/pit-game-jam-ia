@@ -12,6 +12,7 @@ on:
       - 'qa/v5-forge*'
       - 'qa/v5-phase2-combat.cjs'
       - 'qa/v5-phase2-expansion.cjs'
+      - 'qa/v5-phase2-next-paths.cjs'
       - 'qa/v5-phase2-browser.cjs'
       - 'qa/v5-arena-physics-fairness.cjs'
       - 'qa/v5-arena-navigation.cjs'
@@ -39,6 +40,7 @@ jobs:
           node --check v5/phase2-combat.js
           node --check qa/v5-phase2-combat.cjs
           node --check qa/v5-phase2-expansion.cjs
+          node --check qa/v5-phase2-next-paths.cjs
           node --check qa/v5-phase2-browser.cjs
           node --check qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-lab.cjs
@@ -46,6 +48,7 @@ jobs:
           node qa/v5-arena-targeting.cjs
           node qa/v5-phase2-combat.cjs
           node qa/v5-phase2-expansion.cjs
+          node qa/v5-phase2-next-paths.cjs
           node qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-balance-matrix.cjs
   browser:

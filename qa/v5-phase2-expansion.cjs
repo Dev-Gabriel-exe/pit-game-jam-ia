@@ -7,9 +7,9 @@ const classes=['warrior','mage','hunter','guardian'];
 const expected={};
 for(const klass of classes){
  const approved=JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents;
- assert.equal(P.TALENTS[klass].length,10,'Expected first ten approved talents per class');
+ assert(P.TALENTS[klass].length>=10,'Expected at least first ten approved talents per class');
  expected[klass]=approved.slice(5,10).map(t=>t.id);
- assert.deepEqual(P.TALENTS[klass].slice(5).map(t=>t.id),expected[klass]);
+ assert.deepEqual(P.TALENTS[klass].slice(5,10).map(t=>t.id),expected[klass]);
  const fresh=P.exampleBuild(klass,'B2-'+klass,5,1);
  assert.deepEqual(fresh.talents,expected[klass],'B2 variant must equip new skills, not 10 skills');
  assert.equal(Object.values(fresh.attributes).reduce((a,v)=>a+v,0),10);
