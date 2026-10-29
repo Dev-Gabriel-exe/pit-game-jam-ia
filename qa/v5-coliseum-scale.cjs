@@ -9,10 +9,14 @@ const code=name=>fs.readFileSync(path.join(__dirname,'../v5',name),'utf8');
 const citadel=code('arena-citadel.js');
 const renderer=code('arena-three.js');
 const lab=code('arena-lab.js');
-assert.match(citadel,/eclipse-citadel-3-duel-courts/);
+assert.match(citadel,/eclipse-citadel-4-gothic-hex/);
 assert.match(citadel,/const duelCourts=low\?8:12/);
 assert.match(renderer,/KayKit-Game-Assets\/KayKit-Dungeon-Remastered-1\.0/);
 assert.match(renderer,/container\.dataset\.v5DuelCourts/);
+assert.match(citadel,/CylinderGeometry\(1\.42,1\.42,\.13,6,1\)/,'Piso hexagonal instanciado deve existir');
+assert.match(citadel,/stained-glass-gothic/,'Vitrais góticos presentes na arena');
+assert.match(renderer,/function cinematic\(\)/,'Câmera de aproximação disponível');
+assert.match(renderer,/v5VisibleNicks/,'Cotas de nomes visíveis devem existir');
 assert.match(lab,/arenaScale:5,onEvent/);
 const klasses=['warrior','mage','hunter','guardian'];
 const roster=Array.from({length:30},(_,i)=>{
