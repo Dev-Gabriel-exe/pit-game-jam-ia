@@ -331,7 +331,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   const bar=new THREE.Group();bar.position.y=3.08;m.root.add(bar);
   const background=put(bar,geo('PlaneGeometry',1.37,.14),new THREE.MeshBasicMaterial({color:0x170f19,depthTest:false}),0,0,0);
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
-  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null};
+  const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,nick,hp:100,dead:false,spectator:false,seat:null,transfer:null,desiredPosition:m.root.position.clone()};
   individuals.set(item.id,item);
   addRealCharacter(item);
   return item;
@@ -414,7 +414,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   unit.fill.scale.x=health;unit.fill.position.x=-.65*(1-health);
   unit.fill.material.color.setHex(health>.55?0xd0a86e:health>.24?0xd08e52:0xbf5051);
   if(!unit.spectator){
-   unit.mesh.root.position.set(f.x,Math.max(0,f.y||0),f.z);
+   unit.desiredPosition.set(f.x,Math.max(0,f.y||0),f.z);
    unit.mesh.actor.rotation.y=f.face;
    if(unit.overrideMotion&&elapsed<unit.motionUntil){
     // Keep one-shot clips visible until the strike/reaction concludes.
@@ -461,6 +461,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
      triggerMotion(attacker,'dodge',.43);
      if(attacker)burst(attacker.mesh.root.position.x,attacker.mesh.root.position.z,0x7ad1e2,5);
     }
+    if(ev.type==='dash'){
+     triggerMotion(attacker,'run',.60);
+     if(attacker)burst(attacker.mesh.root.position.x,attacker.mesh.root.position.z,0xeec38b,7);
+    }
     if(ev.type==='knockout'||ev.type==='storm')sendToGrandstand(ev.target||ev.hero,ev.type);
     onEvent(ev);
    }
@@ -483,7 +487,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(simulation){
     const active=new Set();
     for(let i=0;i<simulation.projectiles.length;i++){
-      const p=simulation.projectiles[i],k=p.from+':'+p.to+':'+i;active.add(k);
+      const p=simulation.projectiles[i],k=String(p.id??(p.from+':'+p.to+':'+i));active.add(k);
       let mesh=shots.get(k);
       if(!mesh){mesh=put(root,geo('OctahedronGeometry',.16,0),new THREE.MeshBasicMaterial({color:p.kind==='multishot'?0x9ed6ab:0xdbacfa}),p.x,1.4,p.z);shots.set(k,mesh)}
       mesh.position.set(p.x,p.y+.14*Math.sin(p.age*9),p.z);mesh.rotation.y+=dt*4;
@@ -491,6 +495,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     for(const [key,m] of shots)if(!active.has(key)){root.remove(m);m.geometry.dispose();m.material.dispose();shots.delete(key)}
   }
   for(const [id,u] of individuals){
+   // Interpolate 20Hz simulation transforms at display refresh rate.
+   if(!u.spectator&&u.desiredPosition)u.mesh.root.position.lerp(u.desiredPosition,Math.min(1,dt*16));
    u.bar.quaternion.copy(camera.quaternion);
    if(u.mixer&&!reduce)u.mixer.update(dt);
    if(u.spectator&&u.seat){
