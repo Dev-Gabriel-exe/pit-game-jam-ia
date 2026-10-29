@@ -136,7 +136,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   const rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03)+(rnd()-.5)*1.25)*scale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
-   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0};
+   basic:rnd()*.7,special:1.8+rnd()*3.8,slow:0,animation:'idle',sidestep:rnd()*6,stagger:0,rush:0,rushCooldown:rnd()*2,telegraph:false,aim:0,eliminatedAt:null};
  });
  let time=0,seq=0,winner=null,finished=false;
  const initialCount=fighters.length;
@@ -166,8 +166,8 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   if(f.build.klass==='warrior'&&kind==='melee')f.hp=Math.min(f.stats.hp,f.hp+Math.min(4.4,amount*.15));
   if(f.build.talents.leech||f.build.talents.vamp)f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
   if(o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
-  if(o.hp<=0){o.alive=false;f.kills++;o.animation='defeated';log('knockout',f,{target:o.id,by:f.name})}
-  if(f.hp<=0){f.alive=false;f.animation='defeated';log('knockout',o,{target:f.id,by:o.name})}
+  if(o.hp<=0){o.alive=false;o.eliminatedAt=time;f.kills++;o.animation='defeated';log('knockout',f,{target:o.id,by:f.name})}
+  if(f.hp<=0){f.alive=false;f.eliminatedAt=time;f.animation='defeated';log('knockout',o,{target:f.id,by:o.name})}
  }
  function blocked(f,x,z){
   for(const o of obstacles){const dx=x-o.x,dz=z-o.z,d=Math.hypot(dx,dz),min=o.r+.56;
@@ -225,7 +225,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    f.animation=(Math.hypot(f.vx,f.vz)>.3)?'run':'idle';
    // Arena ring is a soft physical boundary, followed by damage outside the storm.
    const cd=Math.hypot(f.x,f.z);
-   if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
+   if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;f.eliminatedAt=time;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
    if(d<=f.stats.range&&f.basic<=0){
     // Archery costs time to draw and aim; no free +50% DPS from range.
     f.basic=(f.build.klass==='hunter'?1.27:f.build.klass==='mage'?1.18:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
@@ -329,9 +329,13 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    // A timeout must not automatically crown the guardian merely because it
    // started with the largest *absolute* HP pool. Compare survival fraction,
    // then combat contribution.
-   winner=(left.length===1?left[0]:left.slice().sort((a,b)=>
+   winner=(left.length===1?left[0]:left.length===0?
+    fighters.slice().sort((a,b)=>(b.eliminatedAt??-1)-(a.eliminatedAt??-1)||b.kills-a.kills||b.damage-a.damage||a.id.localeCompare(b.id))[0]:
+    left.slice().sort((a,b)=>
      (b.hp/b.stats.hp-a.hp/a.stats.hp)||b.kills-a.kills||b.damage-a.damage||a.id.localeCompare(b.id))[0])||null;
-   log('end',winner,{winner:winner?.id||null,reason:left.length===1?'last-hero':'time-limit'});
+   // A rare simultaneous last storm KO is decided by survival time and
+   // contribution, never by fabricated random victory.
+   log('end',winner,{winner:winner?.id||null,reason:left.length===1?'last-hero':left.length===0?'last-fallen':'time-limit'});
   }
   return {finished,winner,events:events.slice(start),time,radius,fighters,projectiles};
  }
