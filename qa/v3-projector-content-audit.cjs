@@ -28,7 +28,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    if(!(await page.locator('#pitProjector').count())){rows.push({mission,phase,...before,error:'NO_SLIDES'});continue}
    const slideCount=await page.locator('#pitProjectorCount').innerText();
    const n=Number(slideCount.split('/')[1]?.trim())||1;
-   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[],m09PracticeSteps=[];
+   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m05Verifications=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[],m09PracticeSteps=[];
    let demoInteraction=null,m08Interaction=null;
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
@@ -118,9 +118,18 @@ const {chromium}=require('playwright'),fs=require('node:fs');
      if(mission===5&&step){
       m05Sections.push(await page.locator('#pitProjectorContent').evaluate(el=>({
        where:el.querySelectorAll('.m5g-instruction').length===2,
+       source:!!el.querySelector('.m5g-photo-foot a'),
+       privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+      })));
+     }
+     if(mission===5&&phase==='demo'){
+      const verification=page.locator('#pitProjectorContent [data-pit-projector-verify]');
+      if(await verification.count())m05Verifications.push(await verification.evaluate(el=>({
+       id:el.dataset.pitProjectorVerify,
        result:!!el.querySelector('.m5g-expect'),
        fix:!!el.querySelector('.pit-projector-diagnostic'),
-       source:!!el.querySelector('.m5g-photo-foot a'),
+       source:!!el.querySelector('.pit-projector-g5-verify-source a'),
+       preview:el.textContent.includes('Preview'),
        privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
       })));
      }
@@ -150,7 +159,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title}));
   }
@@ -186,18 +195,24 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   const selected=await page.locator('#m5Guide [data-m5g-route="'+routeIndex+'"]').getAttribute('aria-selected');
   await page.locator('#pitProjectorLaunch').click();
   const total=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]?.trim())||0;
-  const steps=[];
+  const steps=[],verifications=[];
   for(let i=0;i<total;i++){
    const el=page.locator('#pitProjectorContent [data-pit-projector-step]');
    if(await el.count()){
     const id=await el.getAttribute('data-pit-projector-step');
-    const complete=await el.evaluate(node=>node.querySelectorAll('.m5g-instruction').length===2&&!!node.querySelector('.m5g-expect')&&!!node.querySelector('.pit-projector-diagnostic')&&!!node.querySelector('.m5g-photo-foot a')&&!node.querySelector('.pit-private-teacher-notes'));
+    const complete=await el.evaluate(node=>node.querySelectorAll('.m5g-instruction').length===2&&!!node.querySelector('.m5g-photo-foot a')&&!node.querySelector('.m5g-expect')&&!node.querySelector('.pit-projector-diagnostic')&&!node.querySelector('.pit-private-teacher-notes'));
     steps.push({id,complete});
+   }
+   const verify=page.locator('#pitProjectorContent [data-pit-projector-verify]');
+   if(await verify.count()){
+    const id=await verify.getAttribute('data-pit-projector-verify');
+    const complete=await verify.evaluate(node=>!!node.querySelector('.m5g-expect')&&!!node.querySelector('.pit-projector-diagnostic')&&!!node.querySelector('.pit-projector-g5-verify-source a')&&node.textContent.includes('Preview')&&!node.querySelector('.pit-private-teacher-notes'));
+    verifications.push({id,complete});
    }
    if(i<total-1)await page.locator('#pitProjectorNext').click();
   }
   await page.locator('#pitProjectorClose').click();
-  m05RouteChecks.push({routeIndex,selected,total,steps,pass:selected==='true'&&steps.length===5&&steps.every((s,i)=>s.id==='M05:'+i&&s.complete)});
+  m05RouteChecks.push({routeIndex,selected,total,steps,verifications,pass:selected==='true'&&steps.length===5&&verifications.length===5&&steps.every((s,i)=>s.id==='M05:'+i&&s.complete)&&verifications.every((s,i)=>s.id==='M05:'+i&&s.complete)});
  }
 
  const m07RouteChecks=[];
@@ -287,8 +302,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M05 review: intro, four rubric criteria, decisions and evidence caveat on separate slides',pass:m05Review?.m05ReviewSteps?.length===7&&JSON.stringify(m05Review.m05ReviewSteps.map(x=>x.id))===JSON.stringify(['M05:intro','M05:rubric-1','M05:rubric-2','M05:rubric-3','M05:rubric-4','M05:decision','M05:record'])&&m05Review.m05ReviewSteps.every(x=>x.privateNotes===0)&&(m05Review.retainedRatio||0)>.5},
   {name:'M05 review: real Preview checks, approval/revision and no automatic GDevelop validation',pass:!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:intro'&&x.text.includes('Preview'))&&['EVENTO','AÇÃO E ESTADO','ACEITE 3×','CONTINUIDADE'].every((label,i)=>m05Review?.m05ReviewSteps?.[i+1]?.text.includes(label))&&!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:decision'&&x.text.includes('APROVAR')&&x.text.includes('SOLICITAR REVISÃO'))&&!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:record'&&x.text.includes('não valida automaticamente')&&x.text.includes('evidência permanece autodeclaratória'))},
   {name:'M05: five GDevelop event steps projected separately',pass:JSON.stringify(m05?.guideSteps)===JSON.stringify(expected05)},
-  {name:'M05: two actions, expected result, visible recovery, source and no private notes',pass:m05?.m05Sections?.length===5&&m05.m05Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
-  {name:'M05: RPG, puzzle and 3D routes each project five complete steps',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
+  {name:'M05: action and verification screens preserve instructions, result, recovery, source and no private notes',pass:m05?.m05Sections?.length===5&&m05.m05Verifications?.length===5&&m05.m05Sections.every(x=>x.where&&x.source&&x.privateNotes===0)&&m05.m05Verifications.every((x,i)=>x.id==='M05:'+i&&x.result&&x.fix&&x.source&&x.preview&&x.privateNotes===0)},
+  {name:'M05: RPG, puzzle and 3D routes each project five actions and five verifications',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
   {name:'M08 briefing: six concepts, simulator, acceptance and evidence on 11 slides without private notes',pass:m08Briefing?.m08BriefingSteps?.length===11&&JSON.stringify(m08Briefing.m08BriefingSteps.map(x=>x.id))===JSON.stringify(['M08:intro',...Array.from({length:6},(_,i)=>'M08:concept-'+(i+1)),'M08:simulation-intro','M08:simulation','M08:accept','M08:evidence'])&&m08Briefing.m08BriefingSteps.every(x=>x.privateNotes===0)&&(m08Briefing.retainedRatio||0)>.6},
   {name:'M08 briefing: all UX labels and Preview evidence caveat projected',pass:['AFFORDANCE','INSTRUÇÃO','HUD','CONTRASTE','RESPOSTA AO INPUT','ERRO RECUPERÁVEL'].every((label,i)=>m08Briefing?.m08BriefingSteps?.[i+1]?.text.includes(label))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:accept'&&x.text.includes('antes/depois'))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:evidence'&&x.text.includes('simulação'))},
   {name:'M08 briefing: cloned before/after simulator responds to radio and actions',pass:m08Briefing?.m08Interaction?.pass===true},
