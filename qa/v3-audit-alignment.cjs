@@ -158,6 +158,9 @@ assert(!m09Validation.includes('<details class="pit-private-teacher-notes" open'
 assert(m09Validation.indexOf('Depois de retirar o espelhamento')>m09Validation.indexOf('function review()'),'M09 review workflow is concealed');
 assert(m09Student.includes('só declare')===false || m09Student.includes('após modificar'),'M09 cannot claim unobserved correction');
 
+assert(m09Validation.includes('nenhuma mudança após teste sem falha'),'M09 projected practice must show the legitimate no-defect decision');
+assert(!m09Validation.includes('solicite o Preview e confira o projeto editável'),'M09 projected footer must not contain teacher-only instructions');
+
 // M10: self-guided launch, neutral shared tutorial, projector-safe teacher review.
 const m10Student=read('v3/student-mission-ten.js');
 const m10Guide=read('v3/gdevelop-mission-ten-guide.js');
@@ -188,6 +191,9 @@ assert(m10Student.includes('correção retestada, backlog ou ausência de falha'
 assert(m10Teacher.includes('nenhuma alteração após teste sem falha'),'M10 projected teacher rubric recognizes a successful peer test');
 assert(!m10Teacher.includes('correção testada ou backlog justificado.'),'M10 old two-outcome rubric must not reappear');
 assert(m10Guide.includes('nenhuma alteração após teste sem falha'),'M10 shared GDevelop guide keeps M09 tri-state outcome');
+
+assert(m10Teacher.includes('CRITÉRIO PÚBLICO'),'M10 projected footer must state student-facing criteria');
+assert(!m10Teacher.includes('registre aprovação ou devolutiva no painel de acompanhamento'),'M10 projected footer cannot expose teacher workflow');
 
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
