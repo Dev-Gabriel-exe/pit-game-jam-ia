@@ -20,7 +20,7 @@ const fs=require('node:fs');
     assert(Number(await page.locator('#stage').getAttribute('data-clip-count'))>0,'Sem clipes: '+klass);
     assert(await page.locator('.animations button:not([disabled])').count()>0,'Sem controles de animação verdadeiros: '+klass);
     const audit=await page.evaluate(()=>({clipCount:Number(document.querySelector('#stage').dataset.clipCount),roles:[...document.querySelectorAll('.animations button:not([disabled])')].map(b=>b.dataset.animation)}));
-    if(width===1440){modelReports.push({klass,...audit});console.log('ASSET AUDIT '+klass+' '+JSON.stringify(audit));}
+    if(width===1440){modelReports.push({klass,...audit});console.log('ASSET AUDIT '+klass+' '+JSON.stringify(audit));await page.locator('#stage').screenshot({path:'qa/v5-fase1-class-'+klass+'.png'});}
     assert.equal(await page.locator('[data-class="'+klass+'"]').getAttribute('aria-pressed'),'true');
    }
    await page.locator('#resetCamera').click();
