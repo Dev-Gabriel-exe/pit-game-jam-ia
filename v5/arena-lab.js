@@ -216,7 +216,7 @@ function reportModels(){
   message('OS '+state.count+' HERÓIS ESTÃO PRONTOS');
  }
 }
-function initRound(){
+function initRound({sameSeed=false}={}){
  if(!state.stage)return;
  state.stage.pause();
  state.fought=false;state.result=null;state.busy=true;state.speed=1;
@@ -250,10 +250,14 @@ function initRound(){
   (state.customBuild?'SUA BUILD EXPERIMENTAL DA FORJA · cinco talentos e até dez pontos na missão 5. O confronto NÃO verifica aprovações, notas ou entrada oficial no torneio.':'MOTOR B.6 · 120 talentos executáveis, 30 opções por classe; 5 talentos escolhidos e até 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
   'Motor legado · os 120 talentos finais ainda não foram integrados; modo experimental B.1 disponível.';
  state.round++;
- const random=new Uint32Array(1);
- if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(random);
- else random[0]=Math.floor(Math.random()*0xffffffff);
- state.seed=(random[0]||1)>>>0;
+ // Keep identical starting positions, talent build and RNG when comparing
+ // 100%, 75% and 60%. Reset/New Mission still creates a fresh scenario.
+ if(!sameSeed||!state.seed){
+  const random=new Uint32Array(1);
+  if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(random);
+  else random[0]=Math.floor(Math.random()*0xffffffff);
+  state.seed=(random[0]||1)>>>0;
+ }
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
  const prefix=trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
  const gameInfo=$('matchInfo');if(gameInfo)gameInfo.textContent='PARTIDA '+state.round+' · SEED '+state.seed;
@@ -351,7 +355,7 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.bo
 $('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn)state.stage?.focusFighter(btn.dataset.focus);});
 $('damagePace').addEventListener('click',()=>{
  state.damageIndex=(state.damageIndex+1)%PACES.length;
- initRound();
+ initRound({sameSeed:true});
 });
 $('speedBattle').addEventListener('click',()=>{
  if(!state.stage)return;
