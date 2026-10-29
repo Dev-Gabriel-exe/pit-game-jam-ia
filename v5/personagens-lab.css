@@ -38,3 +38,17 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 @media(max-width:880px){.main-grid{grid-template-columns:1fr}.class-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.avatar-stage{height:440px}}
 @media(max-width:490px){.site-header{flex-wrap:wrap}.site-label{order:3;width:100%}.class-button{padding:11px;min-height:73px}.class-icon{font-size:26px}.class-button strong{font-size:13px}.class-button small{font-size:10px}main{padding:12px}.avatar-stage{height:410px;min-height:320px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+
+/* Actual four-model comparison: thumbnails are rendered from the four GLBs,
+   never stock illustrations or procedurally assembled human figures. */
+.four-heroes-gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 6px}
+.four-heroes-loading{grid-column:1/-1;color:#e1b993;text-align:center;padding:22px;background:#231a2a;border:1px solid #9e775d55;margin:0}
+.hero-model-card{min-width:0;border:1px solid #9576597a;background:linear-gradient(135deg,#261c2e,#140f1c);color:#ecdacb;padding:7px;cursor:pointer;display:grid;gap:7px;text-align:center}
+.hero-model-card[aria-pressed=true]{border:2px solid #deb78a;background:linear-gradient(135deg,#39283c,#211729)}
+.hero-model-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:contain;background:radial-gradient(ellipse at 50% 60%,#4a344a,#15121e 75%);border-radius:3px}
+.hero-model-card .hero-name{font:700 15px Cinzel,serif;color:#f3dcc0}
+.hero-model-card small{font-size:11px;color:#bda9a4}
+.hero-model-card .hero-status{font-size:10px;letter-spacing:.08em;color:#b4d5b3;min-height:12px}
+.gallery-caption{font-size:12px;color:#bbaaaf;text-align:center;margin:9px 0 20px}
+@media(max-width:740px){.four-heroes-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hero-model-card .hero-name{font-size:12px}}
