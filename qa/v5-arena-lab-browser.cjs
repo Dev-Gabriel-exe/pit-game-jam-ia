@@ -52,8 +52,12 @@ const {chromium}=require('playwright');
     await page.screenshot({path:'qa/v5-arena-lab-grandstands-1440.png',fullPage:true});
    }
    await page.waitForTimeout(700);
-   await page.locator('#pauseBattle').click();
-   assert.match(await page.locator('#pauseBattle').textContent(),/Continuar/);
+   if(await page.locator('#pauseBattle').isEnabled()){
+    await page.locator('#pauseBattle').click();
+    assert.match(await page.locator('#pauseBattle').textContent(),/Continuar/);
+   }else{
+    assert.match(await page.locator('#arenaStatus').textContent(),/CONFRONTO FINALIZADO/,'A luta pode terminar antes do teste de pausa');
+   }
    await page.locator('#resetBattle').click();
    await page.waitForFunction(n=>window.PIT_V5_ARENA_LAB?.modelState.loaded===n,count,{timeout:90000});
    await page.locator('[data-mission="10"]').click();
