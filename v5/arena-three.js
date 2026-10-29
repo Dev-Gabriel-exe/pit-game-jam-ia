@@ -557,6 +557,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(!item||item.spectator||!isPhase2()||!event?.talent)return false;
   const cue=cueFor(item.build.klass,event.talent);
   if(!cue)return false;
+  // Under 30-player load, prioritize actual active casts above subdued
+  // passive/proc decals, without changing battle events or talent outcomes.
+  if(!subtle&&effects.filter(e=>e.isAbility).length>=visualBudget){
+   const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
+   if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+  }
   if(effects.filter(e=>e.isAbility).length>=visualBudget){
    talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);return false;
   }
@@ -607,7 +613,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    root.add(crown);decors.push(crown);
   }
   const duration=reduce?.48:(subtle?Math.max(.78,cue.duration*1.45):Math.max(1.45,cue.duration*1.9));
-  effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors});
+  effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors,subtle});
   talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
   container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
