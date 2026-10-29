@@ -1,5 +1,5 @@
 'use strict';
-// Validate the real B.3 engine, 60 catalog skills and user-selectable M5 samples.
+// Validate the real B.4 engine, 80 catalog skills and user-selectable M5 samples.
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 (async()=>{
@@ -20,7 +20,7 @@ const {chromium}=require('playwright');
    });
   });
   assert(budgets.every(b=>b.talents===5&&b.points===10));
-  assert.equal(await page.evaluate(()=>Object.values(window.PIT_V5_PHASE2.TALENTS).flat().length),60);
+  assert.equal(await page.evaluate(()=>Object.values(window.PIT_V5_PHASE2.TALENTS).flat().length),80);
   assert.equal((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).length,30);
   await page.locator('[data-roster="4"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.fighterCount===4&&window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:100000});
@@ -42,7 +42,7 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
   assert.equal(await page.locator('#phase2Mode').getAttribute('aria-pressed'),'false');
   assert.deepEqual(errors,[],'Page errors: '+errors.join(' | '));
-  console.log('PASS Phase2 B.3 browser: 60 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
+  console.log('PASS Phase2 B.4 browser: 80 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
   await page.close();
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
