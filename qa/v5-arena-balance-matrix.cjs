@@ -46,7 +46,7 @@ function makeRoster(mission,count,rotation,scenario){
  });
 }
 const modes=[
- {name:'original-class-roster',count:30,scenario:'baseline',seeds:32},
+ {name:'offensive-archetypes',count:30,scenario:'baseline',seeds:32},
  {name:'rotated-mixed-builds',count:30,scenario:'varied',seeds:48},
  {name:'adverse-builds',count:30,scenario:'offmeta',seeds:32},
  {name:'four-player',count:4,scenario:'varied',seeds:48}
@@ -72,10 +72,12 @@ for(const mode of modes){
   const totalDamage=Object.fromEntries(CLASSES.map(c=>[c,Math.round(damage[c])]));
   console.log('BALANCE MATRIX '+mode.name+' M'+mission+' '+JSON.stringify({wins:ordered,uniqueWinners:winnerIds.size,kills,damage:totalDamage}));
   assert(winnerIds.size>=Math.min(3,mode.seeds),'Winners always same ID: '+mode.name+'/'+mission);
-  if(mode.count===30){
-   // For an 8/8/7/7 class composition, 75%+ dominance is certainly broken.
-   if(Math.max(...Object.values(wins))>Math.ceil(mode.seeds*.67))violations.push('One class dominates '+mode.name+' M'+mission+': '+JSON.stringify(wins));
-  }
+  // Require no class to take >60% of wins in either 30-hero or 4-hero
+  // scenarios. The baseline remains intentionally varied by class presence.
+  if(Math.max(...Object.values(wins))>Math.ceil(mode.seeds*.60))
+   violations.push('One class dominates '+mode.name+' M'+mission+': '+JSON.stringify(wins));
+  if(mode.count===30&&Object.values(wins).filter(v=>v>0).length<3)
+   violations.push('Too few viable classes '+mode.name+' M'+mission+': '+JSON.stringify(wins));
  }
 }
 assert.deepEqual(violations,[],'Balance matrix violations: '+violations.join(' | '));
