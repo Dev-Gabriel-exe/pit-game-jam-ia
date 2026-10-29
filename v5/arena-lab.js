@@ -154,7 +154,10 @@ function onEvent(event){
   message('CONFRONTO FINALIZADO','finished');
   $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;
  }
- updateScoreboard();
+ // Updating 30 fighter DOM cards for every projectile hit starves the
+ // WebGL frame loop. The scoreboard also refreshes every 450ms; only
+ // knockouts and the winner need an immediate refresh.
+ if(event.type==='knockout'||event.type==='storm'||event.type==='end')updateScoreboard();
 }
 function reportModels(){
  const stage=$('arenaStage');
