@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T17:14:23Z",
+  "last_completed_at": "2026-10-29T18:15:07.113Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm M03 practice projector Chrome/static/Browser QA on commit 188b8ec; then restore M04/Comprovar, M05/Comprovar, M08/Entender, M09/Criar and split 720p oversized slides",
+  "priority": "Confirm Chrome/static/Browser QA for M04/Comprovar on 7bde9d5; then restore M05/Comprovar, M08/Entender, M09/Criar; reduce oversized 720p slides",
   "current_phase": "MISSOES",
-  "last_task": "V4-M03-PRACTICE-PROJECTION-COVERAGE",
+  "last_task": "V4-M04-REVIEW-PROJECTION-COVERAGE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2492,12 +2492,19 @@
       "status": "in_progress",
       "commit": "188b8ecd510e278f61d8860559ddffb52f95071c",
       "summary": "M03/Criar projected practice now has three explicit GDevelop lab fragments, visible error recovery, time allocation, 2D/3D alternatives and final Preview/save criterion; private notes removed from cloned slides. Added Chrome regression; V8 parse PASS for both JS; previous M01 Browser QA 40910615906 SUCCESS. New CI/Chrome not yet verified; GDevelop GUI, HDMI, physical mobile and peer playtest NOT_RUN. 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T18:15:07.113Z",
+      "task": "V4-M04-REVIEW-PROJECTION-COVERAGE",
+      "status": "in_progress",
+      "commit": "7bde9d55f683e375f0ab12ff925812518891ed5e",
+      "summary": "M04/Comprovar now projects introduction, four rubric criteria, approval/revision decisions and evidence limitations in seven slides; private HDMI-off notes excluded. Added two Chrome regression checks for content, order, retention and private-note absence. M03 prior Chrome/static/Browser CI SUCCESS. M04 first code static QA SUCCESS, final SHA CI pending; GDevelop/HDMI/mobile/peer NOT_RUN. 54/59 unchanged, main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M03-PRACTICE-PROJECTION-COVERAGE",
+    "task": "V4-M04-REVIEW-PROJECTION-COVERAGE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T17:14:23Z",
+    "updated_at": "2026-10-29T18:15:07.113Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2527,9 +2534,11 @@
       "2e37bdc53f4377c62011dc1060ffe1f3cb7f8ba2",
       "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
       "3157b84a1219911bd38775dfee12497b20817b0a",
-      "188b8ecd510e278f61d8860559ddffb52f95071c"
+      "188b8ecd510e278f61d8860559ddffb52f95071c",
+      "b8fb9d9089854d8f0a6ea678637e6975a8d3fbdc",
+      "7bde9d55f683e375f0ab12ff925812518891ed5e"
     ],
-    "documentation_commit": "d97e949f6d7f6c7d45c549369dd6a2bec4f043ae",
+    "documentation_commit": "5e09e35448a6b2f1375ed75e9aa58853b3de1a09",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2858,13 +2867,44 @@
         "name": "M03 practice new GitHub Actions Chrome/static/Browser QA",
         "sha": "188b8ecd510e278f61d8860559ddffb52f95071c",
         "result": "NOT_CONFIRMED: no PR workflow runs or combined status reported yet"
+      },
+      {
+        "name": "M03 practice previous code Chrome/static/Browser QA",
+        "sha": "188b8ecd510e278f61d8860559ddffb52f95071c",
+        "run_ids": [
+          40919582060,
+          40919582148,
+          40919582225
+        ],
+        "result": "SUCCESS verified via GitHub Actions 2026-10-29"
+      },
+      {
+        "name": "M04 review projector static QA first code commit",
+        "sha": "b8fb9d9089854d8f0a6ea678637e6975a8d3fbdc",
+        "run_id": 40928859102,
+        "result": "SUCCESS confirmed"
+      },
+      {
+        "name": "M04 review 7-slide Chrome regression",
+        "sha": "7bde9d55f683e375f0ab12ff925812518891ed5e",
+        "run_id": 40928905958,
+        "result": "IN_PROGRESS at checkpoint; no PASS claim"
+      },
+      {
+        "name": "M04 review static and Browser QA",
+        "sha": "7bde9d55f683e375f0ab12ff925812518891ed5e",
+        "run_ids": [
+          40928905948,
+          40928905906
+        ],
+        "result": "IN_PROGRESS at checkpoint; no PASS claim"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M03 practice projector Chrome/static/Browser QA on commit 188b8ec; then restore M04/Comprovar, M05/Comprovar, M08/Entender, M09/Criar and split 720p oversized slides",
-    "blocker": "New M03 CI/Chrome not confirmed; M04/M05 720p slides still long, four other low-coverage phases remain; GDevelop GUI/HDMI/physical mobile/peer NOT_RUN"
+    "next_task": "Verify all 3 CI jobs for M04 review regression at SHA 7bde9d5; if passing, audit M05/Comprovar, M08/Entender and M09/Criar; reduce M04/M05 long 720p slides",
+    "blocker": "M04 review regression CI still in progress; M05/Comprovar, M08/Entender, M09/Criar and 720p long slides pending; GDevelop GUI/HDMI/physical mobile/peer NOT_RUN"
   }
 }
