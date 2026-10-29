@@ -127,3 +127,12 @@ body.pit-projecting{overflow:hidden!important}
 
 /* Safe alignment prevents the first lines of an oversized tutorial from being clipped above the scroll area. */
 #pitProjector .pit-projector-slide{align-items:safe center;justify-content:safe center}
+
+
+/* M01 authorial planning: two legible worksheet fields per slide, never a tiny seven-cell grid. */
+#pitProjector .pit-projector-m01-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2vw,26px);width:100%;font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-m01-fields .tm1-field{min-width:0;width:100%;padding:clamp(18px,2vw,28px);margin:0}
+#pitProjector .pit-projector-m01-fields .tm1-field span{font:800 clamp(18px,1.35vw,22px)/1.35 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-m01-fields .tm1-field strong{display:block;font:700 clamp(25px,2.1vw,34px)/1.25 Georgia,serif;margin:12px 0}
+#pitProjector .pit-projector-m01-fields .tm1-field p{font:400 clamp(19px,1.6vw,25px)/1.45 system-ui,"Segoe UI",Arial,sans-serif}
+@media(max-width:850px){#pitProjector .pit-projector-m01-fields{grid-template-columns:minmax(0,1fr)}}
