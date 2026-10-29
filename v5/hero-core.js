@@ -115,14 +115,16 @@ function derived(b){
 }
 function mulberry(seed){let v=(seed|0)>>>0;return ()=>{v+=0x6D2B79F5;let t=v;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
 function hash(s){let h=2166136261;for(const char of String(s)){h^=char.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
-function battle(source,{seed=486,dt=.05,limit=180}={}){
+function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
+ // Optional geometric scaling for a 30-participant spectator arena; legacy callers retain 1.
+ const scale=clamp(arenaScale,1,3);
  const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
  const fighters=heroes.map((input,i)=>{
   const name=String(input.name||'Aventureiro').slice(0,56),id=String(input.id||('hero-'+i)).slice(0,80);
   if(used.has(id))throw Error('Personagem duplicado.');used.add(id);
   // Trusted caller must canonicalize player build using server-awarded XP.
   const b=canonical(input,name,clamp(input.xp,0,1030)),stats=derived(b);
-  const theta=i*2.3999632297,rad=5.2+Math.sqrt(i)*1.03;
+  const theta=i*2.3999632297,rad=(5.2+Math.sqrt(i)*1.03)*scale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
    basic:0,special:2+(i%3)*.85,slow:0,animation:'idle'};
@@ -130,7 +132,7 @@ function battle(source,{seed=486,dt=.05,limit=180}={}){
  let time=0,seq=0,winner=null,finished=false;
  const events=[];
  const log=(type,f,payload={})=>{const e={seq:++seq,time:+time.toFixed(2),type,hero:f?.id||null,...payload};events.push(e);return e};
- const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}];
+ const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({...o,x:o.x*scale,z:o.z*scale,r:o.r*scale}));
  const projectiles=[];
  const areaHit=(f,radius,damage,except=null)=>{
   for(const o of fighters)if(o.alive&&o!==f&&o!==except&&Math.hypot(o.x-f.x,o.z-f.z)<radius)hit(f,o,damage,'special');
@@ -157,7 +159,7 @@ function battle(source,{seed=486,dt=.05,limit=180}={}){
   if(finished)return {finished,winner,events:[]};
   const step=Math.min(.09,Math.max(.001,Number(rawDt)||dt));
   time+=step;const start=events.length;
-  const radius=Math.max(3.2,18-Math.max(0,time-18)*.13);
+  const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-18)*(scale===1?.13:.37*scale));
   for(const f of fighters){
    if(!f.alive)continue;
    f.basic=Math.max(0,f.basic-step);f.special=Math.max(0,f.special-step);
