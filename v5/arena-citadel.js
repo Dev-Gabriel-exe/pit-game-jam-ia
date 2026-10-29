@@ -221,6 +221,44 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
    }
   }
  }
+ // The sky has a recognizable silhouette: a dusky eclipse above the far
+ // battlements, with a soft painted corona instead of another geometric cone.
+ // One tiny local canvas texture; no copyrighted background or remote request.
+ const skyCanvas=document.createElement('canvas');skyCanvas.width=256;skyCanvas.height=256;
+ const skyContext=skyCanvas.getContext('2d');
+ if(skyContext){
+  const halo=skyContext.createRadialGradient(128,128,22,128,128,126);
+  halo.addColorStop(0,'rgba(14,11,21,1)');
+  halo.addColorStop(.37,'rgba(14,11,21,1)');
+  halo.addColorStop(.405,'rgba(255,193,132,.92)');
+  halo.addColorStop(.445,'rgba(197,79,62,.72)');
+  halo.addColorStop(.55,'rgba(128,63,91,.36)');
+  halo.addColorStop(.77,'rgba(88,55,87,.11)');
+  halo.addColorStop(1,'rgba(40,27,54,0)');
+  skyContext.fillStyle=halo;skyContext.fillRect(0,0,256,256);
+  const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
+  const eclipse=new THREE.Sprite(new THREE.SpriteMaterial({map:skyTexture,transparent:true,depthWrite:false,fog:false,opacity:.90}));
+  eclipse.name='eclipse-sky-disc';eclipse.position.set(-32,104,-165);eclipse.scale.set(90,90,1);
+  world.add(eclipse);
+ }
+ // Sparse embers stay around the perimeter, not in the middle of the
+ // combatants; the particles have no physics and are cheaper than point lights.
+ const countEmbers=low?80:220,emberCoords=new Float32Array(countEmbers*3);
+ for(let i=0;i<countEmbers;i++){
+  const angle=i*2.399963229728653;
+  const radius=46+(i%11)*1.8;
+  emberCoords[i*3]=Math.cos(angle)*radius;
+  emberCoords[i*3+1]=2.0+(i%13)*.84;
+  emberCoords[i*3+2]=Math.sin(angle)*radius;
+ }
+ const emberGeometry=new THREE.BufferGeometry();
+ emberGeometry.setAttribute('position',new THREE.BufferAttribute(emberCoords,3));
+ const emberField=new THREE.Points(emberGeometry,new THREE.PointsMaterial({
+  color:0xeea06a,size:low?.11:.16,transparent:true,opacity:.31,
+  depthWrite:false,blending:THREE.AdditiveBlending
+ }));
+ emberField.name='coliseum-perimeter-embers';
+ world.add(emberField);world.userData.emberField=emberField;
  // Grand backdrop: standing rock masses outside the walls, not collision props.
  const rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),ash,low?90:165);
  for(let i=0;i<rocks.count;i++){
