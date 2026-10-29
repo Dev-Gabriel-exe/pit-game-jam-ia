@@ -271,4 +271,40 @@ assert(!m09Review.includes('Confirme os três passos realizados'),'M09 locked re
 assert(m09Review.includes('disabled'),'M09 approved record stays read-only');
 m09Restore.hydrate('m09-original',m09Evidence,'approved');
 assert.equal(m09Restore.load('m09-original').checks.length,3,'M09 existing locally marked checks are not erased');
+// M07/M08/M10 integrity regression: remote evidence carries written answers but
+// no trustworthy record of the three manual Preview checkboxes. A submission
+// or approval status must never synthesize test execution on a new device.
+for(const [number,source,globalName,warningClass] of [
+ [7,m07Student,'PIT_STUDENT_MISSION_SEVEN','m7s-warning'],
+ [8,m08Student,'PIT_STUDENT_MISSION_EIGHT','m8s-warning'],
+ [10,m10Student,'PIT_STUDENT_MISSION_TEN','m10s-warning']
+]){
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:key=>store.get(key)||null,
+  setItem:(key,value)=>store.set(key,value)
+ }};
+ vm.runInNewContext(source,env,{timeout:3000,filename:'student-mission-'+number+'.js'});
+ const mod=env.window[globalName],draft={checks:[0,1,2]};
+ for(const field of mod.fields)draft[field.id]='Registro de QA fictício, sem execução humana '+field.id;
+ if(number===8){
+  draft.before='ANTES: personagem sem indicador visual na cena';
+  draft.after='DEPOIS: personagem com indicador visual na cena';
+ }
+ if(number===10)draft.route='local';
+ assert(mod.save('original-'+number,draft),'M'+number+' fixture can be stored locally');
+ assert.equal(mod.validate('original-'+number).ok,true,'M'+number+' original fixture passes form validation');
+ const remoteText=mod.evidence('original-'+number);
+ mod.hydrate('restored-'+number,remoteText,'approved');
+ const recovered=mod.load('restored-'+number);
+ assert.equal(recovered.checks.length,0,'M'+number+' approved status must not fabricate three manual Preview tests');
+ assert.equal(recovered[mod.fields[0].id],draft[mod.fields[0].id],'M'+number+' preserves written evidence on restore');
+ assert.equal(mod.validate('restored-'+number).ok,false,'M'+number+' new editable draft still requires manual test confirmation');
+ const approved=mod.render({session:'restored-'+number,status:'approved',phase:'review',idea:{title:'Jogo fictício'},approvedStages:[],preview:true});
+ assert(!approved.includes('class="'+warningClass+'"'),'M'+number+' approved read-only review must not display misleading missing-checkbox warning');
+ assert(approved.includes('disabled'),'M'+number+' approved record cannot be resubmitted');
+ const draftReview=mod.render({session:'restored-'+number,status:'draft',phase:'review',idea:{title:'Jogo fictício'},approvedStages:[],preview:true});
+ assert(draftReview.includes('class="'+warningClass+'"'),'M'+number+' editable draft still warns about unchecked tests');
+ mod.hydrate('original-'+number,remoteText,'approved');
+ assert.equal(mod.load('original-'+number).checks.length,3,'M'+number+' preserves actual existing local checkbox declarations');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
