@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d0b12">
+<meta name="description" content="Protótipo isolado da Arena dos Criadores: combate automático 3D com modelos reais e personagens de treino.">
+<title>Arena dos Criadores · Protótipo de Combate V5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./arena-lab.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script src="./hero-core.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
+<script src="./arena-lab.js" type="module"></script>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<header class="topbar"><a class="brand" href="./seletor.html">PIT <span>GAME JAM</span><sup>V5</sup></a>
+ <div class="top-center">⚔ A ARENA DOS CRIADORES <small>PROTÓTIPO DE CONFRONTO AUTOMÁTICO</small></div>
+ <a class="back" href="./seletor.html">← Seleção de heróis</a></header>
+<main>
+ <section class="intro">
+  <span class="eyebrow">✧ O CAMPO DE PROVA ✧</span>
+  <h1>A estratégia encontra <em>seu destino.</em></h1>
+  <p>Assista a quatro personagens 3D reais lutando num mapa tridimensional. Este é o primeiro teste do palco e do combate, separado dos dados dos alunos.</p>
+  <div class="disclaimer"><strong>LABORATÓRIO ISOLADO</strong> · Combate com o motor legado V5. Os 120 talentos planejados, os cinco atributos novos e o bloqueio da final <strong>ainda não estão integrados</strong>. Nenhuma vitória dá XP, altera notas ou bloqueia talentos.</div>
+ </section>
+ <nav class="milestones" aria-label="Simulação de marco da oficina">
+  <button class="milestone" data-mission="5" aria-pressed="true" type="button"><span class="number">05</span><span><strong>Primeira prova</strong><small>500 XP · confronto de treino · build editável</small></span><span class="tag">TESTE</span></button>
+  <button class="milestone" data-mission="10" aria-pressed="false" type="button"><span class="number">10</span><span><strong>Último desafio</strong><small>1.000 XP · prévia visual da final</small></span><span class="tag">SIMULAÇÃO</span></button>
+ </nav>
+ <div class="layout">
+  <section class="theater">
+   <div class="theater-head"><div><span class="eyebrow">01 · O COLISEU</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div>
+   <div class="stage-wrap">
+    <div id="arenaStage" class="stage" aria-label="Arena tridimensional com quatro personagens reais em combate">
+      <div class="stage-loading" id="stageLoading" role="status">✦ Invocando o coliseu 3D...</div>
+    </div>
+    <div class="stage-flair" aria-hidden="true"><span>✦</span> ARENA DOS CRIADORES <span>✦</span></div>
+   </div>
+   <div class="controls">
+     <button id="startBattle" type="button" class="cta" disabled>▶ Iniciar confronto</button>
+     <button id="pauseBattle" type="button" disabled>Ⅱ Pausar</button>
+     <button id="resetBattle" type="button" disabled>↻ Reiniciar</button>
+     <button id="speedBattle" type="button" disabled>Velocidade ×1</button>
+   </div>
+   <div class="theater-foot"><span id="modelReport" role="status">Carregando modelos GLB...</span><span>Arraste para girar a câmera · roda ou pinça para zoom</span></div>
+  </section>
+  <aside class="side">
+   <section class="panel scoreboard"><span class="eyebrow">02 · DESAFIANTES</span><h2>Confronto dos Quatro</h2>
+     <p>Todos os heróis recebem a mesma experiência por rodada. Nesta primeira versão, cada um usa sua classe e as regras anteriores de combate.</p>
+     <div id="fighters" class="fighters" role="list"></div>
+     <div class="result" id="result" role="status">Ainda não há vencedor. Prepare o coliseu.</div>
+   </section>
+   <section class="panel logpanel"><span class="eyebrow">03 · CRÔNICAS DA BATALHA</span><h2>O que aconteceu</h2>
+     <div id="battleLog" class="battle-log" role="log" aria-live="polite"><p>As ações aparecerão aqui quando a batalha começar.</p></div>
+   </section>
+  </aside>
+ </div>
+ <div class="footer-note">FASE ARENA · PRÉVIA DE ENGENHARIA · NÃO É A ARENA FINAL INTEGRADA DA OFICINA · <a href="./seletor.html">Voltar à Forja</a></div>
+</main>
+</body></html>
