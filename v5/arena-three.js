@@ -417,7 +417,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    const bounds=new THREE.Box3().setFromObject(model),measure=new THREE.Vector3(),center=new THREE.Vector3();
    bounds.getSize(measure);bounds.getCenter(center);
    if(!Number.isFinite(measure.y)||measure.y<.05)throw Error('Modelo sem geometria válida');
-   const factor=Math.min(3,2.55/measure.y);
+   // Class-independent 2.55m rendered height; previous max scale=3 caused
+   // real GLB rigs to look dramatically different from the hunter on mobile.
+   const factor=2.55/measure.y;
    model.scale.setScalar(factor);
    model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
    const tint=new THREE.Color(item.identity?.accent||PALETTES[item.build.appearance.palette]||PALETTES.ember);
