@@ -68,6 +68,16 @@ const {chromium}=require('playwright');
   await page.locator('[data-mission="10"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
   assert.equal(await page.locator('#phase2Mode').getAttribute('aria-pressed'),'false');
+  // Experimental Fase E: URL opt-in must reach the actual battle engine.
+  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?phase2=1&count=4&nav=steer&counterplay=1',
+   {waitUntil:'domcontentloaded',timeout:45000});
+  await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5RangedCommitment==='recovery',
+   null,{timeout:60000});
+  assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-navigation-mode'),'steer');
+  assert.match(await page.locator('#matchInfo').textContent(),/MIRA COM RECUPERAÇÃO/);
+  await page.locator('[data-mission="10"]').click();
+  await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5RangedCommitment==='legacy',
+   null,{timeout:45000});
   assert.deepEqual(errors,[],'Page errors: '+errors.join(' | '));
   console.log('PASS Phase2 B.6 browser: 120 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
   await page.close();
