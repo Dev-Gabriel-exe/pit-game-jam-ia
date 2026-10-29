@@ -1,7 +1,7 @@
 /* Arena V5 | Isolated 3D battle lab for educational prototyping.
  * Uses existing legacy V5 battle engine as a temporary scaffold.
  * NO approved-stages API, no teacher PIN, no XP writes, no student identities.
- * B.3 executes the first 60 Phase-2 talents; other 60 and final lock are pending.
+ * B.4 executes the first 80 Phase-2 talents; other 40 and final lock are pending.
  */
 import {createStage} from './arena-three.js';
 import * as THREE from 'three';
@@ -29,12 +29,12 @@ const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
  if(state.phase2){
-  if(mission!==5||!PHASE2)throw Error('Motor B.3 aceita apenas missão 5');
+  if(mission!==5||!PHASE2)throw Error('Motor B.4 aceita apenas missão 5');
   return Array.from({length:count},(_,i)=>{
    const mine=i===0&&state.customBuild;
    const klass=mine?state.customBuild.klass:expected[i%4];
    const label=mine?'Minha build de teste':count===4?names[klass]:(names[klass].split(' ')[0]+' '+String(i+1).padStart(2,'0'));
-   const build=mine?state.customBuild:PHASE2.exampleBuild(klass,label,5,(Math.floor(i/4)+state.phase2Variant)%5);
+   const build=mine?state.customBuild:PHASE2.exampleBuild(klass,label,5,(Math.floor(i/4)+state.phase2Variant)%7);
    return {id:mine?'phase2-my-forged-build':'phase2-'+i+'-'+klass,name:label,build,approvedMissions:5};
   });
  }
@@ -220,15 +220,15 @@ function initRound(){
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission,trial=state.phase2&&mission===5;
  const toggle=$('phase2Mode');
- const sets=['Brutalidade / Elemental','Alternativos I','Mistos I','Caminhos II','Mistos II'];
+ const sets=['Brutalidade / Elemental','Alternativos I','Mistos I','Caminhos II','Mistos II','Caminhos III','Mistos III'];
  const chooseBuilds=$('phase2Builds');
  chooseBuilds.disabled=!trial;
  chooseBuilds.textContent='✦ Combinações: '+sets[state.phase2Variant];
  chooseBuilds.setAttribute('aria-label','Alterar combinação de talentos: '+sets[state.phase2Variant]);
  toggle.setAttribute('aria-pressed',String(trial));
- toggle.innerHTML=trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.3</small>':'<strong>✦ Experimentar 60 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
+ toggle.innerHTML=trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.4</small>':'<strong>✦ Experimentar 80 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
  $('engineModeInfo').textContent=trial?
-  (state.customBuild?'SUA BUILD EXPERIMENTAL DA FORJA · cinco talentos e até dez pontos na missão 5. O confronto NÃO verifica aprovações, notas ou entrada oficial no torneio.':'MOTOR B.3 · 60 talentos executáveis, 15 opções por classe; 5 talentos escolhidos e até 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
+  (state.customBuild?'SUA BUILD EXPERIMENTAL DA FORJA · cinco talentos e até dez pontos na missão 5. O confronto NÃO verifica aprovações, notas ou entrada oficial no torneio.':'MOTOR B.4 · 80 talentos executáveis, 20 opções por classe; 5 talentos escolhidos e até 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
   'Motor legado · os 120 talentos finais ainda não foram integrados; modo experimental B.1 disponível.';
  state.round++;
  const random=new Uint32Array(1);
@@ -287,7 +287,7 @@ $('phase2Mode').addEventListener('click',()=>{
 });
 $('phase2Builds').addEventListener('click',()=>{
  if(!state.phase2||state.mission!==5)return;
- state.phase2Variant=(state.phase2Variant+1)%5;
+ state.phase2Variant=(state.phase2Variant+1)%7;
  initRound();
 });
 $('startBattle').addEventListener('click',begin);
