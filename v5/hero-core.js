@@ -8,7 +8,7 @@ const VERSION=5;
 const CLASS={
  warrior:{label:'Bárbaro',icon:'⚒',color:'#e4a266',hp:125,speed:4.25,range:2.25,attack:14.5,defense:6,magic:0,ability:'Golpe sísmico'},
  mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:80,speed:3.55,range:8.7,attack:13.5,defense:2,magic:7,ability:'Explosão arcana'},
- hunter:{label:'Patrulheiro',icon:'➶',color:'#98d4a1',hp:90,speed:4.3,range:9.8,attack:12.6,defense:3,magic:1,ability:'Flecha múltipla'},
+ hunter:{label:'Patrulheiro',icon:'➶',color:'#98d4a1',hp:94,speed:4.15,range:9.1,attack:11.4,defense:3,magic:1,ability:'Flecha dupla'},
  guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:130,speed:3.8,range:2.25,attack:12.6,defense:9,magic:2,ability:'Fortaleza'},
  rogue:{label:'Ladino',icon:'⟡',color:'#c79dcc',hp:87,speed:5.0,range:1.9,attack:13.7,defense:3.5,magic:1,ability:'Emboscada'},
  necromancer:{label:'Necromante',icon:'☠',color:'#a79bbf',hp:83,speed:3.5,range:8.3,attack:13,defense:2.5,magic:6,ability:'Chamado das Sombras'}
@@ -218,10 +218,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    const cd=Math.hypot(f.x,f.z);
    if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
    if(d<=f.stats.range&&f.basic<=0){
-    f.basic=1.0+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
+    // Archery costs time to draw and aim; no free +50% DPS from range.
+    f.basic=(f.build.klass==='hunter'?1.27:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
     f.animation='attack';
     if(f.stats.range>3){
-     projectiles.push({id:++projectileSeq,x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack,kind:'ranged',age:0});
+     projectiles.push({id:++projectileSeq,x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack*(f.build.klass==='hunter'?.87:1),kind:'ranged',age:0});
      log('launch',f,{target:target.id});
     }else hit(f,target,f.stats.attack,'melee');
    }
@@ -246,9 +247,13 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
       f.shield+=15+f.build.talents.aegis*10;
       areaHit(f,3+f.build.talents.taunt*.6,f.stats.attack*.7);
     }else{
-      for(let n=0;n<2+f.build.talents.multishot;n++){
-       const chosen=enemies[n%enemies.length];
-       projectiles.push({id:++projectileSeq,x:f.x,y:1.65,z:f.z,from:f.id,to:chosen.id,speed:20,damage:f.stats.attack*1.15,kind:'multishot',age:0});
+      // Flecha dupla is a multi-target zoning tool, not two 115%-damage
+      // missiles into the same victim every 8 s. No bonus on lone target.
+      const targets=enemies.filter(e=>e.alive&&Math.hypot(e.x-f.x,e.z-f.z)<f.stats.range+1);
+      const count=Math.min(targets.length,2+f.build.talents.multishot);
+      for(let n=0;n<count;n++){
+       const chosen=targets[n];
+       projectiles.push({id:++projectileSeq,x:f.x,y:1.65,z:f.z,from:f.id,to:chosen.id,speed:18,damage:f.stats.attack*(n===0?.88:.61),kind:'multishot',age:0});
       }
       if(f.build.talents.trap)target.slow=2+f.build.talents.trap;
     }
