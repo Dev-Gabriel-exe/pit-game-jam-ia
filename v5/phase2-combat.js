@@ -87,6 +87,14 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   f.cooldowns[id]=ALL[f.build.klass].find(t=>t.id===id).cooldown;
   f.gcd=.7;f.usage[id]=(f.usage[id]||0)+1;f.animation='cast';
   emit('talent',f,{talent:id,animationId:f.build.klass+'_'+id.toLowerCase(),name:ALL[f.build.klass].find(t=>t.id===id).name,target:target?.id||null});
+  // E07 charges after two offensive spells and boosts the next one.
+  if(f.build.klass==='mage'&&['E01','E03','E04','E06','E10'].includes(id)&&has(f,'E07')&&
+    (f.cooldowns.E07||0)<=0&&!f.passives.e07Ready){
+   f.passives.e07Count=(f.passives.e07Count||0)+1;
+   if(f.passives.e07Count>=2){
+    f.passives.e07Count=0;f.passives.e07Ready=true;emit('charge',f,{talent:'E07'});
+   }
+  }
  }
  function ready(f,id){return has(f,id)&&(f.cooldowns[id]||0)<=0&&f.gcd<=0}
  function shield(f,amount,seconds){
@@ -256,7 +264,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   f.animation='attack';
   if(kind==='ranged')projectile(f,target,amount,null,{kind:'basic'});
-  else{applyHit(f,target,amount,{kind:'basic'});
+  else{applyHit(f,target,amount,{kind:'melee'});
    if(has(f,'G08')&&(f.cooldowns.G08||0)<=0){
     f.passives.g08Count=(f.passives.g08Count||0)+1;
     if(f.passives.g08Count>=3){
@@ -355,15 +363,16 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   if(klass==='hunter'){
    if(f.offenseDelay>0)return false;
-   if(ready(f,'P10')&&d<=f.stats.range){
+   const shotRange=f.stats.range*(f.passives.p08RangeReady?1+.08*scaleSkill('P08'):1);
+   if(ready(f,'P10')&&d<=shotRange){
     use(f,'P10',target);prepareAoE(f,target,'P10',atk*.48*scaleSkill('P10'),.7,3,2);return true;
    }
-   if(ready(f,'P06')&&d<=f.stats.range){
+   if(ready(f,'P06')&&d<=shotRange){
     use(f,'P06',target);projectile(f,target,atk*1.25*scaleSkill('P06'),'P06',{shieldBonus:.60});return true;
    }
-   if(ready(f,'P05')&&d<=f.stats.range&&!target.markBy){use(f,'P05',target);projectile(f,target,atk*scaleSkill('P05'),'P05',{mark:true});return true}
-   if(ready(f,'P01')&&d<=f.stats.range){use(f,'P01',target);projectile(f,target,atk*1.4*scaleSkill('P01'),'P01',{ignoreDefense:.10});return true}
-   if(ready(f,'P03')&&d<=f.stats.range){use(f,'P03',target);for(let n=0;n<2;n++)projectile(f,target,atk*.58*scaleSkill('P03'),'P03');return true}
+   if(ready(f,'P05')&&d<=shotRange&&!target.markBy){use(f,'P05',target);projectile(f,target,atk*scaleSkill('P05'),'P05',{mark:true});return true}
+   if(ready(f,'P01')&&d<=shotRange){use(f,'P01',target);projectile(f,target,atk*1.4*scaleSkill('P01'),'P01',{ignoreDefense:.10});return true}
+   if(ready(f,'P03')&&d<=shotRange){use(f,'P03',target);for(let n=0;n<2;n++)projectile(f,target,atk*.58*scaleSkill('P03'),'P03');return true}
   }
   return false;
  }
@@ -430,7 +439,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
     f.passives.b04Ready=true;f.movingTime=0;emit('charge',f,{talent:'B04'});
    }
    if(Math.hypot(f.x,f.z)>radius){const excess=Math.hypot(f.x,f.z)-radius;f.hp=Math.max(0,f.hp-step*(4+excess*4));endHero(f,null);if(!f.alive)continue}
-   if(!act(f,target,d)&&d<=f.stats.range&&f.basic<=0)basicAttack(f,target);
+   const basicRange=f.stats.range*(has(f,'P08')&&f.passives.p08RangeReady?1+.08*effectiveness(f,'P08'):1);
+   if(!act(f,target,d)&&d<=basicRange&&f.basic<=0)basicAttack(f,target);
   }
   // A warning gives time to leave the marked area. Damage is applied only
   // at impact time, against the fighters physically inside its radius.
