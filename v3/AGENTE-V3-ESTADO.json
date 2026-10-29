@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Chrome/static/Browser QA for M09/Criar and M08/Entender on current branch; then reduce M04/M05 720p long slides while preserving all tutorial steps",
+  "priority": "Confirm Chrome/static/Browser QA for M05 split at current SHA, inspect 720p overflow; then M04 tutorial scroll and teacher/student full audit",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-PRACTICE-PROJECTION-COVERAGE",
+  "last_task": "V4-M05-DEMO-720P-SPLIT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2520,12 +2520,19 @@
       "status": "in_progress",
       "commit": "cd13f9901a8747a37808bc758591caa7b3f3aff8",
       "summary": "Recovered M09/Criar projected lesson as five public slides: 16-minute protocol, three real peer-test steps and evidence checklist; excluded HDMI-off private notes. CSS ensures one readable practice card per slide. Added two Chrome assertions, V8 parsing and 12 isolated source/render checks PASS. Chrome/CI not confirmed, human/physical tests NOT_RUN. Roadmap 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T21:16:59.230Z",
+      "task": "V4-M05-DEMO-720P-SPLIT",
+      "status": "in_progress",
+      "commit": "93804ff7f3b2df80990650ebfada04fa0bb7a3d0",
+      "summary": "Split five M05 GDevelop projected tutorial steps into action and verification slides (14 expected total) for 720p legibility; preserve all where/how/result/recovery/source, selected RPG/puzzle/3D route and exclude private notes. Added Chrome regression assertions for five action+five verification pairs per route. V8 JS syntax PASS; Chrome/CI NOT_CONFIRMED; physical/human NOT_RUN. Documentation commit d9ee0895; roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-PRACTICE-PROJECTION-COVERAGE",
+    "task": "V4-M05-DEMO-720P-SPLIT",
     "status": "in_progress",
-    "updated_at": "2026-10-29T20:18:39.238Z",
+    "updated_at": "2026-10-29T21:16:59.230Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2563,9 +2570,12 @@
       "053883fcd6059c4ff23327e2594908f0f830da27",
       "852b4701b6bad9e25bc6ed1f6e281c54e36d0c12",
       "443b44d179e58e2b3206519d3d22f524d51d8e26",
-      "cd13f9901a8747a37808bc758591caa7b3f3aff8"
+      "cd13f9901a8747a37808bc758591caa7b3f3aff8",
+      "40b200514cb2c1e90b6036e3e70fc57693fb00cc",
+      "82a798d2c3180a793e032a2b724d59eb3b2f9af9",
+      "93804ff7f3b2df80990650ebfada04fa0bb7a3d0"
     ],
-    "documentation_commit": "3c1eeec6fa962a6377bf0dd77073c0af17f92764",
+    "documentation_commit": "d9ee0895571b58bd736add3727c54dca463c941b",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2961,13 +2971,27 @@
       {
         "name": "GDevelop GUI, HDMI, physical mobile, observed peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M05 projector + QA JavaScript syntax",
+        "sha": "93804ff7f3b2df80990650ebfada04fa0bb7a3d0",
+        "result": "PASS: V8 new Function parsed both modified JavaScript files; no browser execution"
+      },
+      {
+        "name": "M05 new Chrome 3 resolutions and Browser QA",
+        "sha": "93804ff7f3b2df80990650ebfada04fa0bb7a3d0",
+        "result": "NOT_CONFIRMED: GitHub connector workflow_runs=[] and combined statuses=[]; no new Chrome result"
+      },
+      {
+        "name": "M05 720p scrolling after split",
+        "result": "NOT_MEASURED; previous 5/9 scrolling measurement is pre-change"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm Browser QA 40928905906 for M04 review; then restore M05/Comprovar (24%), M08/Entender (39%), M09/Criar (35%); reduce long M04/M05 demo slides",
-    "blocker": "M04 review Chrome/static SUCCESS but Browser QA still in progress; 3 low-coverage phases and M04/M05 720p demo scroll remain; GDevelop GUI/HDMI/physical mobile/peer NOT_RUN"
+    "next_task": "Confirm new M05 Chrome/Browser QA and 720p metrics, fix any regressions; then reduce M04 long slides",
+    "blocker": "Current M05 browser/CI results not observable yet; physical HDMI/GDevelop/mobile/peer tests NOT_RUN"
   }
 }
