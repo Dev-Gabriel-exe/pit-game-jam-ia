@@ -248,4 +248,27 @@ assert.equal(m10.validate('m10-qa').ok,true,'M10 gd route accepts a properly for
 launchFixture.access='https://gd.games/jogo-teste?token=segredo';
 m10.save('m10-qa',launchFixture);
 assert.equal(m10.validate('m10-qa').ok,false,'M10 must reject token-bearing URLs');
+// M09 regression: a submitted/approved evidence record does not prove three real
+// peer-test checkbox events. Hydration must restore text without fabricating them.
+const m09RestoreStore=new Map(),m09RestoreSandbox={window:{},localStorage:{
+ getItem:key=>m09RestoreStore.get(key)||null,
+ setItem:(key,value)=>m09RestoreStore.set(key,value)
+}};
+vm.runInNewContext(m09Student,m09RestoreSandbox,{timeout:3000,filename:'student-mission-nine.js'});
+const m09Restore=m09RestoreSandbox.window.PIT_STUDENT_MISSION_NINE;
+const m09Fixture={outcome:'passed',resolution:'nochange',checks:[0,1,2]};
+for(const f of m09Restore.fields)m09Fixture[f.id]='Observação fictícia de QA sem participante real';
+m09Restore.save('m09-original',m09Fixture);
+assert.equal(m09Restore.validate('m09-original').ok,true,'M09 QA fixture valid before evidence roundtrip');
+const m09Evidence=m09Restore.evidence('m09-original');
+m09Restore.hydrate('m09-recovered',m09Evidence,'approved');
+const m09Recovered=m09Restore.load('m09-recovered');
+assert.equal(m09Recovered.checks.length,0,'M09 restored status must not invent peer test confirmations');
+assert.equal(m09Recovered.outcome,'passed','M09 restores genuine outcome text');
+assert.equal(m09Recovered.resolution,'nochange','M09 restores genuine resolution text');
+const m09Review=m09Restore.render({session:'m09-recovered',status:'approved',phase:'review',idea:{title:'QA fictícia'}});
+assert(!m09Review.includes('Confirme os três passos realizados'),'M09 locked review must not claim missing checkmarks invalidate accepted evidence');
+assert(m09Review.includes('disabled'),'M09 approved record stays read-only');
+m09Restore.hydrate('m09-original',m09Evidence,'approved');
+assert.equal(m09Restore.load('m09-original').checks.length,3,'M09 existing locally marked checks are not erased');
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
