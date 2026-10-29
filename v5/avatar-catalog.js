@@ -1,5 +1,5 @@
 /* V5 armory catalogue — shared pure module (browser + Node).
- * IMPORTANT: 120 selectable VISUAL VARIANTS, not 120 different 3D meshes.
+ * IMPORTANT: 40 selectable VISUAL VARIANTS, not 120 different 3D meshes.
  * One verified CC0 rigged GLB per class. Future licensed GLBs can replace
  * baseModelId individually without changing the reservation ID.
  * This module is DEMO LOGIC: authoritative cross-device claims require
@@ -26,8 +26,8 @@ const COLORS=['#dc8767','#9b82ed','#66c6bb','#dfbd76','#88a7ec','#cd7c9d','#9ad1
 const BADGES=['✦','◆','❖','✧','⟡','✶'];
 const list=[];
 for(const [klass,info] of Object.entries(CLASSES)){
- for(let index=0;index<30;index++){
-  const i=index%10,epoch=Math.floor(index/10);
+ for(let index=0;index<10;index++){
+  const i=index%10,epoch=0;
   const number=String(index+1).padStart(2,'0');
   const entry={
    id:klass+'-'+number,klass,role:info.role,name:info.names[i]+' '+EPITHETS[epoch],
@@ -43,13 +43,18 @@ for(const [klass,info] of Object.entries(CLASSES)){
 const AVATARS=Object.freeze(list),BY_ID=new Map(AVATARS.map(a=>[a.id,a]));
 function forClass(klass){return AVATARS.filter(a=>a.klass===klass)}
 function get(id){return BY_ID.get(String(id||''))||null}
+function assignedClass(studentId){
+ const match=/^aluno-(0[1-9]|[12][0-9]|30)$/.exec(String(studentId||''));
+ if(!match)return null;
+ return Object.keys(CLASSES)[(Number(match[1])-1)%4];
+}
 function sanitizeClaims(input){
  const usedStudents=new Set(),usedAvatars=new Set(),clean=[];
  for(const c of Array.isArray(input)?input:[]){
   if(!c||typeof c!=='object')continue;
   const studentId=String(c.studentId||''),avatarId=String(c.avatarId||'');
   const avatar=get(avatarId);
-  if(!/^aluno-(?:0[1-9]|[12][0-9]|30)$/.test(studentId)||!avatar)continue;
+  if(!avatar||assignedClass(studentId)!==avatar.klass)continue;
   if(usedStudents.has(studentId)||usedAvatars.has(avatarId))continue;
   usedStudents.add(studentId);usedAvatars.add(avatarId);
   clean.push(Object.freeze({studentId,avatarId,klass:avatar.klass}));
@@ -57,9 +62,11 @@ function sanitizeClaims(input){
  return clean;
 }
 function reserve(existing,studentId,avatarId){
- if(!/^aluno-(?:0[1-9]|[12][0-9]|30)$/.test(String(studentId)))return {ok:false,error:'Aluno de demonstração inválido'};
+ const requiredClass=assignedClass(studentId);
+ if(!requiredClass)return {ok:false,error:'Aluno de demonstração inválido'};
  const avatar=get(avatarId);
  if(!avatar)return {ok:false,error:'Personagem não cadastrado'};
+ if(avatar.klass!==requiredClass)return {ok:false,error:'O aluno deve escolher um personagem da classe atribuída: '+CLASSES[requiredClass].label};
  const claims=sanitizeClaims(existing);
  const taken=claims.find(c=>c.avatarId===avatarId&&c.studentId!==studentId);
  if(taken)return {ok:false,error:'Este personagem já foi escolhido por outro aluno',owner:taken.studentId,claims};
@@ -70,5 +77,5 @@ function reserve(existing,studentId,avatarId){
 function release(existing,studentId){
  return sanitizeClaims(existing).filter(c=>c.studentId!==studentId);
 }
-return Object.freeze({CLASSES,AVATARS,get,forClass,sanitizeClaims,reserve,release});
+return Object.freeze({CLASSES,AVATARS,get,forClass,assignedClass,sanitizeClaims,reserve,release});
 });
