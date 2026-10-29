@@ -1,7 +1,9 @@
 'use strict';
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
+const fs=require('node:fs');
 (async()=>{
+ const modelReports=[];
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  try{
   for(const width of [1440,390]){
@@ -17,6 +19,8 @@ const {chromium}=require('playwright');
     await page.waitForFunction(k=>document.querySelector('#stage')?.dataset.assetClass===k&&document.querySelector('#stage')?.dataset.model==='loaded',klass,{timeout:60000});
     assert(Number(await page.locator('#stage').getAttribute('data-clip-count'))>0,'Sem clipes: '+klass);
     assert(await page.locator('.animations button:not([disabled])').count()>0,'Sem controles de animação verdadeiros: '+klass);
+    const audit=await page.evaluate(()=>({clipCount:Number(document.querySelector('#stage').dataset.clipCount),roles:[...document.querySelectorAll('.animations button:not([disabled])')].map(b=>b.dataset.animation)}));
+    if(width===1440){modelReports.push({klass,...audit});console.log('ASSET AUDIT '+klass+' '+JSON.stringify(audit));}
     assert.equal(await page.locator('[data-class="'+klass+'"]').getAttribute('aria-pressed'),'true');
    }
    await page.locator('#resetCamera').click();
@@ -29,5 +33,6 @@ const {chromium}=require('playwright');
    console.log('PASS: '+width+'px: quatro GLBs reais carregados com clipes, orbit e interface responsiva');
    await page.close();
   }
+  fs.writeFileSync('qa/v5-fase1-model-audit.json',JSON.stringify(modelReports,null,2)+'\n');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
