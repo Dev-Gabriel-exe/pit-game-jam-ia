@@ -24,7 +24,13 @@ const importedBuild=(()=>{
   return PHASE2.canonical({...input,name:'Minha build de teste'},5);
  }catch{return null}
 })();
-const state={mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
+// Isolated presentation presets. No global class statistics or persistent XP changes.
+const PACES=[
+ {scale:1,mageBonus:1,label:'Dano 100% · original'},
+ {scale:.75,mageBonus:1.10,label:'Dano 75% · prolongado'},
+ {scale:.60,mageBonus:1.10,label:'Dano 60% · épico'}
+];
+const state={damageIndex:1,mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
@@ -223,6 +229,11 @@ function initRound(){
  $('combatClock').textContent='00:00';$('followSpotlight').disabled=true;
  state.stage.setSpeed(1);
  $('speedBattle').textContent='Velocidade ×1';
+ const pace=PACES[state.damageIndex];
+ $('damagePace').textContent='⚔ '+pace.label;
+ $('damagePace').setAttribute('aria-label','Alterar ritmo do confronto. '+pace.label+'. Arcanista recebe compensação experimental de 10% nos modos reduzidos.');
+ $('damagePace').setAttribute('title','Reduz dano de ataques, habilidades e reflexos, não o dano da tempestade. Modo experimental, não altera as regras finais.');
+ $('damagePace').dataset.scale=String(pace.scale);
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('cinematicCamera').disabled=false;$('actionCamera').disabled=false;
@@ -248,7 +259,11 @@ function initRound(){
  const gameInfo=$('matchInfo');if(gameInfo)gameInfo.textContent='PARTIDA '+state.round+' · SEED '+state.seed;
  message('CARREGANDO '+state.count+' HERÓIS');
  state.roster=roster(mission,state.count);
- try{state.stage.fighters(state.roster,{seed:state.seed,limit:95});
+ try{
+  const damageMode=PACES[state.damageIndex];
+  const battleLimit=damageMode.scale===1?95:damageMode.scale===.75?110:125;
+  state.stage.fighters(state.roster,{seed:state.seed,limit:battleLimit,
+   damageScale:damageMode.scale,mageDamageBonus:damageMode.mageBonus});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   $('cinematicCamera').setAttribute('aria-pressed','true');
@@ -334,6 +349,10 @@ function setImmersive(on){
 expandButton.addEventListener('click',()=>setImmersive(!document.body.classList.contains('arena-immersive')));
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('arena-immersive'))setImmersive(false)});
 $('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn)state.stage?.focusFighter(btn.dataset.focus);});
+$('damagePace').addEventListener('click',()=>{
+ state.damageIndex=(state.damageIndex+1)%PACES.length;
+ initRound();
+});
 $('speedBattle').addEventListener('click',()=>{
  if(!state.stage)return;
  // Slow motion (×0.5) is deliberate: 30 simultaneous fighters are difficult
@@ -373,5 +392,6 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get customBuildLoaded(){return !!state.customBuild},
  get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'},
  get seed(){return state.seed},
+ get damageMode(){return {...PACES[state.damageIndex]}},
  get round(){return state.round}
 });
