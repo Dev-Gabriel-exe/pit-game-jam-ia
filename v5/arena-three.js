@@ -274,7 +274,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const floating=new Set(),floatDebounce=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
- let accumulator=0;const shots=new Map();let followId=null;
+ let accumulator=0;const shots=new Map();let followId=null;const followBack=new THREE.Vector3();
  // Stage-only diagnostics: avoid overclaiming that a successful browser load
  // proves 30-player GPU performance on actual phones.
  let monitorFrames=0,monitorStarted=performance.now();
@@ -282,7 +282,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  container.dataset.v5FrameRate='measuring';
  container.dataset.v5DrawCalls='0';
  container.dataset.v5Triangles='0';
- function discardEffect(e){root.remove(e.mesh);e.mesh.geometry?.dispose?.();if(Array.isArray(e.mesh.material))e.mesh.material.forEach(m=>m.dispose?.());else e.mesh.material?.dispose?.()}
+ function discardEffect(e){
+  for(const d of e.decors||[]){root.remove(d);d.geometry.dispose();d.material.dispose()}
+  root.remove(e.mesh);e.mesh.geometry?.dispose?.();
+  if(Array.isArray(e.mesh.material))e.mesh.material.forEach(m=>m.dispose?.());else e.mesh.material?.dispose?.();
+ }
  function clearVisuals(){for(const e of effects)discardEffect(e);effects.length=0}
  function clearHeroes(){
   modelLoadedCount=0;modelErrorCount=0;
@@ -303,6 +307,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    labels.delete(x.id);
   }
   individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();floatingLayer.replaceChildren();floating.clear();floatDebounce.clear();followId=null;
+  controls.enableRotate=true;controls.enablePan=true;container.dataset.v5FollowTarget='';container.dataset.v5FollowBackDot='';
   availableClips=0;container.dataset.v5GlbClips='0';container.dataset.v5ChoreographiesActive='0';
   container.dataset.v5BuildVisuals='0';container.dataset.v5BuildIdentities='0';
   container.dataset.v5Spectators='0';
@@ -635,21 +640,45 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  // D-phase presets: both are passive camera positions, not the later auto-director.
  // The close low-angle view intentionally frames only a portion of the arena
  // so the medieval architecture and individual heroes are actually legible.
+ function freeCamera(){
+  followId=null;controls.enableRotate=true;controls.enablePan=true;
+  container.dataset.v5FollowTarget='';container.dataset.v5FollowBackDot='';
+ }
  function cinematic(){
-  followId=null;
+  freeCamera();
   if(worldScale>1.3)camera.position.set(18*stadiumScale,17*stadiumScale,30*stadiumScale);
   else camera.position.set(8.5,9,15);
   controls.target.set(0,worldScale>1.3?2.3:1.2,0);
   controls.update();container.dataset.v5CameraPreset='cinematic';
  }
  function overview(){
-  followId=null;camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);
+  freeCamera();camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);
   controls.target.set(0,.2,0);controls.update();container.dataset.v5CameraPreset='overview';
+ }
+ // In the M5 laboratory, following an alive hero uses a real rear-view
+ // third-person boom that turns with f.face, NOT the old fixed front shot.
+ // The later F-phase handles synchronized teacher/student camera state.
+ function followPose(f,hero){
+  const face=Number.isFinite(f.face)?f.face:0;
+  const fx=Math.sin(face),fz=Math.cos(face);
+  const p=hero?.mesh.root.position||new THREE.Vector3(f.x,0,f.z);
+  const look=new THREE.Vector3(p.x+fx*2.7,2.1,p.z+fz*2.7);
+  const back=12.8,height=6.5;
+  const boom=new THREE.Vector3(p.x-fx*back,Math.max(.15,p.y)+height,p.z-fz*back);
+  return {look,boom,fx,fz};
  }
  function focusFighter(id){
   const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
-  followId=String(id);const watching=occupiedSeats.get(followId),x=watching?.x??f.x,y=watching?.y??1.4,z=watching?.z??f.z;
-  camera.position.set(x+10,y+13,z+19);controls.target.set(x,y+1.4,z);controls.update();container.dataset.v5CameraPreset='fighter';return true;
+  if(!f.alive||occupiedSeats.has(String(id))){cinematic();return false}
+  followId=String(id);
+  // The orbit is locked in follow mode to avoid a 180° face-on camera.
+  // Returning to "Cena" or "Visão geral" restores manual orbiting.
+  controls.enableRotate=false;controls.enablePan=false;
+  const pose=followPose(f,individuals.get(followId));
+  camera.position.copy(pose.boom);controls.target.copy(pose.look);controls.update();
+  container.dataset.v5CameraPreset='third-person';
+  container.dataset.v5FollowTarget=followId;
+  return true;
  }
  function resize(){
   if(!live)return;
@@ -822,11 +851,21 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   }
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   container.dataset.v5ChoreographiesActive=String([...individuals.values()].filter(u=>u.choreography).length);
-  if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId);if(f){
-    const watching=occupiedSeats.get(followId);
-    const target=watching?new THREE.Vector3(watching.x,watching.y+1.4,watching.z):new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
-    controls.target.add(delta);camera.position.add(delta);
-   }}
+  if(followId&&simulation){
+   const f=simulation.fighters.find(x=>String(x.id)===followId);
+   if(!f||!f.alive||occupiedSeats.has(followId)){
+    // An eliminated spectator returns to the global director preview.
+    cinematic();
+   }else{
+    const pose=followPose(f,individuals.get(followId)),ease=Math.min(1,1-Math.exp(-dt*5));
+    controls.target.lerp(pose.look,ease);
+    camera.position.lerp(pose.boom,ease);
+    // Negative = camera stays BEHIND the hero's engine-facing direction.
+    followBack.set(camera.position.x-f.x,0,camera.position.z-f.z);
+    const len=Math.max(.001,followBack.length());
+    container.dataset.v5FollowBackDot=String(((followBack.x*pose.fx+followBack.z*pose.fz)/len).toFixed(3));
+   }
+  }
   controls.update();
   // Nickname overlay is 2D screen space, but positions are projected from
   // each actual 3D character. It is not an unrelated static roster.
