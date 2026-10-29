@@ -252,6 +252,37 @@ function pedagogicalDemoSlides(root,mission){
    return result.length>=guide.guideSteps.length+2?result:null;
   }
  }
+ // M08/Entender: preserve all six UX concepts and the interactive before/after comparison.
+ if(mission===8&&root.querySelector('#t8Foundations')){
+  const source=root.querySelector('#t8Foundations'),concepts=[...source.querySelectorAll('.t8f-concepts > article')];
+  if(concepts.length===6&&source.querySelector('.t8f-scene')){
+   const result=[];
+   function add(node,title,id){
+    if(!node)return;
+    const wrapper=document.createElement('section');
+    wrapper.className='t8f-root pit-projector-m08-briefing';
+    wrapper.dataset.pitProjectorBriefing='M08:'+id;
+    wrapper.innerHTML=cleanCopy(node);
+    result.push({title,html:wrapper.outerHTML});
+   }
+   add(source.querySelector('header'),'Polimento é comunicação, não decoração','intro');
+   concepts.forEach((node,i)=>add(node,'UX '+(i+1)+' de 6 · '+(node.querySelector('h3')?.textContent||'Conceito'),'concept-'+(i+1)));
+   add(source.querySelector('.t8f-lab > div:first-child'),'Antes/depois: o que a simulação demonstra','simulation-intro');
+   const demo=document.createElement('section');
+   demo.className='t8f-root pit-projector-m08-briefing';
+   demo.dataset.pitProjectorBriefing='M08:simulation';
+   const lab=document.createElement('section');lab.className='t8f-lab';
+   for(const selector of ['.t8f-modes','.t8f-scene']){
+    const node=source.querySelector(selector);
+    if(node)lab.insertAdjacentHTML('beforeend',cleanCopy(node));
+   }
+   demo.append(lab);
+   result.push({title:'Simulador interativo: interface antes e depois',html:demo.outerHTML});
+   add(source.querySelector('.t8f-accept'),'Critério: uma melhoria real no próprio jogo','accept');
+   add(source.querySelector('footer'),'Evidência: Preview real, não simulação','evidence');
+   return result.length===11?result:null;
+  }
+ }
  if(mission===7&&root.querySelector('#g7Guide')){
   const guide=window.PIT_GDEVELOP_M07_GUIDE;
   if(guide?.projectorCard&&guide.routes?.length===2){
@@ -294,6 +325,27 @@ function activateProjectorControls(content){
   img.addEventListener('error',fallback);
   if(img.complete&&img.naturalWidth===0)fallback();
  });
+ const ux=content.querySelector('.pit-projector-m08-briefing[data-pit-projector-briefing="M08:simulation"]');
+ if(ux){
+  let mode='raw';
+  const scene=ux.querySelector('[data-t8f-scene]'),objective=ux.querySelector('#t8fObjective');
+  const controls=ux.querySelector('#t8fControls'),status=ux.querySelector('#t8fStatus'),message=ux.querySelector('#t8fMessage');
+  function update(){
+   if(scene)scene.dataset.t8fScene=mode;
+   if(objective)objective.textContent=mode==='polished'?'Objetivo: coletar cristal e abrir a porta':'Objetivo desconhecido';
+   if(controls)controls.textContent=mode==='polished'?'Controles: setas/WASD e interação':'Controles não indicados';
+   if(status)status.textContent='AGUARDANDO AÇÃO';
+   if(message)message.textContent='Execute uma ação e observe a diferença.';
+  }
+  ux.querySelectorAll('input[name="t8fMode"]').forEach(input=>input.addEventListener('change',()=>{
+   if(input.checked){mode=input.value;update()}
+  }));
+  ux.querySelectorAll('[data-t8f-action]').forEach(button=>button.addEventListener('click',()=>{
+   const response=window.PIT_TEACHER_MISSION_EIGHT_FOUNDATIONS?.feedback?.(mode,button.dataset.t8fAction);
+   if(response&&status&&message){status.textContent=response.status;message.textContent=response.message}
+  }));
+  update();
+ }
  const demo=content.querySelector('.tm-pro-demo-layout');
  if(demo){
   let gems=0,won=false;
