@@ -6,8 +6,8 @@
 'use strict';
 const VERSION=5;
 const CLASS={
- warrior:{label:'Bárbaro',icon:'⚒',color:'#e4a266',hp:135,speed:4.3,range:2.4,attack:16,defense:7,magic:0,ability:'Golpe sísmico'},
- mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:76,speed:3.45,range:8.0,attack:12,defense:2,magic:7,ability:'Explosão arcana'},
+ warrior:{label:'Bárbaro',icon:'⚒',color:'#e4a266',hp:145,speed:4.65,range:2.5,attack:16.5,defense:7,magic:0,ability:'Golpe sísmico'},
+ mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:75,speed:3.3,range:7.4,attack:11.4,defense:2,magic:7,ability:'Explosão arcana'},
  hunter:{label:'Patrulheiro',icon:'➶',color:'#98d4a1',hp:94,speed:4.15,range:9.1,attack:11.4,defense:3,magic:1,ability:'Flecha dupla'},
  guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:130,speed:3.8,range:2.25,attack:12.6,defense:9,magic:2,ability:'Fortaleza'},
  rogue:{label:'Ladino',icon:'⟡',color:'#c79dcc',hp:87,speed:5.0,range:1.9,attack:13.7,defense:3.5,magic:1,ability:'Emboscada'},
@@ -219,7 +219,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    if(cd>radius){const dist=cd-radius;f.hp=Math.max(0,f.hp-step*(4+dist*4));if(!f.hp){f.alive=false;log('storm',f,{target:f.id});continue}f.x*=Math.max(.94,1-step*.4);f.z*=Math.max(.94,1-step*.4)}
    if(d<=f.stats.range&&f.basic<=0){
     // Archery costs time to draw and aim; no free +50% DPS from range.
-    f.basic=(f.build.klass==='hunter'?1.27:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
+    f.basic=(f.build.klass==='hunter'?1.27:f.build.klass==='mage'?1.14:1.0)+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
     f.animation='attack';
     if(f.stats.range>3){
      projectiles.push({id:++projectileSeq,x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack*(f.build.klass==='hunter'?.87:1),kind:'ranged',age:0});
@@ -233,7 +233,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     f.special=f.stats.cooldown+1.4*rnd();f.animation='cast';
     log('special',f,{ability:f.stats.special,x:f.x,z:f.z});
     if(f.build.klass==='mage'){
-      areaHit(f,3.8+f.build.talents.nova*.75,f.stats.attack*1.25);
+      areaHit(f,3.5+f.build.talents.nova*.75,f.stats.attack*1.18);
       if(f.build.talents.ward)f.shield+=8*f.build.talents.ward;
       if(f.build.talents.meteor)areaHit(f,5.5,f.stats.attack*.5);
     }else if(f.build.klass==='warrior')areaHit(f,3,f.stats.attack*1.8);
