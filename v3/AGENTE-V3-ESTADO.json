@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-28T23:21:15.648Z",
+  "last_completed_at": "2026-10-29T00:16:27.856Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT teacher projector-safe content and student autonomous evidence M01-M10",
+  "priority": "V4-CROSS-AUDIT remaining projected teacher content and autonomous student evidence M01–M10; verify new browser CI",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-PROJECTION-GUARD",
+  "last_task": "V4-CROSS-TIMING-M06",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2350,47 +2350,57 @@
       "task": "V4-CROSS-PROJECTION-GUARD",
       "commit": "893d43ee26e4c7e558469e708e1bf2ae759726f6",
       "summary": "Confirmed actual GitHub Actions static QA 40786484132 SUCCESS and Browser QA 40786484133 SUCCESS on exact code SHA 893d43ee. Browser run completed private teacher note guard test at 390/1280px, including Escape, data-stage navigation and pagehide. M10 final static/browser QA also SUCCESS on 5949e835. 54/59 original tasks unchanged; no human GDevelop, physical mobile or peer test."
+    },
+    {
+      "at": "2026-10-29T00:16:27.856Z",
+      "task": "V4-CROSS-TIMING-M06",
+      "commit": "81c701a314d91344aaef784430b995f64e3adf43",
+      "summary": "Transversal audit found M03 and M07 legacy PLAN out of sync with projected teacher timelines; corrected to 5+5+18+2 and 7+4+36+3. M06 legacy goal incorrectly required generative AI despite student/teacher accepting manual or licensed assets; made AI optional, origin/license and Preview explicit. Added regression in qa/v3-audit-matrix.cjs, updated 360-minute matrix to 228 practical minutes (63.3%), audit docs. Static CI 40792890200 SUCCESS on a736f287a; static CI 40792920681 SUCCESS on d1894693; final 81c701a CI in progress. Human GDevelop/mobile/HDMI/peer NOT_RUN. Original 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-PROJECTION-GUARD",
+    "task": "V4-CROSS-TIMING-M06",
     "status": "done",
-    "updated_at": "2026-10-28T23:21:15.648Z",
+    "updated_at": "2026-10-29T00:16:27.856Z",
     "code_commits": [
-      "535643ac6b37900d2e8cbe9902908377d0573220",
-      "893d43ee26e4c7e558469e708e1bf2ae759726f6"
+      "9821ec65eca432c1935c01fe84e24db0f3174172",
+      "875d3a02d3d89b697d1f1fb9e3e9c495742bf31c",
+      "a736f287a381a4f17b210694754d3b91fcb434d4"
     ],
-    "audit_commit": "a56b2b558939bbd7f5b492bb3c9b32be5a30934c",
+    "audit_commits": [
+      "d18946931043c6063b5b1aeb3e54de90c39b08ed",
+      "81c701a314d91344aaef784430b995f64e3adf43"
+    ],
     "tests": [
       {
-        "name": "M10 final Browser QA",
-        "run_id": 40778831715,
+        "name": "Cross timing M03/M07 and M06 contract static QA",
+        "run_id": 40792890200,
         "result": "SUCCESS",
-        "sha": "5949e835"
+        "sha": "a736f287a"
       },
       {
-        "name": "M10 final static QA",
-        "run_id": 40778832048,
+        "name": "Updated matrix documentation static QA",
+        "run_id": 40792920681,
         "result": "SUCCESS",
-        "sha": "5949e835"
+        "sha": "d1894693"
       },
       {
-        "name": "Projector guard browser QA",
-        "run_id": 40786484133,
-        "result": "SUCCESS",
-        "sha": "893d43ee"
+        "name": "Cross audit browser QA",
+        "run_id": 40792946142,
+        "result": "IN_PROGRESS",
+        "sha": "81c701a"
       },
       {
-        "name": "Projector guard static QA",
-        "run_id": 40786484132,
-        "result": "SUCCESS",
-        "sha": "893d43ee"
+        "name": "Cross audit final static QA",
+        "run_id": 40792946125,
+        "result": "IN_PROGRESS",
+        "sha": "81c701a"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
-    "next_task": "V4-CROSS-AUDIT: inspect projected teacher content and autonomous student evidence across M01-M10",
-    "blocker": "None for automated projector guard regression; human GDevelop GUI, physical mobile and peer playtest remain NOT_RUN"
+    "next_task": "V4-CROSS-AUDIT: audit other M01–M10 professor projection and student self-guided evidence, confirm final CI",
+    "blocker": "No code blocker; actual HDMI projection, physical mobile, GDevelop GUI and peer playtest NOT_RUN"
   }
 }
