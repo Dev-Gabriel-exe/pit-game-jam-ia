@@ -55,7 +55,7 @@ const violations=[];
 for(const mode of modes){
  for(const mission of [5,10]){
   const wins=Object.fromEntries(CLASSES.map(x=>[x,0])),kills=Object.fromEntries(CLASSES.map(x=>[x,0])),damage=Object.fromEntries(CLASSES.map(x=>[x,0]));
-  const winnerIds=new Set();
+  const winnerIds=new Set(),finishReasons={};
   for(let i=0;i<mode.seeds;i++){
    const seed=(mission*991+mode.count*713+i*19357)>>>0;
    const lineup=makeRoster(mission,mode.count,i%4,mode.scenario);
@@ -63,6 +63,8 @@ for(const mode of modes){
    const result=sim.run(2500);
    assert(result.finished&&result.winner,'no winner '+mode.name+'/'+mission+'/'+i);
    wins[result.winner.klass]++;winnerIds.add(result.winner.id);
+   const finish=result.events.filter(e=>e.type==='end').at(-1)?.reason||'unknown';
+   finishReasons[finish]=(finishReasons[finish]||0)+1;
    for(const f of result.standings){kills[f.klass]+=f.kills;damage[f.klass]+=f.damage}
    // Positive defensive/attack effect is never faked in UI: all from core.
    assert(result.events.some(e=>e.type==='hit'),'No hits in '+mode.name);
@@ -70,7 +72,7 @@ for(const mode of modes){
   }
   const ordered=Object.fromEntries(CLASSES.map(c=>[c,wins[c]]));
   const totalDamage=Object.fromEntries(CLASSES.map(c=>[c,Math.round(damage[c])]));
-  console.log('BALANCE MATRIX '+mode.name+' M'+mission+' '+JSON.stringify({wins:ordered,uniqueWinners:winnerIds.size,kills,damage:totalDamage}));
+  console.log('BALANCE MATRIX '+mode.name+' M'+mission+' '+JSON.stringify({wins:ordered,uniqueWinners:winnerIds.size,kills,damage:totalDamage,finishReasons}));
   assert(winnerIds.size>=Math.min(3,mode.seeds),'Winners always same ID: '+mode.name+'/'+mission);
   // This workshop has ~30 students. The 30-player game is the release gate:
   // no class can take >60% of wins under varied builds. Four-player mode
