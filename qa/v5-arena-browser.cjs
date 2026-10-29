@@ -33,7 +33,9 @@ for(let i=0;i<10;i++){
   await page.locator('#demoLevel').click();
   assert.match(await page.locator('#xpText').innerText(),/200/);
   const skill=page.locator('.talent').first();
+  console.log('BUTTON BEFORE',await skill.locator('button[aria-label^="Melhorar"]').evaluate(el=>({disabled:el.disabled,outer:el.outerHTML})))
   await skill.locator('button[aria-label^="Melhorar"]').click();
+  console.log('BUTTON AFTER',await page.evaluate(()=>({xp:document.getElementById('xpText').textContent,attr:document.getElementById('attrRemaining').textContent,talent:document.getElementById('talentRemaining').textContent,summary:document.getElementById('talents').innerText.slice(0,160)})));
   console.log('TALENT AFTER CLICK',await page.locator('#talentRemaining').innerText(),await page.evaluate(()=>localStorage.getItem('pit_v5_hero_preview')));
   assert.match(await page.locator('#talentRemaining').innerText(),/0 talento/);
   const name=await page.locator('#heroName').inputValue();
