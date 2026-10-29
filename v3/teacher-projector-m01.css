@@ -83,3 +83,21 @@ body.pit-projecting{overflow:hidden!important}
  #pitProjector .pit-projector-g4-step .g4-step{grid-template-columns:minmax(0,1fr)}
  #pitProjector .pit-projector-g4-step .g4-step-picture img{max-height:18vh}
 }
+
+/* M05: five independent, actionable steps for the selected GDevelop events route. */
+#pitProjector .pit-projector-g5-step .m5g-step{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-g5-step .m5g-picture{min-width:0}
+#pitProjector .pit-projector-g5-step .m5g-picture img{width:100%;height:auto;max-height:28vh;min-height:0;object-fit:contain}
+#pitProjector .pit-projector-g5-step .m5g-guide{min-width:0;padding:clamp(12px,1.3vw,20px)}
+#pitProjector .pit-projector-g5-step .m5g-guide h3{font:700 clamp(25px,2.2vw,36px)/1.18 system-ui,"Segoe UI",Arial,sans-serif;margin:4px 0 10px}
+#pitProjector .pit-projector-g5-step .m5g-instruction{padding:8px 12px;margin:6px 0}
+#pitProjector .pit-projector-g5-step .m5g-instruction p,
+#pitProjector .pit-projector-g5-step .m5g-expect p,
+#pitProjector .pit-projector-g5-step .pit-projector-diagnostic p{font:400 clamp(19px,1.45vw,24px)/1.38 system-ui,"Segoe UI",Arial,sans-serif;margin:4px 0}
+#pitProjector .pit-projector-g5-step .m5g-instruction strong,
+#pitProjector .pit-projector-g5-step .m5g-expect b,
+#pitProjector .pit-projector-g5-step .pit-projector-diagnostic strong,
+#pitProjector .pit-projector-g5-step .m5g-picture-top strong{font:700 clamp(18px,1.2vw,20px)/1.25 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-g5-step .pit-projector-diagnostic{margin-top:8px;padding:8px 12px;border-left:3px solid #e0ad75;background:#2b211c}
+#pitProjector .pit-projector-g5-step .m5g-photo-foot{font:400 18px/1.3 system-ui,"Segoe UI",Arial,sans-serif}
+@media(max-width:1000px){#pitProjector .pit-projector-g5-step .m5g-step{grid-template-columns:minmax(0,1fr)}#pitProjector .pit-projector-g5-step .m5g-picture img{max-height:18vh}}

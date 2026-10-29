@@ -154,5 +154,5 @@ function mount(scope,opts={}){
  });
  draw(false,false);
 }
-window.PIT_GDEVELOP_M05_GUIDE={render,mount,routes,guideSteps,screenshots,fallback};
+window.PIT_GDEVELOP_M05_GUIDE={render,mount,routes,guideSteps,screenshots,fallback,projectorPanel:panel};
 })();
