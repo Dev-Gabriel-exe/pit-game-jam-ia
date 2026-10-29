@@ -254,7 +254,7 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  const emberGeometry=new THREE.BufferGeometry();
  emberGeometry.setAttribute('position',new THREE.BufferAttribute(emberCoords,3));
  const emberField=new THREE.Points(emberGeometry,new THREE.PointsMaterial({
-  color:0xeea06a,size:low?.11:.16,transparent:true,opacity:.31,
+  color:0xeea06a,size:low ? 0.11 : 0.16,transparent:true,opacity:.31,
   depthWrite:false,blending:THREE.AdditiveBlending
  }));
  emberField.name='coliseum-perimeter-embers';
