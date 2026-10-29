@@ -6,10 +6,12 @@
 'use strict';
 const VERSION=5;
 const CLASS={
- warrior:{label:'Guerreiro',icon:'⚔',color:'#e4a266',hp:115,speed:3.5,range:1.9,attack:14,defense:7,magic:0,ability:'Golpe sísmico'},
+ warrior:{label:'Bárbaro',icon:'⚒',color:'#e4a266',hp:120,speed:3.5,range:1.9,attack:14,defense:6,magic:0,ability:'Golpe sísmico'},
  mage:{label:'Arcanista',icon:'✦',color:'#b79afa',hp:78,speed:3.6,range:9.1,attack:14,defense:2,magic:7,ability:'Explosão arcana'},
- hunter:{label:'Caçador',icon:'➶',color:'#98d4a1',hp:88,speed:4.6,range:10.3,attack:13,defense:3,magic:1,ability:'Flecha múltipla'},
- guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:135,speed:3.1,range:2.0,attack:11,defense:10,magic:2,ability:'Fortaleza'}
+ hunter:{label:'Patrulheiro',icon:'➶',color:'#98d4a1',hp:88,speed:4.6,range:10.3,attack:13,defense:3,magic:1,ability:'Flecha múltipla'},
+ guardian:{label:'Guardião',icon:'◆',color:'#86baca',hp:135,speed:3.1,range:2.0,attack:11,defense:10,magic:2,ability:'Fortaleza'},
+ rogue:{label:'Ladino',icon:'⟡',color:'#c79dcc',hp:87,speed:5.0,range:1.9,attack:13.7,defense:3.5,magic:1,ability:'Emboscada'},
+ necromancer:{label:'Necromante',icon:'☠',color:'#a79bbf',hp:83,speed:3.5,range:8.3,attack:13,defense:2.5,magic:6,ability:'Chamado das Sombras'}
 };
 const STATS={power:'Força',agility:'Agilidade',spirit:'Espírito',vitality:'Vitalidade'};
 const TALENTS={
@@ -44,6 +46,22 @@ const TALENTS={
   {id:'thorn',name:'Espinhos',desc:'Reflete parte do dano',max:2,requires:['bulwark']},
   {id:'aegis',name:'Égide',desc:'Escudo adicional',max:2,requires:['heal']},
   {id:'last',name:'Último bastião',desc:'Defesa cresce com vida baixa',max:2,requires:['aegis']}
+ ],
+ rogue:[
+  {id:'shadow',name:'Passos sombrios',desc:'Aumenta a velocidade',max:3,requires:[]},
+  {id:'backstab',name:'Punhal certeiro',desc:'Aumenta a chance de crítico',max:3,requires:[]},
+  {id:'poison',name:'Lâmina venenosa',desc:'Aumenta o dano das habilidades',max:3,requires:['backstab']},
+  {id:'dodge',name:'Esquiva',desc:'Melhora a defesa',max:2,requires:['shadow']},
+  {id:'ambush',name:'Emboscada',desc:'Reduz a recarga do especial',max:2,requires:['shadow']},
+  {id:'execute',name:'Executor',desc:'Aumenta o ataque',max:2,requires:['poison']}
+ ],
+ necromancer:[
+  {id:'hex',name:'Maldição',desc:'Aumenta o dano sombrio',max:3,requires:[]},
+  {id:'drain',name:'Dreno vital',desc:'Restaura vida ao usar o especial',max:3,requires:[]},
+  {id:'bones',name:'Armadura óssea',desc:'Aumenta a defesa',max:3,requires:['hex']},
+  {id:'grave',name:'Ritual das sombras',desc:'Expande a área do especial',max:2,requires:['hex']},
+  {id:'wraith',name:'Espectro',desc:'Reduz o intervalo entre especiais',max:2,requires:['drain']},
+  {id:'harvest',name:'Ceifa',desc:'Aumenta o dano dos rituais',max:2,requires:['grave']}
  ]
 };
 const COLORS=['ember','amethyst','jade','azure','ashen','golden'];
@@ -59,7 +77,7 @@ function level(xp){return Math.min(11,1+Math.floor(clamp(xp,0,1030)/100))}
 function budgets(xp){const lvl=level(xp);return {level:lvl,attributes:6+2*(lvl-1),talents:Math.floor((lvl-1)/2),xp:int(xp,0,1030)}}
 function seedBuild(name='Aventureiro',klass='warrior'){return {
  name:String(name||'Aventureiro').trim().slice(0,56),klass:CLASS[klass]?klass:'warrior',
- appearance:{palette:'ember',helmet:1,cape:true,weapon:'blade'},
+ appearance:{palette:'ember',helmet:1,cape:true,weapon:({warrior:'axe',mage:'staff',hunter:'bow',guardian:'blade',rogue:'blade',necromancer:'staff'}[klass]||'blade')},
  attributes:{power:0,agility:0,spirit:0,vitality:0},talents:{}
 }}
 function canonical(input,serverName,awardedXp){
@@ -68,7 +86,7 @@ function canonical(input,serverName,awardedXp){
  const src=p.appearance||{};b.appearance={
   palette:COLORS.includes(src.palette)?src.palette:'ember',
   helmet:int(src.helmet,0,3),cape:src.cape!==false,
-  weapon:WEAPONS.includes(src.weapon)?src.weapon:({mage:'staff',hunter:'bow',guardian:'axe'}[c]||'blade')
+  weapon:WEAPONS.includes(src.weapon)?src.weapon:({warrior:'axe',mage:'staff',hunter:'bow',guardian:'blade',rogue:'blade',necromancer:'staff'}[c]||'blade')
  };
  const available=budgets(awardedXp);
  for(const k of Object.keys(STATS))b.attributes[k]=int(p.attributes?.[k],0,available.attributes);
@@ -85,14 +103,14 @@ function canonical(input,serverName,awardedXp){
 function derived(b){
  const c=CLASS[b.klass]||CLASS.warrior,a=b.attributes||{},t=b.talents||{};
  const s=k=>int(a[k],0,30),r=k=>int(t[k],0,3);
- let hp=c.hp+s('vitality')*11+(r('stamina')*15)+(r('aegis')*11);
- let speed=c.speed+s('agility')*.09+r('dash')*.22;
+ let hp=c.hp+s('vitality')*11+(r('stamina')*15)+(r('aegis')*11)+r('bones')*8;
+ let speed=c.speed+s('agility')*.09+r('dash')*.22+r('shadow')*.18;
  let atk=c.attack+s('power')*1.4+s('spirit')*.65+(c.magic*s('spirit')*.22);
- atk*=1+r('fury')*.12+r('rune')*.12;
- const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5;
+ atk*=1+r('fury')*.12+r('rune')*.12+r('hex')*.10+r('execute')*.07;
+ const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5+r('dodge')*1.5+r('bones')*1.3;
  const range=c.range+r('eagle')*.8;
- const crit=clamp(.06+s('agility')*.011+r('precision')*.06,0,.42);
- const cooldown=Math.max(3.2,8-r('focus')*.8-r('shout')*.8);
+ const crit=clamp(.06+s('agility')*.011+r('precision')*.06+r('backstab')*.055,0,.42);
+ const cooldown=Math.max(3.2,8-r('focus')*.8-r('shout')*.8-r('ambush')*.7-r('wraith')*.7);
  return {hp:Math.round(hp),speed,attack:atk,defense,range,crit,cooldown,special:c.ability};
 }
 function mulberry(seed){let v=(seed|0)>>>0;return ()=>{v+=0x6D2B79F5;let t=v;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
@@ -150,7 +168,7 @@ function battle(source,{seed=486,dt=.05,limit=180}={}){
    const target=enemies[0],dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
    f.face=Math.atan2(dx,dz);
    let dir=d>Math.max(1.15,f.stats.range*.82)?1:-.4;
-   if(f.build.klass==='hunter'&&d<5)dir=-1;
+   if((f.build.klass==='hunter'||f.build.klass==='necromancer')&&d<5)dir=-1;
    const mv=f.stats.speed*(f.slow?0.55:1)*dir*step;
    const move=blocked(f,f.x+dx/d*mv,f.z+dz/d*mv);
    f.x=move.x;f.z=move.z;f.animation='run';
@@ -173,7 +191,13 @@ function battle(source,{seed=486,dt=.05,limit=180}={}){
       if(f.build.talents.ward)f.shield+=8*f.build.talents.ward;
       if(f.build.talents.meteor)areaHit(f,5.5,f.stats.attack*.5);
     }else if(f.build.klass==='warrior')areaHit(f,3,f.stats.attack*1.8);
-    else if(f.build.klass==='guardian'){
+    else if(f.build.klass==='rogue'){
+      areaHit(f,2.8,f.stats.attack*(1.55+f.build.talents.poison*.12));
+      f.shield+=5+f.build.talents.dodge*4;
+    }else if(f.build.klass==='necromancer'){
+      areaHit(f,4.0+f.build.talents.grave*.65,f.stats.attack*(1.15+f.build.talents.harvest*.14));
+      f.hp=Math.min(f.stats.hp,f.hp+7+f.build.talents.drain*5);
+    }else if(f.build.klass==='guardian'){
       f.shield+=15+f.build.talents.aegis*10;
       areaHit(f,3+f.build.talents.taunt*.6,f.stats.attack*.7);
     }else{

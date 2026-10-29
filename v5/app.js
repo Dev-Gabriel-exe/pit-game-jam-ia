@@ -30,8 +30,8 @@ async function api(action,method='GET',data=null){
 }
 function demoHero(name,klass,xp,id){
  const source=C.seedBuild(name,klass);const b=C.budgets(xp);
- source.appearance.palette=({warrior:'ember',mage:'amethyst',hunter:'jade',guardian:'azure'})[klass];
- source.appearance.weapon=({warrior:'blade',mage:'staff',hunter:'bow',guardian:'axe'})[klass];
+ source.appearance.palette=({warrior:'ember',mage:'amethyst',hunter:'jade',guardian:'azure',rogue:'amethyst',necromancer:'ashen'})[klass];
+ source.appearance.weapon=({warrior:'axe',mage:'staff',hunter:'bow',guardian:'blade',rogue:'blade',necromancer:'staff'})[klass];
  source.attributes.power=Math.min(5,b.attributes);
  source.attributes.vitality=Math.min(4,b.attributes-5);
  source.attributes.agility=Math.min(3,b.attributes-9);
@@ -40,13 +40,13 @@ function demoHero(name,klass,xp,id){
 }
 function demoRoster(){
  return [
-  demoHero('Aventureiro de teste','warrior',510,'demo-1'),
+  demoHero('Bárbaro de teste','warrior',510,'demo-1'),
   demoHero('Arcanista de teste','mage',630,'demo-2'),
-  demoHero('Caçador de teste','hunter',580,'demo-3'),
+  demoHero('Patrulheiro de teste','hunter',580,'demo-3'),
   demoHero('Guardião de teste','guardian',600,'demo-4'),
   demoHero('Sentinela de teste','warrior',460,'demo-5'),
-  demoHero('Feiticeiro de teste','mage',550,'demo-6'),
-  demoHero('Explorador de teste','hunter',520,'demo-7'),
+  demoHero('Ladino de teste','rogue',550,'demo-6'),
+  demoHero('Necromante de teste','necromancer',520,'demo-7'),
   demoHero('Protetor de teste','guardian',480,'demo-8')
  ];
 }
@@ -72,8 +72,15 @@ function render(){
  $('v5Xp').textContent=state.progress.total+' XP';
  $('v5XpFill').style.width=Math.min(100,((state.progress.total%100)/100)*100)+'%';
  $('v5XpBreakdown').textContent=state.progress.approvedXp+' XP das missões'+(state.progress.reviewXp?' + '+state.progress.reviewXp+' XP do playtest':'');
- $('v5Classes').innerHTML=Object.entries(C.CLASS).map(([k,c])=>
-  '<button type="button" class="v5-class" data-class="'+k+'" aria-pressed="'+(k===b.klass)+'"><b>'+c.icon+'</b><span>'+esc(c.label)+'</span></button>').join('');
+ $('v5Classes').innerHTML=Object.entries(C.CLASS).map(([k,c])=>{
+  const asset=window.PIT_V5_ASSETS?.[k];
+  return '<button type="button" class="v5-class" data-class="'+k+'" aria-pressed="'+(k===b.klass)+'" aria-label="Escolher classe '+esc(c.label)+'"><b>'+c.icon+'</b><span>'+esc(c.label)+'</span><small>'+esc(asset?.role||'Classe do herói')+'</small></button>';
+ }).join('');
+ const asset=window.PIT_V5_ASSETS?.[b.klass];
+ const modelLink=$('v5ModelOrigin');
+ if(modelLink&&asset){modelLink.href=asset.source;modelLink.textContent='Modelo 3D: '+asset.label+' · '+asset.creator+' · CC0';}
+ const modelStatus=$('v5ModelStatus');
+ if(modelStatus)modelStatus.textContent='Modelo 3D real: '+(asset?.geometry||'Visualização em preparação')+'. Carregamento sob demanda.';
  $('v5Palette').value=b.appearance.palette;$('v5Helmet').value=String(b.appearance.helmet);
  $('v5Weapon').value=b.appearance.weapon;$('v5Cape').checked=b.appearance.cape;
  $('v5Points').textContent=b.remainingAttributes+' / '+C.budgets(b.xp).attributes+' livres';
@@ -102,7 +109,7 @@ function showHero(){
 async function setup3D(){
  $('v5Practice').disabled=true;
  try{
-  const module=await import('./arena-three.js?v=5a');
+  const module=await import('./arena-three.js?v=5-classes2');
   const quality=(navigator.deviceMemory||4)<4?'low':'auto';
   state.stage=module.createStage($('v5Stage'),{quality,onEvent});
   $('v5Practice').disabled=false;
@@ -269,7 +276,7 @@ async function init(){
  }catch(e){$('v5Auth').innerHTML='<strong>Seu cadastro não pôde ser validado.</strong><p>'+esc(e.message)+'</p><a href="../aluno-v3.html" class="v5-link-button">Voltar ao Caderno do Aluno</a><a class="v5-ghost-link" href="./index.html?preview=1">Explorar modo de demonstração</a>';status('V5 AINDA NÃO DISPONÍVEL NA TURMA')}
 }
 document.addEventListener('click',async e=>{
- const klass=e.target.closest('[data-class]');if(klass){update(b=>{b.klass=klass.dataset.class;b.talents={};b.appearance.weapon={warrior:'blade',mage:'staff',hunter:'bow',guardian:'axe'}[b.klass]});return}
+ const klass=e.target.closest('[data-class]');if(klass){update(b=>{b.klass=klass.dataset.class;b.talents={};b.appearance.weapon={warrior:'axe',mage:'staff',hunter:'bow',guardian:'blade',rogue:'blade',necromancer:'staff'}[b.klass]});return}
  const step=e.target.closest('[data-stat]');if(step){update(b=>{const k=step.dataset.stat;b.attributes[k]=Math.max(0,(b.attributes[k]||0)+Number(step.dataset.delta))});return}
  const talent=e.target.closest('[data-talent]');if(talent){update(b=>{b.talents[talent.dataset.talent]=(b.talents[talent.dataset.talent]||0)+1});return}
 });

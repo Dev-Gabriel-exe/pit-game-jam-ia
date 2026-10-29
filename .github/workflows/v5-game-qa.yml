@@ -1,7 +1,7 @@
 name: V5 RPG and Three.js game QA
 on:
   push:
-    branches: [feature/pit-gamejam-v5-arena-rpg]
+    branches: [feature/pit-gamejam-v5-arena-rpg, feature/pit-gamejam-v5-classes-3d-real]
   pull_request:
     paths: ['v5/**','chat-api/api/arena.js','chat-api/lib/v5-hero-core.js','qa/v5-*.cjs']
   workflow_dispatch:
@@ -17,6 +17,9 @@ jobs:
           node-version: '22'
       - name: Deterministic core, code syntax and security rules
         run: |
+          node --check v5/character-assets.js
+          node --check qa/v5-classes.cjs
+          node qa/v5-classes.cjs
           node --check v5/hero-core.js
           node --check v5/app.js
           node --check v5/arena-three.js

@@ -4,7 +4,15 @@
  */
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-const CORE=window.PIT_V5_CORE;
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
+const CORE=window.PIT_V5_CORE, ASSETS=window.PIT_V5_ASSETS||{};
+const loader=new GLTFLoader(), cache=new Map();
+function loadCharacter(klass){
+ const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
+ if(!cache.has(klass))cache.set(klass,new Promise((resolve,reject)=>loader.load(asset.model,resolve,undefined,reject)).catch(err=>{cache.delete(klass);throw err}));
+ return cache.get(klass);
+}
 const MATERIAL={
  floor:new THREE.MeshStandardMaterial({color:0x25222b,roughness:.95,metalness:.04}),
  floorEdge:new THREE.MeshStandardMaterial({color:0x73523b,roughness:.69,metalness:.52}),
@@ -154,7 +162,75 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
  const individuals=new Map(),effects=[],labels=new Map();
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();
- function clearHeroes(){for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();for(const x of individuals.values()){root.remove(x.mesh.root);x.mesh.root.traverse(o=>{o.geometry?.dispose?.();const mats=Array.isArray(o.material)?o.material:[o.material];for(const material of mats)if(material&&!Object.values(MATERIAL).includes(material)){material.map?.dispose?.();material.dispose?.()}});labels.delete(x.id)}individuals.clear();}
+ function clearHeroes(){
+  for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();
+  for(const x of individuals.values()){
+   x.mixer?.stopAllAction();if(x.modelRoot)x.mixer?.uncacheRoot(x.modelRoot);
+   x.personalMaterials?.forEach(material=>material.dispose());
+   root.remove(x.mesh.root);
+   x.mesh.root.traverse(o=>{
+    if(o.userData?.v5SharedGLB)return;
+    o.geometry?.dispose?.();
+    const mats=Array.isArray(o.material)?o.material:[o.material];
+    for(const m of mats)if(m&&!Object.values(MATERIAL).includes(m)){m.map?.dispose?.();m.dispose?.()}
+   });
+   labels.delete(x.id);
+  }
+  individuals.clear();
+ }
+ function animateModel(item,motion){
+  if(!item.actions||item.lastMotion===motion)return;
+  const choices={
+   idle:[/idle/,/breath/,/stand/],
+   run:[/run/,/walk/,/move/],
+   attack:[/attack/,/slash/,/punch/,/sword/,/bow/,/shoot/],
+   cast:[/spell/,/cast/,/magic/,/attack/],
+   defeated:[/death/,/die/,/dead/,/hit/,/idle/]
+  }[motion]||[/idle/];
+  let choice;for(const regexp of choices){choice=[...item.actions].find(([name])=>regexp.test(name))?.[1];if(choice)break}
+  choice||=item.actions.values().next().value;
+  if(!choice)return;
+  if(item.lastAction!==choice){item.lastAction?.fadeOut(.2);choice.reset().fadeIn(.2).play();item.lastAction=choice}
+  item.lastMotion=motion;
+ }
+ function addRealCharacter(item){
+  const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
+  if(item.id==='preview'){container.dataset.v5Asset='loading';container.dataset.v5AssetClass=klass}
+  loadCharacter(klass).then(gltf=>{
+   if(!live||individuals.get(item.id)!==item)return;
+   const model=cloneSkinned(gltf.scene);
+   const bounds=new THREE.Box3().setFromObject(model),measure=new THREE.Vector3(),center=new THREE.Vector3();
+   bounds.getSize(measure);bounds.getCenter(center);
+   if(!Number.isFinite(measure.y)||measure.y<.05)throw Error('Modelo sem geometria válida');
+   const factor=Math.min(3,2.55/measure.y);
+   model.scale.setScalar(factor);
+   model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
+   const tint=new THREE.Color(PALETTES[item.build.appearance.palette]||PALETTES.ember);
+   const personalMaterials=[];
+   model.traverse(o=>{
+    // Cached GLB geometry and textures are shared across clones.
+    o.userData.v5SharedGLB=true;
+    if(!o.isMesh)return;
+    o.castShadow=true;o.receiveShadow=true;
+    const custom=source=>{const mat=source.clone();if(mat.color)mat.color.lerp(tint,.10);personalMaterials.push(mat);return mat};
+    if(o.material)o.material=Array.isArray(o.material)?o.material.map(custom):custom(o.material);
+   });
+   // Keep original procedural mesh as offline fallback, but do not overlay it.
+   const actor=item.mesh.actor;for(const child of actor.children)child.visible=false;
+   actor.add(model);item.modelRoot=model;item.personalMaterials=personalMaterials;
+   if(gltf.animations?.length){
+    item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
+    for(const clip of gltf.animations)item.actions.set(clip.name.toLowerCase(),item.mixer.clipAction(clip));
+    animateModel(item,'idle');
+   }
+   if(item.id==='preview'){container.dataset.v5Asset='loaded';container.dataset.v5AnimationCount=String(gltf.animations?.length||0)}
+  }).catch(err=>{
+   if(item.id==='preview'&&individuals.get(item.id)===item){
+    container.dataset.v5Asset='fallback';container.dataset.v5AssetError=String(err.message||err).slice(0,140);
+   }
+   console.warn('[V5] GLB indisponível, preservado herói procedural:',klass,err.message||err);
+  });
+ }
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
   const m=heroMesh(b,scale);m.root.position.set(position.x,0,position.z);root.add(m.root);
@@ -165,10 +241,12 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   const fill=put(bar,geo('PlaneGeometry',1.30,.095),new THREE.MeshBasicMaterial({color:0xd8a773,depthTest:false}),0,0,.02);
   const item={id:String(id),name:b.name,build:b,mesh:m,label,bar,fill,hp:100,dead:false};
   individuals.set(item.id,item);
+  addRealCharacter(item);
   return item;
  }
  function preview(b){
   simulation=null;playing=false;clearHeroes();
+  delete container.dataset.v5AssetError;
   const item=addHero(b,'preview',{x:0,z:0},1.75);item.bar.visible=false;
   camera.position.set(7.5,5.5,10);controls.target.set(0,1.4,0);controls.update();
   return item;
@@ -202,6 +280,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   unit.fill.material.color.setHex(health>.55?0xd0a86e:health>.24?0xd08e52:0xbf5051);
   unit.mesh.root.position.set(f.x,Math.max(0,f.y||0),f.z);
   unit.mesh.actor.rotation.y=f.face;
+  animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
   if(!f.alive){unit.mesh.actor.rotation.z=THREE.MathUtils.lerp(unit.mesh.actor.rotation.z,-1.2,.07);unit.mesh.circle.visible=false}
  }
  function resize(){
@@ -252,6 +331,7 @@ export function createStage(container,{mode='hero',quality='auto',onEvent=()=>{}
   }
   for(const [id,u] of individuals){
    u.bar.quaternion.copy(camera.quaternion);
+   if(u.mixer&&!reduce)u.mixer.update(dt);
    const a=u.mesh.actor,active=!u.dead;
    if(!active)continue;
    const wobble=reduce?0:Math.sin(elapsed*2.7+id.length)*.055;

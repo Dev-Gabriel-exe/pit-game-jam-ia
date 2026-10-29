@@ -4,9 +4,9 @@
 <title>V5 — A Forja dos Heróis | PIT Game Jam IA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css?v=5a">
+<link rel="stylesheet" href="./style.css?v=5classes2">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
-<script src="./hero-core.js?v=5a"></script><script src="./app.js?v=5a" defer></script>
+<script src="./hero-core.js?v=5classes2"></script><script src="./character-assets.js?v=5classes2"></script><script src="./app.js?v=5classes2" defer></script>
 </head><body>
 <div class="v5-background" aria-hidden="true"><span class="v5-sigil"></span></div>
 <header class="v5-top"><a href="../index.html" class="v5-logo">PIT <span>GAME JAM</span> <small>V5</small></a><div class="v5-top-center">✦ A FORJA DOS HERÓIS ✦ <span>UMA CAMPANHA DE CRIAÇÃO</span></div><nav><a href="../aluno-v3.html">Caderno</a><a href="../professor-v3.html">Mission Control</a></nav></header>
@@ -21,7 +21,8 @@
  <div class="v5-xp-line"><strong id="v5Level">NÍVEL 1</strong><span id="v5Xp">0 XP</span></div>
  <div class="v5-xp-track"><span id="v5XpFill"></span></div>
  <div class="v5-mini-legend" id="v5XpBreakdown">100 XP por missão aprovada</div>
- <h3 class="v5-mini-title">ESCOLHA UMA CLASSE</h3><div id="v5Classes" class="v5-classes"></div>
+ <h3 class="v5-mini-title">ESCOLHA UMA DAS SEIS CLASSES</h3><p class="v5-class-intro">Cada classe tem <strong>um modelo GLB 3D próprio</strong>, com silhueta e animações de origem aberta. Escolha uma classe para invocar o personagem no palco.</p><div id="v5Classes" class="v5-classes"></div>
+ <div class="v5-model-source"><strong id="v5ModelStatus" role="status">Preparando modelo 3D real...</strong><a id="v5ModelOrigin" href="https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0" target="_blank" rel="noopener noreferrer">Ver origem e licença CC0</a></div>
  <h3 class="v5-mini-title">APARÊNCIA</h3>
  <div class="v5-field"><label for="v5Palette">Cor da armadura</label><select id="v5Palette"><option value="ember">Bronze infernal</option><option value="amethyst">Ametista</option><option value="jade">Esmeralda</option><option value="azure">Safira</option><option value="ashen">Aço noturno</option><option value="golden">Ouro antigo</option></select></div>
  <div class="v5-field"><label for="v5Helmet">Capacete</label><select id="v5Helmet"><option value="0">Sem capacete</option><option value="1">Elmo clássico</option><option value="2">Elmo pesado</option><option value="3">Elmo místico</option></select></div>
@@ -31,7 +32,7 @@
 <section class="v5-middle">
  <div class="v5-theater"><div class="v5-theater-hud"><span id="v5TheaterLabel">✦ FORJA / CÂMARA DO HERÓI</span><span class="v5-webgl-badge">WEBGL 2 · THREE.JS</span></div>
  <div id="v5Stage" class="v5-stage"><div class="v5-loader">✦<span>Invocando a arena tridimensional...</span></div></div>
- <div class="v5-theater-bottom"><span id="v5StageNote">Arraste para girar a câmera · role para aproximar</span><button id="v5Sound" type="button" class="v5-mini-button" aria-pressed="false">♫ Ativar efeitos sonoros</button></div></div>
+ <div class="v5-theater-bottom"><span id="v5StageNote">Arraste para girar a câmera · role para aproximar · modelos reais licenciados CC0</span><button id="v5Sound" type="button" class="v5-mini-button" aria-pressed="false">♫ Ativar efeitos sonoros</button></div></div>
  <div class="v5-lore"><div><span class="v5-eyebrow">✧ ÁRVORE DO DESTINO</span><h2>Não existe build perfeita.</h2></div><p>Força, agilidade, espírito e vitalidade alteram a forma como seu personagem luta. Os talentos desbloqueiam estratégias novas. Cada criação é única — e a arena respeita suas escolhas.</p></div>
  <div class="v5-actions"><button id="v5Save" class="v5-btn v5-btn-primary" type="button">✦ Salvar meu herói</button><button id="v5Practice" class="v5-btn" type="button">⚔ Simular batalha contra heróis de treino</button><button id="v5Back" class="v5-btn v5-btn-quiet" type="button" hidden>↩ Voltar à personalização</button></div>
 </section>
