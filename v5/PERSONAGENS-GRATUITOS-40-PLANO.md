@@ -36,6 +36,13 @@ Branch: `feature/v5-arena-dos-criadores`. Não integrar `main` antes da revisão
 7. **KayKit Adventurers — Free**: https://kaylousberg.itch.io/kaykit-adventurers
    - Cinco modelos gratuitos + armas e animações; CC0, glTF. **Quatro GLBs base já carregam no V5**. Visual infantil/low-poly e longe do resultado semirrealista desejado; apenas fallback operacional por enquanto.
 
+## Prévia isolada publicada
+- https://pit-v5-arsenal-demo.vercel.app/v5/personagens-lab.html
+- Projeto Vercel independente `pit-v5-arsenal-demo` (`prj_C3ptPz0cJmEvyfqDxaP53t8eI0hL`). Deployment `dpl_4uMiq3LHdziVwTiT57wwMp5gpy3i` READY, página acessível publicamente.
+- Teste automatizado de catálogo `qa/v5-avatar-catalog.cjs` aprovado. A execução do navegador `qa/v5-avatar-gallery-browser.cjs` foi iniciada no workflow https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40958407755; **não declarar aprovação de navegador antes do job interface concluir**.
+- `v5/arena-three.js` também corrigido para eliminar `Math.min(3,...)` na altura; agora os GLBs são normalizados pela altura física real. Essa correção depende dos testes de arena/visual para homologação.
+- O projeto `pit-v5-coliseu-demo` mantém seu próprio domínio e não foi substituído. `main` continua sem merge.
+
 ## Trabalho realizado na V5 neste checkpoint
 - `v5/avatar-catalog.js`: **40 IDs** exclusivos, dez por classe, nomes, cores, emblemas e aparência. **Não são 40 malhas 3D distintas**; ainda são quatro GLBs reais gratuitos com variações de tonalidade e emblemas. Evitar apresentar como 40 personagens realistas concluídos.
 - `v5/personagens-lab.html`, `.css` e `.js`: showroom independente com GLB em 3D, classes atribuídas, cartões e reservas de demonstração.
