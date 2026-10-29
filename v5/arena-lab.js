@@ -4,6 +4,7 @@
  * The 120 Phase-2 talents are NOT executed in this demonstrator.
  */
 import {createStage} from './arena-three.js';
+import * as THREE from 'three';
 const CORE=window.PIT_V5_CORE;
 const CATALOG=window.PIT_V5_FASE1||[];
 const $=id=>document.getElementById(id);
@@ -107,7 +108,9 @@ function initRound(){
  const prefix=mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
  message('CARREGANDO QUATRO HERÓIS');
  state.roster=roster(mission);
- try{state.stage.fighters(state.roster,{seed:mission===5?10929:20929,limit:75});}
+ try{state.stage.fighters(state.roster,{seed:mission===5?10929:20929,limit:75});
+  // Close-in spectator camera for four characters. The full coliseum remains orbitable.
+  state.stage.camera.position.set(0,14.5,22.5);}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
  if($('stageLoading'))$('stageLoading').hidden=true;
  updateScoreboard();$models.textContent=prefix+' Carregando modelos CC0 reais...';
@@ -150,6 +153,7 @@ $('speedBattle').addEventListener('click',()=>{
 window.addEventListener('pagehide',()=>{clearInterval(state.interval);state.stage?.dispose()},{once:true});
 try{
  state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',onEvent});
+ const actorFill=new THREE.DirectionalLight(0xffd5b9,2.5);actorFill.position.set(4,13,14);state.stage.scene.add(actorFill);
  initRound();
  state.interval=setInterval(()=>{if(!document.hidden){updateScoreboard();reportModels()}},450);
 }catch(e){
