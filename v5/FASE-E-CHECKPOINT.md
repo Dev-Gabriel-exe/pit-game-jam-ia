@@ -42,3 +42,31 @@ Com 30 personagens, os vencedores foram Caçador/Arcanista/Guerreiro = 6/3/1 no 
 - Página: https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1
 - Deployment: `dpl_2oAwe3RgismFCV3ruygiRRroGpBE`, READY, alias público verificado.
 - O modo 50% é um **ajuste reversível do laboratório**, não regra definitiva da missão 5/10 nem alteração no progresso dos alunos.
+
+## Fase E — diagnóstico de sobrevivência e perseguição (29/10/2026, segundo incremento)
+
+**Atenção:** este bloco é posterior aos dados iniciais do checkpoint. A branch continua experimental, sem merge em `main` e sem conexão à turma real.
+
+### Banco de testes reproduzível
+
+- `qa/v5-tank-survivability.cjs`: duelos Guerreiro/Guardião × Caçador/Arcanista, 4 e 30 atores, seeds variadas, ordem de spawn e variantes de talentos rotacionadas. Registra primeiro KO, primeiro contato corpo a corpo, dano HP, absorção em escudos, talentos e vitórias. O log da CI documenta todas as amostras; os resultados de duelos não são probabilidades populacionais.
+- `qa/v5-phase2-navigation.cjs`: regressão de pilar central por 4 classes, comparação explícita do modo antigo `direct` versus `navigationMode:'steer'`, replay completo sob a mesma seed e ausência de penetração do colisor.
+- `v5/phase2-combat.js`: navegação tangencial determinística reaproveitando a geometria dos pilares, **desligada por padrão**. O campo `navTurns` mostra mudanças de direção; atributos, dano, talentos e seletor de alvos foram preservados.
+- `v5/arena-three.js` e `v5/arena-lab.js`: o modo opcional chega ao laboratório só com `phase2=1&nav=steer`. Sem `nav=steer` a regra de movimentação antiga permanece. O motor M10 legado não recebeu a nova navegação.
+
+### Resultados mecânicos, modo principal de laboratório (dano 50%, engajamento spaced)
+
+| Amostra | Resultado |
+| --- | --- |
+| Guerreiro × Caçador, 12 seeds, direct | Guerreiro 12, Caçador 0 |
+| Guardião × Caçador, 12 seeds, direct | Guardião 0, Caçador 12 |
+| Guerreiro × Arcanista, 12 seeds, direct | Guerreiro 10, Arcanista 2 |
+| Guardião × Arcanista, 12 seeds, direct | Guardião 0, Arcanista 12 |
+| Quatro heróis, 20 seeds, direct | Caçador 11, Guerreiro 4, Arcanista 5, Guardião 0 |
+| Trinta heróis, 16 seeds, direct | Caçador 10, Guerreiro 4, Arcanista 2, Guardião 0 |
+
+Em corredor propositalmente bloqueado por pilar, **todos os quatro** conseguiram contornar a coluna em `steer` sem atravessá-la, enquanto `direct` ficou a 13,26 unidades do alvo. Distância mínima em `steer`: Guerreiro 1,98, Arcanista 6,02, Caçador 5,72 e Guardião 2,19 unidades.
+
+**Conclusão cautelosa:** o novo desvio resolve o caso geométrico isolado, mas o efeito sobre o equilíbrio das partidas é diferente e precisa de correção. Nos mesmos 12 duelos Guerreiro × Caçador com `steer`, o resultado inverteu para 2 Guerreiro / 10 Caçador. Guardião permaneceu 0/12 frente a Caçador e 0/12 frente a Arcanista. Com 30 heróis em 12 seeds, `steer` registrou Caçador 8 / Arcanista 2 / Guerreiro 2 / Guardião 0. **NÃO habilitar `steer` por padrão** nem declarar as classes equilibradas apenas porque os testes de regressão passaram.
+
+Investigação seguinte: (1) medir dano quando perseguidores ficam sem alcance e cooldowns consumidos fora de contato; (2) observar se `G06`, `J03` e as builds defensivas de Guardião produzem aproximação utilizável, sem bônus arbitrário de HP; (3) implementar contrajogo real de long-range com leitura clara de animações e janelas de vulnerabilidade; (4) repetir com 4 e 30 em várias composições antes de qualquer mudança do preset.
