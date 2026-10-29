@@ -7,6 +7,11 @@ on:
       - 'v5/arena-three.js'
       - 'v5/talent-vfx.js'
       - 'v5/talent-choreography.js'
+      - 'v5/build-identity.js'
+      - 'qa/v5-build-identity.cjs'
+      - 'qa/v5-build-identity-browser.cjs'
+      - 'v5/arena-lab.css'
+      - 'v5/C3-IDENTIDADE-VISUAL.md'
       - 'qa/v5-talent-choreography.cjs'
       - 'qa/v5-talent-choreography-browser.cjs'
       - 'qa/v5-talent-vfx.cjs'
@@ -43,6 +48,9 @@ jobs:
           node --check v5/arena-three.js
           node --check v5/talent-vfx.js
           node --check v5/talent-choreography.js
+          node --check v5/build-identity.js
+          node --check qa/v5-build-identity.cjs
+          node --check qa/v5-build-identity-browser.cjs
           node --check qa/v5-talent-choreography.cjs
           node --check qa/v5-talent-choreography-browser.cjs
           node --check qa/v5-talent-vfx.cjs
@@ -72,6 +80,7 @@ jobs:
           node qa/v5-phase2-b6.cjs
           node qa/v5-talent-vfx.cjs
           node qa/v5-talent-choreography.cjs
+          node qa/v5-build-identity.cjs
           node qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-balance-matrix.cjs
   browser:
@@ -91,6 +100,7 @@ jobs:
           node qa/v5-phase2-browser.cjs
           node qa/v5-talent-vfx-browser.cjs
           node qa/v5-talent-choreography-browser.cjs
+          node qa/v5-build-identity-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
