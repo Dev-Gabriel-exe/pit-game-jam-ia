@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const c=require('../v5/hero-core.js'),backend=require('../chat-api/lib/v5-hero-core.js');
 assert.equal(c.VERSION,5);
-assert.deepEqual(Object.keys(c.CLASS),['warrior','mage','hunter','guardian']);
+assert.deepEqual(Object.keys(c.CLASS),['warrior','mage','hunter','guardian','rogue','necromancer']);
 assert.deepEqual(Object.keys(c.STATS),['power','agility','spirit','vitality']);
 assert.equal(c.exp(2,10).total,230);
 assert.equal(c.exp(12,15).total,1030);
@@ -28,11 +28,11 @@ function heroWith(id,klass,xp){
  b.attributes.power=Math.min(6,max);b.attributes.vitality=max-b.attributes.power;
  return {id,name:b.name,build:c.canonical(b,b.name,xp),xp};
 }
-const fighters=[heroWith('01','warrior',600),heroWith('02','mage',400),heroWith('03','hunter',700),heroWith('04','guardian',500)];
+const fighters=[heroWith('01','warrior',600),heroWith('02','mage',400),heroWith('03','hunter',700),heroWith('04','guardian',500),heroWith('05','rogue',450),heroWith('06','necromancer',520)];
 const m1=c.battle(fighters,{seed:1001,limit:120});
 const result1=m1.run(4000),result2=c.battle(fighters,{seed:1001,limit:120}).run(4000);
 assert.equal(result1.finished,true,'Arena must finish');
-assert.equal(result1.standings.length,4);
+assert.equal(result1.standings.length,6);
 assert.deepEqual(result1.winner,result2.winner,'Battle must be reproducible with same seed');
 assert.deepEqual(result1.events,result2.events,'Battle event stream must be deterministic');
 assert(result1.events.some(e=>e.type==='hit'),'Battle needs collision/damage');
@@ -42,5 +42,11 @@ assert(result1.time<=120.01);
 for(const e of result1.events){assert(e.time>=0);assert(!Number.isNaN(e.time))}
 assert.throws(()=>c.battle([fighters[0],fighters[0]]),/duplicado/);
 const stat=c.derived(fighters[0].build);assert(stat.hp>100&&stat.attack>14);
-console.log('PASS: V5 4 classes, trusted XP budgets, talent prerequisites, student names, deterministic physics auto-battle, same backend/frontend rules');
+for(const [key,klass] of Object.entries(c.CLASS)){
+ const hero=c.canonical(c.seedBuild('Nome do cadastro real',key),'Nome do cadastro real',500);
+ assert.equal(hero.klass,key);
+ assert(c.TALENTS[key].length>=6,'Each class must have a real talent tree: '+key);
+ assert(c.derived(hero).hp>50,'Class must be viable in battle: '+key);
+}
+console.log('PASS: V5 6 classes, trusted XP budgets, talent prerequisites, student names, deterministic physics auto-battle, same backend/frontend rules');
 console.log(JSON.stringify({winner:result1.winner,duration:result1.time,events:result1.events.length,standings:result1.standings},null,2));
