@@ -583,11 +583,31 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(ground)mesh.rotation.x=-Math.PI/2;
   else if(cue.style==='arrow')mesh.rotation.z=-Math.PI/2;
   else if(cue.style==='arc')mesh.rotation.z=Math.PI/4;
-  const baseScale=cue.scale*(subtle?.72:1);
+  // Layered VFX: every visual comes from a real Phase2 talent/proc event.
+  // A readable luminous cast ring and raised colored flare stay bounded by
+  // the existing 9/18 simultaneous ability-event budget (not damage logic).
+  const baseScale=cue.scale*(subtle?.72:1)*1.6;
   mesh.scale.setScalar(baseScale);mesh.userData.velocity=new THREE.Vector3();
+  material.blending=THREE.AdditiveBlending;
   root.add(mesh);
-  const duration=(reduce?.25:cue.duration)*(subtle?.68:1);
-  effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale});
+  const decors=[];
+  const haloMaterial=new THREE.MeshBasicMaterial({
+   color:cue.color,transparent:true,opacity:.66,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending
+  });
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(1.65,.12,6,48),haloMaterial);
+  halo.rotation.x=-Math.PI/2;halo.position.set(x,.18,z);
+  halo.scale.setScalar(baseScale);
+  root.add(halo);decors.push(halo);
+  if(quality!=='low'&&!reduce&&!subtle){
+   const crown=new THREE.Mesh(new THREE.TorusGeometry(1.0,.07,6,40),new THREE.MeshBasicMaterial({
+    color:cue.color,transparent:true,opacity:.62,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending
+   }));
+   crown.rotation.x=Math.PI/4;
+   crown.position.set(x,2.1,z);crown.scale.setScalar(baseScale*.66);
+   root.add(crown);decors.push(crown);
+  }
+  const duration=reduce?.48:(subtle?Math.max(.78,cue.duration*1.45):Math.max(1.45,cue.duration*1.9));
+  effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors});
   talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
   container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
@@ -713,7 +733,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
      triggerMotion(attacker,'cast',.5);warningFx(attacker);
     }else if(ev.type==='talent'){
      if(!cue||!playChoreography(attacker,cue))triggerMotion(attacker,cue?.motion||'cast',cue?.duration||.72);
-     if(!cue)specialFx(attacker);else talentVisual(attacker,ev);
+     if(!cue)specialFx(attacker);
+     else {
+      talentVisual(attacker,ev);
+      // The actual talent name is readable even when a GLB has no matching
+      // dedicated attack clip. No simulated activation is injected.
+      showCombatText(ev.hero,'✦ '+cue.name,'special');
+     }
     }else if(ev.type==='shield'){
      triggerMotion(attacker,'block',.58);
      if(!isPhase2())specialFx(attacker);
@@ -841,8 +867,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(e.isAbility){
     const progress=1-e.life/e.maxLife;
     e.mesh.scale.setScalar((e.baseScale||.7)*(1+progress*(e.talentCue?.style==='barrier'?.8:1.7)));
-    e.mesh.material.opacity=(e.talentCue?.type==='passivo'?.52:.78)*(1-progress);
+    e.mesh.material.opacity=(e.talentCue?.type==='passivo'?.58:.90)*(1-progress);
     e.mesh.rotation.y+=dt*(e.talentCue?.spin||1.8);
+    if(e.decors)for(let i=0;i<e.decors.length;i++){
+     const deco=e.decors[i];
+     deco.scale.setScalar((e.baseScale||1)*(i===0?1:.66)*(1+progress*1.1));
+     deco.material.opacity=(i===0?.64:.53)*(1-progress);
+     if(i===1)deco.rotation.y+=dt*(e.talentCue?.spin||2);
+    }
    }else{
     e.mesh.userData.velocity.y-=dt*7;
     e.mesh.scale.setScalar(Math.max(.01,e.life));
