@@ -1,3 +1,9 @@
+# HISTÓRICO SUPERADO: agora são quatro modelos diferentes do KayKit Adventurers
+
+**Este arquivo descreve um rollback anterior de 3 rigs para 4 classes, rejeitado posteriormente pelo usuário.** Nova decisão implementada: Bárbaro, Mago, Ladino Encapuzado, Cavaleiro — ver [`KAYKIT-QUATRO-PERSONAGENS.md`](KAYKIT-QUATRO-PERSONAGENS.md). Não seguir a solução antiga.
+
+---
+
 # V5 — quatro personagens da mesma família visual (decisão aprovada em 29/10/2026)
 
 ## Por que voltamos
