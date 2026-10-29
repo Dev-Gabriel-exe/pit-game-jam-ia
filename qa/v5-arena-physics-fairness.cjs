@@ -64,7 +64,9 @@ const summary=Object.fromEntries([...byClass].sort((a,b)=>a[0].localeCompare(b[0
 console.log('V5 FAIRNESS AUDIT 72 fights, 30 unique fictitious heroes: '+JSON.stringify(summary));
 console.log('Unique winner IDs: '+allWinners.size+'; winning classes: '+classesWinning.size);
 assert(allWinners.size>=5,'Same bot dominates seeds; winner diversity too low');
-assert(classesWinning.size>=2,'Exactly one class wins every seed');
+assert.equal(classesWinning.size,4,'Todas as quatro classes precisam conseguir vencer nas sementes de referencia');
+for(const klass of classes)assert((byClass.get(klass)||0)>=3,'Classe sem vitorias suficientes no benchmark: '+klass);
+assert(Math.max(...byClass.values())<=43,'Uma unica classe domina mais de 60% das 72 partidas de referencia');
 const maxWins=Math.max(...hist.values());
 assert(maxWins<48,'Single bot won two thirds of matches: unbalanced default roster');
 console.log('PASS seeded replay, 30-player hit/elimination events, variable winners, multiple winning classes.');
