@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T16:20:00Z",
+  "last_completed_at": "2026-10-29T16:22:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm projector Chrome 40910382601 and Browser QA 40910382624 on M01 practice fix; audit remaining low-coverage M03/Criar, M04/Comprovar, M05/Comprovar, M08/Entender, M09/Criar; then split long M04/M05 tutorial slides in 720p",
+  "priority": "Confirm Chrome projector audit 40910615911, Browser QA 40910615906 and static QA 40910616007; then M03/Criar low coverage and M04/M05 oversized slides",
   "current_phase": "MISSOES",
   "last_task": "V4-M01-PRACTICE-PROJECTION-COVERAGE",
   "completed_count": 54,
@@ -2471,12 +2471,19 @@
       "status": "in_progress",
       "commit": "d00fc669cd2e4f409a0466ea8ed70cfb797122e6",
       "summary": "M01/Criar generic projector omitted seven planning fields. Added ten source-derived slides: intro, example, four field groups, three concept fragments, transition. Added desktop two-column 720p-aware CSS and Chrome assertion for all seven fields and >65% text coverage. V8 JS syntax PASS, static QA 40910382730 SUCCESS, Chrome 40910382601 and Browser 40910382624 IN_PROGRESS; previous Browser 40900326551 SUCCESS. No manual HDMI/GDevelop GUI/mobile/peer; 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T16:22:00Z",
+      "task": "V4-M01-PRACTICE-PROJECTION-COVERAGE",
+      "status": "in_progress",
+      "commit": "6193224b5ef0973d2a47cbfaedb3c4b2df138b30",
+      "summary": "Chrome revealed initial M01 selector targeted legacy edition: regression failed 40910382601 (0.09 coverage). Corrected active university edition .tm-pro-spec-row, added eight slides and scoped CSS. Chrome at b6dc463 measured 0.62 retention and one scrolling slide at 720p, but full run failed outdated test selector. Updated regression dd6dcf3 for seven real labels and >0.50 coverage; final CI 40910615911/40910615906/40910616007 pending. Human tests NOT_RUN; main untouched."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-M01-PRACTICE-PROJECTION-COVERAGE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T16:20:00Z",
+    "updated_at": "2026-10-29T16:22:00Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2501,9 +2508,12 @@
       "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
       "93bc3d64b9732e850d947a6b7386017447b53e69",
       "6f0fc868bb087c6b0ccd5fe171b59346aa7d5ff2",
-      "f648c3f2f1d8580029de6aa3bb176fef6e56a57a"
+      "f648c3f2f1d8580029de6aa3bb176fef6e56a57a",
+      "b6dc463ad211d63ff59e66ff244f7ed816d9ae0c",
+      "2e37bdc53f4377c62011dc1060ffe1f3cb7f8ba2",
+      "dd6dcf3761345f7ce98019fbfefa034a360be0d6"
     ],
-    "documentation_commit": "d00fc669cd2e4f409a0466ea8ed70cfb797122e6",
+    "documentation_commit": "6193224b5ef0973d2a47cbfaedb3c4b2df138b30",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2769,13 +2779,43 @@
       {
         "name": "Manual HDMI, GDevelop GUI, physical mobile and peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "Initial M01 practice Chrome audit (legacy selector regression)",
+        "run_id": 40910382601,
+        "sha": "f648c3f2f1d8580029de6aa3bb176fef6e56a57a",
+        "result": "FAIL: active teacher edition did not contain legacy .tm1-field; 2 slides and 0.09 retention"
+      },
+      {
+        "name": "Active M01 university code Chrome measurement",
+        "run_id": 40910567587,
+        "sha": "b6dc463ad211d63ff59e66ff244f7ed816d9ae0c",
+        "result": "Chrome 1280x720 logged 8 slides, 0.62 retention, 1 vertical scroll, 0 horizontal overflow; overall run FAILED because test still checked legacy selector"
+      },
+      {
+        "name": "Revised M01 university regression Chrome",
+        "run_id": 40910615911,
+        "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
+        "result": "IN_PROGRESS; no PASS claim"
+      },
+      {
+        "name": "Revised M01 university Browser QA",
+        "run_id": 40910615906,
+        "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
+        "result": "IN_PROGRESS"
+      },
+      {
+        "name": "Revised M01 university static QA",
+        "run_id": 40910616007,
+        "sha": "dd6dcf3761345f7ce98019fbfefa034a360be0d6",
+        "result": "QUEUED at checkpoint"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm projector Chrome 40910382601 and Browser QA 40910382624 on M01 practice fix; audit remaining low-coverage M03/Criar, M04/Comprovar, M05/Comprovar, M08/Entender, M09/Criar; then split long M04/M05 tutorial slides in 720p",
-    "blocker": "Chrome and Browser QA of new M01 worksheet pending; manual HDMI, GDevelop GUI, physical mobile and peer playtest NOT_RUN"
+    "next_task": "Confirm Chrome projector audit 40910615911, Browser QA 40910615906 and static QA 40910616007; then M03/Criar low coverage and M04/M05 oversized slides",
+    "blocker": "New regression not yet confirmed by CI; 1 M01 practice slide still scrolls in 720p; manual HDMI/GDevelop GUI/mobile/peer NOT_RUN"
   }
 }
