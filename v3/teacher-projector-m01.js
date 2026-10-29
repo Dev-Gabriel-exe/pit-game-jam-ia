@@ -36,6 +36,31 @@ function pedagogicalDemoSlides(root,mission){
   add('.tm-guide-footer','Referências e limites do tutorial');
   return result.length>=10?result:null;
  }
+ // The live university edition uses .tm-pro-spec-row (not the legacy .tm1-field).
+ // Keep every example, acceptance criterion and test case visible, but never private notes.
+ if(mission===1&&root.querySelector('.tm-pro-proposal')){
+  const fields=[...root.querySelectorAll('.tm-pro-spec .tm-pro-spec-row')];
+  if(fields.length!==7)return null;
+  const result=[];
+  function add(selector,title){
+   const node=root.querySelector(selector);
+   if(node)result.push({title,html:cleanCopy(node)});
+  }
+  add('.tm-pro-lead','Da ideia a uma especificação de jogo');
+  add('.tm-pro-dossier','Projeto de referência: A Última Chave');
+  for(let i=0;i<fields.length;i+=2){
+   const group=document.createElement('section');
+   group.className='pit-projector-m01-fields pit-projector-m01-pro-fields';
+   const heading=document.createElement('h3');
+   heading.textContent='Ficha de game design · campos '+(i+1)+'–'+Math.min(i+2,fields.length)+' de 7';
+   group.appendChild(heading);
+   fields.slice(i,i+2).forEach(field=>group.insertAdjacentHTML('beforeend',cleanCopy(field)));
+   result.push({title:heading.textContent,html:group.outerHTML});
+  }
+  add('.tm-pro-criteria','Da ideia vaga ao requisito testável');
+  add('.tm-pro-codepanel','Casos de teste: quando a porta deve abrir?');
+  return result.length===8?result:null;
+ }
  // M01 / Criar: preserve the complete authorial worksheet in the mirrored presentation.
  // The original generic card extractor misses the seven .tm1-field entries.
  if(mission===1&&root.querySelector('.tm1-planning')){
