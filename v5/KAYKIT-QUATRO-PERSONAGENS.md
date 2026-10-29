@@ -42,3 +42,15 @@ Quatro GLBs diferentes (não 3 GLBs para 4 classes). A aparência do Ladino Enca
 - Não adicionar armaduras/quimeras/partes 3D procedurais sobre os GLBs.
 - 4 classes continuam com seus atributos, 30 talentos por classe, combate, progressão e câmeras existentes.
 - Não mexer na `main`. Próximo passo legítimo da fase E continua balanceamento, VFX artísticos, simulação das 30 entidades. F diretor automático, G QA real mobile, H integração de alunos, I merge com autorização.
+
+## Revisão visual após retorno do usuário (29/10/2026, ~20h)
+- O usuário enviou captura do combate em 3ª pessoa e disse que a troca de personagens **não era perceptível**. A captura mantém o cenário original, mas ele queria validar claramente os modelos.
+- Confirmado por extração do **arquivo servido pela URL pública** `pit-v5-coliseu-demo.vercel.app/v5/character-assets.js` que o servidor já usava `Barbarian.glb`, `Mage.glb`, `Rogue_Hooded.glb` e `Knight.glb`; a substituição dos GLBs estava de fato publicada.
+- Problema visual concreto encontrado em `arena-three.js`: **a cor original dos modelos era misturada a 28% com a cor do build**; ainda havia uma coroa flutuante a 2,94 unidades, mini-anel e cristais a 1,85 unidade cobrindo as silhuetas. Corrigido preservando os materiais originais (clone sem lerp) e ocultando os ornamentos flutuantes; **os círculos no solo e os VFX dos talentos são mantidos**.
+- Criada galeria lado a lado com **quatro miniaturas reais renderizadas diretamente dos quatro GLBs** na página `personagens-lab.html` (`generateRealModelGallery()` gera PNG por WebGL e exibe botões interativos). Clicar em cada miniatura abre a prévia maior 3D girável.
+- Arena ganhou o quadro `#realModelProof`: mostra nomes exatos dos quatro modelos e se todos os arquivos GLB da partida carregaram. Link para galeria.
+- QA de catálogo e navegador da galeria **PASS** (390 e 1200px), 4 miniaturas reais e 4 alturas 2,55: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40972215442. Screenshot gerado como artefato `v5-four-hero-model-comparison` ID `12940173998`, link https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40972215442/artifacts/12940173998.
+- Projetos isolados publicados e disponíveis SEM LOGIN via **aliases de produção estáveis**, que DEVEM ser os links enviados ao usuário: https://pit-v5-arsenal-demo.vercel.app/v5/personagens-lab.html e https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1&count=4.
+- IMPORTANTE: **URLs imutáveis** dos deploys com host `pit-v5-...-<hash>.vercel.app` estão protegidas por autenticação do Vercel e podem retornar `login_required`, inclusive depois de `target=production`; não enviar essas URLs para o usuário. Usar **somente alias estável de produção**, verificado pelo navegador externo.
+- A bateria completa da arena iniciada no commit `f3fe86c2` ainda executava na última verificação; não declarar homologação integral nessa revisão sem conferir.
+- A semelhança de estilo do KayKit continuará, porque é **low-poly cartunesco por definição**. Não prometer personagens realistas. Próxima validação deve priorizar comparação lado a lado antes de mexer no cenário/meshes ou atributos.
