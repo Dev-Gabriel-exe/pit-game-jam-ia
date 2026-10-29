@@ -308,4 +308,51 @@ for(const [number,source,globalName,warningClass] of [
  mod.hydrate('original-'+number,remoteText,'approved');
  assert.equal(mod.load('original-'+number).checks.length,3,'M'+number+' preserves actual existing local checkbox declarations');
 }
+// M03-M05 regression: an approved/submitted text record cannot attest to
+// three Preview tests. Existing local answers and manually marked checks win.
+const earlyEvidenceFixtures=[
+ [3,'student-mission-three','PIT_STUDENT_MISSION_THREE',{
+  project:'Meu Jogo QA',scene:'Cena Inicial',object:'Heroi',objectType:'2D Sprite',
+  source:'Desenho autoral',preview:'O objeto apareceu na cena de teste sem falhas',
+  saved:'Pasta de projetos local',fix:'',checks:[0,1,2]
+ },'Antes de enviar:'],
+ [4,'student-mission-four','PIT_STUDENT_MISSION_FOUR',{
+  route:0,command:'Setas e teclado',response:'O heroi moveu no Preview ao pressionar setas',
+  boundary:'O heroi parou ao encontrar uma parede na cena',
+  retest:'Repeti com as teclas soltas e nada se moveu',
+  saved:'Projeto salvo na pasta local',issue:'',checks:[0,1,2]
+ },'class="m4s-warning"'],
+ [5,'student-mission-five','PIT_STUDENT_MISSION_FIVE',{
+  route:0,condition:'SE o heroi tocar no cristal',action:'ENTAO somar um ponto e remover cristal',
+  variable:'Score=0 depois 1',positive:'O placar aumentou de zero para um',
+  negative:'Fora do cristal nao houve pontuacao',
+  feedback:'O placar mudou ao coletar cristal',
+  saved:'Projeto salvo na pasta local',issue:'',checks:[0,1,2]
+ },'class="m5s-warning"']
+];
+for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>[x[0],x[1],x[2],x[4]])){
+ const fixture=earlyEvidenceFixtures.find(x=>x[0]===number)[3];
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,value)=>store.set(k,String(value))
+ }};
+ vm.runInNewContext(read('v3/'+filename+'.js'),env,{timeout:3000,filename:filename+'.js'});
+ const mod=env.window[globalName],original='early-original-'+number,recovered='early-restored-'+number;
+ mod.save(original,fixture);
+ assert.equal(mod.validate(original).ok,true,'M'+number+' valid original fixture');
+ const remote=mod.evidence(original,{idea:{title:'Jogo QA',genre:'RPG'}});
+ mod.hydrate(recovered,remote,'approved');
+ const restored=mod.load(recovered);
+ assert.equal(restored.checks.length,0,'M'+number+' approved evidence cannot invent Preview checks');
+ const firstField=number===3?'project':number===4?'command':'condition';
+ assert.equal(restored[firstField],fixture[firstField],'M'+number+' restores actual written evidence');
+ assert.equal(mod.validate(recovered).ok,false,'M'+number+' editable restored record requires manual confirmation');
+ const approved=mod.render({session:recovered,status:'approved',phase:'review',idea:{title:'Jogo QA',genre:'RPG'},canSubmit:true,preview:true});
+ assert(!approved.includes(warning),'M'+number+' locked review cannot display missing-check warning');
+ assert(approved.includes('id="submitWork"')&&approved.includes('disabled'),'M'+number+' approved review stays locked');
+ const draft=mod.render({session:recovered,status:'draft',phase:'review',idea:{title:'Jogo QA',genre:'RPG'},canSubmit:true,preview:true});
+ assert(draft.includes(warning),'M'+number+' editable review still warns about incomplete tests');
+ mod.hydrate(original,remote,'approved');
+ assert.equal(mod.load(original).checks.length,3,'M'+number+' preserves locally marked test declarations');
+ assert.equal(mod.load(original)[firstField],fixture[firstField],'M'+number+' preserves local written answers');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
