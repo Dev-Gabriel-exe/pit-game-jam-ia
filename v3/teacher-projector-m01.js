@@ -120,17 +120,43 @@ function pedagogicalDemoSlides(root,mission){
    return result.length>=guide.guideSteps.length+2?result:null;
   }
  }
+ if(mission===7&&root.querySelector('#g7Guide')){
+  const guide=window.PIT_GDEVELOP_M07_GUIDE;
+  if(guide?.projectorCard&&guide.routes?.length===2){
+   const selected=Number(root.querySelector('#g7Guide [data-g7-route][aria-selected="true"]')?.dataset.g7Route??0);
+   const routeIndex=Number.isInteger(selected)&&guide.routes[selected]?selected:0;
+   const route=guide.routes[routeIndex],result=[];
+   const heading=root.querySelector('#g7Guide header');
+   if(heading)result.push({title:'Do desafio à conclusão verificável',html:cleanCopy(heading)});
+   const intro=document.createElement('section');intro.className='pit-projector-route-intro';
+   for(const [tag,value] of [['h3','Rota escolhida: '+route.label],['p','Mecânica: '+route.type],['p','Objetivo: início jogável → desafio com condição real → conclusão visível. Rotas 2D e 3D são alternativas.']]){
+    const node=document.createElement(tag);node.textContent=value;intro.append(node);
+   }
+   result.push({title:'Condição de vitória: '+route.label,html:intro.outerHTML});
+   for(let i=0;i<route.steps.length;i++){
+    const wrapper=document.createElement('section');
+    wrapper.className='pit-projector-tutorial-step pit-projector-g7-step';
+    wrapper.dataset.pitProjectorStep='M07:'+i;
+    wrapper.innerHTML=guide.projectorCard(routeIndex,i);
+    if(!wrapper.querySelector('.g7-card'))continue;
+    result.push({title:'Passo '+(i+1)+' · '+route.steps[i].title,html:wrapper.outerHTML});
+   }
+   const footer=root.querySelector('#g7Guide footer');
+   if(footer)result.push({title:'Plano B e limites das capturas',html:cleanCopy(footer)});
+   return result.length>=route.steps.length+2?result:null;
+  }
+ }
  return null;
 }
 function activateProjectorControls(content){
  // Cloned tutorial images do not inherit the original tab component's error listeners.
- content.querySelectorAll('[data-gd3-image],[data-tm-guide-image],[data-g4-image],[data-m5g-image]').forEach(img=>{
+ content.querySelectorAll('[data-gd3-image],[data-tm-guide-image],[data-g4-image],[data-m5g-image],[data-g7-shot]').forEach(img=>{
   const fallback=()=>{
    if(img.dataset.pitProjectorFallback)return;
    img.dataset.pitProjectorFallback='1';
-   img.src=img.hasAttribute('data-m5g-image')?(window.PIT_GDEVELOP_M05_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-g4-image')?(window.PIT_GDEVELOP_M04_GUIDE?.fallback||'./v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg'):img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
+   img.src=img.hasAttribute('data-g7-shot')?(window.PIT_GDEVELOP_M07_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-m5g-image')?(window.PIT_GDEVELOP_M05_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-g4-image')?(window.PIT_GDEVELOP_M04_GUIDE?.fallback||'./v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg'):img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
    img.alt='Diagrama didático autoral em português; captura externa indisponível';
-   const caption=img.closest('.gd3-picture,.tm-guide-image,.g4-step-picture,.m5g-picture')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span,.g4-picture-label span,.m5g-picture-top strong');
+   const caption=img.closest('.gd3-picture,.tm-guide-image,.g4-step-picture,.m5g-picture,.g7-card figure')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span,.g4-picture-label span,.m5g-picture-top strong,.g7-card figcaption span');
    if(caption)caption.textContent='DIAGRAMA AUTORAL · CAPTURA INDISPONÍVEL';
   };
   img.addEventListener('error',fallback);
