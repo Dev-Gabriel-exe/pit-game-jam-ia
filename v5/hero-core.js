@@ -271,7 +271,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    // instant translation straight through another player's position.
    const ranged=f.stats.range>3;
    const preferred=ranged?Math.min(f.stats.range*.67,6.6):Math.max(1.25,f.stats.range*.79);
-   const chase=route.blocked?1:d>preferred+1.2?1:d<preferred-.9?-0.65:0;
+   // Preserve ranged spacing: seeing a blocked route is not a reason for
+   // an Arcanist or Hunter to charge directly into a melee fighter. Only
+   // frontliners commit fully to closing obstructed gaps.
+   const ordinaryChase=d>preferred+1.2?1:d<preferred-.9?-0.65:0;
+   const chase=route.blocked&&!ranged?1:ordinaryChase;
    const strafeSign=(hash(f.id)^seed)&1?1:-1;
    const strafe=route.direction?0:(d<preferred+5&&d>1.5?0.27:0)*strafeSign;
    // Melee fighters need a readable, timed dash to close the gap against
