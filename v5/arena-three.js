@@ -517,13 +517,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   camera.position.set(7.5,5.5,10);controls.target.set(0,1.4,0);controls.update();
   return item;
  }
- function fighters(list,{seed=48211,limit=70,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free'}={}){
+ function fighters(list,{seed=48211,limit=70,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct'}={}){
   clearHeroes();const trial=!!PHASE2&&list.every(entry=>entry.build?.schema===PHASE2.VERSION);
   const normalized=trial?list.map((entry,i)=>({build:entry.build,id:String(entry.id??i),name:entry.name,approvedMissions:entry.build.approvedMissions})):list.map((entry,i)=>({
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
-  simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale,damageScale,mageDamageBonus,stormDelay,stormRateFactor,engagementMode});
+  simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale,damageScale,mageDamageBonus,stormDelay,stormRateFactor,engagementMode,navigationMode});
   container.dataset.v5EngagementMode=String(trial?engagementMode:'legacy');
+  container.dataset.v5NavigationMode=String(trial?navigationMode:'legacy');
   container.dataset.v5StormDelay=String(stormDelay);
   container.dataset.v5StormRateFactor=String(stormRateFactor);
   container.dataset.v5DamageScale=String(damageScale);
