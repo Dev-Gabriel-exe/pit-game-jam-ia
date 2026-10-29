@@ -8,11 +8,12 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
-const API=window.PIT_V5_AVATARS,ASSETS=window.PIT_V5_ASSETS;
+const API=window.PIT_V5_AVATARS,ASSETS=window.PIT_V5_ASSETS,WARDROBE=window.PIT_V5_WARDROBE;
 const $=id=>document.getElementById(id);
 const modelCache=new Map(),loader=new GLTFLoader();
 let currentStudent='aluno-01',currentClass='warrior',selectedAvatar='warrior-01',room='TURMA-01';
-let renderer,scene,camera,controls,root,mixer,clock,glReady=false,loadId=0,spinTimer=null;
+let renderer,scene,camera,controls,root,mixer,clock,glReady=false,loadId=0,activeWardrobe=null,activeVisual=null;
+let demoShowroomSource='pending';
 const theme={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
 const names={warrior:'Guerreiros',mage:'Arcanistas',hunter:'Caçadores',guardian:'Guardiões'};
 const safeRoom=v=>(String(v||'TURMA-01').toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,24)||'TURMA-01');
@@ -76,11 +77,12 @@ function renderGallery(){
   portrait.setAttribute('aria-hidden','true');
   const info=document.createElement('span');info.className='info';
   const title=document.createElement('strong');title.textContent=avatar.name;
-  const armor=document.createElement('small');armor.textContent=avatar.armor+' · '+avatar.id.toUpperCase();
+  const recipe=WARDROBE.spec(avatar);
+  const armor=document.createElement('small');armor.textContent=recipe.weapon.toUpperCase()+' · '+avatar.armor+' · '+avatar.id.toUpperCase();
   const state=document.createElement('span');state.className='state';
   state.textContent=blocked?'✕ JÁ ESCOLHIDO':mine?.avatarId===avatar.id?'✓ SEU PERSONAGEM':'✦ DISPONÍVEL';
   info.append(title,armor,state);b.append(portrait,info);
-  b.title=blocked?'Indisponível: já reservado por '+taken.studentId:avatar.name+' · Prévia 3D CC0';
+  b.title=blocked?'Indisponível: já reservado por '+taken.studentId:avatar.name+' · '+recipe.outfit+' · '+recipe.weapon+' · armadura e capacete próprios';
   b.addEventListener('click',()=>{selectedAvatar=avatar.id;draw()});
   host.appendChild(b);
  }
@@ -150,66 +152,91 @@ function init3d(){
   });resize.observe(stage);
   renderer.setAnimationLoop(()=>{
    const dt=Math.min(.06,clock.getDelta());mixer?.update(dt);
+   if(activeVisual&&!mixer){
+    const t=clock.elapsedTime;activeVisual.position.y=Math.sin(t*1.5)*.016;
+    activeVisual.rotation.y=Math.sin(t*.5)*.028;
+   }
    controls.update();renderer.render(scene,camera);
   });
-  $('assetStatus').textContent='GLB · CC0';
+  $('assetStatus').textContent='GLB + ARMADURA 3D · CC0';
  }catch(e){
   $('loading').textContent='Prévia WebGL indisponível neste aparelho. As reservas ainda funcionam.';
   $('assetStatus').textContent='SEM WEBGL';console.warn('[V5] GL unavailable',e);
  }
 }
+function disposeGenerated(){
+ if(!activeWardrobe)return;
+ activeWardrobe.root.traverse(obj=>{
+  if(obj.isMesh){
+   obj.geometry?.dispose();
+   if(Array.isArray(obj.material))obj.material.forEach(m=>m.dispose());
+   else obj.material?.dispose();
+  }
+ });
+ activeWardrobe=null;
+}
 async function show3d(avatar){
  const ticket=++loadId;
- const asset=ASSETS[avatar?.baseModelId];
- if(!asset||!glReady)return;
- $('loading').hidden=false;$('loading').textContent='✧ Carregando '+avatar.name+'…';
- $('assetStatus').textContent='CARREGANDO GLB';
+ const recipe=WARDROBE.spec(avatar),asset=ASSETS[avatar?.baseModelId];
+ if(!recipe||!asset||!glReady)return;
+ $('loading').hidden=false;$('loading').textContent='✧ Forjando '+avatar.name+'…';
+ $('assetStatus').textContent='MALHA CC0 · GLTF';
+ let data,source='Quaternius';
  try{
-  const data=await getGLB(asset.model);
+  // All four authentic medieval outfits are hosted as free/CC0 Standard
+  // glTF exports at an immutable public GitHub commit. A KayKit CC0 GLB
+  // remains a working fallback for browsers with failed cross-origin fetch.
+  try{data=await getGLB(recipe.url)}
+  catch(error){
+   console.warn('[V5] Quaternius Standard outfit not reachable; fallback CC0',recipe.outfit,error);
+   data=await getGLB(asset.model);source='KayKit fallback';
+  }
   if(ticket!==loadId)return;
-  mixer?.stopAllAction();root.clear();
+  mixer?.stopAllAction();disposeGenerated();root.clear();
   const model=cloneSkinned(data.scene);
-  // Normalize independently of source GLB bounding-box scale. No cap at 3;
-  // all FOUR class rigs display at the same 2.6-unit height.
   model.updateMatrixWorld(true);
-  const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+  const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),
+   center=bounds.getCenter(new THREE.Vector3());
   if(!Number.isFinite(size.y)||size.y<.01)throw Error('Altura do GLB inválida');
+  // Class-independent apparent height; NO previous max-factor cap.
   const factor=2.6/size.y;
   model.scale.setScalar(factor);
   model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
   const accent=new THREE.Color(avatar.accent);
   model.traverse(part=>{
    if(!part.isMesh)return;
-   // Each appearance receives independent materials, but GLB geometry and
-   // textures remain cache-shared. No model buy/download needed.
    const recolor=mat=>{
     const m=mat.clone();
-    if(m.color)m.color.lerp(accent,.31);
+    // Keep photographic/hand-painted cloth texture legible; class identity
+    // is primarily shown by unique 3D equipment, not garish overall tint.
+    if(m.color)m.color.lerp(accent,.13);
+    m.side=THREE.FrontSide;
     return m;
    };
    part.material=Array.isArray(part.material)?part.material.map(recolor):recolor(part.material);
   });
   root.add(model);
-  // A small distinctive hovering crest belongs to THIS visual identity,
-  // not to the actual fighter's stats, collider, XP or talents.
-  const haloMat=new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:.75,depthWrite:false});
-  const circle=new THREE.Mesh(new THREE.TorusGeometry(.62,.035,8,42),haloMat);
-  circle.rotation.x=-Math.PI/2;circle.position.y=.12;root.add(circle);
-  const insignia=new THREE.Mesh(new THREE.OctahedronGeometry(.12+avatar.variant*.005),
-   new THREE.MeshStandardMaterial({color:accent,metalness:.73,roughness:.26,emissive:accent,emissiveIntensity:.22}));
-  insignia.position.set(0,3.05,0);root.add(insignia);
+  activeWardrobe=WARDROBE.construct(THREE,avatar);
+  activeVisual=activeWardrobe.root;root.add(activeVisual);
   mixer=null;
   if(data.animations?.length){
    mixer=new THREE.AnimationMixer(model);
    const clip=data.animations.find(c=>/idle|breath/i.test(c.name))||data.animations[0];
    mixer.clipAction(clip).play();
   }
-  $('assetStatus').textContent='GLB CC0 · '+(data.animations?.length||0)+' CLIPES';
+  demoShowroomSource=source;
+  $('assetStatus').textContent=(source==='Quaternius'?'QUATERNIUS · CC0':'KAYKIT · CC0')+' · '+activeWardrobe.meshCount+' PARTES';
+  $('avatarEquipment').textContent=avatar.armor+' · '+recipe.weapon+' · '+recipe.outfit;
+  $('avatarStage').dataset.avatarId=avatar.id;
+  $('avatarStage').dataset.baseSource=source;
+  $('avatarStage').dataset.meshCount=String(activeWardrobe.meshCount);
+  $('avatarStage').dataset.outfit=recipe.outfit;
   $('loading').hidden=true;
  }catch(e){
   if(ticket!==loadId)return;
-  $('loading').hidden=false;$('loading').textContent='Modelo indisponível: '+(e.message||e);
-  $('assetStatus').textContent='FALHA DO GLB';
+  $('loading').hidden=false;$('loading').textContent='Modelo 3D indisponível: '+(e.message||e);
+  $('assetStatus').textContent='ERRO DE ASSET';
+  console.error('[V5] Character asset failed',e);
  }
 }
 function init(){
@@ -225,7 +252,21 @@ function init(){
   get assignedClass(){return currentClass},
   get selectedAvatar(){return selectedAvatar},
   get claims(){return claims()},get catalogSize(){return API.AVATARS.length},
-  get glReady(){return glReady}
+  get glReady(){return glReady},
+  get previewSource(){return demoShowroomSource},
+  get renderedAvatar(){return $('avatarStage').dataset.avatarId||null},
+  get renderedParts(){return Number($('avatarStage').dataset.meshCount||0)},
+  get recipe(){return WARDROBE.spec(API.get(selectedAvatar))},
+  validateAllGear(){
+   const unique=new Set(),summary=[];
+   for(const avatar of API.AVATARS){
+    const o=WARDROBE.construct(THREE,avatar);
+    const key=o.recipe.id+'|'+o.recipe.weapon+'|'+o.recipe.outfit+'|'+o.meshCount;
+    unique.add(key);summary.push({id:avatar.id,meshCount:o.meshCount,weapon:o.recipe.weapon,source:o.recipe.outfit});
+    o.root.traverse(obj=>{if(obj.isMesh){obj.geometry.dispose();if(Array.isArray(obj.material))obj.material.forEach(m=>m.dispose());else obj.material.dispose()}});
+   }
+   return {count:summary.length,unique:unique.size,summary};
+  }
  });
 }
 init();
