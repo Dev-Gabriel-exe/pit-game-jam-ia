@@ -147,7 +147,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  }
  function applySlow(f,fraction,duration,owner){
   if(!f.alive)return;
-  if(owner&&has(f,'E08')&&(f.cooldowns.E08||0)<=0){
+  if(owner&&f.build.klass==='mage'&&has(f,'E08')&&(f.cooldowns.E08||0)<=0){
    f.cooldowns.E08=19;
    duration*=1-.5*effectiveness(f,'E08');
    const dx=f.x-owner.x,dz=f.z-owner.z,d=Math.max(.001,Math.hypot(dx,dz));
@@ -173,7 +173,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   if(!target?.alive||!attacker||(!attacker.alive&&!reflect))return 0;
   let amount=Math.max(0,raw);
   const heavy=!reflect&&raw>=attacker.stats.attack*1.30;
-  if(!reflect&&kind==='melee'&&has(target,'E06')&&(target.cooldowns.E06||0)<=0){
+  if(!reflect&&kind==='melee'&&target.build.klass==='hunter'&&has(target,'E06')&&(target.cooldowns.E06||0)<=0){
    amount*=1-.25*effectiveness(target,'E06');target.cooldowns.E06=19;
    const dx=target.x-attacker.x,dz=target.z-attacker.z,dd=Math.max(.001,Math.hypot(dx,dz));
    clearPosition(target,dx/dd,dz/dd,1);
@@ -274,7 +274,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   attacker.damage+=inflicted;attacker.attacks++;
   target.lastHitAt=time;
-  if(inflicted>0&&has(target,'E07')){
+  if(inflicted>0&&target.build.klass==='hunter'&&has(target,'E07')){
    target.passives.e07Ready=false;target.passives.e07Anchor={x:target.x,z:target.z};
   }
   target.hitWindow.push({time,value:inflicted});
@@ -311,7 +311,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    target.passives.r09Used=true;shield(target,target.stats.hp*.12*effectiveness(target,'R09'),3);
    emit('proc',target,{talent:'R09'});
   }
-  if(has(target,'E08')&&!target.passives.e08Used&&target.hp/target.stats.hp<.40){
+  if(target.build.klass==='hunter'&&has(target,'E08')&&!target.passives.e08Used&&target.hp/target.stats.hp<.40){
    target.passives.e08Used=true;
    zones.push({owner:target.id,talent:'E08',x:target.x,z:target.z,r:1.5,until:time+5,triggered:false});
    emit('proc',target,{talent:'E08'});emit('zone',target,{talent:'E08',x:target.x,z:target.z,radius:1.5,duration:5});
@@ -328,7 +328,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   if(has(target,'B08')&&!target.passives.b08Used&&target.hp/target.stats.hp<.45){
    target.passives.b08Used=true;target.rage=6;emit('proc',target,{talent:'B08',target:attacker.id});
   }
-  if(has(target,'E09')&&!target.passives.e09Used&&target.hp/target.stats.hp<.4){
+  if(target.build.klass==='mage'&&has(target,'E09')&&!target.passives.e09Used&&target.hp/target.stats.hp<.4){
    target.passives.e09Used=true;target.passives.e09Ready=true;emit('charge',target,{talent:'E09'});
   }
   if(!reflect&&has(target,'B10')&&!target.passives.b10Used&&target.hp/target.stats.hp<.25){
@@ -343,7 +343,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    target.cooldowns.G05=16;shield(target,7*effectiveness(target,'G05'),3);
    emit('proc',target,{talent:'G05',target:attacker.id});
   }
-  if(!reflect&&has(target,'E05')&&(target.cooldowns.E05||0)<=0&&dist(attacker,target)<=3.1){
+  if(!reflect&&target.build.klass==='mage'&&has(target,'E05')&&(target.cooldowns.E05||0)<=0&&dist(attacker,target)<=3.1){
    target.cooldowns.E05=18;shield(target,10*effectiveness(target,'E05'),2);
    emit('proc',target,{talent:'E05',target:attacker.id});
    applyHit(target,attacker,target.stats.attack*.35*effectiveness(target,'E05'),{kind:'retaliation',skill:'E05',reflect:true});
@@ -677,7 +677,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    }
    const speed=Math.hypot(f.vx,f.vz);
    f.animation=speed>.25?'run':'idle';
-   if(has(f,'E07')){
+   if(f.build.klass==='hunter'&&has(f,'E07')){
     const a=f.passives.e07Anchor||(f.passives.e07Anchor={x:f.x,z:f.z});
     if(!f.passives.e07Ready&&(f.cooldowns.E07||0)<=0&&Math.hypot(f.x-a.x,f.z-a.z)>=3){
      f.passives.e07Ready=true;emit('charge',f,{talent:'E07'});
