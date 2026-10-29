@@ -140,6 +140,12 @@ assert(m09Student.includes("x.outcome=outcomes.includes(d.outcome)?d.outcome:''"
 assert(m09Student.includes("const resolutions=['fixed','backlog','nochange']"),'M09 allows honest no-defect playtest');
 assert(m09Student.includes("d.outcome==='passed'&&d.resolution==='fixed'"),'M09 rejects fictitious correction of no-defect test');
 assert(m09Student.includes("d.outcome==='issue'&&d.resolution==='nochange'"),'M09 requires backlog or fix for observed defect');
+// The projected professor rubric must match all three student outcomes, including a genuine no-defect test.
+assert(m09Validation.includes('A decisão pode ser correção retestada, backlog justificado ou nenhuma alteração após um teste sem falha.'),'M09 projected professor summary must allow no-defect outcome');
+assert(m09Validation.includes('ausência de alteração justificada após teste sem falha'),'M09 private acceptance criteria must not reject a genuine no-defect playtest');
+assert(m09Foundations.includes('nenhuma alteração quando o teste não encontrou falha'),'M09 projected protocol must include the no-defect branch');
+assert(m09Foundations.includes('nenhuma alteração após teste sem falha'),'M09 projected output must describe no-change evidence');
+assert(!m09Validation.includes('A decisão é correção testada ou backlog justificado.'),'M09 old two-option claim must not reappear');
 assert(m09Student.includes('https://editor.gdevelop.io/'),'M09 student GDevelop editor handoff');
 assert(m09Student.includes('não abre nem importa seu jogo automaticamente'),'M09 editor handoff must be honest');
 assert(m09Student.includes('aplicativo GDevelop já instalado'),'M09 student offline fallback');
