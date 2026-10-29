@@ -193,6 +193,30 @@ function pedagogicalDemoSlides(root,mission){
   }
  }
 
+ // M05/Comprovar: preserve public criteria and caveats; never project HDMI-off notes.
+ if(mission===5&&root.querySelector('.t5v-root[data-t5v-phase="review"]')){
+  const source=root.querySelector('.t5v-root[data-t5v-phase="review"]');
+  const result=[];
+  function add(node,title,id,group){
+   if(!node)return;
+   const wrapper=document.createElement('section');
+   wrapper.className='pit-projector-review-step t5v-root';
+   wrapper.dataset.pitProjectorReview='M05:'+id;
+   const content=document.createElement('div');content.className='t5v-content';
+   if(group){
+    const grid=document.createElement('div');grid.className=group;
+    grid.innerHTML=cleanCopy(node);content.append(grid);
+   }else content.innerHTML=cleanCopy(node);
+   wrapper.append(content);
+   result.push({title,html:wrapper.outerHTML});
+  }
+  add(source.querySelector('.t5v-intro'),'Como comprovar uma regra SE/ENTÃO','intro');
+  const criteria=[...source.querySelectorAll('.t5v-rubric > article')];
+  criteria.forEach((criterion,i)=>add(criterion,'Critério '+(i+1)+' de 4 · '+(criterion.querySelector('small')?.textContent||'Teste'),'rubric-'+(i+1),'t5v-rubric'));
+  add(source.querySelector('.t5v-decisions'),'Decisão: aprovar ou solicitar revisão','decision');
+  add(source.querySelector('.t5v-verification'),'Registro no painel e limites da evidência','record');
+  return criteria.length===4&&result.length===7?result:null;
+ }
  if(mission===5&&root.querySelector('#m5Guide')){
   const guide=window.PIT_GDEVELOP_M05_GUIDE;
   if(guide?.projectorPanel&&guide.guideSteps?.length===5&&guide.routes?.length){
