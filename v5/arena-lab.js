@@ -14,10 +14,10 @@ const glyph={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
 const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
-const state={mission:5,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[]};
+const state={mission:5,count:30,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[]};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
-function roster(mission){
+function roster(mission,count=30){
  // The first M5/M10 lab deliberately uses 10/20 points ONLY,
  // not the historical 6 free points nor peer-review bonus XP.
  const presets={
@@ -27,11 +27,12 @@ function roster(mission){
   guardian:{power:1,agility:0,spirit:1,vitality:8}
  };
  const factor=mission===10?2:1,xp=mission*100;
- return expected.map((klass,i)=>{
-  const build=CORE.seedBuild(names[klass],klass);
+ return Array.from({length:count},(_,i)=>{
+  const klass=expected[i%4],label=count===4?names[klass]:(names[klass].split(' ')[0]+' '+String(i+1).padStart(2,'0'));
+  const build=CORE.seedBuild(label,klass);
   build.appearance.palette=palette[klass];
   for(const [key,value] of Object.entries(presets[klass]))build.attributes[key]=value*factor;
-  return {id:'arena-lab-'+klass,name:names[klass],build:CORE.canonical(build,names[klass],xp),progress:{missions:mission,total:xp,approvedXp:xp,reviewXp:0}};
+  return {id:'arena-lab-'+i+'-'+klass,name:label,build:CORE.canonical(build,label,xp),progress:{missions:mission,total:xp,approvedXp:xp,reviewXp:0}};
  });
 }
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
@@ -85,13 +86,13 @@ function reportModels(){
   message('MODELO 3D INDISPONÍVEL');return;
  }
  $models.textContent=count+' / '+expectedCount+' modelos 3D reais carregados';
- if(count===expectedCount&&expectedCount===4&&!state.fought&&!state.stage?.playing&&!state.busy){
+ if(count===expectedCount&&expectedCount===state.count&&!state.fought&&!state.stage?.playing&&!state.busy){
   return;
  }
- if(count===expectedCount&&expectedCount===4&&!state.fought&&!state.stage?.playing){
+ if(count===expectedCount&&expectedCount===state.count&&!state.fought&&!state.stage?.playing){
   state.busy=false;
   $('startBattle').disabled=false;
-  message('OS QUATRO HERÓIS ESTÃO PRONTOS');
+  message('OS '+state.count+' HERÓIS ESTÃO PRONTOS');
  }
 }
 function initRound(){
@@ -106,11 +107,11 @@ function initRound(){
  const mission=state.mission;
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
  const prefix=mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
- message('CARREGANDO QUATRO HERÓIS');
- state.roster=roster(mission);
+ message('CARREGANDO '+state.count+' HERÓIS');
+ state.roster=roster(mission,state.count);
  try{state.stage.fighters(state.roster,{seed:mission===5?10929:20929,limit:75});
   // Close-in spectator camera for four characters. The full coliseum remains orbitable.
-  state.stage.camera.position.set(0,14.5,22.5);}
+  state.stage.camera.position.set(0,state.count===30?38:16,state.count===30?62:26);}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
  if($('stageLoading'))$('stageLoading').hidden=true;
  updateScoreboard();$models.textContent=prefix+' Carregando modelos CC0 reais...';
@@ -133,6 +134,11 @@ function pause(){
   message('BATALHA EM ANDAMENTO','running');
  }
 }
+document.querySelectorAll('.roster-mode').forEach(button=>button.addEventListener('click',()=>{
+ const count=Number(button.dataset.roster);if(![4,30].includes(count)||state.count===count)return;
+ state.count=count;document.querySelectorAll('.roster-mode').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.roster)===count)));
+ initRound();
+}));
 document.querySelectorAll('.milestone').forEach(button=>{
  button.addEventListener('click',()=>{
   const next=Number(button.dataset.mission);
@@ -152,7 +158,7 @@ $('speedBattle').addEventListener('click',()=>{
 });
 window.addEventListener('pagehide',()=>{clearInterval(state.interval);state.stage?.dispose()},{once:true});
 try{
- state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',onEvent});
+ state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:2.6,onEvent});
  const actorFill=new THREE.DirectionalLight(0xffd5b9,2.5);actorFill.position.set(4,13,14);state.stage.scene.add(actorFill);
  initRound();
  state.interval=setInterval(()=>{if(!document.hidden){updateScoreboard();reportModels()}},450);
@@ -163,6 +169,7 @@ try{
 }
 window.PIT_V5_ARENA_LAB=Object.freeze({
  get mission(){return state.mission},
+ get fighterCount(){return state.count},
  get modelState(){return {loaded:Number($('arenaStage').dataset.v5ModelsLoaded||0),failed:Number($('arenaStage').dataset.v5ModelsFailed||0)}},
  get finished(){return !!state.stage?.simulation?.finished},
  get winner(){return state.stage?.simulation?.result()?.winner||null},
