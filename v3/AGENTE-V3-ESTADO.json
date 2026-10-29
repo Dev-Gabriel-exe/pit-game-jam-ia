@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T03:17:37.829Z",
+  "last_completed_at": "2026-10-29T04:12:18.359Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: verify final CI for M10 access-route hints; inspect M01–M10 remaining evidence and projected-teacher alignment",
+  "priority": "V4-CROSS-AUDIT: verify CI for M09 evidence hydration; inspect M07/M08 and M10 restored manual test checkmarks without fabricating test history",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M10-ACCESS",
+  "last_task": "V4-CROSS-M09-HYDRATE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2380,49 +2380,66 @@
       "task": "V4-CROSS-M10-ACCESS",
       "commit": "6f40718ce1849112ab01f00a23233fb76025c8f2",
       "summary": "Audited M10 student handoff and found a generic access field that did not tell students what to enter for Preview local, exported Web or gd.games; added route-aware hints, examples and aria-describedby, with live updates on guide tab changes. Added VM regression to qa/v3-audit-alignment.cjs; 13/13 V8 source/runtime assertions PASS on fetched branch files. Prior 806fd214e CI static 40805185850 and browser 40805185799 SUCCESS. New final SHA CI not yet verified. GDevelop GUI, physical mobile, HDMI and peer playtest NOT_RUN. Original roadmap 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-29T04:12:18.359Z",
+      "task": "V4-CROSS-M09-HYDRATE",
+      "commit": "8e8988e378fd948b3e871c67da746a140df72b95",
+      "summary": "Found M09 hydrate auto-checking all three peer-playtest declarations from submitted/approved status, which is not proof of human test. Changed restore to keep checkbox state empty unless previously recorded locally; locked review avoids false invalid-warning. Added seven QA assertions. JS V8 compile + simulated evidence roundtrip PASS. Prior M10 static/browser CI 40811261322/40811261384 SUCCESS. New M09 static/browser CI 40816390231/40816390193 IN_PROGRESS. No human/physical/HDMI test. Roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M10-ACCESS",
+    "task": "V4-CROSS-M09-HYDRATE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T03:17:37.829Z",
+    "updated_at": "2026-10-29T04:12:18.359Z",
     "code_commits": [
-      "7200847c949c9dcdcba21de42850135c19470b80",
-      "79a26667843fa17f688c13105b8e7de9b74177f9",
-      "6f40718ce1849112ab01f00a23233fb76025c8f2"
+      "fa7933c7a96841ec5fa5d5f737357ad9fb36a8f1",
+      "8e8988e378fd948b3e871c67da746a140df72b95"
     ],
+    "documentation_commit": "9f85fdb7bb81c46ba7bc63f9887d2520891a05f8",
     "tests": [
       {
-        "name": "Prior M09/M10 projection static QA",
-        "run_id": 40805185850,
+        "name": "Prior M10 route-aware hint static QA",
+        "run_id": 40811261322,
         "result": "SUCCESS",
-        "sha": "806fd214e"
+        "sha": "6f40718ce1849112ab01f00a23233fb76025c8f2"
       },
       {
-        "name": "Prior M09/M10 projection browser QA",
-        "run_id": 40805185799,
+        "name": "Prior M10 route-aware hint Browser QA",
+        "run_id": 40811261384,
         "result": "SUCCESS",
-        "sha": "806fd214e"
+        "sha": "6f40718ce1849112ab01f00a23233fb76025c8f2"
       },
       {
-        "name": "M10 access-route JS source/render/validation assertions",
+        "name": "M09 hydration JS V8 compile and simulated localStorage restore",
         "result": "PASS",
-        "count": "13/13",
-        "sha": "6f40718c",
-        "details": "Actual student module parsed and executed in V8; local/web/gd hints, aria, valid URL, invalid local description and token-bearing URL; not Node CI or browser"
+        "sha": "fa7933c7a96841ec5fa5d5f737357ad9fb36a8f1",
+        "details": "Submitted/approved status no longer auto-marks three peer-playtest checkboxes; fields restored; locked review no false validation warning"
       },
       {
-        "name": "M10 new final static/browser CI",
-        "result": "NOT_VERIFIED",
-        "sha": "6f40718c",
-        "details": "No GitHub Actions run IDs available via current connector; do not infer PASS from prior commits"
+        "name": "M09 restored evidence regression source",
+        "result": "PARSE_PASS_CI_PENDING",
+        "sha": "8e8988e378fd948b3e871c67da746a140df72b95",
+        "details": "7 additional assertions; full Node CI and browser QA not yet confirmed"
+      },
+      {
+        "name": "M09 final static QA",
+        "run_id": 40816390231,
+        "result": "IN_PROGRESS",
+        "sha": "8e8988e378fd948b3e871c67da746a140df72b95"
+      },
+      {
+        "name": "M09 final Browser QA",
+        "run_id": 40816390193,
+        "result": "IN_PROGRESS",
+        "sha": "8e8988e378fd948b3e871c67da746a140df72b95"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify static/browser CI for 6f40718c or newer checkpoint SHA; inspect student M01–M10 evidence/teacher criteria with priority on real delivery instructions",
-    "blocker": "No code blocker; GDevelop GUI, physical mobile, HDMI projection and real peer playtest NOT_RUN"
+    "next_task": "Verify static/browser CI at 8e8988e or newer checkpoint; audit M07/M08 restored checkboxes and apply the same integrity guard where warranted",
+    "blocker": "No code blocker; real peer playtest, GDevelop GUI, physical mobile, HDMI projection remain NOT_RUN"
   }
 }
