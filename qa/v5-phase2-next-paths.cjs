@@ -37,7 +37,7 @@ function advance(sim,n=1000){for(let i=0;i<n&&!sim.finished;i++)sim.update(.05)}
 const seen=(sim,id)=>sim.events.filter(e=>e.talent===id);
 const kinds=(sim,id)=>[...new Set(seen(sim,id).map(e=>e.type))];
 for(const [k,enemy,dist] of [['warrior','guardian',2],['mage','warrior',2],['hunter','guardian',5],['guardian','warrior',2]]){
- const {sim,f,e}=staged(k,additions[k],enemy,['B01'],dist,972);
+ const {sim,f,e}=staged(k,additions[k],enemy,enemy==='warrior'?['B01']:[],dist,972);
  if(k==='guardian'){f.stats.hp=1400;f.hp=800;e.stats.attack=8;}
  if(k==='hunter'){f.hp=f.stats.hp*.8;}
  advance(sim,1200);
