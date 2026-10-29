@@ -1,5 +1,5 @@
-/* Four clean Tactical Slash / KayKit CC0 GLB characters. No modular armor.
- * Single source family, identical height and original animations.
+/* Four clean KayKit Adventurers CC0 GLB characters. No modular armor.
+ * FOUR distinct source models, identical rendered height and original animations.
  * No fake avatar reservation, no professor/student progress writes.
  */
 import * as THREE from 'three';
@@ -8,10 +8,10 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 const A=window.PIT_V5_ASSETS,$=id=>document.getElementById(id);
 const defs={
- warrior:{name:'Guerreiro',glyph:'⚔',color:'#daa16d',description:'Ataques corpo a corpo e força. A armadura não concede vantagem: os atributos e talentos definem o desempenho.'},
- mage:{name:'Arcanista',glyph:'✦',color:'#b38be9',description:'Magia, runas e habilidades de alcance. Utiliza o Sacerdote animado, da mesma origem do Arqueiro.'},
- hunter:{name:'Caçador',glyph:'➶',color:'#99ceaa',description:'Mobilidade e ataques à distância. Preserva exatamente o Arqueiro que já tinha sido aprovado no Coliseu.'},
- guardian:{name:'Guardião',glyph:'◆',color:'#92bbdb',description:'Proteção, vitalidade e resistência. Compartilha a malha do Espadachim com o Guerreiro, mas conserva os talentos próprios.'}
+ warrior:{name:'Guerreiro',glyph:'⚔',color:'#daa16d',description:'Bárbaro animado do KayKit Adventurers. Ataques corpo a corpo e força, sem alterar atributos ou habilidades pelo aspecto visual.'},
+ mage:{name:'Arcanista',glyph:'✦',color:'#b38be9',description:'Mago original do mesmo pacote KayKit, pronto para magia, runas e habilidades à distância.'},
+ hunter:{name:'Caçador',glyph:'➶',color:'#99ceaa',description:'Ladino encapuzado original do mesmo pacote KayKit, com identidade furtiva. A classe preserva suas habilidades de Caçador no motor de combate.'},
+ guardian:{name:'Guardião',glyph:'◆',color:'#92bbdb',description:'Cavaleiro original, diferente do Bárbaro. Seus atributos e talentos defensivos são preservados.'}
 };
 const cache=new Map(),loader=new GLTFLoader();
 let selected='warrior',scene,renderer,camera,controls,modelHost,mixer,clock,glReady=false,ticket=0;
@@ -119,7 +119,7 @@ function containerStatus(klass,asset,clips,height){
  const host=$('avatarStage');
  host.dataset.loadState='ready';
  host.dataset.selectedClass=klass;
- host.dataset.sourceFamily='tactical-slash';
+ host.dataset.sourceFamily='kaykit-adventurers';
  host.dataset.modelFile=asset.model.split('/').pop();
  host.dataset.modelHeight=String(height);
  host.dataset.clips=String(clips);
@@ -128,7 +128,9 @@ function containerStatus(klass,asset,clips,height){
 window.PIT_V5_SIMPLE_HERO_LAB=Object.freeze({
  get class(){return selected},
  get glReady(){return glReady},
- get source(){return 'tactical-slash'},
- get modelHeight(){return Number($('avatarStage').dataset.modelHeight||0)}
+ get source(){return 'kaykit-adventurers'},
+ get modelHeight(){return Number($('avatarStage').dataset.modelHeight||0)},
+ get selectedModel(){return A[selected].model},
+ get animationCount(){return Number($('avatarStage').dataset.clips||0)}
 });
 initWebGL();select(selected);
