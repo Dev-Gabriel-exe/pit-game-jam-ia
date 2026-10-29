@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="theme-color" content="#0a0a10">
+ <meta name="description" content="Laboratório V5: compare quatro heróis 3D reais da Arena dos Criadores.">
+ <title>Forja de Heróis · Laboratório V5 | PIT Game Jam IA</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="./seletor.css">
+ <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+ <script src="./character-assets.js"></script>
+ <script src="./fase1-catalog.js"></script>
+ <script src="./seletor.js" type="module"></script>
+</head>
+<body>
+ <div class="background" aria-hidden="true"></div>
+ <header class="topbar">
+  <a class="brand" href="../index.html" aria-label="Voltar ao portal PIT Game Jam">PIT <span>GAME JAM</span><sup>V5</sup></a>
+  <div class="top-center">A ARENA DOS CRIADORES <small>LABORATÓRIO DE CLASSES · FASE 01</small></div>
+  <a class="back" href="./index.html?preview=1">Versão experimental V5 <span aria-hidden="true">↗</span></a>
+ </header>
+ <main>
+  <div class="hero"><span class="eyebrow">✦ A FORJA DOS QUATRO ARQUÉTIPOS ✦</span>
+   <h1>Todo criador merece <em>uma lenda.</em></h1>
+   <p>Quatro silhuetas, quatro estilos de combate. Inspecione o modelo original, gire a câmera e reproduza apenas as animações realmente disponíveis no GLB.</p>
+   <span class="pilot-note">PROTÓTIPO ISOLADO · SEM CADASTRO · SEM MUDANÇAS NO XP OU NAS MISSÕES</span>
+  </div>
+  <div class="workspace">
+   <aside class="classes panel" aria-labelledby="class-title">
+    <div class="section-head"><span class="eyebrow">01 · SUA VOCAÇÃO</span><h2 id="class-title">Escolha uma classe</h2></div>
+    <div id="classList" class="class-list" role="group" aria-label="Quatro classes disponíveis"></div>
+    <p class="rail-note">Os personagens são GLBs reais. Nenhum boneco geométrico será exibido como substituto caso falhe o download.</p>
+   </aside>
+   <section class="stage-shell" aria-labelledby="stage-title">
+    <div class="stage-top"><div><span class="eyebrow">02 · CÂMARA DA INVOCAÇÃO</span><h2 id="stage-title">Visualizador tridimensional</h2></div><span id="webglBadge" class="live-badge">INICIALIZANDO</span></div>
+    <div id="stage" class="stage" aria-label="Visualização 3D do personagem selecionado">
+     <div class="loading" id="loading" role="status"><div class="sigil" aria-hidden="true">✦</div><strong>Invocando personagem…</strong><span>Os modelos vêm de bibliotecas abertas CC0.</span></div>
+    </div>
+    <div class="stage-bottom">
+      <span id="stageStatus" role="status" aria-live="polite">Verificando suporte 3D…</span>
+      <div class="stage-actions">
+       <button id="resetCamera" type="button" aria-label="Reiniciar posição da câmera"> <span aria-hidden="true">⟳</span> Centralizar</button>
+       <button id="toggleTurn" type="button" aria-pressed="false">↻ Giro automático</button>
+      </div>
+    </div>
+    <div class="animation-console panel"><div><span class="eyebrow">03 · MOVIMENTOS AUTÊNTICOS</span><p>Use as sequências embutidas no arquivo, sem animação simulada.</p></div>
+      <div id="animationControls" class="animations" role="group" aria-label="Animações do personagem"></div>
+    </div>
+   </section>
+   <aside class="codex panel">
+     <span class="eyebrow">✧ REGISTRO DO ARQUÉTIPO</span><div class="codex-glyph" id="classGlyph" aria-hidden="true">⚔</div>
+     <h2 id="className">Guerreiro</h2><p class="class-type" id="classType">Combate corpo a corpo</p>
+     <p class="class-lore" id="classLore">Uma classe projetada para a primeira linha.</p>
+     <div class="divider"></div><div class="detail"><span>TÉCNICA ASSINATURA</span><strong id="classSpecial">—</strong></div>
+     <div class="detail"><span>LIMITAÇÃO DE COMBATE</span><strong id="classWeakness">—</strong></div>
+     <div class="divider"></div>
+     <span class="eyebrow">✧ PROVENIÊNCIA DO MODELO</span>
+     <div class="detail"><span>ARQUIVO GLB</span><strong id="assetName">—</strong></div>
+     <div class="detail"><span>LICENÇA</span><strong id="assetLicense">—</strong></div>
+     <div class="detail"><span>ANIMAÇÕES DETECTADAS</span><strong id="assetAnimations">—</strong></div>
+     <a id="assetLink" href="https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0" target="_blank" rel="noopener noreferrer" class="source-link">Ver fonte e licença <span aria-hidden="true">↗</span></a>
+     <p class="note">Arraste para orbitar · use a roda do mouse ou gesto de pinça para zoom. Os controles só são habilitados quando um clipe real é encontrado.</p>
+   </aside>
+  </div>
+ </main>
+ <footer><span>PIT GAME JAM IA · EXPERIMENTO V5 · FOUR HEROES LAB</span><span>3D: Three.js · modelos originais CC0</span></footer>
+</body>
+</html>
