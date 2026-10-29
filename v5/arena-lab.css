@@ -202,3 +202,12 @@ body.arena-immersive .stage-flair{display:none}
 #damagePace[data-scale="0.6"]{border-color:#9869be;background:#37213d;color:#e4c8fc}
 
 #damagePace[data-scale="0.5"]{border-color:#cc9a73;background:#4b2935;color:#ffe4cc}
+
+/* No false 'four real models ready' claim: readiness reflects stage WebGL load. */
+.real-model-proof{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid #9874518a;background:#19131ede;color:#e9d5b8;margin:8px 0 11px}
+.real-model-proof>div{display:grid;gap:3px;min-width:0}
+.real-model-proof strong{font-size:12px;color:#dfbf94}
+.real-model-proof span{font-size:11px;color:#e5d4c7}
+.real-model-proof a{border:1px solid #9672989c;padding:8px 11px;color:#e8cdf9;text-decoration:none;font-size:11px;font-weight:800;text-align:center}
+.real-model-proof[data-ready=true]{border-color:#7a957f}
+@media(max-width:700px){.real-model-proof{flex-direction:column;align-items:stretch;text-align:center}.real-model-proof a{display:block;padding:9px}}
