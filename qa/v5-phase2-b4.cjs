@@ -10,10 +10,10 @@ const fresh={
  hunter:['E06','E07','E08','E09','E10'],
  guardian:['L06','L07','L08','L09','L10']
 };
-assert.equal(Object.values(P.TALENTS).flat().length,100);
+assert.equal(Object.values(P.TALENTS).flat().length,120);
 for(const klass of classes){
  const planned=JSON.parse(fs.readFileSync(path.join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents;
- assert.equal(P.TALENTS[klass].length,25);
+ assert.equal(P.TALENTS[klass].length,30);
  assert.deepEqual(P.TALENTS[klass].slice(15,20).map(t=>t.id),fresh[klass]);
  for(let i=15;i<20;i++){
   const a=P.TALENTS[klass][i],b=planned[i];

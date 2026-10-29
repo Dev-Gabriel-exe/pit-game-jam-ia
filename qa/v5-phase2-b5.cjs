@@ -3,11 +3,11 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const P=require('../v5/phase2-combat.js'),classes=['warrior','mage','hunter','guardian'];
 const talents={warrior:['T01','T02','T03','T04','T05'],mage:['A01','A02','A03','A04','A05'],hunter:['S01','S02','S03','S04','S05'],guardian:['J01','J02','J03','J04','J05']};
-assert.equal(Object.values(P.TALENTS).flat().length,100);
+assert.equal(Object.values(P.TALENTS).flat().length,120);
 for(const klass of classes){
  const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'../v5/talents-'+klass+'-plan.json'),'utf8')).talents;
- assert.equal(P.TALENTS[klass].length,25);
- assert.deepEqual(P.TALENTS[klass].map(t=>t.id),expected.slice(0,25).map(t=>t.id));
+ assert.equal(P.TALENTS[klass].length,30);
+ assert.deepEqual(P.TALENTS[klass].map(t=>t.id),expected.slice(0,30).map(t=>t.id));
  for(const [i,t] of P.TALENTS[klass].entries()){
   const plan=expected[i];
   for(const key of ['id','name','type','primary','secondary'])assert.equal(t[key],plan[key],klass+' '+key);
@@ -130,4 +130,4 @@ assert(winners.size>=2,'Unbalanced B.5 winner cohort');
 assert([...observed].some(t=>t.endsWith(':T01'))&&[...observed].some(t=>t.endsWith(':A01'))&&
  [...observed].some(t=>t.endsWith(':S01'))&&[...observed].some(t=>t.endsWith(':J01')),
  'All four B.5 trees should be represented in 30-hero battles');
-console.log('PASS B.5 100 catalog-faithful combat talents, M5 budget, target/mechanics tests, 18x30 deterministic FFA simulations; winners='+[...winners].join(','));
+console.log('PASS B.5 120 catalog-faithful combat talents, M5 budget, target/mechanics tests, 18x30 deterministic FFA simulations; winners='+[...winners].join(','));

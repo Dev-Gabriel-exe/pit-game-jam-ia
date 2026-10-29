@@ -1,5 +1,5 @@
 'use strict';
-// Validate the real B.5 engine, 100 catalog skills and user-selectable M5 samples.
+// Validate the real B.6 engine, 120 catalog skills and user-selectable M5 samples.
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 (async()=>{
@@ -20,7 +20,7 @@ const {chromium}=require('playwright');
    });
   });
   assert(budgets.every(b=>b.talents===5&&b.points===10));
-  assert.equal(await page.evaluate(()=>Object.values(window.PIT_V5_PHASE2.TALENTS).flat().length),100);
+  assert.equal(await page.evaluate(()=>Object.values(window.PIT_V5_PHASE2.TALENTS).flat().length),120);
   assert.equal((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).length,30);
   await page.locator('[data-roster="4"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.fighterCount===4&&window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:100000});
@@ -47,6 +47,12 @@ const {chromium}=require('playwright');
   assert.deepEqual(b5.map(x=>x[0]),['T01','A01','S01','J01']);
   assert(b5.every(x=>x.length===5));
   assert.match(await page.locator('#phase2Builds').textContent(),/Caminhos IV/);
+  for(let n=0;n<2;n++)await page.locator('#phase2Builds').click();
+  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.selectedTalents?.[0]?.ids?.[0]==='T06'&&window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:100000});
+  const b6=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents.map(x=>x.ids));
+  assert.deepEqual(b6.map(x=>x[0]),['T06','A06','S06','J06']);
+  assert(b6.every(x=>x.length===5));
+  assert.match(await page.locator('#phase2Builds').textContent(),/Caminhos V/);
   await page.locator('#startBattle').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.talentEvents>0,null,{timeout:65000});
   assert(await page.locator('#battleLog').textContent());
@@ -54,7 +60,7 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
   assert.equal(await page.locator('#phase2Mode').getAttribute('aria-pressed'),'false');
   assert.deepEqual(errors,[],'Page errors: '+errors.join(' | '));
-  console.log('PASS Phase2 B.5 browser: 100 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
+  console.log('PASS Phase2 B.6 browser: 120 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
   await page.close();
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
