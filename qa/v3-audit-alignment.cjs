@@ -195,7 +195,7 @@ assert(!m10Teacher.includes('correção testada ou backlog justificado.'),'M10 o
 // outcomes. A peer test without a defect must not force a fictional correction.
 const m10TeacherFoundations=read('v3/teacher-mission-ten-foundations.js');
 const m10TeacherEnv={window:{}};
-vm.runInNewContext(m10TeacherFoundations,m10TeacherEnv,{timeout:3000,filename:'teacher-mission-ten-foundations.js'});
+require('node:vm').runInNewContext(m10TeacherFoundations,m10TeacherEnv,{timeout:3000,filename:'teacher-mission-ten-foundations.js'});
 const m10Projected=m10TeacherEnv.window.PIT_TEACHER_MISSION_TEN_FOUNDATIONS;
 const m10ProjectedHtml=m10Projected.render();
 for(const phrase of ['correção retestada','backlog justificado','nenhuma alteração após teste sem falha']){
