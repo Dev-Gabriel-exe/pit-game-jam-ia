@@ -7,6 +7,8 @@ on:
       - 'v5/arena-three.js'
       - 'v5/arena-citadel.js'
       - 'v5/hero-core.js'
+      - 'v5/phase2-combat.js'
+      - 'qa/v5-phase2-combat.cjs'
       - 'qa/v5-arena-physics-fairness.cjs'
       - 'qa/v5-arena-navigation.cjs'
       - 'qa/v5-arena-targeting.cjs'
@@ -30,10 +32,13 @@ jobs:
           node --check qa/v5-arena-lab-browser.cjs
           node --check qa/v5-arena-navigation.cjs
           node --check qa/v5-arena-targeting.cjs
+          node --check v5/phase2-combat.js
+          node --check qa/v5-phase2-combat.cjs
           node --check qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-lab.cjs
           node qa/v5-arena-navigation.cjs
           node qa/v5-arena-targeting.cjs
+          node qa/v5-phase2-combat.cjs
           node qa/v5-arena-physics-fairness.cjs
           node qa/v5-arena-balance-matrix.cjs
   browser:
