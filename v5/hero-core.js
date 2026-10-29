@@ -127,9 +127,11 @@ function derived(b){
 }
 function mulberry(seed){let v=(seed|0)>>>0;return ()=>{v+=0x6D2B79F5;let t=v;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
 function hash(s){let h=2166136261;for(const char of String(s)){h^=char.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
-function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1,damageScale=1,mageDamageBonus=1}={}){
+function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1}={}){
  const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
  const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
+ const stormStart=clamp(Number(stormDelay)||18,18,50);
+ const shrinkFactor=clamp(Number(stormRateFactor)||1,.4,1);
  // Optional geometric scaling for a 30-participant spectator arena; legacy callers retain 1.
  const scale=clamp(arenaScale,1,5);
  const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
@@ -287,7 +289,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1,damageScale=1,mag
   // With a fixed ~14m minimum on a giant decorative map, every fighter
   // could safely circle indefinitely and win a meaningless timeout.
   const minStormRadius=initialCount<=4?2.5:3.2*scale;
-  const radius=Math.max(minStormRadius,18*scale-Math.max(0,time-18)*stormRate);
+  const radius=Math.max(minStormRadius,18*scale-Math.max(0,time-stormStart)*stormRate*shrinkFactor);
   // Rotate action order deterministically; the first fighter in the input
   // must not always enjoy first strike advantage.
   const startIndex=Math.floor(rnd()*Math.max(1,fighters.length));
