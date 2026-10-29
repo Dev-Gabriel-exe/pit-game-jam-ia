@@ -117,14 +117,14 @@ function mulberry(seed){let v=(seed|0)>>>0;return ()=>{v+=0x6D2B79F5;let t=v;t=M
 function hash(s){let h=2166136261;for(const char of String(s)){h^=char.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  // Optional geometric scaling for a 30-participant spectator arena; legacy callers retain 1.
- const scale=clamp(arenaScale,1,3);
+ const scale=clamp(arenaScale,1,5);
  const rnd=mulberry(seed),heroes=(Array.isArray(source)?source:[]).slice(0,48),used=new Set();
  const fighters=heroes.map((input,i)=>{
   const name=String(input.name||'Aventureiro').slice(0,56),id=String(input.id||('hero-'+i)).slice(0,80);
   if(used.has(id))throw Error('Personagem duplicado.');used.add(id);
   // Trusted caller must canonicalize player build using server-awarded XP.
   const b=canonical(input,name,clamp(input.xp,0,1030)),stats=derived(b);
-  const theta=i*2.3999632297,rad=(5.2+Math.sqrt(i)*1.03)*scale;
+  const theta=i*2.3999632297,rad=(5.2+Math.sqrt(i)*(scale>3?1.65:1.03))*scale;
   return {id,name,build:b,stats,x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,
    vx:0,vz:0,vy:0,face:theta,hp:stats.hp,shield:0,alive:true,attacks:0,kills:0,damage:0,
    basic:0,special:2+(i%3)*.85,slow:0,animation:'idle'};
