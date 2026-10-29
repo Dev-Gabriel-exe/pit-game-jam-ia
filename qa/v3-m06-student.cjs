@@ -18,7 +18,7 @@ assert.ok(evidence.includes('Licença:')&&evidence.includes('Teste negativo:'));
 assert.equal(m.parseEvidence(evidence).route,'model');
 m.hydrate('ficticio-C',evidence,'submitted');
 assert.equal(m.load('ficticio-C').route,'model');
-assert.equal(m.load('ficticio-C').checks.length,3);
+assert.equal(m.load('ficticio-C').checks.length,0,'remote submission must not invent Preview checks');
 m.hydrate('ficticio-A','M06 | image\nAsset: sobrescrito','submitted');
 assert.equal(m.load('ficticio-A').route,'model');
 const bad=m.load('ficticio-A');bad.after='curto';m.save('ficticio-A',bad);
