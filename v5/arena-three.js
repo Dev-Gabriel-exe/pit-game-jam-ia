@@ -8,6 +8,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
+const TALENT_FX=window.PIT_V5_TALENT_VFX;
+const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -215,7 +217,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  stormRing.rotation.x=-Math.PI/2;stormRing.position.y=.42;
  stormRing.scale.setScalar(18*worldScale);root.add(stormRing);
  const individuals=new Map(),effects=[],labels=new Map();
- let animationEvents=0,specialFxEvents=0;
+ let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
+ const visualBudget=quality==='low'||reduce?9:18;
+ const isPhase2=()=>container.dataset.v5CombatEngine==='phase2-m5';
+ const cueFor=(klass,id)=>CUES?.[klass]?.find(c=>c.id===id)||null;
  const standSeats=(world.spectatorSeats||[]).map(seat=>({...seat,x:seat.x*stadiumScale,y:seat.y*stadiumScale,z:seat.z*stadiumScale}));
  const occupiedSeats=new Map(),spectators=new Set();
  const nicknameLayer=document.createElement('div');nicknameLayer.className='arena-nickname-layer';nicknameLayer.setAttribute('aria-hidden','true');container.append(nicknameLayer);
@@ -224,11 +229,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();let followId=null;
+ function discardEffect(e){root.remove(e.mesh);e.mesh.geometry?.dispose?.();if(Array.isArray(e.mesh.material))e.mesh.material.forEach(m=>m.dispose?.());else e.mesh.material?.dispose?.()}
+ function clearVisuals(){for(const e of effects)discardEffect(e);effects.length=0}
  function clearHeroes(){
   modelLoadedCount=0;modelErrorCount=0;
   delete container.dataset.v5ModelsLoaded;delete container.dataset.v5ModelsFailed;
   delete container.dataset.v5ModelsExpected;
-  for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();
+  clearVisuals();
+   for(const obj of shots.values()){root.remove(obj);obj.geometry.dispose();obj.material.dispose()}shots.clear();
   for(const x of individuals.values()){
    x.mixer?.stopAllAction();if(x.modelRoot)x.mixer?.uncacheRoot(x.modelRoot);
    x.personalMaterials?.forEach(material=>material.dispose());
@@ -252,6 +260,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    attack:[/attack/,/slash/,/punch/,/sword/,/bow/,/shoot/],
    cast:[/spell/,/cast/,/magic/,/attack/],
    hit:[/hit/,/hurt/,/damage/,/react/,/block/],
+   block:[/block/,/defend/,/guard/,/shield/,/hit/,/idle/],
    dodge:[/dodge/,/roll/,/evade/,/jump/,/run/],
    defeated:[/death/,/die/,/dead/,/hit/,/idle/]
   }[motion]||[/idle/];
@@ -262,7 +271,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   }
   if(!matches.length)matches=[...item.actions.values()];
   if(!matches.length)return;
-  const transient=['attack','cast','hit','dodge'].includes(motion);
+  const transient=['attack','cast','hit','dodge','block'].includes(motion);
   // Different matching GLB clips are selected for consecutive strikes
   // instead of repeating just the first "Attack" animation forever.
   const variant=force&&transient?(item.variantCursor=(item.variantCursor||0)+1):(item.variantCursor||0);
@@ -363,7 +372,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5CombatEngine=trial?'phase2-m5':'legacy';
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
+  talentFxEvents=0;talentFxDropped=0;
   container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
+  container.dataset.v5TalentFxEvents='0';container.dataset.v5TalentFxDropped='0';
+  container.dataset.v5TalentCueLast='';container.dataset.v5TalentCueStyle='';
+  container.dataset.v5TalentFxActive='0';
+  container.dataset.v5TalentFxCatalog=String(CUES?Object.values(CUES).flat().length:0);
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
