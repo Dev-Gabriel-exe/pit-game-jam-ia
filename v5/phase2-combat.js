@@ -302,7 +302,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   if(!reflect&&has(target,'D06')&&(target.cooldowns.D06||0)<=0&&(defenseFactor<1||shieldTaken>0)){
    target.cooldowns.D06=11;target.d06Until=time+3;emit('proc',target,{talent:'D06',target:attacker.id});
   }
-  if(!reflect&&heavy&&has(target,'D09')&&(target.cooldowns.D09||0)<=0&&dist(target,attacker)<=3.1){
+  if(!reflect&&target.hp>0&&heavy&&has(target,'D09')&&(target.cooldowns.D09||0)<=0&&dist(target,attacker)<=3.1){
    target.cooldowns.D09=15;emit('proc',target,{talent:'D09',target:attacker.id});
    if(attacker.alive)applyHit(target,attacker,target.stats.attack*.70*effectiveness(target,'D09'),{kind:'retaliation',skill:'D09',reflect:true});
   }
@@ -485,7 +485,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(f.offenseDelay>0)return false;
    if(ready(f,'D10')&&d<f.stats.range){
     use(f,'D10',target);
-    for(let n=0;n<3;n++)pending.push({owner:f.id,talent:'D10',targetId:target.id,damage:atk*.55*scaleSkill('D10'),impactAt:time+.10+n*.22,kind:'combo'});
+    for(let n=0;n<3;n++)pending.push({owner:f.id,talent:'D10',targetId:target.id,damage:atk*.55*scaleSkill('D10'),impactAt:time+.10+n*.22,kind:'combo',comboId:f.id+':'+time});
     return true;
    }
    if(ready(f,'D07')&&d<f.stats.range){
@@ -660,6 +660,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
     &&d>4&&d<=f.stats.range+.5;
    const chase=holdForAim?0:d>preferred+1?1:d<preferred-.7?-.6:0;
    const strafe=holdForAim?0:(d<preferred+5?.21:0)*((f.id.length+seed)%2?-1:1);
+   if(has(f,'D08')&&f.hp/f.stats.hp>.60&&!f.passives.d08Observed){f.passives.d08Observed=true;emit('proc',f,{talent:'D08'})}
    const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1)*(f.regenUntil>time?.88:1)*
      (f.speedUntil>time?1+.10*effectiveness(f,'E02'):1)*
      (has(f,'D08')&&f.hp/f.stats.hp>.60?1+.08*effectiveness(f,'D08'):1);
@@ -742,14 +743,14 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    const p=pending[i];if(time+1e-8<p.impactAt)continue;
    pending.splice(i,1);
    const caster=byId.get(p.owner);
-   if(!caster)continue;
+   if(!caster||p.cancelled)continue;
    if(p.kind==='combo'||p.kind==='beam'){
     const victim=byId.get(p.targetId);
     const maxRange=p.kind==='beam'?7:caster.stats.range;
     if(caster.alive&&victim?.alive&&dist(caster,victim)<=maxRange){
      emit('talent-impact',caster,{talent:p.talent,target:victim.id});
      applyHit(caster,victim,p.damage,{kind:p.kind==='combo'?'melee':'special',skill:p.talent});
-    }else emit('interrupted',caster,{talent:p.talent,target:p.targetId});
+    }else{emit('interrupted',caster,{talent:p.talent,target:p.targetId});if(p.kind==='combo')for(const q of pending)if(q.comboId===p.comboId)q.cancelled=true;}
     continue;
    }
    if(p.shieldAfter&&caster.alive)shield(caster,p.shieldAfter,4);
