@@ -32,6 +32,19 @@ Data: 2026-10-29. Branch exclusiva: `feature/v5-arena-dos-criadores`. **Não apr
 - Observabilidade acrescentada após a prévia inicial (`v5FrameRate`, `v5DrawCalls`, `v5Triangles`, `v5QualityMode`). Deve ser confirmada por workflow posterior e medição em GPU real.
 - **Aguardando validação estética do usuário**, antes de declarar Fase D encerrada.
 
+## Fase D — segunda iteração (feedback visual do usuário, 29/10/2026)
+Capturas reais do usuário apontaram: cenário simples demais, câmera alta/afastada, 29 nicks sobrepostos na arquibancada e painel de destaque grande demais na tela do celular. Referências enviadas incluíram Coliseu medieval em 3D, arena com degraus e imagens de ARPG gótico com hexágonos, paredes e efeitos luminosos.
+
+**Implementado na branch, sem main:**
+- `arena-three.js`: preset `cinematic()` (câmera mais baixa e próxima) como padrão da arena; `overview()` preservado; ajuste de campo de visão/exposição/fog e limite de nicks sobrepostos de 4/6/9 conforme largura de tela. O nick do jogador focado tem prioridade; mortos continuam representados fisicamente nas arquibancadas.
+- `arena-lab.js`, `arena-lab.html`, `arena-lab.css`: corrige uma posição obrigatória antiga da câmera (128,190) que tornava a arena uma miniatura; botão **Cena cinematográfica** ao lado de **Visão geral** e novo HUD compacto no celular.
+- `arena-citadel.js`: palco `eclipse-citadel-4-gothic-hex`, piso hexagonal instanciado, arco de vitrais pontiagudos em quatro fachadas, rift luminoso no perímetro, alvenaria mais legível e marcações arcanas contrastadas. Preserva as 12 áreas ilustrativas de duelo e os assentos.
+- `qa/v5-coliseum-scale.cjs` e `qa/v5-arena-lab-browser.cjs`: verificam versão do mapa, câmera e orçamento de nomes, sem alterar o resultado de combate.
+- Demonstrador atualizado no Vercel (projeto **isolado** `pit-v5-coliseu-demo`, não é `main`): **https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1**. Deploy alvo `dpl_ARmMRynQTh7XyqHAPZCQdGbeDXpV` confirmado READY, a URL principal respondeu publicamente.
+
+**O que NÃO está concluído:** inspeção humana dos materiais e iluminação; medição real de FPS no celular do usuário; ajustes de IA/justiça 1×1 (Fase E); diretor de câmera automático e câmera individual por aluno (Fase F); merge.
+**Nota sobre QA:** commits intermediários falharam no browser devido ao teste antigo esperar nome de mapa v3; o teste foi atualizado para v4. Verificar o último workflow antes de declarar homologado.
+
 ## Continuidade e evidências
 - Workflow: `.github/workflows/v5-arena-lab-qa.yml`.
 - Stage: `v5/arena-lab.html?phase2=1` (em ambiente da branch que de fato esteja publicado).
