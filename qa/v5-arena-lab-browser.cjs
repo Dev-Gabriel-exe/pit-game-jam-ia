@@ -10,7 +10,9 @@ const {chromium}=require('playwright');
    await page.goto('http://127.0.0.1:8899/v5/arena-lab.html',{waitUntil:'domcontentloaded',timeout:40000});
    assert.equal(await page.locator('.milestone').count(),2);
    assert.equal(await page.locator('[data-mission="5"]').getAttribute('aria-pressed'),'true');
-   try{await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:65000});}
+   const count=width===1440?30:4;
+   if(width===390)await page.locator('[data-roster="4"]').click();
+   try{await page.waitForFunction(n=>window.PIT_V5_ARENA_LAB?.fighterCount===n&&window.PIT_V5_ARENA_LAB?.modelState.loaded===n,count,{timeout:100000});}
    catch(e){
     const debug=await page.evaluate(()=>({stage:document.querySelector('#arenaStage')?.dataset, status:document.querySelector('#arenaStatus')?.textContent, models:document.querySelector('#modelReport')?.textContent, lab:!!window.PIT_V5_ARENA_LAB, canvas:document.querySelectorAll('#arenaStage canvas').length}));
     console.error('MODEL DEBUG '+JSON.stringify({width,debug,errors}));
@@ -18,7 +20,7 @@ const {chromium}=require('playwright');
     throw e;
    }
    assert.equal(await page.locator('#arenaStage canvas').count(),1);
-   assert.equal(await page.locator('[data-fighter]').count(),4);
+   assert.equal(await page.locator('[data-fighter]').count(),count);
    await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,null,{timeout:10000});
    assert.equal(await page.locator('#startBattle').isDisabled(),false);
    await page.locator('#startBattle').click();
@@ -27,16 +29,16 @@ const {chromium}=require('playwright');
    await page.locator('#pauseBattle').click();
    assert.match(await page.locator('#pauseBattle').textContent(),/Continuar/);
    await page.locator('#resetBattle').click();
-   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:90000});
+   await page.waitForFunction(n=>window.PIT_V5_ARENA_LAB?.modelState.loaded===n,count,{timeout:90000});
    await page.locator('[data-mission="10"]').click();
-   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.mission===10&&window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:90000});
+   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.mission===10&&window.PIT_V5_ARENA_LAB?.modelState.loaded===n,count,{timeout:90000});
    assert.match(await page.locator('#arenaTitle').textContent(),/Missão 10/);
    assert.equal(await page.locator('[data-fighter]').count(),4);
    assert.deepEqual(errors,[],'Unexpected JS error: '+errors.join(' | '));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<15,'Horizontal overflow at '+width+'px: '+overflow);
    await page.screenshot({path:'qa/v5-arena-lab-'+width+'.png',fullPage:true});
-   console.log('PASS arena browser '+width+'px: 4 real GLBs, M5/M10, start/pause/reset, no errors');
+   console.log('PASS arena browser '+width+'px: '+count+' real GLBs, M5/M10, start/pause/reset, no errors');
    await page.close();
   }
  }finally{await browser.close()}
