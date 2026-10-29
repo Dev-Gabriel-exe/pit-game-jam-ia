@@ -366,7 +366,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
  function specialFx(item){
-  if(!item||effects.length>90)return;
+  // A 30-player fight often saturates the hit-spark budget. Reserve ability
+  // effects so class specials remain visible even while many hits occur.
+  if(!item||effects.filter(e=>e.isAbility).length>=18)return;
   const klass=item.build.klass;
   const color={warrior:0xf5a45d,mage:0xa88aff,hunter:0x70dda2,guardian:0x83d7ed}[klass]||0xd5a876;
   const x=item.mesh.root.position.x,z=item.mesh.root.position.z;
