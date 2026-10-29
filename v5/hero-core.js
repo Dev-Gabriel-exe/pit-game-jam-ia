@@ -112,7 +112,7 @@ function derived(b){
  // Mage's basic bolt must not multiply Spirit twice. High Spirit builds
  // remain stronger, but sacrifice HP and must time area spells to win.
  const spiritScaling=b.klass==='mage'?.65:(.55+c.magic*.08);
- let atk=c.attack+s('power')*powerScaling+s('spirit')*spiritScaling+(b.klass==='hunter'?s('agility')*.18:0);
+ let atk=c.attack+s('power')*powerScaling+s('spirit')*spiritScaling+(b.klass==='hunter'?s('agility')*.22:0)+(b.klass==='guardian'?s('vitality')*.26:0);
  atk*=1+r('fury')*.12+r('rune')*.12+r('hex')*.10+r('execute')*.07;
  const defense=c.defense+s('vitality')*.6+r('bulwark')*2.5+r('dodge')*1.5+r('bones')*1.3;
  const range=c.range+r('eagle')*.8;
@@ -245,7 +245,11 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    if(f.special<=.55&&f.special>0&&readyForSpecial&&!f.telegraph){
     // Advance notice: observers can see where a dangerous ability comes from.
     // Does not secretly change damage/targeting rules.
-    f.telegraph=true;log('prepare',f,{ability:f.stats.special,target:target.id,x:f.x,z:f.z});
+    f.telegraph=true;
+    // Conjuring an area spell has a visible commitment: a mage cannot
+    // retreat at full speed throughout the 0.55 s warning window.
+    if(f.build.klass==='mage')f.aim=Math.max(f.aim,.55);
+    log('prepare',f,{ability:f.stats.special,target:target.id,x:f.x,z:f.z});
    }
    if(f.special<=0&&readyForSpecial){
     f.telegraph=false;
