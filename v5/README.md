@@ -1,5 +1,7 @@
 # PIT Game Jam IA V5 — A Forja dos Heróis
 
+> **Roadmap de conclusão atualizado:** [ROADMAP-D-A-I.md](./ROADMAP-D-A-I.md). Ordem: Coliseu e arte → mecânica/física/balanceamento → **câmera cinematográfica automática** → QA final → integração com alunos → revisão e merge na `main`. As funcionalidades legadas abaixo são histórico; não indicam conclusão das fases D–I.
+
 ## Estado: branch experimental; não trocar a V3 sem validação
 
 Branch base: `feature/pit-gamejam-v5-arena-rpg`; expansão de personagens: `feature/pit-gamejam-v5-classes-3d-real`. O caderno e as dez missões da V3 continuam funcionando; a V5 adiciona uma experiência opcional, isolada em \`/v5/index.html\`.
