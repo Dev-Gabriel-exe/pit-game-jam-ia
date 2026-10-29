@@ -51,6 +51,7 @@ const modes=[
  {name:'adverse-builds',count:30,scenario:'offmeta',seeds:32},
  {name:'four-player',count:4,scenario:'varied',seeds:48}
 ];
+const violations=[];
 for(const mode of modes){
  for(const mission of [5,10]){
   const wins=Object.fromEntries(CLASSES.map(x=>[x,0])),kills=Object.fromEntries(CLASSES.map(x=>[x,0])),damage=Object.fromEntries(CLASSES.map(x=>[x,0]));
@@ -73,8 +74,9 @@ for(const mode of modes){
   assert(winnerIds.size>=Math.min(3,mode.seeds),'Winners always same ID: '+mode.name+'/'+mission);
   if(mode.count===30){
    // For an 8/8/7/7 class composition, 75%+ dominance is certainly broken.
-   assert(Math.max(...Object.values(wins))<=Math.ceil(mode.seeds*.67),'One class dominates '+mode.name+' M'+mission);
+   if(Math.max(...Object.values(wins))>Math.ceil(mode.seeds*.67))violations.push('One class dominates '+mode.name+' M'+mission+': '+JSON.stringify(wins));
   }
  }
 }
+assert.deepEqual(violations,[],'Balance matrix violations: '+violations.join(' | '));
 console.log('PASS V5 balance matrix across spawn order, attribute builds, legacy talent choices and both milestones');
