@@ -6,8 +6,89 @@ const CARD_SELECTOR=['.tm1-hero-line','.tm1-concept','.tm1-key','.tm2-intro','.t
 function missionNumber(){const match=($('missionNumber')?.textContent||'').match(/MISSÃO\s+(\d+)/i);return match?Number(match[1]):0;}
 const $=id=>document.getElementById(id);
 function eligible(){return document.body.dataset.role==='teacher'&&missionNumber()>=1&&missionNumber()<=10&&!$('workspace')?.hidden;}
+function cleanCopy(node){
+ const copy=node.cloneNode(true);
+ copy.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').forEach(el=>el.remove());
+ return copy.outerHTML;
+}
+function pedagogicalDemoSlides(root,mission){
+ const teacherGuide=window.PIT_TEACHER_GDEVELOP_GUIDE;
+ const firstRun=window.PIT_GDEVELOP_FIRST_RUN;
+ if(mission===1&&root.querySelector('[data-teacher-phase="demo"]')&&teacherGuide?.projectorPanel&&teacherGuide.stageCount===5){
+  const result=[];
+  function add(selector,title){
+   const node=root.querySelector(selector);
+   if(node)result.push({title:title||node.querySelector('h3,h4,strong')?.textContent?.trim()||'Demonstração',html:cleanCopy(node)});
+  }
+  add('.tm-pro-lead','Como funciona a transição de estado');
+  add('.tm-pro-demo-layout','Simulador local: entrada, regra e resposta');
+  root.querySelectorAll('.tm-pro-tech-grid > article').forEach(node=>result.push({title:node.querySelector('h4')?.textContent?.trim()||'Teste da regra',html:cleanCopy(node)}));
+  add('.tm-pro-engine','Da simulação aos eventos do GDevelop');
+  add('.tm-guide-heading','Tutorial de eventos: cinco etapas');
+  for(let i=0;i<teacherGuide.stageCount;i++){
+   const container=document.createElement('div');container.innerHTML=teacherGuide.projectorPanel(i);
+   container.querySelector('.tm-guide-panel-actions')?.remove();
+   const panel=container.querySelector('.tm-guide-panel');
+   if(!panel)continue;
+   const title=panel.querySelector('h4')?.textContent?.trim()||'Etapa '+(i+1);
+   result.push({title,html:'<section class="pit-projector-tutorial-step" data-pit-projector-step="M01:'+i+'">'+panel.outerHTML+'</section>'});
+  }
+  add('.tm-guide-footer','Referências e limites do tutorial');
+  return result.length>=10?result:null;
+ }
+ if(mission===3&&root.querySelector('[data-tm3-phase="demo"]')&&firstRun?.projectorPanel&&firstRun.steps?.length===6){
+  const result=[];
+  for(const [selector,title] of [['.tm3-lead','Do projeto ao primeiro Preview'],['.gd3-heading','Tutorial de GDevelop: seis etapas']]){
+   const node=root.querySelector(selector);if(node)result.push({title,html:cleanCopy(node)});
+  }
+  for(let i=0;i<firstRun.steps.length;i++){
+   const container=document.createElement('div');container.innerHTML=firstRun.projectorPanel(i);
+   container.querySelector('.gd3-nav')?.remove();
+   const panel=container.querySelector('.gd3-panel');if(!panel)continue;
+   result.push({title:firstRun.steps[i].title,html:'<section class="pit-projector-tutorial-step" data-pit-projector-step="M03:'+i+'">'+panel.outerHTML+'</section>'});
+  }
+  const footer=root.querySelector('.gd3-footer');
+  if(footer)result.push({title:'Conferência final do Preview',html:cleanCopy(footer)});
+  return result.length>=8?result:null;
+ }
+ return null;
+}
+function activateProjectorControls(content){
+ const demo=content.querySelector('.tm-pro-demo-layout');
+ if(demo){
+  let gems=0,won=false;
+  const el=id=>demo.querySelector('#'+id);
+  const trace=el('tm1Trace');
+  function update(message,rule){
+   if(el('tm1Gems'))el('tm1Gems').textContent=gems+'/3';
+   if(el('tm1Door'))el('tm1Door').textContent=won?'ABERTA':gems===3?'LIBERADA':'FECHADA';
+   if(el('tm1GameState'))el('tm1GameState').textContent=won?'CONCLUÍDO':gems===3?'PORTA LIVRE':'EXPLORAR';
+   if(el('tm1Bar'))el('tm1Bar').style.width=Math.round(gems/3*100)+'%';
+   if(el('tm1Gate')){el('tm1Gate').classList.toggle('unlocked',gems===3);el('tm1Gate').classList.toggle('won',won)}
+   if(el('tm1Victory'))el('tm1Victory').hidden=!won;
+   if(el('tm1Feedback'))el('tm1Feedback').textContent=message;
+   if(el('tm1Step'))el('tm1Step').textContent=rule==='collect'?'Coleta processada':rule==='win'?'Vitória validada':rule==='lock'?'Acesso negado':'Estado inicial';
+   demo.querySelectorAll('[data-tm-rule]').forEach(node=>node.classList.toggle('tm-pro-rule-active',node.dataset.tmRule===rule));
+   if(trace){const item=document.createElement('li');item.textContent=gems+'/3 · '+(won?'vitória':gems===3?'porta liberada':'porta fechada');trace.appendChild(item);while(trace.children.length>6)trace.removeChild(trace.firstElementChild)}
+  }
+  demo.querySelectorAll('[data-tm1]').forEach(button=>button.addEventListener('click',()=>{
+   if(button.dataset.tm1==='reset'){gems=0;won=false;if(trace)trace.textContent='';update('S = {cristais: 0, fase: EXPLORAR}. Reinício do simulador local.','');return}
+   if(won){update('A partida já foi concluída. Reinicie para jogar novamente.','win');return}
+   if(button.dataset.tm1==='collect'){if(gems<3)gems++;update(gems===3?'Terceiro cristal coletado: a porta está liberada.':'Cristal coletado: contador atualizado.','collect');return}
+   if(gems===3){won=true;update('Condição verdadeira: cristais ≥ 3. A porta abriu.','win')}
+   else update('Condição falsa: faltam '+(3-gems)+' cristais. A porta continua fechada.','lock');
+  }));
+ }
+ content.querySelectorAll('[data-tm-test]').forEach(button=>button.addEventListener('click',()=>{
+  const gems=Number(button.dataset.tmTest),pass=gems===3;
+  const output=content.querySelector('#tm1TestResult');
+  if(output){output.textContent='Simulação local · Entrada: '+gems+'/3 · Esperado: '+(pass?'ABERTA':'FECHADA')+' · Obtido: '+(pass?'ABERTA':'FECHADA')+' · REGRA CONFIRMADA';output.classList.add('tm-pro-test-pass')}
+ }));
+}
 function build(){
  const root=$('mainContent');if(!root)return [];
+ const special=pedagogicalDemoSlides(root,missionNumber());
+ if(special)return special;
  const heading=$('missionTitle')?.textContent||'PIT GAME JAM IA';
  const cards=[...root.querySelectorAll(CARD_SELECTOR)].filter(node=>!node.closest('.pit-private-teacher-notes,[data-private-note],.teacher-private-note')&&!node.matches('.tm1-root,.tm2-root,.tm3-root'));
  const unique=cards.filter(node=>!cards.some(parent=>parent!==node&&parent.contains(node)));
@@ -17,7 +98,7 @@ function build(){
 }
 function render(){
  if(!overlay)return;
- const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';content.classList.add('pit-projector-enter');
+ const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';activateProjectorControls(content);content.classList.add('pit-projector-enter');
  $('pitProjectorCount').textContent=(index+1)+' / '+slides.length;
  $('pitProjectorTitle').textContent=slide.title;
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;
