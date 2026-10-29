@@ -31,8 +31,8 @@ for(const klass of classes){
  assert.throws(()=>I.describe({...initial,schema:'legacy'},E,V),/canônica/);
 }
 assert(signatures.size>=32);
-assert.equal(I.describe(E.exampleBuild('mage','a',5,3),E,V).primaryPath,'A');
-assert.equal(I.describe(E.exampleBuild('hunter','a',5,3),E,V).primaryPath,'S');
-assert.equal(I.describe(E.exampleBuild('guardian','a',5,3),E,V).primaryPath,'J');
-assert.equal(I.describe(E.exampleBuild('warrior','a',5,3),E,V).primaryPath,'T');
+assert.equal(I.describe(E.exampleBuild('mage','a',5,7),E,V).primaryPath,'A');
+assert.equal(I.describe(E.exampleBuild('hunter','a',5,7),E,V).primaryPath,'S');
+assert.equal(I.describe(E.exampleBuild('guardian','a',5,7),E,V).primaryPath,'J');
+assert.equal(I.describe(E.exampleBuild('warrior','a',5,7),E,V).primaryPath,'T');
 console.log('PASS C.3: build-specific canonical visual profiles, all 4 classes x 11 builds, 3 distinct talent paths, palette, crests, deterministic identity & invalid-input guards');
