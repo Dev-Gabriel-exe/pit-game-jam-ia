@@ -38,14 +38,26 @@ function roster(mission,count=30){
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 function updateScoreboard(){
  const sim=state.stage?.simulation,combatants=sim?.fighters||[];
- if(!combatants.length){$('fighters').textContent='Inicializando combatentes...';return;}
- $('fighters').innerHTML=combatants.map(f=>{
+ const panel=$('fighters');
+ if(!combatants.length){panel.textContent='Inicializando combatentes...';return;}
+ const signature=combatants.map(f=>f.id).join('|');
+ if(panel.dataset.rosterSignature!==signature){
+  // Rebuild ONLY when roster changes; otherwise focus buttons are detached
+  // every 450ms and cannot be tapped reliably on mobile or in Playwright.
+  panel.innerHTML=combatants.map(f=>'<div role="listitem" class="fighter" data-id="'+esc(f.id)+'" data-fighter="'+esc(f.build.klass)+'">'+
+   '<div class="name"><strong>'+glyph[f.build.klass]+' '+esc(f.name)+'</strong><span data-hp></span></div>'+
+   '<div class="bar"><span data-health style="width:100%"></span></div>'+
+   '<div class="small"><span data-damage></span><button type="button" data-focus="'+esc(f.id)+'" aria-label="Seguir '+esc(f.name)+'">◉ Seguir</button></div></div>').join('');
+  panel.dataset.rosterSignature=signature;
+ }
+ for(let i=0;i<combatants.length;i++){
+  const f=combatants[i],item=panel.children[i];if(!item)continue;
   const val=Math.max(0,f.hp),max=f.stats.hp;
-  return '<div role="listitem" class="fighter '+(f.alive?'':'defeated')+'" data-fighter="'+esc(f.build.klass)+'">'+
-   '<div class="name"><strong>'+glyph[f.build.klass]+' '+esc(f.name)+'</strong><span>'+Math.ceil(val)+' / '+max+' HP</span></div>'+
-   '<div class="bar"><span style="width:'+Math.max(0,Math.min(100,val/max*100)).toFixed(1)+'%"></span></div>'+
-   '<div class="small"><span>'+esc(CORE.CLASS[f.build.klass].label)+' · '+Math.round(f.damage||0)+' dano</span><button type="button" data-focus="'+esc(f.id)+'" aria-label="Seguir '+esc(f.name)+'">◉ Seguir</button></div></div>';
- }).join('');
+  item.classList.toggle('defeated',!f.alive);
+  item.querySelector('[data-hp]').textContent=Math.ceil(val)+' / '+max+' HP';
+  item.querySelector('[data-health]').style.width=Math.max(0,Math.min(100,val/max*100)).toFixed(1)+'%';
+  item.querySelector('[data-damage]').textContent=CORE.CLASS[f.build.klass].label+' · '+Math.round(f.damage||0)+' dano';
+ }
 }
 function appendLog(content,klass='hit'){
  const log=$('battleLog');if(log.querySelector('p'))log.replaceChildren();
