@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T05:20:15.140Z",
+  "last_completed_at": "2026-10-29T05:20:23.338Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -2403,7 +2403,7 @@
   "v4_checkpoint": {
     "task": "V4-CROSS-M06-HYDRATE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T05:20:15.140Z",
+    "updated_at": "2026-10-29T05:20:23.338Z",
     "code_commits": [
       "8ec3353b1c6c487114039daf597eecbf528ec784",
       "135fd4da4ce5c6fb965c8d251fbac7c62acdf7bd",
@@ -2452,14 +2452,22 @@
       },
       {
         "name": "Latest M06 audit QA",
-        "result": "PENDING",
-        "sha": "be4c51cbce190ab5bfc7f316a738241a612152d8"
+        "result": "SUCCESS",
+        "sha": "be4c51cbce190ab5bfc7f316a738241a612152d8",
+        "run_id": 40822781236,
+        "details": "Full static workflow passed with M06, M07, M08, M09 and M10 regression tests"
       },
       {
         "name": "M07/M08/M10 Browser QA",
         "run_id": 40822639529,
         "result": "IN_PROGRESS",
         "sha": "7772444e848e42345ec9dd6263645e7290b4b5b4"
+      },
+      {
+        "name": "Latest M06 Browser QA",
+        "run_id": 40822781309,
+        "result": "IN_PROGRESS",
+        "sha": "be4c51cbce190ab5bfc7f316a738241a612152d8"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
