@@ -28,7 +28,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    if(!(await page.locator('#pitProjector').count())){rows.push({mission,phase,...before,error:'NO_SLIDES'});continue}
    const slideCount=await page.locator('#pitProjectorCount').innerText();
    const n=Number(slideCount.split('/')[1]?.trim())||1;
-   const slides=[],guideSteps=[],m04Sections=[],m05Sections=[],m05Verifications=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[],m09PracticeSteps=[];
+   const slides=[],guideSteps=[],m04Sections=[],m04Verifications=[],m05Sections=[],m05Verifications=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[],m09PracticeSteps=[];
    let demoInteraction=null,m08Interaction=null;
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
@@ -109,9 +109,20 @@ const {chromium}=require('playwright'),fs=require('node:fs');
      if(mission===4&&step){
       m04Sections.push(await page.locator('#pitProjectorContent').evaluate(el=>({
        where:el.querySelectorAll('.g4-instruction').length>=2,
+       action:!!el.querySelector('.g4-step-guide'),
+       image:!!el.querySelector('.g4-step-picture img'),
+       source:!!el.querySelector('.g4-picture-source'),
+       privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+      })));
+     }
+     if(mission===4&&phase==='demo'){
+      const verify=page.locator('#pitProjectorContent [data-pit-projector-verify]');
+      if(await verify.count())m04Verifications.push(await verify.evaluate(el=>({
+       id:el.dataset.pitProjectorVerify,
        result:!!el.querySelector('.g4-result'),
        fix:!!el.querySelector('.pit-projector-diagnostic'),
-       source:!!el.querySelector('.g4-source-link'),
+       source:!!el.querySelector('.g4-source-link[href^="https://wiki.gdevelop.io/"]'),
+       preview:el.textContent.includes('Preview'),
        privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
       })));
      }
@@ -159,7 +170,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m04Verifications,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title}));
   }
@@ -173,18 +184,23 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   const selected=await page.locator('#g4Tutorial [data-g4-route="'+routeIndex+'"]').getAttribute('aria-selected');
   await page.locator('#pitProjectorLaunch').click();
   const total=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]?.trim())||0;
-  const steps=[];
+  const steps=[],verifications=[];
   for(let i=0;i<total;i++){
    const el=page.locator('#pitProjectorContent [data-pit-projector-step]');
    if(await el.count()){
     const id=await el.getAttribute('data-pit-projector-step');
-    const complete=await el.evaluate(node=>node.querySelectorAll('.g4-instruction').length===2&&!!node.querySelector('.g4-result')&&!!node.querySelector('.pit-projector-diagnostic')&&!node.querySelector('.pit-private-teacher-notes'));
+    const complete=await el.evaluate(node=>node.querySelectorAll('.g4-instruction').length===2&&!!node.querySelector('.g4-step-picture img')&&!node.querySelector('.pit-private-teacher-notes'));
     steps.push({id,complete});
    }
+   const verify=page.locator('#pitProjectorContent [data-pit-projector-verify]');
+   if(await verify.count())verifications.push(await verify.evaluate(node=>({
+    id:node.dataset.pitProjectorVerify,
+    complete:!!node.querySelector('.g4-result')&&!!node.querySelector('.pit-projector-diagnostic')&&!!node.querySelector('.g4-source-link')&&node.textContent.includes('Preview')&&!node.querySelector('.pit-private-teacher-notes')
+   })));
    if(i<total-1)await page.locator('#pitProjectorNext').click();
   }
   await page.locator('#pitProjectorClose').click();
-  m04RouteChecks.push({routeIndex,selected,total,steps,pass:selected==='true'&&steps.length===4&&steps.every((s,i)=>s.id==='M04:'+i&&s.complete)});
+  m04RouteChecks.push({routeIndex,selected,total,steps,verifications,pass:selected==='true'&&steps.length===4&&verifications.length===4&&steps.every((x,i)=>x.id==='M04:'+i&&x.complete)&&verifications.every((x,i)=>x.id==='M04:'+i&&x.complete)});
  }
 
  const m05RouteChecks=[];
@@ -297,8 +313,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M04 review: introduction, four criteria, decision and evidence are separate slides without private notes',pass:m04Review?.m04ReviewSteps?.length===7&&JSON.stringify(m04Review.m04ReviewSteps.map(x=>x.id))===JSON.stringify(['M04:intro','M04:rubric-1','M04:rubric-2','M04:rubric-3','M04:rubric-4','M04:decision','M04:record'])&&m04Review.m04ReviewSteps.every(x=>x.privateNotes===0)&&(m04Review.retainedRatio||0)>.5},
   {name:'M04 review: public criteria and assessment limits remain projected',pass:!!m04Review?.m04ReviewSteps?.find(x=>x.id==='M04:intro'&&x.text.includes('evidência'))&&['ENTRADA','LIMITE','REPRODUTIBILIDADE','PERSISTÊNCIA'].every((label,i)=>m04Review?.m04ReviewSteps?.[i+1]?.text.includes(label))&&!!m04Review?.m04ReviewSteps?.find(x=>x.id==='M04:decision'&&x.text.includes('APROVAR')&&x.text.includes('SOLICITAR REVISÃO'))&&!!m04Review?.m04ReviewSteps?.find(x=>x.id==='M04:record'&&x.text.includes('painel de acompanhamento')&&x.text.includes('declaração do aluno'))},
   {name:'M04: all four steps of selected GDevelop route projected separately',pass:JSON.stringify(m04?.guideSteps)===JSON.stringify(expected04)},
-  {name:'M04: each step includes action, result, recovery, and source without private notes',pass:m04?.m04Sections?.length===4&&m04.m04Sections.every(x=>x.where&&x.result&&x.fix&&x.source&&x.privateNotes===0)},
-  {name:'M04: platform, puzzle, and 3D routes each project all four complete steps',pass:m04RouteChecks.length===3&&m04RouteChecks.every(x=>x.pass)},
+  {name:'M04: four action and four verification screens preserve how/result/recovery/source without private notes',pass:m04?.m04Sections?.length===4&&m04?.m04Verifications?.length===4&&m04.m04Sections.every(x=>x.where&&x.action&&x.image&&x.source&&x.privateNotes===0)&&m04.m04Verifications.every((x,i)=>x.id==='M04:'+i&&x.result&&x.fix&&x.source&&x.preview&&x.privateNotes===0)},
+  {name:'M04: platform, puzzle, and 3D routes each project four actions and four verifications',pass:m04RouteChecks.length===3&&m04RouteChecks.every(x=>x.pass)},
   {name:'M05 review: intro, four rubric criteria, decisions and evidence caveat on separate slides',pass:m05Review?.m05ReviewSteps?.length===7&&JSON.stringify(m05Review.m05ReviewSteps.map(x=>x.id))===JSON.stringify(['M05:intro','M05:rubric-1','M05:rubric-2','M05:rubric-3','M05:rubric-4','M05:decision','M05:record'])&&m05Review.m05ReviewSteps.every(x=>x.privateNotes===0)&&(m05Review.retainedRatio||0)>.5},
   {name:'M05 review: real Preview checks, approval/revision and no automatic GDevelop validation',pass:!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:intro'&&x.text.includes('Preview'))&&['EVENTO','AÇÃO E ESTADO','ACEITE 3×','CONTINUIDADE'].every((label,i)=>m05Review?.m05ReviewSteps?.[i+1]?.text.includes(label))&&!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:decision'&&x.text.includes('APROVAR')&&x.text.includes('SOLICITAR REVISÃO'))&&!!m05Review?.m05ReviewSteps?.find(x=>x.id==='M05:record'&&x.text.includes('não valida automaticamente')&&x.text.includes('evidência permanece autodeclaratória'))},
   {name:'M05: five GDevelop event steps projected separately',pass:JSON.stringify(m05?.guideSteps)===JSON.stringify(expected05)},
