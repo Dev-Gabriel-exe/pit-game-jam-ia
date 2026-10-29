@@ -185,7 +185,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
   log('hit',f,{target:o.id,amount:+amount.toFixed(1),kind,x:o.x,z:o.z});
   // Limited frontline sustain to counter constant ranged focus in FFA.
   // Intrinsic provisional rule, NOT one of the 120 designed talent effects.
-  if(f.alive&&f.build.klass==='warrior'&&kind==='melee')f.hp=Math.min(f.stats.hp,f.hp+Math.min(4.4,amount*.15));
+  if(f.alive&&f.build.klass==='warrior'&&kind==='melee')f.hp=Math.min(f.stats.hp,f.hp+Math.min(3.0,amount*.10));
   if(f.alive&&(f.build.talents.leech||f.build.talents.vamp))f.hp=Math.min(f.stats.hp,f.hp+amount*(f.build.talents.leech||f.build.talents.vamp)*.028);
   if(f.alive&&o.build.talents.thorn)f.hp=Math.max(0,f.hp-amount*o.build.talents.thorn*.075);
   if(o.hp<=0){o.alive=false;o.eliminatedAt=time;f.kills++;o.animation='defeated';log('knockout',f,{target:o.id,by:f.name})}
@@ -283,7 +283,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    if(!ranged&&!route.blocked&&d>5.2&&f.rushCooldown<=0){
     f.rush=1.35;
     f.rushCooldown=5.5+rnd()*1.2;
-    if(f.build.klass==='warrior')f.shield=Math.min(f.stats.hp*.24,f.shield+20);
+    if(f.build.klass==='warrior')f.shield=Math.min(f.stats.hp*.24,f.shield+12);
     // Guardian's shield belongs to Fortress, not every mobility dash.
     log('dash',f,{target:target.id,x:f.x,z:f.z});
    }
