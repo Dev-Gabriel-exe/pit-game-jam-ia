@@ -276,7 +276,7 @@ assert.equal(m09Restore.load('m09-original').checks.length,3,'M09 existing local
 // or approval status must never synthesize test execution on a new device.
 for(const [number,source,globalName,warningClass] of [
  [6,m06Student,'PIT_STUDENT_MISSION_SIX','m6s-alert'],
- [7,m07Student,'PIT_STUDENT_MISSION_SEVEN','m7s-warning']
+ [7,m07Student,'PIT_STUDENT_MISSION_SEVEN','m7s-warning'],
  [8,m08Student,'PIT_STUDENT_MISSION_EIGHT','m8s-warning'],
  [10,m10Student,'PIT_STUDENT_MISSION_TEN','m10s-warning']
 ]){
