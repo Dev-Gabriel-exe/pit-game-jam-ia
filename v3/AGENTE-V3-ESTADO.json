@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T05:19:01.616Z",
+  "last_completed_at": "2026-10-29T05:20:15.140Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-AUDIT: confirm Browser QA for M07/M08/M10 restored evidence; continue evidence truthfulness audit across M01-M06 and test projector safety",
+  "priority": "V4-CROSS-AUDIT: confirm latest static/browser QA; fix M03-M05 parseEvidence fabricating manual checks, preserve local drafts, and audit locked review",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-M07-M08-M10-HYDRATE",
+  "last_task": "V4-CROSS-M06-HYDRATE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2392,46 +2392,68 @@
       "task": "V4-CROSS-M07-M08-M10-HYDRATE",
       "commit": "7772444e848e42345ec9dd6263645e7290b4b5b4",
       "summary": "Cross-audit found M07/M08/M10 hydrate automatically checked three manual Preview test declarations for submitted/approved evidence. Restores now keep written evidence but do not fabricate checkmarks; locked reviews suppress misleading validation warnings; local checkmarks preserved. Added Node VM regression in qa/v3-audit-alignment.cjs and updated legacy M07 test. Intermediate static QA failed due old assertion, final static QA 40822639640 SUCCESS, Browser QA 40822639529 IN_PROGRESS. Prior M09 static/browser 40816390231/40816390193 SUCCESS. No manual GDevelop/HDMI/physical mobile/peer test; original 54/59 unchanged."
+    },
+    {
+      "at": "2026-10-29T05:20:15.140Z",
+      "task": "V4-CROSS-M06-HYDRATE",
+      "commit": "be4c51cbce190ab5bfc7f316a738241a612152d8",
+      "summary": "Extended honest evidence hydration correction to M06; remote submitted/approved asset evidence no longer auto-checks three manual Preview declarations. Locked review no false warning, local draft remains intact. Updated M06 legacy test and cross-mission QA. M06 code static 40822714843 SUCCESS; updated test static 40822736124 SUCCESS. New cross-audit test at 320e7677 failed due missing comma, corrected be4c51c; final CI pending. Read M03-M05 parseEvidence and found same checkbox fabrication, prioritized next. Original 54/59 unchanged; no human GDevelop/HDMI/mobile/peer tests."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-M07-M08-M10-HYDRATE",
+    "task": "V4-CROSS-M06-HYDRATE",
     "status": "in_progress",
-    "updated_at": "2026-10-29T05:19:01.616Z",
+    "updated_at": "2026-10-29T05:20:15.140Z",
     "code_commits": [
-      "f81f68b6c9aea5336752777b2c016548c4807235",
-      "d6b18246dfd6d3ea3ff8725cc4d9cb651896aa13",
-      "822d88f0f8b99c54baf7c149e39be8211648c9a4",
-      "198da5c4acb5764ec9d39fb24f1308aed69b212b",
-      "7772444e848e42345ec9dd6263645e7290b4b5b4"
+      "8ec3353b1c6c487114039daf597eecbf528ec784",
+      "135fd4da4ce5c6fb965c8d251fbac7c62acdf7bd",
+      "02b42faf42dabb68fb1a8642ce3bc0870b06127b",
+      "320e76776535b07c37078860e1154174795f8e9a",
+      "be4c51cbce190ab5bfc7f316a738241a612152d8"
     ],
-    "documentation_commit": "f30a08617ea73a2fd3e8d0ab7e97f8359d459363",
+    "documentation_commit": "85f4ee4bf9d044bad8a5fe492a3c1f9c17954263",
     "tests": [
       {
-        "name": "Prior M09 static QA",
+        "name": "M09 prior static QA",
         "run_id": 40816390231,
         "result": "SUCCESS",
         "sha": "8e8988e378fd948b3e871c67da746a140df72b95"
       },
       {
-        "name": "Prior M09 Browser QA",
+        "name": "M09 prior Browser QA",
         "run_id": 40816390193,
         "result": "SUCCESS",
         "sha": "8e8988e378fd948b3e871c67da746a140df72b95"
       },
       {
-        "name": "Intermediate static QA on M07/M08/M10",
-        "run_id": 40822612411,
-        "result": "FAILURE",
-        "sha": "198da5c4acb5764ec9d39fb24f1308aed69b212b",
-        "details": "Legacy M07 test incorrectly expected three automatic restored checkmarks; corrected in 7772444e"
-      },
-      {
-        "name": "M07/M08/M10 final static QA",
+        "name": "M07/M08/M10 regression static QA",
         "run_id": 40822639640,
         "result": "SUCCESS",
-        "sha": "7772444e848e42345ec9dd6263645e7290b4b5b4",
-        "details": "Node QA includes restored checkbox regression in qa/v3-audit-alignment.cjs and corrected M07 legacy test"
+        "sha": "7772444e848e42345ec9dd6263645e7290b4b5b4"
+      },
+      {
+        "name": "M06 code static QA",
+        "run_id": 40822714843,
+        "result": "SUCCESS",
+        "sha": "8ec3353b1c6c487114039daf597eecbf528ec784"
+      },
+      {
+        "name": "M06 updated legacy test static QA",
+        "run_id": 40822736124,
+        "result": "SUCCESS",
+        "sha": "02b42faf42dabb68fb1a8642ce3bc0870b06127b"
+      },
+      {
+        "name": "Intermediate M06 audit QA",
+        "run_id": 40822740819,
+        "result": "FAILURE",
+        "sha": "320e76776535b07c37078860e1154174795f8e9a",
+        "details": "Regression fixture had missing comma; corrected at be4c51c"
+      },
+      {
+        "name": "Latest M06 audit QA",
+        "result": "PENDING",
+        "sha": "be4c51cbce190ab5bfc7f316a738241a612152d8"
       },
       {
         "name": "M07/M08/M10 Browser QA",
@@ -2444,7 +2466,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm Browser QA at 7772444e or newer; audit M01-M06 restored evidence and remaining projected teacher instructions",
-    "blocker": "No code blocker; real GDevelop GUI, HDMI, physical mobile, peer playtest and real classroom remain NOT_RUN"
+    "next_task": "Confirm static/browser CI at be4c51c or newer; correct M03-M05 parseEvidence auto-checked tests with local draft preservation and regression QA",
+    "blocker": "Manual GDevelop GUI, HDMI, physical mobile, peer playtest and classroom data are not available/authorized; remain NOT_RUN"
   }
 }
