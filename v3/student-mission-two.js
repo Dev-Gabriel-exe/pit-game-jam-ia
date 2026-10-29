@@ -29,7 +29,9 @@ function parseEvidence(raw){
 function hydrate(session,raw,status){
  const obj=parseEvidence(raw);if(!obj)return;
  if(Object.values(load(session)).some(Boolean)&&!['approved','submitted'].includes(status))return;
- if(obj.scene&&obj.mechanic)save(session,obj);
+ // Uma entrega remota parcial nao pode apagar um rascunho local valido,
+  // inclusive quando o status ja estiver submitted/approved.
+  if(FIELDS.every(f=>clean(obj[f.id]).length>=f.min&&obj[f.id].length<=f.max)&&parts(obj.elements).length===3)save(session,obj);
 }
 function validate(session){
  const d=load(session);
