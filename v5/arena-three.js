@@ -231,7 +231,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    });
    labels.delete(x.id);
   }
-  individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();
+  individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();followId=null;
   container.dataset.v5Spectators='0';
  }
  function animateModel(item,motion){
@@ -375,7 +375,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  }
  function focusFighter(id){
   const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
-  followId=String(id);camera.position.set(f.x+9,11,f.z+14);controls.target.set(f.x,1.4,f.z);controls.update();return true;
+  followId=String(id);const watching=occupiedSeats.get(followId),x=watching?.x??f.x,y=watching?.y??1.4,z=watching?.z??f.z;
+  camera.position.set(x+10,y+13,z+19);controls.target.set(x,y+1.4,z);controls.update();return true;
  }
  function resize(){
   if(!live)return;
@@ -461,8 +462,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    e.mesh.scale.setScalar(Math.max(.01,e.life));
    if(e.life<=0){root.remove(e.mesh);e.mesh.geometry.dispose();e.mesh.material.dispose();effects.splice(i,1)}
   }
-  if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId&&x.alive);if(f){
-    const target=new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
+  if(followId&&simulation){const f=simulation.fighters.find(x=>x.id===followId);if(f){
+    const watching=occupiedSeats.get(followId);
+    const target=watching?new THREE.Vector3(watching.x,watching.y+1.4,watching.z):new THREE.Vector3(f.x,1.4,f.z);const delta=target.sub(controls.target).multiplyScalar(Math.min(1,dt*3));
     controls.target.add(delta);camera.position.add(delta);
    }}
   controls.update();
