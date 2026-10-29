@@ -109,7 +109,7 @@ function initRound(){
  state.roster=roster(mission);
  try{state.stage.fighters(state.roster,{seed:mission===5?10929:20929,limit:75});}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
- $('stageLoading').hidden=true;
+ if($('stageLoading'))$('stageLoading').hidden=true;
  updateScoreboard();$models.textContent=prefix+' Carregando modelos CC0 reais...';
  reportModels();
 }
@@ -154,7 +154,7 @@ try{
  state.interval=setInterval(()=>{if(!document.hidden){updateScoreboard();reportModels()}},450);
 }catch(e){
  state.busy=true;message('WEBGL INDISPONÍVEL');
- $('stageLoading').textContent='O Three.js não pôde iniciar: '+String(e?.message||e);
+ if($('stageLoading'))$('stageLoading').textContent='O Three.js não pôde iniciar: '+String(e?.message||e);
  $models.textContent='O navegador não conseguiu iniciar o protótipo. Nenhum dado de aluno foi alterado.';
 }
 window.PIT_V5_ARENA_LAB=Object.freeze({
