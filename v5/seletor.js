@@ -3,6 +3,7 @@
  * Isolated character audition. No authentication, grade, XP or database writes.
  */
 import * as THREE from 'three';
+import {selectForgeClass} from './forja-builder.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
@@ -191,6 +192,7 @@ async function selectClass(id){
  const entry=CATALOG.find(x=>x.id===id),asset=SOURCES[id];
  if(!entry||!asset)return;
  const request=++loadSequence;currentId=id;
+ selectForgeClass(id);
  document.querySelectorAll('.class-button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.class===id)));
  showDetails(entry,asset);
  clearActor();

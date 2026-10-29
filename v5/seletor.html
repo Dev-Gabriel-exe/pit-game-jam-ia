@@ -13,6 +13,8 @@
  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
  <script src="./character-assets.js"></script>
  <script src="./fase1-catalog.js"></script>
+ <script src="./phase2-combat.js"></script>
+ <script src="./forja-core.js"></script>
  <script src="./seletor.js" type="module"></script>
 </head>
 <body>
@@ -27,7 +29,7 @@
    <h1>Todo criador merece <em>uma lenda.</em></h1>
    <p>Quatro silhuetas, quatro estilos de combate. Inspecione o modelo original, gire a câmera e reproduza apenas as animações realmente disponíveis no GLB.</p>
    <span class="pilot-note">PROTÓTIPO ISOLADO · SEM CADASTRO · SEM MUDANÇAS NO XP OU NAS MISSÕES</span>
-   <p class="arena-access"><a href="./arena-lab.html">⚔ Entrar no Coliseu · testar a arena 3D</a><small>Prévia de combate com motor legado · sem alterar dados dos alunos</small></p>
+   <p class="arena-access"><a href="#forgeWorkshop">✦ Criar minha build · 120 talentos</a> <a href="./arena-lab.html">⚔ Entrar no Coliseu · testar a arena 3D</a><small>Prévia de combate com motor legado · sem alterar dados dos alunos</small></p>
   </div>
   <div class="workspace">
    <aside class="classes panel" aria-labelledby="class-title">
@@ -66,6 +68,38 @@
      <p class="note">Arraste para orbitar · use a roda do mouse ou gesto de pinça para zoom. Os controles só são habilitados quando um clipe real é encontrado.</p>
    </aside>
   </div>
+  <section class="forge" id="forgeWorkshop" aria-labelledby="forgeHeading">
+   <header class="forge-heading">
+    <div><span class="eyebrow">04 · FORJA DOS DESTINOS · CONSTRUÇÃO LIVRE</span>
+     <h2 id="forgeHeading">Uma classe. <em>Inúmeras combinações.</em></h2>
+     <p>30 talentos em cada classe, distribuídos por três caminhos. Não há restrição de mistura entre caminhos. Sua build é diferente mesmo que o colega use a mesma classe.</p></div>
+    <div class="forge-count"><strong>120</strong><span>TALENTOS PLANEJADOS</span></div>
+   </header>
+   <div class="forge-alert"><strong>RASCUNHO EXPERIMENTAL</strong> · As missões aqui são apenas simuladas, sem aprovação real, XP, nota, banco de dados ou bloqueio definitivo. Dos 120 talentos, 40 têm efeitos executáveis na arena atual e 80 estão em planejamento.</div>
+   <div class="forge-dashboard">
+    <div><span class="eyebrow">CLASSE ATUAL</span><h3 id="forgeTitle">Abrindo os grimórios…</h3><p id="forgeSubtitle">Três caminhos independentes</p></div>
+    <div class="forge-mission"><span class="eyebrow">MISSÃO SIMULADA</span><strong id="forgeMissionNumber">05</strong><small> / 10</small>
+     <input id="forgeMissionRange" type="range" min="1" max="10" value="5" step="1" aria-label="Simular número de missões aprovadas">
+     <div class="forge-pills"><button type="button" id="forgeM5" aria-pressed="true">M5 · Teste</button><button type="button" id="forgeM10" aria-pressed="false">M10 · Final*</button></div>
+     <small>*A confirmação real da final será feita no servidor.</small>
+    </div>
+    <div class="forge-metrics"><div><strong id="forgePoints">0 / 10</strong><span>PONTOS DE ATRIBUTOS</span></div><div><strong id="forgeChosen">0 / 5</strong><span>TALENTOS ESCOLHIDOS</span></div></div>
+   </div>
+   <div class="forge-layout">
+    <aside class="forge-sidebar">
+     <section class="forge-panel"><span class="eyebrow">01 · PONTOS</span><h3>Cinco atributos</h3><p>+2 pontos por missão e limite de 12 pontos investidos em cada atributo.</p><div id="forgeAttributeList" class="forge-attrs"></div></section>
+     <section class="forge-panel"><span class="eyebrow">02 · COMPOSIÇÃO</span><h3>Sua coleção de talentos</h3><p id="forgeRemaining">5 escolhas disponíveis</p><div id="forgeSelectedSlots" class="forge-slots"></div></section>
+     <section class="forge-panel forge-actions"><span class="eyebrow">03 · PRÉVIA</span><button id="forgeTryM5" class="forge-try" type="button" disabled>⚔ Testar minha build M5</button><small id="forgeTrialHint">Selecione cinco talentos executáveis.</small><button id="forgeExport" type="button" disabled>↓ Exportar rascunho JSON</button><button id="forgeReset" type="button">↻ Recomeçar escolhas</button><p id="forgeFeedback" role="status" aria-live="polite">Carregando catálogo…</p></section>
+    </aside>
+    <section class="forge-library">
+     <span class="eyebrow">04 · OS 30 TALENTOS DESTA CLASSE</span><h3>Explore os três caminhos</h3>
+     <p>Todos os caminhos podem ser misturados livremente. Os planejados podem entrar no seu rascunho, mas não são liberados para combate até sua implementação.</p>
+     <div id="forgeTreeFilters" class="forge-filters" role="group" aria-label="Filtrar por caminho"></div>
+     <div class="forge-legend"><span>● <b class="forge-implemented">Motor ativo</b></span><span>◇ <b class="forge-planned">Planejado</b></span></div>
+     <div id="forgeTalentGrid" class="forge-grid"></div>
+    </section>
+   </div>
+  </section>
  </main>
  <footer><span>PIT GAME JAM IA · EXPERIMENTO V5 · FOUR HEROES LAB</span><span>3D: Three.js · modelos originais CC0</span></footer>
 </body>

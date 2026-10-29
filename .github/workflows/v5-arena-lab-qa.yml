@@ -8,6 +8,8 @@ on:
       - 'v5/arena-citadel.js'
       - 'v5/hero-core.js'
       - 'v5/phase2-combat.js'
+      - 'v5/forja-core.js'
+      - 'qa/v5-forge*'
       - 'qa/v5-phase2-combat.cjs'
       - 'qa/v5-phase2-expansion.cjs'
       - 'qa/v5-phase2-browser.cjs'

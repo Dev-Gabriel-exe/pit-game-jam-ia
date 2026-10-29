@@ -14,15 +14,28 @@ const glyph={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
 const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
-const state={mission:5,count:30,phase2:new URLSearchParams(location.search).get('phase2')==='1',phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
+const params=new URLSearchParams(location.search);
+const importedBuild=(()=>{
+ try{
+  const raw=params.get('draft');
+  if(!raw||raw.length>1800||!PHASE2)return null;
+  const input=JSON.parse(raw);
+  if(input?.missions!==5||!expected.includes(input?.klass)||!Array.isArray(input.talents)||input.talents.length!==5)return null;
+  return PHASE2.canonical({...input,name:'Minha build de teste'},5);
+ }catch{return null}
+})();
+const state={mission:5,count:importedBuild?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
  if(state.phase2){
   if(mission!==5||!PHASE2)throw Error('Motor B.2 aceita apenas missão 5');
   return Array.from({length:count},(_,i)=>{
-   const klass=expected[i%4],label=count===4?names[klass]:(names[klass].split(' ')[0]+' '+String(i+1).padStart(2,'0'));
-   return {id:'phase2-'+i+'-'+klass,name:label,build:PHASE2.exampleBuild(klass,label,5,(Math.floor(i/4)+state.phase2Variant)%3),approvedMissions:5};
+   const mine=i===0&&state.customBuild;
+   const klass=mine?state.customBuild.klass:expected[i%4];
+   const label=mine?'Minha build de teste':count===4?names[klass]:(names[klass].split(' ')[0]+' '+String(i+1).padStart(2,'0'));
+   const build=mine?state.customBuild:PHASE2.exampleBuild(klass,label,5,(Math.floor(i/4)+state.phase2Variant)%3);
+   return {id:mine?'phase2-my-forged-build':'phase2-'+i+'-'+klass,name:label,build,approvedMissions:5};
   });
  }
  // The first M5/M10 lab deliberately uses 10/20 points ONLY,
@@ -215,7 +228,7 @@ function initRound(){
  toggle.setAttribute('aria-pressed',String(trial));
  toggle.innerHTML=trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.2</small>':'<strong>✦ Experimentar 40 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
  $('engineModeInfo').textContent=trial?
-  'MOTOR B.2 · 40 talentos executáveis, dez opções por classe; 5 talentos escolhidos e 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.':
+  (state.customBuild?'SUA BUILD EXPERIMENTAL DA FORJA · cinco talentos e até dez pontos na missão 5. O confronto NÃO verifica aprovações, notas ou entrada oficial no torneio.':'MOTOR B.2 · 40 talentos executáveis, dez opções por classe; 5 talentos escolhidos e 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
   'Motor legado · os 120 talentos finais ainda não foram integrados; modo experimental B.1 disponível.';
  state.round++;
  const random=new Uint32Array(1);
@@ -314,6 +327,7 @@ window.addEventListener('pagehide',()=>{clearInterval(state.interval);state.stag
 try{
  state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:4.4,onEvent});
  const actorFill=new THREE.DirectionalLight(0xffd5b9,2.5);actorFill.position.set(4,13,14);state.stage.scene.add(actorFill);
+ document.querySelectorAll('.roster-mode').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.roster)===state.count)));
  initRound();
  state.interval=setInterval(()=>{if(!document.hidden){
   updateScoreboard();reportModels();
@@ -336,6 +350,7 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get combatEngine(){return $('arenaStage').dataset.v5CombatEngine||'uninitialized'},
  get talentEvents(){return state.stage?.simulation?.events?.filter(e=>e.type==='talent').length||0},
  get selectedTalents(){return state.roster.map(x=>({klass:x.build.klass,ids:x.build.talents||[]}))},
+ get customBuildLoaded(){return !!state.customBuild},
  get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'},
  get seed(){return state.seed},
  get round(){return state.round}
