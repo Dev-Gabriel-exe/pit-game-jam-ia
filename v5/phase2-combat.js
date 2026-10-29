@@ -1,4 +1,4 @@
-/* V5 Phase B.4 — executable M5 sandbox, 80 distinct talents.
+/* V5 Phase B.5 — executable M5 sandbox, 100 distinct talents.
  * Isolated from legacy V5 and student/server state. No XP or grading writes.
  * UMD: Node test runner and same browser GLB rendering pipeline.
  */
@@ -13,10 +13,10 @@ const CLASSES={
  guardian:{name:'Guardião',hp:140,atk:13.1,def:9,speed:3.9,range:2.6,palette:'azure'}
 };
 const TALENTS={
- warrior:[['B01','Golpe do Carrasco','ativo','FOR','DES',8],['B02','Sangue Quente','passivo','FOR','VIT',10],['B03','Fenda Sísmica','ativo','FOR','DEF',14],['B04','Ímpeto Predador','passivo','DES','FOR',12],['B05','Rugido da Ruína','ativo','VIT','FOR',18],['B06','Sede de Batalha','reativo','VIT','FOR',5],['B07','Golpe de Exaustão','ativo','FOR','DES',12],['B08','Ira Contida','passivo','VIT','INT',0],['B09','Ruptura Brutal','ativo','FOR','DEF',20],['B10','Última Investida','reativo','FOR','VIT',0],['D01','Corte Relâmpago','ativo','DES','FOR',6],['D02','Passo Lateral','reativo','DES','DEF',14],['D03','Lâmina Reversa','ativo','DES','INT',9],['D04','Cadência da Guerra','passivo','DES','FOR',8],['D05','Ponta Precisa','ativo','DES','FOR',12],['D06','Reflexo Treinado','passivo','DES','DEF',11],['D07','Finta do Escorpião','ativo','DES','INT',16],['D08','Jogo de Pés','passivo','DES','VIT',0],['D09','Contra-Medida','reativo','DES','DEF',15],['D10','Dança das Lâminas','ativo','DES','FOR',23]],
- mage:[['E01','Lança de Cinzas','ativo','INT','DES',9],['E02','Combustão Residual','passivo','INT','VIT',10],['E03','Prisão de Gelo','ativo','INT','DEF',17],['E04','Estilhaço Polar','ativo','INT','DES',11],['E05','Pele Vulcânica','reativo','VIT','INT',18],['E06','Tempestade Estática','ativo','INT','DES',21],['E07','Olho da Tormenta','passivo','DES','INT',12],['E08','Névoa de Inverno','reativo','DEF','INT',19],['E09','Núcleo Incandescente','passivo','VIT','INT',0],['E10','Cometa Carmesim','ativo','INT','VIT',25],['R01','Selo de Proteção','ativo','DEF','INT',13],['R02','Inscrição Dolorosa','passivo','INT','DEF',10],['R03','Runa da Repulsão','ativo','INT','DES',18],['R04','Mente Blindada','passivo','DEF','VIT',12],['R05','Corte de Mana','ativo','INT','FOR',15],['R06','Reflexo Prismático','reativo','DEF','INT',20],['R07','Tecelagem de Runas','passivo','INT','VIT',15],['R08','Marca Desarmônica','ativo','INT','DEF',22],['R09','Última Equação','reativo','VIT','DEF',0],['R10','Grande Mandala','ativo','INT','DEF',27]],
- hunter:[['P01','Flecha Perfurante','ativo','DES','FOR',10],['P02','Mira Firme','passivo','DES','INT',10],['P03','Tiro Duplo','ativo','DES','FOR',8],['P04','Olhar Predador','passivo','DES','INT',12],['P05','Flecha Marcadora','ativo','DES','INT',15],['P06','Disparo de Ruptura','ativo','FOR','DES',19],['P07','Pulsação da Corda','passivo','DES','FOR',10],['P08','Olho do Caçador','reativo','DES','DEF',18],['P09','Tiro de Interrupção','reativo','DES','INT',21],['P10','Chuva de Setas','ativo','DES','VIT',25],['E01','Armadilha de Espinhos','ativo','INT','DES',17],['E02','Passo de Sombra','ativo','DES','VIT',18],['E03','Venenos de Caça','passivo','INT','DES',12],['E04','Isca do Deserto','ativo','INT','VIT',20],['E05','Corda de Aprisionamento','ativo','DES','INT',15],['E06','Camuflagem das Folhas','reativo','DES','DEF',19],['E07','Predador Invisível','passivo','DES','INT',14],['E08','Armadilha Reflexa','reativo','DEF','INT',0],['E09','Rede Preparada','passivo','INT','DEF',0],['E10','Mina de Estilhaços','ativo','INT','FOR',25]],
- guardian:[['G01','Escudo da Alvorada','ativo','DEF','VIT',14],['G02','Armadura Consagrada','passivo','DEF','VIT',12],['G03','Retorno da Égide','reativo','DEF','FOR',18],['G04','Postura da Cidadela','ativo','DEF','VIT',20],['G05','Aço Resiliente','passivo','VIT','DEF',16],['G06','Rota de Guarda','ativo','DEF','DES',17],['G07','Reflexo da Sentinela','reativo','DES','DEF',15],['G08','Peso da Armadura','passivo','DEF','FOR',10],['G09','Vigília de Pedra','ativo','VIT','DEF',24],['G10','Bastião Solar','ativo','DEF','INT',28],['L01','Bênção da Aurora','ativo','INT','VIT',19],['L02','Luz Persistente','passivo','INT','VIT',12],['L03','Fagulha Reparadora','passivo','VIT','INT',15],['L04','Clarão Purificador','ativo','INT','DEF',16],['L05','Voto da Luz','ativo','INT','DEF',15],['L06','Resplendor de Esperança','reativo','VIT','INT',0],['L07','Sopro da Graça','passivo','INT','DES',13],['L08','Julgamento Luminoso','ativo','INT','FOR',18],['L09','Orvalho de Misericórdia','reativo','INT','VIT',22],['L10','Círculo de Santuário','ativo','INT','DEF',26]]
+ warrior:[['B01','Golpe do Carrasco','ativo','FOR','DES',8],['B02','Sangue Quente','passivo','FOR','VIT',10],['B03','Fenda Sísmica','ativo','FOR','DEF',14],['B04','Ímpeto Predador','passivo','DES','FOR',12],['B05','Rugido da Ruína','ativo','VIT','FOR',18],['B06','Sede de Batalha','reativo','VIT','FOR',5],['B07','Golpe de Exaustão','ativo','FOR','DES',12],['B08','Ira Contida','passivo','VIT','INT',0],['B09','Ruptura Brutal','ativo','FOR','DEF',20],['B10','Última Investida','reativo','FOR','VIT',0],['D01','Corte Relâmpago','ativo','DES','FOR',6],['D02','Passo Lateral','reativo','DES','DEF',14],['D03','Lâmina Reversa','ativo','DES','INT',9],['D04','Cadência da Guerra','passivo','DES','FOR',8],['D05','Ponta Precisa','ativo','DES','FOR',12],['D06','Reflexo Treinado','passivo','DES','DEF',11],['D07','Finta do Escorpião','ativo','DES','INT',16],['D08','Jogo de Pés','passivo','DES','VIT',0],['D09','Contra-Medida','reativo','DES','DEF',15],['D10','Dança das Lâminas','ativo','DES','FOR',23],['T01','Guarda Alta','ativo','DEF','VIT',12],['T02','Pele de Ferro','passivo','DEF','VIT',0],['T03','Rebote de Aço','reativo','DEF','FOR',14],['T04','Postura de Muralha','ativo','DEF','VIT',18],['T05','Brado Protetor','ativo','VIT','INT',20]],
+ mage:[['E01','Lança de Cinzas','ativo','INT','DES',9],['E02','Combustão Residual','passivo','INT','VIT',10],['E03','Prisão de Gelo','ativo','INT','DEF',17],['E04','Estilhaço Polar','ativo','INT','DES',11],['E05','Pele Vulcânica','reativo','VIT','INT',18],['E06','Tempestade Estática','ativo','INT','DES',21],['E07','Olho da Tormenta','passivo','DES','INT',12],['E08','Névoa de Inverno','reativo','DEF','INT',19],['E09','Núcleo Incandescente','passivo','VIT','INT',0],['E10','Cometa Carmesim','ativo','INT','VIT',25],['R01','Selo de Proteção','ativo','DEF','INT',13],['R02','Inscrição Dolorosa','passivo','INT','DEF',10],['R03','Runa da Repulsão','ativo','INT','DES',18],['R04','Mente Blindada','passivo','DEF','VIT',12],['R05','Corte de Mana','ativo','INT','FOR',15],['R06','Reflexo Prismático','reativo','DEF','INT',20],['R07','Tecelagem de Runas','passivo','INT','VIT',15],['R08','Marca Desarmônica','ativo','INT','DEF',22],['R09','Última Equação','reativo','VIT','DEF',0],['R10','Grande Mandala','ativo','INT','DEF',27],['A01','Pulso Estelar','ativo','INT','DES',8],['A02','Passagem Etérea','ativo','DES','INT',19],['A03','Órbita Protetora','passivo','DEF','INT',14],['A04','Gravidade Menor','ativo','INT','DEF',17],['A05','Eco Astral','passivo','INT','DES',13]],
+ hunter:[['P01','Flecha Perfurante','ativo','DES','FOR',10],['P02','Mira Firme','passivo','DES','INT',10],['P03','Tiro Duplo','ativo','DES','FOR',8],['P04','Olhar Predador','passivo','DES','INT',12],['P05','Flecha Marcadora','ativo','DES','INT',15],['P06','Disparo de Ruptura','ativo','FOR','DES',19],['P07','Pulsação da Corda','passivo','DES','FOR',10],['P08','Olho do Caçador','reativo','DES','DEF',18],['P09','Tiro de Interrupção','reativo','DES','INT',21],['P10','Chuva de Setas','ativo','DES','VIT',25],['E01','Armadilha de Espinhos','ativo','INT','DES',17],['E02','Passo de Sombra','ativo','DES','VIT',18],['E03','Venenos de Caça','passivo','INT','DES',12],['E04','Isca do Deserto','ativo','INT','VIT',20],['E05','Corda de Aprisionamento','ativo','DES','INT',15],['E06','Camuflagem das Folhas','reativo','DES','DEF',19],['E07','Predador Invisível','passivo','DES','INT',14],['E08','Armadilha Reflexa','reativo','DEF','INT',0],['E09','Rede Preparada','passivo','INT','DEF',0],['E10','Mina de Estilhaços','ativo','INT','FOR',25],['S01','Rolamento Tático','ativo','DES','VIT',16],['S02','Respiração do Bosque','passivo','VIT','DEF',15],['S03','Flecha de Retirada','ativo','DES','FOR',12],['S04','Vigilância da Floresta','passivo','DEF','INT',14],['S05','Tiro Enfraquecedor','ativo','DES','INT',18]],
+ guardian:[['G01','Escudo da Alvorada','ativo','DEF','VIT',14],['G02','Armadura Consagrada','passivo','DEF','VIT',12],['G03','Retorno da Égide','reativo','DEF','FOR',18],['G04','Postura da Cidadela','ativo','DEF','VIT',20],['G05','Aço Resiliente','passivo','VIT','DEF',16],['G06','Rota de Guarda','ativo','DEF','DES',17],['G07','Reflexo da Sentinela','reativo','DES','DEF',15],['G08','Peso da Armadura','passivo','DEF','FOR',10],['G09','Vigília de Pedra','ativo','VIT','DEF',24],['G10','Bastião Solar','ativo','DEF','INT',28],['L01','Bênção da Aurora','ativo','INT','VIT',19],['L02','Luz Persistente','passivo','INT','VIT',12],['L03','Fagulha Reparadora','passivo','VIT','INT',15],['L04','Clarão Purificador','ativo','INT','DEF',16],['L05','Voto da Luz','ativo','INT','DEF',15],['L06','Resplendor de Esperança','reativo','VIT','INT',0],['L07','Sopro da Graça','passivo','INT','DES',13],['L08','Julgamento Luminoso','ativo','INT','FOR',18],['L09','Orvalho de Misericórdia','reativo','INT','VIT',22],['L10','Círculo de Santuário','ativo','INT','DEF',26],['J01','Golpe do Veredito','ativo','FOR','INT',11],['J02','Vontade do Justo','passivo','FOR','VIT',10],['J03','Investida do Tribunal','ativo','FOR','DES',18],['J04','Marca do Veredito','ativo','INT','FOR',15],['J05','Coração Corajoso','passivo','VIT','FOR',0]]
 };
 const ALL=Object.fromEntries(Object.entries(TALENTS).map(([klass,items])=>[klass,items.map(([id,name,type,primary,secondary,cooldown])=>Object.freeze({id,name,type,primary,secondary,cooldown,animationId:klass.toLowerCase()+'_'+id.toLowerCase()}))]));
 const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
@@ -48,7 +48,7 @@ function exampleBuild(klass,name,mission=5,variant=0){
  const pointPool=mission*2, attributes=Object.fromEntries(ATTR.map(k=>[k,0]));
  let left=pointPool;
  for(const [k,v]of Object.entries(selections[klass]||{})){const n=Math.min(left,v);attributes[k]=n;left-=n}
- const variants=[[0,1,2,3,4],[5,6,7,8,9],[0,2,5,7,9],[10,11,12,13,14],[0,6,10,12,14],[15,16,17,18,19],[0,6,11,16,19]];
+ const variants=[[0,1,2,3,4],[5,6,7,8,9],[0,2,5,7,9],[10,11,12,13,14],[0,6,10,12,14],[15,16,17,18,19],[0,6,11,16,19],[20,21,22,23,24],[0,11,20,22,24]];
  const picks=variants[((variant%variants.length)+variants.length)%variants.length].slice(0,mission).map(i=>ALL[klass][i].id);
  return canonical({klass,name,attributes,talents:picks},mission);
 }
@@ -77,9 +77,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    hp,shield:0,shieldUntil:0,alive:true,kills:0,damage:0,attacks:0,
    basic:r()*.45,gcd:0,cooldowns:{},usage:{},passives:{},slow:0,slowPower:0,
    weak:0,weakPower:0,fortress:0,markBy:null,markUntil:0,offenseDelay:0,rage:0,solarUntil:0,
-   regenUntil:0,regenPower:0,lightRegenUntil:0,lightRegenPower:0,runicRegenUntil:0,runicRegenPower:0,hopeRegenUntil:0,hopeRegenPower:0,mercyRegenUntil:0,mercyRegenPower:0,
+   regenUntil:0,regenPower:0,s02Until:0,s02Power:0,lightRegenUntil:0,lightRegenPower:0,runicRegenUntil:0,runicRegenPower:0,hopeRegenUntil:0,hopeRegenPower:0,mercyRegenUntil:0,mercyRegenPower:0,
    guardUntil:0,healWindow:[],poisonUntil:0,poisonPower:0,poisonOwner:null,
-   reverseUntil:0,r04Until:0,d04Charge:0,speedUntil:0,d06Until:0,d07WeakUntil:0,d07WeakPower:0,r08Until:0,r08Power:0,
+   reverseUntil:0,t04Until:0,s01Until:0,a03Travel:0,a03LastX:null,a03LastZ:null,a02BoostUntil:0,r04Until:0,d04Charge:0,speedUntil:0,d06Until:0,d07WeakUntil:0,d07WeakPower:0,r08Until:0,r08Power:0,
    burning:0,burnPower:0,burnOwner:null,movingTime:0,stationaryTime:0,lastTarget:null,
    lastHitAt:-999,hitWindow:[],eliminatedAt:null};
  });
@@ -185,6 +185,18 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    amount*=1-.30*effectiveness(target,'D02');target.cooldowns.D02=14;
    staggeredSideStep(target,attacker,1);emit('proc',target,{talent:'D02',target:attacker.id});
   }
+  if(!reflect&&target.t04Until>time)amount*=1-.15*effectiveness(target,'T04');
+  if(!reflect&&has(target,'T02')&&target.passives.t02Ready){
+   amount*=1-.18*effectiveness(target,'T02');target.passives.t02Ready=false;emit('proc',target,{talent:'T02'});
+  }
+  if(!reflect&&target.s01Until>time)amount*=1-.18*effectiveness(target,'S01');
+  if(!reflect&&has(target,'A03')&&target.passives.a03Ready){
+   amount*=1-.10*effectiveness(target,'A03');target.passives.a03Ready=false;
+   target.cooldowns.A03=14;target.a03Travel=0;emit('proc',target,{talent:'A03'});
+  }
+  if(!reflect&&skill&&has(target,'S04')&&target.passives.s04Ready&&target.passives.s04Until>time){
+   amount*=1-.10*effectiveness(target,'S04');target.passives.s04Ready=false;emit('proc',target,{talent:'S04'});
+  }
   const defenseFactor=Math.max(.35,1-(target.stats.defense*(1-ignoreDefense))*.025);
   amount*=defenseFactor;
   if(!reflect&&target.d06Until>time)amount*=1-.08*effectiveness(target,'D06');
@@ -255,6 +267,13 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   target.shield-=shieldTaken;
   const inflicted=Math.max(0,amount-normalAbsorption);
   target.hp=Math.max(0,target.hp-inflicted);
+  // Delayed non-recursive echo of actual single-target active magic damage.
+  if(!reflect&&inflicted>0&&attacker.build.klass==='mage'&&has(attacker,'A05')&&
+   (attacker.cooldowns.A05||0)<=0&&['A01','E01','E03','E04','E06','R05','R08'].includes(skill)){
+   attacker.cooldowns.A05=13;pending.push({kind:'echo',owner:attacker.id,targetId:target.id,
+    damage:inflicted*.25*effectiveness(attacker,'A05'),talent:'A05',impactAt:time+.30});
+   emit('proc',attacker,{talent:'A05',target:target.id});
+  }
   // D04 builds on *successful own impacts*, including both D01 hits.
   if(!reflect&&inflicted>0&&has(attacker,'D04')&&!attacker.passives.d04Ready&&(attacker.cooldowns.D04||0)<=0&&skill!=='poison'){
    attacker.passives.d04Hits=(attacker.passives.d04Hits||0)+1;
@@ -264,7 +283,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   // R02 must connect two *different* offensive spells to the same enemy.
   if(!reflect&&inflicted>0&&has(attacker,'R02')&&attacker.build.klass==='mage'&&
-    ['E01','E03','E04','E06','E10','R03','R05'].includes(skill)&&
+    ['E01','E03','E04','E06','E10','R03','R05','A01','A04'].includes(skill)&&
     (attacker.cooldowns.R02||0)<=0&&!attacker.passives.r02Ready){
    if(attacker.passives.r02Target!==target.id){
     attacker.passives.r02Target=target.id;attacker.passives.r02Last=skill;
@@ -273,13 +292,18 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    }
   }
   attacker.damage+=inflicted;attacker.attacks++;
-  target.lastHitAt=time;
+  if(inflicted>0){target.lastHitAt=time;target.s02Until=0;target.passives.t02Ready=false;}
   if(inflicted>0&&target.build.klass==='hunter'&&has(target,'E07')){
    target.passives.e07Ready=false;target.passives.e07Anchor={x:target.x,z:target.z};
   }
   target.hitWindow.push({time,value:inflicted});
   target.hitWindow=target.hitWindow.filter(h=>time-h.time<=3);
   emit('hit',attacker,{target:target.id,amount:+inflicted.toFixed(2),absorbed:+shieldTaken.toFixed(2),kind,skill});
+  if(!reflect&&skill&&inflicted>0&&has(target,'S04')&&
+   !target.passives.s04Ready&&(target.cooldowns.S04||0)<=0){
+   target.passives.s04Ready=true;target.passives.s04Until=time+4;target.cooldowns.S04=14;
+   emit('charge',target,{talent:'S04',target:attacker.id});
+  }
   // B06: 6% effective damage converted into healing, with an additional
   // per-five-second 4% HP cap (and the shared global healing cap).
   if(!reflect&&has(attacker,'B06')&&inflicted>0){
@@ -290,6 +314,12 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    const gained=heal(attacker,Math.min(healCap,inflicted*.06*effectiveness(attacker,'B06')),'B06');
    attacker.passives.b06Spent=(attacker.passives.b06Spent||0)+gained;
    if(gained>0)emit('proc',attacker,{talent:'B06',target:target.id});
+  }
+  if(!reflect&&shieldTaken>0&&target.build.klass==='warrior'&&has(target,'T03')&&
+   (target.cooldowns.T03||0)<=0&&dist(attacker,target)<=target.stats.range+.3){
+   target.cooldowns.T03=14;emit('proc',target,{talent:'T03',target:attacker.id});
+   if(attacker.alive)applyHit(target,attacker,target.stats.attack*.45*effectiveness(target,'T03'),
+    {kind:'retaliation',skill:'T03',reflect:true});
   }
   if(!reflect&&shieldTaken>0&&has(target,'L03')&&(target.cooldowns.L03||0)<=0){
    target.cooldowns.L03=15;heal(target,target.stats.hp*.015*effectiveness(target,'L03'),'L03');
@@ -388,6 +418,20 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    amount*=1+.12*effectiveness(f,'P02');f.passives.p02Ready=false;f.cooldowns.P02=10;
    emit('proc',f,{talent:'P02',target:target.id});
   }
+  if(klass==='guardian'){
+   if(has(f,'J05')&&f.hp>f.stats.hp*.70){
+    amount*=1+.07*effectiveness(f,'J05');
+    if(!f.passives.j05Seen){f.passives.j05Seen=true;emit('proc',f,{talent:'J05'})}
+   }
+   if(has(f,'J02')&&f.passives.j02Ready){
+    amount*=1+.10*effectiveness(f,'J02');f.passives.j02Ready=false;
+    f.cooldowns.J02=10;emit('proc',f,{talent:'J02',target:target.id});
+   }
+   if(target.j04MarkBy===f.id&&target.j04Until>time){
+    amount*=1+.12*effectiveness(f,'J04');target.j04MarkBy=null;target.j04Until=0;
+    emit('proc',f,{talent:'J04',target:target.id});
+   }
+  }
   f.basic=klass==='hunter'?1.23:klass==='mage'?1.16:1.02;
   if(has(f,'D04')&&f.passives.d04Ready){
    f.basic*=1-.15*effectiveness(f,'D04');f.passives.d04Ready=false;f.cooldowns.D04=8;
@@ -401,6 +445,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   f.animation='attack';
   if(kind==='ranged')projectile(f,target,amount,null,{kind:'basic'});
   else{applyHit(f,target,amount,{kind:'melee'});
+   if(klass==='guardian'&&has(f,'J02')&&!f.passives.j02Ready&&(f.cooldowns.J02||0)<=0){
+    f.passives.j02Count=(f.passives.j02Count||0)+1;
+    if(f.passives.j02Count>=2){f.passives.j02Count=0;f.passives.j02Ready=true;emit('charge',f,{talent:'J02'})}
+   }
    if(has(f,'G08')&&(f.cooldowns.G08||0)<=0){
     f.passives.g08Count=(f.passives.g08Count||0)+1;
     if(f.passives.g08Count>=3){
@@ -415,6 +463,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  }
  function spellBonus(f){
   let bonus=1;
+  if(f.build.klass==='mage'&&f.a02BoostUntil>time){
+   bonus+=.07*effectiveness(f,'A02');f.a02BoostUntil=0;emit('proc',f,{talent:'A02'});
+  }
   if(has(f,'E07')&&f.passives.e07Ready){
    bonus+=.08*effectiveness(f,'E07');f.passives.e07Ready=false;f.cooldowns.E07=12;
    emit('proc',f,{talent:'E07'});
@@ -447,6 +498,21 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   const klass=f.build.klass;
   // Contextual priority; each cast is a *real* ability with its own CD.
   if(klass==='guardian'){
+   if(ready(f,'J03')&&d>f.stats.range&&d<=f.stats.range+3.3){
+    use(f,'J03',target);const dx=(target.x-f.x)/d,dz=(target.z-f.z)/d;
+    clearPosition(f,dx,dz,Math.min(3,Math.max(0,d-1.5)));
+    if(target.alive&&dist(f,target)<=f.stats.range)applyHit(f,target,atk*1.05*scaleSkill('J03'),{kind:'melee',skill:'J03'});
+    return true;
+   }
+   if(ready(f,'J04')&&d<=f.stats.range){
+    use(f,'J04',target);
+    const dealt=applyHit(f,target,atk*.85*scaleSkill('J04'),{kind:'special',skill:'J04'});
+    if(dealt>0&&target.alive){target.j04MarkBy=f.id;target.j04Until=time+4;emit('mark',f,{talent:'J04',target:target.id})}
+    return true;
+   }
+   if(ready(f,'J01')&&d<=f.stats.range){
+    use(f,'J01',target);applyHit(f,target,atk*1.40*scaleSkill('J01'),{kind:'melee',skill:'J01'});return true;
+   }
    if(ready(f,'L10')&&d<=8){
     use(f,'L10');zones.push({owner:f.id,talent:'L10',x:f.x,z:f.z,r:3,until:time+4});
     emit('zone',f,{talent:'L10',x:f.x,z:f.z,radius:3,duration:4});return true;
@@ -482,7 +548,19 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(ready(f,'G04')&&d<7&&f.fortress<=0){use(f,'G04');f.fortress=4;return true}
   }
   if(klass==='warrior'){
+   if(ready(f,'T01')&&f.shield<2){use(f,'T01');
+    shield(f,20+1.5*f.build.attributes.DEF+.6*f.build.attributes.VIT,4);return true}
+   if(ready(f,'T04')&&d<6&&f.t04Until<=time){use(f,'T04');f.t04Until=time+5;return true}
    if(f.offenseDelay>0)return false;
+   if(ready(f,'T05')&&d<2.7){
+    use(f,'T05',target);
+    for(const e of fighters)if(e.alive&&e!==f&&dist(e,f)<=2){
+     applyHit(f,e,atk*.75*scaleSkill('T05'),{kind:'special',skill:'T05'});
+     e.weak=Math.max(e.weak,3);e.weakPower=Math.max(e.weakPower,.10*scaleSkill('T05'));
+     emit('debuff',f,{target:e.id,kind:'weak',talent:'T05'})}
+    return true;
+   }
+
    if(ready(f,'D10')&&d<f.stats.range){
     use(f,'D10',target);
     for(let n=0;n<3;n++)pending.push({owner:f.id,talent:'D10',targetId:target.id,damage:atk*.55*scaleSkill('D10'),impactAt:time+.10+n*.22,kind:'combo',comboId:f.id+':'+time});
@@ -533,6 +611,24 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(ready(f,'B01')&&d<f.stats.range){use(f,'B01',target);applyHit(f,target,atk*1.55*scaleSkill('B01'),{kind:'special',skill:'B01'});return true}
   }
   if(klass==='mage'){
+   if(ready(f,'A02')&&d<=12&&d>=2){
+    use(f,'A02');const ax=target.x-f.x,az=target.z-f.z,mag=Math.max(.001,Math.hypot(ax,az));
+    if(staggeredSideStep(f,target,3)||clearPosition(f,-ax/mag,-az/mag,3)){
+     f.a02BoostUntil=time+2;emit('teleport',f,{talent:'A02',x:f.x,z:f.z})}
+    return true;
+   }
+   if(ready(f,'A04')&&d<=8.5){
+    const bonus=spellBonus(f);use(f,'A04',target);
+    emit('zone',f,{talent:'A04',x:target.x,z:target.z,radius:2,duration:2});
+    for(const e of fighters)if(e.alive&&e!==f&&dist(e,target)<=2){
+     applyHit(f,e,atk*.50*scaleSkill('A04')*bonus,{kind:'special',skill:'A04'});
+     if(e.alive)applySlow(e,.20,2,f)}
+    return true;
+   }
+   if(ready(f,'A01')&&d<=10){
+    const bonus=spellBonus(f);use(f,'A01',target);
+    projectile(f,target,atk*1.15*scaleSkill('A01')*bonus,'A01');return true;
+   }
    if(ready(f,'R10')&&d<=8.5){
     const buff=spellBonus(f);use(f,'R10',target);
     prepareAoE(f,target,'R10',atk*.90*scaleSkill('R10')*buff,.5,1,3);
@@ -573,7 +669,21 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    if(ready(f,'E01')&&d<=9){const buff=spellBonus(f);use(f,'E01',target);projectile(f,target,atk*1.45*scaleSkill('E01')*buff,'E01',{fire:true});return true}
   }
   if(klass==='hunter'){
+   if(ready(f,'S01')&&d<=9){
+    use(f,'S01');const ax=f.x-target.x,az=f.z-target.z,dd=Math.max(.001,Math.hypot(ax,az));
+    if(!clearPosition(f,ax/dd,az/dd,2.5))staggeredSideStep(f,target,2.5);
+    f.s01Until=time+1.5;return true;
+   }
    if(f.offenseDelay>0)return false;
+   if(ready(f,'S03')&&d<=9.3){
+    use(f,'S03',target);projectile(f,target,atk*.90*scaleSkill('S03'),'S03');
+    const ax=f.x-target.x,az=f.z-target.z,dd=Math.max(.001,Math.hypot(ax,az));
+    clearPosition(f,ax/dd,az/dd,1.5);return true;
+   }
+   if(ready(f,'S05')&&d<=9.3){
+    use(f,'S05',target);projectile(f,target,atk*.95*scaleSkill('S05'),'S05',{weakening:.10*scaleSkill('S05')});return true;
+   }
+
    if(ready(f,'E10')&&d<=9){
     use(f,'E10',target);zones.push({owner:f.id,talent:'E10',x:target.x,z:target.z,r:1.5,until:time+8,triggered:false});
     emit('zone',f,{talent:'E10',x:target.x,z:target.z,radius:1.5,duration:8});return true;
@@ -622,6 +732,16 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    f.slow=Math.max(0,f.slow-step);f.weak=Math.max(0,f.weak-step);f.fortress=Math.max(0,f.fortress-step);
    f.offenseDelay=Math.max(0,f.offenseDelay-step);
    f.rage=Math.max(0,f.rage-step);
+   if(f.s02Until>time)heal(f,f.s02Power*step,'S02');
+   if(f.s02Until>0&&f.s02Until<=time)f.s02Until=0;
+   if(has(f,'S02')&&f.s02Until<=time&&f.hp<f.stats.hp-.1&&
+     time-f.lastHitAt>=5&&(f.cooldowns.S02||0)<=0){
+    f.cooldowns.S02=15;f.s02Until=time+4;f.s02Power=f.stats.hp*.02*effectiveness(f,'S02')/4;
+    emit('proc',f,{talent:'S02'});
+   }
+   if(has(f,'T02')&&!f.passives.t02Ready&&time-f.lastHitAt>=5){
+    f.passives.t02Ready=true;emit('charge',f,{talent:'T02'});
+   }
    if(f.regenUntil>time){heal(f,f.regenPower*step,'G09')}
    if(f.runicRegenUntil>time)heal(f,f.runicRegenPower*step,'R07');
    if(f.hopeRegenUntil>time)heal(f,f.hopeRegenPower*step,'L06');
@@ -661,13 +781,14 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    const chase=holdForAim?0:d>preferred+1?1:d<preferred-.7?-.6:0;
    const strafe=holdForAim?0:(d<preferred+5?.21:0)*((f.id.length+seed)%2?-1:1);
    if(has(f,'D08')&&f.hp/f.stats.hp>.60&&!f.passives.d08Observed){f.passives.d08Observed=true;emit('proc',f,{talent:'D08'})}
-   const penalty=(f.fortress>0?.85:1)*(f.slow>0?1-f.slowPower:1)*(f.regenUntil>time?.88:1)*
+   const penalty=(f.fortress>0?.85:1)*(f.t04Until>time?.90:1)*(f.slow>0?1-f.slowPower:1)*(f.regenUntil>time?.88:1)*
      (f.speedUntil>time?1+.10*effectiveness(f,'E02'):1)*
      (has(f,'D08')&&f.hp/f.stats.hp>.60?1+.08*effectiveness(f,'D08'):1);
    const goalVX=(dx/d*chase-dz/d*strafe)*f.stats.speed*penalty;
    const goalVZ=(dz/d*chase+dx/d*strafe)*f.stats.speed*penalty;
    const smoothing=1-Math.exp(-8*step);
    f.vx+=(goalVX-f.vx)*smoothing;f.vz+=(goalVZ-f.vz)*smoothing;
+   const oldX=f.x,oldZ=f.z;
    const oldDist=d;
    f.x+=f.vx*step;f.z+=f.vz*step;
    // Slide around the inflated collider instead of allowing pillar clipping.
@@ -675,6 +796,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
     const x=f.x-ob.x,z=f.z-ob.z,rad=ob.r+.56,dd=Math.hypot(x,z);
     if(dd<rad){f.x=ob.x+x/Math.max(dd,.00001)*rad;f.z=ob.z+z/Math.max(dd,.00001)*rad}
    }
+   if(has(f,'A03')&&!f.passives.a03Ready&&(f.cooldowns.A03||0)<=0){
+    f.a03Travel+=Math.hypot(f.x-(f.a03LastX??oldX),f.z-(f.a03LastZ??oldZ));
+    if(f.a03Travel>=4){f.passives.a03Ready=true;emit('charge',f,{talent:'A03'})}
+   }
+   f.a03LastX=f.x;f.a03LastZ=f.z;
    const speed=Math.hypot(f.vx,f.vz);
    f.animation=speed>.25?'run':'idle';
    if(f.build.klass==='hunter'&&has(f,'E07')){
@@ -744,6 +870,12 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    pending.splice(i,1);
    const caster=byId.get(p.owner);
    if(!caster||p.cancelled)continue;
+   if(p.kind==='echo'){
+    const victim=byId.get(p.targetId);
+    if(caster.alive&&victim?.alive){emit('talent-impact',caster,{talent:'A05',target:victim.id});
+     applyHit(caster,victim,p.damage,{kind:'echo',skill:'A05',ignoreDefense:1,reflect:true})}
+    continue;
+   }
    if(p.kind==='combo'||p.kind==='beam'){
     const victim=byId.get(p.targetId);
     const maxRange=p.kind==='beam'?7:caster.stats.range;
@@ -802,6 +934,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
      if(amount>0&&effect.r08Weak&&source&&victim.alive){
       victim.r08Power=victim.r08Until>time?Math.max(victim.r08Power,effect.r08Weak):effect.r08Weak;victim.r08Until=time+3;
       emit('debuff',source,{target:victim.id,kind:'skill-weak',seconds:3,talent:'R08'});
+     }
+     if(amount>0&&effect.weakening&&source&&victim.alive){
+      victim.weak=Math.max(victim.weak,3);victim.weakPower=Math.max(victim.weakPower,effect.weakening);
+      emit('debuff',source,{talent:'S05',target:victim.id,kind:'weak',seconds:3});
      }
      if(amount>0&&effect.slow)applySlow(victim,effect.slow,effect.duration,source);
      if(amount>0&&effect.mark){victim.markBy=source.id;victim.markUntil=time+4;emit('mark',source,{target:victim.id,talent:'P05'})}
