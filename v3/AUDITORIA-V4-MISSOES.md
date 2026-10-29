@@ -145,3 +145,11 @@
 **Correção em código:** o resumo e a rubrica do professor agora incluem explicitamente a opção de nenhuma alteração justificada; o protocolo e a saída projetados também mostram os três caminhos. O roteiro privado continua recolhido por `<details class="pit-private-teacher-notes">` e não foi movido para o aluno. `qa/v3-audit-alignment.cjs` recebeu cinco asserções para evitar regressão. A matriz `AUDITORIA-ALINHAMENTO-PROFESSOR-ALUNO.md` também foi corrigida: M03 usa 4+8+6=18 minutos de prática, não o registro antigo de 16 minutos.
 
 **Validação:** QA estática do commit `edf85a39821b` (`40799443149`) confirmou **SUCCESS**; QA no commit de regressão `f9916c14d428` e no último commit documental estavam em andamento/na fila na consulta. Browser QA do commit anterior `cdb68c5befc` confirmou **SUCCESS** (`40792976296`), mas isso não homologa esta nova alteração. Testes humanos, GDevelop GUI, HDMI real e celular físico permanecem **NOT_RUN**. Próximo: confirmar CI no SHA final e continuar auditoria de evidência/avaliação M01–M10.
+
+
+## Auditoria transversal M09 → M10 — resultados e autoria (29/10/2026)
+
+- **Achado confirmado:** a ficha M09 já aceitava correção retestada, backlog ou teste sem falha, mas o resumo legado em `v2/missions.js` exigia registrar um problema, aplicar/planejar correção e entregar nome do colega. Isso podia induzir defeitos fictícios e dados pessoais. O roteiro legado agora aceita os três resultados e usa identificação anônima.
+- **Achado confirmado:** a rubrica projetada da M10 (`teacher-mission-ten-validation.js`) e o campo/roteiro do aluno (`student-mission-ten.js`) ainda pressupunham correção após playtest. Ambos agora reconhecem ausência de alteração justificada após teste sem falha. O tutorial compartilhado `gdevelop-mission-ten-guide.js` também preserva essa alternativa.
+- **Achado confirmado:** o pitch legado da M10 em `v2/missions.js` exigia dizer como a IA foi usada, apesar de a M06 permitir criação manual. O pitch agora descreve uma decisão técnica autoral; IA é opcional.
+- **Regressão:** `qa/v3-audit-alignment.cjs` ganhou verificações literais para os três resultados, anonimização e IA opcional. Os testes do GitHub Actions devem ser conferidos no SHA do commit correspondente; nenhum teste humano de GDevelop, HDMI, celular ou colega foi executado nesta rodada.

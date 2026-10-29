@@ -176,6 +176,19 @@ assert(m10Teacher.includes('aria-label="Abrir roteiro privado da avaliação da 
 assert(!m10Teacher.includes('<details class="pit-private-teacher-notes" open'),'M10 private notes default closed');
 assert(m10Teacher.includes('Depois de retirar o espelhamento HDMI'),'M10 assessment workflow kept private');
 
+// M09→M10 cumulative contract: a successful peer test must not force a fictitious defect or AI use.
+const legacyMissions=read('v2/missions.js');
+assert(legacyMissions.includes('Identificação anônima do colega, observação real e decisão justificada'),'M09 legacy delivery must protect peer identity and support real outcomes');
+assert(legacyMissions.includes('nenhuma alteração após teste sem falha'),'M09 legacy checklist accepts no-defect playtest');
+assert(!legacyMissions.includes('Registre um problema encontrado e faça a correção possível'),'M09 legacy steps must not force a fictitious bug');
+assert(legacyMissions.includes('decisão técnica (IA opcional)'),'M10 legacy pitch cannot require generative AI');
+assert(!legacyMissions.includes('eu usei IA para'),'M10 legacy sample pitch must not require AI');
+assert(m10Student.includes('Observação e decisão após o playtest'),'M10 student field accepts all legitimate M09 outcomes');
+assert(m10Student.includes('correção retestada, backlog ou ausência de falha'),'M10 student presentation does not require a fictional correction');
+assert(m10Teacher.includes('nenhuma alteração após teste sem falha'),'M10 projected teacher rubric recognizes a successful peer test');
+assert(!m10Teacher.includes('correção testada ou backlog justificado.'),'M10 old two-outcome rubric must not reappear');
+assert(m10Guide.includes('nenhuma alteração após teste sem falha'),'M10 shared GDevelop guide keeps M09 tri-state outcome');
+
 // End-to-end source contract: every mission has student evidence and a private teacher practice guide.
 const teacherValidation={
  4:'teacher-mission-four-validation',5:'teacher-mission-five-validation',
