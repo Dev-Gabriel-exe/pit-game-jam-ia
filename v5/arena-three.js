@@ -207,6 +207,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5SpectatorCapacity=String(world.spectatorSeats.length);
   loadMedievalArchitecture(root,worldScale,quality,container);
  }else container.dataset.v5Map='original-ring-1';
+ // Visible and accurate safe-zone boundary, scaled from the combat core.
+ // Eliminations by the storm are no longer invisible/indecipherable.
+ const stormGeometry=new THREE.RingGeometry(1,1.025,128);
+ const stormMaterial=new THREE.MeshBasicMaterial({color:0xc778e4,transparent:true,opacity:.67,side:THREE.DoubleSide,depthWrite:false});
+ const stormRing=new THREE.Mesh(stormGeometry,stormMaterial);
+ stormRing.rotation.x=-Math.PI/2;stormRing.position.y=.42;
+ stormRing.scale.setScalar(18*worldScale);root.add(stormRing);
  const individuals=new Map(),effects=[],labels=new Map();
  let animationEvents=0,specialFxEvents=0;
  const standSeats=(world.spectatorSeats||[]).map(seat=>({...seat,x:seat.x*stadiumScale,y:seat.y*stadiumScale,z:seat.z*stadiumScale}));
@@ -352,6 +359,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
   simulation=CORE.battle(normalized,{seed,limit,arenaScale:worldScale});
+  stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
   container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
@@ -477,6 +485,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   for(let n=0;n<20&&accumulator>=.05;n++){
    accumulator-=.05;
    const result=simulation.update(.05);
+   stormRing.scale.setScalar(result.radius);
+   stormMaterial.opacity=result.time>18?.75:.36;
    for(const ev of result.events){
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
     if(ev.type==='prepare'){
@@ -617,6 +627,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
   clearHeroes();nicknameLayer.remove();floatingLayer.remove();
+  stormGeometry.dispose();stormMaterial.dispose();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
