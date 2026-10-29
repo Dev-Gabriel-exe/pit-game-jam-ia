@@ -11,16 +11,16 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  world.name='cidadela-do-eclipse';
  root.add(world);
  const low=quality==='low';
- const basalt=new THREE.MeshStandardMaterial({color:0x332d36,roughness:.92,metalness:.06});
- const stone=new THREE.MeshStandardMaterial({color:0x564753,roughness:.94});
- const highStone=new THREE.MeshStandardMaterial({color:0x7d6571,roughness:.89});
- const ash=new THREE.MeshStandardMaterial({color:0x191824,roughness:1});
+ const basalt=new THREE.MeshStandardMaterial({color:0x54434d,roughness:.9,metalness:.08});
+ const stone=new THREE.MeshStandardMaterial({color:0x776575,roughness:.92});
+ const highStone=new THREE.MeshStandardMaterial({color:0xa58a94,roughness:.86});
+ const ash=new THREE.MeshStandardMaterial({color:0x27222c,roughness:1});
  const darkIron=new THREE.MeshStandardMaterial({color:0x282733,metalness:.58,roughness:.53});
  const oldGold=new THREE.MeshStandardMaterial({color:0xc7a16a,metalness:.63,roughness:.35});
  const turquoise=new THREE.MeshStandardMaterial({color:0x5db7c1,emissive:0x307c8a,emissiveIntensity:.55,roughness:.45});
  const redLight=new THREE.MeshBasicMaterial({color:0xd65936});
  const fire=new THREE.MeshBasicMaterial({color:0xffc178});
- const tileColors=[0x443743,0x4a3d49,0x352e3b,0x514351,0x39303d,0x473a48];
+ const tileColors=[0x665463,0x564856,0x413a4a,0x736070,0x504557,0x67515c];
  const made=[];
  const box=(parent,w,h,d,mat,x,y,z)=>{
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
@@ -40,15 +40,21 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  // SQUARE architectural foundation, 106×106 units, with a truly open central field.
  box(world,112,2.4,112,ash,0,-1.85,0);
  box(world,99,.8,99,stone,0,-.49,0);
- const stoneGeometry=new THREE.BoxGeometry(2.45,.12,2.45);
- const map=new THREE.InstancedMesh(stoneGeometry,basalt,1600);
+ // Hexagonal paving is dramatically different from the old square grid;
+ // one InstancedMesh retains a predictable draw-call budget for 30 heroes.
+ const tilePositions=[];
+ for(let j=-22;j<=22;j++)for(let i=-21;i<=21;i++){
+  const x=(i+(Math.abs(j)%2)*.5)*2.46,z=j*2.14;
+  if(Math.abs(x)<48.7&&Math.abs(z)<48.7)tilePositions.push({x,z,i,j});
+ }
+ const stoneGeometry=new THREE.CylinderGeometry(1.42,1.42,.13,6,1);
+ const map=new THREE.InstancedMesh(stoneGeometry,basalt,tilePositions.length);
  const dummy=new THREE.Object3D(),tone=new THREE.Color();
  let instanceCount=0;
- for(let i=-20;i<20;i++)for(let j=-20;j<20;j++){
-  const x=(i+.5)*2.48,z=(j+.5)*2.48;
-  dummy.position.set(x,-.015-.013*((Math.abs(i*19+j*7))%3),z);
-  dummy.rotation.set(0,(((i*11+j*17)%5)-2)*.006,0);
-  dummy.updateMatrix();map.setMatrixAt(instanceCount,dummy.matrix);
+ for(const {x,z,i,j} of tilePositions){
+  dummy.position.set(x,.03-.018*(Math.abs(i*19+j*7)%3),z);
+  dummy.rotation.set(0,Math.PI/6+((Math.abs(i+j)%4)-2)*.008,0);
+  dummy.scale.set(1,1,1);dummy.updateMatrix();map.setMatrixAt(instanceCount,dummy.matrix);
   tone.setHex(tileColors[Math.abs(i*41+j*13)%tileColors.length]);map.setColorAt(instanceCount++,tone);
  }
  map.count=instanceCount;map.instanceMatrix.needsUpdate=true;
@@ -133,6 +139,34 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
    cyl(perimeter,.9,.9,.11,5,oldGold,x,7.5,58.85).rotation.x=Math.PI/2;
   }
  }
+ // Gothic pointed stained-glass windows embedded in the four outer walls.
+ // They are scenery only and are safely outside every playable collision.
+ const windowColors=[0x6d41ce,0x3e93b1,0xb55177,0x8052ae];
+ for(let side=0;side<4;side++){
+  const a=side*Math.PI/2,facade=new THREE.Group();
+  facade.rotation.y=a;world.add(facade);
+  const xs=low?[-26,26]:[-39,-22,22,39];
+  xs.forEach((x,index)=>{
+   const windowGroup=new THREE.Group();windowGroup.position.set(x,6.0,59.48);
+   facade.add(windowGroup);
+   const shape=new THREE.Shape();
+   shape.moveTo(-2.4,-.35);shape.lineTo(2.4,-.35);
+   shape.lineTo(2.4,5.1);shape.lineTo(0,8.6);shape.lineTo(-2.4,5.1);shape.closePath();
+   const panel=new THREE.Mesh(new THREE.ShapeGeometry(shape),
+    new THREE.MeshBasicMaterial({color:windowColors[(side+index)%4],transparent:true,opacity:.83,side:THREE.DoubleSide,depthWrite:false}));
+   panel.name='stained-glass-gothic';windowGroup.add(panel);made.push(panel);
+   // Lead mullions and a pointed arch frame help the windows remain legible
+   // when the camera is oblique, unlike untextured flat wall rectangles.
+   const lead=new THREE.Line(new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-2.45,-.36,.04),new THREE.Vector3(-2.45,5.16,.04),
+    new THREE.Vector3(0,8.68,.04),new THREE.Vector3(2.45,5.16,.04),
+    new THREE.Vector3(2.45,-.36,.04),new THREE.Vector3(-2.45,-.36,.04)
+   ]),new THREE.LineBasicMaterial({color:0xf3c78f}));
+   windowGroup.add(lead);
+   box(windowGroup,.17,6.0,.13,oldGold,0,2.35,.065).castShadow=false;
+   box(windowGroup,4.7,.13,.15,oldGold,0,2.55,.08).castShadow=false;
+  });
+ }
  // 12 watchtowers / gothic spires and their layered roofs.
  for(let index=0;index<12;index++){
   const a=index/12*Math.PI*2,edge=(index%3===0?68:64);
@@ -165,6 +199,15 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
    torus(group,2.1,.08,turquoise,0,5.1,0);
   }
  });
+ // The luminous perimeter trench gives the stadium depth and scale.
+ // Its surface is OUTSIDE the arena's playable floor and has no physics.
+ const fissure=new THREE.MeshBasicMaterial({color:0x8e3de4,side:THREE.DoubleSide,transparent:true,opacity:.76,depthWrite:false});
+ const lavaEdge=new THREE.MeshBasicMaterial({color:0xef8156,side:THREE.DoubleSide,transparent:true,opacity:.70,depthWrite:false});
+ for(let side=0;side<4;side++){
+  const a=side*Math.PI/2,rift=new THREE.Group();rift.rotation.y=a;world.add(rift);
+  const flow=box(rift,95,.04,2.9,fissure,0,.04,50.1);flow.castShadow=false;
+  const seam=box(rift,95,.055,.27,lavaEdge,0,.1,48.8);seam.castShadow=false;
+ }
  // Lit braziers and stylized embers: 16 stations around the outer coliseum.
  for(let i=0;i<16;i++){
   const a=i/16*Math.PI*2+.14,x=Math.cos(a)*45.5,z=Math.sin(a)*45.5;
@@ -181,7 +224,7 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  // owns all targeting, collision, storm and victory logic.
  // Low-quality mode uses eight courts to preserve the mobile GPU budget.
  const duelCourts=low?8:12;
- const engraving=new THREE.MeshStandardMaterial({color:0x916b6a,emissive:0x3a202c,emissiveIntensity:.14,metalness:.31,roughness:.67});
+ const engraving=new THREE.MeshStandardMaterial({color:0xcca2c6,emissive:0x934c9d,emissiveIntensity:.55,metalness:.36,roughness:.48});
  const courtMetal=new THREE.MeshStandardMaterial({color:0x97846c,metalness:.57,roughness:.43});
  for(let i=0;i<duelCourts;i++){
   const angle=(i+.5)*Math.PI*2/duelCourts;
@@ -269,10 +312,10 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
  }
  rocks.instanceMatrix.needsUpdate=true;world.add(rocks);
  // GPU-safe persistent status so browser QA can prove this is a different map.
- world.userData.version='eclipse-citadel-3-duel-courts';
+ world.userData.version='eclipse-citadel-4-gothic-hex';
  world.userData.playfield='square';
  world.userData.width=112;
 const sortedSeats=orderedSides.flatMap(side=>spectatorSeats.filter(seat=>seat.side===side));
  world.userData.spectatorSeatCapacity=sortedSeats.length;
- return {world,mapType:'eclipse-citadel-3-duel-courts',objects:made.length,tiles:instanceCount,duelCourts,spectatorSeats:sortedSeats};
+ return {world,mapType:'eclipse-citadel-4-gothic-hex',objects:made.length,tiles:instanceCount,duelCourts,spectatorSeats:sortedSeats};
 }
