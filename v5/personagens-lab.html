@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#130e18">
+<meta name="description" content="Prévia V5: 4 classes, 120 identidades visuais e escolha exclusiva de personagem por aluno em turma simulada.">
+<title>Arsenal das Lendas · Escolha seu Herói · Game Jam IA V5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./personagens-lab.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script src="./avatar-catalog.js"></script><script src="./character-assets.js"></script>
+<script src="./personagens-lab.js" type="module"></script>
+</head><body>
+<div class="background" aria-hidden="true"></div>
+<header class="site-header">
+ <a class="logo" href="./seletor.html">PIT <span>GAME JAM</span><sup>V5</sup></a>
+ <span class="site-label">ARSENAL DAS LENDAS <small>PRÉVIA DE PERSONALIZAÇÃO · SEM INTEGRAÇÃO COM ALUNOS</small></span>
+ <a href="./arena-lab.html?phase2=1" class="back">⚔ Coliseu</a>
+</header>
+<main>
+ <section class="intro">
+  <div class="eyebrow"><span class="spark">✦</span> UM HERÓI, UMA LENDA, UM CRIADOR <span class="spark">✦</span></div>
+  <h1>Forje sua <em>identidade.</em></h1>
+  <p>Escolha uma classe e encontre seu personagem. Na turma, cada identidade pertence a apenas um aluno.</p>
+  <div class="scope">LABORATÓRIO ISOLADO · 4 MODELOS GLB CC0 REAIS COM 120 VARIAÇÕES VISUAIS · BLOQUEIO SIMULADO NESTE NAVEGADOR · NENHUMA ALTERAÇÃO NO XP OU NO JOGO DOS ALUNOS</div>
+ </section>
+ <section class="class-section" aria-labelledby="classesTitle">
+  <div class="section-top"><span class="eyebrow">01 · SELECIONE SEU CAMINHO</span><h2 id="classesTitle">Quatro classes. Infinitas histórias.</h2></div>
+  <div class="class-tabs" id="classTabs" role="group" aria-label="Escolha uma das quatro classes"></div>
+ </section>
+ <div class="main-grid">
+  <section class="character-panel" aria-labelledby="galleryTitle">
+   <div class="panel-header"><div><span class="eyebrow">02 · O SALÃO DOS ESCOLHIDOS</span><h2 id="galleryTitle">Guerreiros</h2></div><span class="counter" id="availableCount">30 / 30 livres</span></div>
+   <div class="gallery-notice">Cada carta representa uma identidade visual exclusiva da turma. <strong>Nem todas são malhas 3D diferentes:</strong> esta versão reutiliza os GLBs de cada classe com novos detalhes, materiais e emblemas. Modelos adicionais serão substituíveis individualmente.</div>
+   <div class="gallery" id="avatarGallery" role="group" aria-label="Personagens da classe selecionada"></div>
+  </section>
+  <aside class="right-rail">
+   <section class="viewer-panel" aria-labelledby="previewTitle">
+    <div class="viewer-head"><div><span class="eyebrow">03 · SUA LENDA EM 3D</span><h2 id="previewTitle">Prévia do personagem</h2></div><span class="asset-status" id="assetStatus">WEBGL</span></div>
+    <div id="avatarStage" class="avatar-stage" aria-label="Modelo tridimensional com rotação por gesto ou mouse" role="img"><div class="loading" id="loading" role="status">✧ Preparando personagem em 3D…</div></div>
+    <div class="viewer-bottom"><strong id="avatarName">Selecione seu herói</strong><span id="avatarEquipment">Equipamento</span><small>Arraste para girar · pinça ou roda para ampliar</small></div>
+   </section>
+   <section class="claim-panel" aria-labelledby="claimTitle">
+    <span class="eyebrow">04 · RESERVA EXCLUSIVA · SIMULAÇÃO</span><h2 id="claimTitle">Escolha seu personagem</h2>
+    <label for="roomCode">Turma de demonstração</label>
+    <input id="roomCode" maxlength="24" value="TURMA-01" autocomplete="off" aria-describedby="storageDisclaimer">
+    <label for="studentSelect">Quem está escolhendo?</label>
+    <select id="studentSelect" aria-label="Aluno de demonstração"></select>
+    <div class="selection" id="selectedSummary">Selecione uma carta disponível para reservar.</div>
+    <button id="claimAvatar" class="reserve" type="button" disabled>✦ Reservar este personagem</button>
+    <button id="releaseAvatar" class="release" type="button">Liberar escolha deste aluno</button>
+    <div class="alert" id="claimMessage" role="status" aria-live="polite"></div>
+    <p class="fine-print" id="storageDisclaimer">O bloqueio desta prévia funciona entre os alunos simulados no próprio navegador e é sincronizado entre abas do mesmo site. <strong>A reserva definitiva entre celulares diferentes depende de transação no servidor</strong>, planejada para a Fase H.</p>
+   </section>
+  </aside>
+ </div>
+ <footer><a href="./seletor.html">← Voltar à Forja de classes</a><span>Personagens CC0: KayKit / Tactical Slash · sem modelos de terceiros do Tripo sem autorização</span><a href="./arena-lab.html?phase2=1">Conhecer o Coliseu →</a></footer>
+</main>
+</body></html>
