@@ -21,6 +21,10 @@ assert.match(renderer,/function followPose\(f,hero\)/,'Follow camera requires a 
 assert.match(renderer,/v5FollowBackDot/,'Follow camera must expose rear-camera QA');
 assert.match(renderer,/Math\.max\(1\.45,cue\.duration\*1\.9\)/,'Active talents need sustained visible cues');
 assert.match(renderer,/new THREE\.TorusGeometry\(1\.65,\.12/,'Real skills should show a second glowing ring');
+assert.match(renderer,/cue\.style==='fire'\|\|cue\.style==='frost'\|\|cue\.style==='bolt'/,'Distinguish elemental cast silhouettes');
+assert.match(renderer,/cue\.style==='barrier'/,'Gothic shield wards must be recognizable');
+assert.match(renderer,/cue\.style==='arrow'\|\|cue\.style==='arc'/,'Arrows and melee arcs have specific VFX');
+assert.match(renderer,/deco\.userData\.cueAccent/,'Layered VFX must have real timed animation');
 
 assert.match(lab,/arenaScale:5,onEvent/);
 const klasses=['warrior','mage','hunter','guardian'];
