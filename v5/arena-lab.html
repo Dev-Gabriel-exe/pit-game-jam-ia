@@ -22,7 +22,7 @@
  <section class="intro">
   <span class="eyebrow">✧ NOVA ARENA · CIDADELA DO ECLIPSE ✧</span>
   <h1>30 heróis. <em>Uma grande batalha.</em></h1>
-  <p>Um castelo medieval inteiramente novo, com muralhas, torres, portões, arquibancadas e 30 aventureiros 3D. Explore a arena em visão panorâmica ou acompanhe um herói.</p>
+  <p>Um campo de batalha monumental, com arquibancadas reais: todo herói eliminado se transforma em espectador e continua visível com o seu nick acima da cabeça.</p>
   <div class="disclaimer"><strong>LABORATÓRIO ISOLADO</strong> · Combate com o motor legado V5. Os 120 talentos planejados, os cinco atributos novos e o bloqueio da final <strong>ainda não estão integrados</strong>. Nenhuma vitória dá XP, altera notas ou bloqueia talentos.</div>
  </section>
  <nav class="milestones" aria-label="Simulação de marco da oficina">
@@ -32,7 +32,7 @@
  <div class="roster-controls" role="group" aria-label="Quantidade de combatentes na arena"><span class="eyebrow">FORMATO DO CONFRONTO</span><button type="button" class="roster-mode" data-roster="30" aria-pressed="true"><strong>30 HERÓIS</strong><small>COLISEU DA TURMA</small></button><button type="button" class="roster-mode" data-roster="4" aria-pressed="false"><strong>4 HERÓIS</strong><small>ZOOM NO COMBATE</small></button><span class="roster-note">Personagens de demonstração, sem dados reais dos alunos</span></div>
  <div class="layout">
   <section class="theater">
-   <div class="theater-head"><div><span class="eyebrow">01 · CIDADELA DO ECLIPSE</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div>
+   <div class="theater-head"><div><span class="eyebrow">01 · CIDADELA DO ECLIPSE · CAMPO AMPLIADO</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><div class="combat-stats"><span id="aliveCount" class="counter alive">30 em combate</span><span id="spectatorsCount" class="counter audience">0 na arquibancada</span><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div></div>
    <div class="stage-wrap">
     <div id="arenaStage" class="stage" aria-label="Arena tridimensional com até 30 personagens reais em combate">
       <div class="stage-loading" id="stageLoading" role="status">✦ Invocando o coliseu 3D...</div>
@@ -51,7 +51,7 @@
   </section>
   <aside class="side">
    <section class="panel scoreboard"><span class="eyebrow">02 · DESAFIANTES</span><h2>Os Combatentes</h2>
-     <p>Os 30 aventureiros são fictícios, divididos entre as quatro classes aprovadas. A simulação ainda usa o motor de combate anterior; os 120 talentos estão em desenvolvimento.</p>
+     <p>Os 30 aventureiros são fictícios, divididos entre as quatro classes aprovadas. Os eliminados são transferidos para a arquibancada e não atacam mais. Os 120 talentos ainda estão em desenvolvimento.</p>
      <div id="fighters" class="fighters" role="list"></div>
      <div class="result" id="result" role="status">Ainda não há vencedor. Prepare o coliseu.</div>
    </section>
