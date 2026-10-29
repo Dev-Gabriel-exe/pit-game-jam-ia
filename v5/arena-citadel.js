@@ -106,7 +106,7 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
    for(let seat=0;seat<spectatorsPerRow;seat++){
     const sx=-40+seat*(80/(spectatorsPerRow-1));
     const angle=side*Math.PI/2;
-    const local=new THREE.Vector3(sx,h+.18,z);
+    const local=new THREE.Vector3(sx,h-.10,z);
     local.applyAxisAngle(new THREE.Vector3(0,1,0),angle);
     spectatorSeats.push({side,tier,seat,x:local.x,y:local.y,z:local.z,lookAtX:0,lookAtZ:0});
    }
