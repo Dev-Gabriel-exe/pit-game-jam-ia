@@ -232,7 +232,7 @@ function initRound({sameSeed=false}={}){
  $('speedBattle').textContent='Velocidade ×1';
  const pace=PACES[state.damageIndex];
  $('damagePace').textContent='⚔ '+pace.label;
- $('damagePace').setAttribute('aria-label','Alterar ritmo do confronto. '+pace.label+'. Arcanista recebe compensação experimental de 10% nos modos reduzidos.');
+ $('damagePace').setAttribute('aria-label','Alterar ritmo do confronto. '+pace.label+'. '+(pace.scale===1?'Regras originais, sem compensação.':'O Arcanista recebe uma compensação ofensiva experimental de 10%.'));
  $('damagePace').setAttribute('title','Reduz dano de ataques/habilidades e adia o fechamento do círculo. O dano causado pela tempestade permanece inalterado. Experimento reversível.');
  $('damagePace').dataset.scale=String(pace.scale);
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
