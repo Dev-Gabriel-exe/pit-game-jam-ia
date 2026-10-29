@@ -441,13 +441,36 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    actor.visible=true;
    actor.add(model);item.modelRoot=model;item.personalMaterials=personalMaterials;
    if(item.id!=='preview'){
-    container.dataset.v5RigFamily='tactical-slash-cc0';
+    container.dataset.v5RigFamily='kaykit-adventurers-cc0';
+    container.dataset.v5RigModel=asset.model.split('/').pop();
     container.dataset.v5RigHeight='2.55';
    }
    if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
    if(gltf.animations?.length){
     item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
-    for(const clip of gltf.animations)item.actions.set(clip.name.toLowerCase(),item.mixer.clipAction(clip));
+    // The full KayKit pack embeds a large animation library; avoid creating
+    // every action for every one of 30 heroes. Keep a compact, varied subset
+    // of native actions for idle, traversal, attacks, spells, reactions and KO.
+    const motionGroups=[
+     [/idle|stand|breath/i,3],
+     [/run|walk|move/i,3],
+     [/attack|slash|punch|sword|bow|shoot/i,5],
+     [/spell|cast|magic/i,3],
+     [/hit|hurt|damage|react/i,3],
+     [/block|defend|guard|shield/i,2],
+     [/dodge|roll|evade|jump/i,3],
+     [/death|die|dead/i,2]
+    ];
+    const selected=new Set();
+    for(const [regex,limit] of motionGroups){
+     let count=0;
+     for(const clip of gltf.animations){
+      if(regex.test(clip.name)&&count<limit){selected.add(clip);count++}
+     }
+    }
+    if(!selected.size&&gltf.animations.length)selected.add(gltf.animations[0]);
+    for(const clip of selected)item.actions.set(clip.name.toLowerCase(),item.mixer.clipAction(clip));
+    if(item.id!=='preview')container.dataset.v5ActiveClipsPerFighter=String(selected.size);
     if(item.id!=='preview'){availableClips+=gltf.animations.length;container.dataset.v5GlbClips=String(availableClips)}
     animateModel(item,'idle');
    }
