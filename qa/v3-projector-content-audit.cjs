@@ -166,8 +166,38 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   await page.locator('#pitProjectorClose').click();
   m07RouteChecks.push({routeIndex,selected,total,steps,pass:selected==='true'&&steps.length===4&&steps.every((s,i)=>s.id==='M07:'+i&&s.complete)});
  }
+
+ // A long projected tutorial must be readable with PageDown before changing slides.
+ // Constrain the viewport locally to make the regression deterministic at all three CI resolutions.
+ await page.locator('.stage-btn[data-stage="4"]').click();
+ await page.locator('#phasebar [data-phase="demo"]').click();
+ await page.locator('#pitProjectorLaunch').click();
+ let targetFound=false;
+ const navigationTotal=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]?.trim())||0;
+ for(let i=0;i<navigationTotal;i++){
+  if(await page.locator('#pitProjectorContent [data-pit-projector-step="M04:0"]').count()){targetFound=true;break}
+  await page.locator('#pitProjectorNext').click();
+ }
+ const navigationCheck={targetFound,overflow:false,firstPageScroll:false,keepsSlide:false,resetOnNext:false,atBottomAdvances:false,privateNotes:0};
+ if(targetFound){
+  const content=page.locator('#pitProjectorContent');
+  await content.evaluate(el=>{el.style.height='180px';el.style.maxHeight='180px'});
+  const beforeCount=await page.locator('#pitProjectorCount').innerText();
+  navigationCheck.overflow=await content.evaluate(el=>el.scrollHeight>el.clientHeight+12);
+  navigationCheck.privateNotes=await content.locator('.pit-private-teacher-notes').count();
+  await page.keyboard.press('PageDown');
+  navigationCheck.firstPageScroll=await content.evaluate(el=>el.scrollTop>0);
+  navigationCheck.keepsSlide=(await page.locator('#pitProjectorCount').innerText())===beforeCount;
+  await page.keyboard.press('ArrowRight');
+  navigationCheck.resetOnNext=await content.evaluate(el=>el.scrollTop===0);
+  const nextCount=await page.locator('#pitProjectorCount').innerText();
+  await content.evaluate(el=>{el.scrollTop=el.scrollHeight});
+  await page.keyboard.press('PageDown');
+  navigationCheck.atBottomAdvances=(await page.locator('#pitProjectorCount').innerText())!==nextCount;
+ }
+ await page.locator('#pitProjectorClose').click();
  fs.mkdirSync('qa/projector-audit-artifacts',{recursive:true});
- fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors,m04RouteChecks,m05RouteChecks,m07RouteChecks},null,2));
+ fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors,m04RouteChecks,m05RouteChecks,m07RouteChecks,navigationCheck},null,2));
  const fail=rows.filter(x=>x.error||!x.slides||x.retainedRatio<.4||x.slidesWithOverflowX).map(x=>({mission:x.mission,phase:x.phase,error:x.error||'coverage_or_overflow',ratio:x.retainedRatio}));
  const m01=rows.find(x=>x.mission===1&&x.phase==='demo');
  const m03=rows.find(x=>x.mission===3&&x.phase==='demo');
@@ -189,7 +219,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M05: RPG, puzzle and 3D routes each project five complete steps',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
   {name:'M07: four GDevelop completion steps projected individually',pass:JSON.stringify(m07?.guideSteps)===JSON.stringify(expected07)},
   {name:'M07: each step has where/action/result/recovery/source without private notes',pass:m07?.m07Sections?.length===4&&m07.m07Sections.every(x=>x.where&&x.action&&x.result&&x.fix&&x.source&&x.image&&x.privateNotes===0)},
-  {name:'M07: 2D and 3D routes each project four complete steps',pass:m07RouteChecks.length===2&&m07RouteChecks.every(x=>x.pass)}
+  {name:'M07: 2D and 3D routes each project four complete steps',pass:m07RouteChecks.length===2&&m07RouteChecks.every(x=>x.pass)},
+  {name:'720p long tutorials: PageDown scrolls before advancing; next slide starts at top; no private notes',pass:navigationCheck.targetFound&&navigationCheck.overflow&&navigationCheck.firstPageScroll&&navigationCheck.keepsSlide&&navigationCheck.resetOnNext&&navigationCheck.atBottomAdvances&&navigationCheck.privateNotes===0}
  ];
  console.log('PROJECTOR_REGRESSION '+JSON.stringify(projectorChecks));
  console.log('PROJECTOR_SUMMARY '+JSON.stringify({viewport:width+'x'+height,phases:rows.length,errors,fail,smallText:rows.filter(x=>x.smallFontSlides>0).length,scroll:rows.filter(x=>x.slidesWithScroll>0).length,totalScrollSlides:rows.reduce((n,x)=>n+x.slidesWithScroll,0)}));
