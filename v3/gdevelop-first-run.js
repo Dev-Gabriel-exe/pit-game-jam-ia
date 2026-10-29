@@ -111,5 +111,5 @@ function mount(scope){
  });
  apply(0,false);
 }
-window.PIT_GDEVELOP_FIRST_RUN={render,mount,steps,localFallback};
+window.PIT_GDEVELOP_FIRST_RUN={render,mount,steps,localFallback,projectorPanel:panel};
 })();
