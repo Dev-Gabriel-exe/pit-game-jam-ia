@@ -137,7 +137,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
  const events=[];
  const log=(type,f,payload={})=>{const e={seq:++seq,time:+time.toFixed(2),type,hero:f?.id||null,...payload};events.push(e);return e};
  const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({...o,x:o.x*scale,z:o.z*scale,r:o.r*scale}));
- const projectiles=[];
+ const projectiles=[];let projectileSeq=0;
  const areaHit=(f,radius,damage,except=null)=>{
   for(const o of fighters)if(o.alive&&o!==f&&o!==except&&Math.hypot(o.x-f.x,o.z-f.z)<radius)hit(f,o,damage,'special');
  };
@@ -214,7 +214,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     f.basic=1.0+(.18*rnd())-(f.build.talents.berserk&&f.hp<f.stats.hp*.5?.16:0);
     f.animation='attack';
     if(f.stats.range>3){
-     projectiles.push({x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack,kind:'ranged',age:0});
+     projectiles.push({id:++projectileSeq,x:f.x,y:1.6,z:f.z,from:f.id,to:target.id,speed:16,damage:f.stats.attack,kind:'ranged',age:0});
      log('launch',f,{target:target.id});
     }else hit(f,target,f.stats.attack,'melee');
    }
@@ -241,7 +241,7 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
     }else{
       for(let n=0;n<2+f.build.talents.multishot;n++){
        const chosen=enemies[n%enemies.length];
-       projectiles.push({x:f.x,y:1.65,z:f.z,from:f.id,to:chosen.id,speed:20,damage:f.stats.attack*1.15,kind:'multishot',age:0});
+       projectiles.push({id:++projectileSeq,x:f.x,y:1.65,z:f.z,from:f.id,to:chosen.id,speed:20,damage:f.stats.attack*1.15,kind:'multishot',age:0});
       }
       if(f.build.talents.trap)target.slow=2+f.build.talents.trap;
     }
@@ -268,7 +268,18 @@ function battle(source,{seed=486,dt=.05,limit=180,arenaScale=1}={}){
    const p=projectiles[i],target=fighters.find(x=>x.id===p.to);
    if(!target?.alive){projectiles.splice(i,1);continue}
    const dx=target.x-p.x,dz=target.z-p.z,d=Math.max(.00001,Math.hypot(dx,dz));
-   const v=p.speed*step;p.x+=dx/d*v;p.z+=dz/d*v;p.age+=step;
+   const v=p.speed*step,prevX=p.x,prevZ=p.z;
+   p.x+=dx/d*v;p.z+=dz/d*v;p.age+=step;
+   // The same collision radii used by walking actors now block arrows/spells.
+   // Deterministic segment-vs-circle checks prevent shooting through pillars.
+   let obstructed=false;
+   for(const obstacle of obstacles){
+    const segX=p.x-prevX,segZ=p.z-prevZ,len2=Math.max(.00001,segX*segX+segZ*segZ);
+    const t=clamp(((obstacle.x-prevX)*segX+(obstacle.z-prevZ)*segZ)/len2,0,1);
+    const qx=prevX+segX*t,qz=prevZ+segZ*t;
+    if(Math.hypot(qx-obstacle.x,qz-obstacle.z)<obstacle.r+.2){obstructed=true;break}
+   }
+   if(obstructed){projectiles.splice(i,1);continue}
    if(d<=v+.7){const from=fighters.find(x=>x.id===p.from);if(from?.alive)hit(from,target,p.damage,p.kind);projectiles.splice(i,1)}
    else if(p.age>3)projectiles.splice(i,1);
   }
