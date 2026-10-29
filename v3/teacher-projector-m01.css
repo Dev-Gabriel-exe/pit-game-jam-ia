@@ -113,3 +113,14 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-g7-step .g7-card dt{font:800 18px/1.3 system-ui,"Segoe UI",Arial,sans-serif}
 #pitProjector .pit-projector-g7-step .g7-card dd{font:400 clamp(19px,1.45vw,23px)/1.35 system-ui,"Segoe UI",Arial,sans-serif;padding:0 0 8px;overflow-wrap:anywhere}
 @media(max-width:1000px){#pitProjector .pit-projector-g7-step .g7-card{grid-template-columns:minmax(0,1fr);grid-template-areas:"eyebrow" "heading" "picture" "instructions"}#pitProjector .pit-projector-g7-step .g7-card img{max-height:16vh}}
+
+/* Projection in 720p: reclaim chrome space without shrinking tutorial body text. */
+#pitProjector #pitProjectorScrollHint{display:block;margin:3px 0 0;font:600 14px/1.3 system-ui,"Segoe UI",Arial,sans-serif;color:#ffe0a9;letter-spacing:0}
+#pitProjector #pitProjectorScrollHint[hidden]{display:none}
+@media (max-height:800px) and (min-width:1001px){
+ #pitProjector .pit-projector-top{padding:8px 3vw}
+ #pitProjector .pit-projector-top h1{font-size:clamp(26px,2.4vw,38px);margin:2px 0}
+ #pitProjector .pit-projector-footer{padding:8px 3vw}
+ #pitProjector .pit-projector-slide{padding:1.5vh 5vw}
+ #pitProjector .pit-projector-footer button,#pitProjector .pit-projector-top button{padding:8px 14px}
+}
