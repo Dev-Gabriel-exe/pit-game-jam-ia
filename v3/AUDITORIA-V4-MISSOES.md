@@ -181,3 +181,11 @@
 - **CI anterior:** a Browser QA da correção M09 no SHA `8e8988e378fd948b3e871c67da746a140df72b95` terminou **SUCCESS** (run `40816390193`); a QA estática correspondente `40816390231` também terminou **SUCCESS**.
 - **Falhas intermediárias observadas:** os commits iniciais M07/M08/M10 tiveram QA estática **FAILURE**, porque o teste legado `qa/v3-m07-student.cjs` ainda exigia `checks.length===3` após `hydrate`. O teste foi corrigido no commit `7772444e848e42345ec9dd6263645e7290b4b5b4`. A aprovação do commit final depende de conferir a CI correspondente; não extrapolar o sucesso anterior.
 - **Limitações:** testes automatizados simulam dados e estados; não demonstram que o aluno executou o GDevelop. GDevelop GUI, projeção HDMI física, aparelho móvel físico, colega humano e turma real permanecem **NOT_RUN**. A solução não certifica a veracidade dos textos digitados e não altera o contrato do backend nem dados reais.
+
+## Auditoria transversal M06 — continuação da integridade de evidências (29/10/2026)
+
+- **Falha comprovada:** `v3/student-mission-six.js` repetia o padrão de M07–M10, criando automaticamente três confirmações de importação/teste do asset quando o registro remoto era `submitted` ou `approved`.
+- **Correção:** `hydrate` recupera rota e respostas escritas com as caixas desmarcadas quando não existe rascunho local; a revisão bloqueada não exibe falsa advertência de teste incompleto. O rascunho local já preenchido continua preservado.
+- **Testes atualizados:** `qa/v3-m06-student.cjs` deixa de esperar testes inventados; `qa/v3-audit-alignment.cjs` inclui M06 na regressão de restauração com armazenamento simulado e revisão bloqueada. QA estática do commit de código M06 `8ec3353b1c6c487114039daf597eecbf528ec784`: **SUCCESS**, run `40822714843`; CI do último commit de regressão ainda requer confirmação.
+- **Próximo defeito a investigar:** leitura de `parseEvidence` em `student-mission-three.js`, `student-mission-four.js` e `student-mission-five.js` revelou `checks=[0,1,2]` injetado na conversão de evidência textual. A revisão deve corrigir também a política de preservação de rascunho local e os testes legados antes de considerar M03–M05 homologadas.
+- **Não executado:** GDevelop GUI, teste humano com colega, HDMI real e dispositivo móvel físico continuam **NOT_RUN**.
