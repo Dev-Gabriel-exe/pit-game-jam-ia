@@ -64,3 +64,10 @@ Feedback do usuário: câmera cinematográfica melhorou; "Seguir" ainda ficava n
 **Para avaliar manualmente:** abrir M5 `phase2=1`, clicar `4 HERÓIS` para reduzir poluição, `Iniciar confronto`, selecionar o personagem em `Os Combatentes` ou `Seguir em 3ª pessoa` no destaque, ativar `Velocidade ×0,5`. Os golpes especiais aparecem por eventos verdadeiros no painel de talentos. Repetir 30 jogadores para checar performance e volume.
 **Ainda pendente:** aprovação visual humana e FPS em celular; a Fase E analisará PV do Guerreiro/Guardião, dominância do Caçador, alvo/timing do combate e a IA em cenários com 30 pessoas.
 **CI:** verificar o último run `V5 Arena Lab` do commit `d503f3bc3d2eb27368d63df9f4d5f68abacadb0f` antes de chamar o incremento de homologado. O GitHub Actions estava enfileirado no momento deste checkpoint.
+
+### Patch adicional da terceira iteração
+- O VFX reforçado agora prioriza um talento **ativo** sobre um decalque passivo quando o orçamento de efeitos fica cheio em arena com 30 pessoas; não muda a ordem do combate nem o dano (`v5/arena-three.js`, commit `cfb1d10e`).
+- Uma asserção de QA incluída incorretamente que acessava `window` no processo Node da automação foi removida em `qa/v5-talent-vfx-browser.cjs` (commit `dca0855b`). O teste deve ser validado no GitHub Actions após o conserto; falhas intermediárias não devem ser tratadas como falhas do jogo.
+- Link estável do demonstrador isolado, atualizado com o efeito ativo prioritário: https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1
+- Deploy da última versão de código da arena `cfb1d10eda35542aafa16c28959c790c1c9aba02`: Vercel `dpl_3wVvYrbFwfBieqf1VFTWg4hrRAwG`, READY e alias `pit-v5-coliseu-demo.vercel.app`.
+- A configuração atual B.6 de HP é Guerreiro 137, Guardião 140, Caçador 93 e Arcanista 78, **antes** de alocação individual de VIT/DEF. A maior vida base já existe, mas não assegura sobrevivência equilibrada ante ataque à distância; analisar medindo win rates e tempo até primeira eliminação na Fase E.
