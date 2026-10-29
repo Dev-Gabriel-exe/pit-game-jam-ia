@@ -101,3 +101,15 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-g5-step .pit-projector-diagnostic{margin-top:8px;padding:8px 12px;border-left:3px solid #e0ad75;background:#2b211c}
 #pitProjector .pit-projector-g5-step .m5g-photo-foot{font:400 18px/1.3 system-ui,"Segoe UI",Arial,sans-serif}
 @media(max-width:1000px){#pitProjector .pit-projector-g5-step .m5g-step{grid-template-columns:minmax(0,1fr)}#pitProjector .pit-projector-g5-step .m5g-picture img{max-height:18vh}}
+
+/* M07: selected 2D/3D completion tutorial is readable as four individual slides. */
+#pitProjector .pit-projector-g7-step .g7-card{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);grid-template-areas:"eyebrow eyebrow" "heading heading" "picture instructions";gap:8px 22px;align-items:start;padding:clamp(12px,1.4vw,22px);font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-g7-step .g7-card>small{grid-area:eyebrow;font-size:18px}
+#pitProjector .pit-projector-g7-step .g7-card h3{grid-area:heading;font:700 clamp(25px,2.2vw,36px)/1.18 system-ui,"Segoe UI",Arial,sans-serif;margin:2px 0}
+#pitProjector .pit-projector-g7-step .g7-card figure{grid-area:picture;min-width:0;margin:0}
+#pitProjector .pit-projector-g7-step .g7-card img{width:100%;height:auto;max-height:28vh;object-fit:contain}
+#pitProjector .pit-projector-g7-step .g7-card figcaption{font:400 18px/1.3 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-g7-step .g7-card dl{grid-area:instructions;display:grid;grid-template-columns:minmax(0,145px) minmax(0,1fr);gap:9px 12px;margin:0}
+#pitProjector .pit-projector-g7-step .g7-card dt{font:800 18px/1.3 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-g7-step .g7-card dd{font:400 clamp(19px,1.45vw,23px)/1.35 system-ui,"Segoe UI",Arial,sans-serif;padding:0 0 8px;overflow-wrap:anywhere}
+@media(max-width:1000px){#pitProjector .pit-projector-g7-step .g7-card{grid-template-columns:minmax(0,1fr);grid-template-areas:"eyebrow" "heading" "picture" "instructions"}#pitProjector .pit-projector-g7-step .g7-card img{max-height:16vh}}
