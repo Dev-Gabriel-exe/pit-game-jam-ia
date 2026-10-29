@@ -66,7 +66,7 @@ for(const [klass,ids,foe,dist] of [
 {
  const {sim,f,e}=make('mage',['E01','E06','E07','E09'],'guardian',[],6);
  e.stats.hp=3000;e.hp=3000;e.stats.defense=1;
- f.hp=f.stats.hp*.32;e.basic=0;e.stats.attack=2;
+ f.hp=f.stats.hp*.39;e.x=f.x+2.2;e.basic=0;e.stats.attack=.5;
  advance(sim,650);
  assert(events(sim,'E07','charge').length>0,'E07 did not charge after two offense casts');
  assert(events(sim,'E09','charge').length===1,'E09 should charge once under 40% after hit');
