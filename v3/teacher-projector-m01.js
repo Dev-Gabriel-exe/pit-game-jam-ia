@@ -243,7 +243,32 @@ function pedagogicalDemoSlides(root,mission){
      visible.append(label,...[...diagnostic.querySelectorAll('p')].map(x=>x.cloneNode(true)));
      diagnostic.replaceWith(visible);
     }
-    result.push({title:'Passo '+(i+1)+' · '+guide.guideSteps[i].title,html:wrapper.outerHTML});
+    // Split each dense 720p tutorial step into action and verification without losing content.
+    const verify=document.createElement('section');
+    verify.className='pit-projector-g5-verify';
+    verify.dataset.pitProjectorVerify='M05:'+i;
+    const heading=document.createElement('h3');
+    heading.textContent='Conferência '+(i+1)+' de 5 · '+guide.guideSteps[i].title;
+    verify.append(heading);
+    const expected=wrapper.querySelector('.m5g-expect');
+    const recovery=wrapper.querySelector('.pit-projector-diagnostic');
+    if(expected)verify.append(expected.cloneNode(true));
+    if(recovery)verify.append(recovery.cloneNode(true));
+    const reference=wrapper.querySelector('.m5g-photo-foot a');
+    if(reference){
+     const sourceLink=document.createElement('p');
+     sourceLink.className='pit-projector-g5-verify-source';
+     sourceLink.append('Referência técnica: ',reference.cloneNode(true));
+     verify.append(sourceLink);
+    }
+    const reminder=document.createElement('p');
+    reminder.className='pit-projector-g5-verify-reminder';
+    reminder.textContent='Confira o resultado no Preview do seu jogo. A captura ilustra o editor, mas não comprova a implementação.';
+    verify.append(reminder);
+    wrapper.querySelector('.m5g-expect')?.remove();
+    wrapper.querySelector('.pit-projector-diagnostic')?.remove();
+    result.push({title:'Passo '+(i+1)+' · Onde clicar e o que fazer',html:wrapper.outerHTML});
+    result.push({title:'Passo '+(i+1)+' · Resultado e recuperação',html:verify.outerHTML});
    }
    const check=root.querySelector('#m5Guide .m5g-check');
    if(check)result.push({title:'Teste negativo e repetição no Preview',html:cleanCopy(check)});
