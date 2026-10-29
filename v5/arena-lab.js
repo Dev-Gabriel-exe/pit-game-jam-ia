@@ -111,7 +111,7 @@ function initRound(){
  state.roster=roster(mission,state.count);
  try{state.stage.fighters(state.roster,{seed:mission===5?10929:20929,limit:75});
   // Close-in spectator camera for four characters. The full coliseum remains orbitable.
-  state.stage.camera.position.set(0,state.count===30?38:16,state.count===30?62:26);}
+  state.stage.camera.position.set(0,state.count===30?76:16,state.count===30?112:26);}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
  if($('stageLoading'))$('stageLoading').hidden=true;
  updateScoreboard();$models.textContent=prefix+' Carregando modelos CC0 reais...';
@@ -152,6 +152,15 @@ $('startBattle').addEventListener('click',begin);
 $('pauseBattle').addEventListener('click',pause);
 $('resetBattle').addEventListener('click',initRound);
 $('overviewCamera').addEventListener('click',()=>state.stage?.overview());
+const expandButton=$('expandStage');
+function setImmersive(on){
+ document.body.classList.toggle('arena-immersive',on);
+ expandButton.setAttribute('aria-pressed',String(on));
+ expandButton.textContent=on?'✕ Fechar arena':'⛶ Ampliar arena';
+ requestAnimationFrame(()=>state.stage?.resize());
+}
+expandButton.addEventListener('click',()=>setImmersive(!document.body.classList.contains('arena-immersive')));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('arena-immersive'))setImmersive(false)});
 $('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn)state.stage?.focusFighter(btn.dataset.focus);});
 $('speedBattle').addEventListener('click',()=>{
  if(!state.stage)return;
@@ -175,5 +184,6 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get modelState(){return {loaded:Number($('arenaStage').dataset.v5ModelsLoaded||0),failed:Number($('arenaStage').dataset.v5ModelsFailed||0)}},
  get finished(){return !!state.stage?.simulation?.finished},
  get winner(){return state.stage?.simulation?.result()?.winner||null},
- get previewOnly(){return true}
+ get previewOnly(){return true},
+ get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'}
 });
