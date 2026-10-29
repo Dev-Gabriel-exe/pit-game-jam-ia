@@ -1,7 +1,7 @@
 /* Arena V5 | Isolated 3D battle lab for educational prototyping.
  * Uses existing legacy V5 battle engine as a temporary scaffold.
  * NO approved-stages API, no teacher PIN, no XP writes, no student identities.
- * The 120 Phase-2 talents are NOT executed in this demonstrator.
+ * B.2 executes the first 40 Phase-2 talents; other 80 and final lock are pending.
  */
 import {createStage} from './arena-three.js';
 import * as THREE from 'three';
@@ -14,15 +14,15 @@ const glyph={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
 const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
-const state={mission:5,count:30,phase2:new URLSearchParams(location.search).get('phase2')==='1',stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
+const state={mission:5,count:30,phase2:new URLSearchParams(location.search).get('phase2')==='1',phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
  if(state.phase2){
-  if(mission!==5||!PHASE2)throw Error('Motor B.1 aceita apenas missão 5');
+  if(mission!==5||!PHASE2)throw Error('Motor B.2 aceita apenas missão 5');
   return Array.from({length:count},(_,i)=>{
    const klass=expected[i%4],label=count===4?names[klass]:(names[klass].split(' ')[0]+' '+String(i+1).padStart(2,'0'));
-   return {id:'phase2-'+i+'-'+klass,name:label,build:PHASE2.exampleBuild(klass,label,5,Math.floor(i/4)%3),approvedMissions:5};
+   return {id:'phase2-'+i+'-'+klass,name:label,build:PHASE2.exampleBuild(klass,label,5,(Math.floor(i/4)+state.phase2Variant)%3),approvedMissions:5};
   });
  }
  // The first M5/M10 lab deliberately uses 10/20 points ONLY,
@@ -207,6 +207,11 @@ function initRound(){
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission,trial=state.phase2&&mission===5;
  const toggle=$('phase2Mode');
+ const sets=['Originais','Novos','Mistos'];
+ const chooseBuilds=$('phase2Builds');
+ chooseBuilds.disabled=!trial;
+ chooseBuilds.textContent='✦ Combinações: '+sets[state.phase2Variant];
+ chooseBuilds.setAttribute('aria-label','Alterar combinação de talentos: '+sets[state.phase2Variant]);
  toggle.setAttribute('aria-pressed',String(trial));
  toggle.innerHTML=trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.2</small>':'<strong>✦ Experimentar 40 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
  $('engineModeInfo').textContent=trial?
@@ -265,6 +270,11 @@ $('phase2Mode').addEventListener('click',()=>{
  if(!PHASE2)return;
  state.phase2=!state.phase2;
  if(state.phase2){state.mission=5;document.querySelectorAll('.milestone').forEach(x=>x.setAttribute('aria-pressed',String(Number(x.dataset.mission)===5)))}
+ initRound();
+});
+$('phase2Builds').addEventListener('click',()=>{
+ if(!state.phase2||state.mission!==5)return;
+ state.phase2Variant=(state.phase2Variant+1)%3;
  initRound();
 });
 $('startBattle').addEventListener('click',begin);

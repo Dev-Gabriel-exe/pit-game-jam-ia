@@ -127,5 +127,6 @@ for(let seed=1;seed<=24;seed++){
  assert(sim.fighters.every(f=>Number.isFinite(f.hp)&&Number.isFinite(f.x)&&Number.isFinite(f.z)));
 }
 assert(wins.size>=2,'New talents eliminate class variety');
+assert.equal(used.size,40,'Every B.1+B.2 effect must activate in 24 seeded 30-player fights');
 console.log('B2 24x30 TRIAL '+JSON.stringify({observed:[...used].sort(),winners:[...wins],finish:times}));
 console.log('PASS Phase B.2: ten original catalog entries per class, five talent picks M5, 20 additional functional skills + 24 30-bot simulations. No final arena / 120 animation claim.');

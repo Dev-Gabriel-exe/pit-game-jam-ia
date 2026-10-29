@@ -1,5 +1,5 @@
 'use strict';
-// Validate the real B.1 engine is mounted and executes talents in the 3D lab.
+// Validate the real B.2 engine, 40 catalog skills and user-selectable M5 samples.
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 (async()=>{
@@ -20,8 +20,17 @@ const {chromium}=require('playwright');
    });
   });
   assert(budgets.every(b=>b.talents===5&&b.points===10));
+  assert.equal(await page.evaluate(()=>Object.values(window.PIT_V5_PHASE2.TALENTS).flat().length),40);
+  assert.equal((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).length,30);
   await page.locator('[data-roster="4"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.fighterCount===4&&window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:100000});
+  const original=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents.map(x=>x.ids[0]));
+  assert.deepEqual(original,['B01','E01','P01','G01']);
+  await page.locator('#phase2Builds').click();
+  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.selectedTalents?.[0]?.ids?.[0]==='B06'&&window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:100000});
+  const newSkills=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents.map(x=>x.ids[0]));
+  assert.deepEqual(newSkills,['B06','E06','P06','G06']);
+  assert.match(await page.locator('#phase2Builds').textContent(),/Novos/);
   await page.locator('#startBattle').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.talentEvents>0,null,{timeout:65000});
   assert(await page.locator('#battleLog').textContent());
@@ -29,7 +38,7 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
   assert.equal(await page.locator('#phase2Mode').getAttribute('aria-pressed'),'false');
   assert.deepEqual(errors,[],'Page errors: '+errors.join(' | '));
-  console.log('PASS Phase2 B.1 browser: real five-talent M5 builds, 3D skills and M10 legacy isolation');
+  console.log('PASS Phase2 B.2 browser: 40 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
   await page.close();
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
