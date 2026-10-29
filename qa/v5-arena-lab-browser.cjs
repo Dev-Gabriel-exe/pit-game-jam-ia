@@ -41,6 +41,8 @@ const {chromium}=require('playwright');
    assert.equal(await page.locator('#damagePace').getAttribute('data-scale'),'0.75');
    assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-damage-scale'),'0.75');
    assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-mage-damage-bonus'),'1.1');
+   assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-storm-delay'),'28');
+   assert.equal(await page.locator('#arenaStage').getAttribute('data-v5-storm-rate-factor'),'0.7');
    await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5VisibleNicks||0)>=1,null,{timeout:15000});
    assert(Number(await page.locator('#arenaStage').getAttribute('data-v5-visible-nicks'))<=(width===390?4:9),'Limitar sobreposição de nomes na cena');
    assert.equal(await page.locator('.battle-legend').count(),1);
