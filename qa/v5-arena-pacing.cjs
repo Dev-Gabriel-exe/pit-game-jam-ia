@@ -61,3 +61,36 @@ for(const {name,engine,list} of rosters){
  }
 }
 console.log('PASS pacing: legacy + Phase2 keep default damage unchanged and deterministic 75% / 60% reductions');
+
+// Observational balance matrix, not a pass/fail fairness claim. Do not
+// silently buff base HP, class damage, damage-by-storm, or talent cooldowns
+// based on this tiny sample. Results support the user review of a weak mage.
+const classes=['warrior','mage','hunter','guardian'];
+function sample(rosterCount,scale,seed){
+ const list=Array.from({length:rosterCount},(_,i)=>{
+  const klass=classes[i%4];
+  return {id:'pacing-'+i,name:klass+' '+i,
+   build:PHASE2.exampleBuild(klass,klass+' '+i,5,Math.floor(i/4)%11),
+   approvedMissions:5};
+ });
+ const sim=PHASE2.battle(list,{seed,arenaScale:5,limit:scale===1?95:110,
+  damageScale:scale,mageDamageBonus:scale===1?1:1.1});
+ const result=sim.run(2400);
+ const first=result.events.find(e=>e.type==='knockout'||e.type==='storm');
+ return {time:result.time,firstKo:first?.time??null,winner:result.winner?.klass||'none',
+  skills:result.events.filter(e=>e.type==='talent').length,
+  knocks:result.events.filter(e=>e.type==='knockout').length};
+}
+for(const count of [4,30]){
+ for(const scale of [1,.75]){
+  const n=count===30?6:12;
+  const samples=Array.from({length:n},(_,i)=>sample(count,scale,22360+i*2717));
+  const avg=key=>(samples.reduce((sum,s)=>sum+(s[key]||0),0)/n).toFixed(1);
+  const wins=Object.fromEntries(classes.map(k=>[k,samples.filter(s=>s.winner===k).length]));
+  console.log('PACING MATRIX '+count+' players '+Math.round(scale*100)+'% '+JSON.stringify({
+   seeds:n,avgTimeSeconds:avg('time'),avgFirstEliminationSeconds:avg('firstKo'),
+   avgTalentEvents:avg('skills'),avgKnockouts:avg('knocks'),winners:wins
+  }));
+ }
+}
+
