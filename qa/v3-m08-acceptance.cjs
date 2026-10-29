@@ -26,7 +26,7 @@ student.save('student-b',same);
 assert.equal(student.validate('student-b').ok,false,'identical before and after rejected');
 const rubric=ctx.window.PIT_TEACHER_MISSION_EIGHT_VALIDATION;
 assert(rubric&&rubric.rubric.length===6,'teacher rubric covers six criteria');
-assert(rubric.rubric.some(x=>/MOBILE/.test(x.title)),'mobile rubric');
+assert(rubric.rubric.some(x=>/LEGIBILIDADE NA TELA-ALVO/.test(x.title) && /resolução-alvo no Preview/.test(x.accept) && /Se o jogo também é para celular/.test(x.accept) && /Teste em celular físico não é requisito/.test(x.accept)),'target-screen rubric: Preview at intended resolution, conditional narrow-screen check, no physical-device claim');
 assert(rubric.rubric.some(x=>/ACESSIBILIDADE/.test(x.title)),'accessibility rubric');
 assert(rubric.rubric.some(x=>/DESEMPENHO/.test(x.title)),'performance rubric');
 const page=fs.readFileSync('v3/app.js','utf8');
