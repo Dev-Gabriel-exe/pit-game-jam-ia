@@ -136,3 +136,12 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-m01-fields .tm1-field strong{display:block;font:700 clamp(25px,2.1vw,34px)/1.25 Georgia,serif;margin:12px 0}
 #pitProjector .pit-projector-m01-fields .tm1-field p{font:400 clamp(19px,1.6vw,25px)/1.45 system-ui,"Segoe UI",Arial,sans-serif}
 @media(max-width:850px){#pitProjector .pit-projector-m01-fields{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Live M01 university edition: avoid squeezing seven specification rows into one projected card. */
+#pitProjector .pit-projector-m01-pro-fields h3{grid-column:1/-1;margin:0 0 8px;font:700 clamp(25px,2.1vw,34px)/1.2 Georgia,serif}
+#pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-row{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:start;gap:14px;min-width:0;margin:0;padding:clamp(14px,1.5vw,22px);background:#1c1b22;border:1px solid #85623e;border-radius:12px}
+#pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-row small{display:block;font:800 clamp(18px,1.3vw,20px)/1.3 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-row strong{display:block;margin:9px 0;font:700 clamp(24px,2vw,32px)/1.25 Georgia,serif}
+#pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-row p{font:400 clamp(19px,1.5vw,24px)/1.4 system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-index{font:700 20px/1.2 system-ui,"Segoe UI",Arial,sans-serif}
