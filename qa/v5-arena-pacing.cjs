@@ -73,9 +73,10 @@ function sample(rosterCount,scale,seed){
    build:PHASE2.exampleBuild(klass,klass+' '+i,5,Math.floor(i/4)%11),
    approvedMissions:5};
  });
- const sim=PHASE2.battle(list,{seed,arenaScale:5,limit:scale===1?95:110,
+ const sim=PHASE2.battle(list,{seed,arenaScale:5,limit:scale===1?95:scale===.75?110:125,
   damageScale:scale,mageDamageBonus:scale===1?1:1.1,
-  stormDelay:scale===1?18:28,stormRateFactor:scale===1?1:.70});
+  stormDelay:scale===1?18:scale===.75?28:34,
+  stormRateFactor:scale===1?1:scale===.75?.70:.60});
  const result=sim.run(2400);
  const first=result.events.find(e=>e.type==='knockout'||e.type==='storm');
  return {time:result.time,firstKo:first?.time??null,winner:result.winner?.klass||'none',
@@ -83,7 +84,7 @@ function sample(rosterCount,scale,seed){
   knocks:result.events.filter(e=>e.type==='knockout').length};
 }
 for(const count of [4,30]){
- for(const scale of [1,.75]){
+ for(const scale of [1,.75,.60]){
   const n=count===30?6:12;
   const samples=Array.from({length:n},(_,i)=>sample(count,scale,22360+i*2717));
   const avg=key=>(samples.reduce((sum,s)=>sum+(s[key]||0),0)/n).toFixed(1);
