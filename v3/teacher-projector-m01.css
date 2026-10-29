@@ -145,3 +145,10 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-row strong{display:block;margin:9px 0;font:700 clamp(24px,2vw,32px)/1.25 Georgia,serif}
 #pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-row p{font:400 clamp(19px,1.5vw,24px)/1.4 system-ui,"Segoe UI",Arial,sans-serif}
 #pitProjector .pit-projector-m01-pro-fields .tm-pro-spec-index{font:700 20px/1.2 system-ui,"Segoe UI",Arial,sans-serif}
+
+/* M09: one peer-playtest task per projected slide, legible at 720p. */
+#pitProjector .pit-projector-m09-practice{width:100%;max-width:1080px;font-family:system-ui,"Segoe UI",Arial,sans-serif}
+#pitProjector .pit-projector-m09-practice .t9v-work{display:grid;grid-template-columns:minmax(0,1fr);margin:0}
+#pitProjector .pit-projector-m09-practice .t9v-work article{min-width:0;padding:clamp(18px,2vw,30px)}
+#pitProjector .pit-projector-m09-practice h2,#pitProjector .pit-projector-m09-practice h3{font-size:clamp(27px,2.4vw,38px);line-height:1.2}
+#pitProjector .pit-projector-m09-practice p,#pitProjector .pit-projector-m09-practice b,#pitProjector .pit-projector-m09-practice strong{font-size:clamp(19px,1.6vw,25px);line-height:1.45;overflow-wrap:anywhere}
