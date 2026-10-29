@@ -223,19 +223,19 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  renderer.shadowMap.enabled=quality!=='low';
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=worldScale>1.3?1.65:1.38;
+ renderer.toneMappingExposure=worldScale>1.3?1.87:1.38;
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.setClearColor(0x09070f,1);
  container.replaceChildren(renderer.domElement);renderer.domElement.className='v5-webgl';
- const scene=new THREE.Scene();scene.background=new THREE.Color(worldScale>1.3?0x17121c:0x09070f);scene.fog=new THREE.FogExp2(0x17121c,worldScale>1.3?.004:.018);
- const camera=new THREE.PerspectiveCamera(41,1,.15,580);
+ const scene=new THREE.Scene();scene.background=new THREE.Color(worldScale>1.3?0x17121c:0x09070f);scene.fog=new THREE.FogExp2(0x201a27,worldScale>1.3?.0023:.018);
+ const camera=new THREE.PerspectiveCamera(worldScale>1.3?50:41,1,.15,580);
  camera.position.set(0,17,27);camera.lookAt(0,1,0);
  const controls=new OrbitControls(camera,renderer.domElement);
  controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=7;controls.maxDistance=78*worldScale;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
  controls.target.set(0,1,0);
  scene.add(new THREE.HemisphereLight(0xb9a7bb,0x574132,worldScale>1.3?3.4:2.2));
  if(worldScale>1.3){
-  scene.add(new THREE.AmbientLight(0xbdb2ad,1.45));
+  scene.add(new THREE.AmbientLight(0xc9bec4,1.75));
   const fill=new THREE.DirectionalLight(0xe4c3a0,1.9);fill.position.set(20,25,-12);scene.add(fill);
   MATERIAL.floor.color.setHex(0x4b3b45);MATERIAL.floorEdge.color.setHex(0x8c6a54);MATERIAL.dark.color.setHex(0x30252c);
  }
@@ -500,7 +500,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5BuildVisuals=String([...individuals.values()].filter(u=>u.identityVisual).length);
   container.dataset.v5BuildIdentities=String(new Set([...individuals.values()].filter(u=>u.identity).map(u=>u.identity.visualId)).size);
   container.dataset.v5Spectators='0';
-  camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);controls.target.set(0,.2,0);controls.update();
+  if(worldScale>1.3)cinematic();else overview();
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
@@ -632,13 +632,24 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(!f.alive){unit.mesh.circle.visible=false}
   }
  }
+ // D-phase presets: both are passive camera positions, not the later auto-director.
+ // The close low-angle view intentionally frames only a portion of the arena
+ // so the medieval architecture and individual heroes are actually legible.
+ function cinematic(){
+  followId=null;
+  if(worldScale>1.3)camera.position.set(18*stadiumScale,17*stadiumScale,30*stadiumScale);
+  else camera.position.set(8.5,9,15);
+  controls.target.set(0,worldScale>1.3?2.3:1.2,0);
+  controls.update();container.dataset.v5CameraPreset='cinematic';
+ }
  function overview(){
-  followId=null;camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);controls.target.set(0,.2,0);controls.update();
+  followId=null;camera.position.set(0,worldScale>1.3?76*stadiumScale:26,worldScale>1.3?112*stadiumScale:37);
+  controls.target.set(0,.2,0);controls.update();container.dataset.v5CameraPreset='overview';
  }
  function focusFighter(id){
   const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
   followId=String(id);const watching=occupiedSeats.get(followId),x=watching?.x??f.x,y=watching?.y??1.4,z=watching?.z??f.z;
-  camera.position.set(x+10,y+13,z+19);controls.target.set(x,y+1.4,z);controls.update();return true;
+  camera.position.set(x+10,y+13,z+19);controls.target.set(x,y+1.4,z);controls.update();container.dataset.v5CameraPreset='fighter';return true;
  }
  function resize(){
   if(!live)return;
@@ -820,18 +831,36 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   // Nickname overlay is 2D screen space, but positions are projected from
   // each actual 3D character. It is not an unrelated static roster.
   const rectW=container.clientWidth,rectH=container.clientHeight;
+  // Keep every fighter in the DOM and scoreboard, but only render a small
+  // non-overlapping sample of on-screen names. This fixes the 29 labels stacked
+  // across the grandstand on narrow phones. Following a fighter takes priority.
+  const nickCandidates=[];
   for(const u of individuals.values()){
    if(!u.nick?.isConnected)continue;
+   u.nick.style.display='none';
+   // Eliminated players remain seated in 3D but do not cover the battlefield.
+   if(u.spectator&&u.id!==followId)continue;
    const worldPos=new THREE.Vector3(0,3.48,0);
    u.mesh.root.localToWorld(worldPos);
    worldPos.project(camera);
-   const inside=u.mesh.root.visible&&worldPos.z<1&&worldPos.z>-1&&Math.abs(worldPos.x)<.985&&Math.abs(worldPos.y)<.97;
-   u.nick.style.display=inside?'block':'none';
-   if(inside){
-    const sx=(worldPos.x*.5+.5)*rectW,sy=(-worldPos.y*.5+.5)*rectH;
-    u.nick.style.transform='translate(-50%,-100%) translate('+Math.round(sx)+'px,'+Math.round(sy)+'px)';
-   }
+   if(!u.mesh.root.visible||worldPos.z>=1||worldPos.z<=-1||Math.abs(worldPos.x)>=.91||Math.abs(worldPos.y)>=.88)continue;
+   const sx=(worldPos.x*.5+.5)*rectW,sy=(-worldPos.y*.5+.5)*rectH;
+   const chosen=u.id===followId;
+   // Prioritize the selected fighter, followed by heroes near the center.
+   const rank=(chosen?-100000:0)+(u.spectator?50000:0)+Math.hypot(sx-rectW*.5,sy-rectH*.55);
+   nickCandidates.push({u,sx,sy,rank});
   }
+  nickCandidates.sort((a,b)=>a.rank-b.rank);
+  const placed=[],maxLabels=rectW<500?4:rectW<900?6:9;
+  for(const item of nickCandidates){
+   if(placed.length>=maxLabels)break;
+   const near=placed.some(other=>Math.abs(item.sx-other.sx)<(rectW<500?102:126)&&Math.abs(item.sy-other.sy)<29);
+   if(near)continue;
+   item.u.nick.style.display='block';
+   item.u.nick.style.transform='translate(-50%,-100%) translate('+Math.round(item.sx)+'px,'+Math.round(item.sy)+'px)';
+   placed.push(item);
+  }
+  container.dataset.v5VisibleNicks=String(placed.length);
   for(const fl of [...floating]){
    const age=elapsed-fl.started;
    if(age>1.1||!fl.unit.mesh.root.visible){fl.node.remove();floating.delete(fl);continue}
@@ -865,5 +894,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,overview,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
