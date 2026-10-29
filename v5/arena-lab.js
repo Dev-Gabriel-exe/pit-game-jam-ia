@@ -56,8 +56,11 @@ function updateScoreboard(){
   item.classList.toggle('defeated',!f.alive);
   item.querySelector('[data-hp]').textContent=Math.ceil(val)+' / '+max+' HP';
   item.querySelector('[data-health]').style.width=Math.max(0,Math.min(100,val/max*100)).toFixed(1)+'%';
-  item.querySelector('[data-damage]').textContent=CORE.CLASS[f.build.klass].label+' · '+Math.round(f.damage||0)+' dano';
+  item.querySelector('[data-damage]').textContent=f.alive?CORE.CLASS[f.build.klass].label+' · '+Math.round(f.damage||0)+' dano':'👁 Arquibancada · eliminado';
  }
+ const watching=combatants.filter(f=>!f.alive).length;
+ const audience=$('spectatorsCount');if(audience)audience.textContent=watching+' na arquibancada';
+ const remaining=$('aliveCount');if(remaining)remaining.textContent=(combatants.length-watching)+' em combate';
 }
 function appendLog(content,klass='hit'){
  const log=$('battleLog');if(log.querySelector('p'))log.replaceChildren();
@@ -73,9 +76,9 @@ function onEvent(event){
  if(event.type==='critical')appendLog('⚡ Um golpe crítico atingiu o adversário!','special');
  if(event.type==='knockout'){
   const defeated=state.roster.find(x=>x.id===event.target)?.name||'Um combatente';
-  appendLog('☠ '+defeated+' foi eliminado!','hit');
+  appendLog('☠ '+defeated+' foi eliminado e subiu para a arquibancada!','hit');
  }
- if(event.type==='storm')appendLog('☄ A tempestade engoliu um dos combatentes.','hit');
+ if(event.type==='storm')appendLog('☄ Um combatente caiu na tempestade e foi para a arquibancada.','hit');
  if(event.type==='end'){
   const winner=state.stage.simulation?.result()?.winner;
   state.result=winner||null;state.fought=true;
@@ -123,7 +126,7 @@ function initRound(){
  state.roster=roster(mission,state.count);
  try{state.stage.fighters(state.roster,{seed:mission===5?10929:20929,limit:75});
   // Close-in spectator camera for four characters. The full coliseum remains orbitable.
-  state.stage.camera.position.set(0,state.count===30?76:16,state.count===30?112:26);}
+  state.stage.camera.position.set(0,state.count===30?128:22,state.count===30?190:36);}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
  if($('stageLoading'))$('stageLoading').hidden=true;
  updateScoreboard();$models.textContent=prefix+' Carregando modelos CC0 reais...';
@@ -181,7 +184,7 @@ $('speedBattle').addEventListener('click',()=>{
 });
 window.addEventListener('pagehide',()=>{clearInterval(state.interval);state.stage?.dispose()},{once:true});
 try{
- state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:2.6,onEvent});
+ state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:4.4,onEvent});
  const actorFill=new THREE.DirectionalLight(0xffd5b9,2.5);actorFill.position.set(4,13,14);state.stage.scene.add(actorFill);
  initRound();
  state.interval=setInterval(()=>{if(!document.hidden){updateScoreboard();reportModels()}},450);
