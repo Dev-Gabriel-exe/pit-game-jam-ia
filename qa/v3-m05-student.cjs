@@ -37,7 +37,7 @@ ok(evid.length<=750,'API evidence max 750');
 ok(['Condição:','Ação:','Variável:','Positivo:','Negativo:','Feedback:','Salvo em:'].every(x=>evid.includes(x)),'All evidence fields included');
 m.hydrate('student-2',evid,'submitted');
 ok(m.fields.every(f=>m.load('student-2')[f.key]===data[f.key]),'Submitted fields restore from API');
-ok(m.load('student-2').checks.length===3,'Submitted test attestations restored');
+ok(m.load('student-2').checks.length===0,'Submitted evidence does not invent Preview test attestations');
 ok(m.load('student-3').condition==='','Session isolation');
 m.save('student-2',{...data,action:'Minha versão corrigida preservada'});
 m.hydrate('student-2',evid,'revision');
