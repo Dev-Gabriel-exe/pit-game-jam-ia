@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T14:20:16.694Z",
+  "last_completed_at": "2026-10-29T15:17:28Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V4-CROSS-PROJECTOR-CONTENT: M07 2D/3D steps added; confirm Chrome/Browser CI and reduce 720p scroll before aesthetics",
+  "priority": "V4-PROJECTOR-CI: confirm new Chrome scrolling regression 1280/1600/1920 and Browser QA; then split oversized M04/M05 slides and audit low-coverage phases",
   "current_phase": "MISSOES",
-  "last_task": "V4-CROSS-PROJECTOR-M07",
+  "last_task": "V4-CROSS-PROJECTOR-OVERFLOW-KEYBOARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2450,12 +2450,19 @@
       "status": "in_progress",
       "commit": "5ee29e4d4eef6916320141aa3ec8ed6586dc60ea",
       "summary": "M07 projected 4 complete GDevelop steps for selected 2D or 3D route, image fallback and Chrome regressions. V8 syntax 3/3 and isolated assertions 73/73 PASS; new CI not confirmed; human/GDevelop/HDMI NOT_RUN. 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-29T15:17:28Z",
+      "task": "V4-CROSS-PROJECTOR-OVERFLOW-KEYBOARD",
+      "status": "in_progress",
+      "commit": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
+      "summary": "Found projector PageDown skipped unread parts of long GDevelop tutorial slides; vertical centering could clip the first lines. Added PageDown/PageUp scroll-first navigation, reset on slide change, accessible overflow hint, safe center alignment and compact 720p chrome without shrinking tutorial body. Added deterministic Chrome regression for overflow/keyboard/top visibility/private notes, documented limitations. Static QA 40900307916 SUCCESS on prior CSS commit; new 6fbbbb7 static 40900326543, projector 40900326757 and Browser 40900326551 IN_PROGRESS at checkpoint. Prior 2a1b2d projector 40900268316 SUCCESS. No manual HDMI/GDevelop GUI/mobile/peer. 54/59 unchanged, main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CROSS-PROJECTOR-CONTENT",
+    "task": "V4-CROSS-PROJECTOR-OVERFLOW-KEYBOARD",
     "status": "in_progress",
-    "updated_at": "2026-10-29T14:20:16.694Z",
+    "updated_at": "2026-10-29T15:17:28Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2472,9 +2479,14 @@
       "1dd7ed2275139750fb6c8e4087816ccd3112cc7a",
       "087eda6bb44a62ee9b68e4319f8b45708b48a52c",
       "c5e97bed56739d6b99b33f667827bdf2654ca691",
-      "5ee29e4d4eef6916320141aa3ec8ed6586dc60ea"
+      "5ee29e4d4eef6916320141aa3ec8ed6586dc60ea",
+      "60dec810a81f0c6ad593e7af2ead2034928cdb9a",
+      "5d7e53aac0c5a14a8450667647cf459ec3331a21",
+      "2a1b2dcdcb0a89f6cccd99e1bd8a85579daec9af",
+      "9d3d825dc37b7b25a5cba6b28ab93f57e79b028f",
+      "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582"
     ],
-    "documentation_commit": "2042133285cf30387c1a7a3a6be000b94298b619",
+    "documentation_commit": "4357929108ba8625e79399c7cafa44bd02a21a39",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -2653,13 +2665,56 @@
       {
         "name": "GDevelop GUI, HDMI, physical mobile, human peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "Previous M07 projector Chrome and Browser",
+        "sha": "5ee29e4d4eef6916320141aa3ec8ed6586dc60ea",
+        "run_ids": [
+          40890383193,
+          40890383247
+        ],
+        "result": "SUCCESS confirmed 2026-10-29"
+      },
+      {
+        "name": "Projector scroll-first initial Chrome audit",
+        "sha": "2a1b2dcdcb0a89f6cccd99e1bd8a85579daec9af",
+        "run_id": 40900268316,
+        "result": "SUCCESS 3 viewport jobs; later safe alignment/top-visibility assertion not yet covered"
+      },
+      {
+        "name": "Projector safe alignment static QA",
+        "sha": "9d3d825dc37b7b25a5cba6b28ab93f57e79b028f",
+        "run_id": 40900307916,
+        "result": "SUCCESS"
+      },
+      {
+        "name": "Projector overflow keyboard regression final Chrome",
+        "sha": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
+        "run_id": 40900326757,
+        "result": "IN_PROGRESS at checkpoint; no pass claim"
+      },
+      {
+        "name": "Final code static QA",
+        "sha": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
+        "run_id": 40900326543,
+        "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "Final code Browser QA",
+        "sha": "6fbbbb7e7f04721bae8de703e2ec9fa4b44b5582",
+        "run_id": 40900326551,
+        "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "Human GDevelop GUI, HDMI, physical mobile, observed peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M07 Chrome 1280/1600/1920 and Browser QA on latest commit; reduce M04/M05/M07 720p scrolling; inspect remaining low-coverage phases",
-    "blocker": "New M07 Chrome/CI not yet confirmed; manual GDevelop GUI/HDMI/mobile/peer NOT_RUN"
+    "next_task": "Confirm final Chrome 3-viewports/Browser/static on 6fbbbb7; fix regressions if any; then reduce M04/M05/M07 720p scroll and review six low-coverage mission phases",
+    "blocker": "CI for final overflow regression not confirmed at checkpoint; human GDevelop GUI, HDMI, physical mobile and peer playtest remain NOT_RUN"
   }
 }
