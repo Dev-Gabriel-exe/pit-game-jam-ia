@@ -150,7 +150,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   f.mercyRegenPower=f.stats.hp*.02*effectiveness(f,'L09')/3;
   emit('proc',f,{talent:'L09'});
  }
- function applySlow(f,fraction,duration,owner){
+ function applySlow(f,fraction,duration,owner,talent=null){
   if(!f.alive)return;
   if(owner&&f.build.klass==='mage'&&has(f,'E08')&&(f.cooldowns.E08||0)<=0){
    f.cooldowns.E08=19;
@@ -166,7 +166,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   if(f.slowPower<fraction||f.slow<=0)f.slowPower=fraction;
   f.slow=Math.max(f.slow,duration);
-  emit('debuff',owner,{target:f.id,kind:'slow',fraction,duration});
+  emit('debuff',owner,{target:f.id,kind:'slow',fraction,duration,talent});
  }
  function staggeredSideStep(f,owner,meters){
   const dx=owner.x-f.x,dz=owner.z-f.z,dd=Math.max(.001,Math.hypot(dx,dz));
@@ -577,7 +577,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
      const angle=Math.atan2(e.x-f.x,e.z-f.z),delta=Math.atan2(Math.sin(angle-f.face),Math.cos(angle-f.face));
      if(Math.abs(delta)<=.95){
       applyHit(f,e,atk*scaleSkill('J07'),{kind:'special',skill:'J07'});
-      if(e.alive)applySlow(e,.15,1.5,f);
+      if(e.alive)applySlow(e,.15,1.5,f,'J07');
      }
     }
     return true;
@@ -970,7 +970,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
      zone.sharedHits.add(victim.id);
      const hit=applyHit(owner,victim,owner.stats.attack*.55*effectiveness(owner,'S10'),
       {kind:'special',skill:'S10'});
-     if(hit>0&&victim.alive)applySlow(victim,.12,1,owner);
+     if(hit>0&&victim.alive)applySlow(victim,.12,1,owner,'S10');
      emit('trap',owner,{talent:'S10',target:victim.id,castId:zone.castId});
      continue;
     }
