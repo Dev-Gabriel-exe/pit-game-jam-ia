@@ -204,9 +204,18 @@ function build(){
  const blocks=usable.length?usable:[...root.querySelectorAll('section,article,.tm1-root > *, .tm2-content > *, .tm3-body > *')].filter(node=>node.textContent.trim().length>=35&&!node.querySelector('.pit-private-teacher-notes'));
  return blocks.map((node,n)=>{const copy=node.cloneNode(true);copy.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').forEach(privateNode=>privateNode.remove());return {title:copy.querySelector('h2,h3,h4,strong')?.textContent?.trim().slice(0,95)||heading,html:copy.outerHTML,number:n+1};});
 }
+function updateScrollHint(){
+ const content=$('pitProjectorContent'),hint=$('pitProjectorScrollHint');
+ if(!content||!hint)return;
+ const maxScroll=Math.max(0,content.scrollHeight-content.clientHeight);
+ hint.hidden=maxScroll<=12;
+ if(!hint.hidden)hint.textContent=maxScroll-content.scrollTop>12?'↓ Há mais conteúdo neste slide · PageDown para ler':'Fim deste slide · PageDown avança';
+}
 function render(){
  if(!overlay)return;
- const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';activateProjectorControls(content);content.classList.add('pit-projector-enter');
+ const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';content.scrollTop=0;activateProjectorControls(content);content.classList.add('pit-projector-enter');
+ content.querySelectorAll('img').forEach(img=>img.addEventListener('load',updateScrollHint,{once:true}));
+ updateScrollHint();
  $('pitProjectorCount').textContent=(index+1)+' / '+slides.length;
  $('pitProjectorTitle').textContent=slide.title;
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;
@@ -219,12 +228,23 @@ function open(){
  slides=build();if(!slides.length)return;
  origin=document.activeElement;index=0;
  overlay=document.createElement('div');overlay.id='pitProjector';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Apresentação da missão atual');
- overlay.innerHTML='<div class="pit-projector-top"><div><small>✦ PIT GAME JAM IA · MISSÃO <span id="pitProjectorMission"></span></small><h1 id="pitProjectorTitle"></h1></div><button id="pitProjectorClose" type="button">✕ Encerrar apresentação</button></div><main id="pitProjectorContent" class="pit-projector-slide"></main><footer class="pit-projector-footer"><button id="pitProjectorPrev" type="button">← Anterior</button><div class="pit-projector-meter"><span id="pitProjectorCount"></span><div><i id="pitProjectorProgress"></i></div></div><button id="pitProjectorNext" type="button">Próximo →</button></footer>';
+ overlay.innerHTML='<div class="pit-projector-top"><div><small>✦ PIT GAME JAM IA · MISSÃO <span id="pitProjectorMission"></span></small><h1 id="pitProjectorTitle"></h1></div><button id="pitProjectorClose" type="button">✕ Encerrar apresentação</button></div><main id="pitProjectorContent" class="pit-projector-slide"></main><footer class="pit-projector-footer"><button id="pitProjectorPrev" type="button">← Anterior</button><div class="pit-projector-meter"><span id="pitProjectorCount"></span><small id="pitProjectorScrollHint" role="status" aria-live="polite" hidden></small><div><i id="pitProjectorProgress"></i></div></div><button id="pitProjectorNext" type="button">Próximo →</button></footer>';
  document.body.appendChild(overlay);document.body.classList.add('pit-projecting');$('pitProjectorMission').textContent=String(missionNumber()).padStart(2,'0');
  $('pitProjectorClose').onclick=close;$('pitProjectorPrev').onclick=()=>move(-1);$('pitProjectorNext').onclick=()=>move(1);
- render();$('pitProjectorClose').focus();
+ $('pitProjectorContent').addEventListener('scroll',updateScrollHint,{passive:true});render();$('pitProjectorClose').focus();
 }
-document.addEventListener('keydown',e=>{if(!overlay)return;if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
+document.addEventListener('keydown',e=>{if(!overlay)return;if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'){e.preventDefault();move(1)}
+ else if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}
+ else if(e.key==='PageDown'||e.key==='PageUp'){
+  e.preventDefault();
+  const content=$('pitProjectorContent');
+  const canScrollDown=e.key==='PageDown'&&content.scrollTop+content.clientHeight<content.scrollHeight-12;
+  const canScrollUp=e.key==='PageUp'&&content.scrollTop>12;
+  if(canScrollDown||canScrollUp){
+   content.scrollTop+=(e.key==='PageDown'?1:-1)*Math.max(160,Math.floor(content.clientHeight*.8));
+   updateScrollHint();
+  }else move(e.key==='PageDown'?1:-1);
+ }});
 document.addEventListener('click',e=>{if(e.target?.closest?.('#pitProjectorLaunch'))open()});
 const button=document.createElement('button');button.id='pitProjectorLaunch';button.type='button';button.innerHTML='<svg class="pit-projector-sigil" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M32 3 40 17 54 12 49 28 60 34 45 39 49 55 33 48 18 59 18 41 4 35 18 27 12 12 27 17Z" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/><path d="M32 14 42 32 32 50 22 32Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M32 22v20M26 32h12" stroke="currentColor" stroke-width="2.4"/><circle cx="32" cy="32" r="3" fill="#e8a74e"/></svg><span>APRESENTAR <small id="pitProjectorButtonMission">MISSÃO 01</small></span>';button.setAttribute('aria-label','Apresentar aula da missão atual');button.title='Apresentação cinematográfica: um card por slide';
 const pane=$('mainPane');if(pane){const head=pane.querySelector('.mainhead');head?.appendChild(button)}
