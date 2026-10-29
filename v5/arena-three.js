@@ -208,6 +208,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   loadMedievalArchitecture(root,worldScale,quality,container);
  }else container.dataset.v5Map='original-ring-1';
  const individuals=new Map(),effects=[],labels=new Map();
+ let animationEvents=0,specialFxEvents=0;
  const standSeats=(world.spectatorSeats||[]).map(seat=>({...seat,x:seat.x*stadiumScale,y:seat.y*stadiumScale,z:seat.z*stadiumScale}));
  const occupiedSeats=new Map(),spectators=new Set();
  const nicknameLayer=document.createElement('div');nicknameLayer.className='arena-nickname-layer';nicknameLayer.setAttribute('aria-hidden','true');container.append(nicknameLayer);
@@ -273,6 +274,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   item.overrideMotion=motion;
   item.motionUntil=elapsed+duration;
   animateModel(item,motion,true);
+  animationEvents++;container.dataset.v5AnimationEvents=String(animationEvents);
  }
  function addRealCharacter(item){
   const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
@@ -348,6 +350,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
   simulation=CORE.battle(normalized,{seed,limit,arenaScale:worldScale});
+  animationEvents=0;specialFxEvents=0;
+  container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
@@ -382,6 +386,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   }
   root.add(mesh);mesh.userData.velocity=new THREE.Vector3();
   effects.push({mesh,life:.85,maxLife:.85,isAbility:true});
+  specialFxEvents++;container.dataset.v5SpecialFx=String(specialFxEvents);
   burst(x,z,color,9);
  }
  function burst(x,z,color=0xf4bb7e,count=10){
