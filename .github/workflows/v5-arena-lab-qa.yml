@@ -33,6 +33,7 @@ on:
       - 'qa/v5-arena-targeting.cjs'
       - 'qa/v5-arena-balance-matrix.cjs'
       - 'qa/v5-arena-lab*'
+      - 'qa/v5-coliseum-scale.cjs'
       - '.github/workflows/v5-arena-lab-qa.yml'
   workflow_dispatch:
 permissions:
@@ -69,6 +70,8 @@ jobs:
           node --check qa/v5-phase2-b6.cjs
           node --check qa/v5-phase2-browser.cjs
           node --check qa/v5-arena-physics-fairness.cjs
+          node --check qa/v5-coliseum-scale.cjs
+          node qa/v5-coliseum-scale.cjs
           node qa/v5-arena-lab.cjs
           node qa/v5-arena-navigation.cjs
           node qa/v5-arena-targeting.cjs
