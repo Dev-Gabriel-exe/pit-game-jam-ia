@@ -100,6 +100,15 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  }
  function ready(f,id){return has(f,id)&&(f.cooldowns[id]||0)<=0&&f.gcd<=0}
  function shield(f,amount,seconds){
+  if(has(f,'L07')&&f.passives.l07Ready){
+   amount*=1+.10*effectiveness(f,'L07');f.passives.l07Ready=false;f.cooldowns.L07=13;
+   emit('proc',f,{talent:'L07',kind:'shield'});
+  }
+  if(has(f,'R07')&&(f.cooldowns.R07||0)<=0&&f.runicRegenUntil<=time){
+   f.cooldowns.R07=15;f.runicRegenUntil=time+5;
+   f.runicRegenPower=f.stats.hp*.015*effectiveness(f,'R07')/5;
+   emit('proc',f,{talent:'R07'});
+  }
   f.shield=Math.min(f.stats.hp*.30,Math.max(0,f.shield)+amount);
   f.shieldUntil=Math.max(f.shieldUntil,time+seconds);
   emit('shield',f,{amount:+amount.toFixed(2),total:+f.shield.toFixed(2)});
@@ -111,6 +120,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   return false;
  }
  function heal(f,amount,talent){
+  if(has(f,'L07')&&f.passives.l07Ready&&amount>0){
+   amount*=1+.10*effectiveness(f,'L07');f.passives.l07Ready=false;f.cooldowns.L07=13;
+   emit('proc',f,{talent:'L07',kind:'heal'});
+  }
   // 10% HP per rolling 15s, shared by regenerative talents, never over-heal.
   f.healWindow=f.healWindow.filter(x=>time-x.time<15);
   const spent=f.healWindow.reduce((a,b)=>a+b.amount,0);
@@ -122,6 +135,15 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    }
   }
   return allowed;
+ }
+ function reactAilment(f){
+  if(!f.alive||!has(f,'L09')||(f.cooldowns.L09||0)>0)return;
+  f.cooldowns.L09=22;
+  if(f.burning>0)f.burning*=.5;
+  if(f.poisonUntil>time)f.poisonUntil=time+(f.poisonUntil-time)*.5;
+  f.mercyRegenUntil=time+3;
+  f.mercyRegenPower=f.stats.hp*.02*effectiveness(f,'L09')/3;
+  emit('proc',f,{talent:'L09'});
  }
  function applySlow(f,fraction,duration,owner){
   if(!f.alive)return;
@@ -150,6 +172,13 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
  function applyHit(attacker,target,raw,{kind='basic',skill=null,ignoreDefense=0,fire=false,reflect=false,shieldBonus=0}={}){
   if(!target?.alive||!attacker||(!attacker.alive&&!reflect))return 0;
   let amount=Math.max(0,raw);
+  const heavy=!reflect&&raw>=attacker.stats.attack*1.30;
+  if(!reflect&&kind==='melee'&&has(target,'E06')&&(target.cooldowns.E06||0)<=0){
+   amount*=1-.25*effectiveness(target,'E06');target.cooldowns.E06=19;
+   const dx=target.x-attacker.x,dz=target.z-attacker.z,dd=Math.max(.001,Math.hypot(dx,dz));
+   clearPosition(target,dx/dd,dz/dd,1);
+   emit('proc',target,{talent:'E06',target:attacker.id});
+  }
   // Warrior Duelist D02 works only against directed attacks, never AoE or
   // reflection. The side step is collision-checked.
   if(!reflect&&['melee','ranged'].includes(kind)&&has(target,'D02')&&(target.cooldowns.D02||0)<=0){
@@ -158,6 +187,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   const defenseFactor=Math.max(.35,1-(target.stats.defense*(1-ignoreDefense))*.025);
   amount*=defenseFactor;
+  if(!reflect&&target.d06Until>time)amount*=1-.08*effectiveness(target,'D06');
+  if(!reflect&&skill&&attacker.r08Until>time)amount*=1-attacker.r08Power;
+  if(!reflect&&attacker.build.klass==='mage'&&has(target,'L10')&&
+    zones.some(z=>z.talent==='L10'&&z.owner===target.id&&z.until>time&&dist(z,target)<=z.r))
+   amount*=1-.12*effectiveness(target,'L10');
   if(target.fortress>0)amount*=.82;
   if(!reflect&&target.guardUntil>time&&target.passives.g06GuardReady){
    amount*=1-.12*effectiveness(target,'G06');target.passives.g06GuardReady=false;target.guardUntil=0;
@@ -182,6 +216,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',target,{talent:'G02',target:attacker.id});
   }
   if(attacker.weak>0)amount*=1-attacker.weakPower;
+  if(!reflect&&attacker.d07WeakUntil>time){
+   amount*=1-attacker.d07WeakPower;attacker.d07WeakUntil=0;
+   emit('proc',attacker,{talent:'D07',kind:'weakened'});
+  }
   if(attacker.solarUntil>time&&attacker.shield>0)amount*=.88;
   if(attacker.rage>0)amount*=1+.10*effectiveness(attacker,'B08');
   if(!reflect&&kind==='melee'&&has(attacker,'L02')&&attacker.passives.l02Ready){
@@ -190,6 +228,15 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',attacker,{talent:'L02',target:target.id});
   }
   if(!reflect&&r()<attacker.stats.crit)amount*=1.5;
+  if(!reflect&&attacker.build.klass==='hunter'&&has(attacker,'E07')&&attacker.passives.e07Ready){
+   amount*=1+.10*effectiveness(attacker,'E07');attacker.passives.e07Ready=false;attacker.cooldowns.E07=14;
+   attacker.passives.e07Anchor={x:attacker.x,z:attacker.z};
+   emit('proc',attacker,{talent:'E07',target:target.id});
+  }
+  if(!reflect&&attacker.build.klass==='hunter'&&skill&&has(attacker,'E09')&&attacker.passives.e09NetReady){
+   amount*=1+.12*effectiveness(attacker,'E09');attacker.passives.e09NetReady=false;
+   emit('proc',attacker,{talent:'E09',target:target.id});
+  }
   // P04 and P05 are one-charge, scoped to the hero that owns the effect.
   if(!reflect&&kind==='basic'&&has(attacker,'P04')&&attacker.passives.p04Ready){
    amount*=1+.08*effectiveness(attacker,'P04');attacker.passives.p04Ready=false;
@@ -227,6 +274,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
   }
   attacker.damage+=inflicted;attacker.attacks++;
   target.lastHitAt=time;
+  if(inflicted>0&&has(target,'E07')){
+   target.passives.e07Ready=false;target.passives.e07Anchor={x:target.x,z:target.z};
+  }
   target.hitWindow.push({time,value:inflicted});
   target.hitWindow=target.hitWindow.filter(h=>time-h.time<=3);
   emit('hit',attacker,{target:target.id,amount:+inflicted.toFixed(2),absorbed:+shieldTaken.toFixed(2),kind,skill});
@@ -249,7 +299,28 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    target.reverseUntil=0;emit('proc',target,{talent:'D03',target:attacker.id});
    applyHit(target,attacker,target.stats.attack*.65*effectiveness(target,'D03'),{kind:'retaliation',skill:'D03',reflect:true});
   }
+  if(!reflect&&has(target,'D06')&&(target.cooldowns.D06||0)<=0&&(defenseFactor<1||shieldTaken>0)){
+   target.cooldowns.D06=11;target.d06Until=time+3;emit('proc',target,{talent:'D06',target:attacker.id});
+  }
+  if(!reflect&&heavy&&has(target,'D09')&&(target.cooldowns.D09||0)<=0&&dist(target,attacker)<=3.1){
+   target.cooldowns.D09=15;emit('proc',target,{talent:'D09',target:attacker.id});
+   if(attacker.alive)applyHit(target,attacker,target.stats.attack*.70*effectiveness(target,'D09'),{kind:'retaliation',skill:'D09',reflect:true});
+  }
   if(target.hp<=0){endHero(target,attacker);return inflicted}
+  if(has(target,'R09')&&!target.passives.r09Used&&target.hp/target.stats.hp<.30){
+   target.passives.r09Used=true;shield(target,target.stats.hp*.12*effectiveness(target,'R09'),3);
+   emit('proc',target,{talent:'R09'});
+  }
+  if(has(target,'E08')&&!target.passives.e08Used&&target.hp/target.stats.hp<.40){
+   target.passives.e08Used=true;
+   zones.push({owner:target.id,talent:'E08',x:target.x,z:target.z,r:1.5,until:time+5,triggered:false});
+   emit('proc',target,{talent:'E08'});emit('zone',target,{talent:'E08',x:target.x,z:target.z,radius:1.5,duration:5});
+  }
+  if(has(target,'L06')&&!target.passives.l06Used&&target.hp/target.stats.hp<.35){
+   target.passives.l06Used=true;target.hopeRegenUntil=time+3;
+   target.hopeRegenPower=target.stats.hp*.05*effectiveness(target,'L06')/3;
+   emit('proc',target,{talent:'L06'});
+  }
   if(!reflect&&skill&&has(target,'R04')&&(target.cooldowns.R04||0)<=0&&target.r04Until<=time){
    target.r04Until=time+4;target.cooldowns.R04=12;
    emit('charge',target,{talent:'R04',target:attacker.id});
@@ -277,6 +348,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    emit('proc',target,{talent:'E05',target:attacker.id});
    applyHit(target,attacker,target.stats.attack*.35*effectiveness(target,'E05'),{kind:'retaliation',skill:'E05',reflect:true});
   }
+  if(!reflect&&shieldTaken>0&&has(target,'R06')&&(target.cooldowns.R06||0)<=0&&dist(attacker,target)<=7){
+   target.cooldowns.R06=20;emit('proc',target,{talent:'R06',target:attacker.id});
+   if(attacker.alive)applyHit(target,attacker,target.stats.attack*.35*effectiveness(target,'R06'),{kind:'reflect',skill:'R06',reflect:true});
+  }
   if(!reflect&&shieldTaken>0&&has(target,'G03')&&(target.cooldowns.G03||0)<=0&&dist(attacker,target)<=3){
    target.cooldowns.G03=18;emit('proc',target,{talent:'G03',target:attacker.id});
    applyHit(target,attacker,target.stats.attack*.35*effectiveness(target,'G03'),{kind:'reflect',skill:'G03',reflect:true});
@@ -285,6 +360,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1}={}){
    attacker.cooldowns.E02=10;target.burning=3;
    target.burnPower=attacker.stats.attack*.03*effectiveness(attacker,'E02');
    target.burnOwner=attacker.id;
+   reactAilment(target);
    emit('proc',attacker,{talent:'E02',target:target.id});
   }
   return inflicted;
