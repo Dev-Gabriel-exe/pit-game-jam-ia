@@ -50,3 +50,17 @@ Capturas reais do usuário apontaram: cenário simples demais, câmera alta/afas
 - Stage: `v5/arena-lab.html?phase2=1` (em ambiente da branch que de fato esteja publicado).
 - Acompanhar commits e CI em https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions.
 - Não declarar revisão visual, screenshots, FPS nem Vercel pronto sem verificação.
+
+## Fase D — terceiro incremento: câmera atrás do personagem e habilidades (29/10/2026)
+Feedback do usuário: câmera cinematográfica melhorou; "Seguir" ainda ficava na frente do personagem; os talentos pareciam apenas golpes básicos/escudo; caçador venceu repetidamente e Guerreiro/Guardião aparentavam pouca vida. **Pedido explícito:** resolver primeiro câmera 3ª pessoa e comunicação visual dos talentos; deixar equilíbrio de PV/dano para Fase E.
+
+**Implementado:**
+- `arena-three.js`: `focusFighter` agora posiciona atrás da direção autoritativa `f.face` do personagem, mantém distância, acompanha giros via interpolação e mantém o jogador em destaque. A câmera livre retorna quando se seleciona a visão geral ou a cinematográfica; após KO há retorno à câmera global da prévia. Não confundir com replicação multiusuário da Fase F/H.
+- `arena-three.js`: visualização C.1/C.2 mais legível; efeitos ativos emitidos por eventos reais `talent` com motivos específicos, anel de energia auxiliar, cor da classe, camada adicional no desktop e maior duração (respeitando `prefers-reduced-motion`). Tela mostra nome real da habilidade acima do personagem. VFX são apresentações das 120 habilidades catalogadas, **não 120 animações GLB únicas**. O budget de efeitos permanece 9 no baixo e 18 no normal; descartar os efeitos remove os meshes acessórios.
+- `arena-lab.html`, `arena-lab.js`, `arena-lab.css`: botão `Seguir em 3ª pessoa`, telemetria de **último talento realmente ativado**, contador, reset correto, prioridade maior de leitura das habilidades.
+- `qa/v5-arena-lab-browser.cjs`, `qa/v5-talent-vfx-browser.cjs`, `qa/v5-coliseum-scale.cjs`: cobertura de câmera atrás, UI de talento real, reset e persistência da lógica. Não alterar o motor de classes/HP antes da Fase E.
+- **Prévia isolada atualizada:** https://pit-v5-coliseu-demo.vercel.app/v5/arena-lab.html?phase2=1 ; deployment `dpl_GCh7KUfC9qvgPyNm6EpzKRdsexKi`, com estado READY. HTML com painel `✦ TALENTOS ATIVADOS` confirmado via fetch.
+
+**Para avaliar manualmente:** abrir M5 `phase2=1`, clicar `4 HERÓIS` para reduzir poluição, `Iniciar confronto`, selecionar o personagem em `Os Combatentes` ou `Seguir em 3ª pessoa` no destaque, ativar `Velocidade ×0,5`. Os golpes especiais aparecem por eventos verdadeiros no painel de talentos. Repetir 30 jogadores para checar performance e volume.
+**Ainda pendente:** aprovação visual humana e FPS em celular; a Fase E analisará PV do Guerreiro/Guardião, dominância do Caçador, alvo/timing do combate e a IA em cenários com 30 pessoas.
+**CI:** verificar o último run `V5 Arena Lab` do commit `d503f3bc3d2eb27368d63df9f4d5f68abacadb0f` antes de chamar o incremento de homologado. O GitHub Actions estava enfileirado no momento deste checkpoint.
