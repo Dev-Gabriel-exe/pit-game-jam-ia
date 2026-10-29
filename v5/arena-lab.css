@@ -175,3 +175,23 @@ body.arena-immersive .stage-flair{display:none}
  .spotlight-text{font-size:11px}
  .battle-float{font-size:13px}
 }
+
+/* D-phase legibility: confirmed engine talent, not generic basic attacks.
+   Compact, non-interactive telemetry stays readable on narrow phones. */
+.talent-telemetry{position:absolute;bottom:65px;right:10px;z-index:7;
+ display:flex;flex-direction:column;gap:3px;max-width:min(44%,320px);padding:8px 12px;
+ border:1px solid #b99add99;border-left:3px solid #ba8cff;background:#161025e8;
+ color:#e9ddfa;border-radius:5px;pointer-events:none;box-shadow:0 6px 20px #09061499}
+.talent-telemetry span{font:800 9px "Source Sans 3",sans-serif;letter-spacing:.15em;color:#cfaaff}
+.talent-telemetry strong{font:800 12px/1.3 "Source Sans 3",sans-serif;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;color:#faf2ff}
+.talent-telemetry small{font-size:10px;color:#cbbbd8}
+.talent-telemetry[data-active="false"]{opacity:.53}
+@media(max-width:700px){
+ .talent-telemetry{bottom:76px;right:6px;left:auto;max-width:57%;
+  padding:6px 9px;gap:2px;background:#1d1428e8}
+ .talent-telemetry span{font-size:8px;letter-spacing:.07em}
+ .talent-telemetry strong{font-size:10px}
+ .talent-telemetry small{font-size:9px}
+ #followSpotlight{font-size:9px}
+}
