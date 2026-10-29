@@ -212,6 +212,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const standSeats=(world.spectatorSeats||[]).map(seat=>({...seat,x:seat.x*stadiumScale,y:seat.y*stadiumScale,z:seat.z*stadiumScale}));
  const occupiedSeats=new Map(),spectators=new Set();
  const nicknameLayer=document.createElement('div');nicknameLayer.className='arena-nickname-layer';nicknameLayer.setAttribute('aria-hidden','true');container.append(nicknameLayer);
+ const floatingLayer=document.createElement('div');floatingLayer.className='battle-float-layer';floatingLayer.setAttribute('aria-hidden','true');container.append(floatingLayer);
+ const floating=new Set(),floatDebounce=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();let followId=null;
@@ -232,7 +234,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    });
    labels.delete(x.id);
   }
-  individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();followId=null;
+  individuals.clear();occupiedSeats.clear();spectators.clear();nicknameLayer.replaceChildren();floatingLayer.replaceChildren();floating.clear();floatDebounce.clear();followId=null;
   container.dataset.v5Spectators='0';
  }
  function animateModel(item,motion,force=false){
@@ -445,6 +447,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  }
  resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
  const now=()=>performance.now();
+ function showCombatText(id,label,type='hit'){
+  const unit=individuals.get(String(id));if(!unit||floating.size>=16)return;
+  const last=floatDebounce.get(unit.id)??-999;
+  if(elapsed-last<.35)return;
+  floatDebounce.set(unit.id,elapsed);
+  const node=document.createElement('div');
+  node.className='battle-float'+(type==='critical'?' critical':type==='dodge'?' dodge':type==='special'?' special':'');
+  node.textContent=label;
+  floatingLayer.append(node);
+  floating.add({node,unit,started:elapsed,offset:(floating.size%3)*12});
+ }
  function simulateStep(seconds){
   if(!live||!playing||!simulation)return;
   accumulator+=Math.min(1,Math.max(0,seconds))*speed;
@@ -459,10 +472,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     }else if(ev.type==='launch'){
      triggerMotion(attacker,'attack',.47);
     }else if(ev.type==='hit'){
+     if(victim)showCombatText(ev.target,'−'+Math.round(ev.amount||0),'hit');
      if(ev.kind==='melee')triggerMotion(attacker,'attack',.44);
      if(victim&&!victim.spectator)triggerMotion(victim,'hit',.25);
      if(victim)burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
     }else if(ev.type==='dodge'){
+     showCombatText(ev.hero,'ESQUIVA','dodge');
      triggerMotion(attacker,'dodge',.43);
      if(attacker)burst(attacker.mesh.root.position.x,attacker.mesh.root.position.z,0x7ad1e2,5);
     }
@@ -566,6 +581,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
     u.nick.style.transform='translate(-50%,-100%) translate('+Math.round(sx)+'px,'+Math.round(sy)+'px)';
    }
   }
+  for(const fl of [...floating]){
+   const age=elapsed-fl.started;
+   if(age>1.1||!fl.unit.mesh.root.visible){fl.node.remove();floating.delete(fl);continue}
+   const wp=new THREE.Vector3(0,3.1+age*1.2,0);
+   fl.unit.mesh.root.localToWorld(wp);wp.project(camera);
+   if(wp.z<0||wp.z>1||Math.abs(wp.x)>.98||Math.abs(wp.y)>.98){fl.node.style.display='none';continue}
+   fl.node.style.display='block';
+   fl.node.style.opacity=String(Math.max(.01,1-age/1.1));
+   const x=(wp.x*.5+.5)*rectW,y=(-wp.y*.5+.5)*rectH-fl.offset;
+   fl.node.style.transform='translate(-50%,-50%) translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
+  }
   renderer.render(scene,camera);
  }
  renderer.setAnimationLoop(loop);
@@ -574,7 +600,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
-  clearHeroes();nicknameLayer.remove();
+  clearHeroes();nicknameLayer.remove();floatingLayer.remove();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
