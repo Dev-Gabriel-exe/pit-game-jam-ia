@@ -259,7 +259,10 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.bo
 $('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn)state.stage?.focusFighter(btn.dataset.focus);});
 $('speedBattle').addEventListener('click',()=>{
  if(!state.stage)return;
- state.speed=state.speed===1?1.5:state.speed===1.5?2:state.speed===2?3:1;
+ // Slow motion (×0.5) is deliberate: 30 simultaneous fighters are difficult
+ // to read at full speed. Always expose this directly via the speed control.
+ const speeds=[1,.5,1.5,2,3];
+ state.speed=speeds[(speeds.indexOf(state.speed)+1)%speeds.length];
  state.stage.setSpeed(state.speed);$('speedBattle').textContent='Velocidade ×'+state.speed;
 });
 window.addEventListener('pagehide',()=>{clearInterval(state.interval);state.stage?.dispose()},{once:true});
