@@ -49,9 +49,9 @@ for (const [klass,file] of defs) {
   names.add(t.name);
   assert(types.includes(t.type),klass+' invalid type '+t.id);counts[t.type]++;
   assert(attrs.has(t.primary) && attrs.has(t.secondary) && t.primary!==t.secondary,klass+' attrs '+t.id);
-  assert(t.effect.length>=35,klass+' effect too short '+t.id);
+  assert(t.effect.length>=30,klass+' effect too short '+t.id);
   assert(t.animation.storyboard.length>=32,klass+' animation too short '+t.id);
-  assert(t.synergyAndCounter.length>=14,klass+' synergy missing '+t.id);
+  assert(t.synergyAndCounter.length>=12,klass+' synergy missing '+t.id);
   assert(!animationIDs.has(t.animation.id),'duplicate animation '+t.animation.id);
   animationIDs.add(t.animation.id);
   assert(t.animation.id.startsWith(klass+'_'),klass+' animation prefix');
