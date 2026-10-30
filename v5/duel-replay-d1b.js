@@ -430,8 +430,25 @@ function startDemo(){
  label('PRÉVIA FICTÍCIA — uma batalha demonstrativa reproduzida localmente. Sem contas, servidor, turmas ou XP.','info');
  $('description').textContent='Exemplo com duas classes e câmera cinematográfica. O duelo real usa o replay imutável calculado no servidor.';
 }
+// Parent/iframe handoff is deliberately limited to same-origin localhost and
+// a matching invite UUID. No credentials are placed in query params or storage.
+function stagingConfig(){
+ const direct=window.__PIT_V5_D1B_STAGING;
+ if(direct?.enabled===true)return direct;
+ if(window.parent===window||
+    !['localhost','127.0.0.1'].includes(location.hostname))return null;
+ try{
+  if(window.parent.location.origin!==location.origin)return null;
+  const given=window.parent.__PIT_V5_D1C_EMBED;
+  const id=new URLSearchParams(location.search).get('invite');
+  if(given?.enabled===true&&given.inviteId===id&&
+   typeof given.tokenProvider==='function'&&
+   /^[0-9a-f-]{36}$/i.test(id||''))return given;
+ }catch{}
+ return null;
+}
 async function invokeMatch(action){
- const config=window.__PIT_V5_D1B_STAGING;
+ const config=stagingConfig();
  if(!config||typeof config.tokenProvider!=='function'||typeof config.inviteId!=='string')
   throw Error('Sessão de homologação ausente.');
  const endpoint=config.endpoint;
@@ -490,7 +507,7 @@ createWorld();
 raf=requestAnimationFrame(loop);
 if(demo)startDemo();
 else if(['localhost','127.0.0.1'].includes(location.hostname)&&
- window.__PIT_V5_D1B_STAGING?.enabled===true){
+ stagingConfig()?.enabled===true){
  void syncReal();
  matchPoll=setInterval(()=>{if(!document.hidden)void syncReal()},4500);
 }else{
