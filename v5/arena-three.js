@@ -14,6 +14,7 @@ const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
 const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
 const IDENTITY=window.PIT_V5_BUILD_IDENTITY;
+const CAMERA_DIRECTOR=window.PIT_V5_CAMERA_DIRECTOR;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -320,6 +321,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();let followId=null;const followBack=new THREE.Vector3();
+ const autoDirector=CAMERA_DIRECTOR?.createDirector();
+ let autoCamera=false,autoRevision=0;
+ container.dataset.v5CameraDirector='off';
+ container.dataset.v5CameraShot='manual';container.dataset.v5CameraCuts='0';
  // Stage-only diagnostics: avoid overclaiming that a successful browser load
  // proves 30-player GPU performance on actual phones.
  let monitorFrames=0,monitorStarted=performance.now();
@@ -568,6 +573,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
   simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale,damageScale,mageDamageBonus,stormDelay,stormRateFactor,engagementMode,navigationMode,rangedCommitment,balancePreset});
+  autoDirector?.reset();autoCamera=false;autoRevision=0;
+  container.dataset.v5CameraDirector='off';container.dataset.v5CameraShot='manual';container.dataset.v5CameraCuts='0';
   container.dataset.v5EngagementMode=String(trial?engagementMode:'legacy');
   container.dataset.v5NavigationMode=String(trial?navigationMode:'legacy');
   container.dataset.v5RangedCommitment=String(trial?rangedCommitment:'legacy');
@@ -843,7 +850,31 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  // D-phase presets: both are passive camera positions, not the later auto-director.
  // The close low-angle view intentionally frames only a portion of the arena
  // so the medieval architecture and individual heroes are actually legible.
+ function disableAutoCamera(reason='manual'){
+  if(!autoCamera)return;
+  autoCamera=false;autoDirector?.stop();
+  container.dataset.v5CameraDirector='off';
+  container.dataset.v5CameraShot='manual';
+  container.dispatchEvent(new CustomEvent('v5-camera-changed',{detail:{enabled:false,reason}}));
+ }
+ function enableAutoCamera(on=true){
+  if(!autoDirector||!simulation)return false;
+  if(!on){disableAutoCamera();return false}
+  autoDirector.start();autoCamera=true;autoRevision=0;followId=null;
+  controls.enableRotate=true;controls.enablePan=true;
+  container.dataset.v5FollowTarget='';
+  container.dataset.v5CameraDirector='on';
+  container.dataset.v5CameraPreset='director';
+  container.dataset.v5CameraShot='overview';
+  const first=autoDirector.tick(simulation.time,simulation.fighters);
+  if(first)autoRevision=first.revision;
+  container.dispatchEvent(new CustomEvent('v5-camera-changed',{detail:{enabled:true,shot:'overview'}}));
+  return true;
+ }
+ // Real orbit input has precedence over automatic camera.
+ controls.addEventListener('start',()=>{if(autoCamera)disableAutoCamera('orbit')});
  function freeCamera(){
+  disableAutoCamera('preset');
   followId=null;controls.enableRotate=true;controls.enablePan=true;
   container.dataset.v5FollowTarget='';container.dataset.v5FollowBackDot='';
  }
@@ -871,6 +902,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   return {look,boom,fx,fz};
  }
  function focusFighter(id){
+  disableAutoCamera('follow');
   const f=simulation?.fighters.find(x=>String(x.id)===String(id));if(!f)return false;
   if(!f.alive||occupiedSeats.has(String(id))){cinematic();return false}
   followId=String(id);
@@ -910,6 +942,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    stormRing.scale.setScalar(result.radius);
    stormMaterial.opacity=result.time>18?.75:.36;
    for(const ev of result.events){
+    if(autoCamera)autoDirector?.observe(ev,simulation.fighters);
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
     const cue=ev.talent&&attacker?cueFor(attacker.build.klass,ev.talent):null;
     if(ev.type==='prepare'){
@@ -968,6 +1001,16 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     onEvent(ev);
    }
    for(const f of simulation.fighters)sync(f);
+   if(autoCamera){
+    const shot=autoDirector?.tick(result.time,simulation.fighters);
+    if(shot&&shot.revision!==autoRevision){
+     autoRevision=shot.revision;
+     container.dataset.v5CameraShot=shot.mode;
+     container.dataset.v5CameraCuts=String(shot.revision);
+     container.dataset.v5CameraSubject=shot.ids.join(',');
+     container.dispatchEvent(new CustomEvent('v5-director-shot',{detail:shot}));
+    }
+   }
    if(result.finished){playing=false;break}
   }
  }
@@ -1093,7 +1136,31 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
   container.dataset.v5ChoreographiesActive=String([...individuals.values()].filter(u=>u.choreography).length);
-  if(followId&&simulation){
+  if(autoCamera&&simulation){
+   const shot=autoDirector?.snapshot().plan;
+   if(shot){
+    const liveFighters=simulation.fighters.filter(f=>f.alive);
+    const chosen=shot.ids.map(id=>liveFighters.find(f=>String(f.id)===id)).filter(Boolean);
+    const targets=shot.mode==='overview'||!chosen.length?liveFighters:chosen;
+    if(targets.length){
+     const cx=targets.reduce((a,f)=>a+f.x,0)/targets.length;
+     const cz=targets.reduce((a,f)=>a+f.z,0)/targets.length;
+     let extent=0;
+     for(const f of targets)extent=Math.max(extent,Math.hypot(f.x-cx,f.z-cz));
+     const wide=shot.mode==='overview';
+     const dist=wide?Math.max(30,Math.min(115,extent*2.5+22)):
+      shot.mode==='climax'?25:shot.mode==='victory'?19:Math.max(21,Math.min(44,extent*2.5+16));
+     const desiredLook=new THREE.Vector3(cx,wide?1.7:2.7,cz);
+     const desiredBoom=new THREE.Vector3(cx+dist*.56,Math.max(11,dist*.66),cz+dist*.82);
+     const ease=reduce?Math.min(1,dt*1.6):1-Math.exp(-dt*2.0);
+     controls.target.lerp(desiredLook,ease);
+     const move=desiredBoom.clone().sub(camera.position).multiplyScalar(ease);
+     move.clampLength(0,Math.max(.15,dt*65));
+     camera.position.add(move);
+     camera.lookAt(controls.target);
+    }
+   }
+  }else if(followId&&simulation){
    const f=simulation.fighters.find(x=>String(x.id)===followId);
    if(!f||!f.alive||occupiedSeats.has(followId)){
     // An eliminated spectator returns to the global director preview.
@@ -1184,5 +1251,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
