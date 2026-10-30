@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Controle Docente de Duelos — PIT Game Jam V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./hero-lab-h1c.css"><link rel="stylesheet" href="./duel-lobby-d1c.css">
+<script src="./duel-client-d1c.js"></script><script src="./duel-teacher-d1c.js" defer></script>
+</head><body><div class="backdrop" aria-hidden="true"></div>
+<header class="topbar"><a class="brand" href="./duel-lobby-d1c.html"><span>⚔</span> PIT GAME JAM <small>DOCENTE</small></a>
+<span class="top-label">PAINEL DOCENTE <span>HOMOLOGAÇÃO DOS DUELOS 1 × 1</span></span><a class="back" href="./duel-lobby-d1c.html">VER SALÃO ↗</a></header>
+<main style="max-width:970px">
+<div class="eyebrow">FASE D.1c · LIBERAÇÃO PELO PROFESSOR</div><h1>O controle do <em>Coliseu.</em></h1>
+<p class="intro">Libere os duelos enquanto os alunos aguardam a turma terminar uma missão. Ao pausar, novos convites e novas partidas são bloqueados; uma batalha que já começou não perde seu resultado.</p>
+<div class="notice" role="note"><strong>EXCLUSIVO PARA HOMOLOGAÇÃO.</strong> A chave docente de 256 bits é fornecida pelo servidor de testes, não por esta página. Nenhuma turma real nem PIN docente existente é utilizado.</div>
+<section class="card" style="margin-top:18px">
+<div class="section-title"><span>CONTROLE DA TURMA DE TESTE</span><h2>Permitir duelos</h2><p>O professor decide quando os estudantes podem desafiar seus colegas.</p></div>
+<div class="duel-strip"><div><span>SITUAÇÃO</span><strong id="teacherStatus">DESCONHECIDA</strong></div><div><span>ÚLTIMA MUDANÇA</span><strong id="updatedAt">—</strong></div></div>
+<div id="feedback" class="feedback" role="status" aria-live="polite">Aguardando sessão docente de laboratório.</div>
+<div class="row" style="display:flex;gap:12px;flex-wrap:wrap">
+<button id="enableDuels" class="button primary-button" disabled>⚔ Liberar duelos</button>
+<button id="pauseDuels" class="button secondary-button" disabled>⏸ Pausar novos duelos</button>
+<button id="reloadState" class="button subtle-button" disabled>↻ Atualizar situação</button>
+</div>
+</section>
+<div class="footer">D.1c · Controle de laboratório apenas · API isolada da V3 e de produção</div>
+</main></body></html>
