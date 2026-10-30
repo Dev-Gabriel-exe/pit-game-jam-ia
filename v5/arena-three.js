@@ -9,6 +9,7 @@ import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
+const SPRITE_FX=window.PIT_V5_TALENT_SPRITES;
 const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
 const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
@@ -214,7 +215,7 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
   container.dataset.v5EnvironmentParts=String(loaded.reduce((sum,x)=>sum+x.pieces,0));
  });
 }
-export function createStage(container,{mode='hero',quality='auto',arenaScale=1,onEvent=()=>{}}={}){
+export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',onEvent=()=>{}}={}){
  const worldScale=Math.max(1,Math.min(5,Number(arenaScale)||1));
  const stadiumScale=worldScale>1.3?worldScale/2.6:1;
  if(!container)throw Error('Stage container is required');
@@ -264,6 +265,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  stormRing.rotation.x=-Math.PI/2;stormRing.position.y=.42;
  stormRing.scale.setScalar(18*worldScale);root.add(stormRing);
  const individuals=new Map(),effects=[],labels=new Map();
+ // E.6: shared local texture frames, opt-in for M5 and disposed with this stage.
+ const spriteKit=spriteEffects==='on'&&SPRITE_FX?SPRITE_FX.makeAtlas(THREE,{quality,reducedMotion:reduce}):null;
+ let spriteVisualEvents=0,spriteVisualDropped=0;
+ container.dataset.v5SpriteMode=spriteKit?'on':'off';
+ container.dataset.v5SpriteTextures=String(spriteKit?.textureCount||0);
+ container.dataset.v5SpriteFrames=String(spriteKit?.frameCount||0);
+ container.dataset.v5SpriteVisualEvents='0';container.dataset.v5SpriteVisualActive='0';
+ container.dataset.v5SpriteVisualDropped='0';container.dataset.v5SpriteStyleLast='';
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
  let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0,hitReactions=0;
  const visualBudget=quality==='low'||reduce?9:18;
@@ -539,6 +548,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   container.dataset.v5TalentFxEvents='0';container.dataset.v5TalentFxDropped='0';
   container.dataset.v5TalentCueLast='';container.dataset.v5TalentCueStyle='';
   container.dataset.v5TalentFxActive='0';
+  spriteVisualEvents=0;spriteVisualDropped=0;
+  container.dataset.v5SpriteVisualEvents='0';container.dataset.v5SpriteVisualActive='0';
+  container.dataset.v5SpriteVisualDropped='0';container.dataset.v5SpriteStyleLast='';
   container.dataset.v5TalentFxCatalog=String(CUES?Object.values(CUES).flat().length:0);
   container.dataset.v5ChoreographyCatalog=String(CHOREOGRAPHIES?Object.values(CHOREOGRAPHIES).flatMap(x=>Object.keys(x)).length:0);
   container.dataset.v5ChoreographyEvents='0';container.dataset.v5ChoreographyLast='';
@@ -596,6 +608,28 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   specialFxEvents++;container.dataset.v5SpecialFx=String(specialFxEvents);
   burst(x,z,color,9);
  }
+ // E.6 sprites are created only for genuine combat-engine actions and impacts.
+ function spawnSpriteCue(cue,x,z,subtle=false){
+  if(!spriteKit||!cue)return false;
+  const fx=spriteKit.spawn({style:cue.style,color:cue.color,scale:cue.scale,subtle,x,z});
+  if(!fx)return false;
+  fx.talentCue=cue;fx.subtle=subtle;
+  root.add(fx.mesh);effects.push(fx);
+  spriteVisualEvents++;container.dataset.v5SpriteVisualEvents=String(spriteVisualEvents);
+  container.dataset.v5SpriteStyleLast=cue.style;
+  container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
+  return true;
+ }
+ function spawnSpriteImpact(item,color=0xffd69a){
+  if(!spriteKit||!item||item.spectator||effects.filter(e=>e.spriteVisual&&!e.isAbility).length>=18)return false;
+  const pos=item.mesh.root.position;
+  const fx=spriteKit.spawn({style:'impact',color,scale:.9,x:pos.x,z:pos.z});
+  if(!fx)return false;
+  root.add(fx.mesh);effects.push(fx);
+  spriteVisualEvents++;container.dataset.v5SpriteVisualEvents=String(spriteVisualEvents);
+  container.dataset.v5SpriteStyleLast='impact';
+  return true;
+ }
  // C.1: genuine Phase2 actions select motion and bounded 3D VFX.
  // Real GLB clips are reused; bespoke animation per talent is a later phase.
  function talentVisual(item,event,position=null,subtle=false){
@@ -609,10 +643,21 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
   }
   if(effects.filter(e=>e.isAbility).length>=visualBudget){
-   talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);return false;
+   talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);
+   if(spriteKit){spriteVisualDropped++;container.dataset.v5SpriteVisualDropped=String(spriteVisualDropped)}
+   return false;
   }
   const x=Number.isFinite(position?.x)?position.x:item.mesh.root.position.x;
   const z=Number.isFinite(position?.z)?position.z:item.mesh.root.position.z;
+  if(spriteKit){
+   const spawned=spawnSpriteCue(cue,x,z,subtle);
+   if(spawned){
+    talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
+    container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
+    container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
+   }
+   return spawned;
+  }
   const material=new THREE.MeshBasicMaterial({color:cue.color,transparent:true,opacity:subtle?.48:.85,depthWrite:false,side:THREE.DoubleSide});
   let geometry,ground=true;
   switch(cue.style){
@@ -862,7 +907,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
       }
       if(!victim.choreography||elapsed>=victim.choreoUntil)triggerMotion(victim,'hit',.25);
      }
-     if(victim)burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
+     if(victim){
+      if(spriteKit&&isPhase2())spawnSpriteImpact(victim,attacker&&ev.skill?cueFor(attacker.build.klass,ev.skill)?.color||0xffd69a:0xffd69a);
+      else burst(victim.mesh.root.position.x,victim.mesh.root.position.z,0xf4ae7e,5);
+     }
     }else if(ev.type==='dodge'){
      showCombatText(ev.hero,'ESQUIVA','dodge');
      triggerMotion(attacker,'dodge',.43);
@@ -962,7 +1010,15 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
   }
   for(let i=effects.length-1;i>=0;i--){
    const e=effects[i];e.life-=dt;e.mesh.position.addScaledVector(e.mesh.userData.velocity,dt);
-   if(e.isAbility){
+   if(e.spriteVisual){
+    const progress=Math.max(0,Math.min(.999,1-e.life/e.maxLife));
+    const step=Math.min(e.frames.length-1,Math.floor(progress*e.frames.length));
+    if(step!==e.frameIndex){e.frameIndex=step;e.mesh.material.map=e.frames[step]}
+    const swell=reduce?1:1+Math.sin(progress*Math.PI)*.45;
+    e.mesh.scale.set(e.baseScale*swell,e.baseScale*swell,1);
+    e.mesh.material.opacity=e.config.opacity*(1-progress)*(.58+.42*Math.sin(Math.PI*progress));
+    if(!reduce)e.mesh.material.rotation+=dt*(e.style==='arc'?-1:1)*.58;
+   }else if(e.isAbility){
     const progress=1-e.life/e.maxLife;
     e.mesh.scale.setScalar((e.baseScale||.7)*(1+progress*(e.talentCue?.style==='barrier'?.8:1.7)));
     e.mesh.material.opacity=(e.talentCue?.type==='passivo'?.58:.90)*(1-progress);
@@ -988,6 +1044,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
    if(e.life<=0){discardEffect(e);effects.splice(i,1)}
   }
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
+  container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
   container.dataset.v5ChoreographiesActive=String([...individuals.values()].filter(u=>u.choreography).length);
   if(followId&&simulation){
    const f=simulation.fighters.find(x=>String(x.id)===followId);
@@ -1065,7 +1122,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,o
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
-  clearHeroes();nicknameLayer.remove();floatingLayer.remove();
+  clearHeroes();spriteKit?.dispose();nicknameLayer.remove();floatingLayer.remove();
   stormGeometry.dispose();stormMaterial.dispose();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
   // Shared palette materials remain reusable if a stage is reopened.
