@@ -68,6 +68,16 @@ async function call(handler,req){
  return {status:res.statusCode,body:res.payload,headers:res.headers};
 }
 (async()=>{
+ const realRoute=require('../chat-api/api/hero-v2-lab.js');
+ const oldEnabled=process.env.PIT_V5_H1C_ENABLED,oldEnvironment=process.env.VERCEL_ENV;
+ delete process.env.PIT_V5_H1C_ENABLED;
+ let disabledRoute=await call(realRoute,request());
+ assert.equal(disabledRoute.status,503,'Production route must be disabled by default');
+ process.env.PIT_V5_H1C_ENABLED='true';process.env.VERCEL_ENV='production';
+ disabledRoute=await call(realRoute,request());
+ assert.equal(disabledRoute.status,503,'Production must not enable lab route even with feature flag');
+ if(oldEnabled===undefined)delete process.env.PIT_V5_H1C_ENABLED;else process.env.PIT_V5_H1C_ENABLED=oldEnabled;
+ if(oldEnvironment===undefined)delete process.env.VERCEL_ENV;else process.env.VERCEL_ENV=oldEnvironment;
  const off=createHeroV2Handler({enabled:false});
  let r=await call(off,request());
  assert.equal(r.status,503);assert.equal(data.authReads,0);
