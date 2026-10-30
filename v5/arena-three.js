@@ -666,7 +666,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   return {count:simulation.fighters.length,seed};
  }
  function resume(){if(!contextLost&&simulation&&!simulation.finished){
-  arenaAudio.unlock();playing=true;physicsLast=performance.now();
+  arenaAudio.unlock();container.dataset.v5AudioState=arenaAudio.supported?'requested':'unsupported';playing=true;physicsLast=performance.now();
   if(container.dataset.v5GraphicsContext==='restored-paused')container.dataset.v5GraphicsContext='ready';
   simulateStep(.20)
  }}
@@ -904,7 +904,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     unit.overrideMotion=null;
     const champion=simulation?.finished&&simulation?.winner?.id===f.id;
     animateModel(champion?'victory':f.alive?(f.animation||'idle'):'defeated');
-    if(champion)container.dataset.v5VictoryAnimation=unit.actions&&[...unit.actions.keys()].some(k=>/victory|celebrat|cheer|taunt|emote/.test(k))?'native':'idle-fallback';
+    if(champion)container.dataset.v5VictoryAnimation=unit.actions&&[...unit.actions.keys()].some(k=>/victory|celebrat|cheer|taunt|emote/.test(k))?'native':'procedural';
    }
    if(!f.alive){unit.mesh.circle.visible=false}
   }
@@ -1146,7 +1146,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
      container.dispatchEvent(new CustomEvent('v5-director-shot',{detail:shot}));
     }
    }
-   if(result.finished){if(!victoryAudioPlayed){victoryAudioPlayed=true;arenaAudio.play('victory')}playing=false;break}
+   if(result.finished){if(!victoryAudioPlayed){victoryAudioPlayed=true;arenaAudio.play('victory');container.dataset.v5VictorySound=arenaAudio.unlocked?'played':'blocked'}playing=false;break}
   }
  }
  let physicsLast=performance.now();
@@ -1214,7 +1214,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    // Local actor pose only: never alter simulation positions or collisions.
    // Make genuine talent poses readable in an isometric/third-person view.
    // Only render transforms change: engine collision and attack range stay exact.
-   a.position.y=wobble+(choreography?.lift||0)*1.5;
+   const champion=simulation?.finished&&simulation?.winner?.id===id;
+    const victoryAge=champion?Math.max(0,elapsed-(u.victorySince??elapsed)):0;
+    // Visible celebratory lift and turn even when KayKit provides no victory clip.
+    const victoryLift=champion&&!reduce?Math.max(0,Math.sin(victoryAge*5))*Math.min(.55,victoryAge*.65):0;
+    if(champion){a.rotation.y=Math.sin(victoryAge*1.6)*.4;container.dataset.v5VictoryVisible='true'}
+    a.position.y=wobble+(choreography?.lift||0)*1.5+victoryLift;
    a.position.z=(choreography?.forward||0)*2;
    a.rotation.x=THREE.MathUtils.clamp((choreography?.pitch||0)*2,-.64,.64);
    a.rotation.z=THREE.MathUtils.clamp((choreography?.roll||0)*2,-.58,.58);
@@ -1369,6 +1374,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   if(monitorSpan>=950){
    const fps=Math.round(monitorFrames*1000/monitorSpan);
    container.dataset.v5FrameRate=String(fps);
+    container.dataset.v5AudioState=arenaAudio.unlocked?'running':arenaAudio.supported?'blocked':'unsupported';
    const snap=performanceMonitor?.sample({
     fps,drawCalls:renderer.info.render.calls,
     triangles:renderer.info.render.triangles,
