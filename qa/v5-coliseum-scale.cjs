@@ -26,7 +26,7 @@ assert.match(renderer,/cue\.style==='barrier'/,'Gothic shield wards must be reco
 assert.match(renderer,/cue\.style==='arrow'\|\|cue\.style==='arc'/,'Arrows and melee arcs have specific VFX');
 assert.match(renderer,/deco\.userData\.cueAccent/,'Layered VFX must have real timed animation');
 
-assert.match(lab,/arenaScale:5,onEvent/);
+assert.match(lab,/arenaScale:5,[^}]*onEvent/,'Arena must preserve its event callback despite visual-only options');
 const klasses=['warrior','mage','hunter','guardian'];
 const roster=Array.from({length:30},(_,i)=>{
  const klass=klasses[i%4],name='Arena D '+String(i+1).padStart(2,'0');
