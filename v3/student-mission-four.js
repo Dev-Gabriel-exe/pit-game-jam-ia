@@ -129,18 +129,35 @@
   ].join('\n');
  }
  function parseEvidence(raw){
-  if(typeof raw!=='string'||!raw.startsWith('MISSÃO 04 — PRIMEIRO JOGÁVEL'))return null;
-  const lines=raw.split('\n'),read=pre=>{
-   const line=lines.find(x=>x.startsWith(pre));return line?line.slice(pre.length).trim():'';
-  };
-  const route=names.indexOf(read('Rota: '));
+  // Old API records with removed newlines are ambiguous: never guess fields,
+  // route or Preview results from a flattened or partial submission.
+  if(typeof raw!=='string')return null;
+  const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+  const labels=[
+   'MISSÃO 04 — PRIMEIRO JOGÁVEL','Jogo: ','Gênero: ','Projeto: ',
+   'Cena: ','Rota: ','Comando: ','Resposta: ','Limite: ',
+   'Repetição: ','Salvo em: ','Correção: '
+  ];
+  if(lines.length!==labels.length||lines[0]!==labels[0])return null;
+  for(let n=1;n<labels.length;n++){
+   if(!lines[n].startsWith(labels[n]))return null;
+  }
+  const read=n=>lines[n].slice(labels[n].length).trim();
+  // Require complete metadata and exactly one known route.
+  for(const [n,max] of [[1,45],[2,20],[3,37],[4,32]]){
+   if(!read(n)||read(n).length>max)return null;
+  }
+  const route=names.indexOf(read(5));
   if(route<0)return null;
   const d=blank();d.route=route;
-  Object.assign(d,{
-   command:read('Comando: '),response:read('Resposta: '),boundary:read('Limite: '),
-   retest:read('Repetição: '),saved:read('Salvo em: '),issue:read('Correção: ')==='Não informada'?'':read('Correção: ')
-  });
-  // Evidence text cannot prove the three manual Preview tests were performed.
+  const indexes={command:6,response:7,boundary:8,retest:9,saved:10,issue:11};
+  for(const [key,n] of Object.entries(indexes)){
+   const value=read(n);
+   if(key==='issue'&&value==='Não informada'){d.issue='';continue}
+   if(value.length>config[key].max||clean(value).length<config[key].min)return null;
+   d[key]=value;
+  }
+  // Evidence never certifies the three manual GDevelop Preview checks.
   return d;
  }
  function hydrate(session,raw,status){
