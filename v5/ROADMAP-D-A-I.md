@@ -78,6 +78,8 @@
 
 ### H — Integração pedagógica / segurança e progressão
 
+**H.3 — experimento causal de spawn M10 (30/10/2026):** novo override de coordenadas **exclusivo de M10 no laboratório**, com a M5 inalterada. [CI 41021568535 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41021568535): 70 partidas, 6 replays exatos, 30 comparações trocando apenas geometria e 30 mantendo geometria fixa enquanto mudam ordem/RNG. Em 30 equilibrados, trocar somente posições mudou o vencedor em 9/9; trocar ordem/RNG com posições fixas mudou em 5/9. **Geometria influencia o resultado, mas ordem e RNG ainda não estão separados; não houve ajuste de balanceamento.** Checkpoint `v5/FASE-H3-M10-CHECKPOINT.md`. Prévia 3D M10, G.2, H.1/H.2 e Fase I continuam pendentes.
+
 **H.3 — cruzamento pareado de ordem/slot M10 (30/10/2026):** 272 partidas fictícias com rotações completas das mesmas builds e seeds, cada herói ocupando cada slot uma vez por bloco. [CI 41015450904 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41015450904). Em 30 equilibrados, Guardião ganhou **58/120**, versus **28** esperadas por participação; com metade do elenco Guardião, **86/120**, versus **60** esperadas. Com quatro, slots 1+2 ganharam **25/32** mesmo com classes rotacionadas. **A causa não está isolada**: índice de entrada ainda vincula posição, ordem de atualização e RNG; próxima missão é separar essas variáveis sem mudar a M5. Checkpoint: `v5/FASE-H3-M10-CHECKPOINT.md`. **Sem alteração de balanceamento, interface M10, H.1/H.2, G.2, V3 ou `main`.**
 
 
