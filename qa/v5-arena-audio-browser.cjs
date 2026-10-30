@@ -43,7 +43,17 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    window.AudioContext=DeniedAudioContext;window.webkitAudioContext=DeniedAudioContext;
   });
   await silent.goto('http://127.0.0.1:8899/v5/arena-lab.html?phase2=1&count=4&seed=4175863657',{waitUntil:'domcontentloaded',timeout:45000});
-  await silent.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:150000});
+  await silent.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:70000}).catch(async()=>{
+   const diagnostic=await silent.evaluate(()=>({
+    state:window.PIT_V5_ARENA_LAB?.modelState,
+    fighters:window.PIT_V5_ARENA_LAB?.fighterCount,
+    stage:document.querySelector('#arenaStage')?.dataset,
+    status:document.querySelector('#arenaStatus')?.textContent,
+    loading:document.querySelector('#stageLoading')?.textContent,
+    canvas:!!document.querySelector('#arenaStage canvas')
+   }));
+   throw Error('WebAudio-denied GLB readiness timeout: '+JSON.stringify({diagnostic,errors:silentErrors}).slice(0,1800));
+  });
   await silent.locator('#startBattle').click();
   await silent.waitForFunction(()=>document.querySelector('#combatClock')?.textContent!=='00:00',null,{timeout:30000});
   const rendered=await silent.evaluate(()=>({
