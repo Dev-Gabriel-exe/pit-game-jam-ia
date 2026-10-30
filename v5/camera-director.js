@@ -81,7 +81,7 @@
     const byFairness=[...alive].sort((a,b)=>least(a)-least(b)||id(a).localeCompare(id(b)));
     // Every other idle cut returns to an inclusive overview, not perpetual
     // close-ups of the most damaging class.
-    const wide=cuts%3===0||count>12&&cuts%3===1;
+    const wide=cuts%3===0;
     if(wide)proposal={mode:'overview',ids:[],reason:'coverage',priority:8};
     else{
      const a=byFairness[0],b=[...alive].filter(f=>f!==a).sort((x,y)=>
