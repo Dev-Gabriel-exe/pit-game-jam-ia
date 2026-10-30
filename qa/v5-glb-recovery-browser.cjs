@@ -54,6 +54,7 @@ const {chromium}=require('playwright');
   await page.locator('#resetBattle').click();
   await page.locator('[data-roster="30"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:145000});
+  await page.waitForFunction(()=>!document.querySelector('#startBattle')?.disabled,null,{timeout:12000});
   assert.equal(await page.locator('#retryModels').isVisible(),false);
   assert.equal(Number(await stage.getAttribute('data-v5-models-failed')),0);
   assert.equal(await page.locator('#startBattle').isDisabled(),false);
