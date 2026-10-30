@@ -27,6 +27,25 @@ m.save('ficticio-A',d);
 const max=m.load('ficticio-A');for(const f of m.fields)max[f.id]='X'.repeat(f.max);m.save('max',max);
 assert.ok(m.evidence('max').length<=750);
 assert.equal(m.parseEvidence(m.evidence('max')).saved.length,65);
+// Historical API flattened LF separators. Reject partial, duplicated, unknown and invalid evidence.
+const good=m.evidence('ficticio-A');
+const lines=good.split('\\n');
+const corrupt=[
+ good.replace(/\\n/g,' '),
+ lines.slice(0,-1).join('\\n'),
+ good+'\\nExtra: inválido',
+ good.replace('M06 | model','M06 | outra'),
+ good.replace('Asset: ','Necessidade: '),
+ good.replace('Asset: ','Campo desconhecido: '),
+ good.replace(/Asset: [^\\n]*/,'Asset: x'),
+ good.replace(/Asset: [^\\n]*/,'Asset: '+'x'.repeat(66))
+];
+for(const [index,e] of corrupt.entries())assert.equal(m.parseEvidence(e),null,'M06 corrupted evidence '+index);
+m.hydrate('ficticio-legado',corrupt[0],'approved');
+assert.equal(m.load('ficticio-legado').need,'','Flattened evidence must not hydrate an apparent submission');
+m.hydrate('ficticio-legado',good,'approved');
+assert.equal(m.load('ficticio-legado').route,'model','Valid evidence can hydrate');
+assert.equal(m.load('ficticio-legado').checks.length,0,'Hydration must not invent manual tests');
 const app=read('v3/app.js'),html=read('aluno-v3.html'),css=read('v3/student-mission-six.css');
 new vm.Script(app);
 assert.match(app,/const pilotSix=!TEACHER&&activeStage===6/);
