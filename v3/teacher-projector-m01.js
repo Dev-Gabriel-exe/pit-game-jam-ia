@@ -394,6 +394,34 @@ function pedagogicalDemoSlides(root,mission){
    return result.length===11?result:null;
   }
  }
+ // M09/Comprovar: one public rubric criterion per projected screen.
+ // The HDMI-off teacher procedure is deliberately excluded by cleanCopy.
+ if(mission===9&&root.querySelector('#t9vRoot .t9v-rubric')){
+  const source=root.querySelector('#t9vRoot');
+  const criteria=[...source.querySelectorAll('.t9v-rubric > article')];
+  const decisions=[...source.querySelectorAll('.t9v-decisions > article')];
+  if(criteria.length===5&&decisions.length===2){
+   const result=[];
+   function add(node,title,id,group){
+    if(!node)return;
+    const wrapper=document.createElement('section');
+    wrapper.className='t9v-root pit-projector-m09-review';
+    wrapper.dataset.pitProjectorM09Review='M09:'+id;
+    if(group){
+     const grid=document.createElement('div');
+     grid.className=group;
+     grid.innerHTML=cleanCopy(node);
+     wrapper.append(grid);
+    }else wrapper.innerHTML=cleanCopy(node);
+    result.push({title,html:wrapper.outerHTML});
+   }
+   add(source.querySelector('header'),'Critérios públicos da Missão 09','intro');
+   criteria.forEach((node,i)=>add(node,'Critério '+(i+1)+' de 5 · '+(node.querySelector('small')?.textContent||'Playtest'),'criterion-'+(i+1),'t9v-rubric'));
+   decisions.forEach((node,i)=>add(node,i===0?'Quando aprovar após verificar':'Quando solicitar revisão','decision-'+(i+1),'t9v-decisions'));
+   add(source.querySelector('footer'),'O relatório não substitui o Preview real','footer');
+   return result.length===9?result:null;
+  }
+ }
  // M09/Criar: restore the public peer-playtest protocol and evidence; never HDMI-off notes.
  if(mission===9&&root.querySelector('#t9vRoot .t9v-work')){
   const source=root.querySelector('#t9vRoot');
