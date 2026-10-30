@@ -33,8 +33,10 @@
    if(!chosen)return;
    const weight=interesting[event.type];
    // A genuine knockout targets the surviving victor, never the eliminated.
+   const focus=Number.isFinite(event.x)&&Number.isFinite(event.z)&&
+    ['prepare','talent-impact'].includes(event.type)?{x:event.x,z:event.z}:null;
    events.push({time:t,hero:id(chosen),target:b? id(b):null,weight,
-    type:event.type,highImpact:event.type==='prepare'||event.type==='talent-impact'});
+    type:event.type,highImpact:event.type==='prepare'||event.type==='talent-impact',focus});
    if(events.length>MAX_EVENTS)events.shift();
   }
   function tick(time,roster){
@@ -47,7 +49,7 @@
     lastSwitch=-Infinity;
    }
    // Last survivor must immediately switch to the winner, even mid-hold.
-   if(plan&&now-lastSwitch<minHold&&count>1)return plan;
+   if(plan&&now-lastSwitch<minHold&&count>1&&!(count<=3&&plan.mode!=='climax'))return plan;
    const high=events.filter(e=>now-e.time>=0&&now-e.time<=5&&aliveIDs.has(e.hero));
    // Prevent hero lock-in: screen time is credited only when a plan changes.
    const least=(f)=>coverage.get(id(f))||0;
@@ -73,7 +75,8 @@
      Math.hypot(a.x-anchor.x,a.z-anchor.z)-Math.hypot(b.x-anchor.x,b.z-anchor.z))[0];
     const two=partner&&Math.hypot(anchor.x-partner.x,anchor.z-partner.z)<=23;
     proposal={mode:two?'duel':'highlight',ids:two?[id(anchor),id(partner)]:[id(anchor)],
-     reason:best.event.type,priority:best.event.weight};
+     reason:best.event.type,priority:best.event.weight,
+     ...(best.event.focus?{focus:best.event.focus}:{})};
    }else if(!plan||now-lastSwitch>=maxHold||plan.mode==='overview'){
     const byFairness=[...alive].sort((a,b)=>least(a)-least(b)||id(a).localeCompare(id(b)));
     // Every other idle cut returns to an inclusive overview, not perpetual
