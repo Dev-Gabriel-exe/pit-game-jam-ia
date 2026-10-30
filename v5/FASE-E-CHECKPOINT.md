@@ -182,3 +182,15 @@ Um jogador da classe dominante ocupa 40% do elenco; as demais classes, 20% cada.
 - `qa/v5-endgame-browser.cjs`: teste Playwright com 30 GLBs, seed do print, suspensão/retomada explícita da aba, 28 espectadores sem mixers ativos, vitória, resultado na interface e reinício. Foi adicionado também o workflow focal `.github/workflows/v5-endgame-qa.yml` para validar a falha sem depender da longa bateria de outros navegadores.
 
 **Limite da conclusão:** estas correções eliminam dois defeitos de ciclo de vida concretos e reduzem trabalho no trecho crítico. O teste determinístico já comprovou que o motor não bloqueia aos 59s; ainda é preciso verificar encerramento completo no navegador e testar em dispositivo Android/PC reais antes de afirmar que o travamento relatado foi 100% resolvido. Visual de heróis e equilíbrio seguem iguais, e nenhuma mudança foi para `main`.
+
+### E.7 — homologação automatizada do fim da mesma partida + redução de draw calls
+
+**Regressão reproduzível:** `qa/v5-endgame-replay.cjs` e `qa/v5-endgame-browser.cjs`, com 30 GLBs, seed `4175863657`, M5, `nav=steer&counterplay=1&balance=hp2&sprites=1`.
+
+Resultados GitHub Actions:
+- Run [40985099967](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40985099967): browser do seed exato **PASS**, 28 espectadores e 2 mixers vivos no fim; vitória, status final e botão reiniciar; a tab pode ir para segundo plano, exibir pausa e retomar.
+- Run [40985911585](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40985911585): com instâncias CC0 e geometria estática mesclada, mesmo teste **PASS**, 30 modelos carregados, 28 espectadores com 2 mixers, 29 espectadores com 1 mixer após vitória, `environment=loaded`, 136 exemplares de GLB repetido agrupados em 6 lotes; **649 meshes estáticos da cidadela mesclados em 17 lotes**, mantendo malhas e materiais originais.
+- Draw calls na mesma janela automatizada de 30 personagens: **1.109 → 426** com 28 na arquibancada; final da partida **1.122 → 410**. Redução final calculada de **63,46%**. `arena-citadel.js` usa `BufferGeometryUtils.mergeGeometries` em coordenadas locais e agrupa por material, topologia e sombras; vidros translúcidos continuam separados para não alterar ordenação. `arena-three.js` usa `THREE.InstancedMesh` para GLBs repetidos das paredes e pilares, mantendo forma/textura original.
+- **Limitação:** FPS observado no CI não é proxy de S24 ou PC real: Playwright usa SwiftShader/software rendering e a medição foi ~1 FPS. A otimização comprova queda de draw calls e finalização da partida, mas NÃO comprova ausência total de travamentos em hardware real ou que FPS 60 será obtido.
+
+**Não foi ativado low global, não houve alterações de vida, dano, balanceamento, GLBs dos quatro protagonistas ou `main`.** O teste nativo de browser de seed exata e a captura do usuário permanecem evidências; pode-se comparar a mesma partida adicionando `seed=4175863657` à URL RawGitHack do SHA da branch.
