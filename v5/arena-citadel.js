@@ -5,6 +5,7 @@
  * loaded separately by arena-three.js.
  */
 import * as THREE from 'three';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 export function buildEclipseCitadel(root,{quality='auto'}={}){
  const world=new THREE.Group();
@@ -311,7 +312,42 @@ export function buildEclipseCitadel(root,{quality='auto'}={}){
   dummy.scale.set(3+(i%7),4+(i%11),3+(i%4));dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
  }
  rocks.instanceMatrix.needsUpdate=true;world.add(rocks);
- // GPU-safe persistent status so browser QA can prove this is a different map.
+ // E.7: batch STATIC decoration in world coordinates; preserve GLB textures,
+  // original material/mesh geometry, shape and collision-free spectators.
+  // Transparent stained glass stays separate to retain correct sorting.
+  world.updateMatrixWorld(true);
+  const inverse=world.matrixWorld.clone().invert(),buckets=new Map();
+  for(const mesh of made){
+   if(!mesh.geometry||!mesh.material||Array.isArray(mesh.material)||mesh.material.transparent)continue;
+   if(mesh.isSkinnedMesh||mesh.morphTargetInfluences?.length)continue;
+   const geom=mesh.geometry;
+   const shape=(geom.index?'indexed':'plain')+'|'+Object.entries(geom.attributes)
+    .map(([k,v])=>k+':'+v.itemSize+':'+v.normalized).sort().join(',');
+   const id=shape+'|'+mesh.castShadow+'|'+mesh.receiveShadow;
+   let matGroups=buckets.get(mesh.material);
+   if(!matGroups){matGroups=new Map();buckets.set(mesh.material,matGroups)}
+   const items=matGroups.get(id)||[];items.push(mesh);matGroups.set(id,items);
+  }
+  let staticBatches=0,staticMergedMeshes=0;
+  for(const [material,matGroups] of buckets)for(const meshes of matGroups.values()){
+   if(meshes.length<2)continue;
+   const temp=meshes.map(mesh=>{
+    const copy=mesh.geometry.clone();
+    copy.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,mesh.matrixWorld));
+    return copy;
+   });
+   const geometry=mergeGeometries(temp,false);
+   temp.forEach(x=>x.dispose());
+   if(!geometry)continue;
+   const joined=new THREE.Mesh(geometry,material);
+   joined.name='batched-citadel-'+staticBatches++;
+   joined.castShadow=meshes[0].castShadow;joined.receiveShadow=meshes[0].receiveShadow;
+   world.add(joined);
+   for(const mesh of meshes){mesh.parent?.remove(mesh);mesh.geometry.dispose();staticMergedMeshes++}
+  }
+  world.userData.staticBatches=staticBatches;
+  world.userData.staticMergedMeshes=staticMergedMeshes;
+  // GPU-safe persistent status so browser QA can prove this is a different map.
  world.userData.version='eclipse-citadel-4-gothic-hex';
  world.userData.playfield='square';
  world.userData.width=112;
