@@ -200,3 +200,18 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 **Arquivos/commits:** `qa/v5-balance-100-m10.cjs` reforçado com verificação de orçamento, contagem por tamanho, exposição, expectativa proporcional e cobertura de escolhas, commit `d7302d7cee9382a3a69280fdd64607f1817ad461`. Relatório com tabela e gráfico em `v5/FASE-H3-BALANCE-100-20261030.md`, commit `83ac1a26c3dcb87bb879104a2dfa144b360481bd`. Motor testado: blob `8c5422baa9cde3260f1a5250fae4d29b1533b2c5`, sem mudança de estatísticas nesta rodada.
 
 **Limitação:** consultas de checks e workflow runs do commit do teste retornaram vazias; não afirmar que o CI passou. Esta bateria aleatória diverge das matrizes de builds defensivas que favoreceram Guardião; portanto o balanceamento permanece dependente de builds/cenário e **não está aprovado**. Próximo: comparar builds controladas ofensivas/defensivas/aleatórias com mesmos spawns e seeds, investigar dominância e validar CI. G.2 PCs físicos não realizado. H.1/H.2 e merge na `main` bloqueados.
+
+
+## Rodada H.3/M10 — recuperação de renderização e mixagem espacial (30/10/2026)
+
+**Missão técnica:** eliminar a regressão em que mudanças no WebAudio podiam impedir a renderização da arena e substituir a mixagem global excessivamente ruidosa por efeitos vinculados à posição da câmera/personagem. Somente laboratório, sem alterações de M5/M10 em talentos, atributos, física, resultados, progressão ou dados reais.
+
+**Implementação na branch experimental:**
+- `v5/arena-audio.js`: sons de hit, shield, talent e knockout atenuados pela distância, panorâmica estéreo quando disponível, no máximo três vozes de combate simultâneas, cooldown por tipo e vitória global. Fontes sem posição não disparam sons globais. Erros do dispositivo de áudio retornam `false` e não propagam para o WebGL.
+- `v5/arena-three.js`: posição da fonte extraída do herói/alvo real do evento; ouvinte é o personagem seguido ou a câmera do diretor. Tratamento de exceções no bloco de áudio impede falha do loop gráfico. Eventos e resultados do motor permanecem somente leitura.
+- `qa/v5-arena-audio.cjs`: testa desbloqueio, volume distante, panorâmica, limite de vozes, cooldown e falha forçada de WebAudio.
+- `qa/v5-arena-audio-browser.cjs`: Chromium/SwiftShader com **30 GLBs KayKit reais na M10**, 10 slots de talento, conclusão do combate e 29 espectadores; depois fecha o WebGL da M10 e testa **4 GLBs na M5 com AudioContext propositalmente negado**, canvas pronto, contexto `ready` e relógio de combate avançando. Fechar a primeira página antes do segundo cenário evita manter duas cenas WebGL pesadas simultaneamente; falhas anteriores de carregamento no segundo cenário foram documentadas no CI.
+
+**CI APROVADO:** [run 41059481133](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41059481133), job `audio`: testes Node PASS; M10 30 GLBs PASS, 10 talentos disponíveis, vencedor Caçador e 29 espectadores; M5 com áudio bloqueado PASS, canvas renderizado, 4 GLBs, motor ativo. Último commit funcional/testes: `8f3436e994d6ab99db4e82db795847b346679d1f`; correções de áudio e motor em `9e92e737a78286c8d1751df7917312daef04482c` e `0c8c24b4e5532ab7379ace241f1eddd1c5d7353c`.
+
+**Limites e próximo passo:** os testes verificam geração e roteamento de sinais, **não qualidade subjetiva do som em alto-falantes reais**, nem desempenho em PCs da escola. Ouvir no S24/PC e avaliar se a câmera geral realmente mantém os sons discretos; ajustar curvas/vozes apenas com evidência. A G.2 física continua pendente; H.1/H.2, `main` e produção permanecem bloqueadas.
