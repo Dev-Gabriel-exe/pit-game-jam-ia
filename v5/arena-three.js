@@ -670,7 +670,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   if(container.dataset.v5GraphicsContext==='restored-paused')container.dataset.v5GraphicsContext='ready';
   simulateStep(.20)
  }}
- function pause(){playing=false}
+ function enableSound(){const ok=arenaAudio.unlock();container.dataset.v5AudioState=ok?'requested':'unsupported';return ok}
+  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
  function warningFx(item){
   if(!item||effects.filter(e=>e.isAbility).length>=18)return;
@@ -1445,5 +1446,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,retryFailedModels,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get performanceReport(){return performanceMonitor?.report({seed:simulation?.seed??null,players:simulation?.fighters.length||0,quality})||null},get graphicsContext(){return contextLost?'lost':container.dataset.v5GraphicsContext},get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,retryFailedModels,resume,pause,enableSound,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get performanceReport(){return performanceMonitor?.report({seed:simulation?.seed??null,players:simulation?.fighters.length||0,quality})||null},get graphicsContext(){return contextLost?'lost':container.dataset.v5GraphicsContext},get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
