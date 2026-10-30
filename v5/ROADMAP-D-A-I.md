@@ -78,6 +78,8 @@
 
 ### H — Integração pedagógica / segurança e progressão
 
+**H.3 — ablação defensiva do Guardião M10, concluída como diagnóstico limitado (30/10/2026):** opção `experimentalGuardianAblation` exclusivamente de laboratório, desligada por padrão, suprime efeitos de grupos de talentos sem alterar escolhas, stats iniciais ou M5. [CI 41035173280 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41035173280): 108 partidas, 90 comparações pareadas e 6 replays; em 18 baselines o Guardião venceu 11, contra 2 ao suprimir talentos de escudo e 1 ao suprimir todos os grupos. **A amostra é intencionalmente defensiva e desligar habilidades inteiras também remove efeitos mistos; não justifica nerf.** Próximo: ablação por talento de escudo e comparação com builds mistas, depois visual M10 opt-in. G.2, H.1/H.2, Fase I e `main` seguem bloqueados. Checkpoint: `v5/FASE-H3-M10-CHECKPOINT.md`.
+
 **H.3 — ordem de atualização e RNG de críticos isolados em M10 (30/10/2026):** opções diagnósticas opt-in `experimentalTurnOrder` e `experimentalCritSeed` separaram o loop principal de atores do RNG crítico por identidade sem modificar M5 nem o comportamento padrão. [CI 41027655782 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41027655782): 70 partidas, 6 replays exatos, snapshots iniciais idênticos, 17/30 mudanças de vencedor ao variar só ordem e 16/30 ao variar só RNG crítico. **A dominância do Guardião não está explicada; próximos testes são ablação de talentos defensivos e prévia M10 3D.** Detalhes em `v5/FASE-H3-M10-CHECKPOINT.md`. G.2, H.1/H.2 e Fase I seguem pendentes, sem integração real nem `main`.
 
 
