@@ -7,6 +7,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
+import {createArenaAudio} from './arena-audio.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
 const SPRITE_FX=window.PIT_V5_TALENT_SPRITES;
@@ -330,6 +331,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const floating=new Set(),floatDebounce=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
+  const arenaAudio=createArenaAudio();let victoryAudioPlayed=false;
  let accumulator=0;const shots=new Map();let followId=null;const followBack=new THREE.Vector3();
  const autoDirector=CAMERA_DIRECTOR?.createDirector();
  const cameraViewer=CAMERA_VIEWER?.createViewer({feedId:'pit-v5-local-visual-feed'});
@@ -664,7 +666,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   return {count:simulation.fighters.length,seed};
  }
  function resume(){if(!contextLost&&simulation&&!simulation.finished){
-  playing=true;physicsLast=performance.now();
+  arenaAudio.unlock();playing=true;physicsLast=performance.now();
   if(container.dataset.v5GraphicsContext==='restored-paused')container.dataset.v5GraphicsContext='ready';
   simulateStep(.20)
  }}
@@ -1144,7 +1146,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
      container.dispatchEvent(new CustomEvent('v5-director-shot',{detail:shot}));
     }
    }
-   if(result.finished){playing=false;break}
+   if(result.finished){if(!victoryAudioPlayed){victoryAudioPlayed=true;arenaAudio.play('victory')}playing=false;break}
   }
  }
  let physicsLast=performance.now();
@@ -1425,7 +1427,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  };
  document.addEventListener('visibilitychange',onVisibility);
  const dispose=()=>{
-  if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
+  if(!live)return;live=false;pause();arenaAudio.dispose();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);
   renderer.domElement.removeEventListener('webglcontextlost',onGraphicsLost);
   renderer.domElement.removeEventListener('webglcontextrestored',onGraphicsRestored);
