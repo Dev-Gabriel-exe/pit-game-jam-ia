@@ -78,6 +78,29 @@ const {chromium}=require('playwright');
   await page.locator('[data-mission="10"]').click();
   await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5RangedCommitment==='legacy',
    null,{timeout:45000});
+  // Balance preset belongs to M5 only. Check the exact UI -> Three.js -> engine route.
+  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?phase2=1&count=4&nav=steer&counterplay=1&balance=hp2',
+   {waitUntil:'domcontentloaded',timeout:45000});
+  await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5BalancePreset==='e-hp2',
+   null,{timeout:60000});
+  assert.match(await page.locator('#matchInfo').textContent(),/VIDA E ALCANCE BALANCEADOS/);
+  const healthDiff=await page.evaluate(()=>{
+   const api=window.PIT_V5_PHASE2;
+   const list=['warrior','mage','hunter','guardian'].map((klass,i)=>({
+    id:'hp2-'+i,approvedMissions:5,build:api.exampleBuild(klass,klass,5,0)
+   }));
+   const baseline=api.battle(list,{seed:77});
+   const tuned=api.battle(list,{seed:77,balancePreset:'e-hp2'});
+   return baseline.fighters.map((f,i)=>({
+    hp:tuned.fighters[i].stats.hp-f.stats.hp,
+    range:tuned.fighters[i].stats.range-f.stats.range
+   }));
+  });
+  assert.deepEqual(healthDiff.map(v=>v.hp),[17,0,0,10]);
+  assert(Math.abs(healthDiff[2].range+1.2)<1e-9);
+  await page.locator('[data-mission="10"]').click();
+  await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5BalancePreset==='legacy',
+   null,{timeout:45000});
   assert.deepEqual(errors,[],'Page errors: '+errors.join(' | '));
   console.log('PASS Phase2 B.6 browser: 120 real M5 talents, sample build switching, GLB attacks, M10 legacy isolation');
   await page.close();
