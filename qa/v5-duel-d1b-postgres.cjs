@@ -85,6 +85,20 @@ async function setup(){
  assert(first.payload.frames.length>=10);
  assert(first.payload.events.some(e=>e.type==='end'));
  assert(first.payload.frames.every(f=>f.heroes.length===2));
+ // Intermediate missions must preserve each student's actual 6–9 talent
+ // budget despite the existing engine exposing only M5 and experimental M10.
+ for(const n of [6,7,9,10]){
+  const upper=createReplay([
+   {side:'left',name:'Teste Caçador',approved:n,build:build('hunter',n)},
+   {side:'right',name:'Teste Guerreiro',approved:n,build:build('warrior',n)}
+  ],{seed:783+n,stage:n});
+  assert.equal(upper.payload.engineMode,'upper-mission-sandbox');
+  assert.equal(upper.payload.participants[0].approvedMissions,n);
+  assert.equal(upper.payload.participants[1].talents.length,n);
+  assert(upper.payload.frames.length>2);
+  assert(['left','right'].includes(upper.payload.winnerSide));
+ }
+
  assert(first.payload.participants.every(x=>!Object.hasOwn(x,'studentId')));
  // "submitted" player is eligible but has no fictional third talent.
  assert.equal(first.payload.participants[0].approvedMissions,2);
