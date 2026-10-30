@@ -28,6 +28,23 @@ assert.equal(student.load('student-c').checks.length,0,'hydration cannot invent 
 for(const route of student.routes){
  assert(student.accessHelp(route).length>40,'route-specific access instruction '+route);
 }
+// A route switch invalidates stale access and the two checks that depend on the chosen build/link.
+const routeDraft=student.load('route-switch');
+routeDraft.route='gd';
+routeDraft.access='https://gd.games/jogo-ficticio';
+routeDraft.checks=[0,1,2];
+assert.equal(student.switchRoute(routeDraft,'gd'),false,'same route keeps verified evidence');
+assert.equal(routeDraft.checks.length,3,'same route must not clear checks');
+assert.equal(student.switchRoute(routeDraft,'unknown'),false,'invalid route rejected');
+assert.equal(routeDraft.route,'gd','invalid route must not mutate draft');
+assert.equal(student.switchRoute(routeDraft,'web'),true,'different route selected');
+assert.equal(routeDraft.route,'web','route must update');
+assert.equal(routeDraft.access,'','old link must never be reused for a new route');
+assert.deepEqual(Array.from(routeDraft.checks),[0],'project reopen persists, execution/access must be rechecked');
+assert(student.save('route-switch',routeDraft),'route change persists');
+assert.equal(student.validate('route-switch').ok,false,'changed route cannot be submitted with stale checks');
+assert(student.mount.toString().includes('switchRoute(d,id)'),'route-switch invalidation must be wired to the guide callback');
+assert(student.render({session:'route-switch',phase:'practice',status:'',idea:{}}).includes('refaça as conferências'),'student is told why checks reset');
 const review=teacher.render('review');
 assert(review.includes('<details class="pit-private-teacher-notes">'),'teacher private notes retained');
 assert(!/<details class="pit-private-teacher-notes"[^>]*\bopen\b/.test(review),'private notes closed by default');
