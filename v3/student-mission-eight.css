@@ -5,3 +5,6 @@
 .m8s-editor-handoff p{margin:8px 0 0}
 .m8s-editor-handoff a{color:#ffe0a7;text-decoration:underline;text-underline-offset:3px}
 .m8s-editor-handoff a:focus-visible{outline:3px solid #ffe4a0;outline-offset:3px}
+
+/* M08 evidence: concise field-specific instructions remain readable on desktop and phone. */
+.m8s-field-hint{display:block;color:#e4d2b7;font-size:.9em;line-height:1.5;margin:0 0 7px;max-width:72ch}
