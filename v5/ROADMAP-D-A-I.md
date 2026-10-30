@@ -4,6 +4,9 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
+> **H.1b preparada em laboratório (30/10/2026):** criado schema PostgreSQL aditivo `pit_hero_builds_v2` (não aplicado no Neon), catálogo servidor dos 120 talentos com verificação de divergência, contrato de build/locks M5-M10 e repositório transacional com revisão otimista, autorização por aluno/turma e testes em PostgreSQL 16 descartável. Execução CI [41065654716](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41065654716) com contratos e migração aprovados. **Somente na branch `feature/v5-h1b-integration-safe`; endpoint V2 não conectado, sem alterações na `main`, sem aluno real, G.2 ainda pendente.** Consultar `v5/FASE-H1B-ARMAZENAMENTO-V2.md`. Duelos 1×1 continuam a próxima funcionalidade planejada após integração autorizada.
+
+
 **Status em 30/10/2026:** Fase D aprovada visualmente; Fase E recebeu HP2, sprites E.6 e correção E.7 (GPU/PC real será validado na G). **F.1/F.2/F.3 implementadas no laboratório**: diretor do professor, composição cinematográfica e câmera local do personagem vivo que muda para modo espectador após a eliminação, reutilizando o mesmo feed interno da partida. Teste real WebGL de F.3 com 4/30 GLBs aprovado no run 40992989976; regressão do gesto manual do professor teve correção adicional, em reteste. Fase G, integração H entre dispositivos e revisão I pendentes. Sem mudanças na `main`.
 **Branch de trabalho:** `feature/v5-arena-dos-criadores`. **Não fazer merge na `main`** antes da aprovação final.
 **Contexto pronto:** motor experimental de 120 talentos (B.6), efeitos (C.1), coreografias (C.2), identidade visual das builds (C.3).
