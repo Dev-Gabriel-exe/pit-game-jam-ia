@@ -383,7 +383,7 @@
 - **Pendências:** conferir as três resoluções 1280×720, 1600×900, 1920×1080, rolagem e fontes; execução GUI de salvar/reabrir no GDevelop, HDMI físico, celular físico, acesso em janela anônima real e playtest humano seguem **NOT_RUN**. O formulário do aluno continua autodeclaratório e aprovação/conquista dependem de verificação efetiva.
 
 
-## M10 — Prática projetada sincronizada com a ficha do aluno (30/10/2026, 09h20–09h)
+## M10 — Prática projetada sincronizada com a ficha do aluno (30/10/2026, manhã)
 
 - **Falha concreta:** em `v3/teacher-projector-m01.js`, a fase M10/Praticar usava o extrator genérico de artigos. Ele projetava sobretudo os seis cartões de rubrica, mas não mostrava aos alunos os **oito campos que precisavam preencher** nem as **três verificações manuais** exigidas no caderno do aluno. A fase M10/Comprovar já tinha uma projeção dedicada e permanece inalterada.
 - **Correção pedagógica:** `v3/teacher-mission-ten-validation.js` agora mostra, na prática pública do professor, os oito campos na ordem exata do aluno, agrupados em quatro pares, com perguntas operacionais curtas. Acrescentadas as três declarações reais (reabertura do projeto/recursos, Preview/build e privacidade/licença/acesso), com aviso explícito de que a ficha não comprova execução.
