@@ -191,3 +191,12 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 - `experimentalGuardianShieldScale` é parâmetro opcional M10-only, aceita apenas G01/G10 em [0,1], incompatível com ablações. Modifica somente a quantidade de escudo criada; preserva cast, cooldown e efeitos solares. Default mantém o motor canônico.
 - `qa/v5-m10-guardian-shield-scale.cjs` verifica replay neutro idêntico e rejeição de parâmetros inválidos. **CI e execução deste novo teste ainda não comprovados nesta rodada.**
 - Próximo: executar teste no CI, corrigir falhas, realizar matriz pareada com escalas graduais, inspecionar screenshots e efeitos no navegador. Só então avaliar balanceamento. **G.2 em PCs físicos e revisão humana ainda pendentes; etapa 1 não encerrada.**
+
+
+## Rodada H.3 — bateria de 100 partidas com variação de talentos e atributos (30/10/2026, 08h)
+
+**Missão em andamento: validar balanceamento M10; NÃO homologada.** A pedido do usuário, executadas 100 batalhas sintéticas (25 com quatro e 75 com trinta participantes) usando o motor atual, 10 talentos e 20 pontos por personagem, com escolhas aleatorizadas e seeds fixas. Resultado comprovado por execução V8 isolada dos arquivos recuperados do GitHub (aprox. 36,6 s), **não por CI**: 37 vitórias Guerreiro, 28 Arcanista, 19 Caçador e 16 Guardião; no formato de 30 foram 30/18/15/12 respectivamente. Nenhuma das 100 terminou pelo limite de tempo; média 56,137 s. Cobertura de seleção 30/30 talentos por classe, **não** cobertura de ativação.
+
+**Arquivos/commits:** `qa/v5-balance-100-m10.cjs` reforçado com verificação de orçamento, contagem por tamanho, exposição, expectativa proporcional e cobertura de escolhas, commit `d7302d7cee9382a3a69280fdd64607f1817ad461`. Relatório com tabela e gráfico em `v5/FASE-H3-BALANCE-100-20261030.md`, commit `83ac1a26c3dcb87bb879104a2dfa144b360481bd`. Motor testado: blob `8c5422baa9cde3260f1a5250fae4d29b1533b2c5`, sem mudança de estatísticas nesta rodada.
+
+**Limitação:** consultas de checks e workflow runs do commit do teste retornaram vazias; não afirmar que o CI passou. Esta bateria aleatória diverge das matrizes de builds defensivas que favoreceram Guardião; portanto o balanceamento permanece dependente de builds/cenário e **não está aprovado**. Próximo: comparar builds controladas ofensivas/defensivas/aleatórias com mesmos spawns e seeds, investigar dominância e validar CI. G.2 PCs físicos não realizado. H.1/H.2 e merge na `main` bloqueados.
