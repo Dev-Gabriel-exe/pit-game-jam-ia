@@ -35,5 +35,29 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert(result.audio.resumes>=1);assert(result.audio.noise>0);assert(result.audio.oscillators>4);
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
   console.log('PASS V5 30 GLB browser audio: '+JSON.stringify(result));
+  // Regression: WebAudio constructor failure must never blank or freeze the WebGL arena.
+  const silent=await browser.newPage({viewport:{width:1280,height:900}});
+  const silentErrors=[];silent.on('pageerror',e=>silentErrors.push(e.message));
+  await silent.addInitScript(()=>{
+   class DeniedAudioContext{constructor(){throw Error('WebAudio permission denied')}}
+   window.AudioContext=DeniedAudioContext;window.webkitAudioContext=DeniedAudioContext;
+  });
+  await silent.goto('http://127.0.0.1:8899/v5/arena-lab.html?phase2=1&count=4&seed=4175863657',{waitUntil:'domcontentloaded',timeout:45000});
+  await silent.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:150000});
+  await silent.locator('#startBattle').click();
+  await silent.waitForFunction(()=>document.querySelector('#combatClock')?.textContent!=='00:00',null,{timeout:30000});
+  const rendered=await silent.evaluate(()=>({
+   canvas:!!document.querySelector('#arenaStage canvas'),
+   context:window.PIT_V5_ARENA_LAB?.graphicsContext,
+   engine:window.PIT_V5_ARENA_LAB?.combatEngine,
+   models:window.PIT_V5_ARENA_LAB?.modelState.loaded,
+   clock:document.querySelector('#combatClock')?.textContent
+  }));
+  assert.equal(rendered.canvas,true,'Arena canvas survives blocked WebAudio');
+  assert.equal(rendered.models,4,'KayKit GLBs load with audio blocked');
+  assert.equal(rendered.engine,'phase2-m5');
+  assert.deepEqual(silentErrors,[],'No fatal WebGL errors from denied WebAudio');
+  console.log('PASS V5 WebGL render without audio: '+JSON.stringify(rendered));
+  await silent.close();
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
