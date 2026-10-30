@@ -143,7 +143,8 @@ for(const count of [4,30])for(const mode of ['free','spaced']){
  group.meanBaselineSeconds=+(baselineSeconds/group.pairedBattles).toFixed(3);
  group.meanTrialSeconds=+(trialSeconds/group.pairedBattles).toFixed(3);
  for(const key of ['pairedBattles','changedFirstTargets','blockedBaselineFirstTargets',
-  'blockedTrialFirstTargets','changedWinners'])report.totals[key]+=group[key];
+  'blockedTrialFirstTargets','changedWinners','changedWithClearInitial',
+  'changedWithBlockedInitial','boundAtSpawnViolations'])report.totals[key]+=group[key];
  report.groups.push(group);
 }
 assert.equal(report.totals.pairedBattles,24);
