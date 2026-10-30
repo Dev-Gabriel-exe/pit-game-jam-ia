@@ -880,7 +880,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
       talentVisual(attacker,ev);
       // The actual talent name is readable even when a GLB has no matching
       // dedicated attack clip. No simulated activation is injected.
-      showCombatText(ev.hero,'✦ '+cue.name,'special');
+      // Full name is already in the HUD/log: concise glyph keeps nicks legible in 30v30.
+      showCombatText(ev.hero,spriteKit?'✦ '+cue.id:'✦ '+cue.name,'special');
      }
     }else if(ev.type==='shield'){
      triggerMotion(attacker,'block',.58);
