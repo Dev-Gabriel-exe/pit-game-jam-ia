@@ -68,9 +68,11 @@ const GUARDIAN_ABLATION_GROUPS=Object.freeze({
  reactions:Object.freeze(['G02','G03','G07','J06']),
  mitigation:Object.freeze(['G04','G06','G08','L10'])
 });
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null,experimentalGuardianShieldScale=null}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null,experimentalGuardianShieldScale=null,experimentalVisibilityAwareTargets=false}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
+ if(typeof experimentalVisibilityAwareTargets!=='boolean'||(experimentalVisibilityAwareTargets&&arenaMission!==10))
+  throw Error('Visibilidade experimental de alvos exige M10 e opção booleana');
  const spreadAggro=engagementMode==='spaced';
  // Experimental E navigation: legacy direct movement remains the default.
  const obstacleSteering=navigationMode==='steer';
@@ -203,6 +205,18 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    if(sx*sx+sz*sz<(o.r+.74)**2&&(!nearest||t<nearest.t))nearest={o,index,t};
   }
   return nearest;
+ }
+ // M10-only counterfactual: static pillar segment uses the same radius
+ // as physical projectile-vs-pillar collision (r + .2). Dynamic fighters,
+ // moving projectiles and skill LOS are deliberately NOT modeled here.
+ function staticProjectileLaneBlocked(from,to){
+  const dx=to.x-from.x,dz=to.z-from.z,l2=dx*dx+dz*dz;
+  if(l2<1e-8)return false;
+  return obstacles.some(o=>{
+   const t=clamp(((o.x-from.x)*dx+(o.z-from.z)*dz)/l2,0,1);
+   const x=from.x+dx*t-o.x,z=from.z+dz*t-o.z;
+   return x*x+z*z<(o.r+.2)**2;
+  });
  }
  function steeringDirection(f,target){
   const blocker=firstBlockingObstacle(f.x,f.z,target.x,target.z);
@@ -1072,9 +1086,28 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      const score=distance+crowdPenalty-continuity-reciprocal;
      if(score<best-1e-7){best=score;target=rival}
     }
-    aggroReservations.set(target.id,(aggroReservations.get(target.id)||0)+1);
-    f.lastTarget=target.id;
    }else for(const rival of enemies)if(dist(f,rival)<dist(f,target))target=rival;
+   // Experimental M10 only: if the chosen opponent is behind a static pillar,
+   // prefer a nearby clear segment. Preserve bounded range and spaced aggro
+   // penalties; recompute reservation AFTER the actual selection.
+   if(experimentalVisibilityAwareTargets&&staticProjectileLaneBlocked(f,target)){
+    const originalDistance=dist(f,target),maxExtra=Math.min(8,originalDistance*.5);
+    let alternative=null,bestScore=Infinity;
+    for(const rival of enemies){
+     const distance=dist(f,rival);
+     if(distance>originalDistance+maxExtra+1e-8||staticProjectileLaneBlocked(f,rival))continue;
+     const load=aggroReservations.get(rival.id)||0;
+     const crowdPenalty=Math.min(2,load)*Math.min(4.0,Math.max(1.7,f.stats.range*.42));
+     const continuity=f.lastTarget===rival.id?1.15:0;
+     const reciprocal=rival.lastTarget===f.id?1.25:0;
+     const score=spreadAggro?distance+crowdPenalty-continuity-reciprocal:distance;
+     if(score<bestScore-1e-7||(Math.abs(score-bestScore)<=1e-7&&alternative&&rival.id<alternative.id)){
+      alternative=rival;bestScore=score;
+     }
+    }
+    if(alternative)target=alternative;
+   }
+   if(spreadAggro)aggroReservations.set(target.id,(aggroReservations.get(target.id)||0)+1);
    // Expose the selected opponent in both modes for deterministic crowding QA.
    f.lastTarget=target.id;
    const dx=target.x-f.x,dz=target.z-f.z,d=Math.max(.001,Math.hypot(dx,dz));
