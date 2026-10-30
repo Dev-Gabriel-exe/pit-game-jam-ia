@@ -60,19 +60,19 @@ const report={schema:'pit-v5-m10-los-combat-trial-v1',
 assert.throws(()=>P.battle(roster(4,0),{...OPT,arenaMission:5,experimentalVisibilityAwareTargets:true}));
 assert.throws(()=>P.battle(roster(4,0),{...OPT,experimentalVisibilityAwareTargets:'true'}));
 {
- const trio=[entry('warrior','trial-los-A'),entry('hunter','trial-los-B'),entry('mage','trial-los-C')];
+ const trio=[entry('warrior','trial-los-a'),entry('hunter','trial-los-b'),entry('mage','trial-los-c')];
  const positions={
-  'trial-los-A':{x:-4,z:0,face:0},
-  'trial-los-B':{x:4,z:0,face:0},
-  'trial-los-C':{x:-1,z:10,face:0}
+  'trial-los-a':{x:-4,z:0,face:0},
+  'trial-los-b':{x:4,z:0,face:0},
+  'trial-los-c':{x:-1,z:10,face:0}
  };
  const opts={arenaMission:10,arenaScale:1,seed:713,engagementMode:'free',
   experimentalSpawnPositions:positions};
  const before=firstTick(trio,opts),after=firstTick(trio,{...opts,experimentalVisibilityAwareTargets:true});
- assert.equal(before.targets['trial-los-A'],'trial-los-B');
- assert.equal(after.targets['trial-los-A'],'trial-los-C');
- assert(blocked(before.initial['trial-los-A'],before.initial['trial-los-B'],before.obstacles));
- assert(!blocked(after.initial['trial-los-A'],after.initial['trial-los-C'],after.obstacles));
+ assert.equal(before.targets['trial-los-a'],'trial-los-b');
+ assert.equal(after.targets['trial-los-a'],'trial-los-c');
+ assert(blocked(before.initial['trial-los-a'],before.initial['trial-los-b'],before.obstacles));
+ assert(!blocked(after.initial['trial-los-a'],after.initial['trial-los-c'],after.obstacles));
  assert.deepEqual(after.initial,before.initial);
  report.fixtures.blockedTargetRedirect=true;
 }
