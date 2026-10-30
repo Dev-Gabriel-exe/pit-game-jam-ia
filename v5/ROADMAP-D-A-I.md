@@ -78,6 +78,9 @@
 
 ### H — Integração pedagógica / segurança e progressão
 
+**H.3/M10 primeiro incremento experimental (30/10/2026):** o motor `v5/phase2-combat.js` agora permite, **somente por opt-in explícito**, batalhas fictícias da Missão 10 com 10 talentos e 20 pontos por personagem; M5 continua padrão e limitada a 5 talentos/10 pontos. `m10ArenaAdapter` verifica as travas H.0 e `checkTransition` impede mutações após lock final. O primeiro [run 41004049659](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41004049659) passou com replays determinísticos de 4 e 30 participantes; veja `v5/FASE-H3-M10-CHECKPOINT.md` para detalhes, limitações e próxima missão. **Não confundir motor experimental com interface M10 integrada, balanceamento homologado, sincronização ou produção; G.2 e H.1/H.2 permanecem pendentes.**
+
+
 **H.0 preparada, sem integração real (30/10/2026):** criada especificação executável `v5/progression-contract-h0.js` para 2 pontos e 1 talento por missão, bloqueio da primeira entrada M5 e da build final M10; cobre os 120 talentos e não permite execução fictícia da M10 no motor M5 atual. Testes aprovados no [run 40997697983](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40997697983). Contrato e requisitos do futuro backend documentados em `v5/FASE-H0-CONTRATO.md`. **Ainda falta G.2 (PCs reais), autorização explícita, persistência, verificação de permissões, sincronização e motor M10; H operacional NÃO foi iniciada.**
 
 - Somente depois da arena, mecânica e câmera aprovadas, conectar aluno/professor e progresso real.
