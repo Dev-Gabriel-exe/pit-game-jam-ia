@@ -16,6 +16,26 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert(textures===13*frames);
   assert([2,3,6].includes(frames));
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'No fake visual effects before action');
+  // Examine actual raster alpha, not only event counters: frames must contain
+  // painted pixels and distinct animation phases.
+  const pixels=await page.evaluate(async()=>{
+   const THREE=await import('three');
+   const sprites=window.PIT_V5_TALENT_SPRITES.makeAtlas(THREE,{quality:'low'});
+   const result=[];
+   for(const style of ['arc','barrier','fire','frost','heal','arrow','rune','impact']){
+    const e=sprites.spawn({style});
+    const sums=e.frames.map(t=>{
+     const canvas=t.image,data=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+     let alpha=0,weighted=0;for(let i=3;i<data.length;i+=4){alpha+=data[i];weighted+=(i+1)*data[i];}
+     return [alpha,weighted];
+    });
+    result.push({style,alpha:sums[0][0],variation:new Set(sums.map(x=>x.join(':'))).size});
+    e.mesh.material.dispose();
+   }
+   sprites.dispose();return result;
+  });
+  assert(pixels.every(p=>p.alpha>2000&&p.variation>=2),
+   'All sprite families must have visible drawn pixels and distinct animation frames: '+JSON.stringify(pixels));
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===4,null,{timeout:100000});
   await page.locator('#startBattle').click();
   await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5SpriteVisualEvents||0)>=2,
