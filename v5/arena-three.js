@@ -17,6 +17,7 @@ const IDENTITY=window.PIT_V5_BUILD_IDENTITY;
 const CAMERA_DIRECTOR=window.PIT_V5_CAMERA_DIRECTOR;
 const CAMERA_FRAMING=window.PIT_V5_CAMERA_FRAMING;
 const CAMERA_VIEWER=window.PIT_V5_CAMERA_VIEWER;
+const PERFORMANCE=window.PIT_V5_PERFORMANCE;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -336,6 +337,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  // Stage-only diagnostics: avoid overclaiming that a successful browser load
  // proves 30-player GPU performance on actual phones.
  let monitorFrames=0,monitorStarted=performance.now();
+ let worstFrameMs=0,contextLost=false,contextLossCount=0;
+ const performanceMonitor=PERFORMANCE?.createMonitor({windowSize:24});
+ container.dataset.v5GraphicsContext='ready';
+ container.dataset.v5GraphicsLosses='0';
+ container.dataset.v5PerfSamples='0';
+ container.dataset.v5GraphicsGeometries='0';
+ container.dataset.v5GraphicsTextures='0';
  container.dataset.v5QualityMode=quality;
  container.dataset.v5FrameRate='measuring';
  container.dataset.v5DrawCalls='0';
@@ -622,7 +630,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
- function resume(){if(simulation&&!simulation.finished){playing=true;physicsLast=performance.now();simulateStep(.20)}}
+ function resume(){if(!contextLost&&simulation&&!simulation.finished){playing=true;physicsLast=performance.now();simulateStep(.20)}}
  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
  function warningFx(item){
@@ -1104,11 +1112,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const physicsTimer=setInterval(()=>{
   const now=performance.now(),span=Math.max(0,(now-physicsLast)/1000);
   physicsLast=now;
-  if(playing)simulateStep(span);
+  if(playing&&!contextLost)simulateStep(span);
  },50);
  function loop(t){
   if(!live)return;
   const rawDt=Math.max(0,(t-previous)/1000||0);
+  if(previous)worstFrameMs=Math.max(worstFrameMs,rawDt*1000);
   const dt=Math.min(.06,rawDt);
   previous=t;
   frame++;elapsed+=dt;
@@ -1313,11 +1322,31 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    const x=(wp.x*.5+.5)*rectW,y=(-wp.y*.5+.5)*rectH-fl.offset;
    fl.node.style.transform='translate(-50%,-50%) translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
   }
-  renderer.render(scene,camera);
+  if(!contextLost)renderer.render(scene,camera);
   monitorFrames++;
   const monitorNow=performance.now(),monitorSpan=monitorNow-monitorStarted;
   if(monitorSpan>=950){
-   container.dataset.v5FrameRate=String(Math.round(monitorFrames*1000/monitorSpan));
+   const fps=Math.round(monitorFrames*1000/monitorSpan);
+   container.dataset.v5FrameRate=String(fps);
+   const snap=performanceMonitor?.sample({
+    fps,drawCalls:renderer.info.render.calls,
+    triangles:renderer.info.render.triangles,
+    geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,
+    frameMs:worstFrameMs,modelsLoaded:modelLoadedCount,
+    modelsExpected:simulation?.fighters.length||0,
+    active:simulation?.fighters.filter(f=>f.alive).length||0,
+    contextLost
+   });
+   if(snap){
+    container.dataset.v5PerfSamples=String(snap.samples);
+    container.dataset.v5PerfStatus=snap.status;
+    container.dataset.v5PerfP10Fps=String(snap.p10Fps);
+    container.dataset.v5PerfWorstFrameMs=String(Math.round(snap.peakFrameMs));
+    container.dataset.v5GraphicsGeometries=String(snap.geometries);
+    container.dataset.v5GraphicsTextures=String(snap.textures);
+    container.dispatchEvent(new CustomEvent('v5-perf-sample',{detail:snap}));
+   }
+   worstFrameMs=0;
    container.dataset.v5DrawCalls=String(renderer.info.render.calls);
    container.dataset.v5Triangles=String(renderer.info.render.triangles);
    container.dataset.v5ActiveMixerUpdates=String(liveMixersUpdated);
@@ -1326,6 +1355,27 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   }
  }
  renderer.setAnimationLoop(loop);
+ // WebGL context loss must not advance physics behind a blank canvas.
+ // Three.js restores GPU resources internally; resume is always explicit.
+ const onGraphicsLost=event=>{
+  event.preventDefault();
+  if(!live)return;
+  contextLost=true;contextLossCount++;
+  pause();
+  container.dataset.v5GraphicsContext='lost';
+  container.dataset.v5GraphicsLosses=String(contextLossCount);
+  container.dispatchEvent(new CustomEvent('v5-graphics-lost',{detail:{count:contextLossCount}}));
+ };
+ const onGraphicsRestored=()=>{
+  if(!live)return;
+  contextLost=false;
+  previous=0;monitorFrames=0;monitorStarted=performance.now();worstFrameMs=0;
+  container.dataset.v5GraphicsContext='restored-paused';
+  resize();
+  container.dispatchEvent(new CustomEvent('v5-graphics-restored',{detail:{count:contextLossCount}}));
+ };
+ renderer.domElement.addEventListener('webglcontextlost',onGraphicsLost,false);
+ renderer.domElement.addEventListener('webglcontextrestored',onGraphicsRestored,false);
  const onVisibility=()=>{
   if(document.hidden&&playing){
    pause();
@@ -1338,6 +1388,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);
+  renderer.domElement.removeEventListener('webglcontextlost',onGraphicsLost);
+  renderer.domElement.removeEventListener('webglcontextrestored',onGraphicsRestored);
   container.removeEventListener('pointerdown',onManualPointer,true);
   controls.removeEventListener('start',onManualPointer);controls.dispose();
   clearHeroes();spriteKit?.dispose();nicknameLayer.remove();floatingLayer.remove();
@@ -1346,5 +1398,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get performanceReport(){return performanceMonitor?.report({seed:simulation?.seed??null,players:simulation?.fighters.length||0,quality})||null},get graphicsContext(){return contextLost?'lost':container.dataset.v5GraphicsContext},get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
