@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T16:14:46.040Z",
+  "last_completed_at": "2026-10-30T17:19:00.000Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar QA estática/Browser QA da regressão M09 no SHA c5b5a5f0 ou posterior; auditar hydrate/parseEvidence M01–M08 e M10 para impedir preenchimento parcial por evidência antiga achatada. Preservar dados e status reais; HDMI/GDevelop GUI/celular físico/playtest humano NOT_RUN.",
+  "priority": "Confirmar CI do guard M06 no SHA 591a1b56 ou posterior; seguir auditoria de parseEvidence/hydrate M01–M05, M07–M08 e M10 (dados legados achatados, rótulos duplicados, rotas inválidas). Priorizar sincronização professor/aluno; manter testes humanos/HDMI/GDevelop GUI/celular físico NOT_RUN.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M06-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2653,12 +2653,19 @@
       "status": "in_progress",
       "commit": "6d3a41a74720a1feecaeca4debd510af28e8a606",
       "summary": "A API antiga achatava evidências estruturadas. Adicionado aviso somente no caderno do aluno para registros legados sem LF, exibindo texto original escapado em details recolhido, sem reconstruir campos nem alterar dados; cobre M01–M10. Novo teste Node 10 missões/100 verificações ligado à CI; V8 isolado 50 verificações PASS. QA estática GitHub 41078711383 SUCCESS no SHA 6d3a41a. Browser QA 41078711300 IN_PROGRESS na última consulta; Browser QA anterior 41070247881 SUCCESS. Documentado em AUDITORIA-PAGINAS-E-EVIDENCIAS.md. GDevelop GUI, HDMI físico, celular físico e playtest humano NOT_RUN. Roadmap 54/59; main não alterada."
+    },
+    {
+      "timestamp": "2026-10-30T17:19:00Z",
+      "task": "V4-M06-LEGACY-EVIDENCE-GUARD",
+      "status": "in_progress",
+      "commit": "591a1b56539505fe466a03e752fef2f5bab22f2c",
+      "summary": "M06 evidence parser previously accepted flattened, partial, duplicate/unknown labels and invalid routes, silently hydrating default image. Now requires valid route, all 8 distinct labeled fields and bounds, preserving local draft and leaving manual Preview checks unchecked. V8 14/14 functional assertions PASS; qa/v3-m06-student.cjs expanded with corrupted/legacy cases and syntax parsed, native Node/CI NOT_CONFIRMED. No real student data touched; HDMI/GDevelop GUI/mobile/human NOT_RUN. Branch-only, main unchanged; V3 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M06-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T16:14:46.040Z",
+    "updated_at": "2026-10-30T17:19:00.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2755,7 +2762,10 @@
       "1eff878027f28fbfc8c49fa531af2772dc58a74c",
       "6d3a41a74720a1feecaeca4debd510af28e8a606",
       "7d4500c343ce692a17d3e6feafac48373008c8fb",
-      "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49"
+      "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49",
+      "e89314d89181c80f65d587a6684eed4e106c9d05",
+      "95f0a9057e9a759545a252303c5db4b45e436e61",
+      "591a1b56539505fe466a03e752fef2f5bab22f2c"
     ],
     "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
@@ -3559,6 +3569,16 @@
       {
         "name": "GDevelop GUI, HDMI, physical mobile, human peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M06 legacy evidence parser V8",
+        "sha": "e89314d89181c80f65d587a6684eed4e106c9d05",
+        "result": "PASS: 14 V8 functional checks on fetched source with mocked localStorage; valid roundtrip, flattened/partial/duplicate/invalid route rejected, no false manual checks."
+      },
+      {
+        "name": "M06 native Node static QA",
+        "sha": "591a1b56539505fe466a03e752fef2f5bab22f2c",
+        "result": "NOT_CONFIRMED: qa/v3-m06-student.cjs updated and V8 syntax parsed; CI not yet confirmed"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
