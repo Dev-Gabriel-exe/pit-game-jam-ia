@@ -394,6 +394,32 @@ function pedagogicalDemoSlides(root,mission){
    return result.length===10?result:null;
   }
  }
+ // M10/Comprovar: the six public release criteria must be legible on HDMI.
+ // Never clone the collapsed teacher-only guidance into projected content.
+ if(mission===10&&root.querySelector('#t10vRoot .t10v-rubric')){
+  const source=root.querySelector('#t10vRoot');
+  const criteria=[...source.querySelectorAll('.t10v-rubric > article')];
+  if(criteria.length===6){
+   const result=[];
+   function add(node,title,id,isCriterion){
+    if(!node)return;
+    const wrapper=document.createElement('section');
+    wrapper.className='t10v-root pit-projector-m10-review';
+    wrapper.dataset.pitProjectorM10Review='M10:'+id;
+    if(isCriterion){
+     const rubric=document.createElement('div');
+     rubric.className='t10v-rubric';
+     rubric.innerHTML=cleanCopy(node);
+     wrapper.append(rubric);
+    }else wrapper.innerHTML=cleanCopy(node);
+    result.push({title,html:wrapper.outerHTML});
+   }
+   add(source.querySelector('header'),'Entrega final: o que será verificado','intro',false);
+   criteria.forEach((node,i)=>add(node,'Critério '+(i+1)+' de 6 · '+(node.querySelector('h3')?.textContent||'Entrega'),'criterion-'+(i+1),true));
+   add(source.querySelector('footer'),'Aprovação e conquista exigem verificação real','footer',false);
+   return result.length===8?result:null;
+  }
+ }
  // M09/Demonstrar: split all three fictitious triage cases into readable public
  // projection screens. Do not imply a human test or reveal HDMI-off notes.
  if(mission===9&&root.querySelector('#t9Foundations .t9-tabs')){
