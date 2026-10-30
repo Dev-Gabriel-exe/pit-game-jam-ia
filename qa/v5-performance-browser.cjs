@@ -28,7 +28,7 @@ const {chromium}=require('playwright');
   assert.match(await page.locator('#perfModels').textContent(),/4 \/ 4/);
   await page.locator('[data-roster="30"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:140000});
-  await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5PerfSamples)>=4,
+  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.performanceReport?.sample?.modelsLoaded===30,
    null,{timeout:30000});
   const sample30=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.performanceReport?.sample);
   assert.equal(sample30.modelsLoaded,30);
@@ -54,7 +54,7 @@ const {chromium}=require('playwright');
    'Possible texture leak over 2 restarts: '+JSON.stringify(observations));
   // Test explicit browser GPU loss during a real running battle.
   await page.locator('#startBattle').click();
-  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.stageNeverExists!==true,null,{timeout:5000});
+  await page.waitForFunction(()=>document.querySelector('#arenaStatus')?.dataset.status==='running',null,{timeout:10000});
   const capability=await page.evaluate(()=>{
    const canvas=document.querySelector('#arenaStage canvas');
    const gl=canvas.getContext('webgl2');
@@ -68,7 +68,6 @@ const {chromium}=require('playwright');
    assert.match(await page.locator('#arenaStatus').textContent(),/GPU REINICIANDO/);
    assert.equal(await page.locator('#pauseBattle').isDisabled(),true);
    assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.graphicsContext),'lost');
-   const frozen=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer?.viewer?.mode);
    await page.evaluate(()=>window.__g1LostExtension.restoreContext());
    await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5GraphicsContext==='restored-paused',
     null,{timeout:35000});
