@@ -57,7 +57,7 @@ assert.equal(ten.build.spentAttributes,20);
 assert.equal(ten.build.talents.length,10);
 assert(h.checkTransition(locked,ten));
 assert.throws(()=>h.validateCandidate({...finalCandidate,m10Locked:false},{mission:10}),/definitivamente/);
-assert.throws(()=>h.checkTransition(ten,h.validateCandidate({...finalCandidate,m10Locked:false},{mission:10}).value),/./);
+assert.throws(()=>h.checkTransition(ten,{...ten,m10Locked:false}),/irreversível/);
 assert.throws(()=>h.validateCandidate({...finalCandidate,m5Entered:false,m5Frozen:null},{mission:10}),/primeira entrada/);
 assert.throws(()=>h.validateCandidate({...finalCandidate,build:{...finalBuild,talents:[...tenTalent,'D01']}},{mission:10}),/1 talento/);
 // Explicit integration gate: Phase2 battle is still M5-only, NOT a working M10.
