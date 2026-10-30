@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T00:19:20Z",
+  "last_completed_at": "2026-10-30T01:21:27.796Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Resume pedagogy-first professor/student audit: inspect M08/Demonstrar and six-step student path, fix actual omissions before aesthetics; 900p M04/M05 scrolling now resolved in Chrome",
+  "priority": "Verify M08/Demonstrar projected GDevelop tutorial in Chrome at 720p/900p/1080p; then audit M08 student autonomy, before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-M04-M05-CHROME-900P-FIX",
+  "last_task": "V4-M08-DEMO-PROJECTION-COVERAGE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2548,12 +2548,19 @@
       "status": "done",
       "commit": "4b617c7f1e427dca5b62900b7b2595b80cec98ee",
       "summary": "Chrome 1600x900 projector scroll in M04 (4/11) and M05 (5/14) was caused by compact CSS applying only below 800px. Extended compact header/footer/stage padding through 950px without reducing tutorial font sizes or removing public instructions. New 720p/900p no-scroll regression and scroll-slide diagnostics added. Chrome audit run 40978868112 SUCCESS 3/3 viewport jobs; static QA 40978868187 SUCCESS. 1600x900 now M04 0/11, M05 0/14 vertical scroll; both 0 horizontal overflow. General Browser QA 40978868125 pending at checkpoint; human HDMI/GDevelop GUI/mobile/peer playtest NOT_RUN. Main untouched. Roadmap 54/59 unchanged."
+    },
+    {
+      "timestamp": "2026-10-30T01:21:27.796Z",
+      "task": "V4-M08-DEMO-PROJECTION-COVERAGE",
+      "status": "in_progress",
+      "commit": "bd86c189aa0477df8c71b7c9fa8245027248a301",
+      "summary": "M08/Demonstrar now projects all four GDevelop steps in 10 action/verification slides per selected HUD, puzzle or 3D route, with public recovery, official source, local image fallback and no private notes. Added 3-route Chrome regression. V8 parsed projector, guide, QA 3/3 PASS. Previous Browser QA 40978868125 SUCCESS; new CI NOT_CONFIRMED, physical/human tests NOT_RUN. Roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M04-M05-CHROME-900P-FIX",
-    "status": "done",
-    "updated_at": "2026-10-30T00:19:20Z",
+    "task": "V4-M08-DEMO-PROJECTION-COVERAGE",
+    "status": "in_progress",
+    "updated_at": "2026-10-30T01:21:27.796Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2601,9 +2608,13 @@
       "004b1afd020e73886cdd104c54683d7948d10790",
       "0dc6fe4ceb85f20265d31274a8e052a9c2565c18",
       "cfd9cc2fb7b4a6a64cf4fa61ba26837dd8f2f1d8",
-      "4b617c7f1e427dca5b62900b7b2595b80cec98ee"
+      "4b617c7f1e427dca5b62900b7b2595b80cec98ee",
+      "7e935e9dafd8f54b35d18568bf292821d482f9be",
+      "faedfd7974d12d67ad0da0619f65c640a50c912a",
+      "57227ad2be407e8c14443693868d43c916ce9efe",
+      "bd86c189aa0477df8c71b7c9fa8245027248a301"
     ],
-    "documentation_commit": "6471449ec12203dd51ef008611a398a6f4477117",
+    "documentation_commit": "189a28512a85454ff54e84935f3f3e8f1c7abfad",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3073,13 +3084,28 @@
       {
         "name": "Physical HDMI, real GDevelop GUI, physical mobile, observed human playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M08 projector + guide + Chrome QA V8 parsing",
+        "sha": "bd86c189aa0477df8c71b7c9fa8245027248a301",
+        "result": "PASS: three JS files parsed with new Function in V8; source asserts verified three routes and four steps per route. No browser test executed."
+      },
+      {
+        "name": "M08 new Chrome/CI",
+        "sha": "bd86c189aa0477df8c71b7c9fa8245027248a301",
+        "result": "NOT_CONFIRMED: PR-filtered workflow runs and combined statuses returned empty. 720p/900p/1080p actual overflow not measured."
+      },
+      {
+        "name": "Prior general Browser QA",
+        "run_id": 40978868125,
+        "result": "SUCCESS confirmed from GitHub Actions jobs; predates M08 changes."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Check CI at 0dc6fe4, inspect 1600x900 projected tutorial image/slide sizing and eliminate 4+5 scroll slides without hiding didactic content; then continue student/teacher pedagogical audit",
-    "blocker": "1600x900 tutorial slides still scroll; physical GDevelop GUI, HDMI, mobile and human playtest NOT_RUN"
+    "next_task": "Confirm Chrome M08 projected 10 slides on all three routes and resolutions; fix any overflow/QA failure, then inspect six-step student practice and evidence",
+    "blocker": "New M08 Chrome/CI result not confirmed; physical GDevelop GUI, HDMI, mobile and human playtest NOT_RUN"
   }
 }
