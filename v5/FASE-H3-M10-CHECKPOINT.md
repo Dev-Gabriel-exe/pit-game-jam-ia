@@ -168,3 +168,19 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 - Workflow `.github/workflows/v5-m10-guardian-individual-qa.yml`: [CI focal 41042722247](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41042722247), relatório JSON sintético como artefato por 14 dias, mais regressões H.0, M5/E.7, M10 e prévia M10. **Não marcar aprovado até conclusão de todos os testes.**
 
 **Próximo passo:** interpretar resultados e cobertura dos quatro talentos; só propor ajuste mínimo com evidência comparativa, nunca alterar atributos canônicos automaticamente. G.2 em PCs reais, inspeção humana do visual, H.1/H.2 autenticadas e integração `main` seguem bloqueadas.
+
+### H.3 — Resultado validado da ablação individual (30/10/2026)
+
+**CI específico [41042722247](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41042722247) APROVADO** (job `individual-guardian`), com sintaxe, matriz pareada, regressões de grupo, motor M10, roster visual M10, contrato H.0 e replay da M5/E.7. Artefato `v5-m10-guardian-individual-report` arquivado por 14 dias. Commit de implementação `a24c0927af`, teste `e4033711bb`, workflow `ec2f83c8b8`.
+
+| Talento suprimido (efeito inteiro) | Vencedor mudou (24 pares) | Vitórias Guardião (24; baseline 17) | Escudo efetivamente absorvido pelos Guardiões, soma dos 24 blocos |
+|---|---:|---:|---:|
+| Nenhum (baseline) | — | 17 | 33.295,32 |
+| G01 — Escudo da Alvorada | 13 | 14 | 14.213,30 (−57,3%) |
+| G10 — Bastião Solar | 12 | 13 | 21.333,15 (−35,9%) |
+| G05 — Aço Resiliente | 7 | 19 | 31.990,34 (−3,9%) |
+| J09 — Fé Inflexível | 6 | 19 | 30.710,46 (−7,8%) |
+
+**Cobertura real no baseline:** G01 897 ativações, G10 471, G05 207, J09 166. **120/120 partidas, 96 pares e 12 replays exatos**. M5 sem alterações, seeds e builds iniciais preservadas. A soma do escudo absorvido inclui 4 e 30 jogadores e não é normalizada por número de Guardiões; serve somente para comparar o mesmo elenco dentro de cada braço. A supressão de G05/J09 ocasionalmente **aumentou** vitórias do Guardião, o que confirma interações não lineares e reforça que não se deve alterar stats por uma única comparação. Não foi feito nerf.
+
+**Próximo diagnóstico proposto:** isolar **somente o valor de escudo de G01/G10** preservando casts, prioridade e cooldown (experimento parametrizado M10-only), comparar absorção efetiva por elenco, e então validar um ajuste mínimo em builds diversificadas, sem modificar valores canônicos. Ficam pendentes G.2 nos PCs físicos, inspeção visual humana, H.1/H.2 autenticadas e Fase I com autorização explícita.
