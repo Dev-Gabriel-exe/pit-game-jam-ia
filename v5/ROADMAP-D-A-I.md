@@ -4,6 +4,9 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
+> **D.1b — Duelo 1×1 com replay autoritativo concluído na branch experimental (30/10/2026):** o servidor calcula uma única luta com o motor Phase2 V5 aprovado, valida as builds/permite somente os dois alunos autenticados, grava poses/eventos/resultado com SHA-256 no PostgreSQL, reproduz em dois navegadores com câmeras e áudio locais, suporta reconexão, bloqueia cancelamento após início e libera slots ao finalizar. CI real PostgreSQL e Chromium duas sessões [run 41075905328 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41075905328). Prévia fictícia sem API em `v5/duel-replay-d1b.html?demo=1`. **Não é integração com alunos reais, Neon, V3 nem main.** D.1c será fluxo unificado convites/duelo, controle docente, 30 usuários, G.2 física. Ver `v5/FASE-D1B-DUELO-COMPARTILHADO.md`.
+
+
 > **D.1a — Duelos de espera 1×1: convites concluídos no laboratório (30/10/2026).** Novo backend PostgreSQL isolado com opt-in, presença (60s), convite (45s), aceite/recusa/expiração/cancelamento, exclusividade transacional dos dois alunos, professor habilita e elegibilidade `submitted`/`approved` na missão atual, sem conceder XP. Interface gótica fictícia com troca de quatro personagens e notificação. CI com PostgreSQL 16 e Chromium aprovado [run 41071701521](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41071701521). **Branch `feature/v5-duelos-d1a` sem merge, Neon, V3, alunos reais ou batalha sincronizada.** D.1b é motor de duelo autoritativo compartilhado, depois da sincronização e G.2. Ver `v5/FASE-D1A-DUELOS-CONVITES.md`.
 
 
