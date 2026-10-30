@@ -60,7 +60,7 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  const spreadAggro=engagementMode==='spaced';
@@ -75,6 +75,14 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
  const stormStart=clamp(Number(stormDelay)||18,18,50);
  const shrinkFactor=clamp(Number(stormRateFactor)||1,.4,1);
  if(!Array.isArray(entries)||entries.length<2||entries.length>30)throw Error('Arena experimental aceita 2 a 30 heróis');
+ // H.3 diagnostic ONLY: assign fixed world coordinates independently from
+ // array index to isolate geometry from update order / RNG. No M5 override.
+ if(experimentalSpawnPositions!==null){
+  if(arenaMission!==10)throw Error('Spawn experimental disponível somente na M10 de laboratório');
+  if(!experimentalSpawnPositions||typeof experimentalSpawnPositions!=='object'||Array.isArray(experimentalSpawnPositions)||
+     Object.keys(experimentalSpawnPositions).length!==entries.length)
+   throw Error('Spawn experimental exige uma posição por herói');
+ }
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
  const pending=[],zones=[];
@@ -92,8 +100,19 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   const theta=i*2.399963+r()*Math.PI*.13;
   const spawnFactor=entries.length<=4?Math.min(scale,2.2):scale;
   const rad=(5+Math.sqrt(i)*1.4)*spawnFactor;
+  const originalX=Math.cos(theta)*rad,originalZ=Math.sin(theta)*rad;
+  let spawnX=originalX,spawnZ=originalZ,spawnFace=theta;
+  if(experimentalSpawnPositions!==null){
+   if(!Object.prototype.hasOwnProperty.call(experimentalSpawnPositions,id))
+    throw Error('Spawn experimental sem herói: '+id);
+   const spawn=experimentalSpawnPositions[id];
+   if(!spawn||!Number.isFinite(spawn.x)||!Number.isFinite(spawn.z)||
+      !Number.isFinite(spawn.face)||Math.hypot(spawn.x,spawn.z)>18*scale)
+    throw Error('Coordenada experimental inválida: '+id);
+   spawnX=spawn.x;spawnZ=spawn.z;spawnFace=spawn.face;
+  }
   return {id,name:build.name,build,stats:{hp,attack:base.atk+(build.klass==='mage'?a.INT*.8:build.klass==='guardian'?a.FOR*.38+a.INT*.20:a.FOR*.60+a.DES*.22),defense:base.def+a.DEF*.70,speed:base.speed+a.DES*.10,range:base.range-(tunedBalance&&build.klass==='hunter'?1.2:0),crit:Math.min(.2,.03+a.DES*.006)},
-   x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,vx:0,vz:0,face:theta,animation:'idle',
+   x:spawnX,z:spawnZ,y:0,vx:0,vz:0,face:spawnFace,animation:'idle',
    hp,shield:0,shieldUntil:0,alive:true,kills:0,damage:0,attacks:0,
    basic:r()*.45,gcd:0,cooldowns:{},usage:{},passives:{},slow:0,slowPower:0,
    weak:0,weakPower:0,fortress:0,markBy:null,markUntil:0,offenseDelay:0,rage:0,solarUntil:0,
