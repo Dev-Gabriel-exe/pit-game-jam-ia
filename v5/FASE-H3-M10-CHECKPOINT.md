@@ -145,3 +145,15 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 - Workflow `.github/workflows/v5-m10-visual-qa.yml`: links para a execução em andamento: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41037680943. **Não declarar o WebGL M10 aprovado até o job `final-webgl` concluir com sucesso.**
 
 **Ainda pendentes:** análise individual de talentos do Guardião (agente horário), verificação visual humana da cena M10, validação G.2 nos PCs da escola, integração H.1/H.2 de identidades/rede e aprovação final da I. A `main` não foi alterada.
+
+### H.3 — Homologação automatizada da prévia 3D M10 (30/10/2026)
+
+**APROVADA em laboratório — ambos os jobs do [CI 41037680943](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41037680943) concluíram com sucesso após correção de sincronização da checagem do botão Iniciar**. A primeira execução CI 41037540738 interrompeu o teste por conferir `disabled` antes do refresh assíncrono do HUD, mesmo com 4/4 GLBs carregados; `qa/v5-m10-visual-browser.cjs` agora aguarda o botão habilitar antes de iniciar.
+
+- **4 personagens:** KayKit GLBs reais, 10 talentos/20 pontos por build, lançamentos de talentos, partida concluída e 3 espectadores;
+- **30 personagens:** 30 KayKit GLBs reais, 10 talentos/20 pontos por build, dezenas de lançamentos de talentos, vencedor com 29 espectadores, diretor cinematográfico seleciona plano de vitória;
+- **Reversão limpa para M5:** trocar a missão após a final volta a `phase2-m5`, 5 talentos/10 pontos e elenco normal. A câmera e os modelos continuam funcionais;
+- **Regressões do motor:** seis variações de elenco (4/30 e variantes 0/3/10), replays exatos da M10, validador H.0 e replay de E.7 da M5 passaram;
+- **Evidência visual:** artefato `m10-webgl-final-30`, screenshot `qa/v5-m10-visual-30.png` no [CI 41037680943](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41037680943/artifacts/12968383289).
+
+**O que NÃO está homologado:** estética validada por humano, FPS nos PCs reais (G.2), balanceamento final da M10, contas e turmas, progressão salva, transmissão de batalha entre dispositivos e merge. O agente de balanceamento deve continuar os testes individuais do Guardião; não mudar os valores oficiais sem evidência e aprovação. **A `main` não foi alterada.**
