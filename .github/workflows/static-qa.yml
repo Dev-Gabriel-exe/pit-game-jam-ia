@@ -32,6 +32,10 @@ jobs:
         run: |
           node --check v3/student-mission-nine.js
           node qa/v3-m09-field-guidance.cjs
+      - name: Verify M10 student launch field guidance and private notes
+        run: |
+          node --check v3/student-mission-ten.js
+          node qa/v3-m10-field-guidance.cjs
       - name: Audit V3 teacher/student alignment
         run: node qa/v3-audit-alignment.cjs
       - name: Verify M07 student/teacher flow and shared tutorial offline
