@@ -68,7 +68,7 @@ const GUARDIAN_ABLATION_GROUPS=Object.freeze({
  reactions:Object.freeze(['G02','G03','G07','J06']),
  mitigation:Object.freeze(['G04','G06','G08','L10'])
 });
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  const spreadAggro=engagementMode==='spaced';
@@ -110,10 +110,21 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    (arenaMission!==10||typeof experimentalGuardianAblation!=='string'||
     !['shields','healing','reactions','mitigation','all'].includes(experimentalGuardianAblation)))
   throw Error('Ablação experimental do Guardião exige M10 e grupo conhecido');
- const suppressedGuardianTalents=experimentalGuardianAblation===null?null:
-  new Set(experimentalGuardianAblation==='all'?
-   Object.values(GUARDIAN_ABLATION_GROUPS).flat():
-   GUARDIAN_ABLATION_GROUPS[experimentalGuardianAblation]);
+ // H.3 isolated single-talent diagnostic: whole effect suppressed, not a nerf.
+ // Strict whitelist prevents arbitrary ability removal and any M5 changes.
+ const individualGuardianTargets=['G01','G10','G05','J09'];
+ if(experimentalGuardianTalentAblation!==null&&
+    (arenaMission!==10||typeof experimentalGuardianTalentAblation!=='string'||
+     !individualGuardianTargets.includes(experimentalGuardianTalentAblation)))
+  throw Error('Ablação individual do Guardião exige M10 e talento autorizado');
+ if(experimentalGuardianAblation!==null&&experimentalGuardianTalentAblation!==null)
+  throw Error('Ablação do Guardião: grupo e talento individual são mutuamente exclusivos');
+ const suppressedGuardianTalents=experimentalGuardianTalentAblation!==null?
+  new Set([experimentalGuardianTalentAblation]):
+  experimentalGuardianAblation===null?null:
+   new Set(experimentalGuardianAblation==='all'?
+    Object.values(GUARDIAN_ABLATION_GROUPS).flat():
+    GUARDIAN_ABLATION_GROUPS[experimentalGuardianAblation]);
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
  const pending=[],zones=[];
