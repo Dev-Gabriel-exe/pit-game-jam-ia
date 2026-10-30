@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T11:22:22Z",
+  "last_completed_at": "2026-10-30T12:20:13Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 projected review Chrome 41047606750 SUCCESS; verify Browser QA 41047606738 when completed, then synchronize public M10 practice with student actions and finish human signoff plan. No merge main.",
+  "priority": "M10 prática: confirmar CI estática e Chrome 720p/900p/1080p após oito slides públicos de evidência; corrigir rolagem antes de avançar. Human GDevelop/HDMI/mobile/peer NOT_RUN.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M10-REVIEW-PROJECTION",
+  "last_task": "V4-M10-PRACTICE-PROJECTION-ALIGNMENT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2625,12 +2625,19 @@
       "status": "in_progress",
       "commit": "3342632a2e59f0b3e8f641e30880bf6a752b6d53",
       "summary": "M10 teacher review now projects 8 public slides: introduction, six distinct rubric criteria, final approval caveat. Private teacher notes excluded via cleanCopy; dedicated 720p CSS and Chrome regression added. Previous M10 3-route demo projector CI 41039278342 and Browser QA 41039278432 SUCCESS. New static QA 41047606978 SUCCESS; new Chrome 41047606750 SUCCESS (8-slide fit/font regression), Browser QA 41047606738 IN_PROGRESS, not claimed. Physical GDevelop GUI/HDMI/mobile/human NOT_RUN; V3 54/59, main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T12:20:13Z",
+      "task": "V4-M10-PRACTICE-PROJECTION-ALIGNMENT",
+      "status": "in_progress",
+      "commit": "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
+      "summary": "M10 public teacher practice now mirrors all 8 student fields and 3 manual checks; projector 8 dedicated public slides (intro, 4 pairs, checks, 6 criteria, footer) without private notes. Added scoped CSS, isolated Node alignment test, Chrome projector regressions and workflow. Previous Browser QA 41047606738 SUCCESS. V8 11/11 isolated checks and five JS parses PASS. New native Node/Chrome CI NOT_CONFIRMED; human/HDMI/GDevelop/mobile NOT_RUN. V3 54/59, main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M10-PROJECTOR-FOUR-STEPS",
+    "task": "V4-M10-PRACTICE-PROJECTION-ALIGNMENT",
     "status": "in_progress",
-    "updated_at": "2026-10-30T10:15:00.082Z",
+    "updated_at": "2026-10-30T12:20:13Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2711,9 +2718,17 @@
       "de096d3fcf3512e15658699a9559fe5277d8ada1",
       "fece626d6bc007239a9848d84493d56eacda9035",
       "bd13c89077fbb10903590420e07e224e5aa301d3",
-      "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d"
+      "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d",
+      "f3490b171bfc0fa6850f610fa54894f47b928968",
+      "a7bd7261674a99f6b3914685d4af1a49354a2a08",
+      "f23fe02b71fb09c355a2c6a2fe8eaa66ba720542",
+      "1791223e87fc8aa2d3aed5c1d605543e6743af0c",
+      "b0d6d617f2f14bdcf71aa72e9e13c27e550569a9",
+      "68669bc06e950be2bd3ad0599496e565893e020d",
+      "3349d0261cc6614abf0fae76a6fb68a111d2e913",
+      "4f4ee3135b4719e4d4caf60310f9d18d120a81ef"
     ],
-    "documentation_commit": "0cadb69c6ba7d5599e48f2bde1f9a91f7cca1108",
+    "documentation_commit": "aa3b082c9e0000afa578b2a325596585c9dcea74",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3401,13 +3416,29 @@
           41047606738
         ],
         "result": "Chrome 41047606750 SUCCESS on exact code SHA 3342632a; new eight-slide no-scroll/font/overflow regressions passed at 720/900/1080. Browser QA 41047606738 IN_PROGRESS at last check."
+      },
+      {
+        "name": "M10 previous Browser QA completion",
+        "sha": "3342632a2e59f0b3e8f641e30880bf6a752b6d53",
+        "run_id": 41047606738,
+        "result": "SUCCESS: browser-qa job completed successfully, confirmed 2026-10-30 through GitHub connector"
+      },
+      {
+        "name": "M10 practice eight fields and three checks V8 isolated",
+        "sha": "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
+        "result": "PASS: five JS sources parsed and 11 isolated integration checks passed on fetched production modules; teacher/student field labels identical, checks identical, private details closed, no notes in student. Native Node/Chrome not executed locally."
+      },
+      {
+        "name": "M10 new native Node and Chrome CI",
+        "sha": "3349d0261cc6614abf0fae76a6fb68a111d2e913",
+        "result": "NOT_CONFIRMED: new static QA test wired; Chrome projector regression added but no new workflow outcome retrieved. HDMI, GDevelop GUI, mobile and human NOT_RUN."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "V4-M10-REVIEW-CHROME-VERIFY-THEN-PRACTICE",
-    "blocker": "M10 review Browser QA 41047606738 in progress; physical GDevelop GUI, HDMI, mobile and peer playtest NOT_RUN; five release tasks blocked pending human signoff."
+    "next_task": "V4-M10-PRACTICE-CHROME-VERIFY",
+    "blocker": "New static/Chrome CI outcomes unconfirmed; physical GDevelop GUI, HDMI, mobile and peer playtest NOT_RUN; 5 release tasks remain blocked pending human signoff."
   }
 }
