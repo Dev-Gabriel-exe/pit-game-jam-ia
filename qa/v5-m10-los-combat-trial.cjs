@@ -64,7 +64,7 @@ assert.throws(()=>P.battle(roster(4,0),{...OPT,experimentalVisibilityAwareTarget
  const positions={
   'trial-los-A':{x:-4,z:0,face:0},
   'trial-los-B':{x:4,z:0,face:0},
-  'trial-los-C':{x:-4,z:9,face:0}
+  'trial-los-C':{x:-1,z:10,face:0}
  };
  const opts={arenaMission:10,arenaScale:1,seed:713,engagementMode:'free',
   experimentalSpawnPositions:positions};
