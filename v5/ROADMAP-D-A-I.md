@@ -68,6 +68,8 @@
 - Testar a troca no laboratório antes de integrar turmas reais; replicação autenticada/tempo lógico ficam na Fase H.
 
 ### G — QA final e aprovação da arena
+**G.3 (resiliência de GLB) aprovada no laboratório (30/10/2026):** ao injetar falhas reais no primeiro download dos GLBs Mage/Knight, o protótipo bloqueou a batalha incompleta e ofereceu retry seletivo sem alterar semente, atributos ou talentos; houve recuperação 30/30 GLBs e execução de combate. [Run 40997047088](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40997047088). **G.2 validação nos PCs físicos da escola permanece pendente.** Integração H e merge I não autorizados.
+
 
 **G.1 implementada e verificada em laboratório (30/10/2026):** monitor passivo `v5/performance-monitor.js`, painel opt-in `?perf=1` e tratamento de `webglcontextlost/restored` com pausa e retomada explícita. Teste automatizado com 4/30 GLBs, reinício e estabilidade de recursos gráficos após aquecimento WebGL passou em [run 40995278890](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40995278890). O status da GPU após clicar em continuar foi novamente testado com a extensão real WEBGL_lose_context; todos os jobs do [run 40995524247](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40995524247) passaram, inclusive 4/30 GLBs, aquecimento de texturas, duas reinicializações e retomada manual após recuperação de GPU. **Não afirmar desempenho de hardware real com SwiftShader**; G.2 continua exigindo teste nos PCs da escola. Ver `v5/FASE-G-CHECKPOINT.md`.
 - Testes de regressão no motor e no navegador: 4/30 personagens, mobile/desktop, GLB, câmera, pausa, reinício e arquibancadas.
