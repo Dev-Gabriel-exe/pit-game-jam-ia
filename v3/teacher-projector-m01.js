@@ -440,13 +440,13 @@ function pedagogicalDemoSlides(root,mission){
 }
 function activateProjectorControls(content){
  // Cloned tutorial images do not inherit the original tab component's error listeners.
- content.querySelectorAll('[data-gd3-image],[data-tm-guide-image],[data-g4-image],[data-m5g-image],[data-g7-shot]').forEach(img=>{
+ content.querySelectorAll('[data-gd3-image],[data-tm-guide-image],[data-g4-image],[data-m5g-image],[data-g7-shot],[data-g8-shot]').forEach(img=>{
   const fallback=()=>{
    if(img.dataset.pitProjectorFallback)return;
    img.dataset.pitProjectorFallback='1';
-   img.src=img.hasAttribute('data-g7-shot')?(window.PIT_GDEVELOP_M07_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-m5g-image')?(window.PIT_GDEVELOP_M05_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-g4-image')?(window.PIT_GDEVELOP_M04_GUIDE?.fallback||'./v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg'):img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
+   img.src=img.hasAttribute('data-g8-shot')?(window.PIT_GDEVELOP_M08_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-g7-shot')?(window.PIT_GDEVELOP_M07_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-m5g-image')?(window.PIT_GDEVELOP_M05_GUIDE?.fallback||'./v3/assets/guide/gdevelop-eventos-pt.svg'):img.hasAttribute('data-g4-image')?(window.PIT_GDEVELOP_M04_GUIDE?.fallback||'./v3/assets/guide/gdevelop-m04-movimento-limites-pt.svg'):img.hasAttribute('data-gd3-image')?(window.PIT_GDEVELOP_FIRST_RUN?.localFallback||'./v3/assets/guide/gdevelop-inicio-pt.svg'):'./v3/assets/guide/gdevelop-eventos-pt.svg';
    img.alt='Diagrama didático autoral em português; captura externa indisponível';
-   const caption=img.closest('.gd3-picture,.tm-guide-image,.g4-step-picture,.m5g-picture,.g7-card figure')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span,.g4-picture-label span,.m5g-picture-top strong,.g7-card figcaption span');
+   const caption=img.closest('.gd3-picture,.tm-guide-image,.g4-step-picture,.m5g-picture,.g7-card figure,.pit-projector-g8-step figure')?.querySelector('.gd3-picture-caption span,.tm-guide-image-head span,.g4-picture-label span,.m5g-picture-top strong,.g7-card figcaption span,.pit-projector-g8-step figcaption');
    if(caption)caption.textContent='DIAGRAMA AUTORAL · CAPTURA INDISPONÍVEL';
   };
   img.addEventListener('error',fallback);
