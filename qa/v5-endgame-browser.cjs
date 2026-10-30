@@ -57,6 +57,10 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert(at28.staticBatches>0&&at28.staticMergedMeshes>100,
    'Static architecture should be batched without removing geometry: '+JSON.stringify(at28));
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.finished,null,{timeout:90000});
+  // Renderer samples its diagnostics once per second; avoid reading the last
+  // pre-KO frame before this final post-KO sample has refreshed.
+  await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5ActiveMixerUpdates)<=1,
+   null,{timeout:15000});
   const end=await lab();
   assert.equal(end.winner,'guardian','Exact screenshot seed must finish with guardian');
   assert.equal(end.spectators,29);
