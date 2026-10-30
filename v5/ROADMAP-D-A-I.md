@@ -4,7 +4,7 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
-**Status em 30/10/2026:** Fase D aprovada visualmente; Fase E recebeu balanceamento HP2, sprites E.6 e correção E.7 de fim de partida (validação física de GPU/PC continua na G). **F.1 implementada e testada**: diretor automático opt-in de professor no laboratório, planos de duelo/geral/clímax/vencedor e retomada manual. F.2/F.3, G, H e I pendentes. Sem alterações na `main`.
+**Status em 30/10/2026:** Fase D aprovada visualmente; Fase E recebeu HP2, sprites E.6 e correção E.7 (GPU/PC real será validado na G). **F.1/F.2/F.3 implementadas no laboratório**: diretor do professor, composição cinematográfica e câmera local do personagem vivo que muda para modo espectador após a eliminação, reutilizando o mesmo feed interno da partida. Teste real WebGL de F.3 com 4/30 GLBs aprovado no run 40992989976; regressão do gesto manual do professor teve correção adicional, em reteste. Fase G, integração H entre dispositivos e revisão I pendentes. Sem mudanças na `main`.
 **Branch de trabalho:** `feature/v5-arena-dos-criadores`. **Não fazer merge na `main`** antes da aprovação final.
 **Contexto pronto:** motor experimental de 120 talentos (B.6), efeitos (C.1), coreografias (C.2), identidade visual das builds (C.3).
 
@@ -102,3 +102,5 @@ A ordem de trabalho é **D → E → F → G → H → I**. Se for detectado pro
 
 
 **F.2 homologada no laboratório:** compositor `v5/camera-framing.js` escolhe 12 ângulos, considera pilares reais e projeta área de ataque real (`prepare`/`talent-impact`), enquadra tela estreita, suaviza transições e faz órbita sutil na vitória; movimento reduzido suprime a órbita. Full browser com 4/30 GLBs, 30 personagens até vencedor e controles manuais **PASS** no [GitHub Actions 40991606686](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40991606686). F.3, G/H/I ainda pendentes; nenhum merge em `main`.
+
+**F.3 implementada no laboratório (30/10/2026):** `v5/camera-viewer.js` fornece o modo professor/aluno fictício vivo/espectador, estado serializável e uma única identidade de feed local. `v5/arena-three.js` transita da visão pessoal em terceira pessoa para o diretor compartilhado ao morrer, e volta ao professor sem reiniciar a simulação. O navegador validou a transição após morte real com quatro e trinta personagens, incluindo bloqueio explícito de M10 (run [40992989976](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40992989976)). A `main` continua intacta. **Não há transmissão remota de câmera ou autenticação dos alunos — isso pertence à H.** Próximo gate G: desempenho PC/GPU, 30 jogadores, rede/GLB, reset e falhas de contexto WebGL. Regressão F.1 de arrasto manual em reteste.
