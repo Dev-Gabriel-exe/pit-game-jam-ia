@@ -34,6 +34,22 @@ assert.equal(student.load('student-c').checks.length,0,'hydrated submission neve
 const impossible={...draft,outcome:'passed',resolution:'fixed'};
 student.save('student-d',impossible);
 assert.equal(student.validate('student-d').ok,false,'no fake fix after passed test');
+// The report must not claim backlog or a fix when the observed test had no failure.
+for(const [outcome,resolution,accepted] of [
+ ['issue','fixed',true],
+ ['issue','backlog',true],
+ ['issue','nochange',false],
+ ['passed','fixed',false],
+ ['passed','backlog',false],
+ ['passed','nochange',true]
+]){
+ const session='m09-matrix-'+outcome+'-'+resolution;
+ assert(student.save(session,{...draft,outcome,resolution}),'matrix draft saved');
+ const verdict=student.validate(session);
+ assert.equal(verdict.ok,accepted,'outcome/resolution consistency: '+outcome+'/'+resolution);
+ if(!accepted)assert.equal(verdict.field,'resolution','focus contradictory decision');
+}
+assert(student.render({session:'student-a',phase:'practice',status:'',idea:{}}).includes('Se não houve falha, descreva a hipótese confirmada'),'student no-failure guidance');
 const teacherHtml=teacher.render('review');
 assert(teacherHtml.includes('<details class="pit-private-teacher-notes">'),'teacher guidance stays in private details');
 assert(!/<details class="pit-private-teacher-notes"[^>]*\bopen\b/.test(teacherHtml),'teacher details closed by default');
