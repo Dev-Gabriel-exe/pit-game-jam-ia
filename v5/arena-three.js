@@ -21,9 +21,16 @@ const PERFORMANCE=window.PIT_V5_PERFORMANCE;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
- // Warrior and Guardian intentionally share ONE swordsman GLB; cache by URL.
+ // Deduplicated per class and URL. Do not cache rejections or stall forever.
  const key=asset.model;
- if(!cache.has(key))cache.set(key,new Promise((resolve,reject)=>loader.load(key,resolve,undefined,reject)).catch(err=>{cache.delete(key);throw err}));
+ if(!cache.has(key)){
+  let timeout;
+  const request=new Promise((resolve,reject)=>loader.load(key,resolve,undefined,reject));
+  const expiry=new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('GLB não respondeu em 30s')),30000)});
+  const pending=Promise.race([request,expiry]).finally(()=>clearTimeout(timeout));
+  const tracked=pending.catch(err=>{if(cache.get(key)===tracked)cache.delete(key);throw err});
+  cache.set(key,tracked);
+ }
  return cache.get(key);
 }
 const MATERIAL={
@@ -477,7 +484,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   return true;
  }
  function addRealCharacter(item){
-  const klass=item.build.klass,asset=ASSETS[klass];if(!asset)return;
+  const klass=item.build.klass;
+  if(item.loadStatus==='loading'||item.loadStatus==='ready')return;
+  item.loadStatus='loading';
   if(item.id==='preview'){container.dataset.v5Asset='loading';container.dataset.v5AssetClass=klass}
   loadCharacter(klass).then(gltf=>{
    if(!live||individuals.get(item.id)!==item)return;
@@ -515,6 +524,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     container.dataset.v5ModelNames='Barbarian, Mage, Rogue_Hooded, Knight';
     container.dataset.v5RigHeight='2.55';
    }
+   item.loadStatus='ready';item.loadError='';
    if(item.id!=='preview'){modelLoadedCount++;container.dataset.v5ModelsLoaded=String(modelLoadedCount)}
    if(gltf.animations?.length){
     item.mixer=new THREE.AnimationMixer(model);item.actions=new Map();
@@ -546,12 +556,27 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    }
    if(item.id==='preview'){container.dataset.v5Asset='loaded';container.dataset.v5AnimationCount=String(gltf.animations?.length||0)}
   }).catch(err=>{
+   if(!live||individuals.get(item.id)!==item)return;
+   item.loadStatus='failed';item.loadError=String(err.message||err).slice(0,140);
    if(item.id==='preview'&&individuals.get(item.id)===item){
     container.dataset.v5Asset='fallback';container.dataset.v5AssetError=String(err.message||err).slice(0,140);
    }
    if(item.id!=='preview'&&individuals.get(item.id)===item){modelErrorCount++;container.dataset.v5ModelsFailed=String(modelErrorCount)}
+   container.dispatchEvent(new CustomEvent('v5-glb-load-error',{detail:{klass,failed:modelErrorCount,reason:item.loadError}}));
    console.warn('[V5] GLB indisponível, preservado herói procedural:',klass,err.message||err);
   });
+ }
+ // Retry failed official GLBs without changing the combat seed or build.
+ function retryFailedModels(){
+  if(!live||!simulation||playing||contextLost)return 0;
+  const failed=[...individuals.values()].filter(u=>u.id!=='preview'&&u.loadStatus==='failed');
+  if(!failed.length)return 0;
+  for(const item of failed){item.loadStatus='retry';item.loadError=''}
+  modelErrorCount=0;container.dataset.v5ModelsFailed='0';
+  for(const item of failed)addRealCharacter(item);
+  container.dataset.v5ModelRetries=String(Number(container.dataset.v5ModelRetries||0)+1);
+  container.dispatchEvent(new CustomEvent('v5-glb-retry',{detail:{count:failed.length}}));
+  return failed.length;
  }
  function addHero(raw,id,position={x:0,z:0},scale=1){
   const b=CORE.canonical(raw,raw.name||'Aventureiro',raw.xp||0);
@@ -622,6 +647,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5HitReactions='0';container.dataset.v5LastGlbClip='';
   container.dataset.v5ModelsExpected=String(simulation.fighters.length);
   container.dataset.v5ModelsLoaded='0';container.dataset.v5ModelsFailed='0';
+  container.dataset.v5ModelRetries='0';
   for(const f of simulation.fighters)addHero(f.build,f.id,{x:f.x,z:f.z});
   container.dataset.v5BuildVisuals=String([...individuals.values()].filter(u=>u.identityVisual).length);
   container.dataset.v5BuildIdentities=String(new Set([...individuals.values()].filter(u=>u.identity).map(u=>u.identity.visualId)).size);
@@ -1402,5 +1428,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get performanceReport(){return performanceMonitor?.report({seed:simulation?.seed??null,players:simulation?.fighters.length||0,quality})||null},get graphicsContext(){return contextLost?'lost':container.dataset.v5GraphicsContext},get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,retryFailedModels,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get performanceReport(){return performanceMonitor?.report({seed:simulation?.seed??null,players:simulation?.fighters.length||0,quality})||null},get graphicsContext(){return contextLost?'lost':container.dataset.v5GraphicsContext},get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
