@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm final M09 Browser QA, then audit M09 projected demo 720p scrolling and practice font legibility; keep pedagogical audit before aesthetics",
+  "priority": "Verify Chrome projector QA for M09 practice at 1280x720, 1600x900, 1920x1080; investigate remaining M09 demo scroll and any failed font assertion; pedagogical work before aesthetics.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-OUTCOME-DECISION-CONSISTENCY",
+  "last_task": "V4-M09-PROJECTOR-LEGIBILITY",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2576,12 +2576,19 @@
       "status": "in_progress",
       "commit": "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
       "summary": "M09 student practice gained nine field-specific, screen-reader-linked instructions for real peer playtest evidence; no canned answers, no personal data, no private teacher notes. CSS and new CI Node regression added. Fetched production JS and QA parsed in V8; 28/28 actual isolated V8 runtime assertions PASS for field help, privacy, validation, persistence/isolation, evidence, private teacher notes. GitHub combined statuses=[] and PR-only workflow_runs=[] for new commit: CI/Chrome NOT_CONFIRMED. Human peer playtest, HDMI, GDevelop GUI, physical mobile NOT_RUN. 54/59 unchanged, main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T06:14:53.000Z",
+      "task": "V4-M09-PROJECTOR-LEGIBILITY",
+      "status": "in_progress",
+      "commit": "cfae2d5550e29a76c5512ddb334b24ddca970e9d",
+      "summary": "Scoped M09 practice projected small/inline text to minimum 18px and added Chromium QA assertion for five public slides, zero sub-18px font slides and zero horizontal overflow. CSS brace balance and QA V8 syntax PASS. Previous M09 Browser QA run 41007753456 SUCCESS. New CI/Chrome not confirmed; demo scrolling still to fix. No main changes or human/GDevelop/HDMI tests."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-OUTCOME-DECISION-CONSISTENCY",
-    "status": "done",
-    "updated_at": "2026-10-30T05:19:54.619Z",
+    "task": "V4-M09-PROJECTOR-LEGIBILITY",
+    "status": "in_progress",
+    "updated_at": "2026-10-30T06:14:53.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2645,7 +2652,9 @@
       "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
       "3fa571029dbb8426e730c294be25d18be6fe740d",
       "51de9fdd67a0d2c2d6adc0cbd9c7eec23209f618",
-      "fb8c00e3ccf387a3b763b2b03d508addc4ae9719"
+      "fb8c00e3ccf387a3b763b2b03d508addc4ae9719",
+      "e003a1a8e712a7be734164ae76a4f03a2bfef419",
+      "cfae2d5550e29a76c5512ddb334b24ddca970e9d"
     ],
     "documentation_commit": "c8ac4a601cc7d0e7459b31ae67ee7a8b8aafa637",
     "tests": [
@@ -3198,13 +3207,29 @@
       {
         "name": "Human GDevelop GUI, physical HDMI/mobile, observed peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M09 practice CSS scoped legibility and projector regression syntax",
+        "sha": "cfae2d5550e29a76c5512ddb334b24ddca970e9d",
+        "result": "PASS: source CSS braces balanced, QA JS V8 parsed; new Chrome assertion checks 5 public slides, zero <18px fonts, zero horizontal overflow. Browser Chrome for this commit NOT_RUN/NOT_CONFIRMED."
+      },
+      {
+        "name": "Previous M09 decision consistency Browser QA",
+        "sha": "fb8c00e3ccf387a3b763b2b03d508addc4ae9719",
+        "run_id": 41007753456,
+        "result": "SUCCESS: GitHub Actions browser-qa job completed successfully, confirmed this run; predates new CSS."
+      },
+      {
+        "name": "New M09 projector CI status",
+        "sha": "cfae2d5550e29a76c5512ddb334b24ddca970e9d",
+        "result": "NOT_CONFIRMED: combined statuses=[] and PR-filtered workflow_runs=[]; cannot infer push-triggered CI result."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "V4-M09-PROJECTOR-LEGIBILITY",
-    "blocker": "GitHub connector does not expose push-triggered Actions workflow results via commit lookup; HDMI, actual GDevelop GUI, physical mobile, observed peer playtest remain NOT_RUN"
+    "next_task": "V4-M09-PROJECTOR-LEGIBILITY-CHROME",
+    "blocker": "New Chrome projector run not confirmed through connector; M09 demo slide scroll and font sizes need browser measurement. Physical HDMI, real GDevelop GUI, mobile and peer playtest NOT_RUN."
   }
 }
