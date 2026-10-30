@@ -238,8 +238,16 @@
  }
  // Explicit trusted harness ONLY. No URL credential, global V3 storage,
  // classroom token auto-discovery or real API fallback.
- const config=window.__PIT_V5_H1D_STAGING;
  const local=['localhost','127.0.0.1'].includes(window.location.hostname);
+ let config=window.__PIT_V5_H1D_STAGING;
+ if(local&&!config&&window.parent!==window){
+  try{
+   const b=window.parent.__PIT_V5_H1E_BRIDGE;
+   if(window.parent.location.origin===location.origin&&b?.enabled===true&&
+      b.role==='student'&&typeof b.tokenProvider==='function')
+    config={enabled:true,endpoint:b.heroEndpoint,tokenProvider:b.tokenProvider};
+  }catch{}
+ }
  if(!local||!config||config.enabled!==true||
   typeof config.tokenProvider!=='function'||
   typeof config.endpoint!=='string'){
