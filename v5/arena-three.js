@@ -885,7 +885,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5CameraDirector='on';
   container.dataset.v5CameraPreset='director';
   const first=autoDirector.tick(simulation.time,simulation.fighters);
-  if(first)autoRevision=first.revision;
+  if(first){autoRevision=first.revision;
+   container.dataset.v5SharedFeedRevision=String(first.revision);
+   container.dataset.v5CameraSubject=first.ids.join(',');
+   container.dataset.v5CameraCuts=String(first.revision)}
   container.dataset.v5CameraShot=first?.mode||'overview';
   container.dispatchEvent(new CustomEvent('v5-camera-changed',{detail:{enabled:true,shot:'overview'}}));
   return true;
@@ -946,7 +949,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    autoCamera=false;
    if(!sharedFeedActive){autoDirector?.start();sharedFeedActive=true;autoRevision=0}
   }else{
-   followId=null;autoCamera=true;
+   followId=null;autoCamera=true;container.dataset.v5FollowTarget='';
    controls.enableRotate=false;controls.enablePan=false;
    if(!sharedFeedActive){autoDirector?.start();sharedFeedActive=true;autoRevision=0}
    const plan=autoDirector?.tick(simulation.time,simulation.fighters);
@@ -1062,7 +1065,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    for(const f of simulation.fighters)sync(f);
    const transition=cameraViewer?.update(simulation.fighters);
    if(transition?.mode==='spectating'){
-    followId=null;autoCamera=true;
+    followId=null;autoCamera=true;container.dataset.v5FollowTarget='';
     controls.enableRotate=false;controls.enablePan=false;
     framingPose=null;framingRecalc=-Infinity;
     container.dataset.v5CameraAudience='student';
