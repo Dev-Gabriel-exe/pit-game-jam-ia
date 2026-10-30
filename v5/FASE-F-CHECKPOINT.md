@@ -25,3 +25,24 @@ F.2 — melhorar enquadramento adaptativo de duelos, telegraphs e efeitos com vi
 ### Exemplo de prévia isolada
 
 `/v5/arena-lab.html?phase2=1&count=30&nav=steer&counterplay=1&balance=hp2&sprites=1`, clicar em **Diretor automático** e iniciar o combate. Para reproduzir o caso específico de E.7, acrescentar `&seed=4175863657`.
+
+## F.2 — Composição cinematográfica, telegraph e obstáculos (30/10/2026)
+
+**Implementada como camada somente visual, dentro do laboratório da V5, sem tocar em `main` nem na progressão dos alunos.**
+
+- `v5/camera-framing.js`: compositor autoral e puro (não requer Three.js), recebe o plano de câmera selecionado, combatentes vivos, obstáculos físicos retornados pelo motor e proporção real da tela. Calcula centro, raio e distância necessários para enquadrar dois lutadores/área de impacto; testa **12 azimutes** e pontua candidatos por bloqueio real por pilares, deslocamento da câmera e tendência de ficar atrás das muralhas. Modela a altura da linha de visão — uma câmera elevada pode enxergar por cima de um obstáculo, não deve ser marcada como bloqueada erroneamente.
+- `v5/camera-director.js`: eventos reais `prepare` e `talent-impact` podem carregar a posição `x,z` da habilidade na decisão de enquadramento. O centro é mostrado **somente** quando existe no evento do motor, sem inventar golpe. O clímax entra imediatamente ao reduzir para 3 vivos, enquanto planos ordinários respeitam a histerese. Corrigido loop em que a câmera poderia permanecer na visão geral indefinidamente: agora alterna geral/duelo em ausência de eventos.
+- `v5/arena-three.js`: câmera resolve planos a cada 260ms (mais barato que a cada quadro), interpola posição e alvo sem teletransportes; expõe `data-v5-camera-obstructions`, `-framing-distance`, `-telegraph`, `-visible-subjects` para inspecionar a seleção. Clímax e final de vitória têm enquadramento próprio; o vencedor pode receber uma pequena órbita de até 0,2rad (~11,5°), **desativada para `prefers-reduced-motion`**. Manipulação manual, seleção explícita de um aluno e visão geral sempre prevalecem sobre o automático.
+- `v5/arena-lab.html`: carrega o módulo de enquadramento antes do motor Three.js. A câmera é ativada no botão **Diretor automático**, como na F.1.
+
+### QA / evidências
+
+- `qa/v5-camera-framing.cjs`: testa bloqueio vs. linha elevada, composição para paisagem e retrato, inclusão do centro real da habilidade, retirada do alvo eliminado, movimento reduzido sem órbita, alternância ampla/duelo, clímax/último sobrevivente e imutabilidade do snapshot. Teste executado manualmente no runtime Node-equivalente, sem falhas.
+- `qa/v5-camera-director.cjs`: regressão dos resultados exatos da simulação 4/30 com o diretor ativo ou desligado, sem alterar vencedor e danos.
+- `qa/v5-camera-director-browser.cjs`: teste de WebGL real com 4 e 30 GLBs, controle manual, tela estreita e informações de enquadramento; gera screenshot `qa/v5-camera-director-f2-30.png`.
+- `qa/v5-camera-victory-browser.cjs`: teste completo do seed exato da partida S24 (`4175863657`) com **30 personagens e diretor ativo**, aguardando vitória real, 29 espectadores, câmera apontada para o Guardião vencedor e botão manual preservado. Gera screenshot `qa/v5-camera-f2-victory-30.png`.
+- Workflow: `.github/workflows/v5-camera-director-qa.yml`, run F2 https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40991606686. **Não declarar homologação browser ou fluidez de hardware até aprovação efetiva; no CI o WebGL é SwiftShader/software rendering.**
+
+### Pendente em F
+
+F.3 — visão do aluno vivo e ao morrer transição para a mesma câmera global do professor, **com replicação real autorizada exclusivamente em H**. Fases G/H/I continuam separadas: desempenho PC/GPU, integração e aprovação para `main`.
