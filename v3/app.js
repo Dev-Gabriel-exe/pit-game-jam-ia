@@ -300,6 +300,18 @@ function studentWorkForm(m){
   (approved?'<div class="notice green">🏆 Missão aprovada! Sua conquista foi registrada no placar.</div>':'')+
  '</section>';
 }
+// Legacy API versions flattened structured evidence into one line. Never guess field boundaries.
+// Show the untouched historical text to the student; do not mutate server data or mark checks.
+function legacyEvidenceNotice(record,stage){
+ if(TEACHER||visualPreview||!record||typeof record.evidence!=='string')return '';
+ const code=String(stage).padStart(2,'0'),raw=record.evidence;
+ const structured=raw.startsWith('M'+code+' | ')||raw.startsWith('MISSÃO '+code+' —');
+ if(!structured||/[\r\n]/.test(raw)||raw.length<40)return '';
+ return '<aside class="notice pit-legacy-evidence" role="note" aria-label="Evidência histórica sem separadores">'+
+  '<strong>Registro histórico: recuperação parcial</strong>'+
+  '<p>Esta entrega antiga chegou sem as quebras de linha dos campos. O texto original está preservado abaixo, mas não é seguro preencher a ficha automaticamente. Consulte o professor se precisar corrigir ou confirmar a entrega; nenhuma aprovação foi alterada.</p>'+
+  '<details><summary>Ver texto original da entrega</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(raw)+'</pre></details></aside>';
+}
 function renderMain(){
  const m=mission(),e=entry(m.n);
  $('missionNumber').textContent='MISSÃO '+String(m.n).padStart(2,'0')+' / 10 · '+esc(m.time)+' · '+m.minutes+' MINUTOS';
@@ -396,6 +408,7 @@ function renderMain(){
   missionThree?window.PIT_STUDENT_MISSION_THREE.render(missionThreeContext()):
   missionTwo?window.PIT_STUDENT_MISSION_TWO.render(missionTwoContext()):
   missionOne?window.PIT_MISSION_ONE.render(missionOneContext()):phaseBody(m);
+ if(!TEACHER&&!visualPreview){const warning=legacyEvidenceNotice(e,m.n);if(warning)$('mainContent').insertAdjacentHTML('afterbegin',warning)}
  phaseButtons();
  if(TEACHER){
   // Pré-visualizar é diferente de liberar: o botão azul compartilha a etapa/fase com a turma.
