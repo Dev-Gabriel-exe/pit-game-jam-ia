@@ -75,6 +75,7 @@ for(const variant of VARIANTS){
   const seed=(Math.imul(k+1,2246822519)^Math.imul(12,3266489917)^0xa511e9b3)>>>0;
   const opts={...OPTIONS,seed,experimentalCritSeed:(seed^0x5f3759df)>>>0};
   const baselineGame=P.battle(roster,opts),start=positions(baselineGame);
+  const initialHP=Object.fromEntries(baselineGame.fighters.map(f=>[f.id,f.hp]));
   const baseline=early(baselineGame);games++;
   assert(baseline.result.finished&&baseline.result.winner);
   if(k===0){
@@ -90,7 +91,7 @@ for(const variant of VARIANTS){
     const original=baselineGame.fighters.find(x=>x.id===f.id);
     assert.deepEqual(f.build,original.build);
     assert.deepEqual(f.stats,original.stats);
-    assert.equal(f.hp,original.hp);
+    assert.equal(f.hp,initialHP[f.id]);
    }
    const trial=early(trialGame);games++;
    assert(trial.result.finished&&trial.result.winner);
