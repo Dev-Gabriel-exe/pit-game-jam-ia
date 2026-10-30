@@ -30,7 +30,7 @@ for(const route of student.routes){
 }
 const review=teacher.render('review');
 assert(review.includes('<details class="pit-private-teacher-notes">'),'teacher private notes retained');
-assert(!/<details class="pit-private-teacher-notes"[^>]*\\bopen\\b/.test(review),'private notes closed by default');
+assert(!/<details class="pit-private-teacher-notes"[^>]*\bopen\b/.test(review),'private notes closed by default');
 assert(review.includes('<summary')&&review.includes('▤'),'discreet keyboard-accessible control');
 const app=fs.readFileSync('v3/app.js','utf8');
 assert(app.includes('PIT_STUDENT_MISSION_TEN')&&app.includes('PIT_TEACHER_MISSION_TEN_VALIDATION'),'both profiles wired');
