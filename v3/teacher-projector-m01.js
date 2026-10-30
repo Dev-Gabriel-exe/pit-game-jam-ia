@@ -344,6 +344,56 @@ function pedagogicalDemoSlides(root,mission){
    return result.length===10?result:null;
   }
  }
+ // M10/Demonstrar: the shared GDevelop guide has four steps per route.
+ // A cloned active tab omits saving, re-opening and independent access checks.
+ // Project the selected route as public action/verification pairs; no teacher procedure.
+ if(mission===10&&root.querySelector('#g10Guide')){
+  const guide=window.PIT_GDEVELOP_M10_GUIDE;
+  if(guide?.routes?.length===3){
+   const selected=Number(root.querySelector('#g10Guide [data-g10-route][aria-selected="true"]')?.dataset.g10Route??0);
+   const routeIndex=Number.isInteger(selected)&&guide.routes[selected]?selected:0;
+   const route=guide.routes[routeIndex],result=[];
+   if(route.steps?.length!==4)return null;
+   const intro=document.createElement('section');
+   intro.className='pit-projector-g10-intro';
+   intro.dataset.pitProjectorM10='intro';
+   const title=document.createElement('h3');title.textContent='Entrega final · '+route.label;
+   const explain=document.createElement('p');explain.textContent=route.intro+' O projeto editável é obrigatório em qualquer rota; publicação pública é opcional.';
+   intro.append(title,explain);
+   result.push({title:'Lançamento · escolha uma rota gratuita',html:intro.outerHTML});
+   for(let i=0;i<route.steps.length;i++){
+    const step=route.steps[i];
+    function panel(kind,entries){
+     const section=document.createElement('section');
+     section.className='pit-projector-g10-'+kind;
+     section.dataset.pitProjectorM10=kind+':'+i;
+     const h=document.createElement('h3');h.textContent=(kind==='action'?'Passo ':'Conferência ')+(i+1)+' de 4 · '+step.title;
+     const dl=document.createElement('dl');
+     for(const [label,value] of entries){
+      const dt=document.createElement('dt');dt.textContent=label;
+      const dd=document.createElement('dd');dd.textContent=value;
+      dl.append(dt,dd);
+     }
+     section.append(h,dl);
+     return section;
+    }
+    const action=panel('action',[['ONDE CLICAR',step.where],['O QUE FAZER',step.do]]);
+    const verify=panel('verify',[['RESULTADO A VERIFICAR',step.result],['SE NÃO FUNCIONAR',step.fix]]);
+    const source=document.createElement('a');source.href=step.source;source.target='_blank';source.rel='noopener noreferrer';source.textContent='Documentação oficial GDevelop';
+    const note=document.createElement('p');note.textContent='Confirme no Preview ou no acesso realmente disponível; esta apresentação não executa nem publica o jogo.';
+    verify.append(source,note);
+    result.push({title:'Passo '+(i+1)+' · Salvar e preparar',html:action.outerHTML});
+    result.push({title:'Conferência '+(i+1)+' · Testar e recuperar',html:verify.outerHTML});
+   }
+   const footer=document.createElement('section');
+   footer.className='pit-projector-g10-footer';footer.dataset.pitProjectorM10='footer';
+   const finalTitle=document.createElement('h3');finalTitle.textContent='Entrega verificável, sem publicação obrigatória';
+   const finalText=document.createElement('p');finalText.textContent='Mostre início, controle, regra SE/ENTÃO, conclusão, decisão do playtest e local da cópia editável com assets. Não exponha PINs, dados pessoais ou links não autorizados. A aprovação depende de revisão real.';
+   footer.append(finalTitle,finalText);
+   result.push({title:'O que apresentar e comprovar',html:footer.outerHTML});
+   return result.length===10?result:null;
+  }
+ }
  // M09/Demonstrar: split all three fictitious triage cases into readable public
  // projection screens. Do not imply a human test or reveal HDMI-off notes.
  if(mission===9&&root.querySelector('#t9Foundations .t9-tabs')){
