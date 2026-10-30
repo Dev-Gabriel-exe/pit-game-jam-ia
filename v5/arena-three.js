@@ -484,7 +484,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   return true;
  }
  function addRealCharacter(item){
-  const klass=item.build.klass;
+  const klass=item.build.klass,asset=ASSETS[klass];
   if(item.loadStatus==='loading'||item.loadStatus==='ready')return;
   item.loadStatus='loading';
   if(item.id==='preview'){container.dataset.v5Asset='loading';container.dataset.v5AssetClass=klass}
