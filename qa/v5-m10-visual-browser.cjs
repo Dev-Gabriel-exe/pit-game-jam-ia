@@ -25,6 +25,8 @@ const {chromium}=require('playwright');
   assert.equal(selected.length,4);
   assert(selected.every(x=>x.ids.length===10));
   assert.match(await page.locator('#engineModeInfo').textContent(),/PRÉVIA 3D EXPERIMENTAL/);
+  await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,
+   null,{timeout:15000});
   assert.equal(await page.locator('#startBattle').isDisabled(),false);
   await page.locator('#actionCamera').click();
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
@@ -47,6 +49,8 @@ const {chromium}=require('playwright');
   assert.equal(selected.length,30);
   assert(selected.every(x=>x.ids.length===10));
   assert.equal(await page.locator('[data-fighter]').count(),30);
+  await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,
+   null,{timeout:15000});
   assert.equal(await page.locator('#startBattle').isDisabled(),false);
   await page.locator('#actionCamera').click();
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
