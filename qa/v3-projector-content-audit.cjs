@@ -30,6 +30,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    const n=Number(slideCount.split('/')[1]?.trim())||1;
    const slides=[],guideSteps=[],m04Sections=[],m04Verifications=[],m05Sections=[],m05Verifications=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[],m09PracticeSteps=[];
    let demoInteraction=null,m08Interaction=null;
+   const m09DemoSteps=[];
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
      const card=el.querySelector('.pit-projector-card'),r=el.getBoundingClientRect();
@@ -44,6 +45,17 @@ const {chromium}=require('playwright'),fs=require('node:fs');
        cardWidth:Math.round(card?.getBoundingClientRect().width||0),viewportHeight:Math.round(r.height)};
     });
     slides.push(metrics);
+    if(mission===9&&phase==='demo'){
+     const projected=page.locator('#pitProjectorContent [data-pit-projector-m09-demo]');
+     if(await projected.count())m09DemoSteps.push(await projected.evaluate(el=>({
+      id:el.dataset.pitProjectorM09Demo,
+      text:el.textContent.trim(),
+      hypothesis:!!el.querySelector('.pit-projector-m09-action .t9-steps'),
+      comparison:el.querySelectorAll('.pit-projector-m09-observation dl dt').length===3,
+      priority:!!el.querySelector('.pit-projector-m09-decision .t9-priority'),
+      privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+     })));
+    }
     if(mission===9&&phase==='practice'){
      const step=page.locator('#pitProjectorContent [data-pit-projector-practice]');
      if(await step.count())m09PracticeSteps.push(await step.evaluate(el=>({
@@ -170,7 +182,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m04Verifications,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,scrollSlideIndices:slides.flatMap((slide,i)=>slide.overflowY?[i+1]:[]),slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,m09DemoSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m04Verifications,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,scrollSlideIndices:slides.flatMap((slide,i)=>slide.overflowY?[i+1]:[]),slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title,scrollSlideIndices:mission===4||mission===5?row.scrollSlideIndices:undefined}));
   }
@@ -348,6 +360,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  const m08Briefing=rows.find(x=>x.mission===8&&x.phase==='briefing');
  const m07=rows.find(x=>x.mission===7&&x.phase==='demo');
  const m09Practice=rows.find(x=>x.mission===9&&x.phase==='practice');
+ const m09Demo=rows.find(x=>x.mission===9&&x.phase==='demo');
  const expected01=Array.from({length:5},(_,i)=>'M01:'+i),expected03=Array.from({length:6},(_,i)=>'M03:'+i),expected04=Array.from({length:4},(_,i)=>'M04:'+i),expected05=Array.from({length:5},(_,i)=>'M05:'+i),expected07=Array.from({length:4},(_,i)=>'M07:'+i);
  const projectorChecks=[
   {name:'M01 practice: all seven planning fields projected with readable authorial examples',pass:m01Practice?.m01PracticeFields?.length===7&&['GÊNERO','TÍTULO','PROTAGONISTA','AÇÃO','OBJETIVO','CONDIÇÃO','FEEDBACK'].every(label=>m01Practice.m01PracticeFields.some(x=>x.includes(label)))&&(m01Practice?.retainedRatio||0)>.5},
@@ -371,6 +384,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    {name:'M08 briefing: six concepts, simulator, acceptance and evidence on 11 slides without private notes',pass:m08Briefing?.m08BriefingSteps?.length===11&&JSON.stringify(m08Briefing.m08BriefingSteps.map(x=>x.id))===JSON.stringify(['M08:intro',...Array.from({length:6},(_,i)=>'M08:concept-'+(i+1)),'M08:simulation-intro','M08:simulation','M08:accept','M08:evidence'])&&m08Briefing.m08BriefingSteps.every(x=>x.privateNotes===0)&&(m08Briefing.retainedRatio||0)>.6},
   {name:'M08 briefing: all UX labels and Preview evidence caveat projected',pass:['AFFORDANCE','INSTRUÇÃO','HUD','CONTRASTE','RESPOSTA AO INPUT','ERRO RECUPERÁVEL'].every((label,i)=>m08Briefing?.m08BriefingSteps?.[i+1]?.text.includes(label))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:accept'&&x.text.includes('antes/depois'))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:evidence'&&x.text.includes('simulação'))},
   {name:'M08 briefing: cloned before/after simulator responds to radio and actions',pass:m08Briefing?.m08Interaction?.pass===true},
+  {name:'M09 demo: all three fictitious cases projected as hypothesis, observation and decision',pass:m09Demo?.m09DemoSteps?.length===11&&JSON.stringify(m09Demo.m09DemoSteps.map(x=>x.id))===JSON.stringify(['M09:intro',...Array.from({length:3},(_,i)=>['M09:case-'+(i+1)+'-action','M09:case-'+(i+1)+'-observation','M09:case-'+(i+1)+'-decision']).flat(),'M09:footer'])&&m09Demo.m09DemoSteps.every(x=>x.privateNotes===0)&&m09Demo.m09DemoSteps.filter(x=>x.hypothesis).length===3&&m09Demo.m09DemoSteps.filter(x=>x.comparison).length===3&&m09Demo.m09DemoSteps.filter(x=>x.priority).length===3},
+  {name:'M09 demo: readable without slide scrolling at 720p and 900p',pass:height>950||!!m09Demo&&(m09Demo.slidesWithScroll===0&&m09Demo.slidesWithOverflowX===0&&m09Demo.smallFontSlides===0)},
   {name:'M09 practice: protocol, three steps and evidence projected separately',pass:m09Practice?.m09PracticeSteps?.length===5&&JSON.stringify(m09Practice.m09PracticeSteps.map(x=>x.id))===JSON.stringify(['M09:intro','M09:step-1','M09:step-2','M09:step-3','M09:evidence'])&&m09Practice.m09PracticeSteps.every(x=>x.privateNotes===0)&&(m09Practice.retainedRatio||0)>.4},
   {name:'M09 practice: roles, observations, backlog and no invented tests',pass:!!m09Practice?.m09PracticeSteps?.find(x=>x.id==='M09:intro'&&x.text.includes('16 MIN'))&&!!m09Practice?.m09PracticeSteps?.find(x=>x.id==='M09:step-1'&&x.text.includes('SAÍDA'))&&!!m09Practice?.m09PracticeSteps?.find(x=>x.id==='M09:step-2'&&x.text.toLowerCase().includes('papéis'))&&!!m09Practice?.m09PracticeSteps?.find(x=>x.id==='M09:step-3'&&x.text.includes('backlog'))&&!!m09Practice?.m09PracticeSteps?.find(x=>x.id==='M09:evidence'&&x.text.includes('Testador anônimo')&&x.text.includes('não substituem o Preview'))},
   {name:'M09 public practice: five slides keep readable typography and no horizontal overflow',pass:m09Practice?.m09PracticeSteps?.length===5&&m09Practice?.smallFontSlides===0&&m09Practice?.slidesWithOverflowX===0},
