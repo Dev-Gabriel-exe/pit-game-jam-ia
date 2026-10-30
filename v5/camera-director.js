@@ -46,7 +46,8 @@
     // A killed highlight is never held until its normal expiry.
     lastSwitch=-Infinity;
    }
-   if(plan&&now-lastSwitch<minHold)return plan;
+   // Last survivor must immediately switch to the winner, even mid-hold.
+   if(plan&&now-lastSwitch<minHold&&count>1)return plan;
    const high=events.filter(e=>now-e.time>=0&&now-e.time<=5&&aliveIDs.has(e.hero));
    // Prevent hero lock-in: screen time is credited only when a plan changes.
    const least=(f)=>coverage.get(id(f))||0;
