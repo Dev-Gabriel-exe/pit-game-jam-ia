@@ -46,3 +46,15 @@ F.2 — melhorar enquadramento adaptativo de duelos, telegraphs e efeitos com vi
 ### Pendente em F
 
 F.3 — visão do aluno vivo e ao morrer transição para a mesma câmera global do professor, **com replicação real autorizada exclusivamente em H**. Fases G/H/I continuam separadas: desempenho PC/GPU, integração e aprovação para `main`.
+
+### Homologação automatizada da F.2 (30/10/2026)
+
+**GitHub Actions run 40991606686 — todos os jobs concluídos com SUCESSO.**
+
+- Node: F.1 preserva ganhadores em 4 e 30 atores; F.2 testa linha de visão, 12 candidatas angulares, foco da habilidade preparado em posição real, tela estreita, `prefers-reduced-motion` e alternância geral/duelo; replay de E.7 intacto.
+- Playwright/WebGL: **PASS** com 4 e 30 GLBs carregados, câmera automática, redimensionamento para retrato, controle manual e reativação, enquadramento real e ausência de erro fatal.
+- **30 modelos reais com câmera automática até o fim**, seed `4175863657`: `shot=victory`, vencedor Guardião, **29 espectadores na arquibancada**, `subjects=1`, **0 obstruções** calculadas, **11 planos** escolhidos ao longo do confronto, **130 draw calls** no momento capturado. Resultado da batalha preservado; o cronômetro ainda terminou após aproximadamente 63 segundos de tempo de simulação. Artefatos: `v5-camera-director-f2-30.png` e `v5-camera-f2-victory-30.png` em `v5-f2-camera-webgl-30` no run.
+- Link: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40991606686
+- **Limite:** testes de WebGL no CI usam SwiftShader renderizado por software. Não afirmar que FPS em PCs dos alunos/S24 foi homologado; isso é Fase G. Também não afirmar que todas as geometrias reais do cenário estão sempre desobstruídas; a checagem é contra os obstáculos do motor e foi aprovada na cena final deste seed.
+
+**Próximo item F.3:** câmera local de participante vivo e, ao morrer, transição para a MESMA visão global professor + espectadores (servidor e autenticação reais exclusivamente em H); depois G/H/I.
