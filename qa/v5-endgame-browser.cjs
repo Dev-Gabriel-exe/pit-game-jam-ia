@@ -24,7 +24,9 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    drawCalls:Number(document.querySelector('#arenaStage')?.dataset.v5DrawCalls),
    environment:document.querySelector('#arenaStage')?.dataset.v5Environment,
    environmentParts:Number(document.querySelector('#arenaStage')?.dataset.v5EnvironmentParts),
-   environmentBatches:Number(document.querySelector('#arenaStage')?.dataset.v5EnvironmentInstancedBatches)
+   environmentBatches:Number(document.querySelector('#arenaStage')?.dataset.v5EnvironmentInstancedBatches),
+   staticBatches:Number(document.querySelector('#arenaStage')?.dataset.v5StaticBatches),
+   staticMergedMeshes:Number(document.querySelector('#arenaStage')?.dataset.v5StaticMergedMeshes)
   }));
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='phase2-m5',null,{timeout:60000});
   assert.equal((await lab()).seed,4175863657);
@@ -52,6 +54,8 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   const at28=await lab();
   assert(at28.activeMixers<=2,'Only living heroes should animate during final duel: '+JSON.stringify(at28));
   assert(at28.totalIdleMixers>=28,'All eliminated GLB spectators remain in stands');
+  assert(at28.staticBatches>0&&at28.staticMergedMeshes>100,
+   'Static architecture should be batched without removing geometry: '+JSON.stringify(at28));
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.finished,null,{timeout:90000});
   const end=await lab();
   assert.equal(end.winner,'guardian','Exact screenshot seed must finish with guardian');
