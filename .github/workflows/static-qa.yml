@@ -82,6 +82,10 @@ jobs:
         run: |
           node --check v3/hosting-policy.js
           node qa/v3-hosting-audit.cjs
+      - name: Verify legacy M01–M10 evidence remains readable without guessing fields
+        run: |
+          node --check v3/app.js
+          node qa/v3-legacy-evidence.cjs
       - name: Verify FUN-02 isolated registration, token and student progress handlers
         run: |
           node --check qa/v3-isolated-backend.cjs
