@@ -110,3 +110,24 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 **Interpretação rigorosa:** ordem do loop de atores e sorteios de crítico **podem mudar independentemente a identidade do vencedor** nos cenários amostrados, mesmo mantendo os mesmos heróis, builds, posições e condições iniciais. Os fluxos de crítico são independentes por herói; como a intervenção pode mudar quais ataques acontecem, não é possível alegar que toda sequência futura de consumo aleatório seja idêntica entre batalhas. As demais rotinas (projéteis, colisão e áreas) continuam na ordem original e não foram isoladas; não há demonstração de que apenas essas duas causas expliquem a dominância do Guardião. **Nenhum ajuste de dano, defesa, vida, IA ou RNG do modo padrão foi feito.**
 
 **Próxima missão:** ablação controlada de talentos defensivos/reativos do Guardião, com exposição igual por posição e métricas de escudo, cura, dano absorvido, duração e vitórias, sem modificar stats canônicos. Depois, prévia visual M10 opt-in no laboratório e QA WebGL 4/30 com câmera e arquibancada. G.2 em PCs reais, H.1/H.2 autenticadas e merge na `main` continuam bloqueados.
+
+## Rodada H.3 — ablação pareada de defesa do Guardião (30/10/2026)
+
+**Entregue e verificado no laboratório:** `v5/phase2-combat.js` recebeu `experimentalGuardianAblation` (somente M10 opt-in, com grupos `shields`, `healing`, `reactions`, `mitigation`, `all`). A opção é **nula por padrão** e M5 a rejeita. Ela suprime efeitos de talentos selecionados do Guardião, sem alterar a build canônica, os 20 pontos, os 10 talentos escolhidos, a classe, o HP inicial, as posições ou a seed. **Não é ajuste de balanceamento, nem configuração liberada para alunos.** Talentos mistos têm efeitos ofensivos e defensivos; desligá-los integralmente não mede exclusivamente a redução de escudo.
+
+**Experimento:** `qa/v5-m10-guardian-ablation.cjs` + `.github/workflows/v5-m10-guardian-ablation-qa.yml`. **108 partidas** em 18 blocos pareados, cada um com baseline e cinco ablações, em 4 personagens equilibrados, 30 equilibrados e 30 com metade Guardiões; 3 seeds × 2 rotações por cenário. **90 comparações pareadas, 6 replays byte a byte, M5 sem alteração**, contrato H.0 e motor M10 regressados. Foram mantidos os mesmos personagens, atributos, talentos, posições iniciais e RNG crítico por identidade em cada bloco. **CI aprovado** no [run 41035173280](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41035173280), após corrigir o primeiro teste que lia `klass` na raiz do adaptador em vez de `build.klass` ([run 41035096662](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41035096662)). Relatório sintético JSON anexado por 14 dias.
+
+| Grupo de talentos desativado | Mudanças de vencedor vs baseline (18 pares) | Vitórias do Guardião (18 partidas) |
+|---|---:|---:|
+| Nenhum (baseline) | — | 11 |
+| Escudos (`shields`) | 13 | 2 |
+| Cura (`healing`) | 9 | 9 |
+| Reações (`reactions`) | 7 | 10 |
+| Mitigação (`mitigation`) | 7 | 12 |
+| Todos os grupos (`all`) | 15 | 1 |
+
+**Sinal observável:** nas builds fictícias intencionalmente defensivas, desligar talentos que fornecem escudo diminuiu as vitórias do Guardião de 11/18 para 2/18, enquanto desligar os quatro grupos diminuiu para 1/18. Em seis partidas equilibradas com 30 heróis, escudo absorvido nos Guardiões passou de **6.583,7** a **0**; cura efetiva caiu de **1.523,96** para **925,06**, e a média de sobrevivência do Guardião caiu de **56,34s** para **31,15s**. As diferenças de vencedor também aparecem por interação com dano e sobrevivência. As ablações **não são aditivas**. Na turma de 4, o único Guardião não possui talentos do grupo `mitigation`, portanto esse braço é um controle nulo, não uma evidência de irrelevância desse grupo.
+
+**Limite:** são 18 blocos com apenas quatro conjuntos sintéticos de talentos defensivos do Guardião; isso mede a contribuição conjunta dessas habilidades nas builds escolhidas, **não** prova que escudos isoladamente causam a dominância na matriz de 80 partidas nem justifica nerf. Não se mexeu em dano, vida, cooldown, alcance, IA, conteúdo pedagógico, XP, estudantes, `main` ou deploy.
+
+**Próxima missão técnica:** medir, ainda em M10 isolada, quais escudos específicos e condições de uso mais contribuem (por exemplo `G01`, `G10`, `G05`, `J09`), com ablação por talento e duração/capacidade efetiva; comparar builds mistas e balanceamento por participação antes de qualquer proposta de ajuste. Depois, criar a prévia 3D opt-in M10 com câmera e arquibancada, mantendo M5 intacta. **G.2 (PCs reais), H.1/H.2 (alunos e servidor) e Fase I seguem pendentes.**
