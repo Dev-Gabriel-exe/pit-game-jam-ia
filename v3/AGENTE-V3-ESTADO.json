@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T01:21:27.796Z",
+  "last_completed_at": "2026-10-30T02:14:04Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Verify M08/Demonstrar projected GDevelop tutorial in Chrome at 720p/900p/1080p; then audit M08 student autonomy, before aesthetics",
+  "priority": "Confirm Chrome M08/Demonstrar at 1280x720, 1600x900, 1920x1080 and static/Browser QA on new M08 student evidence hints; fix any actual failures, then continue professor/student autonomy audit before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-M08-DEMO-PROJECTION-COVERAGE",
+  "last_task": "V4-M08-STUDENT-EVIDENCE-GUIDANCE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2555,12 +2555,19 @@
       "status": "in_progress",
       "commit": "bd86c189aa0477df8c71b7c9fa8245027248a301",
       "summary": "M08/Demonstrar now projects all four GDevelop steps in 10 action/verification slides per selected HUD, puzzle or 3D route, with public recovery, official source, local image fallback and no private notes. Added 3-route Chrome regression. V8 parsed projector, guide, QA 3/3 PASS. Previous Browser QA 40978868125 SUCCESS; new CI NOT_CONFIRMED, physical/human tests NOT_RUN. Roadmap 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T02:14:04Z",
+      "task": "V4-M08-STUDENT-EVIDENCE-GUIDANCE",
+      "status": "in_progress",
+      "commit": "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52",
+      "summary": "M08 student now receives seven concise, field-specific instructions linked accessibly to evidence inputs; no canned answers or private teacher notes. CSS and static QA regression added. 24/24 isolated JS checks PASS; new CI and Chrome projector measurements not confirmed. Roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M08-DEMO-PROJECTION-COVERAGE",
+    "task": "V4-M08-STUDENT-EVIDENCE-GUIDANCE",
     "status": "in_progress",
-    "updated_at": "2026-10-30T01:21:27.796Z",
+    "updated_at": "2026-10-30T02:14:04Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2612,9 +2619,12 @@
       "7e935e9dafd8f54b35d18568bf292821d482f9be",
       "faedfd7974d12d67ad0da0619f65c640a50c912a",
       "57227ad2be407e8c14443693868d43c916ce9efe",
-      "bd86c189aa0477df8c71b7c9fa8245027248a301"
+      "bd86c189aa0477df8c71b7c9fa8245027248a301",
+      "a1ab0a52a040f261c8eb7664699decc35cf078ee",
+      "7bd9850a8da6c013dc722bab9e7cda673beecadf",
+      "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52"
     ],
-    "documentation_commit": "189a28512a85454ff54e84935f3f3e8f1c7abfad",
+    "documentation_commit": "54979b47a49edae91cb40f6a1a1467c69d27d0d3",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3099,6 +3109,16 @@
         "name": "Prior general Browser QA",
         "run_id": 40978868125,
         "result": "SUCCESS confirmed from GitHub Actions jobs; predates M08 changes."
+      },
+      {
+        "name": "M08 student accessible evidence guidance (isolated JS)",
+        "sha": "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52",
+        "result": "PASS: 24/24 actual JS assertions on fetched branch sources; V8 parsing of production and QA; seven field help/aria-describedby pairs; no teacher notes; fictitious session validation/isolation and evidence roundtrip. Node CI/Chrome not executed locally."
+      },
+      {
+        "name": "M08 new projector Chrome/CI",
+        "sha": "bd86c189aa0477df8c71b7c9fa8245027248a301",
+        "result": "NOT_CONFIRMED: GitHub commit workflow-run and combined-status queries empty (PR-only run lookup); cannot infer push workflow outcome. Physical HDMI/GDevelop GUI/mobile/peer NOT_RUN."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
