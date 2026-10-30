@@ -82,6 +82,11 @@ jobs:
         run: |
           node --check v3/hosting-policy.js
           node qa/v3-hosting-audit.cjs
+      - name: Verify M05 structured evidence and legacy recovery guards
+        run: |
+          node --check v3/student-mission-five.js
+          node --check qa/v3-m05-student.cjs
+          node qa/v3-m05-student.cjs
       - name: Verify legacy M01–M10 evidence remains readable without guessing fields
         run: |
           node --check v3/app.js
