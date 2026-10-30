@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Continue M10 teacher/student projected tutorial alignment, save/reopen/Preview/access/approval; M10 eight-field student guidance now in CI. Check Chrome 720/900/1080 and Node workflow result before declaring verified. Pedagogy before aesthetics, main untouched.",
+  "priority": "Verify M10 Projector Content Audit 41039278342 at 720/900/1080 and Browser QA 41039278432; correct scroll/fonts if measured. Then M10 practice/review teacher/student synchronization and final human signoff plan. Pedagogy first; do not merge main.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M10-STUDENT-EVIDENCE-GUIDANCE",
+  "last_task": "V4-M10-PROJECTOR-FOUR-STEPS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2611,12 +2611,19 @@
       "status": "in_progress",
       "commit": "de096d3fcf3512e15658699a9559fe5277d8ada1",
       "summary": "M10 student launch evidence: seven previously unassisted fields gained precise what/how/test/evidence hints; all eight textareas linked to accessible hints, route-specific access retained. Added CSS, Node regression and static-qa workflow, audit documentation. 29 isolated V8 precommit checks + 33 isolated V8 QA assertions PASS; native Node/CI and Chrome NOT_CONFIRMED; human GDevelop/HDMI/mobile NOT_RUN. V3 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T10:15:00.082Z",
+      "task": "V4-M10-PROJECTOR-FOUR-STEPS",
+      "status": "in_progress",
+      "commit": "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d",
+      "summary": "M10 teacher projector now renders 10 public slides per selected route: intro, 4 where/do steps, 4 result/recovery checks, final evidence. Three routes share the student GDevelop guide. CSS and 3-route Chrome regression added. Isolated V8 source/guide checks PASS, static CI 41039278314 SUCCESS; projector Chrome 41039278342 and Browser QA 41039278432 in progress. Physical GUI/HDMI/mobile/human NOT_RUN. V3 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M10-STUDENT-EVIDENCE-GUIDANCE",
+    "task": "V4-M10-PROJECTOR-FOUR-STEPS",
     "status": "in_progress",
-    "updated_at": "2026-10-30T09:17:37.469Z",
+    "updated_at": "2026-10-30T10:15:00.082Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2694,9 +2701,12 @@
       "08e28fa20dc649c004ea6d3a6accad612e7f9b1e",
       "2a2317a8a4c1fc2114a211912ac5d62c94a143eb",
       "10a144ac0fff69efc48cba6624986bb0d16d9fe0",
-      "de096d3fcf3512e15658699a9559fe5277d8ada1"
+      "de096d3fcf3512e15658699a9559fe5277d8ada1",
+      "fece626d6bc007239a9848d84493d56eacda9035",
+      "bd13c89077fbb10903590420e07e224e5aa301d3",
+      "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d"
     ],
-    "documentation_commit": "faf06635650dc9802eae78aef97b0cb1068a9b30",
+    "documentation_commit": "0cadb69c6ba7d5599e48f2bde1f9a91f7cca1108",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3333,6 +3343,33 @@
         "name": "M10 Node CI/Chrome for new commits",
         "sha": "de096d3fcf3512e15658699a9559fe5277d8ada1",
         "result": "NOT_CONFIRMED; workflow updated to execute node --check and qa/v3-m10-field-guidance.cjs on GitHub Actions. No claim of CI success."
+      },
+      {
+        "name": "M10 original shared GDevelop guide V8 isolated verification",
+        "sha": "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d",
+        "result": "PASS: all 3 delivery routes x 4 steps; four public labels, official source, no private notes. Projector JS and Chrome QA JS parsed in V8. Not a browser or GDevelop GUI test."
+      },
+      {
+        "name": "M10 projector static QA",
+        "sha": "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d",
+        "run_id": 41039278314,
+        "result": "SUCCESS confirmed 2026-10-30"
+      },
+      {
+        "name": "M10 projector Chrome 720p/900p/1080p",
+        "sha": "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d",
+        "run_id": 41039278342,
+        "result": "IN_PROGRESS at checkpoint; 3-route 4-step regression not yet verified"
+      },
+      {
+        "name": "M10 projector Browser QA",
+        "sha": "a95b7a44e8c3a8caaceb9b4a32dc0f8e489f999d",
+        "run_id": 41039278432,
+        "result": "IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "GDevelop GUI save/reopen, HDMI, physical mobile, observed peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
