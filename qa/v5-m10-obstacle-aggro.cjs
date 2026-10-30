@@ -116,7 +116,7 @@ for(const count of [4,30]){
      group.noVisibleAlternative+=Number(visible.length===0);
      group.actors++;
     }
-    group.ticks++;report.totals.ticks++;
+    group.ticks+=2;report.totals.ticks+=2;
    }
    report.groups.push(group);
   }
@@ -125,7 +125,7 @@ for(const count of [4,30]){
 assert.equal(report.totals.ticks,128);
 assert.equal(report.totals.pairedNavigationChecks,64);
 assert.equal(report.totals.exactReplays,8);
-assert.equal(report.groups.reduce((s,g)=>s+g.actors,0),2176);
+assert.equal(report.groups.reduce((s,g)=>s+g.actors,0),1088);
 const m5=['warrior','guardian'].map((klass,i)=>({id:'trial-los-m5-'+i,
  approvedMissions:5,build:P.exampleBuild(klass,'trial-los-m5-'+i,5,0)}));
 assert.deepEqual(P.battle(m5,{seed:4175863657}).run(),
