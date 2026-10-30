@@ -56,12 +56,14 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none'}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline'}={}){
  const spreadAggro=engagementMode==='spaced';
  // Experimental E navigation: legacy direct movement remains the default.
  const obstacleSteering=navigationMode==='steer';
  // Experimental Fase E: ranged attacks trade continuous kiting for a recoverable firing window.
  const rangedRecovery=rangedCommitment==='recovery';
+ // Phase E opt-in; canonical class stats remain unchanged for legacy callers.
+ const tunedBalance=balancePreset==='e-hp2';
  const pace=Math.max(.45,Math.min(1,Number(damageScale)||1));
  const mageBonus=Math.max(1,Math.min(1.20,Number(mageDamageBonus)||1));
  const stormStart=clamp(Number(stormDelay)||18,18,50);
@@ -77,11 +79,11 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   const id=String(entry.id||'trial-'+i);
   if(used.has(id))throw Error('IDs duplicados');used.add(id);
   const base=CLASSES[build.klass],a=build.attributes;
-  const hp=base.hp+a.VIT*6+a.DEF*1.5;
+  const hp=base.hp+a.VIT*6+a.DEF*1.5+(tunedBalance?(build.klass==='warrior'?17:build.klass==='guardian'?10:0):0);
   const theta=i*2.399963+r()*Math.PI*.13;
   const spawnFactor=entries.length<=4?Math.min(scale,2.2):scale;
   const rad=(5+Math.sqrt(i)*1.4)*spawnFactor;
-  return {id,name:build.name,build,stats:{hp,attack:base.atk+(build.klass==='mage'?a.INT*.8:build.klass==='guardian'?a.FOR*.38+a.INT*.20:a.FOR*.60+a.DES*.22),defense:base.def+a.DEF*.70,speed:base.speed+a.DES*.10,range:base.range,crit:Math.min(.2,.03+a.DES*.006)},
+  return {id,name:build.name,build,stats:{hp,attack:base.atk+(build.klass==='mage'?a.INT*.8:build.klass==='guardian'?a.FOR*.38+a.INT*.20:a.FOR*.60+a.DES*.22),defense:base.def+a.DEF*.70,speed:base.speed+a.DES*.10,range:base.range-(tunedBalance&&build.klass==='hunter'?1.2:0),crit:Math.min(.2,.03+a.DES*.006)},
    x:Math.cos(theta)*rad,z:Math.sin(theta)*rad,y:0,vx:0,vz:0,face:theta,animation:'idle',
    hp,shield:0,shieldUntil:0,alive:true,kills:0,damage:0,attacks:0,
    basic:r()*.45,gcd:0,cooldowns:{},usage:{},passives:{},slow:0,slowPower:0,
@@ -997,8 +999,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      (rangedRecovery&&f.shotRecovery>0?.60:1);
    const route=obstacleSteering&&chase>0?steeringDirection(f,target):null;
    const ux=route?.x??dx/d,uz=route?.z??dz/d;
-   const goalVX=(ux*chase-uz*strafe)*f.stats.speed*penalty;
-   const goalVZ=(uz*chase+ux*strafe)*f.stats.speed*penalty;
+   // Guardian closes firing gaps slightly faster, without teleport or damage boost.
+   const tacticalAdvance=tunedBalance&&f.build.klass==='guardian'&&target.stats.range>3&&chase>0?1.16:1;
+   const goalVX=(ux*chase-uz*strafe)*f.stats.speed*penalty*tacticalAdvance;
+   const goalVZ=(uz*chase+ux*strafe)*f.stats.speed*penalty*tacticalAdvance;
    const smoothing=1-Math.exp(-8*step);
    f.vx+=(goalVX-f.vx)*smoothing;f.vz+=(goalVZ-f.vz)*smoothing;
    if(has(f,'S07')&&f.hp/f.stats.hp<.50&&!f.passives.s07Seen){
