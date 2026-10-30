@@ -259,3 +259,8 @@ body.arena-immersive .stage-flair{display:none}
 .g1-performance-panel[data-status="critical"]{border-color:#c26556}
 .g1-performance-panel[data-status="context-lost"]{border-color:#d37663}
 @media(max-width:850px){.g1-performance-numbers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* G.3: recovery action never occupies space when healthy. */
+#retryModels[hidden]{display:none!important}
+#retryModels:not([hidden]){border:1px solid #c49362;background:#4d3024;color:#ffe5bc;
+ font-weight:800;box-shadow:0 0 0 1px #f9c48330 inset}
