@@ -2659,7 +2659,7 @@
       "task": "V4-M06-LEGACY-EVIDENCE-GUARD",
       "status": "in_progress",
       "commit": "591a1b56539505fe466a03e752fef2f5bab22f2c",
-      "summary": "M06 evidence parser previously accepted flattened, partial, duplicate/unknown labels and invalid routes, silently hydrating default image. Now requires valid route, all 8 distinct labeled fields and bounds, preserving local draft and leaving manual Preview checks unchecked. V8 14/14 functional assertions PASS; qa/v3-m06-student.cjs expanded with corrupted/legacy cases and syntax parsed, native Node/CI NOT_CONFIRMED. No real student data touched; HDMI/GDevelop GUI/mobile/human NOT_RUN. Branch-only, main unchanged; V3 54/59."
+      "summary": "M06 evidence parser previously accepted flattened, partial, duplicate/unknown labels and invalid routes, silently hydrating default image. Now requires valid route, all 8 distinct labeled fields and bounds, preserving local draft and leaving manual Preview checks unchecked. V8 14/14 functional assertions PASS; qa/v3-m06-student.cjs expanded with corrupted/legacy cases and syntax parsed, native Node/CI NOT_CONFIRMED. No real student data touched; HDMI/GDevelop GUI/mobile/human NOT_RUN. Branch-only, main unchanged; V3 54/59. After checkpoint, entire qa/v3-m06-student.cjs executed PASS in V8 compatibility sandbox with fetched repository sources; native Node/CI still NOT_CONFIRMED."
     }
   ],
   "v4_checkpoint": {
@@ -3579,6 +3579,11 @@
         "name": "M06 native Node static QA",
         "sha": "591a1b56539505fe466a03e752fef2f5bab22f2c",
         "result": "NOT_CONFIRMED: qa/v3-m06-student.cjs updated and V8 syntax parsed; CI not yet confirmed"
+      },
+      {
+        "name": "M06 full QA compatibility run",
+        "sha": "591a1b56539505fe466a03e752fef2f5bab22f2c",
+        "result": "PASS: executed qa/v3-m06-student.cjs in V8 with emulated fs/path/vm/assert, using actual fetched app/HTML/CSS/student source. Not native Node or Chrome. GitHub Actions on latest commit not confirmed."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
