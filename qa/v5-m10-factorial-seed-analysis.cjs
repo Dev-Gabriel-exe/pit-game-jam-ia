@@ -102,8 +102,9 @@ assert.deepEqual(leaveOneSeedOut([
 const source=process.argv[2]||'qa/out/m10-factorial-seed-crossover.json';
 const input=JSON.parse(fs.readFileSync(source,'utf8'));
 assert.equal(input.schema,'pit-v5-m10-factorial-seed-crossover-v1');
-assert.equal(input.totals.games,384);
-assert.equal(input.totals.comparisons,324);
+assert.equal(input.totals.games,768);
+assert.equal(input.totals.observedCells,864);
+assert.equal(input.totals.comparisons,648);
 assert.equal(input.totals.m5Unchanged,true);
 assert.equal(input.scenarios.length,3);
 const output={schema:'pit-v5-m10-factorial-seed-analysis-v1',
@@ -111,7 +112,7 @@ const output={schema:'pit-v5-m10-factorial-seed-analysis-v1',
  methods:'2000 deterministic cluster bootstrap draws resampling whole seeds; descriptive 95% percentile intervals',
  scenarios:[],limitations:[
   'Rotations within a seed and archetypes using the same seed are correlated; no rotation is an independent trial.',
-  'Eight independent seeds in each 30-player composition (four in 4-player); bootstrap intervals are exploratory and unstable at this sample size.',
+  'Sixteen distinct pseudo-random seeds in each 30-player composition (eight in 4-player); bootstrap intervals are exploratory and unstable at this sample size.',
   'Leave-one-seed-out ranges diagnose sensitivity to one independent seed, not statistical significance or a fairness certificate.',
   'The interaction is a difference-in-differences of Guardian win indicators, not an attribution of combat mechanism.',
   'Actor-order intervention changes the actor loop only, not every update array; subsequent target/RNG paths may diverge.',
@@ -120,7 +121,7 @@ const output={schema:'pit-v5-m10-factorial-seed-analysis-v1',
  ]};
 for(let si=0;si<input.scenarios.length;si++){
  const sc=input.scenarios[si],perKind={},raw={};
- assert([4,8].includes(sc.independentSeeds));
+ assert([8,16].includes(sc.independentSeeds));
  for(let ki=0;ki<KINDS.length;ki++){
   const kind=KINDS[ki],item=sc.archetypes[kind];
   assert(item&&item.perSeed.length===sc.independentSeeds);
@@ -158,4 +159,4 @@ console.log('M10 SEED ANALYSIS '+JSON.stringify(output.scenarios.map(s=>({
  interaction:Object.fromEntries(KINDS.map(k=>[k,s.archetypes[k].geometryOrderInteraction])),
  interactionSeedInfluence:Object.fromEntries(KINDS.map(k=>[k,s.archetypes[k].leaveOneSeedOut.interaction.maxAbsoluteShift]))
 }))));
-console.log('PASS M10 seed-cluster analysis: 3 scenarios, 9 archetype cells, 4/8 independent seeds, fixture checks, M5 preserved; hash '+output.hash);
+console.log('PASS M10 seed-cluster analysis: 3 scenarios, 9 archetype cells, 8/16 distinct seeds, fixture checks, M5 preserved; hash '+output.hash);
