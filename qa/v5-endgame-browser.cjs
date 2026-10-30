@@ -29,6 +29,17 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
   assert.match(await page.locator('#speedBattle').textContent(),/×3/);
   await page.locator('#startBattle').click();
+  // Another concrete mobile pause bug: Android backgrounding the tab silently
+  // stopped physics but still displayed "BATALHA EM ANDAMENTO".
+  await page.evaluate(()=>{
+   Object.defineProperty(document,'hidden',{configurable:true,value:true});
+   document.dispatchEvent(new Event('visibilitychange'));
+  });
+  assert.match(await page.locator('#arenaStatus').textContent(),/PAUSADO/);
+  assert.match(await page.locator('#pauseBattle').textContent(),/Continuar/);
+  await page.evaluate(()=>{delete document.hidden});
+  await page.locator('#pauseBattle').click();
+  assert.match(await page.locator('#arenaStatus').textContent(),/BATALHA EM ANDAMENTO/);
   await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5Spectators)>=28,
    null,{timeout:210000});
   // The reported 28 eliminated characters must still be physically in the
