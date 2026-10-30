@@ -18,6 +18,7 @@ const params=new URLSearchParams(location.search);
 // Experimental M5-only comparison; absent query retains established movement.
 const experimentalSteering=params.get('nav')==='steer';
 const experimentalCounterplay=params.get('counterplay')==='1';
+const experimentalHpBalance=params.get('balance')==='hp2';
 const importedBuild=(()=>{
  try{
   const raw=params.get('draft');
@@ -270,7 +271,8 @@ function initRound({sameSeed=false}={}){
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
  const prefix=trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
  const gameInfo=$('matchInfo');if(gameInfo)gameInfo.textContent='PARTIDA '+state.round+' · SEED '+state.seed+
-  (trial&&experimentalCounterplay?' · MIRA COM RECUPERAÇÃO (EXPERIMENTAL)':'');
+  (trial&&experimentalCounterplay?' · MIRA COM RECUPERAÇÃO (EXPERIMENTAL)':'')+
+  (trial&&experimentalHpBalance?' · VIDA E ALCANCE BALANCEADOS (TESTE)':'');
  message('CARREGANDO '+state.count+' HERÓIS');
  state.roster=roster(mission,state.count);
  try{
@@ -282,7 +284,8 @@ function initRound({sameSeed=false}={}){
    stormRateFactor:damageMode.scale===1?1:damageMode.scale===.75?.70:damageMode.scale===.60?.60:.55,
    engagementMode:trial?'spaced':'free',
    navigationMode:trial&&experimentalSteering?'steer':'direct',
-   rangedCommitment:trial&&experimentalCounterplay?'recovery':'none'});
+   rangedCommitment:trial&&experimentalCounterplay?'recovery':'none',
+   balancePreset:trial&&experimentalHpBalance?'e-hp2':'baseline'});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   $('cinematicCamera').setAttribute('aria-pressed','true');
