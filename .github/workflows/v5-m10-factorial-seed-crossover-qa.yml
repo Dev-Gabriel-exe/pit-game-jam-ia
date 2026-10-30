@@ -5,6 +5,7 @@ on:
     paths:
       - 'qa/v5-m10-factorial-seed-crossover.cjs'
       - 'qa/v5-m10-factorial-seed-analysis.cjs'
+      - 'qa/v5-m10-first-contact.cjs'
       - 'v5/phase2-combat.js'
       - 'v5/progression-contract-h0.js'
       - '.github/workflows/v5-m10-factorial-seed-crossover-qa.yml'
@@ -24,6 +25,7 @@ jobs:
         run: |
           node --check qa/v5-m10-factorial-seed-crossover.cjs
           node --check qa/v5-m10-factorial-seed-analysis.cjs
+          node --check qa/v5-m10-first-contact.cjs
           node qa/v5-progression-contract-h0.cjs
           node qa/v5-m10-engine.cjs
           node qa/v5-endgame-replay.cjs
@@ -35,6 +37,10 @@ jobs:
         run: node qa/v5-m10-factorial-seed-analysis.cjs qa/out/m10-factorial-seed-crossover.json
         env:
           M10_FACTORIAL_ANALYSIS_FILE: qa/out/m10-factorial-seed-analysis.json
+      - name: M10 first-contact proximity and early targeting diagnostic (144 synthetic battles)
+        run: node qa/v5-m10-first-contact.cjs
+        env:
+          M10_FIRST_CONTACT_REPORT_FILE: qa/out/m10-first-contact.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -42,5 +48,6 @@ jobs:
           path: |
             qa/out/m10-factorial-seed-crossover.json
             qa/out/m10-factorial-seed-analysis.json
+            qa/out/m10-first-contact.json
           retention-days: 14
           if-no-files-found: ignore
