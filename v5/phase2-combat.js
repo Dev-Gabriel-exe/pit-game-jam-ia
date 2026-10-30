@@ -148,7 +148,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   const id=String(entry.id||'trial-'+i);
   if(used.has(id))throw Error('IDs duplicados');used.add(id);
   const base=CLASSES[build.klass],a=build.attributes;
-  const hp=base.hp+a.VIT*6+a.DEF*1.5+(tunedBalance?(build.klass==='warrior'?17:build.klass==='guardian'?10:0):0);
+  // M10-only modest Guardian durability trial: +12 HP; M5 and other classes unchanged.
+  const hp=base.hp+a.VIT*6+a.DEF*1.5+(tunedBalance?(build.klass==='warrior'?17:build.klass==='guardian'?10:0):0)+(arenaMission===10&&build.klass==='guardian'?12:0);
   const theta=i*2.399963+r()*Math.PI*.13;
   const spawnFactor=entries.length<=4?Math.min(scale,2.2):scale;
   const rad=(5+Math.sqrt(i)*1.4)*spawnFactor;
