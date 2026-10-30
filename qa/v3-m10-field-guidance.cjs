@@ -45,6 +45,41 @@ assert(student.save('route-switch',routeDraft),'route change persists');
 assert.equal(student.validate('route-switch').ok,false,'changed route cannot be submitted with stale checks');
 assert(student.mount.toString().includes('switchRoute(d,id)'),'route-switch invalidation must be wired to the guide callback');
 assert(student.render({session:'route-switch',phase:'practice',status:'',idea:{}}).includes('refaça as conferências'),'student is told why checks reset');
+// Legacy API versions flattened LF. Reject ambiguous, partial and altered records.
+const malformed=[
+ ['flattened',evidence.replace(/\n/g,' ')],
+ ['missing',evidence.split('\n').slice(0,-1).join('\n')],
+ ['duplicate label',evidence.replace('Mecânica: ','Experiência: ')],
+ ['unknown route',evidence.replace('M10 | local','M10 | xyz')],
+ ['short field',evidence.replace(/Experiência: [^\n]+/,'Experiência: x')],
+ ['long field',evidence.replace(/Mecânica: [^\n]+/,'Mecânica: '+('X'.repeat(76)))],
+ ['extra field',evidence+'\nOutro: valor'],
+ ['extra blank line',evidence+'\n'],
+ ['wrong label',evidence.replace('Acesso: ','Entrega: ')],
+ ['reordered',evidence.split('\n').map((line,i,all)=>i===1?all[2]:i===2?all[1]:line).join('\n')],
+ ['trailing whitespace',evidence.replace(/Projeto: [^\n]+/,line=>line+' ')]
+];
+for(const [name,raw] of malformed){
+ assert.equal(student.parseEvidence(raw),null,'reject ambiguous M10 '+name);
+ student.hydrate('legacy-'+name,raw,'submitted');
+ assert.equal(student.load('legacy-'+name).pitch,'','do not hydrate '+name);
+}
+const checkOnly=student.load('check-only');checkOnly.checks=[1];student.save('check-only',checkOnly);
+student.hydrate('check-only',evidence,'submitted');
+assert.equal(student.load('check-only').pitch,'','preserve local check-only draft');
+assert.deepEqual(Array.from(student.load('check-only').checks),[1]);
+assert.equal(student.parseEvidence(evidence.replace(/\n/g,'\r\n')).pitch,d.pitch,'accept CRLF');
+const gdDraft=student.load('gd-legacy');
+for(const f of student.fields)gdDraft[f.id]='Registro real verificável do jogo e do teste '+f.id;
+gdDraft.route='gd';gdDraft.access='https://gd.games/jogo-ficticio';
+student.save('gd-legacy',gdDraft);
+const gdEvidence=student.evidence('gd-legacy');
+assert.equal(student.parseEvidence(gdEvidence).route,'gd','valid gd.games URL');
+assert.equal(student.parseEvidence(gdEvidence.replace('https://gd.games/jogo-ficticio','link-invalido')),null,'invalid gd.games access rejected');
+const maxDraft=student.load('max-legacy');
+for(const f of student.fields)maxDraft[f.id]='X'.repeat(f.max);
+student.save('max-legacy',maxDraft);
+assert(student.evidence('max-legacy').length<=750,'max-size M10 record fits API');
 const review=teacher.render('review');
 assert(review.includes('<details class="pit-private-teacher-notes">'),'teacher private notes retained');
 assert(!/<details class="pit-private-teacher-notes"[^>]*\bopen\b/.test(review),'private notes closed by default');
