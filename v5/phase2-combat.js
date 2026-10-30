@@ -68,7 +68,7 @@ const GUARDIAN_ABLATION_GROUPS=Object.freeze({
  reactions:Object.freeze(['G02','G03','G07','J06']),
  mitigation:Object.freeze(['G04','G06','G08','L10'])
 });
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null,experimentalGuardianShieldScale=null}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  const spreadAggro=engagementMode==='spaced';
@@ -119,6 +119,16 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   throw Error('Ablação individual do Guardião exige M10 e talento autorizado');
  if(experimentalGuardianAblation!==null&&experimentalGuardianTalentAblation!==null)
   throw Error('Ablação do Guardião: grupo e talento individual são mutuamente exclusivos');
+ // Diagnostic only: scale shield amount, not casting, cooldown or solar buff.
+ if(experimentalGuardianShieldScale!==null&&
+   (arenaMission!==10||typeof experimentalGuardianShieldScale!=='object'||
+    Array.isArray(experimentalGuardianShieldScale)||
+    Object.keys(experimentalGuardianShieldScale).some(k=>!['G01','G10'].includes(k))||
+    Object.values(experimentalGuardianShieldScale).some(v=>typeof v!=='number'||!Number.isFinite(v)||v<0||v>1)))
+  throw Error('Escala experimental de escudo exige M10 e valores G01/G10 entre 0 e 1');
+ if(experimentalGuardianShieldScale!==null&&(experimentalGuardianAblation!==null||experimentalGuardianTalentAblation!==null))
+  throw Error('Escala e ablação de Guardião são mutuamente exclusivas');
+ const guardianShieldScale=experimentalGuardianShieldScale===null?{}:{...experimentalGuardianShieldScale};
  const suppressedGuardianTalents=experimentalGuardianTalentAblation!==null?
   new Set([experimentalGuardianTalentAblation]):
   experimentalGuardianAblation===null?null:
@@ -759,9 +769,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
     use(f,'L05',target);applyHit(f,target,atk*.90*scaleSkill('L05'),{kind:'special',skill:'L05'});
     shield(f,8*scaleSkill('L05'),3);return true;
    }
-   if(ready(f,'G01')&&(f.shield<4||f.hp<f.stats.hp*.7)){use(f,'G01');const a=f.build.attributes;shield(f,20+1.5*a.DEF+.5*a.VIT,4);return true}
+   if(ready(f,'G01')&&(f.shield<4||f.hp<f.stats.hp*.7)){use(f,'G01');const a=f.build.attributes;shield(f,(20+1.5*a.DEF+.5*a.VIT)*(guardianShieldScale.G01??1),4);return true}
    if(ready(f,'G10')&&f.shield<3&&(f.hp<f.stats.hp*.82||d<7)){
-    use(f,'G10');const a=f.build.attributes;shield(f,35+1.7*a.DEF+.6*a.INT,4);f.solarUntil=time+4;return true;
+    use(f,'G10');const a=f.build.attributes;shield(f,(35+1.7*a.DEF+.6*a.INT)*(guardianShieldScale.G10??1),4);f.solarUntil=time+4;return true;
    }
    if(ready(f,'G09')&&f.hp<f.stats.hp*.8&&f.regenUntil<=time){
     use(f,'G09');f.regenUntil=time+4;f.regenPower=f.stats.hp*.04*scaleSkill('G09')/4;return true;
