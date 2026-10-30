@@ -1063,6 +1063,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    stormRing.scale.setScalar(result.radius);
    stormMaterial.opacity=result.time>18?.75:.36;
    for(const ev of result.events){
+    // Audio follows actual combat events, not animation-only cues.
+    const audioKind=ev.type==='hit'?'hit':ev.type==='shield'?'shield':
+     ev.type==='talent'||ev.type==='special'||ev.type==='talent-impact'?'talent':
+     ev.type==='knockout'?'knockout':null;
+    if(audioKind){
+     container.dataset.v5LastAudioEvent=audioKind;
+     if(arenaAudio.play(audioKind))container.dataset.v5AudioPlayed=String(1+Number(container.dataset.v5AudioPlayed||0));
+    }
     if(sharedFeedActive)autoDirector?.observe(ev,simulation.fighters);
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
     const cue=ev.talent&&attacker?cueFor(attacker.build.klass,ev.talent):null;
