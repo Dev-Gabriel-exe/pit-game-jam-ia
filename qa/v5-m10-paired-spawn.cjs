@@ -114,7 +114,7 @@ for(let scenarioIndex=0;scenarioIndex<scenarios.length;scenarioIndex++){
    assert.equal(slots.size,sc.count,'every identity must visit every slot exactly once');
  }
  assert.equal(out.games,sc.count*sc.seedCount);
- for(let k=0;k<CLASSES.length;k++){
+ for(const k of CLASSES){
   out.appearances[k]=sc.allocation[CLASSES.indexOf(k)]*out.games;
   out.expectedWins[k]=round(out.games*sc.allocation[CLASSES.indexOf(k)]/sc.count);
   // Full rotations guarantee exact exposure balance at EACH slot.
