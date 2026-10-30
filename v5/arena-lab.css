@@ -220,3 +220,11 @@ body.arena-immersive .stage-flair{display:none}
 .real-model-proof a{border:1px solid #9672989c;padding:8px 11px;color:#e8cdf9;text-decoration:none;font-size:11px;font-weight:800;text-align:center}
 .real-model-proof[data-ready=true]{border-color:#7a957f}
 @media(max-width:700px){.real-model-proof{flex-direction:column;align-items:stretch;text-align:center}.real-model-proof a{display:block;padding:9px}}
+
+/* F.1 teacher view: clear current automatic shot, no full-screen overlay. */
+.camera-director-status{display:inline-flex;align-items:center;min-height:32px;
+ padding:5px 9px;border:1px solid #8b705d80;border-radius:4px;
+ color:#e1cda9;background:#1e1824;font:800 10px/1.2 "Source Sans 3",system-ui,sans-serif;
+ letter-spacing:.025em}
+.camera-director-status[data-mode="auto"]{color:#ffdfa1;border-color:#b59665;background:#39291d}
+#actionCamera[aria-pressed="true"]{border-color:#cba065;background:#63442f;color:#fff4d5}
