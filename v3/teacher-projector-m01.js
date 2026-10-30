@@ -407,7 +407,7 @@ function pedagogicalDemoSlides(root,mission){
     const wrapper=document.createElement('section');
     wrapper.className='t10v-root pit-projector-m10-practice';
     wrapper.dataset.pitProjectorM10Practice='M10:'+id;
-    wrapper.innerHTML=cleanCopy(node);
+    wrapper.innerHTML=id.startsWith('fields-')?'<div class="t10v-practice-fields">'+cleanCopy(node)+'</div>':cleanCopy(node);
     result.push({title,html:wrapper.outerHTML});
    }
    add(source.querySelector('header'),'Apresentação do protótipo · 18 minutos','intro');
