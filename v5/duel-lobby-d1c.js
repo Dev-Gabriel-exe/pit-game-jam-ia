@@ -9,8 +9,17 @@
  const clean=s=>String(s??'').replace(/[&<>"']/g,ch=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
  })[ch]).slice(0,150);
- const config=window.__PIT_V5_D1C_STAGING;
  const local=['localhost','127.0.0.1'].includes(location.hostname);
+ let config=window.__PIT_V5_D1C_STAGING;
+ if(local&&!config&&window.parent!==window){
+  try{
+   const b=window.parent.__PIT_V5_H1E_BRIDGE;
+   if(window.parent.location.origin===location.origin&&b?.enabled===true&&
+      b.role==='student'&&typeof b.tokenProvider==='function')
+    config={enabled:true,duelEndpoint:b.duelEndpoint,
+     matchEndpoint:b.matchEndpoint,tokenProvider:b.tokenProvider};
+  }catch{}
+ }
  let client=null,latest=null,poll=null,heartbeat=null,lock=false,battleId=null,
   lastNotice=null,lastSignature='';
  const state={connected:false,view:'lobby',requests:0,polls:0,
