@@ -29,16 +29,16 @@ assert.ok(m.evidence('max').length<=750);
 assert.equal(m.parseEvidence(m.evidence('max')).saved.length,65);
 // Historical API flattened LF separators. Reject partial, duplicated, unknown and invalid evidence.
 const good=m.evidence('ficticio-A');
-const lines=good.split('\\n');
+const lines=good.split('\n');
 const corrupt=[
- good.replace(/\\n/g,' '),
- lines.slice(0,-1).join('\\n'),
- good+'\\nExtra: inválido',
+ good.replace(/\n/g,' '),
+ lines.slice(0,-1).join('\n'),
+ good+'\nExtra: inválido',
  good.replace('M06 | model','M06 | outra'),
  good.replace('Asset: ','Necessidade: '),
  good.replace('Asset: ','Campo desconhecido: '),
- good.replace(/Asset: [^\\n]*/,'Asset: x'),
- good.replace(/Asset: [^\\n]*/,'Asset: '+'x'.repeat(66))
+ good.replace(/Asset: [^\n]*/,'Asset: x'),
+ good.replace(/Asset: [^\n]*/,'Asset: '+'x'.repeat(66))
 ];
 for(const [index,e] of corrupt.entries())assert.equal(m.parseEvidence(e),null,'M06 corrupted evidence '+index);
 m.hydrate('ficticio-legado',corrupt[0],'approved');
