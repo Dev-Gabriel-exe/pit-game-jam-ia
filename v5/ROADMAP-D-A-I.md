@@ -4,6 +4,9 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
+> **D.1a — Duelos de espera 1×1: convites concluídos no laboratório (30/10/2026).** Novo backend PostgreSQL isolado com opt-in, presença (60s), convite (45s), aceite/recusa/expiração/cancelamento, exclusividade transacional dos dois alunos, professor habilita e elegibilidade `submitted`/`approved` na missão atual, sem conceder XP. Interface gótica fictícia com troca de quatro personagens e notificação. CI com PostgreSQL 16 e Chromium aprovado [run 41071701521](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41071701521). **Branch `feature/v5-duelos-d1a` sem merge, Neon, V3, alunos reais ou batalha sincronizada.** D.1b é motor de duelo autoritativo compartilhado, depois da sincronização e G.2. Ver `v5/FASE-D1A-DUELOS-CONVITES.md`.
+
+
 > **H.1d homologação isolada concluída no CI (30/10/2026):** tela V5 conectada ao handler autenticado V2 exclusivamente em **ambiente descartável local de testes**; duas sessões independentes do Chromium com o mesmo aluno fictício geraram conflito real HTTP 409, preservação do rascunho, recuperação, congelamento M5 e lock M10 persistidos em PostgreSQL 16, com terceiro aluno isolado. [CI 41069403117 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41069403117). **Não é integração operacional V3, não há sessão real, API V2 de produção ligada, Neon real, `main`, convite de duelo ou PCs físicos homologados.** Ver `v5/FASE-H1D-DOIS-NAVEGADORES.md`.
 
 
