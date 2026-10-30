@@ -275,3 +275,16 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 ### Próximo incremento na MESMA missão H.3
 
 Separar efeito de **build versus slot/posição/ordem** com rotações completas dos quatro jogadores e grupos de 30, mais seeds independentes e intervalos de incerteza. Comparar as builds com a matriz de 100 escolhas aleatórias (que não é pareada diretamente por seeds) e avaliar se o viés do Guardião persiste sem forçar G01/G10. **Não alterar valores canônicos antes de evidência robusta e revisão humana.** G.2 nos PCs físicos continua não realizado; H.1/H.2 reais, V3, `main`, produção, XP, usuários, notas e turmas permanecem intocados/bloqueados.
+
+
+## Rodada H.3/M10 — cruzamento completo de slots por arquétipo (30/10/2026, 12h)
+
+**Missão única em andamento:** distinguir a sensibilidade às builds ofensiva, defensiva e pseudoaleatória da sensibilidade conjunta a slot/spawn/ordem de atualização, sem alterar balanceamento canônico. O HEAD antes da execução era `dd7a5b0ac189624bbf48090798ce0773ceea56f8`. Os roadmaps D–I, checkpoints E/F/G, contrato H.0 e CI anterior [41072955547](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41072955547) foram revisados.
+
+**Implementação:** `qa/v5-m10-full-slot-crossover.cjs` (commit `faa226a20c2c4fc7695454db98538306b2261103`) e `.github/workflows/v5-m10-full-slot-crossover-qa.yml` (commit `88fb7a207d2a93fef3d0c1c6fb54cbe24883117f`). Planeja **396 partidas sintéticas**: 3 arquétipos × [4 personagens × 4 rotações × 3 seeds; 30 equilibrados × 30 rotações × 2 seeds; 30 com 15 Guardiões × 30 rotações × 2 seeds]. Cada identidade atravessa **todos os slots** exatamente uma vez por seed, com a mesma build M5 congelada e cinco escolhas/dez pontos adicionais por arquétipo. Dentro de cada rotação, todos os arquétipos usam as mesmas identidades, slots, seed e geometria. O teste exige 9 replays exatos, 264 comparações pareadas de arquétipos, regressão M5 e snapshots iniciais de posição idênticos entre arquétipos.
+
+**Importante:** o cruzamento não isola causalmente spawn da ordem de atualização ou consumo de RNG não crítico; a rotação muda o pacote de três fatores. As rotações de uma mesma seed são dependentes: intervalos Wilson calculados são apenas descritivos, NÃO prova de equilíbrio. G01/G10 não são forçados nas builds desta rodada, diferentemente da matriz anterior.
+
+**CI disparado, ainda sem aprovação confirmada nesta anotação:** [V5 M10 Full Slot Crossover QA — run 41083051138](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41083051138). Conferir logs, corrigir eventuais falhas e registrar números observados antes de encerrar a missão. Artefato previsto `m10-full-slot-crossover` (JSON, 14 dias).
+
+**Próximo passo:** validar conclusão do CI, analisar diferenças por arquétipo/slot e dependência entre rotações; não alterar HP/escudos sem amostra independente e revisão humana. **G.2 PCs físicos não realizado. H.1/H.2 reais, V3, main, produção, XP, notas e turmas bloqueados.**
