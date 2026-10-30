@@ -34,3 +34,11 @@ G.2 homologação de hardware, G.3 falhas/rede/resiliência, H integração prof
 - `v5/G2-VALIDACAO-PC.md` contém roteiro de uso do painel `&perf=1`, reinícios, 30 GLBs, câmera e relatório. **Fase G não está encerrada**.
 
 **Próxima meta G.2:** rodar a prévia com `perf=1` nos PCs da oficina, observar FPS P10 real e qualquer falha de GPU/rede; G.3 cobre falha de GLB/reconexão; H sincronização do torneio com alunos reais; I revisão e merge autorizados.
+
+## G.3 — Robustez de rede/GLB (em validação)
+
+- Diagnóstico prévio: um erro de download em `Mage.glb` ou `Knight.glb` deixava todos os combatentes da classe com um personagem procedural e a interface permanentemente bloqueada em `MODELO 3D INDISPONÍVEL`, sem botão para recuperação. Quando um GLB demorava indefinidamente, também não havia limite de espera.
+- `v5/arena-three.js`: timeout por URL oficial de 30 segundos; rejeições não ficam guardadas no cache compartilhado. Cada herói possui estado `loading/ready/failed`; ao falhar, mantém a silhueta procedural apenas como indicação do erro, **sem fingir que é o KayKit oficial**. `retryFailedModels()` tenta só os personagens ausentes, deduplicados por URL em cache, sem alterar semente, atributos, talentos ou uma batalha já iniciada.
+- `v5/arena-lab.html/js/css`: botão visível **somente quando ocorrer falha real**, com contagem de modelos ausentes; iniciar confronto permanece bloqueado até todos os GLBs corretos carregarem. A partir de nova tentativa, o botão desaparece enquanto o carregamento prossegue. Reiniciar a partida continua opção separada.
+- `qa/v5-glb-recovery-browser.cjs`: Chromium real recebe falhas propositalmente injetadas no primeiro download de Mage e Knight, confirma bloqueio, depois permite os downloads, verifica recuperações mínimas, personagens corretos e mesma seed/build, executa primeiro talento e expande para 30 KayKits. Workflow: [G.3 — Falhas de GLB](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-glb-recovery-qa.yml). **Resultado final ainda pendente de consulta**.
+- G.2 continua pendente de teste em computadores reais da oficina, ainda que G.3 seja homologada em navegador automatizado. Não publicar na main antes de I.
