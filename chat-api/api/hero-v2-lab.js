@@ -7,7 +7,7 @@
 const {createHeroV2Handler}=require('../lib/v5-hero-v2-handler.js');
 let handler=null;
 module.exports=async function(req,res){
- if(process.env.PIT_V5_H1C_ENABLED!=='true'){
+ if(process.env.VERCEL_ENV==='production'||process.env.PIT_V5_H1C_ENABLED!=='true'){
   return createHeroV2Handler({enabled:false})(req,res);
  }
  if(!process.env.DATABASE_URL){
