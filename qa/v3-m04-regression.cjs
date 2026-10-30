@@ -30,6 +30,37 @@ ok(evidence.length<=750,'Evidence respects API limit');
 M.hydrate('qa2',evidence,'submitted');
 ok(M.load('qa2').response===good.response,'Submitted evidence can hydrate');
 ok(M.load('qa3').command==='','Drafts are student-isolated');
+
+ok(M.parseEvidence(evidence)?.route===0,'Valid structured M04 evidence recovers route');
+ok(M.parseEvidence(evidence)?.command===good.command,'Valid structured M04 evidence recovers command');
+ok(M.load('qa2').checks.length===0,'Remote evidence never certifies manual Preview checks');
+const malformed=[
+ evidence.replace(/\n/g,' '),
+ evidence.split('\n').slice(0,-1).join('\n'),
+ evidence+'\nExtra: unknown',
+ evidence.replace('Rota: RPG / EXPLORAÇÃO','Rota: desconhecida'),
+ evidence.replace('Comando: ','Resposta: '),
+ evidence.replace('Limite: ','Comando: '),
+ evidence.replace('Jogo: Castelo','Jogo: '),
+ evidence.replace('Projeto: Castelo','Projeto: '),
+ evidence.replace('Comando: Usei as setas','Comando: x'),
+ evidence.replace('Resposta: O herói se moveu no Preview.','Resposta: curto'),
+ evidence.replace('Salvo em: GDevelop Cloud','Salvo em: x'),
+ evidence.replace('Correção: Não informada','Correção: '+('X'.repeat(53))),
+ evidence.replace('MISSÃO 04 — PRIMEIRO JOGÁVEL','MISSÃO 05 — A PRIMEIRA REGRA')
+];
+for(const [n,raw] of malformed.entries()){
+ ok(M.parseEvidence(raw)===null,'Reject malformed/flattened M04 evidence '+n);
+ M.hydrate('legacy-m04-'+n,raw,'approved');
+ const restored=M.load('legacy-m04-'+n);
+ ok(restored.route===null&&restored.command===''&&restored.checks.length===0,
+   'Do not fabricate old M04 route or Preview checks '+n);
+}
+M.save('local-m04',{...good,response:'Minha versão local preservada'});
+M.hydrate('local-m04',evidence,'revision');
+ok(M.load('local-m04').response==='Minha versão local preservada',
+   'Keep existing student draft instead of overwriting with server evidence');
+
 const max={route:3,command:'C'.repeat(99),response:'R'.repeat(150),boundary:'B'.repeat(150),retest:'T'.repeat(150),saved:'S'.repeat(99),issue:'I'.repeat(99),checks:[0,1,2]};
 M.save('max',max);
 const long=M.evidence('max',{...ctx,idea:{genre:'Narrativa interativa',title:'X'.repeat(100)},previous:{project:'P'.repeat(100),scene:'Z'.repeat(100)}});
