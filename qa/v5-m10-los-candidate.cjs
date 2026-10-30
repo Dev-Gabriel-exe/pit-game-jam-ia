@@ -84,7 +84,7 @@ for(const count of [4,30]){
   for(let k=0;k<SEEDS;k++){
    const seed=(Math.imul(k+1,2246822519)^Math.imul(count,3266489917)^0x31f5a11b)>>>0;
    const base=P.battle(entries,{...OPT,seed});
-   const positions=Object.fromEntries(base.fighters.map(f=>[f.id,{x:f.x,z:f.z}]));
+   const positions=Object.fromEntries(base.fighters.map(f=>[f.id,{x:f.x,z:f.z,face:f.face}]));
    const shifted=geometry==='shifted'?Object.fromEntries(ids.map((id,i)=>[id,positions[ids[(i+1)%ids.length]]])):null;
    const options={...OPT,seed,engagementMode:mode,...(shifted?{experimentalSpawnPositions:shifted}:{})};
    const direct=firstTick(entries,{...options,navigationMode:'direct'});
