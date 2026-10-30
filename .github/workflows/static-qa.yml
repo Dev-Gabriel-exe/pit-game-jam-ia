@@ -82,6 +82,11 @@ jobs:
         run: |
           node --check v3/hosting-policy.js
           node qa/v3-hosting-audit.cjs
+      - name: Verify M03 structured evidence recovery and draft preservation
+        run: |
+          node --check v3/student-mission-three.js
+          node --check qa/v3-m03-legacy-evidence.cjs
+          node qa/v3-m03-legacy-evidence.cjs
       - name: Verify M04 structured evidence and legacy recovery guards
         run: |
           node --check v3/student-mission-four.js
