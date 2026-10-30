@@ -209,3 +209,30 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-g8-verify p{font-size:clamp(19px,1.45vw,23px);line-height:1.4;margin:6px 0;overflow-wrap:anywhere}
 #pitProjector .pit-projector-g8-source a{color:#f1c58e;text-underline-offset:3px}
 #pitProjector .pit-projector-g8-reminder{border-top:1px solid #67513d;padding-top:8px}
+
+/* M09 projected demo: one hypothesis, observation or decision per screen.
+   All content is fictitious and public; no private teacher notes. */
+#pitProjector .pit-projector-m09-demo{
+ width:min(1080px,100%);padding:clamp(12px,1.5vw,22px);
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;line-height:1.35;
+}
+#pitProjector .pit-projector-m09-demo header,
+#pitProjector .pit-projector-m09-demo footer,
+#pitProjector .pit-projector-m09-demo .t9-case{
+ margin:0;padding:clamp(14px,1.7vw,24px);max-width:100%;
+}
+#pitProjector .pit-projector-m09-demo h2,
+#pitProjector .pit-projector-m09-demo h3{
+ margin:4px 0 12px;font:700 clamp(25px,2.2vw,34px)/1.2 system-ui,"Segoe UI",Arial,sans-serif;
+}
+#pitProjector .pit-projector-m09-demo :is(p,li,dt,dd,small,span,strong,b){
+ font-size:clamp(19px,1.4vw,23px);line-height:1.4;overflow-wrap:anywhere;
+}
+#pitProjector .pit-projector-m09-demo .t9-steps{margin:10px 0}
+#pitProjector .pit-projector-m09-demo .t9-steps ol{margin:8px 0;padding-left:1.5em}
+#pitProjector .pit-projector-m09-demo .t9-case dl{
+ display:grid;grid-template-columns:minmax(135px,.27fr) minmax(0,1fr);
+ gap:12px 20px;margin:12px 0;
+}
+#pitProjector .pit-projector-m09-demo .t9-priority{margin:0;padding:16px 20px}
+#pitProjector .pit-projector-m09-demo .t9-priority p{margin:10px 0 0}
