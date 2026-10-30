@@ -52,7 +52,12 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert(active.count<=36,'No more than 18 ability effects and 18 hit impact sprites');
   assert(active.budget<=18,'Ability FX budget respected');
   assert.equal(active.failed,0);
-  await page.screenshot({path:'qa/v5-arena-lab-sprites-e6.png'});
+  // Chrome DevTools screenshot bypasses Playwright's external-font wait. Canvas
+  // and WebGL are already rendered; Google Fonts may be unreachable on CI.
+  const cdp=await page.context().newCDPSession(page);
+  const shot=await cdp.send('Page.captureScreenshot',{format:'png',fromSurface:true});
+  require('node:fs').writeFileSync('qa/v5-arena-lab-sprites-e6.png',Buffer.from(shot.data,'base64'));
+  await cdp.detach();
   await page.locator('#resetBattle').click();
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-active')),0,'Reset must clean all sprites');
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'Reset must clear telemetry');
