@@ -778,6 +778,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   unit.mesh.circle.visible=false;unit.bar.visible=false;
   unit.nick.classList.add('spectating');unit.nick.textContent='👁 '+unit.name;
   animateModel(unit,'idle');
+  // Rendering defect E.7: eliminated heroes cannot fight again; 28 idle
+  // AnimationMixers and shadow casters still ran every frame until match end.
+  // Settle their last native idle pose once, then leave them visible in stands.
+  unit.mixer?.update(.05);
+  unit.modelRoot?.traverse(o=>{
+   if(o.isMesh){o.castShadow=false;o.receiveShadow=false}
+  });
   container.dataset.v5Spectators=String(spectators.size);
   return true;
  }
@@ -952,11 +959,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     }
     for(const [key,m] of shots)if(!active.has(key)){root.remove(m);m.geometry.dispose();m.material.dispose();shots.delete(key)}
   }
+  let liveMixersUpdated=0;
   for(const [id,u] of individuals){
    // Interpolate 20Hz simulation transforms at display refresh rate.
    if(!u.spectator&&u.desiredPosition)u.mesh.root.position.lerp(u.desiredPosition,Math.min(1,dt*16));
    u.bar.quaternion.copy(camera.quaternion);
-   if(u.mixer&&!reduce)u.mixer.update(dt);
+   if(u.mixer&&!reduce&&!u.spectator){u.mixer.update(dt);liveMixersUpdated++}
    if(u.spectator&&u.seat){
     if(u.transfer){
      const t=THREE.MathUtils.clamp((performance.now()-u.transfer.started)/u.transfer.duration,0,1);
@@ -975,7 +983,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     u.mesh.actor.rotation.set(0,Math.atan2(-u.seat.x,-u.seat.z),0);
    }
    const a=u.mesh.actor,active=!u.dead||u.spectator;
-   if(u.identityVisual){
+   if(u.identityVisual&&!u.spectator){
     const emblem=u.identityVisual,spin=reduce?0:elapsed*.30*(u.identity.variant%2?1:-1);
     emblem.crest.rotation.y=spin;
     emblem.outer.rotation.z=reduce?0:Math.sin(elapsed*.65+u.identity.variant)*.025;
@@ -1008,7 +1016,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
      u.mesh.legs.forEach((leg,i)=>{leg.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.21});
      if(u.mesh.cape)u.mesh.cape.rotation.x=.14+Math.sin(elapsed*3)*.06;
    }
-   u.mesh.circle.material.emissive=new THREE.Color(PALETTES[u.build.appearance.palette]||0xc58865);
+   u.mesh.circle.material.emissive.setHex(PALETTES[u.build.appearance.palette]||0xc58865);
    u.mesh.circle.material.emissiveIntensity=.25+Math.sin(elapsed*2)*.1+(choreography?.glow||0)*.9;
   }
   for(let i=effects.length-1;i>=0;i--){
@@ -1116,6 +1124,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    container.dataset.v5FrameRate=String(Math.round(monitorFrames*1000/monitorSpan));
    container.dataset.v5DrawCalls=String(renderer.info.render.calls);
    container.dataset.v5Triangles=String(renderer.info.render.triangles);
+   container.dataset.v5ActiveMixerUpdates=String(liveMixersUpdated);
+   container.dataset.v5IdleSpectatorMixers=String([...individuals.values()].filter(u=>u.spectator&&!!u.mixer).length);
    monitorFrames=0;monitorStarted=monitorNow;
   }
  }
