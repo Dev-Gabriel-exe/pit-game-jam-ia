@@ -280,3 +280,22 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-m09-review :is(p,small,span,b,strong){
  font-size:clamp(19px,1.55vw,25px);line-height:1.42;overflow-wrap:anywhere;
 }
+
+
+/* M10/Comprovar: one public criterion per slide; keep private notes off HDMI. */
+#pitProjector .pit-projector-m10-review{
+ width:min(1080px,100%);max-width:100%;padding:clamp(14px,2vw,26px);
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;
+}
+#pitProjector .pit-projector-m10-review .t10v-rubric{
+ display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;
+}
+#pitProjector .pit-projector-m10-review :is(header,footer,.t10v-rubric article){
+ margin:0;max-width:100%;padding:clamp(16px,2vw,28px);min-width:0;
+}
+#pitProjector .pit-projector-m10-review :is(h2,h3){
+ font:700 clamp(27px,2.3vw,38px)/1.2 system-ui,"Segoe UI",Arial,sans-serif;
+}
+#pitProjector .pit-projector-m10-review :is(p,small,span,b,strong){
+ font-size:clamp(19px,1.55vw,25px);line-height:1.42;overflow-wrap:anywhere;
+}
