@@ -234,7 +234,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
    'Próximo: Melhorar a leitura dos objetivos no HUD.',
    'Projeto: Pasta local do projeto editável com assets.',
    'Acesso: Preview local acompanhado pelo professor.'
-  ].join('\\r\\n'):'Projeto ficticio M'+n+': regra de jogo testada no Preview; antes/depois e caso negativo registrados.';
+  ].join('\r\n'):'Projeto ficticio M'+n+': regra de jogo testada no Preview; antes/depois e caso negativo registrados.';
   const draft=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'Rascunho '+n},cToken);
   assert.equal(draft.statusCode,200,'draft M'+n+' persisted');
   const before=await call(classroom,'GET','state',{},cToken);
@@ -244,8 +244,8 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
   const sent=await call(classroom,'POST','progress',{stage:n,route,status:'submitted',evidence},cToken);
   assert.equal(sent.statusCode,200,'submitted M'+n);
   if(n===10){
-   assert(sent.body.progress.evidence.includes('\\nExperiência:'),'structured evidence line breaks must survive the real classroom handler');
-   assert(!sent.body.progress.evidence.includes('\\r'),'CRLF must normalize to LF');
+   assert(sent.body.progress.evidence.includes('\nExperiência:'),'structured evidence line breaks must survive the real classroom handler');
+   assert(!sent.body.progress.evidence.includes('\r'),'CRLF must normalize to LF');
    const m10Ctx={window:{}};
    vm.runInNewContext(fs.readFileSync('v3/student-mission-ten.js','utf8'),m10Ctx,{filename:'v3/student-mission-ten.js'});
    const parsed=m10Ctx.window.PIT_STUDENT_MISSION_TEN.parseEvidence(sent.body.progress.evidence);
@@ -254,7 +254,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
    assert.equal(parsed.access,'Preview local acompanhado pelo professor.','cross-device recovery must retain the last field');
    assert.equal(parsed.mechanic,'Personagem responde ao teclado e à interação.','cross-device recovery must retain the middle fields');
    const recovered=await call(classroom,'GET','state',{},cToken);
-   assert(recovered.body.progress.find(p=>p.stage===10).evidence.includes('\\nAcesso:'),'line breaks must survive SQL persistence and GET');
+   assert(recovered.body.progress.find(p=>p.stage===10).evidence.includes('\nAcesso:'),'line breaks must survive SQL persistence and GET');
   }
   const overwrite=await call(classroom,'POST','progress',{stage:n,route,status:'working',evidence:'tentativa'},cToken);
   assert.equal(overwrite.statusCode,409,'pending M'+n+' cannot be overwritten');
