@@ -71,3 +71,8 @@ F.3 — visão do aluno vivo e ao morrer transição para a mesma câmera global
 - Foi identificada regressão do arrasto manual no browser F.1 em commit intermediário. Adicionada captura `pointerdown` no canvas e cleanup em `v5/arena-three.js`; a correção está nos runs mais recentes **40993245807** (diretor F.1/F.2) e **40993245678** (F.3). Conferir conclusão antes de declarar homologação final.
 
 **Restrições:** "mesma câmera" refere-se a usar o mesmo diretor/plano na página de laboratório. NÃO há transmissão multiusuário entre dispositivos nem autenticação de professor/aluno; essas dependências permanecem na Fase H. FPS em PCs reais e teste de dispositivos fazem parte da Fase G. **Não fazer merge na `main`.**
+
+### F.3 — Retestes de interação após o acréscimo do seletor
+
+- Run https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40993482398: **F.3 lógica e navegador aprovados**, incluindo transição de morte real 4/30, mesmo diretor e isolamento M10.
+- Run `40993482485` (F.1/F.2) expôs uma falha no teste de gesto manual de arrasto, sempre na linha 62 do browser: o seletor extra da F.3 desloca a página ao clicar no botão do diretor, e o teste usava coordenadas de um canvas fora da área visível do viewport. `qa/v5-camera-director-browser.cjs` agora chama `scrollIntoViewIfNeeded()` antes de arrastar o canvas, verifica seu enquadramento no viewport e dispara pointerdown real. A arena também aceita pointerdown em fase de captura no elemento do palco (suporta overlays sem perder gestos do professor). **Conferir aprovação do novo run 40993653931 antes de afirmar que a regressão foi resolvida integralmente.**
