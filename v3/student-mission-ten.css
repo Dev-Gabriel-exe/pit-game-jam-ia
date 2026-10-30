@@ -2,3 +2,7 @@
 .m10s-editor-handoff{margin:14px 0;padding:15px 18px;background:#1b3040;border:1px solid #b99568;border-left:4px solid #e6bd7c;color:#f7e8d2;line-height:1.65}.m10s-editor-handoff strong{display:block;color:#ffe2aa;letter-spacing:.035em}.m10s-editor-handoff p{margin:8px 0 0}.m10s-editor-handoff a{color:#ffe4a5;text-decoration:underline;text-underline-offset:3px;font-weight:700}.m10s-editor-handoff a:focus-visible{outline:3px solid #ffe3a0;outline-offset:3px}
 
 .m10s-access-help{display:block;margin:5px 0 8px;color:#f5d5a2;font-size:13px;line-height:1.5}.m10s-root textarea::placeholder{color:#b9b9bd;opacity:1}
+
+/* M10: orientações de preenchimento vinculadas a cada campo, inclusive teclado/leitor de tela. */
+.m10s-field-hint{display:block;margin:5px 0 9px;color:#f5d5a2;font-size:14px;line-height:1.55;max-width:72ch}
+.m10s-log label:focus-within .m10s-field-hint{color:#fff0cf}
