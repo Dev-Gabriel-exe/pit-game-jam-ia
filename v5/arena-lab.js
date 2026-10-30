@@ -344,6 +344,12 @@ $('phase2Builds').addEventListener('click',()=>{
 });
 $('startBattle').addEventListener('click',begin);
 $('pauseBattle').addEventListener('click',pause);
+$('arenaStage').addEventListener('v5-stage-autopaused',()=>{
+ if(!state.fought){
+  $('pauseBattle').textContent='▶ Continuar';
+  message('PAUSADO — VOLTE À ABA E TOQUE EM CONTINUAR');
+ }
+});
 $('resetBattle').addEventListener('click',initRound);
 $('overviewCamera').addEventListener('click',()=>{
  state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
