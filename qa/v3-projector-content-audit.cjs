@@ -30,7 +30,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    const n=Number(slideCount.split('/')[1]?.trim())||1;
    const slides=[],guideSteps=[],m04Sections=[],m04Verifications=[],m05Sections=[],m05Verifications=[],m07Sections=[],m01PracticeFields=[],m03PracticeSteps=[],m04ReviewSteps=[],m05ReviewSteps=[],m08BriefingSteps=[],m09PracticeSteps=[];
    let demoInteraction=null,m08Interaction=null;
-   const m09DemoSteps=[],m09ReviewSteps=[],m10ReviewSteps=[];
+   const m09DemoSteps=[],m09ReviewSteps=[],m10ReviewSteps=[],m10PracticeSteps=[];
    for(let index=0;index<n&&index<65;index++){
     const metrics=await page.locator('#pitProjectorContent').evaluate(el=>{
      const card=el.querySelector('.pit-projector-card'),r=el.getBoundingClientRect();
@@ -63,6 +63,17 @@ const {chromium}=require('playwright'),fs=require('node:fs');
       text:el.textContent.trim(),
       criterion:!!el.querySelector('.t9v-rubric article'),
       decision:!!el.querySelector('.t9v-decisions article'),
+      privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
+     })));
+    }
+    if(mission===10&&phase==='practice'){
+     const step=page.locator('#pitProjectorContent [data-pit-projector-m10-practice]');
+     if(await step.count())m10PracticeSteps.push(await step.evaluate(el=>({
+      id:el.dataset.pitProjectorM10Practice,
+      text:el.textContent.trim(),
+      fields:el.querySelectorAll('.t10v-practice-fields article>div').length,
+      checks:el.querySelectorAll('.t10v-practice-tests li').length,
+      criteria:el.querySelectorAll('.t10v-practice-criteria li').length,
       privateNotes:el.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').length
      })));
     }
@@ -201,7 +212,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
    }
    await page.locator('#pitProjectorClose').click();
    const projectedChars=slides.reduce((x,y)=>x+y.chars,0);
-   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,m09DemoSteps,m09ReviewSteps,m10ReviewSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m04Verifications,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,scrollSlideIndices:slides.flatMap((slide,i)=>slide.overflowY?[i+1]:[]),slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
+   const row={mission,phase,m01PracticeFields,m03PracticeSteps,m04ReviewSteps,m05ReviewSteps,m08BriefingSteps,m08Interaction,m09PracticeSteps,m09DemoSteps,m09ReviewSteps,m10ReviewSteps,m10PracticeSteps,originalChars:before.chars,originalWords:before.words,sourceCards:before.cards,sourceControls:before.controls,slides:slides.length,guideSteps,m04Sections,m04Verifications,m05Sections,m05Verifications,m07Sections,demoInteraction,projectedChars,retainedRatio:before.chars?Number((projectedChars/before.chars).toFixed(2)):null,slidesWithScroll:slides.filter(x=>x.overflowY).length,scrollSlideIndices:slides.flatMap((slide,i)=>slide.overflowY?[i+1]:[]),slidesWithOverflowX:slides.filter(x=>x.overflowX).length,smallFontSlides:slides.filter(x=>x.below18.length>0).length,slidesWithControls:slides.filter(x=>x.buttons).length,samples:slides.slice(0,2),lastSample:slides[slides.length-1]};
    rows.push(row);
    console.log('PROJECTOR_AUDIT '+JSON.stringify({mission,phase,sourceCards:row.sourceCards,sourceControls:row.sourceControls,slides:row.slides,retainedRatio:row.retainedRatio,scroll:row.slidesWithScroll,overflowX:row.slidesWithOverflowX,smallFonts:row.smallFontSlides,controls:row.slidesWithControls,first:slides[0]?.title,last:slides[slides.length-1]?.title,scrollSlideIndices:mission===4||mission===5?row.scrollSlideIndices:undefined}));
   }
@@ -416,6 +427,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  const m09Practice=rows.find(x=>x.mission===9&&x.phase==='practice');
  const m09Demo=rows.find(x=>x.mission===9&&x.phase==='demo');
  const m09Review=rows.find(x=>x.mission===9&&x.phase==='review');
+ const m10Practice=rows.find(x=>x.mission===10&&x.phase==='practice');
  const m10Review=rows.find(x=>x.mission===10&&x.phase==='review');
  const expected01=Array.from({length:5},(_,i)=>'M01:'+i),expected03=Array.from({length:6},(_,i)=>'M03:'+i),expected04=Array.from({length:4},(_,i)=>'M04:'+i),expected05=Array.from({length:5},(_,i)=>'M05:'+i),expected07=Array.from({length:4},(_,i)=>'M07:'+i);
  const projectorChecks=[
@@ -436,6 +448,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M05: five GDevelop event steps projected separately',pass:JSON.stringify(m05?.guideSteps)===JSON.stringify(expected05)},
   {name:'M05: action and verification screens preserve instructions, result, recovery, source and no private notes',pass:m05?.m05Sections?.length===5&&m05.m05Verifications?.length===5&&m05.m05Sections.every(x=>x.where&&x.source&&x.privateNotes===0)&&m05.m05Verifications.every((x,i)=>x.id==='M05:'+i&&x.result&&x.fix&&x.source&&x.preview&&x.privateNotes===0)},
   {name:'M05: RPG, puzzle and 3D routes each project five actions and five verifications',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
+  {name:'M10 practice: eight student fields, three manual checks and six public criteria are projected',pass:m10Practice?.m10PracticeSteps?.length===8&&JSON.stringify(m10Practice.m10PracticeSteps.map(x=>x.id))===JSON.stringify(['M10:intro','M10:fields-1','M10:fields-2','M10:fields-3','M10:fields-4','M10:checks','M10:criteria','M10:footer'])&&m10Practice.m10PracticeSteps.every(x=>x.privateNotes===0)&&m10Practice.m10PracticeSteps.filter(x=>x.fields===2).length===4&&m10Practice.m10PracticeSteps.find(x=>x.id==='M10:checks')?.checks===3&&m10Practice.m10PracticeSteps.find(x=>x.id==='M10:criteria')?.criteria===6},
+  {name:'M10 practice: all eight labels match the student form; readable without scrolling',pass:!!m10Practice&&['Público e experiência do jogo','Mecânica principal demonstrada','Regra SE/ENTÃO e condição final','Percurso demonstrado no Preview','Observação e decisão após o playtest','Limitação e próximo incremento','Local do projeto editável e assets','Como o professor acessa o jogo'].every(label=>m10Practice.m10PracticeSteps.some(x=>x.text.includes(label)))&&m10Practice.smallFontSlides===0&&m10Practice.slidesWithOverflowX===0&&m10Practice.slidesWithScroll===0},
   {name:'M10 review: six public criteria, approval caveat and no private teacher notes',pass:m10Review?.m10ReviewSteps?.length===8&&JSON.stringify(m10Review.m10ReviewSteps.map(x=>x.id))===JSON.stringify(['M10:intro',...Array.from({length:6},(_,i)=>'M10:criterion-'+(i+1)),'M10:footer'])&&m10Review.m10ReviewSteps.every(x=>x.privateNotes===0)&&m10Review.m10ReviewSteps.filter(x=>x.criterion).length===6&&m10Review.m10ReviewSteps[7].text.includes('aprovação')},
   {name:'M10 review: typography, horizontal fit and no slide scrolling',pass:!!m10Review&&m10Review.smallFontSlides===0&&m10Review.slidesWithOverflowX===0&&m10Review.slidesWithScroll===0},
   {name:'M10 demo: all three delivery routes project four public actions and four verifications',pass:m10RouteChecks.length===3&&m10RouteChecks.every(x=>x.pass)},
