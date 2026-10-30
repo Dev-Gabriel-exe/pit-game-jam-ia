@@ -283,6 +283,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const world=worldScale>1.3?buildEclipseCitadel(root,{quality}):arenaScenery(scene,root);
  if(worldScale>1.3){
   world.world.scale.setScalar(stadiumScale);
+  container.dataset.v5StaticBatches=String(world.world.userData.staticBatches||0);
+  container.dataset.v5StaticMergedMeshes=String(world.world.userData.staticMergedMeshes||0);
   container.dataset.v5Map=world.mapType;
   container.dataset.v5PlayfieldWidth=String(Math.round(99*stadiumScale));
   container.dataset.v5SpectatorCapacity=String(world.spectatorSeats.length);
