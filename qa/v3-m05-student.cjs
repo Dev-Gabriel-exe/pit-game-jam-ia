@@ -62,4 +62,33 @@ ok(app.includes('PIT_STUDENT_MISSION_FIVE.routeType('),'Route is transmitted as 
 ok(app.includes("if(visualPreview)return setToast('Prévia: regra registrada"),'Preview cannot submit');
 ok(styles.split('{').length===styles.split('}').length,'CSS braces balanced');
 ok(styles.includes('prefers-reduced-motion'),'Reduced motion supported');
+// Legacy API used to flatten line breaks; malformed evidence must never
+// fabricate a student's rule, result, route or manual Preview checks.
+ok(m.parseEvidence(evid).condition===data.condition,'Valid M05 evidence parses');
+ok(m.parseEvidence(worst).issue==='X'.repeat(38),'Max-length valid evidence parses');
+const invalid=[
+ evid.replace(/\n/g,' '),
+ evid.split('\n').slice(0,-1).join('\n'),
+ evid+'\nExtra: campo inesperado',
+ evid.replace('Trilha: COLETA','Trilha: desconhecida'),
+ evid.replace('Ação: ','Condição: '),
+ evid.replace('Positivo: ','Outro: '),
+ evid.replace(/Condição: [^\n]*/,'Condição: curto'),
+ evid.replace('Jogo: Minha Torre','Jogo: '),
+ evid.replace(/Salvo em: [^\n]*/,'Salvo em: x'),
+ evid.replace('MISSÃO 05 — A PRIMEIRA REGRA','MISSÃO 06 — FORJA')
+];
+for(const [i,raw] of invalid.entries()){
+ ok(m.parseEvidence(raw)===null,'Reject incomplete/ambiguous M05 evidence '+i);
+ m.hydrate('legacy-'+i,raw,'approved');
+ ok(m.load('legacy-'+i).route===null&&m.load('legacy-'+i).condition===''&&
+    m.load('legacy-'+i).checks.length===0,'No false legacy hydration '+i);
+}
+m.hydrate('legacy-valid',evid,'submitted');
+ok(m.load('legacy-valid').route===0&&m.load('legacy-valid').checks.length===0,
+ 'Valid M05 recovery preserves route but never invents manual checks');
+m.save('existing',{...data,condition:'Meu rascunho local deve permanecer'});
+m.hydrate('existing',evid,'approved');
+ok(m.load('existing').condition==='Meu rascunho local deve permanecer',
+ 'Existing M05 draft survives remote hydration');
 console.log('PASS '+count+' M05 student module regressions. Browser/GDevelop/API E2E not run.');
