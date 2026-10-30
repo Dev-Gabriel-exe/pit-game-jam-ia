@@ -10,6 +10,7 @@ on:
       - 'v5/arena-lab.html'
       - 'qa/v5-camera-director.cjs'
       - 'qa/v5-camera-framing.cjs'
+      - 'qa/v5-camera-victory-browser.cjs'
       - 'qa/v5-camera-director-browser.cjs'
       - '.github/workflows/v5-camera-director-qa.yml'
   workflow_dispatch:
@@ -29,12 +30,13 @@ jobs:
           node --check qa/v5-camera-director.cjs
           node --check qa/v5-camera-framing.cjs
           node --check qa/v5-camera-director-browser.cjs
+          node --check qa/v5-camera-victory-browser.cjs
           node qa/v5-camera-director.cjs
           node qa/v5-camera-framing.cjs
           node qa/v5-endgame-replay.cjs
   browser-camera:
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - run: |
@@ -46,9 +48,12 @@ jobs:
           trap 'kill "$PID" 2>/dev/null || true' EXIT
           sleep 2
           node qa/v5-camera-director-browser.cjs
+          node qa/v5-camera-victory-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: v5-f2-camera-webgl-30
-          path: qa/v5-camera-director-f2-30.png
+          path: |
+            qa/v5-camera-director-f2-30.png
+            qa/v5-camera-f2-victory-30.png
           if-no-files-found: ignore
