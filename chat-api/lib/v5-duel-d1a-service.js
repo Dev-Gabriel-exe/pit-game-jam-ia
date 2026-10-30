@@ -172,9 +172,9 @@ function createDuelService(pool){
    // Both inserts are in the same transaction, so partial claims roll back.
    const claims=await db.query(
     'INSERT INTO pit_duel_slots(student_id,invite_id) '+
-    'SELECT id,$3 FROM unnest($1::uuid[]) AS id ORDER BY id '+
+    'SELECT sid,$2 FROM unnest($1::uuid[]) AS u(sid) ORDER BY sid '+
     'ON CONFLICT(student_id) DO NOTHING RETURNING student_id',
-    [[student.id,targetId],student.roomCode,id]);
+    [[student.id,targetId],id]);
    if(claims.rowCount!==2)fail('Um dos jogadores já recebeu ou enviou um convite.',409);
    return {id,status:'pending',expiresInSeconds:TTL_SECONDS};
   });
