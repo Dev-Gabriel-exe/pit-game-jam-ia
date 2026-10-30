@@ -22,14 +22,14 @@ const ALL=Object.fromEntries(Object.entries(TALENTS).map(([klass,items])=>[klass
 const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const rng=seed=>{let s=(seed>>>0)||1;return ()=>{s+=0x6d2b79f5;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}};
-function canonical(input,approvedMissions=5){
+function canonical(input,approvedMissions=5,{experimentalFinal=false}={}){
  if(!input||typeof input!=='object')throw Error('Build obrigatória');
  const klass=input.klass;if(!CLASSES[klass])throw Error('Classe inválida');
- if(!Number.isInteger(approvedMissions)||approvedMissions<0||approvedMissions>5)throw Error('Fase B.1 executa no máximo cinco missões aprovadas');
+ if(!Number.isInteger(approvedMissions)||approvedMissions<0||approvedMissions>5&&!(approvedMissions===10&&experimentalFinal===true))throw Error('Motor padrão executa no máximo cinco missões; M10 exige opt-in experimental');
  const attributes={};let spent=0;
  for(const k of ATTR){
   const val=input.attributes?.[k]??0;
-  if(!Number.isInteger(val)||val<0||val>12)throw Error('Investimento inválido em '+k);
+  if(!Number.isInteger(val)||val<0||val>(experimentalFinal&&approvedMissions===10?20:12))throw Error('Investimento inválido em '+k);
   attributes[k]=val;spent+=val;
  }
  if(spent>approvedMissions*2)throw Error('Atributos acima do orçamento autorizado');
@@ -43,20 +43,26 @@ function canonical(input,approvedMissions=5){
   name:String(input.name||'Aventureiro').slice(0,56),
   appearance:{palette:CLASSES[klass].palette,weapon:{warrior:'axe',mage:'staff',hunter:'bow',guardian:'blade'}[klass],helmet:1,cape:true}};
 }
-function exampleBuild(klass,name,mission=5,variant=0){
+function exampleBuild(klass,name,mission=5,variant=0,{experimentalFinal=false}={}){
  const selections={warrior:{FOR:5,DES:3,VIT:2},mage:{INT:6,DES:2,DEF:2},hunter:{DES:6,FOR:2,INT:2},guardian:{DEF:6,VIT:3,FOR:1}};
  const pointPool=mission*2, attributes=Object.fromEntries(ATTR.map(k=>[k,0]));
  let left=pointPool;
  for(const [k,v]of Object.entries(selections[klass]||{})){const n=Math.min(left,v);attributes[k]=n;left-=n}
+ // Extra points in the opt-in M10 trial; the original M5 builds remain byte-identical.
+ if(mission===10&&experimentalFinal){const priority=Object.keys(selections[klass]||{});let index=0;while(left>0){attributes[priority[index%priority.length]]++;left--;index++}}
  const variants=[[0,1,2,3,4],[5,6,7,8,9],[0,2,5,7,9],[10,11,12,13,14],[0,6,10,12,14],[15,16,17,18,19],[0,6,11,16,19],[20,21,22,23,24],[0,11,20,22,24],[25,26,27,28,29],[0,12,21,25,29]];
- const picks=variants[((variant%variants.length)+variants.length)%variants.length].slice(0,mission).map(i=>ALL[klass][i].id);
- return canonical({klass,name,attributes,talents:picks},mission);
+ const initial=variants[((variant%variants.length)+variants.length)%variants.length];
+ const indices=mission===10&&experimentalFinal?[...initial,...ALL[klass].map((_,i)=>i).filter(i=>!initial.includes(i))]:initial;
+ const picks=indices.slice(0,mission).map(i=>ALL[klass][i].id);
+ return canonical({klass,name,attributes,talents:picks},mission,{experimentalFinal});
 }
 function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline'}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5}={}){
+ // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
+ if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  const spreadAggro=engagementMode==='spaced';
  // Experimental E navigation: legacy direct movement remains the default.
  const obstacleSteering=navigationMode==='steer';
@@ -75,7 +81,10 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
  const emit=(type,f,extra={})=>{const e={type,hero:f?.id||null,time:+time.toFixed(2),seq:++sequence,...extra};events.push(e);return e};
  const obstacles=[{x:0,z:0,r:1.7},{x:5.5,z:-5.5,r:1.5},{x:-5.5,z:5.5,r:1.5},{x:5.7,z:5.7,r:1.2},{x:-5.7,z:-5.7,r:1.2}].map(o=>({x:o.x*scale,z:o.z*scale,r:o.r*scale}));
  const fighters=entries.map((entry,i)=>{
-  const build=canonical(entry.build||entry,entry.approvedMissions??entry.build?.approvedMissions??5);
+  const approved=entry.approvedMissions??entry.build?.approvedMissions??5;
+  if(arenaMission===10&&(approved!==10||entry.finalTrial!==true))throw Error('M10 experimental exige dez missões e adaptador finalTrial explícito');
+  if(arenaMission===5&&approved>5)throw Error('M5 não aceita build final M10');
+  const build=canonical(entry.build||entry,approved,{experimentalFinal:arenaMission===10});
   const id=String(entry.id||'trial-'+i);
   if(used.has(id))throw Error('IDs duplicados');used.add(id);
   const base=CLASSES[build.klass],a=build.attributes;
