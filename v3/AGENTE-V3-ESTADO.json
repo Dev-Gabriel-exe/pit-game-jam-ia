@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T05:19:54.619Z",
+  "last_completed_at": "2026-10-30T08:20:22.664Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm M09 demo 11-slide Chrome projector regression in 1280x720, 1600x900 and 1920x1080; fix any scroll/font failures, then continue teacher/student M09 pedagogical alignment. No aesthetics until pedagogy passes.",
+  "priority": "Confirm M09 review 9-slide Chrome projector QA at 1280x720, 1600x900, 1920x1080 and Browser QA on e9f4a6ca; fix any scroll/font failures before M10 teacher/student pedagogical review. No aesthetics or main merge.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-DEMO-TRIAGE-SPLIT",
+  "last_task": "V4-M09-REVIEW-PROJECTOR-COVERAGE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2590,12 +2590,19 @@
       "status": "in_progress",
       "commit": "ad00e55795e17e7071a0a8477bf201b6da4f0de0",
       "summary": "M09 projected demo now splits all three fictitious cases into 11 public slides (intro, 3 x hypothesis/observation/decision, footer); no HDMI-off notes. CSS scoped readable >=19px. Chrome regression added for 11 screens, 720p/900p no scroll, fonts >=18px, no horizontal overflow. V8 isolated/static checks 17/17 PASS; new GitHub push CI NOT_CONFIRMED; physical HDMI/GDevelop/mobile/peer tests NOT_RUN. V3 roadmap 54/59, main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T08:20:22.664Z",
+      "task": "V4-M09-REVIEW-PROJECTOR-COVERAGE",
+      "status": "in_progress",
+      "commit": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+      "summary": "Confirmed M09 demo prior Chrome 3/3, static and Browser QA success. Added 9-slide public M09 review projector (5 criteria, 2 decisions) with private HDMI-off notes excluded, scoped readable CSS and Chrome regression. V8 syntax and CSS braces PASS; new static CI SUCCESS, new Chrome/Browser QA in progress. Docs commit 2edc3053. V3 54/59 unchanged; main untouched; physical/human tests NOT_RUN."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-DEMO-TRIAGE-SPLIT",
+    "task": "V4-M09-REVIEW-PROJECTOR-COVERAGE",
     "status": "in_progress",
-    "updated_at": "2026-10-30T07:16:09.869Z",
+    "updated_at": "2026-10-30T08:20:22.664Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2664,9 +2671,13 @@
       "cfae2d5550e29a76c5512ddb334b24ddca970e9d",
       "25d463cfc662b9b33e8a3ed1751857fc35d13462",
       "b58cfd9e6cef3ee2c1e21e02a7920cfcbf",
-      "ad00e55795e17e7071a0a8477bf201b6da4f0de0"
+      "ad00e55795e17e7071a0a8477bf201b6da4f0de0",
+      "60319dde6c817223073978cfed4bbab6a3dcbe08",
+      "ed08a1dd9a7a300b5623304393a1aa6ac7ad24fa",
+      "85e074c7e12228bf9804053b6ec7a16899973984",
+      "e9f4a6ca22710db6e73e966bc4640c72bf56233f"
     ],
-    "documentation_commit": "f422cf18a22e1e6ebad7b85f42a4ba03facb780d",
+    "documentation_commit": "2edc3053276150b3f6829d7bd24147b7470c23c5",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3243,13 +3254,48 @@
         "name": "M09 demo Chrome 720p/900p/1080p after split",
         "sha": "ad00e55795e17e7071a0a8477bf201b6da4f0de0",
         "result": "NOT_CONFIRMED: combined statuses=[]; PR-only workflow runs=[]. No Chrome measurement claimed."
+      },
+      {
+        "name": "M09 prior 11-slide Chrome projector",
+        "sha": "ad00e55795e17e7071a0a8477bf201b6da4f0de0",
+        "run_id": 41018969172,
+        "result": "SUCCESS: Chrome 1280x720, 1600x900, 1920x1080 all passed; M09 demo no-scroll/font assertions passed"
+      },
+      {
+        "name": "M09 prior static/browser CI",
+        "sha": "ad00e55795e17e7071a0a8477bf201b6da4f0de0",
+        "run_ids": [
+          41018969094,
+          41018969091
+        ],
+        "result": "SUCCESS both"
+      },
+      {
+        "name": "M09 review projector V8/static checks",
+        "sha": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+        "result": "PASS: projector JS and QA JS parsed in V8, CSS braces balanced; new 9-slide extractor and regression assertions added. No Chrome local."
+      },
+      {
+        "name": "M09 review new static CI",
+        "sha": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+        "run_id": 41025702858,
+        "result": "SUCCESS GitHub Actions static-qa"
+      },
+      {
+        "name": "M09 review new Chrome/Browser QA",
+        "sha": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+        "run_ids": [
+          41025702939,
+          41025702847
+        ],
+        "result": "IN_PROGRESS at checkpoint; do not claim success"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "V4-M09-PROJECTOR-LEGIBILITY-CHROME",
-    "blocker": "New Chrome projector run not confirmed through connector; M09 demo slide scroll and font sizes need browser measurement. Physical HDMI, real GDevelop GUI, mobile and peer playtest NOT_RUN."
+    "next_task": "V4-M09-REVIEW-CHROME-CI",
+    "blocker": "New M09 review Chrome/Browser QA still in progress; verify 9 slides and fix any failure. Physical HDMI, GDevelop GUI, mobile and human playtest remain NOT_RUN."
   }
 }
