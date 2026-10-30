@@ -57,7 +57,7 @@
 - **Controle do professor:** indicador claro **Automática / Geral / Manual**, botão de retorno ao automático, pausa do diretor sem pausar o combate, opção de seguir um aluno específico.
 - **Estado inicial:** por padrão, a abertura do combate pode usar visão geral e avançar automaticamente conforme a opção do professor; manter configuração demonstrativa isolada de turmas reais.
 
-**F.1 implementada (30/10/2026):** `v5/camera-director.js` define os planos de câmera a partir de eventos reais do motor, com histerese, cobertura equitativa, visão geral, duelos, clímax e vencedor. `v5/arena-three.js` interpola os planos sem alterar a simulação; o professor pode arrastar/manipular manualmente ou retomar o automático pelo botão. Testes Node (4/30, mesmos vencedores) e Playwright com 4/30 GLBs aprovados no [run 40990012882](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40990012882). **Não declarar a F concluída**: faltam enquadramento/visibilidade e câmera compartilhada professor/aluno; ver `v5/FASE-F-CHECKPOINT.md`.
+**F.1 e F.2 implementadas e testadas (30/10/2026):** `v5/camera-director.js` define os planos de câmera a partir de eventos reais do motor, com histerese, cobertura equitativa, visão geral, duelos, clímax e vencedor. `v5/arena-three.js` interpola os planos sem alterar a simulação; o professor pode arrastar/manipular manualmente ou retomar o automático pelo botão. Testes Node (4/30, mesmos vencedores) e Playwright com 4/30 GLBs aprovados no [run 40990012882](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40990012882). **Não declarar a F concluída**: faltam enquadramento/visibilidade e câmera compartilhada professor/aluno; ver `v5/FASE-F-CHECKPOINT.md`.
 
 **Critério de saída da F:** teste real com 30 combatentes, replays sob seeds fixas, múltiplos destaques sem favorecimento, clímax e controles manuais. Câmera não pode alterar os resultados da simulação.
 
@@ -99,3 +99,6 @@ A ordem de trabalho é **D → E → F → G → H → I**. Se for detectado pro
 - Demo isolada de escolha exclusiva: `v5/personagens-lab.html`; modo opcional `?avatars=1&count=4` no Coliseu. **Ainda não é seleção persistida entre dispositivos nem sincronização de alunos reais.**
 - Não confundir **40 aparências** com **40 rigs originalmente esculpidos** ou 40 animações exclusivas.
 - **Fase E** balanceamento segue não homologada; **F** direção de câmera automática, **G** FPS/QA mobile 30 pessoas, **H** integração real e reservas atômicas, **I** merge para `main` mediante autorização continuam pendentes.
+
+
+**F.2 homologada no laboratório:** compositor `v5/camera-framing.js` escolhe 12 ângulos, considera pilares reais e projeta área de ataque real (`prepare`/`talent-impact`), enquadra tela estreita, suaviza transições e faz órbita sutil na vitória; movimento reduzido suprime a órbita. Full browser com 4/30 GLBs, 30 personagens até vencedor e controles manuais **PASS** no [GitHub Actions 40991606686](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40991606686). F.3, G/H/I ainda pendentes; nenhum merge em `main`.
