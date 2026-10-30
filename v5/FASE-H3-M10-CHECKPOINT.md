@@ -93,3 +93,20 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 - **Limitações:** não foram testados passivos/reativos defensivos individualmente; nenhum FPS real ou interface M10 3D foi medido; sem autenticação, XP, turmas, V3, `main` ou deploy.
 
 **Próxima missão técnica:** isolar **ordem de atualização versus RNG por identidade** em testes controlados (ou avaliar os passivos/reativos do Guardião com ablação em builds pareadas), preservando a M5. Somente depois propor ajuste mínimo com regressão de 4/30 personagens. A prévia 3D M10 opt-in, G.2 nos PCs físicos, H.1/H.2 e Fase I continuam pendentes.
+
+## Rodada H.3 — ordem de atualização versus RNG de críticos por herói (30/10/2026)
+
+**Missão concluída como diagnóstico causal limitado:** no `v5/phase2-combat.js` foram adicionadas duas opções independentes e **exclusivas da M10 de laboratório**, desativadas por padrão: `experimentalTurnOrder` (lista de IDs pseudônimos que altera somente o loop principal de atualização dos lutadores) e `experimentalCritSeed` (semente de fluxos RNG de acerto crítico independentes por identidade, com hash determinístico). A ordem do array original, as posições de nascimento, os sorteios iniciais de posição e ataque básico, os atributos, o catálogo de talentos e as rotinas de projéteis/armadilhas permanecem inalterados. A M5 rejeita ambas as opções.
+
+**Experimento:** `qa/v5-m10-order-rng-causal.cjs` executou **70 batalhas sintéticas** em três cenários (4 equilibrados; 30 equilibrados; 30 com metade Guardiões), 10 blocos com seeds e builds fixas, 30 intervenções somente na ordem de processamento e 30 somente na semente de RNG crítico. Todas as intervenções preservaram snapshots iniciais idênticos por herói; identidade da ordem reproduziu o baseline evento a evento; **6 replays exatos**, 4/30 combatentes e M5 preservada. CI específico: [run 41027655782](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41027655782), job `causal-order-rng` **aprovado**, incluindo testes M10, E.7 e H.0. Relatório JSON sintético arquivado por 14 dias.
+
+| Cenário | Trocar somente ordem mudou vencedor | Trocar somente RNG crítico mudou vencedor |
+|---|---:|---:|
+| 4 equilibrados | 5/12 | 2/12 |
+| 30 equilibrados | 5/9 | 7/9 |
+| 30 com metade Guardiões | 7/9 | 7/9 |
+| **Total** | **17/30** | **16/30** |
+
+**Interpretação rigorosa:** ordem do loop de atores e sorteios de crítico **podem mudar independentemente a identidade do vencedor** nos cenários amostrados, mesmo mantendo os mesmos heróis, builds, posições e condições iniciais. Os fluxos de crítico são independentes por herói; como a intervenção pode mudar quais ataques acontecem, não é possível alegar que toda sequência futura de consumo aleatório seja idêntica entre batalhas. As demais rotinas (projéteis, colisão e áreas) continuam na ordem original e não foram isoladas; não há demonstração de que apenas essas duas causas expliquem a dominância do Guardião. **Nenhum ajuste de dano, defesa, vida, IA ou RNG do modo padrão foi feito.**
+
+**Próxima missão:** ablação controlada de talentos defensivos/reativos do Guardião, com exposição igual por posição e métricas de escudo, cura, dano absorvido, duração e vitórias, sem modificar stats canônicos. Depois, prévia visual M10 opt-in no laboratório e QA WebGL 4/30 com câmera e arquibancada. G.2 em PCs reais, H.1/H.2 autenticadas e merge na `main` continuam bloqueados.
