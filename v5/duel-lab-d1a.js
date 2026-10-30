@@ -171,7 +171,7 @@
    $('duelStage').innerHTML='<div class="eyebrow">DESAFIO ACEITO · FASE D.1a</div>'+
     '<h2>Os dois jogadores estão prontos</h2><div class="versus">'+
     player(accepted.from).name+' <span>VS</span> '+player(accepted.to).name+'</div>'+
-    '<p>Convite sincronizado conceitualmente. A partida 3D real e o resultado compartilhado fazem parte da próxima fase D.1b.</p>';
+    '<p>Prévia visual fictícia: a versão real usa um único replay do servidor para os dois alunos.</p>'+ '<p><a href="./duel-replay-d1b.html?demo=1" style="display:inline-block;padding:12px 19px;border:1px solid #d4a96f;color:#f7dcae;background:#443025;text-decoration:none;font-weight:900">🎬 Ver demonstração 3D (sem conta)</a></p>';
   }
  }
  function expireQuiet(){
