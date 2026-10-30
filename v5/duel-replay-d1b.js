@@ -31,7 +31,7 @@ const snapshot=()=>({
  ready:status.ready,demo:status.demo,mode:status.mode,
  replaySha256:status.match?.replaySha256||null,
  winnerSide:status.replay?.winnerSide||null,
- playback:+status.replayTime.toFixed(2),modelsLoaded:status.modelsLoaded,
+ playback:+status.replayTime.toFixed(2),replayDuration:status.replay?.duration??0,modelsLoaded:status.modelsLoaded,
  modelsFailed:status.modelsFailed,sceneReady:status.sceneReady,
  frameCount:status.replay?.frames?.length||0,
  eventCount:status.replay?.events?.length||0,
