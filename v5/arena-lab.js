@@ -21,6 +21,8 @@ const experimentalCounterplay=params.get('counterplay')==='1';
 const experimentalHpBalance=params.get('balance')==='hp2';
 // E.6: original animated talent sprites in M5 only (never progression or M10).
 const experimentalTalentSprites=params.get('sprites')==='1';
+// G.1: explicitly opt-in local diagnostics; no forced low graphics quality.
+const performanceDiagnostics=params.get('perf')==='1';
 // Reproduce a reported lab run exactly without touching student data.
 const requestedSeed=/^\d{1,10}$/.test(params.get('seed')||'')?(Number(params.get('seed'))>>>0):0;
 const importedBuild=(()=>{
@@ -315,6 +317,7 @@ function initRound({sameSeed=false}={}){
 }
 function begin(){
  if(state.busy||state.fought||!state.stage?.simulation)return;
+ if(state.stage.graphicsContext==='lost'){message('GPU INDISPONÍVEL — RECARREGUE SE NÃO RESTAURAR');return}
  state.stage.resume();
  $('startBattle').disabled=true;$('pauseBattle').disabled=false;$('pauseBattle').textContent='Ⅱ Pausar';
  message('BATALHA EM ANDAMENTO','running');
@@ -326,6 +329,7 @@ function pause(){
   state.stage.pause();$('pauseBattle').textContent='▶ Continuar';
   message('BATALHA PAUSADA');
  }else{
+  if(state.stage.graphicsContext==='lost'){message('GPU INDISPONÍVEL — AGUARDE A RESTAURAÇÃO');return}
   state.stage.resume();$('pauseBattle').textContent='Ⅱ Pausar';
   message('BATALHA EM ANDAMENTO','running');
  }
@@ -361,6 +365,57 @@ $('arenaStage').addEventListener('v5-stage-autopaused',()=>{
  if(!state.fought){
   $('pauseBattle').textContent='▶ Continuar';
   message('PAUSADO — VOLTE À ABA E TOQUE EM CONTINUAR');
+ }
+});
+// Prevent silent blanks when the browser or graphics driver loses WebGL.
+$('arenaStage').addEventListener('v5-graphics-lost',()=>{
+ $('pauseBattle').textContent='▶ Continuar';
+ $('pauseBattle').disabled=true;
+ message('GPU REINICIANDO — BATALHA PAUSADA');
+ $('perfContext').textContent='Contexto perdido';
+ $('performancePanel').dataset.status='context-lost';
+});
+$('arenaStage').addEventListener('v5-graphics-restored',()=>{
+ $('pauseBattle').disabled=!state.stage?.simulation||state.fought;
+ $('pauseBattle').textContent='▶ Continuar';
+ message('GPU RESTAURADA — TOQUE EM CONTINUAR');
+ $('perfContext').textContent='Restaurada · pausada';
+ $('performancePanel').dataset.status='measuring';
+});
+// Passive local performance sampling, including unfiltered GPU resource totals.
+$('performancePanel').hidden=!performanceDiagnostics;
+$('arenaStage').addEventListener('v5-perf-sample',e=>{
+ if(!performanceDiagnostics)return;
+ const snap=e.detail;
+ $('perfFps').textContent=String(snap.fps);
+ $('perfP10').textContent=String(snap.p10Fps);
+ $('perfFrame').textContent=Math.round(snap.peakFrameMs)+' ms';
+ $('perfCalls').textContent=String(snap.drawCalls);
+ $('perfTriangles').textContent=Number(snap.triangles).toLocaleString('pt-BR');
+ $('perfMemory').textContent=snap.geometries+' / '+snap.textures;
+ $('perfModels').textContent=snap.modelsLoaded+' / '+snap.modelsExpected;
+ if(snap.contextLost)$('perfContext').textContent='Contexto perdido';
+ else if(state.stage?.graphicsContext==='restored-paused')$('perfContext').textContent='Restaurada · pausada';
+ else $('perfContext').textContent='Normal';
+ $('performancePanel').dataset.status=snap.status;
+ $('perfNote').textContent=snap.fps<30?'FPS baixo neste navegador — teste no PC com GPU real.':
+  'Medição local — renderização por software no CI não representa o PC dos alunos.';
+});
+$('perfCopy').addEventListener('click',async()=>{
+ const report=state.stage?.performanceReport;
+ if(!report)return;
+ const body=JSON.stringify({...report,seed:state.seed,players:state.count,
+  context:state.stage.graphicsContext},null,2);
+ try{
+  if(!navigator.clipboard?.writeText)throw Error('clipboard');
+  await navigator.clipboard.writeText(body);
+  $('perfNote').textContent='Relatório local copiado — sem nomes de alunos.';
+ }catch{
+  const input=document.createElement('textarea');
+  input.value=body;input.style.position='fixed';input.style.opacity='0';
+  document.body.append(input);input.select();
+  const copied=document.execCommand?.('copy');input.remove();
+  $('perfNote').textContent=copied?'Relatório local copiado.':'Copiar indisponível neste navegador.';
  }
 });
 $('resetBattle').addEventListener('click',initRound);
@@ -472,6 +527,8 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get seed(){return state.seed},
  get damageMode(){return {...PACES[state.damageIndex]}},
  get round(){return state.round},
+ get performanceReport(){return state.stage?.performanceReport||null},
+ get graphicsContext(){return state.stage?.graphicsContext||'uninitialized'},
  get cameraViewer(){return state.stage?.viewerSnapshot()||null},
  tryStudentCamera(id){return state.stage?.setStudentCamera(id)||false}
 });
