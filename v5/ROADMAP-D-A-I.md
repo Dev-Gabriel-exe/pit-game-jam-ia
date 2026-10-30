@@ -77,6 +77,9 @@
 - Preparar demonstração de revisão do professor **antes** de conectar usuários reais.
 
 ### H — Integração pedagógica / segurança e progressão
+
+**H.0 preparada, sem integração real (30/10/2026):** criada especificação executável `v5/progression-contract-h0.js` para 2 pontos e 1 talento por missão, bloqueio da primeira entrada M5 e da build final M10; cobre os 120 talentos e não permite execução fictícia da M10 no motor M5 atual. Testes aprovados no [run 40997697983](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40997697983). Contrato e requisitos do futuro backend documentados em `v5/FASE-H0-CONTRATO.md`. **Ainda falta G.2 (PCs reais), autorização explícita, persistência, verificação de permissões, sincronização e motor M10; H operacional NÃO foi iniciada.**
+
 - Somente depois da arena, mecânica e câmera aprovadas, conectar aluno/professor e progresso real.
 - Cada missão aprovada disponibiliza **1 talento + 2 pontos de atributo** para o personagem; a escolha permanece livre entre as árvores da própria classe.
 - Redistribuição permitida **até a primeira entrada na arena da missão 5**. Reavaliar a progressão depois e travar a build definitivamente antes da arena da missão 10, conforme regras pedagógicas já acordadas.
