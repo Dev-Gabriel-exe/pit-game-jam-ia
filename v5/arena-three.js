@@ -397,6 +397,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    hit:[/hit/,/hurt/,/damage/,/react/,/block/],
    block:[/block/,/defend/,/guard/,/shield/,/hit/,/idle/],
    dodge:[/dodge/,/roll/,/evade/,/jump/,/run/],
+   victory:[/victory/,/celebrat/,/cheer/,/taunt/,/emote/,/idle/],
    defeated:[/death/,/die/,/dead/,/hit/,/idle/]
   }[motion]||[/idle/];
   let matches=[];
@@ -539,7 +540,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
      [/hit|hurt|damage|react/i,3],
      [/block|defend|guard|shield/i,2],
      [/dodge|roll|evade|jump/i,3],
-     [/death|die|dead/i,2]
+     [/death|die|dead/i,2],
+     [/victory|celebrat|cheer|taunt|emote/i,3]
     ];
     const selected=new Set();
     for(const [regex,limit] of motionGroups){
@@ -898,7 +900,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     // Keep one-shot clips visible until the strike/reaction concludes.
    }else{
     unit.overrideMotion=null;
-    animateModel(unit,f.alive?(f.animation||'idle'):'defeated');
+    const champion=simulation?.finished&&simulation?.winner?.id===f.id;
+    animateModel(champion?'victory':f.alive?(f.animation||'idle'):'defeated');
+    if(champion)container.dataset.v5VictoryAnimation=unit.actions&&[...unit.actions.keys()].some(k=>/victory|celebrat|cheer|taunt|emote/.test(k))?'native':'idle-fallback';
    }
    if(!f.alive){unit.mesh.circle.visible=false}
   }
