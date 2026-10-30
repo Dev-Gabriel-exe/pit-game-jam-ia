@@ -22,7 +22,23 @@ function load(session){let d=blank();try{const x=JSON.parse(localStorage.getItem
 function save(session,d){const x=blank();x.route=routes.includes(d.route)?d.route:'image';for(const f of fields)x[f.id]=clean(d[f.id]).slice(0,f.max);x.checks=[...new Set((d.checks||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<3))];try{localStorage.setItem(key(session),JSON.stringify(x));return true}catch{return false}}
 function validate(session){const d=load(session);for(const f of fields){const n=clean(d[f.id]).length;if(n<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};if(n>f.max)return {ok:false,field:f.id,label:'Reduza o campo "'+f.label+'".'}}if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme manualmente os três testes do asset no Preview.'};return {ok:true,label:'Registro completo. O professor ainda deve verificar a execução.'}}
 function evidence(session){const d=load(session);const map={need:'Necessidade',file:'Asset',source:'Origem',license:'Licença',before:'Antes',after:'Depois',negative:'Teste negativo',saved:'Projeto salvo'};return ['M06 | '+d.route,...fields.map(f=>map[f.id]+': '+clean(d[f.id]))].join('\n').slice(0,750)}
-function parseEvidence(s){const x=blank();if(typeof s!=='string'||!s.startsWith('M06 | '))return null;const lines=s.split(/\r?\n/);const route=lines[0].slice(6).trim();if(routes.includes(route))x.route=route;const map={Necessidade:'need',Asset:'file',Origem:'source','Licença':'license',Antes:'before',Depois:'after','Teste negativo':'negative','Projeto salvo':'saved'};for(const line of lines.slice(1)){const i=line.indexOf(': ');if(i<0)continue;const k=map[line.slice(0,i)];if(k){const f=fields.find(z=>z.id===k);x[k]=line.slice(i+2).slice(0,f.max)}}return x}
+function parseEvidence(s){
+ // Evidências antigas achatadas ou parciais não podem virar rascunho aparentemente válido.
+ if(typeof s!=='string'||!s.startsWith('M06 | '))return null;
+ const lines=s.split(/\r?\n/),route=lines[0].slice(6).trim();
+ if(!routes.includes(route)||lines.length!==fields.length+1)return null;
+ const map={Necessidade:'need',Asset:'file',Origem:'source','Licença':'license',Antes:'before',Depois:'after','Teste negativo':'negative','Projeto salvo':'saved'};
+ const x=blank(),seen=new Set();x.route=route;
+ for(const line of lines.slice(1)){
+  const i=line.indexOf(': ');if(i<0)return null;
+  const id=map[line.slice(0,i)],f=fields.find(z=>z.id===id);
+  if(!f||seen.has(id))return null;
+  const value=line.slice(i+2);
+  if(clean(value).length<f.min||value.length>f.max)return null;
+  seen.add(id);x[id]=value;
+ }
+ return seen.size===fields.length?x:null;
+}
 function hydrate(session,evidenceText,status){const parsed=parseEvidence(evidenceText);if(!parsed)return;const current=load(session);if(fields.some(f=>current[f.id].trim()))return;parsed.checks=[];save(session,parsed)}
 function profile(ctx){const idea=ctx.idea||{};return {title:clean(idea.title)||'seu jogo da Missão 01',genre:clean(idea.genre)||'gênero autoral',hero:clean(idea.hero)||'personagem do jogo'}}
 function heading(ctx){const p=profile(ctx);return '<header class="m6s-head"><small>✦ MISSÃO 06 / 10 · FORJA DE IA · 45 MINUTOS</small><h2>Um recurso novo. Um mundo mais vivo.</h2><p>Continue <b>'+esc(p.title)+'</b> ('+esc(p.genre)+'). Você não precisa aprender cinco ferramentas: escolha apenas a que resolve uma necessidade real.</p></header>'}
