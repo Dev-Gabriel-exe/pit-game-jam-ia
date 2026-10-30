@@ -471,5 +471,7 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get mapId(){return $('arenaStage').dataset.v5Map||'not-loaded'},
  get seed(){return state.seed},
  get damageMode(){return {...PACES[state.damageIndex]}},
- get round(){return state.round}
+ get round(){return state.round},
+ get cameraViewer(){return state.stage?.viewerSnapshot()||null},
+ tryStudentCamera(id){return state.stage?.setStudentCamera(id)||false}
 });
