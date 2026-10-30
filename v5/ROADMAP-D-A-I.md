@@ -4,6 +4,9 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
+> **H.1d homologação isolada concluída no CI (30/10/2026):** tela V5 conectada ao handler autenticado V2 exclusivamente em **ambiente descartável local de testes**; duas sessões independentes do Chromium com o mesmo aluno fictício geraram conflito real HTTP 409, preservação do rascunho, recuperação, congelamento M5 e lock M10 persistidos em PostgreSQL 16, com terceiro aluno isolado. [CI 41069403117 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41069403117). **Não é integração operacional V3, não há sessão real, API V2 de produção ligada, Neon real, `main`, convite de duelo ou PCs físicos homologados.** Ver `v5/FASE-H1D-DOIS-NAVEGADORES.md`.
+
+
 > **H.1b preparada em laboratório (30/10/2026):** criado schema PostgreSQL aditivo `pit_hero_builds_v2` (não aplicado no Neon), catálogo servidor dos 120 talentos com verificação de divergência, contrato de build/locks M5-M10 e repositório transacional com revisão otimista, autorização por aluno/turma e testes em PostgreSQL 16 descartável. Execução CI [41065654716](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41065654716) com contratos e migração aprovados. **Somente na branch `feature/v5-h1b-integration-safe`; endpoint V2 não conectado, sem alterações na `main`, sem aluno real, G.2 ainda pendente.** Consultar `v5/FASE-H1B-ARMAZENAMENTO-V2.md`. Duelos 1×1 continuam a próxima funcionalidade planejada após integração autorizada.
 
 
