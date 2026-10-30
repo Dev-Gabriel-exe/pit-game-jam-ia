@@ -344,6 +344,56 @@ function pedagogicalDemoSlides(root,mission){
    return result.length===10?result:null;
   }
  }
+ // M09/Demonstrar: split all three fictitious triage cases into readable public
+ // projection screens. Do not imply a human test or reveal HDMI-off notes.
+ if(mission===9&&root.querySelector('#t9Foundations .t9-tabs')){
+  const guide=window.PIT_TEACHER_MISSION_NINE_FOUNDATIONS;
+  const source=root.querySelector('#t9Foundations');
+  if(guide?.caseHtml&&guide.cases?.length===3){
+   const result=[];
+   function add(node,title,id){
+    if(!node)return;
+    const wrapper=document.createElement('section');
+    wrapper.className='t9-root pit-projector-m09-demo';
+    wrapper.dataset.pitProjectorM09Demo='M09:'+id;
+    wrapper.innerHTML=cleanCopy(node);
+    result.push({title,html:wrapper.outerHTML});
+   }
+   add(source.querySelector('header'),'Triagem: três cenários fictícios, não testes reais','intro');
+   for(let i=0;i<guide.cases.length;i++){
+    const holder=document.createElement('div');
+    holder.innerHTML=guide.caseHtml(i);
+    const original=holder.querySelector('.t9-case');
+    if(!original)continue;
+    const label='Caso '+String.fromCharCode(65+i);
+    const action=document.createElement('article');
+    action.className='t9-case pit-projector-m09-action';
+    for(const selector of ['small','h3','.t9-steps']){
+     const part=original.querySelector(selector);
+     if(part)action.append(part.cloneNode(true));
+    }
+    add(action,label+' · Hipótese e reprodução','case-'+(i+1)+'-action');
+    const observation=document.createElement('article');
+    observation.className='t9-case pit-projector-m09-observation';
+    const title=document.createElement('h3');
+    title.textContent=label+' · Esperado, observado e impacto';
+    observation.append(title);
+    const comparison=original.querySelector('dl');
+    if(comparison)observation.append(comparison.cloneNode(true));
+    add(observation,label+' · Evidência fictícia para comparar','case-'+(i+1)+'-observation');
+    const decision=document.createElement('article');
+    decision.className='t9-case pit-projector-m09-decision';
+    const heading=document.createElement('h3');
+    heading.textContent=label+' · Prioridade e próxima ação';
+    decision.append(heading);
+    const priority=original.querySelector('.t9-priority');
+    if(priority)decision.append(priority.cloneNode(true));
+    add(decision,label+' · Decisão e recuperação','case-'+(i+1)+'-decision');
+   }
+   add(source.querySelector('footer'),'Demonstração não substitui playtest entre colegas','footer');
+   return result.length===11?result:null;
+  }
+ }
  // M09/Criar: restore the public peer-playtest protocol and evidence; never HDMI-off notes.
  if(mission===9&&root.querySelector('#t9vRoot .t9v-work')){
   const source=root.querySelector('#t9vRoot');
