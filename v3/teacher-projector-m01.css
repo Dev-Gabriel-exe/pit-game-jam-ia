@@ -163,6 +163,16 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-m09-practice h2,#pitProjector .pit-projector-m09-practice h3{font-size:clamp(27px,2.4vw,38px);line-height:1.2}
 #pitProjector .pit-projector-m09-practice p,#pitProjector .pit-projector-m09-practice b,#pitProjector .pit-projector-m09-practice strong{font-size:clamp(19px,1.6vw,25px);line-height:1.45;overflow-wrap:anywhere}
 
+/* M09 public practice: source badges and inline labels need at least 18px on projector.
+   Scope to the five public playtest slides only; cleanCopy removes private teacher notes. */
+#pitProjector .pit-projector-m09-practice :is(small,span,li,dt,dd,figcaption,time,code){
+ font-size:clamp(18px,1.35vw,22px);
+ line-height:1.38;
+ overflow-wrap:anywhere;
+}
+#pitProjector .pit-projector-m09-practice :is(header,footer,.t9v-work article){max-width:100%;box-sizing:border-box}
+#pitProjector .pit-projector-m09-practice .t9v-work article :is(p,li){margin-block:8px}
+
 /* M05 projected verification is a second full slide, not a hidden troubleshooting drawer. */
 #pitProjector .pit-projector-g5-verify{width:min(1050px,100%);padding:clamp(18px,2vw,32px);font-family:system-ui,"Segoe UI",Arial,sans-serif;background:#171920;border:1px solid #936d46;border-radius:16px}
 #pitProjector .pit-projector-g5-verify h3{font:700 clamp(28px,2.4vw,40px)/1.18 system-ui,"Segoe UI",Arial,sans-serif;margin:0 0 18px;color:#ffe1b0}
