@@ -4,7 +4,7 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
-**Status em 29/10/2026:** Fase D aprovada **visualmente pelo usuário** para avançar, porém validação completa de GPU/mobile permanece na Fase G. **Fase E em execução** (mecânica/IA/balanceamento); F diretor automático, G, H e I ainda pendentes.
+**Status em 30/10/2026:** Fase D aprovada visualmente; Fase E recebeu balanceamento HP2, sprites E.6 e correção E.7 de fim de partida (validação física de GPU/PC continua na G). **F.1 implementada e testada**: diretor automático opt-in de professor no laboratório, planos de duelo/geral/clímax/vencedor e retomada manual. F.2/F.3, G, H e I pendentes. Sem alterações na `main`.
 **Branch de trabalho:** `feature/v5-arena-dos-criadores`. **Não fazer merge na `main`** antes da aprovação final.
 **Contexto pronto:** motor experimental de 120 talentos (B.6), efeitos (C.1), coreografias (C.2), identidade visual das builds (C.3).
 
@@ -57,7 +57,7 @@
 - **Controle do professor:** indicador claro **Automática / Geral / Manual**, botão de retorno ao automático, pausa do diretor sem pausar o combate, opção de seguir um aluno específico.
 - **Estado inicial:** por padrão, a abertura do combate pode usar visão geral e avançar automaticamente conforme a opção do professor; manter configuração demonstrativa isolada de turmas reais.
 
-**Situação atual (antes da F):** `v5/arena-lab.js` já possui um botão experimental "Câmera de combate", que segue periodicamente um personagem em destaque (`spotlight`, intervalo aproximado de 7 s), e `v5/arena-three.js` permite `focusFighter` / `overview`. **Isso ainda não é o diretor cinematográfico descrito acima.** Não declarar a F concluída por causa dessas rotinas existentes.
+**F.1 implementada (30/10/2026):** `v5/camera-director.js` define os planos de câmera a partir de eventos reais do motor, com histerese, cobertura equitativa, visão geral, duelos, clímax e vencedor. `v5/arena-three.js` interpola os planos sem alterar a simulação; o professor pode arrastar/manipular manualmente ou retomar o automático pelo botão. Testes Node (4/30, mesmos vencedores) e Playwright com 4/30 GLBs aprovados no [run 40990012882](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40990012882). **Não declarar a F concluída**: faltam enquadramento/visibilidade e câmera compartilhada professor/aluno; ver `v5/FASE-F-CHECKPOINT.md`.
 
 **Critério de saída da F:** teste real com 30 combatentes, replays sob seeds fixas, múltiplos destaques sem favorecimento, clímax e controles manuais. Câmera não pode alterar os resultados da simulação.
 
