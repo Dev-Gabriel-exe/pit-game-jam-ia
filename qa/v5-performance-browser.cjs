@@ -77,6 +77,7 @@ const {chromium}=require('playwright');
    assert.equal(await page.locator('#pauseBattle').isDisabled(),false);
    await page.locator('#pauseBattle').click();
    assert.match(await page.locator('#arenaStatus').textContent(),/BATALHA EM ANDAMENTO/);
+   assert.equal(await stage.getAttribute('data-v5-graphics-context'),'ready','GPU status must clear after explicit resume');
    assert.equal(await stage.getAttribute('data-v5-graphics-losses'),'1');
   }else{
    console.log('G1 GPU context loss extension unsupported in this Chromium environment; lifecycle test requires PC hardware');
