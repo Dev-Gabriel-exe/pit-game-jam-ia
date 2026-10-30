@@ -64,6 +64,10 @@ const snap=page=>page.evaluate(()=>window.PIT_V5_D1B_VIEW.snapshot);
   assert.equal(a.frameCount,b.frameCount);
   assert(a.frameCount>20&&a.eventCount>5);
   assert.equal(a.demo,false);
+  assert.equal(a.sceneReady,true,'First Chromium client must render a WebGL scene');
+  assert.equal(b.sceneReady,true,'Second Chromium client must render a WebGL scene');
+  assert.equal(await A.locator('#stage canvas').count(),1);
+  assert.equal(await B.locator('#stage canvas').count(),1);
   await A.waitForTimeout(700);
   const nowA=await snap(A),nowB=await snap(B);
   assert(Math.abs(nowA.playback-nowB.playback)<2.0,
