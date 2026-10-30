@@ -2,7 +2,9 @@
 const assert=require('node:assert/strict');
 const assets=require('../v5/character-assets.js');
 const core=require('../v5/hero-core.js');
-assert.deepEqual(Object.keys(assets).sort(),Object.keys(core.CLASS).sort(),'Every playable class needs one real GLB');
+assert.deepEqual(Object.keys(assets).sort(),['guardian','hunter','mage','warrior'],
+ 'V5 KayKit presentation must contain exactly four approved classes');
+for(const klass of Object.keys(assets))assert(core.CLASS[klass], 'Legacy core missing KayKit class '+klass);
 const urls=new Set();
 for(const [klass,asset] of Object.entries(assets)){
  assert(/^https:\/\/raw\.githubusercontent\.com\/[^?]+\.glb$/i.test(asset.model),'Not an immutable GLB URL: '+klass);
@@ -24,7 +26,7 @@ const team=Object.keys(assets).map((klass,i)=>{
  return {id:'class-'+i,name:b.name,build:b,xp:500};
 });
 const battle=core.battle(team,{seed:7202,limit:120}).run(5000);
-assert(battle.finished&&battle.winner,'Six classes must participate in the same automatic match');
-assert.equal(battle.standings.length,6);
-console.log('PASS: six distinct pinned CC0 GLBs, unique readable classes, 6 talents per class, trusted identity and 6-class auto-battle');
+assert(battle.finished&&battle.winner,'Four KayKit classes must participate in the same automatic match');
+assert.equal(battle.standings.length,4);
+console.log('PASS: four distinct pinned KayKit CC0 GLBs, core compatibility and 4-class auto-battle; legacy extra classes untouched');
 console.log(Object.entries(assets).map(([id,a])=>id+' = '+a.model.split('/').at(-1)).join('\n'));
