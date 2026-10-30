@@ -19,6 +19,8 @@ const params=new URLSearchParams(location.search);
 const experimentalSteering=params.get('nav')==='steer';
 const experimentalCounterplay=params.get('counterplay')==='1';
 const experimentalHpBalance=params.get('balance')==='hp2';
+// E.6: original animated talent sprites in M5 only (never progression or M10).
+const experimentalTalentSprites=params.get('sprites')==='1';
 const importedBuild=(()=>{
  try{
   const raw=params.get('draft');
@@ -272,7 +274,8 @@ function initRound({sameSeed=false}={}){
  const prefix=trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
  const gameInfo=$('matchInfo');if(gameInfo)gameInfo.textContent='PARTIDA '+state.round+' · SEED '+state.seed+
   (trial&&experimentalCounterplay?' · MIRA COM RECUPERAÇÃO (EXPERIMENTAL)':'')+
-  (trial&&experimentalHpBalance?' · VIDA E ALCANCE BALANCEADOS (TESTE)':'');
+  (trial&&experimentalHpBalance?' · VIDA E ALCANCE BALANCEADOS (TESTE)':'')+
+  (trial&&experimentalTalentSprites?' · TALENTOS COM SPRITES ANIMADOS (E.6)':'');
  message('CARREGANDO '+state.count+' HERÓIS');
  state.roster=roster(mission,state.count);
  try{
@@ -385,7 +388,7 @@ $('speedBattle').addEventListener('click',()=>{
 });
 window.addEventListener('pagehide',()=>{clearInterval(state.interval);state.stage?.dispose()},{once:true});
 try{
- state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:5,onEvent});
+ state.stage=createStage($('arenaStage'),{quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:5,spriteEffects:experimentalTalentSprites?'on':'off',onEvent});
  const actorFill=new THREE.DirectionalLight(0xffd5b9,2.5);actorFill.position.set(4,13,14);state.stage.scene.add(actorFill);
  document.querySelectorAll('.roster-mode').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.roster)===state.count)));
  initRound();
