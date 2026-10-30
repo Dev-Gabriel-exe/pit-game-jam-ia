@@ -147,7 +147,7 @@ assert(m09Foundations.includes('Rodada B (8 min)'),'M09 teacher round B 8 min');
 assert(m09Student.includes("outcome:'',resolution:''"),'M09 must not preselect a fictitious issue or resolution');
 assert(m09Student.includes("x.outcome=outcomes.includes(d.outcome)?d.outcome:''"),'M09 save must not inject issue by default');
 assert(m09Student.includes("const resolutions=['fixed','backlog','nochange']"),'M09 allows honest no-defect playtest');
-assert(m09Student.includes("d.outcome==='passed'&&d.resolution==='fixed'"),'M09 rejects fictitious correction of no-defect test');
+assert(m09Student.includes("d.outcome==='passed'&&d.resolution!=='nochange'"),'M09 rejects fictitious correction or backlog of no-defect test');
 assert(m09Student.includes("d.outcome==='issue'&&d.resolution==='nochange'"),'M09 requires backlog or fix for observed defect');
 // The projected professor rubric must match all three student outcomes, including a genuine no-defect test.
 assert(m09Validation.includes('A decisão pode ser correção retestada, backlog justificado ou nenhuma alteração após um teste sem falha.'),'M09 projected professor summary must allow no-defect outcome');
