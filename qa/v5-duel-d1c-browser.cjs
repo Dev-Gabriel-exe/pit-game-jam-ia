@@ -132,8 +132,8 @@ const frameSnap=page=>page.evaluate(()=>document.querySelector('#arenaFrame')
   const ended=()=>{const s=document.querySelector('#arenaFrame')
    ?.contentWindow?.PIT_V5_D1B_VIEW?.snapshot;
    return !!s?.ready&&s.replayDuration>0&&s.playback>=s.replayDuration-.1;};
-  await A.page.waitForFunction(ended,{timeout:25000});
-  await B.page.waitForFunction(ended,{timeout:25000});
+  await A.page.waitForFunction(ended,null,{timeout:25000});
+  await B.page.waitForFunction(ended,null,{timeout:25000});
   const winA=await A.page.frameLocator('#arenaFrame').locator('#winnerName').textContent();
   const winB=await B.page.frameLocator('#arenaFrame').locator('#winnerName').textContent();
   assert.equal(winA,winB);
