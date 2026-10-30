@@ -121,7 +121,9 @@ function publicView(row,progress){
  const build=clean(normalizeBuild(copyBuild(row),progress.approvedMissions));
  enforceM5Floor(build,row.m5_snapshot);
  return Object.freeze({schemaVersion:VERSION,revision:row.revision,build,
-  progress,arena:{m5Entered:!!row.m5_snapshot,m10Locked:!!row.m10_snapshot},
+  progress,arena:{m5Entered:!!row.m5_snapshot,m10Locked:!!row.m10_snapshot,
+   m5Snapshot:row.m5_snapshot?{
+    attributes:{...row.m5_snapshot.attributes},talents:[...row.m5_snapshot.talents]}:null},
   duel:{waiting:progress.awaitingPeers}});
 }
 module.exports=Object.freeze({VERSION,ATTR,CLASSES,progressOf,normalizeBuild,
