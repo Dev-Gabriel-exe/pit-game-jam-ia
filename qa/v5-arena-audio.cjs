@@ -4,15 +4,16 @@ const fs=require('node:fs'),assert=require('node:assert/strict');
  const source=fs.readFileSync('v5/arena-audio.js','utf8');
  const {createArenaAudio}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
  let starts=0,closed=0,resumes=0;
+ const chain={connect(){return this}};
  class AudioContextMock{
   constructor(){this.state='suspended';this.currentTime=1;this.sampleRate=44100;this.destination={};}
   resume(){this.state='running';resumes++;return Promise.resolve()}
   close(){closed++;return Promise.resolve()}
-  createOscillator(){return {frequency:{value:0,setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){return {connect(){}}},start(){starts++},stop(){},set type(v){}}}
-  createGain(){return {gain:{value:0,setValueAtTime(){},linearRampToValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){return {connect(){}}}}}
+  createOscillator(){return {frequency:{value:0,setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){return chain},start(){starts++},stop(){},set type(v){}}}
+  createGain(){return {gain:{value:0,setValueAtTime(){},linearRampToValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){return chain}}}
   createBuffer(ch,n){return {getChannelData(){return new Float32Array(n)}}}
-  createBufferSource(){return {connect(){return {connect(){}}},start(){starts++},set buffer(v){}}}
-  createBiquadFilter(){return {frequency:{value:0},connect(){return {connect(){}}},set type(v){}}}
+  createBufferSource(){return {connect(){return chain},start(){starts++},set buffer(v){}}}
+  createBiquadFilter(){return {frequency:{value:0},connect(){return chain},set type(v){}}}
  }
  const a=createArenaAudio({AudioContextClass:AudioContextMock});
  assert.equal(a.play('hit',1000),false,'No autoplay before user gesture');
