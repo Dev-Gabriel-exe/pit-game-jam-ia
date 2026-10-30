@@ -245,3 +245,33 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 **Leitura cautelosa:** reduzir ambos os escudos a 75% baixou o escudo nominal em aproximadamente 23,4% e o absorvido em 7,8%, **sem mudar o total de vitórias da classe nesta amostra**, mas trocando oito vencedores individuais. Remover integralmente ambos os escudos mudou 12 vencedores e reduziu vitórias de Guardião de 18 para 12. Os números não homologam balanceamento: composições defensivas foram escolhidas deliberadamente, amostra pequena, casts e RNG posteriores divergem. Não foi feito nerf.
 
 **Próximo passo da mesma missão H.3:** examinar por cenário a sensibilidade das builds e comparar com a matriz de 100 builds aleatórias; testar candidatos com amostra maior e seeds independentes antes de qualquer alteração canônica. A G.2 nos PCs físicos e inspeção humana seguem pendentes; integração real H.1/H.2, `main` e produção continuam bloqueadas.
+
+
+## Rodada H.3/M10 — sensibilidade de escudos por arquétipo (30/10/2026, 11h)
+
+**Missão única desta execução:** continuar a investigação de balanceamento M10 com builds **ofensivas, defensivas e pseudoaleatórias**, sem aplicar nerf ou mudar o motor. Foram lidos os roadmaps D–I, checkpoints E/F/G e contrato H.0 antes do trabalho. Último HEAD anterior da branch: `461e7271769b4776f6ae2e297f4b83f74244c3d7`.
+
+### Entrega técnica
+
+- `qa/v5-m10-archetype-shield-pairs.cjs`: gera três arquétipos com as **cinco escolhas de talento da M5 congeladas** e mais cinco da M10; distribui dez pontos adicionais de atributos por arquétipo, totalizando **10 talentos/20 pontos**. Usa H.0 `m10ArenaAdapter` para validar aprovação fictícia sequencial e lock M10. As quatro classes KayKit usam o mesmo motor, sem alterar catálogo canônico.
+- Em cada arquétipo, testa **4 balanceados**, **30 balanceados** e **30 com metade Guardiões**; quatro seeds independentes das usadas na matriz anterior, com duas rotações do elenco. Cada bloco tem uma partida canônica (100% G01/G10) e outra com ambos os escudos a 75%, preservando identidade, build, spawn, seed e ordem.
+- G01 e G10 são intencionalmente escolhidos para todos os Guardiões deste teste, inclusive ofensivos/aleatórios, a fim de garantir exposição do mecanismo sob análise. Isso **não** representa amostragem aleatória irrestrita de talentos.
+- `.github/workflows/v5-m10-archetype-shield-qa.yml`: CI com H.0, motor M10, replay M5/E.7, 144 partidas, 72 pares, 9 replays exatos, 9 checks neutros e relatório JSON arquivado por 14 dias.
+- Commits de implementação: `2b5161ac2b56e13b446d4aca7e245efac406605c`, correção de geração do roster `779c9bd03c94b274c08f5561f2d10593389fb1d2`, workflow `6e28475c8889f64bb3dbd9f79f2777a37ebd18cb`.
+
+### Evidência de execução
+
+**GitHub Actions [41072955547](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41072955547) — job `m10-archetypes` concluído com SUCCESS.** Logs registram `PASS M10 archetype sensitivity: 144 games, 72 pairs, 9 exact replays, 9 neutral checks, M5 unchanged.` Os guardas H.0, motor M10 e replay E.7 também passaram. Artefato: `m10-archetype-shield-pairs`.
+
+| Arquétipo | Vitórias Guardião canônico (24) | Vitórias com G01/G10 a 75% (24) | Pares que mudaram vencedor (24) |
+|---|---:|---:|---:|
+| Ofensivo | 12 | 9 | 4 |
+| Defensivo | 18 | 15 | 10 |
+| Pseudoaleatório | 12 | 13 | 11 |
+| **Total (72 pares)** | **42** | **37** | **25** |
+
+**Atenção à interpretação:** na composição com quatro personagens, Guardião defensivo venceu **7/8** no canônico (referência proporcional: 2/8), enquanto ofensivo venceu **1/8** e pseudoaleatório **5/8**. O resultado é **sensível à seleção de build**. No grupo pseudoaleatório, a escala de 75% chegou a **aumentar** as vitórias de Guardião (12→13), demonstrando que não há efeito monotônico simples sobre vencedores. Nas nove células, as duas habilidades foram efetivamente ativadas. Esses números não autorizam alteração de stats, pois a amostra é pequena, a seleção forçou G01/G10, a ordem/spawn ainda podem favorecer slots e alterações no escudo mudam decisões e RNG subsequentes.
+
+### Próximo incremento na MESMA missão H.3
+
+Separar efeito de **build versus slot/posição/ordem** com rotações completas dos quatro jogadores e grupos de 30, mais seeds independentes e intervalos de incerteza. Comparar as builds com a matriz de 100 escolhas aleatórias (que não é pareada diretamente por seeds) e avaliar se o viés do Guardião persiste sem forçar G01/G10. **Não alterar valores canônicos antes de evidência robusta e revisão humana.** G.2 nos PCs físicos continua não realizado; H.1/H.2 reais, V3, `main`, produção, XP, usuários, notas e turmas permanecem intocados/bloqueados.
