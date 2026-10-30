@@ -3722,6 +3722,11 @@
         "name": "M10 regression QA source",
         "sha": "2d69796df9b06b7d31c7dd553fcf84dfbc94bcf8",
         "result": "PASS: V8 syntax of updated qa/v3-m10-field-guidance.cjs; GitHub Actions native Node and Browser QA on new commits NOT_CONFIRMED."
+      },
+      {
+        "name": "M10 full QA compatibility execution on committed files",
+        "sha": "2d69796df9b06b7d31c7dd553fcf84dfbc94bcf8",
+        "result": "PASS: 73 assertions executed from committed qa/v3-m10-field-guidance.cjs against fetched student/teacher production modules, CSS and app using a V8 Node-compatible fs/vm/assert shim. Not native Node, browser, HDMI, or GDevelop."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
