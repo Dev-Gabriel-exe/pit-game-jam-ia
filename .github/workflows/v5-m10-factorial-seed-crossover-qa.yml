@@ -4,6 +4,7 @@ on:
     branches: [feature/v5-arena-dos-criadores]
     paths:
       - 'qa/v5-m10-factorial-seed-crossover.cjs'
+      - 'qa/v5-m10-factorial-seed-analysis.cjs'
       - 'v5/phase2-combat.js'
       - 'v5/progression-contract-h0.js'
       - '.github/workflows/v5-m10-factorial-seed-crossover-qa.yml'
@@ -22,6 +23,7 @@ jobs:
       - name: Syntax and M5/M10 progression regression
         run: |
           node --check qa/v5-m10-factorial-seed-crossover.cjs
+          node --check qa/v5-m10-factorial-seed-analysis.cjs
           node qa/v5-progression-contract-h0.cjs
           node qa/v5-m10-engine.cjs
           node qa/v5-endgame-replay.cjs
@@ -29,10 +31,16 @@ jobs:
         run: node qa/v5-m10-factorial-seed-crossover.cjs
         env:
           M10_FACTORIAL_REPORT_FILE: qa/out/m10-factorial-seed-crossover.json
+      - name: Seed-clustered interaction and uncertainty analysis
+        run: node qa/v5-m10-factorial-seed-analysis.cjs qa/out/m10-factorial-seed-crossover.json
+        env:
+          M10_FACTORIAL_ANALYSIS_FILE: qa/out/m10-factorial-seed-analysis.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: m10-factorial-seed-crossover
-          path: qa/out/m10-factorial-seed-crossover.json
+          path: |
+            qa/out/m10-factorial-seed-crossover.json
+            qa/out/m10-factorial-seed-analysis.json
           retention-days: 14
           if-no-files-found: ignore
