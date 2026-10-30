@@ -41,6 +41,9 @@ assert.throws(()=>bridge.view({...snapshot(),stageRows:[...approvals(3),{stage:4
 assert.throws(()=>bridge.view({...waiting,build:build('warrior',3)}),/pontos excedem/);
 assert.throws(()=>bridge.view({...snapshot(),rosterKey:'student-name'}),/pseudônimo/);
 assert.throws(()=>bridge.view({...snapshot(),teacherCurrentStage:11}),/missão liberada/);
+assert.throws(()=>bridge.view({...snapshot(),m5Entered:true,m5Frozen:build('warrior',3)}),/antes de cinco/);
+const legacy=require('../chat-api/lib/v5-hero-core.js');
+assert.throws(()=>bridge.view({...snapshot(),build:legacy.seedBuild('Aluna fictícia')}),/atributos inválidos|pontos excedem|talento/,'Never silently accept legacy V5 build schema');
 const five=snapshot('guardian',5);
 const before=bridge.view(five);
 assert.equal(before.arena.m5Eligible,false,'M5 requires authoritative freeze');
