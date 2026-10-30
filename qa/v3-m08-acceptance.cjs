@@ -30,6 +30,26 @@ for(const field of student.fields){
  assert(studentPractice.includes('aria-describedby="m8s-help-'+field.id+'"'),'M08 student links textarea to instructions for '+field.id);
 }
 assert(!studentPractice.includes('pit-private-teacher-notes'),'private teacher notes absent from student M08');
+// The suggested negative test must follow the selected route, not stay on HUD.
+for(const [route,term] of [['hud','contador'],['puzzle','pontuação'],['3d','colisão']]){
+ const data=student.load('student-route');data.route=route;student.save('student-route',data);
+ const html=student.render({phase:'practice',session:'student-route',idea:{title:'Jogo fictício'}});
+ assert(html.includes('id="m8sRouteTestPlan"')&&html.includes(term),'student sees an actionable Preview test for '+route);
+ assert(html.includes('não um resultado esperado preenchido'),'student is not given a canned test outcome');
+ assert(!html.includes('pit-private-teacher-notes'),'student route guidance never contains teacher notes');
+}
+// Simulate the tutorial's tab callback without claiming a real browser test.
+const testPlan={textContent:''},guideRoot={querySelectorAll:()=>[]};
+const fakeRoot={
+ querySelector:sel=>sel==='#g8Guide'?guideRoot:sel==='#m8sRouteTestPlan'?testPlan:null,
+ querySelectorAll:()=>[]
+};
+ctx.document.querySelector=sel=>sel==='#m8sRoot'?fakeRoot:null;
+ctx.window.PIT_GDEVELOP_M08_GUIDE={mount:(_guide,options)=>options.onRouteChange('3d')};
+student.mount({phase:'practice',session:'student-route',status:'draft'});
+assert.equal(student.load('student-route').route,'3d','route selection persisted by tutorial callback');
+assert(testPlan.textContent.includes('colisão'),'negative-test prompt updates on route selection');
+
 const studentCss=fs.readFileSync('v3/student-mission-eight.css','utf8');
 assert(studentCss.includes('.m8s-field-hint'),'M08 guidance is styled for legibility');
 const rubric=ctx.window.PIT_TEACHER_MISSION_EIGHT_VALIDATION;
