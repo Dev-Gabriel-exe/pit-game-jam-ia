@@ -97,7 +97,7 @@ function createMatchService(pool){
    const room=await db.query(
     'SELECT c.current_stage,COALESCE(s.enabled,false) AS enabled '+
     'FROM pit_classroom_state c LEFT JOIN pit_duel_room_settings s '+
-    'ON s.room_code=c.room_code WHERE c.room_code=$1',
+    'ON s.room_code=c.room_code WHERE c.room_code=$1 FOR SHARE OF c',
     [student.roomCode]);
    if(room.rowCount!==1||room.rows[0].enabled!==true||
      Number(room.rows[0].current_stage)!==Number(invite.stage))
