@@ -896,8 +896,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  // Real orbit input has precedence over automatic camera.
  // Direct pointer input cancels the professor's automatic camera immediately.
  // OrbitControls' 'start' is not always fired for touch/canvas overlays.
- const onManualPointer=()=>{if(autoCamera&&cameraViewer?.state().audience==='teacher')disableAutoCamera('orbit')};
- renderer.domElement.addEventListener('pointerdown',onManualPointer);
+ const onManualPointer=()=>{
+  container.dataset.v5ManualPointerEvents=String(Number(container.dataset.v5ManualPointerEvents||0)+1);
+  if(autoCamera&&cameraViewer?.state().audience==='teacher')disableAutoCamera('orbit');
+ };
+ // Stage capture receives drags even when the WebGL canvas has a transparent
+ // interface layer above it; it excludes controls outside the stage.
+ container.addEventListener('pointerdown',onManualPointer,true);
  controls.addEventListener('start',onManualPointer);
  function freeCamera(){
   disableAutoCamera('preset');
@@ -1333,7 +1338,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
   document.removeEventListener('visibilitychange',onVisibility);
-  renderer.domElement.removeEventListener('pointerdown',onManualPointer);
+  container.removeEventListener('pointerdown',onManualPointer,true);
   controls.removeEventListener('start',onManualPointer);controls.dispose();
   clearHeroes();spriteKit?.dispose();nicknameLayer.remove();floatingLayer.remove();
   stormGeometry.dispose();stormMaterial.dispose();
