@@ -120,19 +120,34 @@ function evidence(session,ctx={}){
  ].join('\n');
 }
 function parseEvidence(raw){
- if(typeof raw!=='string'||!raw.startsWith('MISSÃO 05 — A PRIMEIRA REGRA'))return null;
- const lines=raw.split('\n'),get=label=>{
-  const hit=lines.find(l=>l.startsWith(label));return hit?hit.slice(label.length).trim():'';
- };
- const route=routes.findIndex(r=>r.short===get('Trilha: '));
- if(route<0)return null;
- const d=fresh();d.route=route;
- for(const [f,label] of [['condition','Condição: '],['action','Ação: '],['variable','Variável: '],
-  ['positive','Positivo: '],['negative','Negativo: '],['feedback','Feedback: '],
-  ['saved','Salvo em: '],['issue','Correção: ']]){
-  const val=get(label);d[f]=val==='Não informada'&&f==='issue'?'':val.slice(0,fields.find(x=>x.key===f).max);
+ // Legacy API records sometimes lost line breaks. Never infer a student's
+ // rule, Preview results or selected route from flattened/partial evidence.
+ if(typeof raw!=='string'||raw.length>750)return null;
+ const lines=raw.split('\n');
+ if(lines.length!==14||lines[0]!=='MISSÃO 05 — A PRIMEIRA REGRA')return null;
+ const metadata=[['Jogo: ',32],['Gênero: ',19],['Projeto: ',34],['Cena: ',29]];
+ for(let i=0;i<metadata.length;i++){
+  const [label,max]=metadata[i],line=lines[i+1];
+  if(!line.startsWith(label))return null;
+  const value=line.slice(label.length);
+  if(!value.trim()||value.length>max)return null;
  }
- // Remote evidence has no trustworthy checkbox attestation; keep checks empty.
+ if(!lines[5].startsWith('Trilha: '))return null;
+ const route=routes.findIndex(r=>r.short===lines[5].slice('Trilha: '.length));
+ if(route<0)return null;
+ const labels=['Condição: ','Ação: ','Variável: ','Positivo: ','Negativo: ',
+  'Feedback: ','Salvo em: ','Correção: '];
+ const d=fresh();d.route=route;
+ for(let i=0;i<fields.length;i++){
+  const f=fields[i],label=labels[i],line=lines[i+6];
+  if(!line.startsWith(label))return null;
+  const value=line.slice(label.length);
+  const normalized=f.key==='issue'&&value==='Não informada'?'':value;
+  if(value!==value.trim()||normalized.length>f.max||
+    (f.min>0&&clean(normalized).length<f.min))return null;
+  d[f.key]=normalized;
+ }
+ // Remote evidence cannot attest to Preview tests; never restore checkboxes.
  return d;
 }
 function hydrate(session,raw,status){
