@@ -22,7 +22,7 @@
    const {distance,t}=segmentDistance(camera,target,obstacle);
    if(t<=.015||t>=.985||distance>=obstacle.r+clearance)continue;
    // An elevated camera can look OVER the existing 3D column.
-   const sightY=camera.y+(target.y??2.3-camera.y)*t;
+   const sightY=camera.y+((target.y??2.3)-camera.y)*t;
    if(sightY<=height){blocked++;break}
   }
   return blocked;
