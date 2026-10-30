@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#110c15">
+<meta name="description" content="PIT Game Jam IA V5 — reprodução compartilhada de duelos 3D com personagens oficiais CC0.">
+<title>Duelo Cinematográfico | PIT Game Jam IA V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./duel-replay-d1b.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script src="./character-assets.js"></script>
+<script src="./phase2-combat.js"></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="./duel-lab-d1a.html">⚔ PIT GAME JAM <span>V5</span></a><div class="top-center">CIDADELA DO ECLIPSE<small>DESAFIOS ENTRE HERÓIS · 1 × 1</small></div><a class="back" href="./duel-lab-d1a.html">← CONVITES</a></header>
+<main>
+<div class="eyebrow">MODO DUELO · VISUALIZAÇÃO CINEMATOGRÁFICA</div>
+<h1>O confronto dos <em>heróis.</em></h1>
+<p class="intro" id="description">Dois alunos assistem ao mesmo resultado, calculado uma única vez no servidor.</p>
+<div class="notice" id="safetyNotice" role="status">Homologação desabilitada: abra a prévia fictícia para assistir sem conta ou dados reais.</div>
+<section class="arena-shell">
+<div class="battle-heading">
+<div id="leftCard" class="hero-card left"><span class="icon">◆</span><div><strong>GUARDIÃO</strong><small>Aguardando partida</small></div><div class="hp-track"><div id="hpLeft" class="hp-fill"></div></div></div>
+<div class="battle-center"><span class="versus">VS</span><strong id="battleStatus">AGUARDANDO</strong><small id="battleClock">00:00</small></div>
+<div id="rightCard" class="hero-card right"><span class="icon">✦</span><div><strong>ARCANISTA</strong><small>Aguardando partida</small></div><div class="hp-track"><div id="hpRight" class="hp-fill"></div></div></div>
+</div>
+<div id="stage" class="stage">
+<div id="stagePlaceholder" class="placeholder">Carregando o palco 3D…</div>
+<div class="stage-label">⚔ CIDADELA DO ECLIPSE <span>· CONFRONTO SINCRONIZADO</span></div>
+<div id="victory" class="victory" hidden><div class="eyebrow">VENCEDOR DO CONFRONTO</div><strong id="winnerName">—</strong><span>Resultado do motor de combate · sem XP e sem nota</span></div>
+</div>
+<div class="controls" role="group" aria-label="Câmera e áudio">
+<button id="director" type="button" aria-pressed="true">🎥 Modo diretor</button>
+<button id="followLeft" type="button" aria-pressed="false">◆ Acompanhar 1</button>
+<button id="followRight" type="button" aria-pressed="false">✦ Acompanhar 2</button>
+<button id="enableAudio" type="button">🔊 Ativar som espacial</button>
+<button id="reconnect" type="button">↻ Sincronizar</button>
+</div>
+<div class="match-foot"><span id="matchInfo">NENHUMA PARTIDA</span><span id="modelInfo">Modelos de personagens: preparando</span></div>
+</section>
+<div class="below"><section class="panel"><h2>⚔ Destaques da batalha</h2><div id="eventList" class="event-list">Aguardando os dois heróis.</div></section><section class="panel"><h2>Como funciona</h2><p>O resultado é gerado pelo servidor, a partir dos personagens e talentos que cada aluno realmente conquistou. O navegador só reproduz a sequência registrada.</p><p>O áudio acompanha a câmera: quanto mais longe do combate, menor o volume dos efeitos.</p><p class="muted">Prévia pública: dados fictícios e simulação local de demonstração. Conexão com alunos reais permanece desativada.</p></section></div>
+<footer>FASE D.1b · Servidor autoritativo · Glb KayKit CC0 · Prévia experimental · Não altera notas, talentos nem XP</footer>
+</main>
+<script src="./duel-replay-d1b.js" type="module"></script>
+</body></html>
