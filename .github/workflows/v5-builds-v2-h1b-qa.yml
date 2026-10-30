@@ -1,0 +1,56 @@
+name: V5 H1b Builds V2 Contract and Ephemeral DB
+on:
+  push:
+    branches:
+      - feature/v5-h1b-integration-safe
+    paths:
+      - 'chat-api/lib/v5-phase2-talent-ids.json'
+      - 'chat-api/lib/v5-build-v2-contract.js'
+      - 'chat-api/lib/v5-builds-v2-repository.js'
+      - 'v5/phase2-combat.js'
+      - 'v5/migration-h1b-builds-v2.sql'
+      - 'qa/v5-builds-v2-h1b.cjs'
+      - 'qa/v5-builds-v2-sql-smoke.sh'
+      - '.github/workflows/v5-builds-v2-h1b-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check independent server modules
+        run: |
+          node --check chat-api/lib/v5-build-v2-contract.js
+          node --check chat-api/lib/v5-builds-v2-repository.js
+          node --check qa/v5-builds-v2-h1b.cjs
+      - name: Verify 120 talents, progression, authorization boundaries and CAS
+        run: node qa/v5-builds-v2-h1b.cjs
+      - name: Recheck H0 and H1a pedagogic rules
+        run: |
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-student-bridge-h1.cjs
+  migration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci_only_password
+          POSTGRES_DB: pit_v5_h1b_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d pit_v5_h1b_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify additive migration against disposable PostgreSQL 16
+        run: bash qa/v5-builds-v2-sql-smoke.sh
