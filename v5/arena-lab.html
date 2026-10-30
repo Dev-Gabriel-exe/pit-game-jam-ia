@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./arena-lab.css">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
-<script src="./hero-core.js"></script><script src="./phase2-combat.js"></script><script src="./talent-vfx.js"></script><script src="./talent-sprites.js"></script><script src="./talent-choreography.js"></script><script src="./build-identity.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
+<script src="./hero-core.js"></script><script src="./phase2-combat.js"></script><script src="./talent-vfx.js"></script><script src="./talent-sprites.js"></script><script src="./talent-choreography.js"></script><script src="./camera-director.js"></script><script src="./build-identity.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
 <script src="./arena-lab.js" type="module"></script>
 </head>
 <body>
@@ -57,7 +57,7 @@
      <button id="resetBattle" type="button" disabled>↻ Reiniciar</button>
      <button id="phase2Builds" type="button" disabled title="Alternar as onze estratégias de talentos das quatro classes">✦ Combinações: Originais</button>
      <button id="cinematicCamera" type="button" disabled aria-pressed="true">◈ Cena cinematográfica</button> <button id="overviewCamera" type="button" disabled>◎ Visão geral</button>
-     <button id="actionCamera" type="button" disabled aria-pressed="false">◉ Câmera de combate</button>
+     <button id="actionCamera" type="button" disabled aria-pressed="false">◎ Diretor automático</button><span id="directorStatus" class="camera-director-status" role="status">Câmera: manual</span>
      <button id="expandStage" type="button" aria-pressed="false">⛶ Ampliar arena</button>
      <button id="damagePace" type="button" title="Altere o dano e reinicie a simulação para comparar: sem alterar o balanceamento definitivo">⚔ Dano 50% · lendário</button>
      <button id="speedBattle" type="button" disabled>Velocidade ×1</button>
