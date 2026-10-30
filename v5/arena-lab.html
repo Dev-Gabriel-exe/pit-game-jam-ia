@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./arena-lab.css">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
-<script src="./hero-core.js"></script><script src="./phase2-combat.js"></script><script src="./talent-vfx.js"></script><script src="./talent-sprites.js"></script><script src="./talent-choreography.js"></script><script src="./camera-director.js"></script><script src="./camera-framing.js"></script><script src="./camera-viewer.js"></script><script src="./build-identity.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
+<script src="./hero-core.js"></script><script src="./phase2-combat.js"></script><script src="./talent-vfx.js"></script><script src="./talent-sprites.js"></script><script src="./talent-choreography.js"></script><script src="./camera-director.js"></script><script src="./camera-framing.js"></script><script src="./camera-viewer.js"></script><script src="./performance-monitor.js"></script><script src="./build-identity.js"></script><script src="./character-assets.js"></script><script src="./fase1-catalog.js"></script>
 <script src="./arena-lab.js" type="module"></script>
 </head>
 <body>
@@ -70,6 +70,21 @@
      <button id="damagePace" type="button" title="Altere o dano e reinicie a simulação para comparar: sem alterar o balanceamento definitivo">⚔ Dano 50% · lendário</button>
      <button id="speedBattle" type="button" disabled>Velocidade ×1</button>
    </div>
+   <section id="performancePanel" class="g1-performance-panel" hidden aria-label="Diagnóstico local da GPU">
+    <div class="g1-performance-heading"><strong>G.1 · DIAGNÓSTICO WEBGL</strong>
+     <span>Somente neste navegador · sem dados de alunos · sem reduzir a qualidade</span></div>
+    <div class="g1-performance-numbers">
+     <span>FPS atual <strong id="perfFps">—</strong></span>
+     <span>FPS P10 <strong id="perfP10">—</strong></span>
+     <span>Maior intervalo <strong id="perfFrame">—</strong></span>
+     <span>Draw calls <strong id="perfCalls">—</strong></span>
+     <span>Triângulos <strong id="perfTriangles">—</strong></span>
+     <span>Geometrias / texturas <strong id="perfMemory">—</strong></span>
+     <span>GLBs carregados <strong id="perfModels">—</strong></span>
+     <span>GPU <strong id="perfContext">Normal</strong></span>
+    </div>
+    <div class="g1-performance-actions"><span id="perfNote">Medição local; FPS no GitHub Actions não representa o PC real.</span><button type="button" id="perfCopy">Copiar diagnóstico</button></div>
+   </section>
    <div class="theater-foot"><span id="modelReport" role="status">Carregando modelos GLB...</span><span id="matchInfo" class="match-info" aria-label="Identificador da partida">PARTIDA 1</span><span>Arraste para girar a câmera · roda ou pinça para zoom</span></div>
   </section>
   <aside class="side">
