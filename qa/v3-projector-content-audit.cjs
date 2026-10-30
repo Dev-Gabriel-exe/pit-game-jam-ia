@@ -371,6 +371,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  const m07=rows.find(x=>x.mission===7&&x.phase==='demo');
  const m09Practice=rows.find(x=>x.mission===9&&x.phase==='practice');
  const m09Demo=rows.find(x=>x.mission===9&&x.phase==='demo');
+ const m09Review=rows.find(x=>x.mission===9&&x.phase==='review');
  const expected01=Array.from({length:5},(_,i)=>'M01:'+i),expected03=Array.from({length:6},(_,i)=>'M03:'+i),expected04=Array.from({length:4},(_,i)=>'M04:'+i),expected05=Array.from({length:5},(_,i)=>'M05:'+i),expected07=Array.from({length:4},(_,i)=>'M07:'+i);
  const projectorChecks=[
   {name:'M01 practice: all seven planning fields projected with readable authorial examples',pass:m01Practice?.m01PracticeFields?.length===7&&['GÊNERO','TÍTULO','PROTAGONISTA','AÇÃO','OBJETIVO','CONDIÇÃO','FEEDBACK'].every(label=>m01Practice.m01PracticeFields.some(x=>x.includes(label)))&&(m01Practice?.retainedRatio||0)>.5},
