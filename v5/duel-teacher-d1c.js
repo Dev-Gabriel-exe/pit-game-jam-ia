@@ -5,6 +5,7 @@
  'use strict';
  const $=id=>document.getElementById(id);
  const local=['localhost','127.0.0.1'].includes(location.hostname);
+ const demo=new URLSearchParams(location.search).get('demo')==='1';
  let settings=window.__PIT_V5_D1C_TEACHER_STAGING;
  if(!settings&&window.parent!==window&&
   ['localhost','127.0.0.1'].includes(location.hostname)){
@@ -31,6 +32,15 @@
   configurable:false,writable:false
  });
  async function request(value){
+  if(demo){
+   if(typeof value==='boolean')enabled=value;
+   ready=true;updates++;render();
+   $('updatedAt').textContent=new Date().toLocaleString('pt-BR')+' · fictício';
+   message(enabled?
+    'PRÉVIA FICTÍCIA: duelos liberados somente nesta tela.':
+    'PRÉVIA FICTÍCIA: convites pausados somente nesta tela.','success');
+   return;
+  }
   if(!client||busy)return;
   busy=true;render();
   try{
@@ -49,6 +59,7 @@
  $('pauseDuels').addEventListener('click',()=>void request(false));
  $('reloadState').addEventListener('click',()=>void request());
  render();
+ if(demo){void request();return;}
  if(!local||settings?.enabled!==true||typeof settings.keyProvider!=='function'){
   message('Habilitação docente indisponível fora de homologação local.','info');
   return;
