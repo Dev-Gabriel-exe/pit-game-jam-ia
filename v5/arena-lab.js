@@ -269,6 +269,7 @@ function initRound({sameSeed=false}={}){
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('cinematicCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission,trial=state.phase2&&(mission===5||mission===10&&m10Preview);
+ document.querySelectorAll('.milestone').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.mission)===mission)));
  const toggle=$('phase2Mode');
  $('studentViewControls').hidden=!trial;
  $('studentViewButton').disabled=!trial;
@@ -370,6 +371,9 @@ document.querySelectorAll('.milestone').forEach(button=>{
 });
 $('phase2Mode').addEventListener('click',()=>{
  if(!PHASE2)return;
+ if(state.mission===10&&m10Preview){
+  state.mission=5;state.phase2=true;initRound();return;
+ }
  state.phase2=!state.phase2;
  if(state.phase2){state.mission=5;document.querySelectorAll('.milestone').forEach(x=>x.setAttribute('aria-pressed',String(Number(x.dataset.mission)===5)))}
  initRound();
