@@ -321,7 +321,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
  let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0,hitReactions=0;
  const visualBudget=quality==='low'||reduce?9:18;
- const isPhase2=()=>container.dataset.v5CombatEngine==='phase2-m5';
+ const isPhase2=()=>['phase2-m5','phase2-m10'].includes(container.dataset.v5CombatEngine);
  const cueFor=(klass,id)=>CUES?.[klass]?.find(c=>c.id===id)||null;
  const standSeats=(world.spectatorSeats||[]).map(seat=>({...seat,x:seat.x*stadiumScale,y:seat.y*stadiumScale,z:seat.z*stadiumScale}));
  const occupiedSeats=new Map(),spectators=new Set();
@@ -608,12 +608,15 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   camera.position.set(7.5,5.5,10);controls.target.set(0,1.4,0);controls.update();
   return item;
  }
- function fighters(list,{seed=48211,limit=70,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline'}={}){
+ function fighters(list,{seed=48211,limit=70,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5}={}){
+  if(arenaMission!==5&&arenaMission!==10)throw Error('Missão visual inválida');
+  if(arenaMission===10&&(!PHASE2||!list.every(x=>x.build?.schema===PHASE2.VERSION&&x.finalTrial===true&&x.approvedMissions===10)))
+   throw Error('Prévia M10 exige builds experimentais completas; legado bloqueado');
   clearHeroes();const trial=!!PHASE2&&list.every(entry=>entry.build?.schema===PHASE2.VERSION);
-  const normalized=trial?list.map((entry,i)=>({build:entry.build,id:String(entry.id??i),name:entry.name,approvedMissions:entry.build.approvedMissions})):list.map((entry,i)=>({
+  const normalized=trial?list.map((entry,i)=>({build:entry.build,id:String(entry.id??i),name:entry.name,approvedMissions:entry.build.approvedMissions,finalTrial:entry.finalTrial===true})):list.map((entry,i)=>({
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
-  simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale,damageScale,mageDamageBonus,stormDelay,stormRateFactor,engagementMode,navigationMode,rangedCommitment,balancePreset});
+  simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale,damageScale,mageDamageBonus,stormDelay,stormRateFactor,engagementMode,navigationMode,rangedCommitment,balancePreset,arenaMission:trial?arenaMission:5});
   autoDirector?.reset();sharedFeedActive=false;autoCamera=false;autoRevision=0;
   cameraViewer?.reset();
   container.dataset.v5CameraAudience='teacher';
@@ -629,7 +632,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5StormRateFactor=String(stormRateFactor);
   container.dataset.v5DamageScale=String(damageScale);
   container.dataset.v5MageDamageBonus=String(mageDamageBonus);
-  container.dataset.v5CombatEngine=trial?'phase2-m5':'legacy';
+  container.dataset.v5CombatEngine=trial?(arenaMission===10?'phase2-m10':'phase2-m5'):'legacy';
+  container.dataset.v5ArenaMission=String(trial?arenaMission:5);
+  container.dataset.v5ApprovedTalentSlots=String(trial?(arenaMission===10?10:5):0);
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
   talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;hitReactions=0;
