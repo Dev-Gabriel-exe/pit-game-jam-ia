@@ -1065,6 +1065,27 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    for(const ev of result.events){
     if(sharedFeedActive)autoDirector?.observe(ev,simulation.fighters);
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
+    // Positional sound is observational: never change combat events or stop a WebGL frame.
+    const audioKind=ev.type==='hit'?'hit':ev.type==='shield'?'shield':
+     ev.type==='talent'||ev.type==='special'||ev.type==='talent-impact'?'talent':
+     ev.type==='knockout'?'knockout':null;
+    if(audioKind){
+     try{
+      const source=(audioKind==='hit'?victim:attacker)||victim||attacker;
+      const point=source?.mesh?.root?.position;
+      const listener=followId?individuals.get(followId)?.mesh?.root?.position:camera.position;
+      if(point&&listener){
+       const direction=point.clone().sub(listener);
+       const right=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion);
+       const distance=direction.length(),pan=distance>.001?direction.multiplyScalar(1/distance).dot(right):0;
+       container.dataset.v5LastAudioEvent=audioKind;
+       if(arenaAudio.play(audioKind,Date.now(),{distance,pan}))
+        container.dataset.v5AudioPlayed=String(1+Number(container.dataset.v5AudioPlayed||0));
+      }
+     }catch{
+      container.dataset.v5AudioError='isolated';
+     }
+    }
     const cue=ev.talent&&attacker?cueFor(attacker.build.klass,ev.talent):null;
     if(ev.type==='prepare'){
      triggerMotion(attacker,'cast',.5);warningFx(attacker);
