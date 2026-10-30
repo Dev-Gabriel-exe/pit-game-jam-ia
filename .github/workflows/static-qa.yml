@@ -82,6 +82,11 @@ jobs:
         run: |
           node --check v3/hosting-policy.js
           node qa/v3-hosting-audit.cjs
+      - name: Verify M04 structured evidence and legacy recovery guards
+        run: |
+          node --check v3/student-mission-four.js
+          node --check qa/v3-m04-regression.cjs
+          node qa/v3-m04-regression.cjs
       - name: Verify M05 structured evidence and legacy recovery guards
         run: |
           node --check v3/student-mission-five.js
