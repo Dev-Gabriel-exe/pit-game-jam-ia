@@ -36,7 +36,9 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
   console.log('PASS V5 30 GLB browser audio: '+JSON.stringify(result));
   // Regression: WebAudio constructor failure must never blank or freeze the WebGL arena.
-  const silent=await browser.newPage({viewport:{width:1280,height:900}});
+  // Reuse the same browser context/cache: do not trigger a second burst of remote KayKit GLB downloads.
+  const silent=await page.context().newPage();
+  await silent.setViewportSize({width:1280,height:900});
   const silentErrors=[];silent.on('pageerror',e=>silentErrors.push(e.message));
   await silent.addInitScript(()=>{
    class DeniedAudioContext{constructor(){throw Error('WebAudio permission denied')}}
