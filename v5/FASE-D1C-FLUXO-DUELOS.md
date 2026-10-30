@@ -13,7 +13,7 @@
 5. **Controle docente isolado.** `v5/duel-teacher-d1c.html/.js`, `chat-api/lib/v5-duel-d1c-teacher.js` e `chat-api/api/duel-teacher-v2-lab.js` oferecem liberar/pausar novos desafios. Exigem segredo aleatório de teste de **256 bits** definido no **servidor de homologação**, sem reutilizar PIN do professor ou token de aluno. A ação sincroniza com a criação de convites/partidas por lock da linha de turma. **Pausar não cancela replays já iniciados**; um convite pendente não pode ser aceito até reativação.
 6. **Regras e privacidade.** A listagem só contém colegas opt-in da turma e da missão atual. Não são aceitos IDs de outras turmas, mais de um convite ativo por aluno, builds inventadas pelo navegador, XP, notas, mudanças pedagógicas ou vencedor definido no cliente. A API continua bloqueada em `VERCEL_ENV=production` e desativada por padrão.
 7. **Ambiente de testes separado.** `qa/v5-duel-d1c-30students.cjs` cria **30 alunos fictícios** e realiza **15 convites/pareamentos simultâneos** num PostgreSQL 16 descartável; valida segredo docente, habilitar/pausar, isolamento da turma, replays com budgets reais por missão, 30 slots exclusivos, nenhum 16º desafio, consulta de replay somente para participantes, encerramento e nova rodada. Não grava no Neon real.
-8. **Testes de navegador.** `qa/v5-duel-d1c-server.cjs` + `qa/v5-duel-d1c-browser.cjs` percorrem, em Chromium, três sessões de alunos fictícios e uma de professor: pausa inicial, liberação, um aluno ainda trabalhando (inapto), opt-in, convite, recusa, nova tentativa, aceite, iframe 3D com replay compartilhado, pausa docente sem invalidar luta iniciada, encerramento e retorno ao salão. Simula módulos Three.js localmente e bloqueia chamadas externas de alunos. O teste requer a CI aprovada antes de considerarmos a interface validada ponta a ponta.
+8. **Testes de navegador.** `qa/v5-duel-d1c-server.cjs` + `qa/v5-duel-d1c-browser.cjs` percorrem, em Chromium, três sessões de alunos fictícios e uma de professor: pausa inicial, liberação, um aluno ainda trabalhando (inapto), opt-in, convite, recusa, nova tentativa, aceite, iframe 3D com replay compartilhado, pausa docente sem invalidar luta iniciada, encerramento e retorno ao salão. Simula módulos Three.js localmente e bloqueia chamadas externas de alunos. **Validação ponta a ponta aprovada** no GitHub Actions, incluindo abertura automática do iframe 3D, mesmo replay nos dois navegadores, recusa, pausa e reconexão.
 
 ## O que ainda NÃO está implantado
 
@@ -24,6 +24,8 @@
 - **G.2 obrigatório:** testar em computadores da instituição (GPU, carregamento de modelos GLB, desempenho de 15 pares simultâneos, áudio e rede Wi‑Fi).
 - **H.1e / H.2:** conexão autorizada à sessão real da V3, controle docente na turma, política de duração/retenção dos replays e teste real de múltiplos dispositivos, antes de qualquer deploy/merge.
 - **I:** regressão final, plano de rollback e publicação somente com aprovação explícita.
+
+**Resultados verificados em 30/10/2026:** [CI D1c — 30 alunos + navegador](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41080559985), ambos os jobs aprovados. No teste de 30 alunos foram realizados 15 pareamentos simultâneos e verificada a devolução dos 30 slots após o término.
 
 ## Referências
 
