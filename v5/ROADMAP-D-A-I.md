@@ -68,6 +68,8 @@
 - Testar a troca no laboratório antes de integrar turmas reais; replicação autenticada/tempo lógico ficam na Fase H.
 
 ### G — QA final e aprovação da arena
+
+**G.1 implementada e verificada em laboratório (30/10/2026):** monitor passivo `v5/performance-monitor.js`, painel opt-in `?perf=1` e tratamento de `webglcontextlost/restored` com pausa e retomada explícita. Teste automatizado com 4/30 GLBs, reinício e estabilidade de recursos gráficos após aquecimento WebGL passou em [run 40995278890](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40995278890). O status da GPU após clicar em continuar recebeu refinamento adicional, ainda em reteste no run 40995524247. **Não afirmar desempenho de hardware real com SwiftShader**; G.2 continua exigindo teste nos PCs da escola. Ver `v5/FASE-G-CHECKPOINT.md`.
 - Testes de regressão no motor e no navegador: 4/30 personagens, mobile/desktop, GLB, câmera, pausa, reinício e arquibancadas.
 - Testes de carga e desempenho GPU/CPU; degradação elegante de efeitos em dispositivos mais fracos; testar falhas de GLB/rede.
 - Preparar demonstração de revisão do professor **antes** de conectar usuários reais.
