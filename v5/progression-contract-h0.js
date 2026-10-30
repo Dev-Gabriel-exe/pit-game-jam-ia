@@ -118,8 +118,17 @@
     talents:[...norm.build.talents],name:norm.rosterKey};
    return freezeCopy({rosterKey:norm.rosterKey,build:payload,approvedMissions:5});
   }
+  function m10ArenaAdapter(candidate){
+   const norm=validateCandidate(candidate,{mission:10});
+   // Non-authoritative laboratory payload. The server must independently
+   // enforce approvals, M5 freeze, M10 lock, and immutable participant IDs.
+   const payload={klass:norm.klass,attributes:{...norm.build.attributes},
+    talents:[...norm.build.talents],name:norm.rosterKey};
+   return freezeCopy({rosterKey:norm.rosterKey,build:payload,
+    approvedMissions:10,finalTrial:true});
+  }
   return Object.freeze({VERSION,ATTR,CLASSES,validateBuild,validateCandidate,
-   checkTransition,m5ArenaAdapter});
+   checkTransition,m5ArenaAdapter,m10ArenaAdapter});
  }
  return Object.freeze({VERSION,ATTR,CLASSES,createPolicy});
 });
