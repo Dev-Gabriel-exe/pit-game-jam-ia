@@ -28,7 +28,7 @@ const rand=seed=>{let s=seed>>>0;return ()=>{
 }};
 function roster(counts){
  const left=[...counts],out=[];
- while(left.some(n=>n))for(let i=0;i<4;i++)if(left[i]-- >0)out.push(CLASSES[i]);
+ while(left.some(n=>n>0))for(let i=0;i<4;i++)if(left[i]>0){out.push(CLASSES[i]);left[i]--;}
  return out;
 }
 function rotate(list,shift){return list.map((_,i)=>list[(i+shift)%list.length]);}
