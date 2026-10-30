@@ -54,7 +54,7 @@
   // A tiny final orbit adds depth only during the completed victory; disabled
   // for reduced motion and bounded to ~12 degrees, never circles the field.
   if(shot.mode==='victory'&&!reducedMotion)
-   angle+=clamp((elapsed-(shot.at||elapsed))*.025,0,.20);
+   angle+=clamp(Math.max(0,elapsed)*.025,0,.20);
   const prior=previous?.position;
   const candidates=[];
   for(let j=0;j<12;j++){
