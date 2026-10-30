@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111019">
+<title>H.1c | A Forja dos Heróis — PIT Game Jam IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./hero-lab-h1c.css">
+<script src="./phase2-combat.js"></script>
+<script src="./hero-lab-h1c.js" defer></script>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<header class="topbar">
+<a class="brand" href="./arena-lab.html?m10preview=1&amp;count=30"><span>⚔</span> PIT GAME JAM <small>H.1c</small></a>
+<span class="top-label">A FORJA DOS HERÓIS <span>PRÉVIA DA INTEGRAÇÃO</span></span>
+<a class="back" href="./arena-lab.html?m10preview=1&amp;count=30">VER ARENA ↗</a>
+</header>
+<main>
+<div class="eyebrow">JORNADA DO ALUNO • PERSONAGEM V5</div>
+<h1>Seu herói. <em>Suas escolhas.</em></h1>
+<p class="intro">Uma missão aprovada concede 2 pontos de atributo e 1 talento. Personalize a sua build para os confrontos das missões 5 e 10.</p>
+<div class="notice" role="status"><strong>LABORATÓRIO ISOLADO</strong> — personagens fictícios. Tudo é simulado na memória deste navegador. Nenhuma conta, turma, banco, XP ou aluno real é acessado.</div>
+<div class="meta-row">
+<div class="meta"><span>MISSÕES APROVADAS</span><strong id="missionNumber">3 de 10</strong></div>
+<div class="meta"><span>ATRIBUTOS DISPONÍVEIS</span><strong id="pointsLeft">6</strong></div>
+<div class="meta"><span>TALENTOS DISPONÍVEIS</span><strong id="talentsLeft">3</strong></div>
+<div class="meta"><span>REVISÃO DEMONSTRATIVA</span><strong id="revision">0</strong></div>
+</div>
+<div class="layout">
+<section class="card primary">
+<div class="section-title"><span>01 / IDENTIDADE</span><h2>Escolha sua classe</h2><p>A classe é fixada quando o personagem é salvo pela primeira vez.</p></div>
+<div id="classGrid" class="class-grid" aria-label="Classes de personagem"></div>
+<div class="section-title"><span>02 / ATRIBUTOS</span><h2>Construa sua força</h2><p>Distribua os pontos desbloqueados pelas missões aprovadas.</p></div>
+<div id="attributes" class="attributes"></div>
+<div class="section-title"><span>03 / TALENTOS</span><h2>Escolhas de batalha</h2><p>Trinta talentos por classe. Selecione no máximo um talento por missão aprovada.</p></div>
+<div id="talents" class="talents"></div>
+</section>
+<aside class="sidebar">
+<div class="card sticky">
+<div class="section-title"><span>ESTADO DO PERSONAGEM</span><h2>Seu progresso</h2></div>
+<div id="progressInfo"></div>
+<div id="feedback" class="feedback" role="status" aria-live="polite">Edite e salve para testar o fluxo.</div>
+<button id="saveBuild" class="button primary-button" type="button">◆ Salvar personagem (simulação)</button>
+<button id="advance" class="button secondary-button" type="button">✓ Simular aprovação da próxima missão</button>
+<button id="freezeM5" class="button secondary-button" type="button">⚔ Registrar entrada na Arena M5</button>
+<button id="lockM10" class="button secondary-button" type="button">♛ Travar build final da M10</button>
+<button id="reset" class="button subtle-button" type="button">↺ Reiniciar demonstração</button>
+<div class="divider"></div>
+<div class="section-title"><span>AGUARDANDO A TURMA</span><h2>Duelos 1 × 1</h2></div>
+<p class="muted">Quando os colegas terminarem a mesma missão, poderão desafiar uns aos outros. O convite e o combate online ainda não estão conectados.</p>
+<label class="duel-toggle"><input id="duelOptIn" type="checkbox"> Disponível para duelos (prévia)</label>
+<div id="duelStatus" class="hint">Convites reais: não implementados.</div>
+</div>
+</aside>
+</div>
+<div class="footer">H.1c: testes em dados fictícios • sem alteração nas dez missões da V3 • sem vínculo real com turma ou backend</div>
+</main>
+</body>
+</html>
