@@ -106,7 +106,12 @@
     if(JSON.stringify(before.m5Frozen)!==JSON.stringify(after.m5Frozen))
      invalid('snapshot de entrada M5 é imutável');
    }
-   if(before.m10Locked&&!after.m10Locked)invalid('lock final M10 é irreversível');
+   if(before.m10Locked){
+    if(!after.m10Locked)invalid('lock final M10 é irreversível');
+    if(JSON.stringify(before.build.attributes)!==JSON.stringify(after.build.attributes)||
+       JSON.stringify(before.build.talents)!==JSON.stringify(after.build.talents))
+     invalid('build final M10 é imutável após travamento');
+   }
    return true;
   }
   function m5ArenaAdapter(candidate){
