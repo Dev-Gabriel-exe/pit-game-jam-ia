@@ -67,6 +67,7 @@
     m10Locked:snapshot.m10Locked===true};
    // H0 is responsible for checking the lock when enough missions are approved.
    if(candidate.m5Entered){
+    if(progress.approvedMissions<5)reject('entrada M5 antes de cinco aprovações');
     if(!candidate.m5Frozen)reject('entrada M5 sem snapshot');
     if(progress.approvedMissions>=5){
      const mission=progress.approvedMissions===5?5:10;
