@@ -21,7 +21,10 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    activeMixers:Number(document.querySelector('#arenaStage')?.dataset.v5ActiveMixerUpdates),
    totalIdleMixers:Number(document.querySelector('#arenaStage')?.dataset.v5IdleSpectatorMixers),
    fps:Number(document.querySelector('#arenaStage')?.dataset.v5FrameRate),
-   drawCalls:Number(document.querySelector('#arenaStage')?.dataset.v5DrawCalls)
+   drawCalls:Number(document.querySelector('#arenaStage')?.dataset.v5DrawCalls),
+   environment:document.querySelector('#arenaStage')?.dataset.v5Environment,
+   environmentParts:Number(document.querySelector('#arenaStage')?.dataset.v5EnvironmentParts),
+   environmentBatches:Number(document.querySelector('#arenaStage')?.dataset.v5EnvironmentInstancedBatches)
   }));
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='phase2-m5',null,{timeout:60000});
   assert.equal((await lab()).seed,4175863657);
