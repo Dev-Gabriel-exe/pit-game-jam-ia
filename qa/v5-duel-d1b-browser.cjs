@@ -88,10 +88,16 @@ const snap=page=>page.evaluate(()=>window.PIT_V5_D1B_VIEW.snapshot);
    "ends_at=NOW()-INTERVAL '2 seconds' WHERE invite_id=$1",[fixture.inviteId]);
   await A.locator('#reconnect').click();
   await B.locator('#reconnect').click();
-  await A.waitForFunction(()=>window.PIT_V5_D1B_VIEW?.snapshot.playback>30,
-   null,{timeout:15000});
-  await B.waitForFunction(()=>window.PIT_V5_D1B_VIEW?.snapshot.playback>30,
-   null,{timeout:15000});
+  // A duel may legitimately finish in under 30 simulated seconds.
+  // Assert the *server-recorded* end of replay instead of an arbitrary time.
+  await A.waitForFunction(()=>{
+   const s=window.PIT_V5_D1B_VIEW?.snapshot;
+   return s?.ready&&s.replayDuration>0&&s.playback>=s.replayDuration-.1;
+  },null,{timeout:20000});
+  await B.waitForFunction(()=>{
+   const s=window.PIT_V5_D1B_VIEW?.snapshot;
+   return s?.ready&&s.replayDuration>0&&s.playback>=s.replayDuration-.1;
+  },null,{timeout:20000});
   assert.equal(await A.locator('#victory').isVisible(),true);
   assert.equal(await B.locator('#victory').isVisible(),true);
   const winA=await A.locator('#winnerName').textContent();
