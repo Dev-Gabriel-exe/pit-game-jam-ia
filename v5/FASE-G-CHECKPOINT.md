@@ -22,3 +22,15 @@ Validar FPS **nos computadores reais da escola**, uso de memória após várias 
 ## Fases ainda pendentes
 
 G.2 homologação de hardware, G.3 falhas/rede/resiliência, H integração professor/alunos com autorização e uma partida compartilhada entre dispositivos, I aprovação e merge controlado na main.
+
+## Resultado G.1 — teste automatizado aprovado
+
+**GitHub Actions [40995524247](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40995524247): ambos os jobs `metrics-and-rules` e `real-browser` passaram.**
+
+- WebGL no Chromium: quatro e trinta GLBs carregados, `quality=auto`, quadro real do Coliseu e telemetria válida. Na amostra antes do confronto, ~222 chamadas de desenho com quatro heróis e ~864 com 30. Esses números mudam conforme a câmera e as elimiminações.
+- Recarregamento da arena com **30 modelos**, duas vezes: geometrias **216 → 216 → 216**; texturas **211 (ainda frio) → 385 → 385**. Não houve crescimento adicional após o primeiro aquecimento de GPU. É uma amostra curta; **não prova ausência de vazamentos em partidas longas ou outros drivers**.
+- O Chromium forneceu `WEBGL_lose_context` e a extensão foi **realmente acionada**. O teste passou: evento de contexto perdido, física pausada, aviso de GPU, contexto restaurado, botão continuar e status final `graphicsContext=ready`.
+- Não comparar FPS do GitHub Actions com hardware real: **renderização por software** e grandes oscilações de FPS no próprio runner. Uma máquina de laboratório pode renderizar muito melhor, mas só o teste G.2 em PCs reais poderá comprovar.
+- `v5/G2-VALIDACAO-PC.md` contém roteiro de uso do painel `&perf=1`, reinícios, 30 GLBs, câmera e relatório. **Fase G não está encerrada**.
+
+**Próxima meta G.2:** rodar a prévia com `perf=1` nos PCs da oficina, observar FPS P10 real e qualquer falha de GPU/rede; G.3 cobre falha de GLB/reconexão; H sincronização do torneio com alunos reais; I revisão e merge autorizados.
