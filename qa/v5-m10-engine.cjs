@@ -39,7 +39,7 @@ const m5a=P.exampleBuild('warrior','trial-m5',5,4);
 const m5b=P.exampleBuild('guardian','trial-m5b',5,3);
 assert.equal(m5a.talents.length,5);
 assert.equal(Object.values(m5a.attributes).reduce((a,b)=>a+b,0),10);
-assert.throws(()=>P.canonical(candidate('warrior',0).build,10),/opt-in experimental/);
+assert.throws(()=>P.canonical({klass:'warrior',...candidate('warrior',0).build},10),/opt-in experimental/);
 assert.throws(()=>P.exampleBuild('warrior','trial',10,0),/opt-in experimental/);
 const valid=entry('warrior',0);
 assert.throws(()=>P.battle([valid,entry('guardian',1)]),/M5 não aceita/);
