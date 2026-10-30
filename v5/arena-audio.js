@@ -6,7 +6,7 @@ export function createArenaAudio({AudioContextClass=globalThis.AudioContext||glo
  const supported=!!AudioContextClass;
  function unlock(){
   if(disposed||!supported)return false;
-  try{if(!ctx){ctx=new AudioContextClass();master=ctx.createGain();master.gain.value=.8;master.connect(ctx.destination)}if(ctx.state==='suspended'ctx.resume().catch(()=>{});return true}catch{return false}
+  try{if(!ctx){ctx=new AudioContextClass();master=ctx.createGain();master.gain.value=.8;master.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume().catch(()=>{});return true}catch{return false}
  }
  function tone(freq,duration,volume,type='triangle',endFreq=freq){
   const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
