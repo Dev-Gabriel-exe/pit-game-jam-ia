@@ -317,7 +317,7 @@ function initRound({sameSeed=false}={}){
    engagementMode:trial?'spaced':'free',
    navigationMode:trial&&experimentalSteering?'steer':'direct',
    rangedCommitment:trial&&experimentalCounterplay?'recovery':'none',
-   balancePreset:trial&&experimentalHpBalance?'e-hp2':'baseline',
+   balancePreset:trial&&m10Preview&&params.get('balance')==='classpass1'?'m10-classpass1':trial&&experimentalHpBalance?'e-hp2':'baseline',
    arenaMission:trial?mission:5});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
