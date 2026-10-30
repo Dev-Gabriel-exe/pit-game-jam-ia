@@ -134,3 +134,18 @@ Sem aumento artificial de dano; total de 1 encerramento por tempo nos 120 tornei
 Deployment de prévia Vercel `dpl_Rany9RFYJ7XjF4rZynsYUHAN7NfA`, READY, domínio temporário `pit-v5-coliseu-demo-cp5fhmd5m.vercel.app`, sem alteração da produção, sem merge em `main`. Link de comparação experimental: https://pit-v5-coliseu-demo-cp5fhmd5m.vercel.app/v5/arena-lab.html?phase2=1&count=4&nav=steer&counterplay=1&balance=hp2.
 
 **Próxima etapa antes de concluir Fase E:** confirmar a CI atual (inclusive browser), revisar visualmente o comportamento no celular, testar FPS/latência com 30 modelos e fazer revisão de fairness com composições de turma diferentes. Só após essa etapa iniciar a Fase F da câmera cinematográfica, conforme roadmap.
+
+### Validação adicional: composição desigual (não é critério de 25% exatos)
+
+Além da matriz uniforme de 4/30, foram feitas quatro rodadas com **32 partidas de 30 jogadores**, elencos aleatoriamente embaralhados contendo 12 heróis de uma classe e 6 das outras três (rotação determinística; seed `3900007+i*1907`, builds `(7*j+i*3)%11`):
+
+| Classe que ocupa 12 das 30 posições | Guerreiro | Arcanista | Caçador | Guardião |
+|---|---:|---:|---:|---:|
+| Guerreiro (12) | 12 | 9 | 6 | 5 |
+| Arcanista (12) | 3 | 12 | 4 | 13 |
+| Caçador (12) | 5 | 6 | 8 | 13 |
+| Guardião (12) | 5 | 4 | 6 | 17 |
+
+Um jogador da classe dominante ocupa 40% do elenco; as demais classes, 20% cada. O Guardião se destacou especialmente quando há muitos Caçadores/Arcanistas, e ter 12 Caçadores não se traduziu em vitórias proporcionais. Essa é uma **ressalva real**: não afirmar equilíbrio universal ou que cada classe possui chance idêntica de vencer independentemente da composição. Testes complementares em torneios com os 30 alunos reais, distribuições variadas e builds próprias são necessários; os bônus não devem virar produção automática por conta deste experimento.
+
+**Decisão:** o preset permanece apenas opt-in na V5 de laboratório. A meta de ausência de dominância foi atingida na matriz com classes igualmente distribuídas; o roadmap E segue aberto para composições não uniformes e inspeção visual/GPU, preservando valores de produção.
