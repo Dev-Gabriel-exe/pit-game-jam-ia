@@ -184,3 +184,10 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 **Cobertura real no baseline:** G01 897 ativações, G10 471, G05 207, J09 166. **120/120 partidas, 96 pares e 12 replays exatos**. M5 sem alterações, seeds e builds iniciais preservadas. A soma do escudo absorvido inclui 4 e 30 jogadores e não é normalizada por número de Guardiões; serve somente para comparar o mesmo elenco dentro de cada braço. A supressão de G05/J09 ocasionalmente **aumentou** vitórias do Guardião, o que confirma interações não lineares e reforça que não se deve alterar stats por uma única comparação. Não foi feito nerf.
 
 **Próximo diagnóstico proposto:** isolar **somente o valor de escudo de G01/G10** preservando casts, prioridade e cooldown (experimento parametrizado M10-only), comparar absorção efetiva por elenco, e então validar um ajuste mínimo em builds diversificadas, sem modificar valores canônicos. Ficam pendentes G.2 nos PCs físicos, inspeção visual humana, H.1/H.2 autenticadas e Fase I com autorização explícita.
+
+
+## Etapa 1 — experimento de escudos graduais (30/10/2026)
+- Em andamento; **NÃO homologado**. Commit do motor `f7e97aee08192b71df673a477f819645a79060c4`; teste `8426d6aaf8845e4723804456670b73aa40f2bcf6`.
+- `experimentalGuardianShieldScale` é parâmetro opcional M10-only, aceita apenas G01/G10 em [0,1], incompatível com ablações. Modifica somente a quantidade de escudo criada; preserva cast, cooldown e efeitos solares. Default mantém o motor canônico.
+- `qa/v5-m10-guardian-shield-scale.cjs` verifica replay neutro idêntico e rejeição de parâmetros inválidos. **CI e execução deste novo teste ainda não comprovados nesta rodada.**
+- Próximo: executar teste no CI, corrigir falhas, realizar matriz pareada com escalas graduais, inspecionar screenshots e efeitos no navegador. Só então avaliar balanceamento. **G.2 em PCs físicos e revisão humana ainda pendentes; etapa 1 não encerrada.**
