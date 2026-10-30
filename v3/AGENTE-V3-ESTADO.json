@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T14:16:00Z",
+  "last_completed_at": "2026-10-30T15:17:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Auditar recuperação de evidências legadas M01–M10: a API antiga substituía quebras de linha por espaços; novos registros estão protegidos na branch (QA 41070163512 SUCCESS). Não inferir campos legados ambíguos nem alterar dados reais. Verificar Browser QA 41070163461; GDevelop GUI/HDMI/celular físico/playtest humano NOT_RUN.",
+  "priority": "Confirmar Browser QA 41078711300 no commit 6d3a41a; auditar evidências legadas M01–M10 em fluxo de aluno sem inferir campos perdidos. QA estática 41078711383 SUCCESS; testes HDMI/GDevelop GUI/celular físico/playtest humano NOT_RUN.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M01-M10-EVIDENCE-LINEBREAK-INTEGRITY",
+  "last_task": "V4-M01-M10-LEGACY-EVIDENCE-READONLY",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2646,12 +2646,19 @@
       "status": "in_progress",
       "commit": "cb59e20a58dbc87a27314321603a650b12052444",
       "summary": "Found P1 evidence integrity defect in actual chat-api/api/classroom.js: generic clean() replaced all LF/CRLF with spaces, breaking M01–M10 structured evidence parse/hydration after server roundtrip or device change. Added cleanEvidence() to preserve normalized LF while stripping other controls and enforcing 750-character cap. Expanded real classroom handler mock-SQL QA: M10 CRLF submission, API response, GET persistence and client parseEvidence() recover all fields including access. Updated FUN-10 security assertion to new sanitizer. Static QA 41070163512 SUCCESS (FUN-02 isolated backend, FUN-10, M10 checks). Browser QA 41070163461 IN_PROGRESS at checkpoint; previous Browser QA 41062701654 SUCCESS. Existing evidence stored by previous API may be flattened; no automatic recovery or production DB mutation. GDevelop GUI, HDMI, physical mobile, human playtest NOT_RUN. Roadmap 54/59; branch only, main unchanged."
+    },
+    {
+      "timestamp": "2026-10-30T15:17:00Z",
+      "task": "V4-M01-M10-LEGACY-EVIDENCE-READONLY",
+      "status": "in_progress",
+      "commit": "6d3a41a74720a1feecaeca4debd510af28e8a606",
+      "summary": "A API antiga achatava evidências estruturadas. Adicionado aviso somente no caderno do aluno para registros legados sem LF, exibindo texto original escapado em details recolhido, sem reconstruir campos nem alterar dados; cobre M01–M10. Novo teste Node 10 missões/100 verificações ligado à CI; V8 isolado 50 verificações PASS. QA estática GitHub 41078711383 SUCCESS no SHA 6d3a41a. Browser QA 41078711300 IN_PROGRESS na última consulta; Browser QA anterior 41070247881 SUCCESS. Documentado em AUDITORIA-PAGINAS-E-EVIDENCIAS.md. GDevelop GUI, HDMI físico, celular físico e playtest humano NOT_RUN. Roadmap 54/59; main não alterada."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M10-DELIVERY-ROUTE-INTEGRITY",
+    "task": "V4-M01-M10-LEGACY-EVIDENCE-READONLY",
     "status": "in_progress",
-    "updated_at": "2026-10-30T13:23:00Z",
+    "updated_at": "2026-10-30T15:17:00Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2743,9 +2750,12 @@
       "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
       "590204279508a5632935ca982136cc41d0d4eb21",
       "274e00dca8f81dfd7f0add13ad688244063fd716",
-      "5d0499cea104410497332ed3f57782be84255bc7"
+      "5d0499cea104410497332ed3f57782be84255bc7",
+      "4a6687797c278a506a474edf46419e03f04bbda3",
+      "1eff878027f28fbfc8c49fa531af2772dc58a74c",
+      "6d3a41a74720a1feecaeca4debd510af28e8a606"
     ],
-    "documentation_commit": "aa3b082c9e0000afa578b2a325596585c9dcea74",
+    "documentation_commit": "da9160456d2858450c7bf2db5cb6e71c6091c00a",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3467,13 +3477,36 @@
         "run_id": 41054976003,
         "sha": "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
         "result": "SUCCESS confirmed on 2026-10-30"
+      },
+      {
+        "name": "M01–M10 historical evidence V8 helper",
+        "sha": "4a6687797c278a506a474edf46419e03f04bbda3",
+        "result": "PASS: 50 isolated V8 assertions; no browser/Node local claimed"
+      },
+      {
+        "name": "M01–M10 legacy evidence Node static QA",
+        "sha": "6d3a41a74720a1feecaeca4debd510af28e8a606",
+        "run_id": 41078711383,
+        "result": "SUCCESS: GitHub Actions static QA, includes qa/v3-legacy-evidence.cjs"
+      },
+      {
+        "name": "M01–M10 new Browser QA",
+        "sha": "6d3a41a74720a1feecaeca4debd510af28e8a606",
+        "run_id": 41078711300,
+        "result": "IN_PROGRESS at last check; no browser success claimed"
+      },
+      {
+        "name": "Previous browser QA after LF sanitizer",
+        "sha": "b38d23e4204a7639b00a309f31b58efbe3b5be70",
+        "run_id": 41070247881,
+        "result": "SUCCESS; predates legacy notice"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm complete Browser QA 41062701654; if successful, continue cross-mission evidence integrity audit M01–M10; maintain private projector notes and 54/59 release gate.",
-    "blocker": "Physical HDMI/GDevelop GUI/real mobile/human peer acceptance remains NOT_RUN; full Browser QA currently in progress."
+    "next_task": "Confirmar Browser QA 41078711300, revisar se o aviso de histórico aparece corretamente na UI com dados fictícios em M01–M10 e sem aparecer na projeção; depois auditar o próximo defeito P1 pedagógico.",
+    "blocker": "Registros legados truncados não podem ser reconstruídos sem dados originais; nenhuma migração ou dados reais foram tocados. HDMI, GDevelop GUI, celular físico e playtest humano NOT_RUN."
   }
 }
