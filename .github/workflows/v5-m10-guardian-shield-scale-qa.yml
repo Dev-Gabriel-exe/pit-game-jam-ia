@@ -1,0 +1,36 @@
+name: V5 M10 Guardian Shield Scale QA
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+      - 'qa/v5-m10-guardian-shield-scale.cjs'
+      - 'qa/v5-m10-guardian-shield-matrix.cjs'
+      - '.github/workflows/v5-m10-guardian-shield-scale-qa.yml'
+  workflow_dispatch:
+jobs:
+  m10-shield-sensitivity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check qa/v5-m10-guardian-shield-matrix.cjs
+      - run: node qa/v5-m10-guardian-shield-scale.cjs
+      - run: node qa/v5-progression-contract-h0.cjs
+      - run: node qa/v5-m10-engine.cjs
+      - run: node qa/v5-endgame-replay.cjs
+      - name: Paired 4/30 Guardian shield sensitivity
+        run: node qa/v5-m10-guardian-shield-matrix.cjs
+        env:
+          M10_GUARDIAN_SHIELD_REPORT_FILE: qa/out/m10-guardian-shield-matrix.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-guardian-shield-sensitivity-report
+          path: qa/out/m10-guardian-shield-matrix.json
+          retention-days: 14
+          if-no-files-found: ignore
