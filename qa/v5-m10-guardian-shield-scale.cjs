@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const P=require('../v5/phase2-combat.js');
 const entries=['warrior','mage','hunter','guardian'].map((klass,i)=>({
- ...P.exampleBuild(klass,'trial-shield-'+i,10,i,{experimentalFinal:true}),id:'trial-shield-'+i
+ ...P.exampleBuild(klass,'trial-shield-'+i,10,i,{experimentalFinal:true}),id:'trial-shield-'+i,approvedMissions:10,finalTrial:true
 }));
 const opts={arenaMission:10,seed:20261030};
 function run(extra){return P.battle(entries,{...opts,...extra}).run();}
