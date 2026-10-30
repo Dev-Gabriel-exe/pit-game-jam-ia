@@ -233,5 +233,5 @@ function mount(ctx){
  }));
  update();
 }
-window.PIT_STUDENT_MISSION_THREE={render,mount,load,save,hydrate,validate,evidence,validity};
+window.PIT_STUDENT_MISSION_THREE={render,mount,load,save,parseEvidence,hydrate,validate,evidence,validity};
 })();
