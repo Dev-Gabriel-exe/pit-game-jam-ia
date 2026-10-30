@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T08:20:22.664Z",
+  "last_completed_at": "2026-10-30T08:22:58.393Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm M09 review 9-slide Chrome projector QA at 1280x720, 1600x900, 1920x1080 and Browser QA on e9f4a6ca; fix any scroll/font failures before M10 teacher/student pedagogical review. No aesthetics or main merge.",
+  "priority": "Continue pedagogical alignment of M10 professor/student: where/how/test/evidence, mirrored public presentation and private teacher notes. M09 demo and review Chrome now green. No aesthetics or main merge.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-REVIEW-PROJECTOR-COVERAGE",
+  "last_task": "V4-M09-REVIEW-CHROME-VERIFIED",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2597,12 +2597,19 @@
       "status": "in_progress",
       "commit": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
       "summary": "Confirmed M09 demo prior Chrome 3/3, static and Browser QA success. Added 9-slide public M09 review projector (5 criteria, 2 decisions) with private HDMI-off notes excluded, scoped readable CSS and Chrome regression. V8 syntax and CSS braces PASS; new static CI SUCCESS, new Chrome/Browser QA in progress. Docs commit 2edc3053. V3 54/59 unchanged; main untouched; physical/human tests NOT_RUN."
+    },
+    {
+      "timestamp": "2026-10-30T08:22:58.393Z",
+      "task": "V4-M09-REVIEW-CHROME-VERIFIED",
+      "status": "in_progress",
+      "commit": "1b390360938c2f0af77a116f05a09d8f842276bd",
+      "summary": "Verified M09 review 9-slide Chrome 3/3 success: 0 scroll, 0 overflowX, 0 fonts <18px at 720/900/1080, retainedRatio .75. Static QA and Browser QA both SUCCESS on e9f4a6ca. Prior M09 demo 11 slides also CI green. Next M10 teacher/student alignment. Human GDevelop/HDMI/mobile/peer NOT_RUN, main untouched, V3 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-REVIEW-PROJECTOR-COVERAGE",
+    "task": "V4-M09-REVIEW-CHROME-VERIFIED",
     "status": "in_progress",
-    "updated_at": "2026-10-30T08:20:22.664Z",
+    "updated_at": "2026-10-30T08:22:58.393Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2677,7 +2684,7 @@
       "85e074c7e12228bf9804053b6ec7a16899973984",
       "e9f4a6ca22710db6e73e966bc4640c72bf56233f"
     ],
-    "documentation_commit": "2edc3053276150b3f6829d7bd24147b7470c23c5",
+    "documentation_commit": "1b390360938c2f0af77a116f05a09d8f842276bd",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3289,13 +3296,28 @@
           41025702847
         ],
         "result": "IN_PROGRESS at checkpoint; do not claim success"
+      },
+      {
+        "name": "M09 review 9-slide Chrome projector",
+        "sha": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+        "run_id": 41025702939,
+        "result": "SUCCESS 3/3 Chrome resolutions (1280x720,1600x900,1920x1080): 9 review slides, zero vertical scroll, horizontal overflow, or sub-18px font; retention ratio 0.75; all new regressions passed"
+      },
+      {
+        "name": "M09 review static/browser QA",
+        "sha": "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+        "run_ids": [
+          41025702858,
+          41025702847
+        ],
+        "result": "SUCCESS both"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "V4-M09-REVIEW-CHROME-CI",
-    "blocker": "New M09 review Chrome/Browser QA still in progress; verify 9 slides and fix any failure. Physical HDMI, GDevelop GUI, mobile and human playtest remain NOT_RUN."
+    "next_task": "V4-M10-TEACHER-STUDENT-ALIGNMENT",
+    "blocker": "M09 projector automated QA complete; physical HDMI, GDevelop GUI, mobile and human playtest still NOT_RUN. Global projector audit still has scrolling in some other mission phases, to triage by pedagogical priority."
   }
 }
