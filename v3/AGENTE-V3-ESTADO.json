@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T08:22:58.393Z",
+  "last_completed_at": "2026-10-30T09:17:37.469Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Continue pedagogical alignment of M10 professor/student: where/how/test/evidence, mirrored public presentation and private teacher notes. M09 demo and review Chrome now green. No aesthetics or main merge.",
+  "priority": "Continue M10 teacher/student projected tutorial alignment, save/reopen/Preview/access/approval; M10 eight-field student guidance now in CI. Check Chrome 720/900/1080 and Node workflow result before declaring verified. Pedagogy before aesthetics, main untouched.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-REVIEW-CHROME-VERIFIED",
+  "last_task": "V4-M10-STUDENT-EVIDENCE-GUIDANCE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2604,12 +2604,19 @@
       "status": "in_progress",
       "commit": "1b390360938c2f0af77a116f05a09d8f842276bd",
       "summary": "Verified M09 review 9-slide Chrome 3/3 success: 0 scroll, 0 overflowX, 0 fonts <18px at 720/900/1080, retainedRatio .75. Static QA and Browser QA both SUCCESS on e9f4a6ca. Prior M09 demo 11 slides also CI green. Next M10 teacher/student alignment. Human GDevelop/HDMI/mobile/peer NOT_RUN, main untouched, V3 54/59."
+    },
+    {
+      "timestamp": "2026-10-30T09:17:37.469Z",
+      "task": "V4-M10-STUDENT-EVIDENCE-GUIDANCE",
+      "status": "in_progress",
+      "commit": "de096d3fcf3512e15658699a9559fe5277d8ada1",
+      "summary": "M10 student launch evidence: seven previously unassisted fields gained precise what/how/test/evidence hints; all eight textareas linked to accessible hints, route-specific access retained. Added CSS, Node regression and static-qa workflow, audit documentation. 29 isolated V8 precommit checks + 33 isolated V8 QA assertions PASS; native Node/CI and Chrome NOT_CONFIRMED; human GDevelop/HDMI/mobile NOT_RUN. V3 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-REVIEW-CHROME-VERIFIED",
+    "task": "V4-M10-STUDENT-EVIDENCE-GUIDANCE",
     "status": "in_progress",
-    "updated_at": "2026-10-30T08:22:58.393Z",
+    "updated_at": "2026-10-30T09:17:37.469Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2682,9 +2689,14 @@
       "60319dde6c817223073978cfed4bbab6a3dcbe08",
       "ed08a1dd9a7a300b5623304393a1aa6ac7ad24fa",
       "85e074c7e12228bf9804053b6ec7a16899973984",
-      "e9f4a6ca22710db6e73e966bc4640c72bf56233f"
+      "e9f4a6ca22710db6e73e966bc4640c72bf56233f",
+      "f3e6f05b81d88b447aae12bd10211e32869c1a30",
+      "08e28fa20dc649c004ea6d3a6accad612e7f9b1e",
+      "2a2317a8a4c1fc2114a211912ac5d62c94a143eb",
+      "10a144ac0fff69efc48cba6624986bb0d16d9fe0",
+      "de096d3fcf3512e15658699a9559fe5277d8ada1"
     ],
-    "documentation_commit": "1b390360938c2f0af77a116f05a09d8f842276bd",
+    "documentation_commit": "faf06635650dc9802eae78aef97b0cb1068a9b30",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3311,13 +3323,23 @@
           41025702847
         ],
         "result": "SUCCESS both"
+      },
+      {
+        "name": "M10 eight-field student guidance and teacher private notes",
+        "sha": "de096d3fcf3512e15658699a9559fe5277d8ada1",
+        "result": "PASS: 29 precommit V8 checks and 33 V8 isolated assertions executing committed QA with emulated Node assert/fs/vm; no native Node or browser executed."
+      },
+      {
+        "name": "M10 Node CI/Chrome for new commits",
+        "sha": "de096d3fcf3512e15658699a9559fe5277d8ada1",
+        "result": "NOT_CONFIRMED; workflow updated to execute node --check and qa/v3-m10-field-guidance.cjs on GitHub Actions. No claim of CI success."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "V4-M10-TEACHER-STUDENT-ALIGNMENT",
-    "blocker": "M09 projector automated QA complete; physical HDMI, GDevelop GUI, mobile and human playtest still NOT_RUN. Global projector audit still has scrolling in some other mission phases, to triage by pedagogical priority."
+    "next_task": "V4-M10-TEACHER-PROJECTOR-DEMO-ALIGNMENT",
+    "blocker": "New Node CI/Chrome result NOT_CONFIRMED; physical GDevelop GUI, HDMI, mobile and human tests NOT_RUN. Remaining V3 5 blocked tasks still require human signoff."
   }
 }
