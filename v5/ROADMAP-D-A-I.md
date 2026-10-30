@@ -78,6 +78,9 @@
 
 ### H — Integração pedagógica / segurança e progressão
 
+**H.3 — cruzamento pareado de ordem/slot M10 (30/10/2026):** 272 partidas fictícias com rotações completas das mesmas builds e seeds, cada herói ocupando cada slot uma vez por bloco. [CI 41015450904 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41015450904). Em 30 equilibrados, Guardião ganhou **58/120**, versus **28** esperadas por participação; com metade do elenco Guardião, **86/120**, versus **60** esperadas. Com quatro, slots 1+2 ganharam **25/32** mesmo com classes rotacionadas. **A causa não está isolada**: índice de entrada ainda vincula posição, ordem de atualização e RNG; próxima missão é separar essas variáveis sem mudar a M5. Checkpoint: `v5/FASE-H3-M10-CHECKPOINT.md`. **Sem alteração de balanceamento, interface M10, H.1/H.2, G.2, V3 ou `main`.**
+
+
 **H.3 — matriz M10 concluída como diagnóstico, não como balanceamento homologado (30/10/2026):** 80 batalhas fictícias com 4/30 participantes, 8 seeds, 5 composições e 11 variantes por classe; 80/80 finalizaram. Em 30 personagens o **Guardião venceu 22/40**, versus ~9,87 esperadas proporcionalmente à participação; em quatro jogadores os slots 1/2 somaram 32/40 vitórias. Ambos exigem investigação pareada de spawn/classe antes de ajustar stats. [CI aprovado 41009533478](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41009533478), relatório e próxima missão em `v5/FASE-H3-M10-CHECKPOINT.md`. **Nenhum balanceamento foi modificado nesta rodada; G.2, UI M10, H.1/H.2 e merge continuam pendentes.**
 
 
