@@ -54,7 +54,13 @@ const {chromium}=require('playwright');
   assert.equal(await stage.getAttribute('data-v5-camera-director'),'on');
   // Dragging the actual canvas overrides the director without stopping battle.
   const canvas=page.locator('#arenaStage canvas').first();
+  // F.3 added controls below the stage. Clicking the auto button scrolls the
+  // document down; a synthetic drag with an offscreen rect does not fire events.
+  await canvas.scrollIntoViewIfNeeded();
   const box=await canvas.boundingBox();
+  const viewport=page.viewportSize();
+  assert(box&&box.y<viewport.height&&box.y+box.height>0,
+   'Camera canvas must be visible before sending genuine pointer input');
   await page.mouse.move(box.x+box.width*.48,box.y+box.height*.48);
   await page.mouse.down();
   await page.mouse.move(box.x+box.width*.55,box.y+box.height*.55,{steps:3});
