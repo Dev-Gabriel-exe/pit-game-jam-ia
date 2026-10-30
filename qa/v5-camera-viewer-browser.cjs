@@ -21,7 +21,7 @@ const {chromium}=require('playwright');
   assert.equal(await stage.getAttribute('data-v5-camera-audience'),'student');
   assert.equal(await stage.getAttribute('data-v5-follow-target'),'phase2-0-warrior');
   assert.match(await page.locator('#studentViewStatus').textContent(),/vivo/);
-  const begin=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.stage.viewerSnapshot());
+  const begin=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer);
   assert.equal(begin.viewer.mode,'following');
   assert.equal(begin.viewer.studentId,'phase2-0-warrior');
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
@@ -29,7 +29,7 @@ const {chromium}=require('playwright');
   // At 13.25 engine seconds this real warrior is eliminated for this seed.
   await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5StudentCamera==='spectating',
    null,{timeout:125000});
-  const death=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.stage.viewerSnapshot());
+  const death=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer);
   assert.equal(death.viewer.mode,'spectating');
   assert.equal(death.viewer.studentId,begin.viewer.studentId);
   assert.equal(death.feed.feedId,begin.viewer.feedId,'All spectators share one director');
@@ -41,7 +41,7 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('[data-fighter].defeated').count()>=1,true);
   const sharedBefore=Number(await stage.getAttribute('data-v5-shared-feed-revision'));
   await page.locator('#teacherViewButton').click();
-  const teacher=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.stage.viewerSnapshot());
+  const teacher=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer);
   assert.equal(teacher.viewer.mode,'teacher');
   assert.equal(teacher.feed.feedId,death.feed.feedId);
   assert(teacher.feed.revision>=death.feed.revision,'Teacher uses the existing director, never restarts');
@@ -61,7 +61,7 @@ const {chromium}=require('playwright');
   await page.locator('#startBattle').click();
   await page.waitForFunction(()=>document.querySelector('#arenaStage')?.dataset.v5StudentCamera==='spectating',
    null,{timeout:125000});
-  const student30=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.stage.viewerSnapshot());
+  const student30=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer);
   assert.equal(student30.viewer.mode,'spectating');
   assert(student30.feed.revision>0);
   assert.equal(student30.viewer.feedId,student30.feed.feedId);
@@ -73,7 +73,7 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
   assert.equal(await page.locator('#studentViewControls').isVisible(),false);
   assert.equal(await stage.getAttribute('data-v5-camera-audience'),'teacher');
-  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.stage.setStudentCamera('arena-lab-0-warrior')),false,
+  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.tryStudentCamera('arena-lab-0-warrior')),false,
    'F.3 trial student roles cannot affect legacy M10');
   assert.deepEqual(errors,[],'Browser pageerrors: '+errors.join(' | '));
   console.log('PASS F.3 browser: 4/30 real GLBs, live hero -> shared director on actual KO, teacher reuse and M10 isolated');
