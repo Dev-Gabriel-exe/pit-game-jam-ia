@@ -164,3 +164,21 @@ Um jogador da classe dominante ocupa 40% do elenco; as demais classes, 20% cada.
 **Dependência externa para visualização live:** Vercel está sem autorização para o projeto/time histórico nesta sessão (403 no time; autorização solicitada retornou 404). Não houve novo deployment E.6 confirmado; não reutilizar URL antiga como se incluísse sprites. Código no branch `feature/v5-arena-dos-criadores` continua verificável no GitHub.
 
 **Etapa seguinte:** revisar screenshot / dispositivos reais, granularidade dos efeitos mais frequentes, telegraph sem criar ataques falsos, escudos/status persistentes; câmera cinematográfica somente após revisão E.5/E.6.
+
+## E.7 — diagnóstico de travamento no fim do torneio de 30 (30/10/2026)
+
+**Relato real do usuário:** S24, RawGitHack em Android, 30/30 GLBs carregados, aos 00:59 havia 2 vivos / 28 na arquibancada e a página parou de progredir. Usuário esclareceu que o evento é **no final**, e que os alunos usarão PCs. **Não ativar qualidade baixa globalmente nem alterar balanceamento por causa deste relato.**
+
+**Investigação determinística ancorada no print:** seed exata `4175863657` (partida 4, M5, 30 jogadores, `nav=steer&counterplay=1&balance=hp2&sprites=1`, ritmo de dano 50%). Usando os mesmos 30 builds e parâmetros, o motor tinha exatamente dois Guardiões aos 59s, e encerrou aos **63,3s** com Guardião vencedor e 29 eliminações; `qa/v5-endgame-replay.cjs` reproduz duas vezes e verifica a finalização. Logo o motor não apresenta loop infinito nesse seed. O problema apontado é na transição gráfica/atualização da interface, não na regra de vitória.
+
+**Fatos observáveis no código antes da correção:**
+- `v5/arena-three.js` chamava `u.mixer.update(dt)` para **todos** os heróis em cada frame, inclusive 28 eliminados já sentados nas arquibancadas. Mantinha também as sombras GLB e as rotinas de animação procedural/emblemas dos espectadores ativos, embora não voltassem ao combate.
+- Quando o navegador disparava `visibilitychange` com `document.hidden`, o palco chamava `pause()` silenciosamente, mas `v5/arena-lab.js` deixava o HUD como **"BATALHA EM ANDAMENTO"** e o botão como "Pausar"; ao retornar à aba parecia travado e não havia orientação de como continuar.
+
+**Correções isoladas:**
+- `v5/arena-three.js`: após eliminação, fixa uma pose GLB idle e desativa sombra e atualizações de AnimationMixer para o personagem espectador, mas mantém seu **modelo 3D visível na arquibancada**, com nome e identidade. Evita recalcular emblemas/poses e animação procedural de eliminados. Deixa a animação dos heróis vivos intacta. Expõe `data-v5-active-mixer-updates` e `data-v5-idle-spectator-mixers` para auditoria a cada segundo. Reusa `Color.setHex()` no material existente em vez de alocar `new THREE.Color` continuamente.
+- Ao entrar em segundo plano, a arena emite `v5-stage-autopaused` e o painel agora sinaliza `PAUSADO — VOLTE À ABA E TOQUE EM CONTINUAR`, com o botão `▶ Continuar`. Não autorretoma em segundo plano.
+- `v5/arena-lab.js`: parâmetro diagnóstico `?seed=4175863657` permite reabrir exatamente a partida reportada, sem tocar em progresso de aluno.
+- `qa/v5-endgame-browser.cjs`: teste Playwright com 30 GLBs, seed do print, suspensão/retomada explícita da aba, 28 espectadores sem mixers ativos, vitória, resultado na interface e reinício. Foi adicionado também o workflow focal `.github/workflows/v5-endgame-qa.yml` para validar a falha sem depender da longa bateria de outros navegadores.
+
+**Limite da conclusão:** estas correções eliminam dois defeitos de ciclo de vida concretos e reduzem trabalho no trecho crítico. O teste determinístico já comprovou que o motor não bloqueia aos 59s; ainda é preciso verificar encerramento completo no navegador e testar em dispositivo Android/PC reais antes de afirmar que o travamento relatado foi 100% resolvido. Visual de heróis e equilíbrio seguem iguais, e nenhuma mudança foi para `main`.
