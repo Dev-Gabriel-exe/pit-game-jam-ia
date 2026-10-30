@@ -40,6 +40,7 @@ function createDuelService(pool){
    const stage=Number(room.rows[0].current_stage);
    if(!Number.isInteger(stage)||stage<1||stage>10)fail('Missão liberada inválida.',503);
    await expire(db,student.roomCode);
+   await finishElapsedMatchesIfInstalled(db,student.roomCode);
    const result=await fn({db,student,stage,enabled:room.rows[0].duel_enabled===true});
    await db.query('COMMIT');began=false;
    return result;
@@ -58,6 +59,31 @@ function createDuelService(pool){
   if(out.rowCount)await db.query(
    'DELETE FROM pit_duel_slots WHERE invite_id=ANY($1::uuid[])',
    [out.rows.map(r=>r.id)]);
+ }
+ // D.1b is an additive opt-in migration. Keep D.1a standalone QA working
+ // when the match table is not yet installed in a disposable staging DB.
+ async function matchesInstalled(db){
+  const result=await db.query("SELECT to_regclass('pit_duel_matches') AS match_table");
+  return result.rows[0]?.match_table!==null&&result.rows[0]?.match_table!==undefined;
+ }
+ async function finishElapsedMatchesIfInstalled(db,roomCode){
+  if(!await matchesInstalled(db))return 0;
+  const due=await db.query(
+   'UPDATE pit_duel_matches SET finished_at=NOW() '+
+   'WHERE room_code=$1 AND finished_at IS NULL AND ends_at<=NOW() RETURNING invite_id',
+   [roomCode]);
+  if(!due.rowCount)return 0;
+  const ids=due.rows.map(r=>r.invite_id);
+  await db.query(
+   "UPDATE pit_duel_invites SET status='finished' "+
+   "WHERE id=ANY($1::uuid[]) AND status='accepted'",[ids]);
+  await db.query('DELETE FROM pit_duel_slots WHERE invite_id=ANY($1::uuid[])',[ids]);
+  return due.rowCount;
+ }
+ async function matchStarted(db,id){
+  if(!await matchesInstalled(db))return false;
+  const result=await db.query('SELECT 1 FROM pit_duel_matches WHERE invite_id=$1',[id]);
+  return result.rowCount>0;
  }
  async function eligibility(db,id,roomCode,stage){
   const [progress,presence]=await Promise.all([
@@ -137,6 +163,8 @@ function createDuelService(pool){
      "WHERE sl.student_id=$1 AND i.status IN ('pending','accepted') FOR UPDATE OF i",
      [student.id]);
     for(const i of owned.rows){
+     // A live server-replayed match cannot be undone by toggling presence.
+     if(await matchStarted(db,i.id))continue;
      await db.query(
       "UPDATE pit_duel_invites SET status='cancelled',match_seed=NULL,decided_at=NOW() "+
       "WHERE id=$1 AND status IN ('pending','accepted')",[i.id]);
@@ -199,6 +227,10 @@ function createDuelService(pool){
     if(i.status==='pending'&&self!==challenger)
      fail('Somente quem enviou pode cancelar um convite pendente.',403);
    }
+   // Once the server has generated an authoritative replay, neither student
+   // can cancel to rewrite its outcome or replace its snapshot.
+   if(decision==='cancel'&&i.status==='accepted'&&await matchStarted(db,inviteId))
+    fail('Partida iniciada. Aguarde o resultado do duelo.',409);
    if(decision==='accept'){
     if(!enabled||Number(i.stage)!==stage)
      fail('A missão mudou ou os duelos foram desativados.',409);
