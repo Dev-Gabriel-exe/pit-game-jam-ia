@@ -40,7 +40,11 @@ async function open(browser,token,inviteId){
  await page.goto(BASE+'/v5/duel-replay-d1b.html'+(token?'':'?demo=1'),
   {waitUntil:'domcontentloaded',timeout:40000});
  await page.waitForFunction(()=>window.PIT_V5_D1B_VIEW?.snapshot.ready,
-  null,{timeout:90000});
+  null,{timeout:24000}).catch(async()=>{
+   throw Error('D1b spectator did not load. Browser errors: '+errors.join(' | ')+
+    '; notice: '+await page.locator('#safetyNotice').textContent()+
+    '; module requests: '+urls.filter(u=>u.includes('three@')).slice(-4).join(','));
+  });
  return {page,context};
 }
 const snap=page=>page.evaluate(()=>window.PIT_V5_D1B_VIEW.snapshot);
