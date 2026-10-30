@@ -70,3 +70,34 @@ Em corredor propositalmente bloqueado por pilar, **todos os quatro** conseguiram
 **Conclusão cautelosa:** o novo desvio resolve o caso geométrico isolado, mas o efeito sobre o equilíbrio das partidas é diferente e precisa de correção. Nos mesmos 12 duelos Guerreiro × Caçador com `steer`, o resultado inverteu para 2 Guerreiro / 10 Caçador. Guardião permaneceu 0/12 frente a Caçador e 0/12 frente a Arcanista. Com 30 heróis em 12 seeds, `steer` registrou Caçador 8 / Arcanista 2 / Guerreiro 2 / Guardião 0. **NÃO habilitar `steer` por padrão** nem declarar as classes equilibradas apenas porque os testes de regressão passaram.
 
 Investigação seguinte: (1) medir dano quando perseguidores ficam sem alcance e cooldowns consumidos fora de contato; (2) observar se `G06`, `J03` e as builds defensivas de Guardião produzem aproximação utilizável, sem bônus arbitrário de HP; (3) implementar contrajogo real de long-range com leitura clara de animações e janelas de vulnerabilidade; (4) repetir com 4 e 30 em várias composições antes de qualquer mudança do preset.
+
+## Fase E — contrajogo a ataques à distância (terceiro incremento, 29/10/2026)
+
+**Implementação exclusiva do laboratório M5, reversível e DESLIGADA por padrão:** o parâmetro `rangedCommitment:'recovery'` ativa uma pequena janela de recuperação de movimento quando Caçador/Arcanista **realmente** lança um projétil ou prepara uma área ofensiva. O mecanismo registra `aim-recovery` para telemetria, sem adicionar golpe falso, alterar dano, atributos, cooldown, XP ou forçar vencedor. Estender `rangedCommitment` ao M10 está proibido até unificação posterior das arenas.
+
+- `v5/phase2-combat.js`: recuperação após disparo básico de 0,48 s, após projétil de talento de 0,35 s e ao preparar magia ofensiva de área de 0,45 s. Durante a recuperação, velocidade-alvo é 60% da padrão. Sem opt-in, as trajetórias, eventos, sementes e resultados continuam iguais.
+- `v5/arena-three.js` e `v5/arena-lab.js`: parâmetro `?counterplay=1` para M5, combinado opcionalmente com `?nav=steer`. Identificação visível de modo experimental no painel da partida. Teste de navegador `qa/v5-phase2-browser.cjs` assegura que esse modo é realmente passado ao motor e NÃO alcança o M10.
+- `qa/v5-ranged-counterplay.cjs`: matriz pareada e reprodutível com 12 sementes em cada duelo, 16 partidas de 4 heróis e 12 de 30, com navegação `direct` e `steer`, além de replay exato. CI rules do SHA `935c8fe3` passou. Isso é uma amostra diagnóstica, não validação definitiva de justiça.
+
+### Resultados da calibração reduzida (0,48/0,35/0,45 s; velocidade 60%)
+
+| Cenário | Antes | Experimental |
+| --- | --- | --- |
+| Guardião × Caçador, 12 duelos direct | Guardião 0 / Caçador 12 | Guardião 1 / Caçador 11 |
+| Guardião × Arcanista, 12 duelos direct | Guardião 0 / Arcanista 12 | Guardião 6 / Arcanista 6 |
+| Guardião × Caçador, 12 duelos steer | Guardião 0 / Caçador 12 | Guardião 0 / Caçador 12 |
+| Guardião × Arcanista, 12 duelos steer | Guardião 0 / Arcanista 12 | Guardião 3 / Arcanista 9 |
+| 30 heróis, 12 sementes direct | Caçador 10 / Arcanista 2 | Caçador 6 / Arcanista 3 / Guardião 2 / Guerreiro 1 |
+| 30 heróis, 12 sementes steer | Caçador 8 / Arcanista 3 / Guardião 1 | Caçador 7 / Arcanista 3 / Guerreiro 2 / Guardião 0 |
+
+**Importante:** a primeira tentativa foi excessiva: durações 0,72/0,62 s e velocidade 24%, revertidas pois inverteram 12/12 dos duelos Guardião × Caçador direct. A penalidade reduzida mantém espaço real para contra-ataque, mas **não resolve** a dominância do Caçador com navegação steer. Não adotar como padrão competitivo, não reduzir dano arbitrariamente e não alterar personagem GLB.
+
+### Prévia visual isolada
+
+Foi publicada prévia `dpl_8BgFsrMHcToYrJbYnS8ypy63DsFk`, estado Vercel READY, projeto separado `pit-v5-coliseu-demo` (sem alias para o site oficial):
+- Teste de 4 personagens, navegação steer + recuperação: https://pit-v5-coliseu-demo-5zwtzt30z.vercel.app/v5/arena-lab.html?phase2=1&count=4&nav=steer&counterplay=1
+- Comparação no MESMO build de visualização sem contrajogo: https://pit-v5-coliseu-demo-5zwtzt30z.vercel.app/v5/arena-lab.html?phase2=1&count=4&nav=steer
+
+Observação: a UI de Vercel está READY, mas não corresponde por si só a aprovação humana, FPS real, nem validação visual final. GitHub Actions de browser pode estar em execução em SHA posterior.
+
+**Próxima investigação dentro da E:** por que Guardião continua sem alcance útil contra Caçador sob steer, apesar das janelas de recuperação; analisar uso real de `J03`, `G06` e builds que não os possuem, e checar colisores/arcos/pilares antes de qualquer habilidade passiva ou bonificação. Só depois da homologação E, avançar para F (câmera cinematográfica automática).
