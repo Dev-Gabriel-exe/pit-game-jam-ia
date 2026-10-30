@@ -24,20 +24,32 @@ function load(id){
 }
 function save(id,d){try{localStorage.setItem(key(id),JSON.stringify(d))}catch{}}
 function parseEvidence(raw){
- if(typeof raw!=='string'||!raw.startsWith('MISSÃO 03 — LIGAR O MOTOR'))return null;
- const lines=raw.split('\n');
- const find=p=>{const l=lines.find(s=>s.startsWith(p));return l?l.slice(p.length).trim():''};
- const d=blank();d.project=find('Projeto: ');d.scene=find('Cena: ');d.object=find('Objeto: ');
- const type=find('Tipo: ');if(['2D Sprite','3D Box/Modelo'].includes(type))d.objectType=type;
- d.source=find('Recurso: ');d.preview=find('Preview: ');d.saved=find('Salvo em: ');d.fix=find('Diagnóstico: ');
- // Remote evidence contains text, not a verifiable record of manual Preview checks.
+ // Legacy API snapshots without line breaks are ambiguous: never guess field values.
+ if(typeof raw!=='string')return null;
+ const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+ const labels=['Jogo: ','Gênero: ','Projeto: ','Cena: ','Objeto: ','Tipo: ','Recurso: ','Preview: ','Salvo em: ','Diagnóstico: '];
+ if(lines.length!==labels.length+1||lines[0]!=='MISSÃO 03 — LIGAR O MOTOR')return null;
+ const values=[];
+ for(let i=0;i<labels.length;i++){
+  if(!lines[i+1].startsWith(labels[i]))return null;
+  const value=lines[i+1].slice(labels[i].length);
+  if(value!==value.trim())return null;
+  values.push(value);
+ }
+ const [title,genre,project,scene,object,type,source,preview,saved,fix]=values;
+ if(title.length>55||genre.length>25||!['2D Sprite','3D Box/Modelo'].includes(type))return null;
+ const d={...blank(),project,scene,object,objectType:type,source,preview,saved,
+  fix:fix==='Nenhum problema relatado'?'':fix};
+ const budgets={project:60,scene:53,object:53,source:69,preview:140,saved:85,fix:75};
+ if(FIELDS.some(f=>clean(d[f.key]).length<f.min||d[f.key].length>budgets[f.key]))return null;
+ // Evidence text never attests to manual Preview checks; they remain unchecked.
  return d;
 }
 function hydrate(id,raw,status){
- const d=parseEvidence(raw);if(!d||!d.project||!d.scene)return;
+ const d=parseEvidence(raw);if(!d)return;
  const old=load(id);
- // A local draft (including checkbox declarations) takes precedence over a remote text snapshot.
- if(FIELDS.some(f=>clean(old[f.key]))||old.checks.length)return;
+ // A local draft, including a selected 3D route or checkbox-only progress, wins.
+ if(FIELDS.some(f=>clean(old[f.key]))||old.checks.length||old.objectType!==blank().objectType)return;
  save(id,d);
 }
 function validity(d){
