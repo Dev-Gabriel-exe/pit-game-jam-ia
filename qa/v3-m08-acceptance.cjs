@@ -24,6 +24,14 @@ assert.equal(student.parseEvidence(e).after,d.after,'roundtrip after');
 const same={...d,after:d.before};
 student.save('student-b',same);
 assert.equal(student.validate('student-b').ok,false,'identical before and after rejected');
+const studentPractice=student.render({phase:'practice',session:'student-a',idea:{title:'Jogo de teste',genre:'puzzle'}});
+for(const field of student.fields){
+ assert(studentPractice.includes('id="m8s-help-'+field.id+'"'),'M08 student explains what to fill in '+field.id);
+ assert(studentPractice.includes('aria-describedby="m8s-help-'+field.id+'"'),'M08 student links textarea to instructions for '+field.id);
+}
+assert(!studentPractice.includes('pit-private-teacher-notes'),'private teacher notes absent from student M08');
+const studentCss=fs.readFileSync('v3/student-mission-eight.css','utf8');
+assert(studentCss.includes('.m8s-field-hint'),'M08 guidance is styled for legibility');
 const rubric=ctx.window.PIT_TEACHER_MISSION_EIGHT_VALIDATION;
 assert(rubric&&rubric.rubric.length===6,'teacher rubric covers six criteria');
 assert(rubric.rubric.some(x=>/LEGIBILIDADE NA TELA-ALVO/.test(x.title) && /resolução-alvo no Preview/.test(x.accept) && /Se o jogo também é para celular/.test(x.accept) && /Teste em celular físico não é requisito/.test(x.accept)),'target-screen rubric: Preview at intended resolution, conditional narrow-screen check, no physical-device claim');
