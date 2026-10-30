@@ -4,10 +4,12 @@ on:
     branches: [feature/v5-arena-dos-criadores]
     paths:
       - 'v5/camera-director.js'
+      - 'v5/camera-framing.js'
       - 'v5/arena-three.js'
       - 'v5/arena-lab.js'
       - 'v5/arena-lab.html'
       - 'qa/v5-camera-director.cjs'
+      - 'qa/v5-camera-framing.cjs'
       - 'qa/v5-camera-director-browser.cjs'
       - '.github/workflows/v5-camera-director-qa.yml'
   workflow_dispatch:
@@ -21,11 +23,14 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - run: |
           node --check v5/camera-director.js
+          node --check v5/camera-framing.js
           node --check v5/arena-three.js
           node --check v5/arena-lab.js
           node --check qa/v5-camera-director.cjs
+          node --check qa/v5-camera-framing.cjs
           node --check qa/v5-camera-director-browser.cjs
           node qa/v5-camera-director.cjs
+          node qa/v5-camera-framing.cjs
           node qa/v5-endgame-replay.cjs
   browser-camera:
     runs-on: ubuntu-latest
@@ -41,3 +46,9 @@ jobs:
           trap 'kill "$PID" 2>/dev/null || true' EXIT
           sleep 2
           node qa/v5-camera-director-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v5-f2-camera-webgl-30
+          path: qa/v5-camera-director-f2-30.png
+          if-no-files-found: ignore
