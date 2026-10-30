@@ -173,3 +173,29 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-g5-verify-source{font-size:18px!important}
 #pitProjector .pit-projector-g5-verify-source a{color:#f1c58e;text-underline-offset:3px}
 #pitProjector .pit-projector-g5-verify-reminder{border-top:1px solid #67513d;padding-top:12px}
+
+/* M08: project the complete GDevelop tutorial as action + verification screens.
+   Public recovery instructions stay readable while HDMI is connected. */
+#pitProjector .pit-projector-g8-step,#pitProjector .pit-projector-g8-verify{
+ width:min(1080px,100%);padding:clamp(14px,1.6vw,24px);box-sizing:border-box;
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;background:#171920;
+ border:1px solid #936d46;border-radius:16px;color:#f6e9d7;
+}
+#pitProjector .pit-projector-g8-step h3,#pitProjector .pit-projector-g8-verify h3{
+ margin:0 0 12px;color:#ffe1b0;font:700 clamp(24px,2vw,34px)/1.2 system-ui,"Segoe UI",Arial,sans-serif;
+}
+#pitProjector .pit-projector-g8-step figure{margin:0 0 12px;text-align:center}
+#pitProjector .pit-projector-g8-step img{max-width:100%;width:auto;max-height:22vh;object-fit:contain}
+#pitProjector .pit-projector-g8-step figcaption{font-size:14px;color:#d9c5ab}
+#pitProjector .pit-projector-g8-step dl{display:grid;grid-template-columns:minmax(130px,.26fr) 1fr;gap:8px 16px;margin:0}
+#pitProjector .pit-projector-g8-step dt{color:#f6c78b;font-weight:800;font-size:18px}
+#pitProjector .pit-projector-g8-step dd{margin:0;font-size:clamp(19px,1.45vw,23px);line-height:1.4;overflow-wrap:anywhere}
+#pitProjector .pit-projector-g8-verify .pit-projector-g8-expected,
+#pitProjector .pit-projector-g8-verify .pit-projector-g8-recovery{
+ padding:12px 18px;margin:10px 0;border-left:4px solid #caa36c;background:#22252d;
+}
+#pitProjector .pit-projector-g8-verify .pit-projector-g8-recovery{border-color:#df986b;background:#30231e}
+#pitProjector .pit-projector-g8-verify strong{font-size:19px}
+#pitProjector .pit-projector-g8-verify p{font-size:clamp(19px,1.45vw,23px);line-height:1.4;margin:6px 0;overflow-wrap:anywhere}
+#pitProjector .pit-projector-g8-source a{color:#f1c58e;text-underline-offset:3px}
+#pitProjector .pit-projector-g8-reminder{border-top:1px solid #67513d;padding-top:8px}
