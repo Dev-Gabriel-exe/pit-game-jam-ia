@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T12:20:13Z",
+  "last_completed_at": "2026-10-30T13:23:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 prática: confirmar CI estática e Chrome 720p/900p/1080p após oito slides públicos de evidência; corrigir rolagem antes de avançar. Human GDevelop/HDMI/mobile/peer NOT_RUN.",
+  "priority": "M10: aguardar resultado final Browser QA 41062701654 no commit 5d0499ce; etapa Chrome E2E já passou. Depois auditar coerência das evidências M01–M10 sem alterar estética. GDevelop GUI/HDMI/celular físico/playtest humano NOT_RUN.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M10-PRACTICE-PROJECTION-ALIGNMENT",
+  "last_task": "V4-M10-DELIVERY-ROUTE-INTEGRITY",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2632,12 +2632,19 @@
       "status": "in_progress",
       "commit": "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
       "summary": "M10 public teacher practice now mirrors all 8 student fields and 3 manual checks; projector 8 dedicated public slides (intro, 4 pairs, checks, 6 criteria, footer) without private notes. Added scoped CSS, isolated Node alignment test, Chrome projector regressions and workflow. Previous Browser QA 41047606738 SUCCESS. V8 11/11 isolated checks and five JS parses PASS. New native Node/Chrome CI NOT_CONFIRMED; human/HDMI/GDevelop/mobile NOT_RUN. V3 54/59, main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T13:23:00Z",
+      "task": "V4-M10-DELIVERY-ROUTE-INTEGRITY",
+      "status": "in_progress",
+      "commit": "5d0499cea104410497332ed3f57782be84255bc7",
+      "summary": "M10 delivery-route change now clears stale access/link and invalidates execution+privacy manual checks, preserving editable-project check; visible guidance explains reset. Added Node regression and real Chrome DOM E2E regression with fictional session. Static QA run 41062701801 SUCCESS, Chrome E2E step of run 41062701654 SUCCESS, remaining Browser QA steps IN_PROGRESS. Previous M10 projector 41054976003 SUCCESS. Human GDevelop GUI, HDMI, physical mobile and peer NOT_RUN. Branch only, main untouched; V3 remains 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M10-PRACTICE-PROJECTION-ALIGNMENT",
+    "task": "V4-M10-DELIVERY-ROUTE-INTEGRITY",
     "status": "in_progress",
-    "updated_at": "2026-10-30T12:20:13Z",
+    "updated_at": "2026-10-30T13:23:00Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2726,7 +2733,10 @@
       "b0d6d617f2f14bdcf71aa72e9e13c27e550569a9",
       "68669bc06e950be2bd3ad0599496e565893e020d",
       "3349d0261cc6614abf0fae76a6fb68a111d2e913",
-      "4f4ee3135b4719e4d4caf60310f9d18d120a81ef"
+      "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
+      "590204279508a5632935ca982136cc41d0d4eb21",
+      "274e00dca8f81dfd7f0add13ad688244063fd716",
+      "5d0499cea104410497332ed3f57782be84255bc7"
     ],
     "documentation_commit": "aa3b082c9e0000afa578b2a325596585c9dcea74",
     "tests": [
@@ -3432,13 +3442,31 @@
         "name": "M10 new native Node and Chrome CI",
         "sha": "3349d0261cc6614abf0fae76a6fb68a111d2e913",
         "result": "NOT_CONFIRMED: new static QA test wired; Chrome projector regression added but no new workflow outcome retrieved. HDMI, GDevelop GUI, mobile and human NOT_RUN."
+      },
+      {
+        "name": "M10 route-change regression, Node static QA",
+        "run_id": 41062701801,
+        "sha": "5d0499cea104410497332ed3f57782be84255bc7",
+        "result": "SUCCESS: includes invalid route, same route, link reset, check invalidation and persistence"
+      },
+      {
+        "name": "M10 route-change real Chrome DOM E2E",
+        "run_id": 41062701654,
+        "sha": "5d0499cea104410497332ed3f57782be84255bc7",
+        "result": "E2E STEP SUCCESS; full Browser QA run IN_PROGRESS at checkpoint"
+      },
+      {
+        "name": "M10 previous projector 720p/900p/1080p",
+        "run_id": 41054976003,
+        "sha": "4f4ee3135b4719e4d4caf60310f9d18d120a81ef",
+        "result": "SUCCESS confirmed on 2026-10-30"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "V4-M10-PRACTICE-CHROME-VERIFY",
-    "blocker": "New static/Chrome CI outcomes unconfirmed; physical GDevelop GUI, HDMI, mobile and peer playtest NOT_RUN; 5 release tasks remain blocked pending human signoff."
+    "next_task": "Confirm complete Browser QA 41062701654; if successful, continue cross-mission evidence integrity audit M01–M10; maintain private projector notes and 54/59 release gate.",
+    "blocker": "Physical HDMI/GDevelop GUI/real mobile/human peer acceptance remains NOT_RUN; full Browser QA currently in progress."
   }
 }
