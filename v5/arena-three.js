@@ -295,7 +295,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  container.dataset.v5Triangles='0';
  function discardEffect(e){
   for(const d of e.decors||[]){root.remove(d);d.geometry.dispose();d.material.dispose()}
-  root.remove(e.mesh);e.mesh.geometry?.dispose?.();
+  root.remove(e.mesh);
+  // THREE.Sprite reuses a shared quad geometry; disposing it per VFX is unsafe.
+  if(!e.spriteVisual)e.mesh.geometry?.dispose?.();
   if(Array.isArray(e.mesh.material))e.mesh.material.forEach(m=>m.dispose?.());else e.mesh.material?.dispose?.();
  }
  function clearVisuals(){for(const e of effects)discardEffect(e);effects.length=0}
