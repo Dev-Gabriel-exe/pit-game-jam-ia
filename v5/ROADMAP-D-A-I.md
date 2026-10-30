@@ -103,6 +103,8 @@
 - Persistência e locks no servidor, autorização docente e validação de integridade. XP e aprovações nunca são confiados ao navegador.
 - Não mexer no conteúdo, na ordem ou no XP das dez missões da V3 até concluir testes de integração.
 
+**H.3 — PRIMEIRA PRÉVIA M10 3D APROVADA NO CI (30/10/2026):** modo experimental `?m10preview=1` do Coliseu agora executa o motor final com **10 talentos/20 pontos**, 4/30 KayKit GLBs reais, câmera cinematográfica e 29 eliminados na arquibancada. Builds fictícias passaram pelo contrato H.0 com congelamento M5 apenas em memória. [CI completo com 4/30 WebGL e evidência visual 41037680943](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41037680943). **Não é integração com turmas reais**: G.2 nos PCs da escola, balanceamento final, autorização/H.1/H.2 e validação humana permanecem pendentes. `main` não foi alterada.
+
 ### I — Revisão, homologação e merge para `main`
 - QA ponta a ponta professor/aluno, aprovação explícita da versão final e merge controlado.
 - Rollback e monitoramento planejados; nenhuma publicação em produção automática antes dessa fase.
