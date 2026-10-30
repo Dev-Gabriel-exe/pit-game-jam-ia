@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T13:23:00Z",
+  "last_completed_at": "2026-10-30T14:16:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10: aguardar resultado final Browser QA 41062701654 no commit 5d0499ce; etapa Chrome E2E já passou. Depois auditar coerência das evidências M01–M10 sem alterar estética. GDevelop GUI/HDMI/celular físico/playtest humano NOT_RUN.",
+  "priority": "Auditar recuperação de evidências legadas M01–M10: a API antiga substituía quebras de linha por espaços; novos registros estão protegidos na branch (QA 41070163512 SUCCESS). Não inferir campos legados ambíguos nem alterar dados reais. Verificar Browser QA 41070163461; GDevelop GUI/HDMI/celular físico/playtest humano NOT_RUN.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M10-DELIVERY-ROUTE-INTEGRITY",
+  "last_task": "V4-M01-M10-EVIDENCE-LINEBREAK-INTEGRITY",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2639,6 +2639,13 @@
       "status": "in_progress",
       "commit": "5d0499cea104410497332ed3f57782be84255bc7",
       "summary": "M10 delivery-route change now clears stale access/link and invalidates execution+privacy manual checks, preserving editable-project check; visible guidance explains reset. Added Node regression and real Chrome DOM E2E regression with fictional session. Static QA run 41062701801 SUCCESS, Chrome E2E step of run 41062701654 SUCCESS, remaining Browser QA steps IN_PROGRESS. Previous M10 projector 41054976003 SUCCESS. Human GDevelop GUI, HDMI, physical mobile and peer NOT_RUN. Branch only, main untouched; V3 remains 54/59."
+    },
+    {
+      "timestamp": "2026-10-30T14:16:00Z",
+      "task": "V4-M01-M10-EVIDENCE-LINEBREAK-INTEGRITY",
+      "status": "in_progress",
+      "commit": "cb59e20a58dbc87a27314321603a650b12052444",
+      "summary": "Found P1 evidence integrity defect in actual chat-api/api/classroom.js: generic clean() replaced all LF/CRLF with spaces, breaking M01–M10 structured evidence parse/hydration after server roundtrip or device change. Added cleanEvidence() to preserve normalized LF while stripping other controls and enforcing 750-character cap. Expanded real classroom handler mock-SQL QA: M10 CRLF submission, API response, GET persistence and client parseEvidence() recover all fields including access. Updated FUN-10 security assertion to new sanitizer. Static QA 41070163512 SUCCESS (FUN-02 isolated backend, FUN-10, M10 checks). Browser QA 41070163461 IN_PROGRESS at checkpoint; previous Browser QA 41062701654 SUCCESS. Existing evidence stored by previous API may be flattened; no automatic recovery or production DB mutation. GDevelop GUI, HDMI, physical mobile, human playtest NOT_RUN. Roadmap 54/59; branch only, main unchanged."
     }
   ],
   "v4_checkpoint": {
