@@ -226,3 +226,22 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 **Commits:** matriz `c74fc802add77fab31aa2947a1fd4ef2fe0809b6`; CI `12ecf1ff8c5570e2b7d75a8225369d5ad86d1fa1`. Workflow [V5 M10 Guardian Shield Scale QA](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41065140442) criado e acionado. **Status de CI: pendente de resultado no momento desta anotação; não declarar PASS antes de conferir o job.**
 
 **Próximo passo:** validar resultado do CI e métricas por composição, corrigir qualquer falha, comparar efeitos em amostras maiores se necessário; só então propor ajuste mínimo (ainda experimental) e revisão humana. **G.2 nos PCs físicos não foi feito; H.1/H.2 reais e merge/deploy continuam bloqueados.**
+
+
+### Resultado comprovado da matriz G01/G10 (CI 41065406336)
+
+**GitHub Actions [41065406336](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41065406336) APROVADO.** O primeiro run [41065140442](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41065140442) falhou porque o teste unitário antigo não passava `approvedMissions:10` e `finalTrial:true` ao motor M10. Corrigido em `75d5a201664808c239a14331395cf9332abd547e`; o novo run passou com guardas de entrada, H.0, motor M10, replay M5 e matriz de escudos. O artefato `m10-guardian-shield-sensitivity-report` contém o JSON detalhado por cenário.
+
+**Amostra controlada:** 120 batalhas fictícias, 96 comparações pareadas, 24 blocos e 6 replays exatos; todas terminaram, sem alteração da M5. Os Guardiões ativaram G01 **916** vezes e G10 **480** vezes no baseline.
+
+| Braço experimental M10 | Vitórias do Guardião / 24 | Mudanças de vencedor individual vs. baseline | Escudo nominal emitido | Escudo absorvido |
+|---|---:|---:|---:|---:|
+| Baseline canônico | 18 | — | 64.746,59 | 33.757,13 |
+| Apenas G01 em 75% | 18 | 4 | 56.884,42 | 32.173,78 |
+| Apenas G10 em 75% | 18 | 6 | 59.027,10 | 33.454,82 |
+| G01 + G10 em 75% | 18 | 8 | 49.570,10 | 31.127,35 |
+| G01 + G10 em 0% | 12 | 12 | 5.793,92 | 5.099,38 |
+
+**Leitura cautelosa:** reduzir ambos os escudos a 75% baixou o escudo nominal em aproximadamente 23,4% e o absorvido em 7,8%, **sem mudar o total de vitórias da classe nesta amostra**, mas trocando oito vencedores individuais. Remover integralmente ambos os escudos mudou 12 vencedores e reduziu vitórias de Guardião de 18 para 12. Os números não homologam balanceamento: composições defensivas foram escolhidas deliberadamente, amostra pequena, casts e RNG posteriores divergem. Não foi feito nerf.
+
+**Próximo passo da mesma missão H.3:** examinar por cenário a sensibilidade das builds e comparar com a matriz de 100 builds aleatórias; testar candidatos com amostra maior e seeds independentes antes de qualquer alteração canônica. A G.2 nos PCs físicos e inspeção humana seguem pendentes; integração real H.1/H.2, `main` e produção continuam bloqueadas.
