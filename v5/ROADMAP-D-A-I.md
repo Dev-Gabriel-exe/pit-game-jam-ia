@@ -4,6 +4,9 @@
 
 # PIT Game Jam IA V5 — Roadmap de conclusão: Coliseu → câmera → integração
 
+> **D.1c — Fluxo único de convites e replay 3D, controle docente e teste de 30 alunos fictícios (30/10/2026):** lobby V5 opt-in, colegas elegíveis, convites/aceite/recusa, notificação e entrada automática no replay compartilhado D.1b. Painel docente com chave de homologação de 256 bits e bloqueio de novos desafios, preservando partidas iniciadas. O PostgreSQL descartável validou **15 duelos simultâneos com 30 alunos**, identidade/turma, exclusividade e liberação de reservas após encerramento ([CI 41080265093](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41080265093)). Teste completo com professor e três alunos em Chromium está em validação separada. **Só na branch `feature/v5-duelos-d1c`; V3, Neon real e `main` intactos.** Próximo gate: homologação dos PCs físicos G.2 e integração V3 autenticada H.1e, com aprovação explícita. Ver `v5/FASE-D1C-FLUXO-DUELOS.md`.
+
+
 > **D.1b — Duelo 1×1 com replay autoritativo concluído na branch experimental (30/10/2026):** o servidor calcula uma única luta com o motor Phase2 V5 aprovado, valida as builds/permite somente os dois alunos autenticados, grava poses/eventos/resultado com SHA-256 no PostgreSQL, reproduz em dois navegadores com câmeras e áudio locais, suporta reconexão, bloqueia cancelamento após início e libera slots ao finalizar. CI real PostgreSQL e Chromium duas sessões [run 41075905328 aprovado](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41075905328). Prévia fictícia sem API em `v5/duel-replay-d1b.html?demo=1`. **Não é integração com alunos reais, Neon, V3 nem main.** D.1c será fluxo unificado convites/duelo, controle docente, 30 usuários, G.2 física. Ver `v5/FASE-D1B-DUELO-COMPARTILHADO.md`.
 
 
