@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T03:14:05.338Z",
+  "last_completed_at": "2026-10-30T04:15:47.529Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Verify GitHub push CI and Chrome M08 projector audit at 1280x720, 1600x900, 1920x1080 for current branch SHA; continue M08 professor/student autonomy audit and then M09; do not start aesthetics or merge main",
+  "priority": "Confirm Node static CI for M09 field guidance and outstanding Chrome M08 projection; then audit M09 teacher/student alignment, test evidence flow; aesthetics remain deferred",
   "current_phase": "MISSOES",
-  "last_task": "V4-M08-STUDENT-ROUTE-NEGATIVE-TESTS",
+  "last_task": "V4-M09-STUDENT-FIELD-GUIDANCE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2569,12 +2569,19 @@
       "status": "in_progress",
       "commit": "1b1c7361c70f13316e760fbe0600005e4bd636c3",
       "summary": "M08 student practice now gives route-specific real Preview negative-test prompts for HUD, puzzle, and 3D, updated when tutorial route changes. Isolated V8 JS: 9/9 assertions PASS, syntax of production and QA PASS. Node CI/Chrome new commits NOT_CONFIRMED (GitHub status and PR-filtered workflow lookup empty). Physical HDMI, GDevelop GUI, mobile, human playtest NOT_RUN. Roadmap 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T04:15:47.529Z",
+      "task": "V4-M09-STUDENT-FIELD-GUIDANCE",
+      "status": "in_progress",
+      "commit": "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
+      "summary": "M09 student practice gained nine field-specific, screen-reader-linked instructions for real peer playtest evidence; no canned answers, no personal data, no private teacher notes. CSS and new CI Node regression added. Fetched production JS and QA parsed in V8; 28/28 actual isolated V8 runtime assertions PASS for field help, privacy, validation, persistence/isolation, evidence, private teacher notes. GitHub combined statuses=[] and PR-only workflow_runs=[] for new commit: CI/Chrome NOT_CONFIRMED. Human peer playtest, HDMI, GDevelop GUI, physical mobile NOT_RUN. 54/59 unchanged, main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M08-STUDENT-ROUTE-NEGATIVE-TESTS",
+    "task": "V4-M09-STUDENT-FIELD-GUIDANCE",
     "status": "in_progress",
-    "updated_at": "2026-10-30T03:14:05.338Z",
+    "updated_at": "2026-10-30T04:15:47.529Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2631,7 +2638,11 @@
       "7bd9850a8da6c013dc722bab9e7cda673beecadf",
       "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52",
       "e18f46cd3efbb95d7c955f87988bb9752cfbb8b0",
-      "1b1c7361c70f13316e760fbe0600005e4bd636c3"
+      "1b1c7361c70f13316e760fbe0600005e4bd636c3",
+      "85343feefc583c54b85a78ea020307e2aa7d7ad2",
+      "acd411e25596075073244f0d43dd8ddbe58a3345",
+      "145a5b044a55223e3cf6ff13f19723cc48e35f41",
+      "9b44b6d8e3f57baeed3fca882d40eeae7a478e26"
     ],
     "documentation_commit": "082bceba99653259f7148dd764b33e667a993df8",
     "tests": [
@@ -3138,13 +3149,23 @@
         "name": "Current M08 GitHub CI/Chrome confirmation",
         "sha": "1b1c7361c70f13316e760fbe0600005e4bd636c3",
         "result": "NOT_CONFIRMED: combined statuses=[] and PR-filtered workflow runs=[] for current and earlier M08 commits; does not indicate push CI outcome."
+      },
+      {
+        "name": "M09 student field guidance isolated production V8",
+        "sha": "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
+        "result": "PASS 28/28 actual V8 assertions on fetched M09 student/teacher production modules; syntax parsed for M09 JS and new QA CJS; nine accessible help strings, no student private notes, draft isolation, evidence roundtrip, invalid resolution rejection, teacher details closed. Node QA and browser NOT_RUN locally."
+      },
+      {
+        "name": "M09 latest GitHub CI",
+        "sha": "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
+        "result": "NOT_CONFIRMED: combined statuses=[] and PR-filtered workflow_runs=[]; static-qa workflow now includes node qa/v3-m09-field-guidance.cjs but execution result not accessible through current connector."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify CI/Chrome M08 projected 10 slides for each selected route and 3 viewport sizes; inspect student/teacher six-step evidence and continue M09 pedagogical audit",
-    "blocker": "GitHub Actions push-run status not available through current connector queries; manual GDevelop GUI, HDMI, physical mobile, peer playtest NOT_RUN"
+    "next_task": "Verify new M09 Node CI and prior M08 projector Chrome audit (3 viewports); then inspect M09 professor/student synchronization and M09 review evidence in preview; do not claim human tests",
+    "blocker": "GitHub connector does not expose push-triggered Actions workflow results via commit lookup; HDMI, actual GDevelop GUI, physical mobile, observed peer playtest remain NOT_RUN"
   }
 }
