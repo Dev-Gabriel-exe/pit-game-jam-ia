@@ -384,6 +384,7 @@ $('phase2Builds').addEventListener('click',()=>{
  initRound();
 });
 $('startBattle').addEventListener('click',begin);
+$('enableBattleAudio').addEventListener('click',()=>{const ok=state.stage?.enableSound();$('enableBattleAudio').textContent=ok?'🔊 Som solicitado':'🔇 Som indisponível';});
 $('pauseBattle').addEventListener('click',pause);
 $('arenaStage').addEventListener('v5-stage-autopaused',()=>{
  if(!state.fought){
