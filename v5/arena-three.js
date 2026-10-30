@@ -894,7 +894,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   return true;
  }
  // Real orbit input has precedence over automatic camera.
- controls.addEventListener('start',()=>{if(autoCamera&&cameraViewer?.state().audience!=='student')disableAutoCamera('orbit')});
+ // Direct pointer input cancels the professor's automatic camera immediately.
+ // OrbitControls' 'start' is not always fired for touch/canvas overlays.
+ const onManualPointer=()=>{if(autoCamera&&cameraViewer?.state().audience==='teacher')disableAutoCamera('orbit')};
+ renderer.domElement.addEventListener('pointerdown',onManualPointer);
+ controls.addEventListener('start',onManualPointer);
  function freeCamera(){
   disableAutoCamera('preset');
   followId=null;controls.enableRotate=true;controls.enablePan=true;
@@ -1328,7 +1332,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  document.addEventListener('visibilitychange',onVisibility);
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
-  document.removeEventListener('visibilitychange',onVisibility);controls.dispose();
+  document.removeEventListener('visibilitychange',onVisibility);
+  renderer.domElement.removeEventListener('pointerdown',onManualPointer);
+  controls.removeEventListener('start',onManualPointer);controls.dispose();
   clearHeroes();spriteKit?.dispose();nicknameLayer.remove();floatingLayer.remove();
   stormGeometry.dispose();stormMaterial.dispose();
   scene.traverse(o=>{if(o.geometry)o.geometry.dispose?.()});
