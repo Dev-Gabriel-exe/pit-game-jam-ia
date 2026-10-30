@@ -400,3 +400,11 @@
 - **Regressão:** `qa/v3-m09-field-guidance.cjs` cobre texto achatado, relatório incompleto, rótulo desconhecido, campo duplicado, resultado inválido e ausência de escrita em rascunho local. Roundtrip válido continua funcionando e as três declarações manuais não são marcadas automaticamente.
 - **Execução nesta rodada:** V8 analisou sintaxe do módulo e do teste, executou quatro casos de evidência inválida, verificou ausência de escrita local e roundtrip válido com checks vazios: **PASS**. O teste Node nativo será verificado na GitHub Actions; não foi executado localmente. QA estática e Browser QA anteriores do SHA `54d95c39` **SUCCESS**; novas CI e Browser QA aguardavam resultado. HDMI físico, GUI GDevelop, celular físico e playtest humano **NOT_RUN**.
 - **Commits:** código `7d4500c3`; regressão `c5b5a5f0`. Próxima fatia: confirmar CI do commit de regressão e examinar o mesmo risco de reidratação parcial nas missões 01–08 e 10, sem inferir dados ausentes. `main` não alterada.
+
+
+## M03 — Recuperação histórica sem inferência (30/10/2026)
+
+- **Falha real:** `student-mission-three.js` recuperava campos por `find` de prefixos, aceitando registros incompletos, duplicados e tipo 2D implícito em evidências antigas; isso podia preencher uma ficha sem comprovação estruturada.
+- **Correção:** `parseEvidence` agora exige exatamente 11 linhas em ordem (cabeçalho e dez rótulos), tipo 2D/3D reconhecido, campos obrigatórios e limites da serialização. Evidência achatada ou adulterada não preenche o formulário; o aviso de recuperação parcial já existente permanece disponível no caderno do aluno. O rascunho local, inclusive checkboxes ou escolha 3D isolada, prevalece. Testes manuais de Preview nunca são reconstruídos automaticamente.
+- **Regressão:** `qa/v3-m03-legacy-evidence.cjs` adicionada à CI estática; execução 41143034496 **SUCCESS** no commit `23ca528`. Browser QA 41143034524 estava em execução no checkpoint. Testes reais de GDevelop GUI, HDMI, celular físico e alunos: **NOT_RUN**.
+- **Próximo alvo:** recuperação da Missão 02, depois Missão 01. Não iniciar polimento estético antes da auditoria pedagógica.
