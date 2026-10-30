@@ -394,6 +394,37 @@ function pedagogicalDemoSlides(root,mission){
    return result.length===10?result:null;
   }
  }
+ // M10/Praticar: show the same eight authorial fields and three real checks
+ // as the student form, not only generic rubric cards. Teacher notes stay off HDMI.
+ if(mission===10&&root.querySelector('#t10vRoot .t10v-practice-guide')){
+  const source=root.querySelector('#t10vRoot');
+  const pairs=[...source.querySelectorAll('.t10v-practice-fields > article')];
+  const checks=source.querySelector('.t10v-practice-tests');
+  const criteria=[...source.querySelectorAll('.t10v-rubric > article')];
+  if(pairs.length===4&&checks&&criteria.length===6){
+   const result=[];
+   function add(node,title,id){
+    const wrapper=document.createElement('section');
+    wrapper.className='t10v-root pit-projector-m10-practice';
+    wrapper.dataset.pitProjectorM10Practice='M10:'+id;
+    wrapper.innerHTML=cleanCopy(node);
+    result.push({title,html:wrapper.outerHTML});
+   }
+   add(source.querySelector('header'),'Apresentação do protótipo · 18 minutos','intro');
+   pairs.forEach((node,i)=>add(node,'Ficha do aluno · campos '+(i*2+1)+'–'+(i*2+2),'fields-'+(i+1)));
+   add(checks,'Três testes que precisam acontecer de verdade','checks');
+   const rubric=document.createElement('section');
+   rubric.className='t10v-practice-criteria';
+   const h=document.createElement('h3');h.textContent='O que será avaliado';
+   const list=document.createElement('ul');
+   criteria.forEach(node=>{const li=document.createElement('li');li.textContent=node.querySelector('h3')?.textContent?.trim()||'';list.append(li)});
+   const p=document.createElement('p');p.textContent='A ficha orienta a demonstração; só a verificação do jogo e da cópia editável permite revisar a entrega.';
+   rubric.append(h,list,p);
+   add(rubric,'Critérios públicos da avaliação final','criteria');
+   add(source.querySelector('footer'),'Aprovação somente após revisão real','footer');
+   return result.length===8?result:null;
+  }
+ }
  // M10/Comprovar: the six public release criteria must be legible on HDMI.
  // Never clone the collapsed teacher-only guidance into projected content.
  if(mission===10&&root.querySelector('#t10vRoot .t10v-rubric')){
