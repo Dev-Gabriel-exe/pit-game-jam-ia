@@ -157,3 +157,14 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 - **Evidência visual:** artefato `m10-webgl-final-30`, screenshot `qa/v5-m10-visual-30.png` no [CI 41037680943](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41037680943/artifacts/12968383289).
 
 **O que NÃO está homologado:** estética validada por humano, FPS nos PCs reais (G.2), balanceamento final da M10, contas e turmas, progressão salva, transmissão de batalha entre dispositivos e merge. O agente de balanceamento deve continuar os testes individuais do Guardião; não mudar os valores oficiais sem evidência e aprovação. **A `main` não foi alterada.**
+
+## Rodada H.3 — diagnóstico individual G01/G10/G05/J09 (30/10/2026)
+
+**Incremento implementado, CI específico em validação.** A prévia WebGL M10 já foi aprovada separadamente no run [41037680943](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41037680943); esta rodada **não** modifica o modo 3D, o balanceamento oficial, a M5, o XP ou o servidor.
+
+- `v5/phase2-combat.js`: opção nova `experimentalGuardianTalentAblation` **somente M10**, desligada por padrão, aceita exclusivamente `G01`, `G10`, `G05`, `J09`. Rejeita valores desconhecidos, uso na M5 e combinação com ablação por grupo. A seleção canônica de dez talentos e os vinte pontos permanecem na build; apenas o efeito completo do talento indicado é suprimido na simulação fictícia.
+- `qa/v5-m10-guardian-individual.cjs`: matriz de **120 partidas planejadas**, 24 blocos (2 builds do Guardião: defensiva e mista × 3 cenários: 4 equilibrados, 30 equilibrados e 30 com metade Guardiões × 2 seeds × 2 rotações). Cada bloco compara baseline com as quatro ablações isoladas, produzindo **96 pares**, 12 replays determinísticos e verificações de snapshot inicial, seleção, ausência de ativação do talento suprimido, cobertura dos quatro talentos, regressão M5 e rejeição de entradas inválidas.
+- Métricas por braço: vitórias, escudo emitido nominalmente, escudo absorvido, cura, dano recebido, dano causado, sobrevivência média, ativações dos quatro talentos e mudança do vencedor. **Limitação:** ablação do efeito inteiro, não só do escudo; o escudo nominal não mede capacidade efetivamente usada; desvio de combate e consumo posterior de RNG não são controlados.
+- Workflow `.github/workflows/v5-m10-guardian-individual-qa.yml`: [CI focal 41042722247](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41042722247), relatório JSON sintético como artefato por 14 dias, mais regressões H.0, M5/E.7, M10 e prévia M10. **Não marcar aprovado até conclusão de todos os testes.**
+
+**Próximo passo:** interpretar resultados e cobertura dos quatro talentos; só propor ajuste mínimo com evidência comparativa, nunca alterar atributos canônicos automaticamente. G.2 em PCs reais, inspeção humana do visual, H.1/H.2 autenticadas e integração `main` seguem bloqueadas.
