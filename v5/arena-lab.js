@@ -235,6 +235,7 @@ function initRound({sameSeed=false}={}){
  state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
  $('actionCamera').textContent='◎ Diretor automático';
  $('directorStatus').textContent='Câmera: manual';
+ $('studentViewStatus').textContent='Professor · diretor cinematográfico';
  state.spotId=null;state.spotPriority=0;state.spotTime=-999;state.lastHitLog=-999;state.lastCameraTime=-999;
  state.abilityCount=0;
  $('talentTelemetry').dataset.active='false';
@@ -254,6 +255,9 @@ function initRound({sameSeed=false}={}){
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('cinematicCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission,trial=state.phase2&&mission===5;
  const toggle=$('phase2Mode');
+ $('studentViewControls').hidden=!trial;
+ $('studentViewButton').disabled=!trial;
+ $('teacherViewButton').disabled=!trial;
  const sets=['Brutalidade / Elemental','Alternativos I','Mistos I','Caminhos II','Mistos II','Caminhos III','Mistos III','Caminhos IV','Mistos IV','Caminhos V','Mistos V'];
  const chooseBuilds=$('phase2Builds');
  chooseBuilds.disabled=!trial;
@@ -294,6 +298,14 @@ function initRound({sameSeed=false}={}){
    balancePreset:trial&&experimentalHpBalance?'e-hp2':'baseline'});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
+  // F.3 uses the exact fictitious roster already in this single simulation.
+  // No second engine, account binding or network broadcast.
+  const select=$('studentViewHero');select.replaceChildren();
+  for(const hero of state.roster){
+   const choice=document.createElement('option');
+   choice.value=String(hero.id);choice.textContent=hero.name||hero.build?.name||String(hero.id);
+   select.append(choice);
+  }
   $('cinematicCamera').setAttribute('aria-pressed','true');
   $('overviewCamera').setAttribute('aria-pressed','false');}
  catch(e){message('ERRO AO PREPARAR ARENA');$models.textContent=String(e.message||e);return;}
@@ -353,18 +365,20 @@ $('arenaStage').addEventListener('v5-stage-autopaused',()=>{
 });
 $('resetBattle').addEventListener('click',initRound);
 $('overviewCamera').addEventListener('click',()=>{
+ if(state.stage?.viewerSnapshot()?.viewer?.audience==='student')state.stage.setTeacherCamera();
  state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
  $('cinematicCamera').setAttribute('aria-pressed','false');
  $('overviewCamera').setAttribute('aria-pressed','true');
  state.stage?.overview();
 });
 $('cinematicCamera').addEventListener('click',()=>{
+ if(state.stage?.viewerSnapshot()?.viewer?.audience==='student')state.stage.setTeacherCamera();
  state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
  $('overviewCamera').setAttribute('aria-pressed','false');
  $('cinematicCamera').setAttribute('aria-pressed','true');
  state.stage?.cinematic();
 });
-$('followSpotlight').addEventListener('click',()=>{if(state.spotId)state.stage?.focusFighter(state.spotId)});
+$('followSpotlight').addEventListener('click',()=>{if(state.spotId){if(state.stage?.viewerSnapshot()?.viewer?.audience==='student')state.stage.setTeacherCamera();state.stage?.focusFighter(state.spotId)}});
 function cameraStatus(automatic,shot){
  state.director=automatic;
  $('actionCamera').setAttribute('aria-pressed',String(automatic));
@@ -374,6 +388,7 @@ function cameraStatus(automatic,shot){
  $('directorStatus').dataset.mode=automatic?'auto':'manual';
 }
 $('actionCamera').addEventListener('click',()=>{
+ if(state.stage?.viewerSnapshot()?.viewer?.audience==='student'){state.stage.setTeacherCamera();return}
  if(state.director){state.stage?.enableAutoCamera(false);state.stage?.cinematic()}
  else state.stage?.enableAutoCamera(true);
 });
@@ -382,6 +397,25 @@ $('arenaStage').addEventListener('v5-camera-changed',e=>{
 });
 $('arenaStage').addEventListener('v5-director-shot',e=>{
  if(state.director)cameraStatus(true,e.detail.mode);
+});
+$('studentViewButton').addEventListener('click',()=>{
+ const hero=$('studentViewHero').value;
+ if(hero)state.stage?.setStudentCamera(hero);
+});
+$('teacherViewButton').addEventListener('click',()=>state.stage?.setTeacherCamera());
+$('arenaStage').addEventListener('v5-student-view',event=>{
+ const view=event.detail;
+ if(view.audience==='student'){
+  const hero=state.roster.find(r=>String(r.id)===view.studentId);
+  const label=hero?.name||'Personagem';
+  const spectating=view.mode==='spectating';
+  $('studentViewStatus').textContent=spectating?
+   label+' eliminado · vendo o MESMO diretor da arena':label+' vivo · câmera própria em 3ª pessoa';
+  cameraStatus(spectating,spectating?'climax':'third-person');
+ }else{
+  $('studentViewStatus').textContent='Professor · diretor cinematográfico';
+  cameraStatus(true,state.stage?.viewerSnapshot()?.feed?.mode||'overview');
+ }
 });
 const expandButton=$('expandStage');
 function setImmersive(on){
@@ -392,7 +426,7 @@ function setImmersive(on){
 }
 expandButton.addEventListener('click',()=>setImmersive(!document.body.classList.contains('arena-immersive')));
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('arena-immersive'))setImmersive(false)});
-$('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn)state.stage?.focusFighter(btn.dataset.focus);});
+$('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn){if(state.stage?.viewerSnapshot()?.viewer?.audience==='student')state.stage.setTeacherCamera();state.stage?.focusFighter(btn.dataset.focus)}});
 $('damagePace').addEventListener('click',()=>{
  state.damageIndex=(state.damageIndex+1)%PACES.length;
  initRound({sameSeed:true});
