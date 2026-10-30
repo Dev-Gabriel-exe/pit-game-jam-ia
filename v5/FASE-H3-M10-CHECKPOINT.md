@@ -358,3 +358,16 @@ Em 30 equilibrados, a mudança **somente de geometria** alterou a identidade ven
 **Código:** commit [82e2dbc](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/82e2dbcfa6bca355ce7030f93c4ddbfeba80c264). **CI focal confirmado:** [41108159229](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41108159229) — **SUCCESS** no SHA `82e2dbc`, job `m10-factorial` SUCCESS. O workflow executou regressões M5/H.0/M10, a matriz de 384 batalhas e o analisador com os novos campos. Artefato [m10-factorial-seed-crossover](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41108159229/artifacts/13003396300), 9.535 bytes compactados, contém os dois JSONs. O QA geral no mesmo SHA [41108159231](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41108159231) também concluiu SUCCESS. Os valores numéricos leave-one-out estão no JSON do artefato; não foram transcritos sem leitura direta.
 
 **Próximo passo da MESMA missão:** confirmar CI e artefato, registrar sensibilidade máxima observada por composição/arquétipo e ampliar seeds independentes se a incerteza permanecer alta. Não interpretar leave-one-out nem bootstrap como homologação de equilíbrio com n=4/8. **G.2 nos PCs físicos não foi executado**; H.1/H.2 reais, V3, `main`, produção, XP, aprovações, notas, usuários e turmas continuam bloqueados.
+
+
+## H.3/M10 — ampliação de seeds distintas, experimento fatorial (30/10/2026)
+
+**Uma missão em execução:** ampliar a amostra sintética de seeds antes de considerar qualquer ajuste de HP, escudo, talento ou dano. Releitura dos roadmaps D–I, checkpoints E/F/G, H.0 e último CI M10 [41108159229](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41108159229) (SUCCESS para a amostra anterior).
+
+**Incremento:** o fatorial 2×2 geometria × ordem passa de **4 para 8 seeds distintas** na composição de quatro heróis e de **8 para 16 seeds distintas** em cada composição de 30. As primeiras seeds mantêm a fórmula anterior, permitindo comparar os resultados sem trocar builds ou configurações. Totais esperados: **768 batalhas distintas, 864 observações de braços (baseline reutilizado entre rotações), 648 comparações pareadas, 18 replays idênticos, 9 verificações neutras e 648 verificações geométricas**. Os arquétipos ofensivo/defensivo/pseudoaleatório e as rotações compartilham seeds; não contam como amostras independentes. Análise bootstrap e leave-one-seed-out continua agrupando por seed.
+
+**Arquivos:** `qa/v5-m10-factorial-seed-crossover.cjs`, `qa/v5-m10-factorial-seed-analysis.cjs` e `.github/workflows/v5-m10-factorial-seed-crossover-qa.yml`. Commits: `91ca4032`, `f8db4fc0`, `13c241e9`.
+
+**Estado deste checkpoint:** código e workflow enviados para a branch experimental; **CI da nova amostra ainda precisa de confirmação**. Não interpretar os totais planejados como batalhas executadas até conferir o job e o artefato. Próximo passo da MESMA missão: conferir o CI do último SHA, corrigir falhas, extrair diferenças de vitórias e influência leave-one-seed-out; não homologar fairness com n=8/16.
+
+**Gates preservados:** M5 (5 talentos/10 pontos), M10 (10 talentos/20 pontos), quatro classes KayKit, 120 talentos, câmera, arquibancadas, XP, aprovação, usuários e turmas sem alterações. G.2 em PCs físicos pendente; H.1/H.2 reais, `main`, merge e produção bloqueados.
