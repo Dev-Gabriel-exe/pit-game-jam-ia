@@ -78,6 +78,9 @@
 
 ### H — Integração pedagógica / segurança e progressão
 
+**H.3 — matriz M10 concluída como diagnóstico, não como balanceamento homologado (30/10/2026):** 80 batalhas fictícias com 4/30 participantes, 8 seeds, 5 composições e 11 variantes por classe; 80/80 finalizaram. Em 30 personagens o **Guardião venceu 22/40**, versus ~9,87 esperadas proporcionalmente à participação; em quatro jogadores os slots 1/2 somaram 32/40 vitórias. Ambos exigem investigação pareada de spawn/classe antes de ajustar stats. [CI aprovado 41009533478](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41009533478), relatório e próxima missão em `v5/FASE-H3-M10-CHECKPOINT.md`. **Nenhum balanceamento foi modificado nesta rodada; G.2, UI M10, H.1/H.2 e merge continuam pendentes.**
+
+
 **H.3/M10 primeiro incremento experimental (30/10/2026):** o motor `v5/phase2-combat.js` agora permite, **somente por opt-in explícito**, batalhas fictícias da Missão 10 com 10 talentos e 20 pontos por personagem; M5 continua padrão e limitada a 5 talentos/10 pontos. `m10ArenaAdapter` verifica as travas H.0 e `checkTransition` impede mutações após lock final. O primeiro [run 41004049659](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41004049659) passou com replays determinísticos de 4 e 30 participantes; veja `v5/FASE-H3-M10-CHECKPOINT.md` para detalhes, limitações e próxima missão. **Não confundir motor experimental com interface M10 integrada, balanceamento homologado, sincronização ou produção; G.2 e H.1/H.2 permanecem pendentes.**
 
 
