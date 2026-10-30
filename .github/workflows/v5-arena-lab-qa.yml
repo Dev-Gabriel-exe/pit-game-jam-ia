@@ -40,6 +40,7 @@ on:
       - 'qa/v5-tank-survivability.cjs'
       - 'qa/v5-phase2-navigation.cjs'
       - 'qa/v5-ranged-counterplay.cjs'
+      - 'qa/v5-hp-balance.cjs'
       - '.github/workflows/v5-arena-lab-qa.yml'
   workflow_dispatch:
 permissions:
@@ -82,12 +83,14 @@ jobs:
           node --check qa/v5-tank-survivability.cjs
           node --check qa/v5-phase2-navigation.cjs
           node --check qa/v5-ranged-counterplay.cjs
+          node --check qa/v5-hp-balance.cjs
           node qa/v5-coliseum-scale.cjs
           node qa/v5-arena-pacing.cjs
           node qa/v5-engagement-spread.cjs
           node qa/v5-tank-survivability.cjs
           node qa/v5-phase2-navigation.cjs
           node qa/v5-ranged-counterplay.cjs
+          node qa/v5-hp-balance.cjs
           node qa/v5-arena-lab.cjs
           node qa/v5-arena-navigation.cjs
           node qa/v5-arena-targeting.cjs
