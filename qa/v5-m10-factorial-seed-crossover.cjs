@@ -76,7 +76,7 @@ const report={schema:'pit-v5-m10-factorial-seed-crossover-v1',
   'Fixed deterministic archetypes do not sample the complete talent/build space; no balance nerf is justified.',
   'No physical PC G.2, real H.1/H.2, XP, students, classes, production or main modifications.'
  ]};
-let games=0,comparisons=0,replays=0,geometryChecks=0,neutralChecks=0;
+let games=0,observedCells=0,comparisons=0,replays=0,geometryChecks=0,neutralChecks=0;
 for(let si=0;si<SCENARIOS.length;si++){
  const sc=SCENARIOS[si],classes=classesFor(sc.counts),n=classes.length;
  const entriesByKind=Object.fromEntries(ARCHETYPES.map(kind=>[kind,
@@ -95,7 +95,7 @@ for(let si=0;si<SCENARIOS.length;si++){
    const opts={...OPTIONS,seed,experimentalCritSeed:(seed^0x5f3759df)>>>0};
    const fresh=P.battle(entries,opts),start=initial(fresh),basePos=positions(fresh);
    const seedRow={seed,shifts:[],guardianWins:Object.fromEntries(ARMS.map(a=>[a,0]))};
-   const baseline=fresh.run();
+   const baseline=fresh.run();games++;
    assert(baseline.finished&&baseline.winner);
    assert.equal(baseline.events.filter(e=>e.type==='end').length,1);
    if(k===0){
@@ -132,7 +132,8 @@ for(let si=0;si<SCENARIOS.length;si++){
      const result=results[arm];
      row.winners[arm]=result.winner.id;
      row.winnerClasses[arm]=result.winner.klass;
-     summary.games[arm]++;games++;
+     summary.games[arm]++;observedCells++;
+     if(arm!=='baseline')games++;
      const won=Number(result.winner.klass==='guardian');
      summary.guardianWins[arm]+=won;seedRow.guardianWins[arm]+=won;
      if(arm!=='baseline'){
@@ -163,9 +164,9 @@ const m5opts={seed:4175863657,arenaScale:5,damageScale:.5};
 assert.deepEqual(P.battle(m5,m5opts).run(),P.battle(m5,{...m5opts,arenaMission:5}).run());
 assert.throws(()=>P.battle(m5,{...m5opts,experimentalTurnOrder:m5.map(e=>e.id)}),/M10/);
 assert.throws(()=>P.battle(m5,{...m5opts,experimentalSpawnPositions:{}}),/M10/);
-assert.equal(games,432);assert.equal(comparisons,324);
+assert.equal(games,384);assert.equal(observedCells,432);assert.equal(comparisons,324);
 assert.equal(replays,18);assert.equal(neutralChecks,9);assert.equal(geometryChecks,324);
-report.totals={games,comparisons,replays,neutralChecks,geometryChecks,m5Unchanged:true,
+report.totals={games,observedCells,comparisons,replays,neutralChecks,geometryChecks,m5Unchanged:true,
  independentSeedsPer30Composition:8};
 report.hash=digest(report.scenarios);
 if(process.env.M10_FACTORIAL_REPORT_FILE){
@@ -181,4 +182,5 @@ console.log('M10 FACTORIAL SUMMARY '+JSON.stringify(report.scenarios.map(s=>({
  }]))
 }))));
 console.log('PASS M10 factorial crossover: '+games+' games, '+comparisons+
- ' paired comparisons, '+replays+' exact replays, M5 unchanged; hash '+report.hash);
+ ' paired comparisons, '+observedCells+' arm observations (reused baseline), '+
+ replays+' exact replays, M5 unchanged; hash '+report.hash);
