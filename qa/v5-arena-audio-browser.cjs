@@ -37,6 +37,8 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
   console.log('PASS V5 30 GLB browser audio: '+JSON.stringify(result));
   // Regression: WebAudio constructor failure must never blank or freeze the WebGL arena.
+  // Free the 30-fighter SwiftShader scene before opening the second WebGL context.
+  await page.close();
   // Reuse the same browser context/cache: do not trigger a second burst of remote KayKit GLB downloads.
   const silent=await context.newPage();
   await silent.setViewportSize({width:1280,height:900});
@@ -53,7 +55,9 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
     stage:document.querySelector('#arenaStage')?.dataset,
     status:document.querySelector('#arenaStatus')?.textContent,
     loading:document.querySelector('#stageLoading')?.textContent,
-    canvas:!!document.querySelector('#arenaStage canvas')
+    canvas:!!document.querySelector('#arenaStage canvas'),
+    loadErrors:[...document.querySelectorAll('[data-v5-glb-error]')].map(e=>e.textContent),
+    stageLoading:document.querySelector('#stageLoading')?.textContent
    }));
    throw Error('WebAudio-denied GLB readiness timeout: '+JSON.stringify({diagnostic,errors:silentErrors}).slice(0,1800));
   });
