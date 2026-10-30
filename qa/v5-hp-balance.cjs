@@ -28,7 +28,7 @@ function game(entries,seed,preset){
   const a=baseline.fighters.find(x=>x.build.klass===k),b=tuned.fighters.find(x=>x.build.klass===k);
   assert(a&&b);
   assert.equal(b.stats.hp-a.stats.hp,k==='warrior'?17:k==='guardian'?10:0,k+' HP delta');
-  assert.equal(b.stats.range-a.stats.range,k==='hunter'?-1.2:0,k+' range delta');
+  assert(Math.abs((b.stats.range-a.stats.range)-(k==='hunter'?-1.2:0))<1e-9,k+' range delta');
   assert.equal(b.stats.attack,a.stats.attack,k+' damage unchanged');
   assert.equal(b.stats.defense,a.stats.defense,k+' DEF unchanged');
   assert.equal(b.stats.speed,a.stats.speed,k+' speed unchanged (chase factor is contextual)');
