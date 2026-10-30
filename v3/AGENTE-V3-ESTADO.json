@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-29T23:18:53.490Z",
+  "last_completed_at": "2026-10-30T00:19:20Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Investigate 1600x900 projector scroll (M04 4/11, M05 5/14) without losing public instruction; then resume 10-mission professor/student audit before aesthetics",
+  "priority": "Resume pedagogy-first professor/student audit: inspect M08/Demonstrar and six-step student path, fix actual omissions before aesthetics; 900p M04/M05 scrolling now resolved in Chrome",
   "current_phase": "MISSOES",
-  "last_task": "V4-M04-M05-CHROME-720P-VERIFY",
+  "last_task": "V4-M04-M05-CHROME-900P-FIX",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2541,12 +2541,19 @@
       "status": "in_progress",
       "commit": "0dc6fe4ceb85f20265d31274a8e052a9c2565c18",
       "summary": "Downloaded and inspected all 3 Chrome projector audit metrics artifacts. 720p M04/M05 now 0 scroll (11/14 slides), 1080p also 0, 900p remains 4/5 scrolling. Diagnosed 720p/1080p CI failure: forced-height reading hint stale, not content failure. Added ResizeObserver to projector and deterministic regression; 004b projector audit SUCCESS, 0dc queued at checkpoint. Physical/human NOT_RUN. main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T00:19:20Z",
+      "task": "V4-M04-M05-CHROME-900P-FIX",
+      "status": "done",
+      "commit": "4b617c7f1e427dca5b62900b7b2595b80cec98ee",
+      "summary": "Chrome 1600x900 projector scroll in M04 (4/11) and M05 (5/14) was caused by compact CSS applying only below 800px. Extended compact header/footer/stage padding through 950px without reducing tutorial font sizes or removing public instructions. New 720p/900p no-scroll regression and scroll-slide diagnostics added. Chrome audit run 40978868112 SUCCESS 3/3 viewport jobs; static QA 40978868187 SUCCESS. 1600x900 now M04 0/11, M05 0/14 vertical scroll; both 0 horizontal overflow. General Browser QA 40978868125 pending at checkpoint; human HDMI/GDevelop GUI/mobile/peer playtest NOT_RUN. Main untouched. Roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M04-M05-CHROME-720P-VERIFY",
-    "status": "in_progress",
-    "updated_at": "2026-10-29T23:18:53.490Z",
+    "task": "V4-M04-M05-CHROME-900P-FIX",
+    "status": "done",
+    "updated_at": "2026-10-30T00:19:20Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2592,9 +2599,11 @@
       "e37633edd179cadfae7450434b1f888d70af0751",
       "0c9407b302e699209782d15ba4e4a90fb0bc4fb0",
       "004b1afd020e73886cdd104c54683d7948d10790",
-      "0dc6fe4ceb85f20265d31274a8e052a9c2565c18"
+      "0dc6fe4ceb85f20265d31274a8e052a9c2565c18",
+      "cfd9cc2fb7b4a6a64cf4fa61ba26837dd8f2f1d8",
+      "4b617c7f1e427dca5b62900b7b2595b80cec98ee"
     ],
-    "documentation_commit": "9805ced81a8f3d891fa4a1f152e12d372500a743",
+    "documentation_commit": "6471449ec12203dd51ef008611a398a6f4477117",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3035,6 +3044,34 @@
       },
       {
         "name": "GDevelop GUI, physical HDMI/mobile and human playtest",
+        "result": "NOT_RUN"
+      },
+      {
+        "name": "M04/M05 1600x900 CSS compact stage measured in real Chrome",
+        "sha": "cfd9cc2fb7b4a6a64cf4fa61ba26837dd8f2f1d8",
+        "run_id": 40978812360,
+        "result": "SUCCESS 3/3 viewports; M04 demo 0/11 scroll, M05 demo 0/14 scroll at 1600x900, zero horizontal overflow"
+      },
+      {
+        "name": "M04/M05 zero-scroll regression across 720p and 900p",
+        "sha": "4b617c7f1e427dca5b62900b7b2595b80cec98ee",
+        "run_id": 40978868112,
+        "result": "SUCCESS 3/3 Chrome jobs; 720p and 900p no-scroll assertions passed; V8 syntax PASS"
+      },
+      {
+        "name": "M04/M05 projector static QA",
+        "sha": "4b617c7f1e427dca5b62900b7b2595b80cec98ee",
+        "run_id": 40978868187,
+        "result": "SUCCESS"
+      },
+      {
+        "name": "M04/M05 general Browser QA",
+        "sha": "4b617c7f1e427dca5b62900b7b2595b80cec98ee",
+        "run_id": 40978868125,
+        "result": "IN_PROGRESS at checkpoint; not claimed"
+      },
+      {
+        "name": "Physical HDMI, real GDevelop GUI, physical mobile, observed human playtest",
         "result": "NOT_RUN"
       }
     ],
