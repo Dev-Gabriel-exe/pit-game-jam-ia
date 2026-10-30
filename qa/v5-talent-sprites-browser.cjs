@@ -37,6 +37,25 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-active')),0,'Reset must clean all sprites');
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'Reset must clear telemetry');
   assert.equal(Number(await stage.getAttribute('data-v5-talent-fx-active')),0);
+  // 30-hero stress smoke: respect budget and keep sprite identities legible.
+  await page.locator('[data-roster="30"]').click();
+  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.fighterCount===30&&
+   window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:140000});
+  assert.equal(Number(await stage.getAttribute('data-v5-models-failed')),0);
+  await page.locator('#startBattle').click();
+  await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5SpriteVisualEvents||0)>=3,
+   null,{timeout:90000});
+  const crowd=await stage.evaluate(el=>({
+   active:Number(el.dataset.v5SpriteVisualActive),
+   talentActive:Number(el.dataset.v5TalentFxActive),
+   displayed:Number(el.dataset.v5SpriteVisualEvents)
+  }));
+  assert(crowd.displayed>=3,'Real talents must produce sprites among 30 combatants');
+  assert(crowd.active<=36,'30-person stress must maintain 18+18 visual cap');
+  assert(crowd.talentActive<=18,'30-person ability budget exceeded');
+  await page.locator('#resetBattle').click();
+  assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-active')),0,
+   'Reset after 30 actors must free every sprite');
   await page.locator('[data-mission="10"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'M10 never triggers M5 sprites');
