@@ -6,6 +6,8 @@
 import {createStage} from './arena-three.js';
 import * as THREE from 'three';
 const CORE=window.PIT_V5_CORE,PHASE2=window.PIT_V5_PHASE2;
+const M10_VISUAL=window.PIT_V5_M10_VISUAL_ROSTER;
+const PROGRESSION=window.PIT_V5_PROGRESSION_CONTRACT;
 const CATALOG=window.PIT_V5_FASE1||[];
 const $=id=>document.getElementById(id);
 const palette={warrior:'ember',mage:'amethyst',hunter:'jade',guardian:'azure'};
@@ -15,6 +17,11 @@ const allowed=CATALOG.map(x=>x.id);
 const expected=['warrior','mage','hunter','guardian'];
 if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as quatro classes CC0 e o núcleo V5.');
 const params=new URLSearchParams(location.search);
+// H.3: M10 strictly opt-in, fictional roster, no writes to XP or user progress.
+const m10Preview=params.get('m10preview')==='1';
+if(m10Preview&&(!PHASE2||!M10_VISUAL||!PROGRESSION))
+ throw Error('Prévia M10 exige motor e contrato H0; legado bloqueado');
+const m10Policy=m10Preview?PROGRESSION.createPolicy(PHASE2.TALENTS):null;
 // Experimental M5-only comparison; absent query retains established movement.
 const experimentalSteering=params.get('nav')==='steer';
 const experimentalCounterplay=params.get('counterplay')==='1';
@@ -41,10 +48,12 @@ const PACES=[
  {scale:.60,mageBonus:1.10,label:'Dano 60% · épico'},
  {scale:.50,mageBonus:1.10,label:'Dano 50% · lendário'}
 ];
-const state={damageIndex:3,mission:5,count:importedBuild||params.get('count')==='4'?4:30,customBuild:importedBuild,phase2:params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
+const state={damageIndex:3,mission:m10Preview?10:5,count:importedBuild||params.get('count')==='4'?4:30,customBuild:importedBuild,phase2:m10Preview||params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 function roster(mission,count=30){
+ if(mission===10&&m10Preview)
+  return M10_VISUAL.createRoster(PHASE2,m10Policy,{count,variant:state.phase2Variant});
  if(state.phase2){
   if(mission!==5||!PHASE2)throw Error('Motor B.4 aceita apenas missão 5');
   return Array.from({length:count},(_,i)=>{
@@ -259,7 +268,7 @@ function initRound({sameSeed=false}={}){
  $('retryModels').hidden=true;$('retryModels').disabled=false;
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('cinematicCamera').disabled=false;$('actionCamera').disabled=false;
- const mission=state.mission,trial=state.phase2&&mission===5;
+ const mission=state.mission,trial=state.phase2&&(mission===5||mission===10&&m10Preview);
  const toggle=$('phase2Mode');
  $('studentViewControls').hidden=!trial;
  $('studentViewButton').disabled=!trial;
@@ -270,9 +279,14 @@ function initRound({sameSeed=false}={}){
  chooseBuilds.textContent='✦ Combinações: '+sets[state.phase2Variant];
  chooseBuilds.setAttribute('aria-label','Alterar combinação de talentos: '+sets[state.phase2Variant]);
  toggle.setAttribute('aria-pressed',String(trial));
- toggle.innerHTML=trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.6</small>':'<strong>✦ Experimentar 120 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
- $('engineModeInfo').textContent=trial?
-  (state.customBuild?'SUA BUILD EXPERIMENTAL DA FORJA · cinco talentos e até dez pontos na missão 5. O confronto NÃO verifica aprovações, notas ou entrada oficial no torneio.':'MOTOR B.6 · 120 talentos executáveis, 30 opções por classe; 5 talentos escolhidos e até 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
+ toggle.innerHTML=mission===10&&trial?
+  '<strong>✦ Final 3D experimental</strong><small>M10 · 10 talentos · sem alunos</small>':
+  trial?'<strong>✦ Talentos reais: ATIVO</strong><small>MOTOR M5 · B.6</small>':
+  '<strong>✦ Experimentar 120 talentos</strong><small>ATIVAR MOTOR DA MISSÃO 5</small>';
+ $('engineModeInfo').textContent=trial&&mission===10?
+  'H.3: PRÉVIA 3D EXPERIMENTAL da Missão 10. Dez talentos e vinte pontos por herói; personagens fictícios, sem login, XP, aprovações nem sincronização real. Build M5 congelada apenas em memória.':
+  trial?(state.customBuild?'SUA BUILD EXPERIMENTAL DA FORJA · cinco talentos e até dez pontos na missão 5. O confronto NÃO verifica aprovações, notas ou entrada oficial no torneio.':
+  'MOTOR B.6 · 120 talentos executáveis, 30 opções por classe; 5 talentos escolhidos e até 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
   'Motor legado · os 120 talentos finais ainda não foram integrados; modo experimental B.1 disponível.';
  state.round++;
  // Keep identical starting positions, talent build and RNG when comparing
@@ -284,11 +298,12 @@ function initRound({sameSeed=false}={}){
   state.seed=requestedSeed||((random[0]||1)>>>0);
  }
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
- const prefix=trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
+ const prefix=trial&&mission===10?'Simulação local M10: 10 talentos e 20 pontos (sem XP real).':trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
  const gameInfo=$('matchInfo');if(gameInfo)gameInfo.textContent='PARTIDA '+state.round+' · SEED '+state.seed+
   (trial&&experimentalCounterplay?' · MIRA COM RECUPERAÇÃO (EXPERIMENTAL)':'')+
   (trial&&experimentalHpBalance?' · VIDA E ALCANCE BALANCEADOS (TESTE)':'')+
-  (trial&&experimentalTalentSprites?' · TALENTOS COM SPRITES ANIMADOS (E.6)':'');
+  (trial&&experimentalTalentSprites?' · TALENTOS COM SPRITES ANIMADOS (E.6)':'')+
+  (trial&&mission===10?' · FINAL M10 OPT-IN · 10 TALENTOS':'');
  message('CARREGANDO '+state.count+' HERÓIS');
  state.roster=roster(mission,state.count);
  try{
@@ -301,7 +316,8 @@ function initRound({sameSeed=false}={}){
    engagementMode:trial?'spaced':'free',
    navigationMode:trial&&experimentalSteering?'steer':'direct',
    rangedCommitment:trial&&experimentalCounterplay?'recovery':'none',
-   balancePreset:trial&&experimentalHpBalance?'e-hp2':'baseline'});
+   balancePreset:trial&&experimentalHpBalance?'e-hp2':'baseline',
+   arenaMission:trial?mission:5});
   // Default D-phase review is a genuine close scene, not the old tiny bird's-eye view.
   state.stage.cinematic();
   // F.3 uses the exact fictitious roster already in this single simulation.
@@ -347,7 +363,7 @@ document.querySelectorAll('.milestone').forEach(button=>{
  button.addEventListener('click',()=>{
   const next=Number(button.dataset.mission);
   if(state.mission===next)return;
-  state.mission=next;if(next===10)state.phase2=false;
+  state.mission=next;if(next===10)state.phase2=m10Preview;
   document.querySelectorAll('.milestone').forEach(x=>x.setAttribute('aria-pressed',String(Number(x.dataset.mission)===next)));
   initRound();
  });
@@ -359,7 +375,7 @@ $('phase2Mode').addEventListener('click',()=>{
  initRound();
 });
 $('phase2Builds').addEventListener('click',()=>{
- if(!state.phase2||state.mission!==5)return;
+ if(!state.phase2||(state.mission!==5&&state.mission!==10))return;
  state.phase2Variant=(state.phase2Variant+1)%11;
  initRound();
 });
@@ -530,6 +546,8 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get winner(){return state.stage?.simulation?.result()?.winner||null},
  get previewOnly(){return true},
  get phase2(){return state.phase2},
+ get m10Visual(){return m10Preview&&state.mission===10},
+ get approvedTalentSlots(){return Number($('arenaStage').dataset.v5ApprovedTalentSlots||0)},
  get combatEngine(){return $('arenaStage').dataset.v5CombatEngine||'uninitialized'},
  get talentEvents(){return state.stage?.simulation?.events?.filter(e=>e.type==='talent').length||0},
  get abilityCount(){return state.abilityCount},
