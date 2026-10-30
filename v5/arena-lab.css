@@ -146,6 +146,15 @@ body.arena-immersive .stage-flair{display:none}
 .battle-float.critical{font-size:21px;color:#ffed8a}
 .battle-float.dodge{font-size:15px;color:#9df1ef}
 .battle-float.special{color:#dfb4ff}
+/* E.6: scene labels identify the talent compactly; HUD/log carry full names. */
+.stage[data-v5-sprite-mode="on"] .battle-float.special{
+ font-size:11px;letter-spacing:.025em;max-width:78px;overflow:hidden;text-overflow:ellipsis;
+ padding:2px 4px;border:1px solid #c4a6e36b;border-radius:4px;
+ background:#181123d9;color:#efe0ff;text-shadow:0 1px 2px #160b21;
+}
+@media(max-width:700px){
+ .stage[data-v5-sprite-mode="on"] .battle-float.special{font-size:10px;max-width:64px;padding:1px 3px}
+}
 .combat-alert{font-size:10px;letter-spacing:.08em;color:#f1bb91}
 @media(max-width:900px){
  .battle-spotlight{top:7px;right:7px;width:min(60%,340px);min-width:0;padding:9px 10px}
