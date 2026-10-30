@@ -122,7 +122,7 @@ for(let si=0;si<SCENARIOS.length;si++){
     assert(result.finished&&result.winner);
     assert.equal(result.events.filter(e=>e.type==='end').length,1);
     assert(!result.events.some(e=>e.hero&&
-      entries.some(x=>x.id===e.hero&&x.klass==='guardian')&&
+      entries.some(x=>x.id===e.hero&&x.build.klass==='guardian')&&
       ['talent','proc','charge'].includes(e.type)&&disabled.has(e.talent)),
       'suppressed Guardian talent must never activate or proc');
     add(out.arms[arm]??={},metrics(game,result));
@@ -137,7 +137,7 @@ for(let si=0;si<SCENARIOS.length;si++){
    }
    if(classes.length===30){
     for(const [group,ids] of Object.entries(GROUPS))
-     coverage[group]+=entries.filter(e=>e.klass==='guardian'&&e.build.talents.some(t=>ids.includes(t))).length;
+     coverage[group]+=entries.filter(e=>e.build.klass==='guardian'&&e.build.talents.some(t=>ids.includes(t))).length;
    }
   }
  }
