@@ -3,7 +3,8 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  try{
-  const page=await browser.newPage({viewport:{width:1280,height:900}});
+  const context=await browser.newContext({viewport:{width:1280,height:900}});
+  const page=await context.newPage();
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(()=>{
    window.__arenaAudio={starts:0,oscillators:0,noise:0,resumes:0,closes:0};
@@ -37,7 +38,7 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   console.log('PASS V5 30 GLB browser audio: '+JSON.stringify(result));
   // Regression: WebAudio constructor failure must never blank or freeze the WebGL arena.
   // Reuse the same browser context/cache: do not trigger a second burst of remote KayKit GLB downloads.
-  const silent=await page.context().newPage();
+  const silent=await context.newPage();
   await silent.setViewportSize({width:1280,height:900});
   const silentErrors=[];silent.on('pageerror',e=>silentErrors.push(e.message));
   await silent.addInitScript(()=>{
