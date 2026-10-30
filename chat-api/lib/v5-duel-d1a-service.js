@@ -34,7 +34,7 @@ function createDuelService(pool){
    const room=await db.query(
     'SELECT c.current_stage,COALESCE(s.enabled,false) AS duel_enabled '+
     'FROM pit_classroom_state c LEFT JOIN pit_duel_room_settings s '+
-    'ON s.room_code=c.room_code WHERE c.room_code=$1',
+    'ON s.room_code=c.room_code WHERE c.room_code=$1 FOR SHARE OF c',
     [student.roomCode]);
    if(room.rowCount!==1)fail('Turma não inicializada.',503);
    const stage=Number(room.rows[0].current_stage);
@@ -105,6 +105,9 @@ function createDuelService(pool){
  async function current(student){
   return tx(student,async({db,stage,enabled})=>{
    const own=await eligibility(db,student.id,student.roomCode,stage);
+   const availability=await db.query(
+    'SELECT opt_in FROM pit_duel_presence WHERE student_id=$1 AND room_code=$2 AND stage=$3',
+    [student.id,student.roomCode,stage]);
    const busy=await db.query('SELECT invite_id FROM pit_duel_slots WHERE student_id=$1',
     [student.id]);
    const visible=enabled&&own.eligible&&own.online&&!busy.rowCount;
@@ -131,7 +134,8 @@ function createDuelService(pool){
     [student.roomCode,student.id]);
    return Object.freeze({
     enabled,stage,eligibility:own.status,available:visible,
-    busy:busy.rowCount>0,
+    optedIn:availability.rows[0]?.opt_in===true,
+    online:own.online,busy:busy.rowCount>0,
     peers:peerRows.rows.map(r=>({id:r.id,name:r.display_name})),
     invites:history.rows.map(i=>({
      id:i.id,status:i.status,mission:i.stage,outgoing:i.outgoing,
