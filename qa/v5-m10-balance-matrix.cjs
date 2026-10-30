@@ -95,7 +95,10 @@ function runScenario(scenario,scenarioIndex,count,seed,seedIndex){
  const key=scenario.name;
  const group=byScenario[key]??={games:0,counts:{4:0,30:0},wins:Object.fromEntries(CLASSES.map(c=>[c,0])),
   timeLimit:0,meanTime:0};
- const size=bySize[count]??={games:0,wins:Object.fromEntries(CLASSES.map(c=>[c,0])),meanTime:0,timeLimit:0};
+ const size=bySize[count]??={games:0,wins:Object.fromEntries(CLASSES.map(c=>[c,0])),
+  appearances:Object.fromEntries(CLASSES.map(c=>[c,0])),
+  expectedWins:Object.fromEntries(CLASSES.map(c=>[c,0])),
+  meanTime:0,timeLimit:0};
  group.games++;group.counts[count]++;group.wins[winner.build.klass]++;
  size.games++;size.wins[winner.build.klass]++;
  group.meanTime+=battle.time;size.meanTime+=battle.time;
@@ -123,6 +126,8 @@ function runScenario(scenario,scenarioIndex,count,seed,seedIndex){
  for(const klass of CLASSES){
   const n=ordered.filter(x=>x===klass).length;
   totals[klass].expectedWins+=n/count;
+  size.appearances[klass]+=n;
+  size.expectedWins[klass]+=n/count;
  }
  battleCount++;timeSum+=battle.time;minTime=Math.min(minTime,battle.time);
  maxTime=Math.max(maxTime,battle.time);allEvents+=battle.events.length;
@@ -166,7 +171,20 @@ for(const [klass,s] of Object.entries(summary)){
 if(timeLimitCount/battleCount>.25)
  alerts.push('time-limit >25% of trials; review endgame readability and storm');
 for(const s of Object.values(byScenario))s.meanTime=round(s.meanTime/s.games,1);
-for(const s of Object.values(bySize))s.meanTime=round(s.meanTime/s.games,1);
+for(const [count,s] of Object.entries(bySize)){
+ s.meanTime=round(s.meanTime/s.games,1);
+ s.winVsExposure=Object.fromEntries(CLASSES.map(c=>[c,
+  round(s.wins[c]/s.expectedWins[c])]));
+ s.expectedWins=Object.fromEntries(CLASSES.map(c=>[c,round(s.expectedWins[c])]));
+ for(const c of CLASSES){
+  if(s.expectedWins[c]>=5&&(s.winVsExposure[c]>2||s.winVsExposure[c]<.3))
+   alerts.push('M10 '+count+' fighters / '+LABEL[c]+': wins='+s.wins[c]+
+    ' vs expected='+s.expectedWins[c]+' (exposure-adjusted ratio='+
+    s.winVsExposure[c]+'; inspect before tuning)');
+ }
+}
+if((slotWins[4][1]||0)+(slotWins[4][2]||0)>battleCount/2*.7)
+ alerts.push('M10 4 fighters: slots 1+2 win >70%; possible spawn/class confounding, investigate controlled permutations');
 const report={schema:'v5-m10-balance-matrix-v1',kind:'isolated-laboratory-observations',
  date:'2026-10-30',engineVersion:P.VERSION,configuration:OPTIONS,
  seeds:SEEDS.length,scenarios:SCENARIOS.map(x=>x.name),
