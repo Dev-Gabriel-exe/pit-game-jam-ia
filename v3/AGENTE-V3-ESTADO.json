@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T02:14:04Z",
+  "last_completed_at": "2026-10-30T03:14:05.338Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Chrome M08/Demonstrar at 1280x720, 1600x900, 1920x1080 and static/Browser QA on new M08 student evidence hints; fix any actual failures, then continue professor/student autonomy audit before aesthetics",
+  "priority": "Verify GitHub push CI and Chrome M08 projector audit at 1280x720, 1600x900, 1920x1080 for current branch SHA; continue M08 professor/student autonomy audit and then M09; do not start aesthetics or merge main",
   "current_phase": "MISSOES",
-  "last_task": "V4-M08-STUDENT-EVIDENCE-GUIDANCE",
+  "last_task": "V4-M08-STUDENT-ROUTE-NEGATIVE-TESTS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2562,12 +2562,19 @@
       "status": "in_progress",
       "commit": "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52",
       "summary": "M08 student now receives seven concise, field-specific instructions linked accessibly to evidence inputs; no canned answers or private teacher notes. CSS and static QA regression added. 24/24 isolated JS checks PASS; new CI and Chrome projector measurements not confirmed. Roadmap 54/59 unchanged; main untouched."
+    },
+    {
+      "timestamp": "2026-10-30T03:14:05.338Z",
+      "task": "V4-M08-STUDENT-ROUTE-NEGATIVE-TESTS",
+      "status": "in_progress",
+      "commit": "1b1c7361c70f13316e760fbe0600005e4bd636c3",
+      "summary": "M08 student practice now gives route-specific real Preview negative-test prompts for HUD, puzzle, and 3D, updated when tutorial route changes. Isolated V8 JS: 9/9 assertions PASS, syntax of production and QA PASS. Node CI/Chrome new commits NOT_CONFIRMED (GitHub status and PR-filtered workflow lookup empty). Physical HDMI, GDevelop GUI, mobile, human playtest NOT_RUN. Roadmap 54/59 unchanged; main untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M08-STUDENT-EVIDENCE-GUIDANCE",
+    "task": "V4-M08-STUDENT-ROUTE-NEGATIVE-TESTS",
     "status": "in_progress",
-    "updated_at": "2026-10-30T02:14:04Z",
+    "updated_at": "2026-10-30T03:14:05.338Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2622,9 +2629,11 @@
       "bd86c189aa0477df8c71b7c9fa8245027248a301",
       "a1ab0a52a040f261c8eb7664699decc35cf078ee",
       "7bd9850a8da6c013dc722bab9e7cda673beecadf",
-      "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52"
+      "4b18c1d6ddb1ac35c0f491ca8be3b241d1a3fe52",
+      "e18f46cd3efbb95d7c955f87988bb9752cfbb8b0",
+      "1b1c7361c70f13316e760fbe0600005e4bd636c3"
     ],
-    "documentation_commit": "54979b47a49edae91cb40f6a1a1467c69d27d0d3",
+    "documentation_commit": "082bceba99653259f7148dd764b33e667a993df8",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3119,13 +3128,23 @@
         "name": "M08 new projector Chrome/CI",
         "sha": "bd86c189aa0477df8c71b7c9fa8245027248a301",
         "result": "NOT_CONFIRMED: GitHub commit workflow-run and combined-status queries empty (PR-only run lookup); cannot infer push workflow outcome. Physical HDMI/GDevelop GUI/mobile/peer NOT_RUN."
+      },
+      {
+        "name": "M08 student route-specific negative Preview test prompts",
+        "sha": "1b1c7361c70f13316e760fbe0600005e4bd636c3",
+        "result": "PASS: isolated V8 execution 9/9 assertions, three routes, absence of teacher notes, persisted route and mocked callback text update; production and QA V8 parse PASS. Node CI and Chrome NOT_RUN locally."
+      },
+      {
+        "name": "Current M08 GitHub CI/Chrome confirmation",
+        "sha": "1b1c7361c70f13316e760fbe0600005e4bd636c3",
+        "result": "NOT_CONFIRMED: combined statuses=[] and PR-filtered workflow runs=[] for current and earlier M08 commits; does not indicate push CI outcome."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm Chrome M08 projected 10 slides on all three routes and resolutions; fix any overflow/QA failure, then inspect six-step student practice and evidence",
-    "blocker": "New M08 Chrome/CI result not confirmed; physical GDevelop GUI, HDMI, mobile and human playtest NOT_RUN"
+    "next_task": "Verify CI/Chrome M08 projected 10 slides for each selected route and 3 viewport sizes; inspect student/teacher six-step evidence and continue M09 pedagogical audit",
+    "blocker": "GitHub Actions push-run status not available through current connector queries; manual GDevelop GUI, HDMI, physical mobile, peer playtest NOT_RUN"
   }
 }
