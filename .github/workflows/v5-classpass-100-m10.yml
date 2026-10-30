@@ -1,0 +1,19 @@
+name: V5 Classpass 100 M10
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-classpass-100-m10.cjs'
+      - 'v5/phase2-combat.js'
+      - '.github/workflows/v5-classpass-100-m10.yml'
+  workflow_dispatch:
+jobs:
+  balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node qa/v5-classpass-100-m10.cjs
