@@ -1,0 +1,46 @@
+name: V5 Fase G1 — GPU e Estabilidade 30 Heróis
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/performance-monitor.js'
+      - 'v5/arena-three.js'
+      - 'v5/arena-lab.*'
+      - 'qa/v5-performance-monitor.cjs'
+      - 'qa/v5-performance-browser.cjs'
+      - '.github/workflows/v5-performance-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  metrics-and-rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax and bounded profiling
+        run: |
+          node --check v5/performance-monitor.js
+          node --check v5/arena-three.js
+          node --check v5/arena-lab.js
+          node --check qa/v5-performance-monitor.cjs
+          node --check qa/v5-performance-browser.cjs
+          node qa/v5-performance-monitor.cjs
+          node qa/v5-endgame-replay.cjs
+          node qa/v5-camera-viewer.cjs
+  real-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Chromium and Mesa software WebGL
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Repeat 30 KayKit GLBs and GPU context cycle
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-g1-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-performance-browser.cjs
