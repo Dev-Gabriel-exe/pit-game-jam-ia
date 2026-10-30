@@ -27,7 +27,8 @@ async function open(browser,token,inviteId){
    const file=path.resolve(ROOT,'node_modules/three',rel);
    if(file.startsWith(path.resolve(ROOT,'node_modules/three')+path.sep)){
     try{return route.fulfill({
-     body:await fs.readFile(file),contentType:'text/javascript; charset=utf-8'
+     body:await fs.readFile(file),contentType:'text/javascript; charset=utf-8',
+     headers:{'Access-Control-Allow-Origin':'*','Cross-Origin-Resource-Policy':'cross-origin'}
     })}catch{}
    }
   }
