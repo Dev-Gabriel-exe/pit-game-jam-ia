@@ -10,6 +10,9 @@ function teacher(req){const pin=String(req.headers['x-pit-teacher-pin']||'');ret
 async function student(req){const t=String(req.headers['x-pit-student-token']||'');if(!/^[a-f\d]{64}$/i.test(t))return null;const r=await pool.query('SELECT id,display_name FROM pit_students WHERE room_code=$1 AND token_hash=$2 LIMIT 1',[ROOM,createHash('sha256').update(t).digest('hex')]);return r.rows[0]||null}
 function stageOf(value){const n=Number(value);return Number.isInteger(n)&&n>=1&&n<=MAX_STAGE?n:null}
 function clean(value,max){return String(value||'').replace(/[\x00-\x1f\x7f]/g,' ').trim().slice(0,max)}
+// Structured mission evidence uses line boundaries to recover fields after a device change.
+// Keep LF, normalize CRLF/CR, and strip other control characters before the 750-char cap.
+function cleanEvidence(value,max){return String(value||'').replace(/\r\n?/g,'\n').replace(/[\x00-\x09\x0b-\x1f\x7f]/g,' ').trim().slice(0,max)}
 async function classroom(){const r=await pool.query('SELECT current_stage,phase,updated_at FROM pit_classroom_state WHERE room_code=$1',[ROOM]);return r.rows[0]}
 module.exports=async function handler(req,res){
  const origin=req.headers.origin;
@@ -47,7 +50,7 @@ module.exports=async function handler(req,res){
    if(n===state.current_stage&&!['practice','review'].includes(state.phase))return err(res,403,'A prática desta etapa ainda não foi liberada pelo professor.');
    const status=clean(req.body?.status,20),route=clean(req.body?.route,10);
    if(!['working','submitted'].includes(status)||!['2d','3d'].includes(route))return err(res,400,'Progresso inválido.');
-   const evidence=clean(req.body?.evidence,750);
+   const evidence=cleanEvidence(req.body?.evidence,750);
    if(status==='submitted'&&evidence.length<8)return err(res,400,'Descreva o que foi produzido antes de enviar.');
    const query='INSERT INTO pit_student_stages(student_id,stage,route,status,evidence,feedback,updated_at,reviewed_at) '+
      "VALUES($1,$2,$3,$4,$5,'',NOW(),NULL) "+
