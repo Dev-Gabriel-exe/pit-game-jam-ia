@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T04:15:47.529Z",
+  "last_completed_at": "2026-10-30T05:19:54.619Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm Node static CI for M09 field guidance and outstanding Chrome M08 projection; then audit M09 teacher/student alignment, test evidence flow; aesthetics remain deferred",
+  "priority": "Confirm final M09 Browser QA, then audit M09 projected demo 720p scrolling and practice font legibility; keep pedagogical audit before aesthetics",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-STUDENT-FIELD-GUIDANCE",
+  "last_task": "V4-M09-OUTCOME-DECISION-CONSISTENCY",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2579,9 +2579,9 @@
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-STUDENT-FIELD-GUIDANCE",
-    "status": "in_progress",
-    "updated_at": "2026-10-30T04:15:47.529Z",
+    "task": "V4-M09-OUTCOME-DECISION-CONSISTENCY",
+    "status": "done",
+    "updated_at": "2026-10-30T05:19:54.619Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2642,9 +2642,12 @@
       "85343feefc583c54b85a78ea020307e2aa7d7ad2",
       "acd411e25596075073244f0d43dd8ddbe58a3345",
       "145a5b044a55223e3cf6ff13f19723cc48e35f41",
-      "9b44b6d8e3f57baeed3fca882d40eeae7a478e26"
+      "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
+      "3fa571029dbb8426e730c294be25d18be6fe740d",
+      "51de9fdd67a0d2c2d6adc0cbd9c7eec23209f618",
+      "fb8c00e3ccf387a3b763b2b03d508addc4ae9719"
     ],
-    "documentation_commit": "082bceba99653259f7148dd764b33e667a993df8",
+    "documentation_commit": "c8ac4a601cc7d0e7459b31ae67ee7a8b8aafa637",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3159,13 +3162,49 @@
         "name": "M09 latest GitHub CI",
         "sha": "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
         "result": "NOT_CONFIRMED: combined statuses=[] and PR-filtered workflow_runs=[]; static-qa workflow now includes node qa/v3-m09-field-guidance.cjs but execution result not accessible through current connector."
+      },
+      {
+        "name": "M09 outcome/decision matrix actual production JS V8",
+        "sha": "fb8c00e3ccf387a3b763b2b03d508addc4ae9719",
+        "result": "PASS: 6/6 outcome-resolution combinations; invalid choices focus resolution; no actual human test"
+      },
+      {
+        "name": "M09 final static QA",
+        "sha": "fb8c00e3ccf387a3b763b2b03d508addc4ae9719",
+        "run_id": 41007753499,
+        "result": "SUCCESS; prior two intermediate commits failed outdated alignment source assertion, fixed in final commit"
+      },
+      {
+        "name": "M09 final Browser QA",
+        "sha": "fb8c00e3ccf387a3b763b2b03d508addc4ae9719",
+        "run_id": 41007753456,
+        "result": "IN_PROGRESS at checkpoint; not claimed"
+      },
+      {
+        "name": "M08 projected 3 viewport Chrome audit",
+        "sha": "bd86c189aa0477df8c71b7c9fa8245027248a301",
+        "run_id": 40985297551,
+        "result": "SUCCESS 1280x720, 1600x900, 1920x1080; default M08 demo 10 slides, 0 scroll, 0 overflowX"
+      },
+      {
+        "name": "M09 previous static and Browser QA",
+        "sha": "9b44b6d8e3f57baeed3fca882d40eeae7a478e26",
+        "run_ids": [
+          41001862715,
+          41001862989
+        ],
+        "result": "SUCCESS both; predates current decision consistency fix"
+      },
+      {
+        "name": "Human GDevelop GUI, physical HDMI/mobile, observed peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verify new M09 Node CI and prior M08 projector Chrome audit (3 viewports); then inspect M09 professor/student synchronization and M09 review evidence in preview; do not claim human tests",
+    "next_task": "V4-M09-PROJECTOR-LEGIBILITY",
     "blocker": "GitHub connector does not expose push-triggered Actions workflow results via commit lookup; HDMI, actual GDevelop GUI, physical mobile, observed peer playtest remain NOT_RUN"
   }
 }
