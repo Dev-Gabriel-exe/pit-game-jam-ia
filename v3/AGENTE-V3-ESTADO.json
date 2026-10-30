@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T15:17:00Z",
+  "last_completed_at": "2026-10-30T16:14:46.040Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar Browser QA 41078711300 no commit 6d3a41a; auditar evidências legadas M01–M10 em fluxo de aluno sem inferir campos perdidos. QA estática 41078711383 SUCCESS; testes HDMI/GDevelop GUI/celular físico/playtest humano NOT_RUN.",
+  "priority": "Confirmar QA estática/Browser QA da regressão M09 no SHA c5b5a5f0 ou posterior; auditar hydrate/parseEvidence M01–M08 e M10 para impedir preenchimento parcial por evidência antiga achatada. Preservar dados e status reais; HDMI/GDevelop GUI/celular físico/playtest humano NOT_RUN.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M01-M10-LEGACY-EVIDENCE-READONLY",
+  "last_task": "V4-M09-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2656,9 +2656,9 @@
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M01-M10-LEGACY-EVIDENCE-READONLY",
+    "task": "V4-M09-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T15:17:00Z",
+    "updated_at": "2026-10-30T16:14:46.040Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2753,9 +2753,11 @@
       "5d0499cea104410497332ed3f57782be84255bc7",
       "4a6687797c278a506a474edf46419e03f04bbda3",
       "1eff878027f28fbfc8c49fa531af2772dc58a74c",
-      "6d3a41a74720a1feecaeca4debd510af28e8a606"
+      "6d3a41a74720a1feecaeca4debd510af28e8a606",
+      "7d4500c343ce692a17d3e6feafac48373008c8fb",
+      "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49"
     ],
-    "documentation_commit": "da9160456d2858450c7bf2db5cb6e71c6091c00a",
+    "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3500,6 +3502,63 @@
         "sha": "b38d23e4204a7639b00a309f31b58efbe3b5be70",
         "run_id": 41070247881,
         "result": "SUCCESS; predates legacy notice"
+      },
+      {
+        "name": "M09 legacy flattened/partial evidence hydration",
+        "sha": "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49",
+        "result": "V8 PASS: module and QA syntax; four invalid/ambiguous cases rejected without writing local drafts; valid structured evidence roundtrip and checks reset. Native Node and new CI not yet confirmed."
+      },
+      {
+        "name": "GitHub Actions M09 after code commits",
+        "runs": [
+          {
+            "id": 41088086069,
+            "name": "PIT Game Jam — Browser QA",
+            "sha": "b7b3844d485c99276792188e189b12877d380e82",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "id": 41088085917,
+            "name": "PIT Game Jam QA",
+            "sha": "b7b3844d485c99276792188e189b12877d380e82",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "id": 41088044963,
+            "name": "PIT Game Jam — Browser QA",
+            "sha": "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "id": 41088044394,
+            "name": "PIT Game Jam QA",
+            "sha": "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 41088037135,
+            "name": "PIT Game Jam — Browser QA",
+            "sha": "7d4500c343ce692a17d3e6feafac48373008c8fb",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "id": 41088037051,
+            "name": "PIT Game Jam QA",
+            "sha": "7d4500c343ce692a17d3e6feafac48373008c8fb",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "result": "See per-run status; no SUCCESS claimed for unfinished runs"
+      },
+      {
+        "name": "GDevelop GUI, HDMI, physical mobile, human peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
