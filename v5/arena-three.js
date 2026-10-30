@@ -963,7 +963,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   for(const [id,u] of individuals){
    // Interpolate 20Hz simulation transforms at display refresh rate.
    if(!u.spectator&&u.desiredPosition)u.mesh.root.position.lerp(u.desiredPosition,Math.min(1,dt*16));
-   u.bar.quaternion.copy(camera.quaternion);
+   if(!u.spectator)u.bar.quaternion.copy(camera.quaternion);
    if(u.mixer&&!reduce&&!u.spectator){u.mixer.update(dt);liveMixersUpdated++}
    if(u.spectator&&u.seat){
     if(u.transfer){
@@ -995,7 +995,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     });
    }
    if(!active)continue;
-   const wobble=reduce?0:Math.sin(elapsed*2.7+id.length)*.055;
+   const wobble=reduce||u.spectator?0:Math.sin(elapsed*2.7+id.length)*.055;
    const choreography=u.choreography&&DIRECTOR?DIRECTOR.sample(u.choreography.timeline,elapsed-u.choreography.started,{reducedMotion:reduce}):null;
    if(u.choreography&&!choreography?.active)u.choreography=null;
    // Local actor pose only: never alter simulation positions or collisions.
@@ -1012,12 +1012,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     else {const power=(1-age/.24)*u.hitReaction.power;
      a.rotation.x+=power*.19;a.rotation.z+=power*.075*u.hitReaction.side;}
    }
-   if(!reduce){u.mesh.arms.forEach((arm,i)=>{arm.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.18});
+   if(!reduce&&!u.spectator){u.mesh.arms.forEach((arm,i)=>{arm.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.18});
      u.mesh.legs.forEach((leg,i)=>{leg.rotation.x=Math.sin(elapsed*3+i*Math.PI)*.21});
      if(u.mesh.cape)u.mesh.cape.rotation.x=.14+Math.sin(elapsed*3)*.06;
    }
-   u.mesh.circle.material.emissive.setHex(PALETTES[u.build.appearance.palette]||0xc58865);
-   u.mesh.circle.material.emissiveIntensity=.25+Math.sin(elapsed*2)*.1+(choreography?.glow||0)*.9;
+   if(!u.spectator){
+    u.mesh.circle.material.emissive.setHex(PALETTES[u.build.appearance.palette]||0xc58865);
+    u.mesh.circle.material.emissiveIntensity=.25+Math.sin(elapsed*2)*.1+(choreography?.glow||0)*.9;
+   }
   }
   for(let i=effects.length-1;i>=0;i--){
    const e=effects[i];e.life-=dt;e.mesh.position.addScaledVector(e.mesh.userData.velocity,dt);
