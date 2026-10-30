@@ -27,6 +27,24 @@ const {chromium}=require('playwright');
   const shot=await stage.getAttribute('data-v5-camera-shot');
   assert(['duel','highlight','climax','overview','victory'].includes(shot));
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed),startingSeed);
+  // F.2: the live THREE camera must be guided by a real obstacle-aware plan.
+  await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5CameraFramingDistance)>0,
+   null,{timeout:30000});
+  const comp=await stage.evaluate(el=>({
+   distance:Number(el.dataset.v5CameraFramingDistance),
+   blocked:Number(el.dataset.v5CameraObstructions),
+   subjects:Number(el.dataset.v5CameraVisibleSubjects)
+  }));
+  assert(comp.distance>=19&&Number.isFinite(comp.distance));
+  assert(comp.blocked>=0&&comp.blocked<=4);
+  assert(comp.subjects>=1&&comp.subjects<=4);
+  // A portrait viewport should remain within the same automatic director.
+  await page.setViewportSize({width:450,height:800});
+  await page.waitForTimeout(700);
+  assert.equal(await stage.getAttribute('data-v5-camera-director'),'on');
+  const compact=Number(await stage.getAttribute('data-v5-camera-framing-distance'));
+  assert(Number.isFinite(compact)&&compact>=19,'Portrait camera framing must be finite');
+  await page.setViewportSize({width:1280,height:800});
   // An explicit manual preset immediately turns off automation.
   await page.locator('#overviewCamera').click();
   assert.equal(await stage.getAttribute('data-v5-camera-director'),'off');
@@ -57,8 +75,16 @@ const {chromium}=require('playwright');
    null,{timeout:105000});
   assert.equal(await stage.getAttribute('data-v5-camera-director'),'on');
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.fighterCount),30);
+  await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5CameraFramingDistance)>0,
+   null,{timeout:30000});
+  assert(Number(await stage.getAttribute('data-v5-camera-visible-subjects'))>=1);
+  // Capture the actual WebGL composition without hanging on external fonts.
+  const cdp=await page.context().newCDPSession(page);
+  const proof=await cdp.send('Page.captureScreenshot',{format:'png',fromSurface:true});
+  require('node:fs').writeFileSync('qa/v5-camera-director-f2-30.png',Buffer.from(proof.data,'base64'));
+  await cdp.detach();
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
   assert.deepEqual(errors,[],'Uncaught browser errors: '+errors.join(' | '));
-  console.log('PASS F.1 browser: real 4/30 GLBs, automatic shot, orbit & manual priority, no gameplay changes');
+  console.log('PASS F.2 browser: 4/30 GLBs, real obstacle-aware framing, portrait resize, manual priority, no combat changes');
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
