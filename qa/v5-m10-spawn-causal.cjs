@@ -84,12 +84,15 @@ for(let si=0;si<SCENARIOS.length;si++){
   const entries=classes.map((klass,i)=>entryFor(klass,i,seedIndex,si));
   const opts={...OPTIONS,seed};
   const baseGame=P.battle(entries,opts);
-  const basePositions=positions(baseGame),baseFighters=byId(baseGame);
+  const basePositions=positions(baseGame);
   const baseline=baseGame.run();
+  // Keep an unrun baseline for comparing initial stats/RNG after the battle
+  // has mutated the actual baseline fighters.
+  const baseFresh=P.battle(entries,opts),baseFighters=byId(baseFresh);
   assert(baseline.finished&&baseline.winner);
   assert.equal(baseline.events.filter(e=>e.type==='end').length,1);
   const identical=P.battle(entries,{...opts,experimentalSpawnPositions:basePositions});
-  assertInitialSameExceptPosition(baseGame,identical,true);
+  assertInitialSameExceptPosition(baseFresh,identical,true);
   assert.deepEqual(positions(identical),basePositions,'override with original positions must be exact');
   assert.deepEqual(identical.run(),baseline,'override must not change baseline M10 outcome or events');
   countClass(out.baselineWins,baseline.winner.klass);out.baselineGames++;total++;
@@ -106,7 +109,7 @@ for(let si=0;si<SCENARIOS.length;si++){
    // Controlled geometry arm: identity and order fixed; only locations rotated.
    const moved=Object.fromEntries(entries.map((e,i)=>[e.id,basePositions[entries[(i+shift)%n].id]]));
    const geometry=P.battle(entries,{...opts,experimentalSpawnPositions:moved});
-   assertInitialSameExceptPosition(baseGame,geometry,true);
+   assertInitialSameExceptPosition(baseFresh,geometry,true);
    const geomFighters=byId(geometry);
    for(const e of entries){
     const f=geomFighters.get(e.id),expected=moved[e.id];
@@ -124,7 +127,7 @@ for(let si=0;si<SCENARIOS.length;si++){
    // update order + per-index RNG assignment change together.
    const reordered=rotate(entries,shift);
    const order=P.battle(reordered,{...opts,experimentalSpawnPositions:basePositions});
-   const changed=assertInitialSameExceptPosition(baseGame,order,false);
+   const changed=assertInitialSameExceptPosition(baseFresh,order,false);
    assert(changed>0,'rotating entry order must reassign at least one initial RNG draw');
    out.changedInitialBasic+=changed;
    const orderFighters=byId(order);
