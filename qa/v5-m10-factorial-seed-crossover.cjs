@@ -18,9 +18,9 @@ const OPTIONS={arenaMission:10,arenaScale:5,damageScale:.5,stormDelay:35,
  stormRateFactor:.65,engagementMode:'spaced',navigationMode:'steer',
  rangedCommitment:'recovery',balancePreset:'e-hp2'};
 const SCENARIOS=[
- {name:'4-balanced',counts:[1,1,1,1],seeds:4,shifts:[1]},
- {name:'30-balanced',counts:[8,8,7,7],seeds:8,shifts:[1,15]},
- {name:'30-guardian-half',counts:[5,5,5,15],seeds:8,shifts:[1,15]}
+ {name:'4-balanced',counts:[1,1,1,1],seeds:8,shifts:[1]},
+ {name:'30-balanced',counts:[8,8,7,7],seeds:16,shifts:[1,15]},
+ {name:'30-guardian-half',counts:[5,5,5,15],seeds:16,shifts:[1,15]}
 ];
 const ARMS=['baseline','geometry','order','combined'];
 function rng(seed){let s=seed>>>0;return ()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};}
@@ -69,7 +69,7 @@ function digest(x){return crypto.createHash('sha256').update(JSON.stringify(x)).
 const report={schema:'pit-v5-m10-factorial-seed-crossover-v1',
  scope:'synthetic M10, four KayKit classes, frozen M5, 10 talents and 20 attributes',
  options:OPTIONS,scenarios:[],limitations:[
-  'Eight independent seeds per 30-person composition; two shifts and three archetypes reuse each seed and are correlated, not independent observations.',
+  'Sixteen distinct pseudo-random seeds per 30-person composition (eight with four heroes); two shifts and three archetypes reuse each seed and are correlated, not independent observations.',
   'Actor-order intervention only permutes the main actor loop; projectile and collision arrays remain in original order.',
   'Per-hero critical RNG is fixed within a seed, but encounter-dependent draws and target choices may diverge after intervention.',
   'The 2x2 factorial reports conditional sensitivity and interaction, not proof of an exclusive causal explanation for Guardian wins.',
@@ -164,10 +164,10 @@ const m5opts={seed:4175863657,arenaScale:5,damageScale:.5};
 assert.deepEqual(P.battle(m5,m5opts).run(),P.battle(m5,{...m5opts,arenaMission:5}).run());
 assert.throws(()=>P.battle(m5,{...m5opts,experimentalTurnOrder:m5.map(e=>e.id)}),/M10/);
 assert.throws(()=>P.battle(m5,{...m5opts,experimentalSpawnPositions:{}}),/M10/);
-assert.equal(games,384);assert.equal(observedCells,432);assert.equal(comparisons,324);
-assert.equal(replays,18);assert.equal(neutralChecks,9);assert.equal(geometryChecks,324);
+assert.equal(games,768);assert.equal(observedCells,864);assert.equal(comparisons,648);
+assert.equal(replays,18);assert.equal(neutralChecks,9);assert.equal(geometryChecks,648);
 report.totals={games,observedCells,comparisons,replays,neutralChecks,geometryChecks,m5Unchanged:true,
- independentSeedsPer30Composition:8};
+ independentSeedsPer30Composition:16};
 report.hash=digest(report.scenarios);
 if(process.env.M10_FACTORIAL_REPORT_FILE){
  const target=path.resolve(process.env.M10_FACTORIAL_REPORT_FILE);
