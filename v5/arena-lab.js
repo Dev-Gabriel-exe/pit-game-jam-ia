@@ -211,10 +211,13 @@ function reportModels(){
  const failed=Number(stage.dataset.v5ModelsFailed||0);
  const expectedCount=Number(stage.dataset.v5ModelsExpected||4);
  if(failed){
-  $models.textContent='Falha em '+failed+' modelo(s) GLB. O confronto fica indisponível até carregar todos os modelos reais.';
+  $models.textContent='Falha em '+failed+' modelo(s) GLB. A batalha não começa com modelos incompletos. Verifique a conexão e tente novamente.';
   $models.dataset.error='true';state.busy=true;$('startBattle').disabled=true;
+  $('retryModels').hidden=false;$('retryModels').disabled=false;
+  $('retryModels').textContent='↻ Repetir download de '+failed+' modelo(s) ausentes';
   message('MODELO 3D INDISPONÍVEL');return;
  }
+ $('retryModels').hidden=true;delete $models.dataset.error;
  $models.textContent=count+' / '+expectedCount+' modelos 3D reais carregados';
  const proof=$('realModelProof');
  if(proof){
@@ -253,6 +256,7 @@ function initRound({sameSeed=false}={}){
  $('damagePace').setAttribute('title','Reduz dano de ataques/habilidades e adia o fechamento do círculo. O dano causado pela tempestade permanece inalterado. Experimento reversível.');
  $('damagePace').dataset.scale=String(pace.scale);
  $('result').textContent='Ainda não há vencedor. Prepare o coliseu.';
+ $('retryModels').hidden=true;$('retryModels').disabled=false;
  $('battleLog').innerHTML='<p>As ações aparecerão aqui quando a batalha começar.</p>';
  $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;$('speedBattle').disabled=false;$('overviewCamera').disabled=false;$('cinematicCamera').disabled=false;$('actionCamera').disabled=false;
  const mission=state.mission,trial=state.phase2&&mission===5;
@@ -418,6 +422,14 @@ $('perfCopy').addEventListener('click',async()=>{
   $('perfNote').textContent=copied?'Relatório local copiado.':'Copiar indisponível neste navegador.';
  }
 });
+$('retryModels').addEventListener('click',()=>{
+ if(!state.stage||state.stage.playing||state.fought)return;
+ const count=state.stage.retryFailedModels();
+ if(!count)return;
+ state.busy=true;$('startBattle').disabled=true;$('retryModels').hidden=true;
+ $models.textContent='Baixando novamente apenas '+count+' modelos 3D ausentes...';
+ message('RECUPERANDO MODELOS 3D');
+});
 $('resetBattle').addEventListener('click',initRound);
 $('overviewCamera').addEventListener('click',()=>{
  if(state.stage?.viewerSnapshot()?.viewer?.audience==='student')state.stage.setTeacherCamera();
@@ -529,6 +541,7 @@ window.PIT_V5_ARENA_LAB=Object.freeze({
  get round(){return state.round},
  get performanceReport(){return state.stage?.performanceReport||null},
  get graphicsContext(){return state.stage?.graphicsContext||'uninitialized'},
+ retryModels(){return state.stage?.retryFailedModels()||0},
  get cameraViewer(){return state.stage?.viewerSnapshot()||null},
  tryStudentCamera(id){return state.stage?.setStudentCamera(id)||false}
 });
