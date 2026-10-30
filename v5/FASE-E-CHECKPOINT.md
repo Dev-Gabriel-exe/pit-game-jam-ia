@@ -149,3 +149,18 @@ Além da matriz uniforme de 4/30, foram feitas quatro rodadas com **32 partidas 
 Um jogador da classe dominante ocupa 40% do elenco; as demais classes, 20% cada. O Guardião se destacou especialmente quando há muitos Caçadores/Arcanistas, e ter 12 Caçadores não se traduziu em vitórias proporcionais. Essa é uma **ressalva real**: não afirmar equilíbrio universal ou que cada classe possui chance idêntica de vencer independentemente da composição. Testes complementares em torneios com os 30 alunos reais, distribuições variadas e builds próprias são necessários; os bônus não devem virar produção automática por conta deste experimento.
 
 **Decisão:** o preset permanece apenas opt-in na V5 de laboratório. A meta de ausência de dominância foi atingida na matriz com classes igualmente distribuídas; o roadmap E segue aberto para composições não uniformes e inspeção visual/GPU, preservando valores de produção.
+
+## Fase E.6 — sprites animados de talentos (30/10/2026)
+
+**Primeira entrega implementada na branch de laboratório; sem merge em main.** O objetivo é mostrar os talentos que o motor realmente dispara, sem mudar cálculo de dano, defesa, cooldown, XP, física, atributos ou os quatro modelos GLB.
+
+- `v5/talent-sprites.js`: 13 famílias gráficas autorais, geradas localmente em Canvas 2D: corte, barreira, raio, esquiva, fogo, gelo, cura, órbita, flecha, luz, runa, armadilha e impacto. São sequências de quadros/telas reaproveitáveis por talento, com tintas e escalas de cada classe. Não se afirma ter 120 sprites *exclusivos*: os 120 talentos do catálogo são mapeados a 12 famílias; o 13º estilo é acionado por contato real.
+- `v5/arena-three.js`: cenas M5 em modo `spriteEffects:'on'` substituem o antigo VFX geométrico do talento por sprites animados a partir dos MESMOS eventos reais. Impactos reais produzem sprites adicionais sem simular dano. Máximo de 18 efeitos ativos de habilidade (9 no modo low/reduced motion) e 18 impactos; efeitos passivos discretos cedem lugar às habilidades ativas. Texturas são geradas uma vez por palco e descartadas no dispose; a geometria compartilhada dos sprites é preservada durante reset.
+- `v5/arena-lab.js` e `v5/arena-lab.html`: habilitação opt-in por `?sprites=1`, apenas motor M5; sem flag, efeitos anteriores seguem disponíveis. Compatível com `?nav=steer&counterplay=1&balance=hp2`, sem alterações em M10.
+- `qa/v5-talent-sprites.cjs`: verificação das 120 habilidades, 13 silhuetas e quadros adaptativos (6 normal, 3 low, 2 reduced). Passou no GitHub Actions run `40981905277` no job `rules`.
+- `qa/v5-talent-sprites-browser.cjs`: verificação real de WebGL com 4 e 30 GLBs, orçamento de FX, ativação associada ao combate, reset e isolamento de M10. Salva imagem de evidência `qa/v5-arena-lab-sprites-e6.png`; aguardar resultado do job browser antes de declarar desempenho/FPS homologados.
+- `qa/v5-coliseum-scale.cjs` ajustado para aceitar parâmetro apenas visual, preservando verificação do callback do motor. Em `discardEffect`, não descartar geometria global compartilhada por instâncias de THREE.Sprite.
+
+**Dependência externa para visualização live:** Vercel está sem autorização para o projeto/time histórico nesta sessão (403 no time; autorização solicitada retornou 404). Não houve novo deployment E.6 confirmado; não reutilizar URL antiga como se incluísse sprites. Código no branch `feature/v5-arena-dos-criadores` continua verificável no GitHub.
+
+**Etapa seguinte:** revisar screenshot / dispositivos reais, granularidade dos efeitos mais frequentes, telegraph sem criar ataques falsos, escudos/status persistentes; câmera cinematográfica somente após revisão E.5/E.6.
