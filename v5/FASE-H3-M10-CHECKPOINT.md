@@ -288,3 +288,20 @@ Separar efeito de **build versus slot/posição/ordem** com rotações completas
 **CI disparado, ainda sem aprovação confirmada nesta anotação:** [V5 M10 Full Slot Crossover QA — run 41083051138](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41083051138). Conferir logs, corrigir eventuais falhas e registrar números observados antes de encerrar a missão. Artefato previsto `m10-full-slot-crossover` (JSON, 14 dias).
 
 **Próximo passo:** validar conclusão do CI, analisar diferenças por arquétipo/slot e dependência entre rotações; não alterar HP/escudos sem amostra independente e revisão humana. **G.2 PCs físicos não realizado. H.1/H.2 reais, V3, main, produção, XP, notas e turmas bloqueados.**
+
+
+### Resultado confirmado do cruzamento de slots — CI 41083051138
+
+**CI aprovado:** [run 41083051138](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41083051138), job `m10-full-slot` SUCCESS. O log confirmou **396/396 batalhas**, **264 comparações entre arquétipos com a mesma seed/slot**, **9 replays idênticos**, verificações de posições e regressões H.0/M10/E.7/M5. Artefato JSON [m10-full-slot-crossover](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41083051138/artifacts/12989488545).
+
+| Composição | Guardião ofensivo | Guardião defensivo | Guardião pseudoaleatório | Participação Guardião |
+|---|---:|---:|---:|---:|
+| 4 equilibrados (12 por arquétipo) | 0/12 | 8/12 | 2/12 | 25% |
+| 30 equilibrados (60 por arquétipo) | 16/60 | 30/60 | 27/60 | 23,3% |
+| 30 com 15 Guardiões (60 por arquétipo) | 33/60 | 37/60 | 32/60 | 50% |
+
+**Leitura:** o Guardião defensivo venceu mais que o ofensivo em todas as composições; com 30 equilibrados foram 50% versus 26,7%, apesar de todas as identidades passarem por todos os 30 slots. A sensibilidade às escolhas da build persiste depois do cruzamento, mas **não há prova de que o efeito seja exclusivamente da defesa**. Comparadas às builds ofensivas, as defensivas mudaram o vencedor individual em 9/12, 52/60 e 51/60 partidas respectivamente; pseudoaleatórias em 3/12, 50/60 e 54/60. G01 apareceu em todas as builds do Guardião porque já fazia parte das cinco escolhas M5; G10 **não foi forçado** (0 nas ofensivas/defensivas, 3/7 nas pseudoaleatórias de 30 equilibrados e 4/15 nas de metade Guardião).
+
+**Limites:** 2 seeds por composição de 30 e rotações correlacionadas, não independentes; não interpretar Wilson como intervalo inferencial válido. A geometria de spawn, o índice do loop e consumo de RNG comum ainda variam conjuntamente. **Balanceamento não homologado; nenhum nerf aplicado.**
+
+**Próximo incremento H.3:** aumentar seeds independentes e realizar cruzamento controlado mantendo coordenadas por identidade fixas ao permutar ordem, para separar o efeito conjunto de slot do efeito de build; manter M5 e H.0 protegidos. G.2 físico, H.1/H.2 reais, integração V3, merge e produção permanecem bloqueados.
