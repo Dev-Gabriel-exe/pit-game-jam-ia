@@ -305,3 +305,14 @@ Separar efeito de **build versus slot/posição/ordem** com rotações completas
 **Limites:** 2 seeds por composição de 30 e rotações correlacionadas, não independentes; não interpretar Wilson como intervalo inferencial válido. A geometria de spawn, o índice do loop e consumo de RNG comum ainda variam conjuntamente. **Balanceamento não homologado; nenhum nerf aplicado.**
 
 **Próximo incremento H.3:** aumentar seeds independentes e realizar cruzamento controlado mantendo coordenadas por identidade fixas ao permutar ordem, para separar o efeito conjunto de slot do efeito de build; manter M5 e H.0 protegidos. G.2 físico, H.1/H.2 reais, integração V3, merge e produção permanecem bloqueados.
+
+
+## H.3/M10 — fatorial de geometria × ordem, com seeds independentes (30/10/2026)
+
+**Estado: experimento em execução; CI focal ainda não confirmado neste checkpoint.** Mantida a mesma missão de balanceamento da arena final; não foi realizado nerf, alteração do motor canônico ou integração real.
+
+- Teste novo: `qa/v5-m10-factorial-seed-crossover.cjs` (commit `cbe88e6`), workflow `.github/workflows/v5-m10-factorial-seed-crossover-qa.yml` (commit `ac07e44`).
+- Intervenção 2×2 no motor M10 existente: **baseline**, somente geometria de spawn, somente ordem de processamento dos atores e combinação de ambas. As entradas, builds, estados iniciais e RNG de críticos por identidade ficam fixos no bloco; a geometria é permutada via `experimentalSpawnPositions` e o loop via `experimentalTurnOrder`, ambos M10-only e opt-in.
+- Planejados 8 seeds independentes em cada composição de 30 (equilibrada e metade Guardiões), 4 seeds com quatro heróis, três arquétipos e 1–2 rotações por seed: **432 partidas e 324 comparações pareadas**, além de 18 replays e regressões M5/H.0/E.7/M10. Não tratar as rotações como amostras independentes.
+- Run focal: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41092263259. **Não declarar aprovado até conclusão e leitura dos resultados.**
+- **Próximo passo:** conferir resultado do CI e artefato JSON, corrigir qualquer falha, registrar taxas de vitória por braço e variabilidade entre seeds, sem inferir causalidade exclusiva de um efeito ou aplicar nerf. G.2 nos PCs físicos, H.1/H.2 com alunos, V3, produção e `main` continuam bloqueados.
