@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar execução nativa do novo passo M05 na CI após fefc5865; verificar Browser QA do mesmo SHA; continuar auditoria de parseEvidence/hydrate M01–M04, M07–M08 e M10. Não inferir testes manuais.",
+  "priority": "Confirmar Browser QA 41105456503 (fefc5865) e 41105513965 (checkpoint); seguir auditoria M04/M01–M03 e M07–M08/M10 sem recuperar campos ambíguos.",
   "current_phase": "MISSOES",
   "last_task": "V4-M05-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
@@ -2664,14 +2664,14 @@
     {
       "at": "2026-10-30T18:18:00.000Z",
       "task": "V4-M05-LEGACY-EVIDENCE-GUARD",
-      "summary": "Auditoria de recuperação de evidência M05: parser agora exige 14 linhas ordenadas, 4 metadados válidos, trilha reconhecida e todos os 8 campos dentro dos limites, rejeitando dados legados achatados/parciais/duplicados. Hydrate mantém rascunho local e não fabrica checks. Teste Node qa/v3-m05-student.cjs expandido com 10 casos negativos, restauração válida, preservação de rascunho e limites; adicionado explicitamente ao workflow static-qa.yml (antes não era executado). QA estática do commit 094bf6b SUCCESS, mas ainda não incluía o teste M05; novo workflow fefc5865 precisa confirmar. Browser QA de 094bf6b IN_PROGRESS na última consulta. GDevelop GUI, HDMI, mobile físico e testes humanos NOT_RUN. Branch V3 somente, main intacta; roadmap 54/59.",
+      "summary": "Auditoria de recuperação de evidência M05: parser agora exige 14 linhas ordenadas, 4 metadados válidos, trilha reconhecida e todos os 8 campos dentro dos limites, rejeitando dados legados achatados/parciais/duplicados. Hydrate mantém rascunho local e não fabrica checks. Teste Node qa/v3-m05-student.cjs expandido com 10 casos negativos, restauração válida, preservação de rascunho e limites; adicionado explicitamente ao workflow static-qa.yml (antes não era executado). QA estática do commit 094bf6b SUCCESS, mas ainda não incluía o teste M05; novo workflow fefc5865 CONFIRMADO: run 41105456450 SUCCESS, 57 regressões M05 PASS no Node nativo. Browser QA de 094bf6b IN_PROGRESS na última consulta. GDevelop GUI, HDMI, mobile físico e testes humanos NOT_RUN. Branch V3 somente, main intacta; roadmap 54/59.",
       "commit": "fefc5865483d021dc98bf522bff19e060f0068ac"
     }
   ],
   "v4_checkpoint": {
     "task": "V4-M05-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T18:18:00.000Z",
+    "updated_at": "2026-10-30T18:19:00.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -3608,7 +3608,8 @@
       {
         "name": "M05 new static QA with explicit test step",
         "sha": "fefc5865483d021dc98bf522bff19e060f0068ac",
-        "result": "PENDING confirmation"
+        "result": "SUCCESS: GitHub Actions native Node executed node --check and qa/v3-m05-student.cjs; 57 M05 regressions PASS (log inspected)",
+        "run_id": 41105456450
       },
       {
         "name": "M05 browser QA",
@@ -3621,7 +3622,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar QA nativa M05 e corrigir eventual falha; depois auditar parser M04 (evidências legadas e rótulos).",
+    "next_task": "Browser QA fefc5865/checkpoint; depois auditar parser M04 e corrigir falhas concretas.",
     "blocker": "Nenhuma migração automática de dados legados ambíguos. HDMI físico, GDevelop GUI, celular físico e playtest humano NOT_RUN."
   }
 }
