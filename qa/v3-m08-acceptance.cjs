@@ -21,6 +21,35 @@ const e=student.evidence('student-a');
 assert(e.includes('Antes:')&&e.includes('Depois:')&&e.includes('Negativo:'),'structured before/after/negative');
 assert.equal(student.parseEvidence(e).before,d.before,'roundtrip before');
 assert.equal(student.parseEvidence(e).after,d.after,'roundtrip after');
+
+assert.equal(student.parseEvidence(e).route,'hud','valid route is preserved');
+const invalidLegacy=[
+ ['achatado',e.replace(/\n/g,' ')],
+ ['sem campo',e.split('\n').slice(0,-1).join('\n')],
+ ['rótulo duplicado',e.replace('Depois: ','Antes: ')],
+ ['rota desconhecida',e.replace('M08 | hud','M08 | imagem')],
+ ['campo vazio',e.replace(/Negativo: [^\n]+/,'Negativo: ')],
+ ['campo longo',e.replace(/Mudança: [^\n]+/,'Mudança: '+'X'.repeat(91))],
+ ['campo extra',e+'\nOutro: valor'],
+ ['linha extra',e+'\n'],
+ ['ordem trocada',e.split('\n').map((line,i,arr)=>i===1?arr[2]:i===2?arr[1]:line).join('\n')],
+ ['antes e depois iguais',e.replace(/Depois: [^\n]+/,'Depois: '+d.before)]
+];
+for(const [name,raw] of invalidLegacy){
+ assert.equal(student.parseEvidence(raw),null,'M08 rejects '+name);
+ student.hydrate('legacy-'+name,raw,'submitted');
+ assert.equal(student.load('legacy-'+name).issue,'','invalid M08 evidence must not hydrate '+name);
+}
+assert.equal(student.parseEvidence(e.replace(/\n/g,'\r\n')).route,'hud','CRLF evidence supported');
+student.hydrate('remote-valid',e,'submitted');
+assert.equal(student.load('remote-valid').issue,d.issue,'valid remote text restored');
+assert.equal(student.load('remote-valid').checks.length,0,'remote text never proves Preview checks');
+const checksOnly=student.load('checks-only');checksOnly.checks=[1];
+student.save('checks-only',checksOnly);
+student.hydrate('checks-only',e,'submitted');
+assert.equal(student.load('checks-only').issue,'','local check-only draft preserved');
+assert.equal(student.load('checks-only').checks.length,1);
+
 const same={...d,after:d.before};
 student.save('student-b',same);
 assert.equal(student.validate('student-b').ok,false,'identical before and after rejected');
