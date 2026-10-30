@@ -29,6 +29,25 @@ assert.equal(student.validate('student-b').ok,false,'student data isolated');
 const ev=student.evidence('student-a');
 assert(ev.includes('Observado:')&&ev.includes('Decisão:'),'structured evidence');
 assert.equal(student.parseEvidence(ev).outcome,'issue','outcome roundtrip');
+
+// Legacy API flattened evidence into one line. It must not preselect an unverified peer outcome.
+const legacy=ev.replace(/\r?\n/g,' ');
+assert.equal(student.parseEvidence(legacy),null,'flattened M09 evidence is ambiguous');
+const legacySize=store.size;
+student.hydrate('legacy-student',legacy,'approved');
+assert.equal(store.size,legacySize,'flattened M09 must not create a local draft');
+assert.equal(student.load('legacy-student').outcome,'','no invented peer-test outcome');
+assert.equal(student.load('legacy-student').resolution,'','no invented correction/backlog');
+const truncated=ev.split('\n').slice(0,-1).join('\n');
+assert.equal(student.parseEvidence(truncated),null,'incomplete structured evidence rejected');
+student.hydrate('partial-student',truncated,'submitted');
+assert.equal(store.size,legacySize,'partial M09 must not be persisted');
+const wrongLabel=ev.replace('\nObservado:', '\nCampo estranho:');
+assert.equal(student.parseEvidence(wrongLabel),null,'unknown label rejected');
+const duplicate=ev.replace('\nObservado:', '\nEsperado:');
+assert.equal(student.parseEvidence(duplicate),null,'duplicate field rejected');
+assert.equal(student.parseEvidence(ev.replace('M09 | issue', 'M09 | unknown')),null,'unknown result rejected');
+
 student.hydrate('student-c',ev,'submitted');
 assert.equal(student.load('student-c').checks.length,0,'hydrated submission never fabricates manual peer checks');
 const impossible={...draft,outcome:'passed',resolution:'fixed'};
