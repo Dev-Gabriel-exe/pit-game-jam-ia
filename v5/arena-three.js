@@ -1132,7 +1132,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   }
  }
  renderer.setAnimationLoop(loop);
- const onVisibility=()=>{if(document.hidden)pause()};
+ const onVisibility=()=>{
+  if(document.hidden&&playing){
+   pause();
+   // A backgrounded Android tab is suspended deliberately, but the HUD must
+   // tell the player it is paused rather than claiming combat is ongoing.
+   container.dispatchEvent(new CustomEvent('v5-stage-autopaused',{detail:{reason:'background'}}));
+  }
+ };
  document.addEventListener('visibilitychange',onVisibility);
  const dispose=()=>{
   if(!live)return;live=false;pause();clearInterval(physicsTimer);renderer.setAnimationLoop(null);resizeObserver.disconnect();
