@@ -60,7 +60,7 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  const spreadAggro=engagementMode==='spaced';
@@ -82,6 +82,19 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   if(!experimentalSpawnPositions||typeof experimentalSpawnPositions!=='object'||Array.isArray(experimentalSpawnPositions)||
      Object.keys(experimentalSpawnPositions).length!==entries.length)
    throw Error('Spawn experimental exige uma posição por herói');
+ }
+ // H.3 causal laboratory toggles: M5 and normal M10 remain byte-for-byte unchanged.
+ if(experimentalTurnOrder!==null){
+  if(arenaMission!==10)throw Error('Ordem experimental disponível somente na M10 de laboratório');
+  if(!Array.isArray(experimentalTurnOrder)||experimentalTurnOrder.length!==entries.length||
+     experimentalTurnOrder.some(id=>typeof id!=='string')||
+     new Set(experimentalTurnOrder).size!==entries.length)
+   throw Error('Ordem experimental exige IDs únicos de todos os heróis');
+ }
+ if(experimentalCritSeed!==null){
+  if(arenaMission!==10)throw Error('RNG experimental disponível somente na M10 de laboratório');
+  if(!Number.isInteger(experimentalCritSeed)||experimentalCritSeed<0||experimentalCritSeed>0xffffffff)
+   throw Error('Seed experimental de crítico inválida');
  }
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
@@ -124,6 +137,19 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    lastHitAt:-999,hitWindow:[],prevX:null,prevZ:null,eliminatedAt:null};
  });
  const byId=new Map(fighters.map(f=>[f.id,f]));
+ // Only the actor processing loop is permuted. Fighter array, spawn positions,
+ // projectile order, and initial random draws stay fixed per identity.
+ if(experimentalTurnOrder!==null&&experimentalTurnOrder.some(id=>!byId.has(id)))
+  throw Error('Ordem experimental contém herói inexistente');
+ const turnFighters=experimentalTurnOrder===null?fighters:experimentalTurnOrder.map(id=>byId.get(id));
+ // Per-hero critical RNG streams avoid sharing a mutable global draw sequence
+ // across actors. Different experimentalCritSeed values change crit randomness
+ // without touching world geometry, init RNG, or processing order.
+ const critByHero=experimentalCritSeed===null?null:new Map(fighters.map(f=>{
+  let h=2166136261;
+  for(let i=0;i<f.id.length;i++)h=Math.imul(h^f.id.charCodeAt(i),16777619);
+  return [f.id,rng((h^(experimentalCritSeed>>>0))>>>0)];
+ }));
  // Fase E: deterministic tangential navigation reuses collider footprints.
  // Only changes the route while pursuing; never changes HP, abilities, or targeting.
  function firstBlockingObstacle(x,z,tx,tz){
@@ -339,7 +365,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    attacker.passives.l02Ready=false;attacker.cooldowns.L02=12;
    emit('proc',attacker,{talent:'L02',target:target.id});
   }
-  if(!reflect&&r()<attacker.stats.crit)amount*=1.5;
+  if(!reflect&&(critByHero?critByHero.get(attacker.id)():r())<attacker.stats.crit)amount*=1.5;
   if(!reflect&&attacker.build.klass==='hunter'&&has(attacker,'E07')&&attacker.passives.e07Ready){
    amount*=1+.10*effectiveness(attacker,'E07');attacker.passives.e07Ready=false;attacker.cooldowns.E07=14;
    attacker.passives.e07Anchor={x:attacker.x,z:attacker.z};
@@ -940,7 +966,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   // close rivals are available. Not a forced duel or protected 1x1 arena.
   const aggroReservations=new Map();
   const radius=Math.max(3.2*scale,18*scale-Math.max(0,time-stormStart)*(.35*scale*shrinkFactor));
-  for(const f of fighters){
+  for(const f of turnFighters){
    if(!f.alive)continue;
    f.gcd=Math.max(0,f.gcd-step);f.basic=Math.max(0,f.basic-step);
    f.slow=Math.max(0,f.slow-step);f.weak=Math.max(0,f.weak-step);f.fortress=Math.max(0,f.fortress-step);
