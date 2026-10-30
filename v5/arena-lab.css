@@ -241,3 +241,21 @@ body.arena-immersive .stage-flair{display:none}
 .f3-viewer-controls output{font-weight:800;color:#e6d6b6;flex:1 1 100%;padding:6px 0}
 @media(max-width:650px){.f3-viewer-controls select{max-width:none;flex-basis:100%}
 .f3-viewer-controls button{flex:1 1 120px}}
+
+/* G.1 opt-in hardware diagnostics: readable on projected desktop screens. */
+.g1-performance-panel{display:grid;gap:10px;margin:0 15px 13px;padding:13px 16px;
+ border:1px solid #ae8d65;background:#14121e;color:#e8d5b7}
+.g1-performance-panel[hidden]{display:none!important}
+.g1-performance-heading{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
+ font:800 12px Cinzel,serif;color:#dfb980}
+.g1-performance-heading span{font:600 11px "Source Sans 3",system-ui;color:#b8aba0}
+.g1-performance-numbers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.g1-performance-numbers>span{display:flex;flex-direction:column;gap:5px;
+ background:#271d29;border:1px solid #8f72543b;padding:10px;font-size:11px}
+.g1-performance-numbers strong{font-size:19px;color:#f1d3a6;font-variant-numeric:tabular-nums}
+.g1-performance-actions{display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;gap:12px;font-size:11px;color:#cdb69b}
+.g1-performance-actions button{border:1px solid #a98a5e;background:#443028;color:#f5dabb;padding:9px 12px}
+.g1-performance-panel[data-status="critical"]{border-color:#c26556}
+.g1-performance-panel[data-status="context-lost"]{border-color:#d37663}
+@media(max-width:850px){.g1-performance-numbers{grid-template-columns:repeat(2,minmax(0,1fr))}}
