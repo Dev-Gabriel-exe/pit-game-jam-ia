@@ -101,3 +101,36 @@ Foi publicada prévia `dpl_8BgFsrMHcToYrJbYnS8ypy63DsFk`, estado Vercel READY, p
 Observação: a UI de Vercel está READY, mas não corresponde por si só a aprovação humana, FPS real, nem validação visual final. GitHub Actions de browser pode estar em execução em SHA posterior.
 
 **Próxima investigação dentro da E:** por que Guardião continua sem alcance útil contra Caçador sob steer, apesar das janelas de recuperação; analisar uso real de `J03`, `G06` e builds que não os possuem, e checar colisores/arcos/pilares antes de qualquer habilidade passiva ou bonificação. Só depois da homologação E, avançar para F (câmera cinematográfica automática).
+
+## Fase E — quarta rodada: vida de Guerreiro e Guardião, equilíbrio 4/30 (30/10/2026)
+
+**Pedido do usuário:** aumentar a vida das duas classes corpo a corpo e testar até aproximar a distribuição de vitórias, preservando as quatro classes e o motor de talentos.
+
+### Preset `e-hp2` — opt-in exclusivamente no laboratório M5
+
+O aumento de vida é de **HP-base de 137 → 154** para Guerreiro (+17; +12,4%) e de **140 → 150** para Guardião (+10; +7,1%). Os pontos investidos em VIT/DEF seguem a mesma regra anterior; os incrementos se somam ao cálculo de HP da partida. O Caçador recebe redução experimental de alcance de 9,3 → 8,1 unidades; isso não modifica os 30 talentos nem o dano de flechas. Guardião mantém bônus de aproximação de 16% **apenas ao perseguir um inimigo de longa distância** (não é bônus global de velocidade, dano nem teleporte).
+
+- `v5/phase2-combat.js`: novo `balancePreset:'e-hp2'`; sem parâmetro, tudo permanece com os valores antigos. A recuperação de disparo `rangedCommitment:'recovery'` e o desvio de obstáculos `navigationMode:'steer'` são opções separadas.
+- `v5/arena-three.js`, `v5/arena-lab.js`: parâmetro `balance=hp2` ativa o preset somente no laboratório M5. Para reprodução da versão testada, usar `phase2=1&nav=steer&counterplay=1&balance=hp2`. O M10 continua no motor anterior.
+- `qa/v5-hp-balance.cjs`: compara HP/alcance/dano/DEF/velocidade, verifica regressão do modo padrão, mesma seed reexecutável, talentos efetivamente utilizados, resultados finitos, quatro classes representadas e 120 partidas para cada formato. Foi vinculado ao workflow de regras e ao teste de navegador.
+
+### Seleção do candidato e amostra independente
+
+Testados incrementos progressivos (137/140 inicial; 150/155; 160/170; além de 154/150 e outros), combinações com vantagem de aproximação e ajustes graduais no alcance efetivo. Aumentar só a vida fez Guardião subir em partidas de 30 sem necessariamente melhorar Guerreiro. O candidato selecionado foi `Guerreiro HP 154 / Guardião HP 150 / Caçador alcance 8,1 / Guardião aproximação 1,16` em conjunto com recuperação de disparo moderada.
+
+**Seleção:** 56 partidas de 4 + 56 de 30 no seed `391711+i*2663`: 4 jogadores, Guardião 13, Caçador 15, Guerreiro 17, Arcanista 11; 30 jogadores, Guardião 13, Caçador 16, Guerreiro 13, Arcanista 14.
+
+**Holdout separado:** 120 partidas de 4 e 120 de 30, seed `8123003+i*2089`, variação de talentos por combatente `(i+j*3+7)%11`:
+
+| Formato | Guerreiro | Arcanista | Caçador | Guardião | Média de duração | Média de talentos |
+|---|---:|---:|---:|---:|---:|---:|
+| 4 jogadores, 120 partidas | 33 (27,5%) | 24 (20,0%) | 36 (30,0%) | 27 (22,5%) | 31,6s | 21,5 |
+| 30 jogadores, 120 partidas | 24 (20,0%) | 30 (25,0%) | 30 (25,0%) | 36 (30,0%) | 64,7s | 175,1 |
+
+Sem aumento artificial de dano; total de 1 encerramento por tempo nos 120 torneios de 30 e nenhum nos 120 de quatro. Os números são do motor determinístico, não comprovam FPS/dispositivo real, nem equidade estatística universal para toda composição possível de builds ou distribuição de classes. O resultado atende a um **critério prático provisório de não-dominação (10–40% por classe)**, sem exigir 25% exatos nem manipular o vencedor.
+
+### Publicação isolada
+
+Deployment de prévia Vercel `dpl_Rany9RFYJ7XjF4rZynsYUHAN7NfA`, READY, domínio temporário `pit-v5-coliseu-demo-cp5fhmd5m.vercel.app`, sem alteração da produção, sem merge em `main`. Link de comparação experimental: https://pit-v5-coliseu-demo-cp5fhmd5m.vercel.app/v5/arena-lab.html?phase2=1&count=4&nav=steer&counterplay=1&balance=hp2.
+
+**Próxima etapa antes de concluir Fase E:** confirmar a CI atual (inclusive browser), revisar visualmente o comportamento no celular, testar FPS/latência com 30 modelos e fazer revisão de fairness com composições de turma diferentes. Só após essa etapa iniciar a Fase F da câmera cinematográfica, conforme roadmap.
