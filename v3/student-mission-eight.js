@@ -44,7 +44,7 @@ function parseEvidence(s){
  const lines=s.replace(/\r\n?/g,'\n').split('\n');
  if(lines.length!==fields.length+1)return null;
  const routeLine=lines[0];
- if(!/^M08 \\| (hud|puzzle|3d)$/.test(routeLine))return null;
+ if(!/^M08 \| (hud|puzzle|3d)$/.test(routeLine))return null;
  const d=blank();d.route=routeLine.slice(6);
  const labels=['Problema','Interação','Mudança','Antes','Depois','Negativo','Projeto salvo'];
  for(let i=0;i<fields.length;i++){
