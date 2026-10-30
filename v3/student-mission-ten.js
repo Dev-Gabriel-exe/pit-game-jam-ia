@@ -33,8 +33,30 @@ const accessPlaceholder=route=>({
  gd:'https://gd.games/seu-jogo'
 }[route]||'Descreva o acesso ao jogo');
 function evidence(s){const d=load(s);return ['M10 | '+d.route,...fields.map(f=>names[f.id]+': '+clean(d[f.id]))].join('\n')}
-function parseEvidence(s){if(typeof s!=='string'||!s.startsWith('M10 | '))return null;const d=blank(),lines=s.split(/\r?\n/),route=lines[0].slice(6).trim();if(routes.includes(route))d.route=route;const inv=Object.fromEntries(Object.entries(names).map(([k,v])=>[v,k]));for(const line of lines.slice(1)){const n=line.indexOf(': ');if(n<0)continue;const id=inv[line.slice(0,n)],f=fields.find(x=>x.id===id);if(f)d[id]=line.slice(n+2).slice(0,f.max)}return d}
-function hydrate(s,e,status){const d=parseEvidence(e);if(!d)return;if(fields.some(f=>load(s)[f.id].trim()))return;d.checks=[];save(s,d)}
+function parseEvidence(s){
+ // Evidências legadas com LF removido são ambíguas: não adivinhar rota, campos ou testes.
+ if(typeof s!=='string'||s.length>750)return null;
+ const lines=s.replace(/\r\n?/g,'\n').split('\n');
+ if(lines.length!==fields.length+1||!/^M10 \\| (local|web|gd)$/.test(lines[0]))return null;
+ const d=blank();d.route=lines[0].slice(6);
+ for(let i=0;i<fields.length;i++){
+  const f=fields[i],prefix=names[f.id]+': ',line=lines[i+1];
+  if(!line.startsWith(prefix))return null;
+  const value=line.slice(prefix.length);
+  if(value!==clean(value)||value.length<f.min||value.length>f.max)return null;
+  d[f.id]=value;
+ }
+ if(d.route==='gd'&&!validLink(d.access))return null;
+ // A ficha não comprova Preview, reabertura do projeto ou privacidade.
+ return d;
+}
+function hydrate(s,e,status){
+ const d=parseEvidence(e);if(!d)return;
+ const current=load(s);
+ // Preservar também rascunhos com somente checkboxes marcados.
+ if(fields.some(f=>current[f.id].trim())||current.checks.length)return;
+ d.checks=[];save(s,d);
+}
 function profile(c){const i=c.idea||{};return {title:clean(i.title)||'seu jogo',genre:clean(i.genre)||'gênero autoral'}}
 function render(c){const d=load(c.session),p=profile(c),locked=['submitted','approved'].includes(c.status),v=locked?{ok:true}:validate(c.session);
 const head='<header><small>MISSÃO 10 / 10 · LANÇAMENTO · 30 MIN</small><h2>Seu jogo merece ser jogado.</h2><p>'+esc(p.title)+' · '+esc(p.genre)+'</p></header>';
