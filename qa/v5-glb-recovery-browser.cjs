@@ -30,6 +30,10 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>document.querySelector('#retryModels')?.hidden===false,
    null,{timeout:10000});
   assert.equal(await page.locator('#startBattle').isDisabled(),true);
+  // Failed downloads can finish before the two healthy GLBs: wait for the
+  // positive models to finish instead of interpreting the transient zero.
+  await page.waitForFunction(()=>Number(document.querySelector('#arenaStage')?.dataset.v5ModelsLoaded)===2,
+   null,{timeout:120000});
   assert.equal(await stage.getAttribute('data-v5-models-loaded'),'2');
   assert.match(await page.locator('#modelReport').textContent(),/Falha em 2 modelo/);
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.finished),false);
