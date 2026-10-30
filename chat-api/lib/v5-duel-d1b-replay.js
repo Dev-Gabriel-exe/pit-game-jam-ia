@@ -14,10 +14,10 @@ function validEntry(raw){
  if(!raw||!['left','right'].includes(raw.side))throw Error('D1b: lado inválido');
  if(!Number.isInteger(raw.approved)||raw.approved<0||raw.approved>10)
   throw Error('D1b: aprovações de servidor inválidas');
- const approved=C.normalizeBuild(raw.build,raw.approved);
+ const verified=C.normalizeBuild(raw.build,raw.approved);
  const name=String(raw.name||'Aventureiro').slice(0,40);
- return {side:raw.side,name,approved,
-  build:{klass:approved.klass,attributes:{...approved.attributes},talents:[...approved.talents]}};
+ return {side:raw.side,name,approved:raw.approved,
+  build:{klass:verified.klass,attributes:{...verified.attributes},talents:[...verified.talents]}};
 }
 function snapshot(sim){
  return {t:+sim.time.toFixed(2),
