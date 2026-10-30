@@ -299,3 +299,27 @@ body.pit-projecting{overflow:hidden!important}
 #pitProjector .pit-projector-m10-review :is(p,small,span,b,strong){
  font-size:clamp(19px,1.55vw,25px);line-height:1.42;overflow-wrap:anywhere;
 }
+
+/* M10/Praticar: public eight-field checklist, three real checks and release criteria.
+   No HDMI-off teacher instructions are copied into the projector. */
+#pitProjector .pit-projector-m10-practice{
+ width:min(1080px,100%);max-width:100%;padding:clamp(14px,2vw,24px);
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;line-height:1.4;
+}
+#pitProjector .pit-projector-m10-practice :is(header,footer,.t10v-practice-fields article,.t10v-practice-tests,.t10v-practice-criteria){
+ margin:0;padding:clamp(14px,1.8vw,24px);min-width:0;max-width:100%;
+}
+#pitProjector .pit-projector-m10-practice :is(h2,h3,h4){
+ font:700 clamp(25px,2.1vw,34px)/1.2 system-ui,"Segoe UI",Arial,sans-serif;
+ margin:4px 0 10px;
+}
+#pitProjector .pit-projector-m10-practice :is(p,li,small,span,b,strong){
+ font-size:clamp(19px,1.5vw,24px);line-height:1.42;overflow-wrap:anywhere;
+}
+#pitProjector .pit-projector-m10-practice .t10v-practice-fields{display:block;margin:0}
+#pitProjector .pit-projector-m10-practice .t10v-practice-fields article>div{margin-top:12px}
+#pitProjector .pit-projector-m10-practice .t10v-practice-tests ol{margin:8px 0;padding-left:1.5em}
+#pitProjector .pit-projector-m10-practice .t10v-practice-criteria ul{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 26px;padding-left:1.5em;
+}
+@media(max-width:800px){#pitProjector .pit-projector-m10-practice .t10v-practice-criteria ul{grid-template-columns:1fr}}
