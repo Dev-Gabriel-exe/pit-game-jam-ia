@@ -1,0 +1,38 @@
+name: V5 M10 Archetype Shield Pairs QA
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-archetype-shield-pairs.cjs'
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+      - '.github/workflows/v5-m10-archetype-shield-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  m10-archetypes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and contract guards
+        run: |
+          node --check qa/v5-m10-archetype-shield-pairs.cjs
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-m10-engine.cjs
+          node qa/v5-endgame-replay.cjs
+      - name: 144 controlled M10 battles, 72 paired shield comparisons
+        run: node qa/v5-m10-archetype-shield-pairs.cjs
+        env:
+          M10_ARCHETYPE_REPORT_FILE: qa/out/m10-archetype-shield-pairs.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-archetype-shield-pairs
+          path: qa/out/m10-archetype-shield-pairs.json
+          retention-days: 14
+          if-no-files-found: ignore
