@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar CI do guard M06 no SHA 591a1b56 ou posterior; seguir auditoria de parseEvidence/hydrate M01–M05, M07–M08 e M10 (dados legados achatados, rótulos duplicados, rotas inválidas). Priorizar sincronização professor/aluno; manter testes humanos/HDMI/GDevelop GUI/celular físico NOT_RUN.",
+  "priority": "Confirmar execução nativa do novo passo M05 na CI após fefc5865; verificar Browser QA do mesmo SHA; continuar auditoria de parseEvidence/hydrate M01–M04, M07–M08 e M10. Não inferir testes manuais.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M06-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M05-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2660,12 +2660,18 @@
       "status": "in_progress",
       "commit": "591a1b56539505fe466a03e752fef2f5bab22f2c",
       "summary": "M06 evidence parser previously accepted flattened, partial, duplicate/unknown labels and invalid routes, silently hydrating default image. Now requires valid route, all 8 distinct labeled fields and bounds, preserving local draft and leaving manual Preview checks unchecked. V8 14/14 functional assertions PASS; qa/v3-m06-student.cjs expanded with corrupted/legacy cases and syntax parsed, native Node/CI NOT_CONFIRMED. No real student data touched; HDMI/GDevelop GUI/mobile/human NOT_RUN. Branch-only, main unchanged; V3 54/59. After checkpoint, entire qa/v3-m06-student.cjs executed PASS in V8 compatibility sandbox with fetched repository sources; native Node/CI still NOT_CONFIRMED."
+    },
+    {
+      "at": "2026-10-30T18:18:00.000Z",
+      "task": "V4-M05-LEGACY-EVIDENCE-GUARD",
+      "summary": "Auditoria de recuperação de evidência M05: parser agora exige 14 linhas ordenadas, 4 metadados válidos, trilha reconhecida e todos os 8 campos dentro dos limites, rejeitando dados legados achatados/parciais/duplicados. Hydrate mantém rascunho local e não fabrica checks. Teste Node qa/v3-m05-student.cjs expandido com 10 casos negativos, restauração válida, preservação de rascunho e limites; adicionado explicitamente ao workflow static-qa.yml (antes não era executado). QA estática do commit 094bf6b SUCCESS, mas ainda não incluía o teste M05; novo workflow fefc5865 precisa confirmar. Browser QA de 094bf6b IN_PROGRESS na última consulta. GDevelop GUI, HDMI, mobile físico e testes humanos NOT_RUN. Branch V3 somente, main intacta; roadmap 54/59.",
+      "commit": "fefc5865483d021dc98bf522bff19e060f0068ac"
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M06-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M05-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T17:19:00.000Z",
+    "updated_at": "2026-10-30T18:18:00.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2765,7 +2771,10 @@
       "c5b5a5f0e9133bd47a6bcb55e8c4eeaf60250d49",
       "e89314d89181c80f65d587a6684eed4e106c9d05",
       "95f0a9057e9a759545a252303c5db4b45e436e61",
-      "591a1b56539505fe466a03e752fef2f5bab22f2c"
+      "591a1b56539505fe466a03e752fef2f5bab22f2c",
+      "2c0084e557eb35d6f7cdf83931653c7a7612b1b",
+      "094bf6b60659b0f4b3788400040f5cf7c0d2ab67",
+      "fefc5865483d021dc98bf522bff19e060f0068ac"
     ],
     "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
@@ -3584,13 +3593,35 @@
         "name": "M06 full QA compatibility run",
         "sha": "591a1b56539505fe466a03e752fef2f5bab22f2c",
         "result": "PASS: executed qa/v3-m06-student.cjs in V8 with emulated fs/path/vm/assert, using actual fetched app/HTML/CSS/student source. Not native Node or Chrome. GitHub Actions on latest commit not confirmed."
+      },
+      {
+        "name": "M05 legacy parser and 10 negative cases",
+        "sha": "094bf6b60659b0f4b3788400040f5cf7c0d2ab67",
+        "result": "CODE_AND_REGRESSION_COMMITTED; not yet executed by native Node in verified CI (static QA on 094bf6b did not include this test)"
+      },
+      {
+        "name": "M05 previous static QA",
+        "run_id": 41105224002,
+        "sha": "094bf6b60659b0f4b3788400040f5cf7c0d2ab67",
+        "result": "SUCCESS; existing suite only, before M05 test wiring"
+      },
+      {
+        "name": "M05 new static QA with explicit test step",
+        "sha": "fefc5865483d021dc98bf522bff19e060f0068ac",
+        "result": "PENDING confirmation"
+      },
+      {
+        "name": "M05 browser QA",
+        "run_id": 41105224013,
+        "sha": "094bf6b60659b0f4b3788400040f5cf7c0d2ab67",
+        "result": "IN_PROGRESS at last check; new workflow commit pending"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar Browser QA 41078711300, revisar se o aviso de histórico aparece corretamente na UI com dados fictícios em M01–M10 e sem aparecer na projeção; depois auditar o próximo defeito P1 pedagógico.",
-    "blocker": "Registros legados truncados não podem ser reconstruídos sem dados originais; nenhuma migração ou dados reais foram tocados. HDMI, GDevelop GUI, celular físico e playtest humano NOT_RUN."
+    "next_task": "Confirmar QA nativa M05 e corrigir eventual falha; depois auditar parser M04 (evidências legadas e rótulos).",
+    "blocker": "Nenhuma migração automática de dados legados ambíguos. HDMI físico, GDevelop GUI, celular físico e playtest humano NOT_RUN."
   }
 }
