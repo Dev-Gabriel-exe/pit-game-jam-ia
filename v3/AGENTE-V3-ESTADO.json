@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T17:19:00.000Z",
+  "last_completed_at": "2026-10-30T19:16:00.000Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar Browser QA 41105456503 (fefc5865) e 41105513965 (checkpoint); seguir auditoria M04/M01–M03 e M07–M08/M10 sem recuperar campos ambíguos.",
+  "priority": "Confirmar QA estática e Browser QA do commit 2ddd9c14; continuar auditoria de recuperação M01–M03, M07–M08 e M10, sem preencher dados legados ambíguos.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M05-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M04-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2666,12 +2666,18 @@
       "task": "V4-M05-LEGACY-EVIDENCE-GUARD",
       "summary": "Auditoria de recuperação de evidência M05: parser agora exige 14 linhas ordenadas, 4 metadados válidos, trilha reconhecida e todos os 8 campos dentro dos limites, rejeitando dados legados achatados/parciais/duplicados. Hydrate mantém rascunho local e não fabrica checks. Teste Node qa/v3-m05-student.cjs expandido com 10 casos negativos, restauração válida, preservação de rascunho e limites; adicionado explicitamente ao workflow static-qa.yml (antes não era executado). QA estática do commit 094bf6b SUCCESS, mas ainda não incluía o teste M05; novo workflow fefc5865 CONFIRMADO: run 41105456450 SUCCESS, 57 regressões M05 PASS no Node nativo. Browser QA de 094bf6b IN_PROGRESS na última consulta. GDevelop GUI, HDMI, mobile físico e testes humanos NOT_RUN. Branch V3 somente, main intacta; roadmap 54/59.",
       "commit": "fefc5865483d021dc98bf522bff19e060f0068ac"
+    },
+    {
+      "at": "2026-10-30T19:16:00.000Z",
+      "task": "V4-M04-LEGACY-EVIDENCE-GUARD",
+      "commit": "2ddd9c14ebcee5d28829bf3a92fad67d02c933a0",
+      "summary": "M04 parser previously accepted incomplete, duplicate and flattened evidence; now requires exact 12-line structure, valid metadata/route and bounded required fields, preserves local drafts and never invents three manual Preview checks. qa/v3-m04-regression.cjs expanded with 13 negative cases and wired into native Node CI. 34 isolated V8 production checks PASS; new GitHub Actions and Browser QA NOT_CONFIRMED (commit-status API empty and PR-only workflow lookup empty). No real student data or main changes. Roadmap remains 54/59; HDMI/GDevelop GUI/physical mobile/human NOT_RUN."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M05-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M04-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T18:19:00.000Z",
+    "updated_at": "2026-10-30T19:16:00.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2774,7 +2780,10 @@
       "591a1b56539505fe466a03e752fef2f5bab22f2c",
       "2c0084e557eb35d6f7cdf83931653c7a7612b1b",
       "094bf6b60659b0f4b3788400040f5cf7c0d2ab67",
-      "fefc5865483d021dc98bf522bff19e060f0068ac"
+      "fefc5865483d021dc98bf522bff19e060f0068ac",
+      "2861bd55ba950b483a97f89fe65d232ebb505c34",
+      "c2c23edd1a301ef07802f18ab74fbed75a524d1d",
+      "2ddd9c14ebcee5d28829bf3a92fad67d02c933a0"
     ],
     "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
@@ -3616,13 +3625,23 @@
         "run_id": 41105224013,
         "sha": "094bf6b60659b0f4b3788400040f5cf7c0d2ab67",
         "result": "IN_PROGRESS at last check; new workflow commit pending"
+      },
+      {
+        "name": "M04 structured legacy evidence guard isolated V8",
+        "sha": "2ddd9c14ebcee5d28829bf3a92fad67d02c933a0",
+        "result": "PASS 34 assertions on fetched production module: 13 malformed/flattened/partial/duplicate/unknown cases rejected, valid recovery, no invented Preview checks, local draft preservation, worst-case 723/750 chars."
+      },
+      {
+        "name": "M04 native Node CI and Browser QA on new workflow",
+        "sha": "2ddd9c14ebcee5d28829bf3a92fad67d02c933a0",
+        "result": "NOT_CONFIRMED: native Node test wired to static-qa.yml; commit statuses=[] and PR-only workflow_runs=[]; no GitHub Actions or Chrome pass claimed."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Browser QA fefc5865/checkpoint; depois auditar parser M04 e corrigir falhas concretas.",
-    "blocker": "Nenhuma migração automática de dados legados ambíguos. HDMI físico, GDevelop GUI, celular físico e playtest humano NOT_RUN."
+    "next_task": "Confirmar CI M04 no SHA 2ddd9c14; auditar recuperação de evidências M01–M03, M07–M08 e M10.",
+    "blocker": "Dados legados achatados permanecem consultáveis sem preenchimento automático; GDevelop GUI, HDMI físico, celular físico e playtest humano NOT_RUN."
   }
 }
