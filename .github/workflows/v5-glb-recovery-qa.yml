@@ -1,0 +1,32 @@
+name: V5 Fase G3 — Falhas de GLB e Recuperação
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/arena-three.js'
+      - 'v5/arena-lab.*'
+      - 'qa/v5-glb-recovery-browser.cjs'
+      - '.github/workflows/v5-glb-recovery-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - run: |
+          node --check v5/arena-three.js
+          node --check v5/arena-lab.js
+          node --check qa/v5-glb-recovery-browser.cjs
+          node qa/v5-endgame-replay.cjs
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/v5-g3.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-glb-recovery-browser.cjs
