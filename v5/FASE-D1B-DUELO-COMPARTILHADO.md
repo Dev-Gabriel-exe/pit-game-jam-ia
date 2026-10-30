@@ -42,4 +42,9 @@
 
 **D.1c**: integrar o lobby real de convites D.1a à reprodução D.1b num único fluxo de duas sessões, com controle docente, alerta de convite sem polling excessivo, sala e notificações/reconexão. Simular 15 pares de 30 alunos e medir concorrência. **H.2**: coordenação de espectadores/câmera com a arena coletiva e professor. **G.2/I**: PCs reais, homologação, merge/publicação apenas com autorização.
 
+**QA:** primeira passagem completa de PostgreSQL e duas sessões Chromium em https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41075905328 (**aprovada**). Uma execução posterior também verifica explicitamente a inicialização WebGL de ambas as telas.
+
+**Prévia pública fictícia (sem senha, sem aluno real):**
+https://raw.githack.com/Dev-Gabriel-exe/pit-game-jam-ia/feature/v5-duelos-d1b/v5/duel-replay-d1b.html?demo=1
+
 **Workflow:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-duel-d1b-qa.yml
