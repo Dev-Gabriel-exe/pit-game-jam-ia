@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Auditar recuperação de evidências M08 e M10 (depois M01–M03), sem reconstruir campos de registros legados ambíguos; verificar CI M07 no SHA e8485d2.",
+  "priority": "Confirmar CI M08 no SHA 88bd9365, depois auditar recuperação M10 e M01–M03; não inferir evidências legadas ambíguas.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M07-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M08-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2681,9 +2681,9 @@
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M07-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M08-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T20:19:56Z",
+    "updated_at": "2026-10-30T21:18:00Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2791,7 +2791,10 @@
       "c2c23edd1a301ef07802f18ab74fbed75a524d1d",
       "2ddd9c14ebcee5d28829bf3a92fad67d02c933a0",
       "278ea343f6eb7a2a5fe29ad98a5f7a68d5447828",
-      "e8485d2739d762624d57c6ea81d7b514968dcebd"
+      "e8485d2739d762624d57c6ea81d7b514968dcebd",
+      "aab01c8b7be4eccac4c1e519c2190b2d0eda7785",
+      "7c6cdc3f26f71213fa60e3ff646e0c891dbc17cf",
+      "88bd93653fc6e2fe80ac7baf1dd6cb863b27b75b"
     ],
     "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
@@ -3670,6 +3673,28 @@
         "name": "M07 GitHub Actions new code and regression",
         "sha": "e8485d2739d762624d57c6ea81d7b514968dcebd",
         "result": "QUEUED at last public Actions inspection; native Node and browser outcomes NOT_CONFIRMED."
+      },
+      {
+        "name": "M07 previous CI exact SHA",
+        "sha": "17e18d5021c2fcf75a10392f73ca95759bade2be",
+        "run_ids": [
+          41122645340,
+          41122645324
+        ],
+        "result": "SUCCESS: static and Browser QA confirmed on 2026-10-30"
+      },
+      {
+        "name": "M08 strict legacy evidence parser + regression",
+        "sha": "88bd93653fc6e2fe80ac7baf1dd6cb863b27b75b",
+        "run_ids": [
+          41129958546,
+          41129958152
+        ],
+        "result": "IN_PROGRESS at checkpoint; no human or GDevelop test claimed"
+      },
+      {
+        "name": "HDMI physical, GDevelop GUI, real mobile, human playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
