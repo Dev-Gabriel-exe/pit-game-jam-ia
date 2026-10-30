@@ -1,0 +1,37 @@
+name: V5 M10 — Ablação Defensiva do Guardião
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/phase2-combat.js'
+      - 'qa/v5-m10-guardian-ablation.cjs'
+      - '.github/workflows/v5-m10-guardian-ablation-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guardian-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax
+        run: |
+          node --check v5/phase2-combat.js
+          node --check qa/v5-m10-guardian-ablation.cjs
+      - name: Paired Guardian defense ablation and baseline regressions
+        env:
+          M10_GUARDIAN_REPORT_FILE: /tmp/v5-m10-guardian-ablation.json
+        run: |
+          node qa/v5-m10-guardian-ablation.cjs
+          node qa/v5-m10-engine.cjs
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-endgame-replay.cjs
+      - name: Attach synthetic report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: v5-m10-guardian-ablation-report
+          path: /tmp/v5-m10-guardian-ablation.json
+          if-no-files-found: ignore
+          retention-days: 14
