@@ -4,7 +4,7 @@
  * damage, select builds, create winner, or award XP/grades.
  */
 const {createReplay}=require('./v5-duel-d1b-replay.js');
-const {progressOf,normalizeBuild}=require('./v5-build-v2-contract.js');
+const {progressOf,normalizeBuild,publicView}=require('./v5-build-v2-contract.js');
 const {DuelError}=require('./v5-duel-d1a-service.js');
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const fail=(message,status=409)=>{throw new DuelError(message,status)};
@@ -133,6 +133,9 @@ function createMatchService(pool){
     normalizeBuild(build,progress.approvedMissions);
     if(progress.approvedMissions>5&&!b.m5_snapshot)
      fail('Entrada na arena da missão 5 ainda não registrada.',409);
+    // Re-validate the irreversibly frozen M5 floor even if a stale/incorrect
+    // database row bypassed the regular character editor.
+    publicView(b,progress);
     participants.push({side,name:named.get(String(id)),approved:progress.approvedMissions,build});
    }
    // No client-side RNG, requested build, winner, positions or score.
