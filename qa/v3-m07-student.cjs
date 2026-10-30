@@ -18,6 +18,30 @@ assert.equal(m.routeFor({rule:{route:2}},m.load('novo')),1);
 assert.equal(m.routeFor({playable:{route:3}},m.load('novo')),1);
 const max=m.load('ficticioA');for(const f of m.fields)max[f.id]='X'.repeat(f.max);m.save('max',max);
 assert.ok(m.evidence('max').length<=750);assert.equal(m.parseEvidence(m.evidence('max')).saved.length,65);
+// Regression: API legada pode achatar quebras de linha. Nunca reconstruir
+// respostas, rota ou checks manuais a partir de texto parcial/ambíguo.
+const corrupt=[
+ ['achatado',evidence.replace(/\n/g,' ')],
+ ['incompleto',evidence.split('\n').slice(0,-1).join('\n')],
+ ['rótulo duplicado',evidence.replace('Desafio: ','Início: ')],
+ ['rota desconhecida',evidence.replace('M07 | 3d','M07 | 4d')],
+ ['SE vazio',evidence.replace(/SE: [^\n]+/,'SE: ')],
+ ['campo longo',evidence.replace(/SE: [^\n]+/,'SE: '+'X'.repeat(91))],
+ ['campo extra',evidence+'\nOutro: teste'],
+ ['linha extra',evidence+'\n'],
+ ['rótulo incorreto',evidence.replace('Projeto salvo: ','Projeto: ')],
+ ['ordem trocada',evidence.split('\n').map((line,i,arr)=>i===1?arr[2]:i===2?arr[1]:line).join('\n')]
+];
+for(const [name,raw] of corrupt){
+ assert.equal(m.parseEvidence(raw),null,'M07 must reject '+name);
+ m.hydrate('legado-'+name,raw,'submitted');
+ assert.equal(m.load('legado-'+name).start,'','invalid remote evidence cannot hydrate '+name);
+}
+const checksOnly=m.load('checksOnly');checksOnly.checks=[1];m.save('checksOnly',checksOnly);
+m.hydrate('checksOnly',evidence,'submitted');
+assert.equal(m.load('checksOnly').start,'','a local check-only draft must be preserved');
+assert.equal(m.load('checksOnly').checks.length,1);
+assert.equal(m.parseEvidence(evidence.replace(/\n/g,'\r\n')).route,'3d','CRLF remains supported');
 const app=read('v3/app.js'),html=read('aluno-v3.html');new vm.Script(app);
 assert.match(app,/const pilotSeven=!TEACHER&&activeStage===7/);
 assert.match(app,/PIT_STUDENT_MISSION_SEVEN.validate\(q.session\)/);
