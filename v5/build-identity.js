@@ -19,7 +19,8 @@ function blend(a,b,k){
 }
 function describe(input,engine,vfx){
  if(!engine||!vfx?.PATHS||!input||input.schema!==engine.VERSION)throw Error('Build M5 canônica do motor experimental é obrigatória');
- const b=engine.canonical(input,input.approvedMissions??5);
+ const approved=input.approvedMissions??5;
+ const b=engine.canonical(input,approved,approved===10?{experimentalFinal:true}:{});
  const id=b.klass;if(!PATHS[id]||!Array.isArray(b.talents))throw Error('Classe ou talentos inválidos');
  const valid=new Map(engine.TALENTS[id].map(t=>[t.id,t]));
  const counts=Object.fromEntries(Object.keys(PATHS[id]).map(k=>[k,0]));
