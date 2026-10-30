@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirm M10 review Chrome 41047606750 (8 slides, zero scrolling, no <18px font) and Browser QA 41047606738 on code SHA 3342632a; fix any failure. Then M10 public practice teacher/student protocol and remaining human signoff. Do not merge main.",
+  "priority": "M10 projected review Chrome 41047606750 SUCCESS; verify Browser QA 41047606738 when completed, then synchronize public M10 practice with student actions and finish human signoff plan. No merge main.",
   "current_phase": "MISSOES",
   "last_task": "V4-M10-REVIEW-PROJECTION",
   "completed_count": 54,
@@ -2624,7 +2624,7 @@
       "task": "V4-M10-REVIEW-PROJECTION",
       "status": "in_progress",
       "commit": "3342632a2e59f0b3e8f641e30880bf6a752b6d53",
-      "summary": "M10 teacher review now projects 8 public slides: introduction, six distinct rubric criteria, final approval caveat. Private teacher notes excluded via cleanCopy; dedicated 720p CSS and Chrome regression added. Previous M10 3-route demo projector CI 41039278342 and Browser QA 41039278432 SUCCESS. New static QA 41047606978 SUCCESS; new Chrome 41047606750 and Browser QA 41047606738 IN_PROGRESS, not claimed. Physical GDevelop GUI/HDMI/mobile/human NOT_RUN; V3 54/59, main untouched."
+      "summary": "M10 teacher review now projects 8 public slides: introduction, six distinct rubric criteria, final approval caveat. Private teacher notes excluded via cleanCopy; dedicated 720p CSS and Chrome regression added. Previous M10 3-route demo projector CI 41039278342 and Browser QA 41039278432 SUCCESS. New static QA 41047606978 SUCCESS; new Chrome 41047606750 SUCCESS (8-slide fit/font regression), Browser QA 41047606738 IN_PROGRESS, not claimed. Physical GDevelop GUI/HDMI/mobile/human NOT_RUN; V3 54/59, main untouched."
     }
   ],
   "v4_checkpoint": {
@@ -3400,7 +3400,7 @@
           41047606750,
           41047606738
         ],
-        "result": "IN_PROGRESS; 8-slide projection regression added but outcome not yet confirmed"
+        "result": "Chrome 41047606750 SUCCESS on exact code SHA 3342632a; new eight-slide no-scroll/font/overflow regressions passed at 720/900/1080. Browser QA 41047606738 IN_PROGRESS at last check."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
@@ -3408,6 +3408,6 @@
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
     "next_task": "V4-M10-REVIEW-CHROME-VERIFY-THEN-PRACTICE",
-    "blocker": "New M10 review Chrome 41047606750 and Browser QA 41047606738 pending; physical GDevelop GUI, HDMI, mobile and peer playtest NOT_RUN; 5 V3 release tasks blocked pending human signoff."
+    "blocker": "M10 review Browser QA 41047606738 in progress; physical GDevelop GUI, HDMI, mobile and peer playtest NOT_RUN; five release tasks blocked pending human signoff."
   }
 }
