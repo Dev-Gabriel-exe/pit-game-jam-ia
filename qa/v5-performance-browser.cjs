@@ -47,11 +47,13 @@ const {chromium}=require('playwright');
    await page.waitForTimeout(1300);
    observations.push(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.performanceReport?.sample));
   }
-  const last=observations.at(-1),first=observations[0];
-  assert(last.geometries<=first.geometries+110,
-   'Possible geometry leak over 2 restarts: '+JSON.stringify(observations));
-  assert(last.textures<=first.textures+60,
-   'Possible texture leak over 2 restarts: '+JSON.stringify(observations));
+  // WebGL texture uploads are lazy: 30 GLBs can report "loaded" before
+  // their first GPU draw. Compare post-warmup resets, not the cold GPU count.
+  const last=observations.at(-1),warmed=observations[1];
+  assert(last.geometries<=warmed.geometries+50,
+   'Possible geometry leak after GPU warm-up: '+JSON.stringify(observations));
+  assert(last.textures<=warmed.textures+40,
+   'Possible texture leak after GPU warm-up: '+JSON.stringify(observations));
   // Test explicit browser GPU loss during a real running battle.
   await page.locator('#startBattle').click();
   await page.waitForFunction(()=>document.querySelector('#arenaStatus')?.dataset.status==='running',null,{timeout:10000});
