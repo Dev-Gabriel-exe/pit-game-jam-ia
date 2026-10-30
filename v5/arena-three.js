@@ -16,6 +16,7 @@ const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
 const IDENTITY=window.PIT_V5_BUILD_IDENTITY;
 const CAMERA_DIRECTOR=window.PIT_V5_CAMERA_DIRECTOR;
 const CAMERA_FRAMING=window.PIT_V5_CAMERA_FRAMING;
+const CAMERA_VIEWER=window.PIT_V5_CAMERA_VIEWER;
 const loader=new GLTFLoader(), cache=new Map();
 function loadCharacter(klass){
  const asset=ASSETS[klass];if(!asset)return Promise.reject(Error('GLB não cadastrado: '+klass));
@@ -323,6 +324,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
  let accumulator=0;const shots=new Map();let followId=null;const followBack=new THREE.Vector3();
  const autoDirector=CAMERA_DIRECTOR?.createDirector();
+ const cameraViewer=CAMERA_VIEWER?.createViewer({feedId:'pit-v5-local-visual-feed'});
+ let sharedFeedActive=false;
+ container.dataset.v5CameraAudience='teacher';
+ container.dataset.v5StudentCamera='off';
+ container.dataset.v5SharedFeedId=cameraViewer?.state().feedId||'';
+ container.dataset.v5SharedFeedRevision='0';
  let autoCamera=false,autoRevision=0,framingPose=null,framingRecalc=-Infinity,victoryStart=null;
  container.dataset.v5CameraDirector='off';
  container.dataset.v5CameraShot='manual';container.dataset.v5CameraCuts='0';
@@ -574,7 +581,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    ...CORE.canonical(entry.build||entry,entry.name||entry.build?.name||'Aventureiro',entry.progress?.total??entry.xp??0),
    id:String(entry.id||i),name:entry.name||entry.build?.name||'Aventureiro'}));
   simulation=(trial?PHASE2:CORE).battle(normalized,{seed,limit,arenaScale:worldScale,damageScale,mageDamageBonus,stormDelay,stormRateFactor,engagementMode,navigationMode,rangedCommitment,balancePreset});
-  autoDirector?.reset();autoCamera=false;autoRevision=0;
+  autoDirector?.reset();sharedFeedActive=false;autoCamera=false;autoRevision=0;
+  cameraViewer?.reset();
+  container.dataset.v5CameraAudience='teacher';
+  container.dataset.v5StudentCamera='off';
+  container.dataset.v5StudentHero='';container.dataset.v5SharedFeedRevision='0';
   framingPose=null;framingRecalc=-Infinity;victoryStart=null;
   container.dataset.v5CameraDirector='off';container.dataset.v5CameraShot='manual';container.dataset.v5CameraCuts='0';
   container.dataset.v5EngagementMode=String(trial?engagementMode:'legacy');
@@ -854,7 +865,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  // so the medieval architecture and individual heroes are actually legible.
  function disableAutoCamera(reason='manual'){
   if(!autoCamera)return;
-  autoCamera=false;autoDirector?.stop();framingPose=null;
+  autoCamera=false;
+  // In teacher manual mode the feed can stop. During a student's personal
+  // camera, the shared cinematic timeline must keep advancing independently.
+  if(cameraViewer?.state().audience!=='student'){autoDirector?.stop();sharedFeedActive=false}
+  framingPose=null;
   container.dataset.v5CameraDirector='off';
   container.dataset.v5CameraShot='manual';
   container.dispatchEvent(new CustomEvent('v5-camera-changed',{detail:{enabled:false,reason}}));
@@ -862,20 +877,21 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  function enableAutoCamera(on=true){
   if(!autoDirector||!simulation)return false;
   if(!on){disableAutoCamera();return false}
-  autoDirector.start();autoCamera=true;autoRevision=0;followId=null;
+  if(!sharedFeedActive){autoDirector.start();sharedFeedActive=true;autoRevision=0}
+  autoCamera=true;followId=null;
   framingPose=null;framingRecalc=-Infinity;victoryStart=null;
   controls.enableRotate=true;controls.enablePan=true;
   container.dataset.v5FollowTarget='';
   container.dataset.v5CameraDirector='on';
   container.dataset.v5CameraPreset='director';
-  container.dataset.v5CameraShot='overview';
   const first=autoDirector.tick(simulation.time,simulation.fighters);
   if(first)autoRevision=first.revision;
+  container.dataset.v5CameraShot=first?.mode||'overview';
   container.dispatchEvent(new CustomEvent('v5-camera-changed',{detail:{enabled:true,shot:'overview'}}));
   return true;
  }
  // Real orbit input has precedence over automatic camera.
- controls.addEventListener('start',()=>{if(autoCamera)disableAutoCamera('orbit')});
+ controls.addEventListener('start',()=>{if(autoCamera&&cameraViewer?.state().audience!=='student')disableAutoCamera('orbit')});
  function freeCamera(){
   disableAutoCamera('preset');
   followId=null;controls.enableRotate=true;controls.enablePan=true;
@@ -918,6 +934,46 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5FollowTarget=followId;
   return true;
  }
+ // F.3 demonstration: ONE camera per tab, ONE combat simulation and ONE
+ // shared director. Cross-device synchronization is intentionally Phase H.
+ function setStudentCamera(heroId){
+  const hero=simulation?.fighters.find(f=>String(f.id)===String(heroId));
+  if(!hero||!isPhase2()||!cameraViewer)return false;
+  const selection=cameraViewer.selectStudent(hero.id,simulation.fighters);
+  if(!selection)return false;
+  if(selection.mode==='following'){
+   if(!focusFighter(hero.id))return false;
+   autoCamera=false;
+   if(!sharedFeedActive){autoDirector?.start();sharedFeedActive=true;autoRevision=0}
+  }else{
+   followId=null;autoCamera=true;
+   controls.enableRotate=false;controls.enablePan=false;
+   if(!sharedFeedActive){autoDirector?.start();sharedFeedActive=true;autoRevision=0}
+   const plan=autoDirector?.tick(simulation.time,simulation.fighters);
+   if(plan){autoRevision=plan.revision;container.dataset.v5CameraShot=plan.mode}
+   framingPose=null;framingRecalc=-Infinity;
+  }
+  container.dataset.v5CameraAudience='student';
+  container.dataset.v5StudentHero=hero.id;
+  container.dataset.v5StudentCamera=selection.mode;
+  container.dataset.v5CameraDirector=selection.mode==='spectating'?'on':'off';
+  container.dispatchEvent(new CustomEvent('v5-student-view',{detail:selection}));
+  return true;
+ }
+ function setTeacherCamera(){
+  if(!cameraViewer||!simulation)return false;
+  cameraViewer.teacher();
+  container.dataset.v5CameraAudience='teacher';
+  container.dataset.v5StudentCamera='off';container.dataset.v5StudentHero='';
+  // Reuse the running shared director. No independent spectator engine.
+  const ok=enableAutoCamera(true);
+  container.dispatchEvent(new CustomEvent('v5-student-view',{detail:cameraViewer.state()}));
+  return ok;
+ }
+ function viewerSnapshot(){
+  return {viewer:cameraViewer?.state()||null,
+   feed:cameraViewer?.publicFeed(autoDirector?.snapshot().plan)||null};
+ }
  function resize(){
   if(!live)return;
   const w=Math.max(10,container.clientWidth),h=Math.max(10,container.clientHeight);
@@ -945,7 +1001,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    stormRing.scale.setScalar(result.radius);
    stormMaterial.opacity=result.time>18?.75:.36;
    for(const ev of result.events){
-    if(autoCamera)autoDirector?.observe(ev,simulation.fighters);
+    if(sharedFeedActive)autoDirector?.observe(ev,simulation.fighters);
     const attacker=individuals.get(ev.hero),victim=individuals.get(ev.target);
     const cue=ev.talent&&attacker?cueFor(attacker.build.klass,ev.talent):null;
     if(ev.type==='prepare'){
@@ -1004,15 +1060,28 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     onEvent(ev);
    }
    for(const f of simulation.fighters)sync(f);
-   if(autoCamera){
+   const transition=cameraViewer?.update(simulation.fighters);
+   if(transition?.mode==='spectating'){
+    followId=null;autoCamera=true;
+    controls.enableRotate=false;controls.enablePan=false;
+    framingPose=null;framingRecalc=-Infinity;
+    container.dataset.v5CameraAudience='student';
+    container.dataset.v5StudentCamera='spectating';
+    container.dataset.v5CameraDirector='on';
+    container.dispatchEvent(new CustomEvent('v5-student-view',{detail:transition}));
+   }
+   if(sharedFeedActive){
     const shot=autoDirector?.tick(result.time,simulation.fighters);
     if(shot&&shot.revision!==autoRevision){
      autoRevision=shot.revision;
-     framingPose=null;framingRecalc=-Infinity;
+     container.dataset.v5SharedFeedRevision=String(shot.revision);
+     if(autoCamera){framingPose=null;framingRecalc=-Infinity;}
      if(shot.mode==='victory')victoryStart=elapsed;
-     container.dataset.v5CameraShot=shot.mode;
-     container.dataset.v5CameraCuts=String(shot.revision);
-     container.dataset.v5CameraSubject=shot.ids.join(',');
+     if(autoCamera){
+      container.dataset.v5CameraShot=shot.mode;
+      container.dataset.v5CameraCuts=String(shot.revision);
+      container.dataset.v5CameraSubject=shot.ids.join(',');
+     }
      container.dispatchEvent(new CustomEvent('v5-director-shot',{detail:shot}));
     }
    }
@@ -1263,5 +1332,5 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // Shared palette materials remain reusable if a stage is reopened.
   renderer.dispose();renderer.domElement.remove();
  };
- return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
+ return {preview,fighters,resume,pause,setSpeed,dispose,resize,focusFighter,cinematic,overview,enableAutoCamera,setStudentCamera,setTeacherCamera,viewerSnapshot,sendToGrandstand,get spectatorCount(){return spectators.size},get spectatorSeats(){return occupiedSeats},get simulation(){return simulation},get playing(){return playing},get core(){return CORE},camera,scene};
 }
