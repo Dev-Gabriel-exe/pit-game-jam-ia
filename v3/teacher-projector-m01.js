@@ -293,6 +293,57 @@ function pedagogicalDemoSlides(root,mission){
    return result.length>=guide.guideSteps.length+2?result:null;
   }
  }
+ // M08/Demonstrar: project every step of the selected GDevelop route, not just the active card.
+ if(mission===8&&root.querySelector('#g8Guide')){
+  const guide=window.PIT_GDEVELOP_M08_GUIDE;
+  if(guide?.routes?.length===3){
+   const selected=Number(root.querySelector('#g8Guide [data-g8-route][aria-selected="true"]')?.dataset.g8Route??0);
+   const routeIndex=Number.isInteger(selected)&&guide.routes[selected]?selected:0;
+   const route=guide.routes[routeIndex],result=[];
+   if(route.steps?.length!==4)return null;
+   const intro=document.createElement('section');intro.className='pit-projector-route-intro pit-projector-g8-intro';
+   for(const [tag,value] of [['h3','Rota: '+route.label],['p','Escolha apenas uma rota: '+route.type],['p','Mantenha o jogo da Missão 07; registre o ANTES e o DEPOIS no Preview.']]){
+    const el=document.createElement(tag);el.textContent=value;intro.append(el);
+   }
+   result.push({title:'Polimento · '+route.label,html:intro.outerHTML});
+   for(let i=0;i<route.steps.length;i++){
+    const step=route.steps[i],action=document.createElement('section');
+    action.className='pit-projector-g8-step';action.dataset.pitProjectorStep='M08:'+i;
+    const heading=document.createElement('h3');heading.textContent='Passo '+(i+1)+' de 4 · '+step.title;
+    const figure=document.createElement('figure'),img=document.createElement('img');
+    img.setAttribute('data-g8-shot','');img.loading='lazy';img.src=guide.images[step.image]||guide.fallback;
+    img.alt='Referência oficial do GDevelop: '+(step.image==='events'?'eventos':'cena');
+    const caption=document.createElement('figcaption');caption.textContent='CAPTURA OFICIAL DE REFERÊNCIA · INTERFACE PODE VARIAR';
+    figure.append(img,caption);
+    const instructions=document.createElement('dl');
+    for(const [label,value] of [['ONDE CLICAR',step.where],['O QUE FAZER',step.do]]){
+     const dt=document.createElement('dt');dt.textContent=label;
+     const dd=document.createElement('dd');dd.textContent=value;instructions.append(dt,dd);
+    }
+    action.append(heading,figure,instructions);
+    result.push({title:'Passo '+(i+1)+' · Onde clicar e o que fazer',html:action.outerHTML});
+    const verify=document.createElement('section');
+    verify.className='pit-projector-g8-verify';verify.dataset.pitProjectorVerify='M08:'+i;
+    const title=document.createElement('h3');title.textContent='Conferência '+(i+1)+' de 4 · '+step.title;verify.append(title);
+    for(const [label,value] of [['RESULTADO ESPERADO',step.expect],['SE NÃO FUNCIONAR',step.fix]]){
+     const panel=document.createElement('div');
+     panel.className=label==='RESULTADO ESPERADO'?'pit-projector-g8-expected':'pit-projector-g8-recovery';
+     const strong=document.createElement('strong');strong.textContent=label;
+     const p=document.createElement('p');p.textContent=value;panel.append(strong,p);verify.append(panel);
+    }
+    const source=document.createElement('a');source.href=step.source||guide.docs[step.doc]||guide.docs.events;
+    source.target='_blank';source.rel='noopener noreferrer';source.textContent='Documentação oficial do GDevelop';
+    const link=document.createElement('p');link.className='pit-projector-g8-source';link.append('Referência: ',source);
+    const reminder=document.createElement('p');reminder.className='pit-projector-g8-reminder';
+    reminder.textContent='Confira no Preview do seu jogo: a captura não comprova o teste. Registre ANTES, DEPOIS e caso negativo.';
+    verify.append(link,reminder);
+    result.push({title:'Passo '+(i+1)+' · Resultado e recuperação',html:verify.outerHTML});
+   }
+   const footer=root.querySelector('#g8Guide footer');
+   if(footer)result.push({title:'Critério de aceite e plano B offline',html:cleanCopy(footer)});
+   return result.length===10?result:null;
+  }
+ }
  // M09/Criar: restore the public peer-playtest protocol and evidence; never HDMI-off notes.
  if(mission===9&&root.querySelector('#t9vRoot .t9v-work')){
   const source=root.querySelector('#t9vRoot');
