@@ -1,0 +1,25 @@
+name: V5 Balance 100 M10
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-balance-100-m10.cjs'
+      - '.github/workflows/v5-balance-100-m10.yml'
+      - 'v5/phase2-combat.js'
+  workflow_dispatch:
+jobs:
+  balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run 100 matches
+        run: node qa/v5-balance-100-m10.cjs > balance100.log && grep '^BALANCE_100_JSON=' balance100.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v5-balance-100-log
+          path: balance100.log
+          retention-days: 14
