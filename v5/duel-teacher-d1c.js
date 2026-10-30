@@ -5,7 +5,17 @@
  'use strict';
  const $=id=>document.getElementById(id);
  const local=['localhost','127.0.0.1'].includes(location.hostname);
- const settings=window.__PIT_V5_D1C_TEACHER_STAGING;
+ let settings=window.__PIT_V5_D1C_TEACHER_STAGING;
+ if(!settings&&window.parent!==window&&
+  ['localhost','127.0.0.1'].includes(location.hostname)){
+  try{
+   const b=window.parent.__PIT_V5_H1E_BRIDGE;
+   if(window.parent.location.origin===location.origin&&b?.enabled===true&&
+    b.role==='teacher'&&typeof b.keyProvider==='function')
+    settings={enabled:true,teacherEndpoint:b.teacherEndpoint,
+     keyProvider:b.keyProvider};
+  }catch{}
+ }
  let client=null,busy=false,ready=false,enabled=false,updates=0;
  const render=()=>{
   $('enableDuels').disabled=!ready||busy||enabled;
