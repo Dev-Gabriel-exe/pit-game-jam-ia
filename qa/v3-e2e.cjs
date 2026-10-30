@@ -268,6 +268,26 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   }
  }
  assert.equal(missionAudit.length,70,'All 10 teacher x4 and student x3 mission pages rendered');
+ // M10 integrity: a new delivery route must not inherit a verified link or checks from the previous route.
+ // Uses real Chrome DOM and a fictional local session; no GDevelop GUI or real class data.
+ await sp.locator('#phasebar [data-phase="practice"]').click();
+ const m10RouteTabs=sp.locator('#g10Guide [data-g10-route]');
+ assert.equal(await m10RouteTabs.count(),3,'M10 exposes all three free/optional delivery routes');
+ await m10RouteTabs.nth(2).click(); // gd.games
+ await sp.locator('#m10s-access').fill('https://gd.games/jogo-ficticio');
+ for(let n=0;n<3;n++)await sp.locator('[data-m10s-check="'+n+'"]').check();
+ await m10RouteTabs.nth(1).click(); // web export
+ assert.equal(await sp.locator('#m10s-access').inputValue(),'','M10 must clear stale gd.games URL after route switch');
+ assert.equal(await sp.locator('[data-m10s-check="0"]').isChecked(),true,'M10 keeps independently verified editable-project check');
+ assert.equal(await sp.locator('[data-m10s-check="1"]').isChecked(),false,'M10 requires a new build/Preview execution check');
+ assert.equal(await sp.locator('[data-m10s-check="2"]').isChecked(),false,'M10 requires a new access/privacy check');
+ assert.match(await sp.locator('#m10sStatus').innerText(),/repita as conferências/,'M10 explains why checks reset');
+ await sp.locator('#phasebar [data-phase="review"]').click();
+ await sp.locator('#phasebar [data-phase="practice"]').click();
+ assert.equal(await sp.locator('#g10Guide [data-g10-route="1"]').getAttribute('aria-selected'),'true','M10 route survives phase rerender');
+ assert.equal(await sp.locator('#m10s-access').inputValue(),'','M10 cleared URL remains cleared after rerender');
+ assert.equal(await sp.locator('[data-m10s-check="2"]').isChecked(),false,'M10 manual verification remains invalidated after rerender');
+ console.log('PASS M10: route switch invalidates stale URL and checks, preserves project reopen, persists across phase rerender');
  console.log('PASS AUD-05: 70 mission/role/phase browser page checks with fake API fixture');
  const geometry=await tp.evaluate(()=>{
    const b=document.querySelector('#mainPane').getBoundingClientRect();
