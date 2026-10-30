@@ -59,6 +59,24 @@ async function approveTo(n){
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  const contexts=[];
  try{
+  // Public visitors never inherit a V3 session or initiate staging requests.
+  const anonymous=await browser.newContext({viewport:{width:900,height:700}});
+  contexts.push(anonymous);
+  const publicPage=await anonymous.newPage();
+  const anonymousApiCalls=[];
+  publicPage.on('request',r=>{
+   if(r.url().includes('/api/'))anonymousApiCalls.push(r.url());
+  });
+  await publicPage.route('**/*',route=>{
+   const u=new URL(route.request().url());
+   return u.origin===BASE?route.continue():route.abort();
+  });
+  await publicPage.goto(BASE+'/v5/hero-lab-h1d.html',{waitUntil:'domcontentloaded'});
+  await publicPage.waitForFunction(()=>!!window.PIT_V5_H1D_LAB?.snapshot);
+  assert.equal((await snapshot(publicPage)).ready,false,'No browser auto-auth');
+  assert.equal((await snapshot(publicPage)).hasApi,false,'Staging requires explicit fixture');
+  assert.deepEqual(anonymousApiCalls,[],'No requests without configured staging session');
+  assert.equal(await publicPage.locator('a[href="./hero-lab-h1c.html"]').count(),1);
   const first=await tab(browser,'a'.repeat(64));contexts.push(first.context);
   const second=await tab(browser,'a'.repeat(64));contexts.push(second.context);
   const other=await tab(browser,'b'.repeat(64));contexts.push(other.context);
