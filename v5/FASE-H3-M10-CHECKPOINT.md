@@ -215,3 +215,14 @@ Criar **experimento pareado de balanceamento** com mesmas seeds/builds e posiç�
 **CI APROVADO:** [run 41059481133](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41059481133), job `audio`: testes Node PASS; M10 30 GLBs PASS, 10 talentos disponíveis, vencedor Caçador e 29 espectadores; M5 com áudio bloqueado PASS, canvas renderizado, 4 GLBs, motor ativo. Último commit funcional/testes: `8f3436e994d6ab99db4e82db795847b346679d1f`; correções de áudio e motor em `9e92e737a78286c8d1751df7917312daef04482c` e `0c8c24b4e5532ab7379ace241f1eddd1c5d7353c`.
 
 **Limites e próximo passo:** os testes verificam geração e roteamento de sinais, **não qualidade subjetiva do som em alto-falantes reais**, nem desempenho em PCs da escola. Ouvir no S24/PC e avaliar se a câmera geral realmente mantém os sons discretos; ajustar curvas/vozes apenas com evidência. A G.2 física continua pendente; H.1/H.2, `main` e produção permanecem bloqueadas.
+
+
+## Rodada H.3 — sensibilidade de escudo G01/G10 com pareamento (30/10/2026, 10h)
+
+**Missão única:** continuar a investigação de balanceamento da arena final M10. Nenhuma mudança de vida, dano, estatísticas, talentos canônicos, câmera, GLBs, XP, V3, banco ou `main`.
+
+**Incremento verificável:** `qa/v5-m10-guardian-shield-matrix.cjs` adiciona 24 blocos pareados (4 e 30 participantes, composições balanceada e com metade Guardiões, builds defensiva/mista, seeds e rotações), comparando baseline com escala de G01 75%, G10 75%, ambos 75% e ambos 0%. O parâmetro `experimentalGuardianShieldScale` já existia, somente na M10. O teste compara os mesmos atributos, 10 talentos, 20 pontos, posições e seed entre braços, checa neutralidade de escala 100%, replays determinísticos e regressão M5 sem mudança. Produz relatório JSON com vitórias, mudanças de vencedor, escudo nominal/absorvido e ativações de G01/G10; não supõe monotonicidade nem atribui todo escudo absorvido aos dois talentos.
+
+**Commits:** matriz `c74fc802add77fab31aa2947a1fd4ef2fe0809b6`; CI `12ecf1ff8c5570e2b7d75a8225369d5ad86d1fa1`. Workflow [V5 M10 Guardian Shield Scale QA](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41065140442) criado e acionado. **Status de CI: pendente de resultado no momento desta anotação; não declarar PASS antes de conferir o job.**
+
+**Próximo passo:** validar resultado do CI e métricas por composição, corrigir qualquer falha, comparar efeitos em amostras maiores se necessário; só então propor ajuste mínimo (ainda experimental) e revisão humana. **G.2 nos PCs físicos não foi feito; H.1/H.2 reais e merge/deploy continuam bloqueados.**
