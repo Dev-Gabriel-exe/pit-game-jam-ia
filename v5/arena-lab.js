@@ -21,6 +21,8 @@ const experimentalCounterplay=params.get('counterplay')==='1';
 const experimentalHpBalance=params.get('balance')==='hp2';
 // E.6: original animated talent sprites in M5 only (never progression or M10).
 const experimentalTalentSprites=params.get('sprites')==='1';
+// Reproduce a reported lab run exactly without touching student data.
+const requestedSeed=/^\d{1,10}$/.test(params.get('seed')||'')?(Number(params.get('seed'))>>>0):0;
 const importedBuild=(()=>{
  try{
   const raw=params.get('draft');
@@ -268,7 +270,7 @@ function initRound({sameSeed=false}={}){
   const random=new Uint32Array(1);
   if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(random);
   else random[0]=Math.floor(Math.random()*0xffffffff);
-  state.seed=(random[0]||1)>>>0;
+  state.seed=requestedSeed||((random[0]||1)>>>0);
  }
  $('arenaTitle').textContent=mission===5?'Missão 05 · Arena de Teste':'Missão 10 · Prévia da Arena Final';
  const prefix=trial?'Teste real de cinco talentos e cinco atributos (M5).':mission===5?'Treino com 500 XP e sem travamento.':'Prévia com 1.000 XP, sem travamento ou autenticação.';
