@@ -134,10 +134,8 @@ function spotlight(text,detail,id,kind,priority,eventTime){
  state.spotId=id;
  $('followSpotlight').disabled=!id;
  state.spotPriority=priority;state.spotTime=t;
- if(state.director&&id&&t-state.lastCameraTime>7){
-  state.stage?.focusFighter(id);
-  state.lastCameraTime=t;
- }
+ // F.1: the pure director selects camera plans from unfiltered real combat
+ // events. HUD spotlight text must never override its shot or force a cut.
 }
 function onEvent(event){
  const t=Number(event.time)||0;
@@ -234,6 +232,9 @@ function initRound({sameSeed=false}={}){
  if(!state.stage)return;
  state.stage.pause();
  state.fought=false;state.result=null;state.busy=true;state.speed=1;
+ state.director=false;$('actionCamera').setAttribute('aria-pressed','false');
+ $('actionCamera').textContent='◎ Diretor automático';
+ $('directorStatus').textContent='Câmera: manual';
  state.spotId=null;state.spotPriority=0;state.spotTime=-999;state.lastHitLog=-999;state.lastCameraTime=-999;
  state.abilityCount=0;
  $('talentTelemetry').dataset.active='false';
@@ -364,13 +365,23 @@ $('cinematicCamera').addEventListener('click',()=>{
  state.stage?.cinematic();
 });
 $('followSpotlight').addEventListener('click',()=>{if(state.spotId)state.stage?.focusFighter(state.spotId)});
+function cameraStatus(automatic,shot){
+ state.director=automatic;
+ $('actionCamera').setAttribute('aria-pressed',String(automatic));
+ $('actionCamera').textContent=automatic?'◉ Diretor: ATIVO':'◎ Diretor automático';
+ const labels={overview:'visão geral',duel:'duelo',highlight:'habilidade',climax:'clímax',victory:'vencedor'};
+ $('directorStatus').textContent=automatic?'Automática · '+(labels[shot]||'selecionando plano'):'Câmera: manual';
+ $('directorStatus').dataset.mode=automatic?'auto':'manual';
+}
 $('actionCamera').addEventListener('click',()=>{
- state.director=!state.director;
- $('actionCamera').setAttribute('aria-pressed',String(state.director));
- $('actionCamera').textContent=state.director?'◉ Câmera: seguindo':'◉ Câmera de combate';
- state.lastCameraTime=-999;
- if(state.director&&state.spotId)state.stage?.focusFighter(state.spotId);
- else if(!state.director)state.stage?.overview();
+ if(state.director){state.stage?.enableAutoCamera(false);state.stage?.cinematic()}
+ else state.stage?.enableAutoCamera(true);
+});
+$('arenaStage').addEventListener('v5-camera-changed',e=>{
+ cameraStatus(!!e.detail.enabled,e.detail.shot||'overview');
+});
+$('arenaStage').addEventListener('v5-director-shot',e=>{
+ if(state.director)cameraStatus(true,e.detail.mode);
 });
 const expandButton=$('expandStage');
 function setImmersive(on){
