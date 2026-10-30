@@ -62,3 +62,60 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f v5/migration-d1b-duel-matches.sql
       - name: Verify 30 student permissions and 15 concurrent pairings
         run: node qa/v5-duel-d1c-30students.cjs
+
+  browser-flow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: ci_only_password
+      PGDATABASE: pit_v5_d1c_test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: pit_v5_d1c_test
+          POSTGRES_PASSWORD: ci_only_password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d pit_v5_d1c_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check browser and fixture code
+        run: |
+          node --check qa/v5-duel-d1c-server.cjs
+          node --check qa/v5-duel-d1c-browser.cjs
+          node --check v5/duel-client-d1c.js
+          node --check v5/duel-lobby-d1c.js
+          node --check v5/duel-teacher-d1c.js
+          node --check v5/duel-replay-d1b.js
+      - name: Install Chromium and local rendering dependencies
+        run: |
+          npm install --no-save --no-package-lock pg@8.13.1 playwright@1.58.2 three@0.186.1
+          npx playwright install --with-deps chromium
+      - name: Create disposable classroom and replay schema
+        run: |
+          psql -v ON_ERROR_STOP=1 -f qa/v5-h1d-staging-schema.sql
+          psql -v ON_ERROR_STOP=1 -c "ALTER TABLE pit_students ADD COLUMN display_name text NOT NULL DEFAULT 'Aluno fictício'"
+          psql -v ON_ERROR_STOP=1 -f v5/migration-h1b-builds-v2.sql
+          psql -v ON_ERROR_STOP=1 -f v5/migration-d1a-duelos.sql
+          psql -v ON_ERROR_STOP=1 -f v5/migration-d1b-duel-matches.sql
+      - name: Start server and run three-browser full invite-to-arena test
+        run: |
+          node qa/v5-duel-d1c-server.cjs >/tmp/v5-d1c-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8899/__fixture >/dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8899/__fixture
+          node qa/v5-duel-d1c-browser.cjs
