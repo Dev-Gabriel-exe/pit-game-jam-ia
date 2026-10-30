@@ -92,6 +92,16 @@
    if(after.approvedMissions<before.approvedMissions)
     invalid('aprovações não podem retroceder');
    if(before.m5Entered&&!after.m5Entered)invalid('primeira entrada M5 não pode ser apagada');
+   if(!before.m5Entered&&after.m5Entered){
+    if(before.approvedMissions!==5||after.approvedMissions!==5)
+     invalid('primeira entrada deve acontecer na missão 5');
+    if(!after.m5Frozen||
+       JSON.stringify(before.build.attributes)!==JSON.stringify(after.m5Frozen.attributes)||
+       JSON.stringify(before.build.talents)!==JSON.stringify(after.m5Frozen.talents))
+     invalid('a primeira entrada M5 deve congelar a build que estava aprovada');
+   }
+   if(!before.m5Entered&&after.approvedMissions>5)
+    invalid('não é permitido avançar além da M5 sem registrar a primeira entrada');
    if(before.m5Entered){
     if(JSON.stringify(before.m5Frozen)!==JSON.stringify(after.m5Frozen))
      invalid('snapshot de entrada M5 é imutável');
@@ -101,6 +111,7 @@
   }
   function m5ArenaAdapter(candidate){
    const norm=validateCandidate(candidate,{mission:5});
+   if(!norm.m5Entered)invalid('não executar M5 oficialmente antes de congelar a build no servidor');
    // Current B.6 engine explicitly supports 5 missions only. This adapter
    // does NOT expose an M10 battle, and retains exact canonical attributes.
    const payload={klass:norm.klass,attributes:{...norm.build.attributes},
