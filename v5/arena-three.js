@@ -630,7 +630,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   elapsed=0;accumulator=0;playing=false;
   return {count:simulation.fighters.length,seed};
  }
- function resume(){if(!contextLost&&simulation&&!simulation.finished){playing=true;physicsLast=performance.now();simulateStep(.20)}}
+ function resume(){if(!contextLost&&simulation&&!simulation.finished){
+  playing=true;physicsLast=performance.now();
+  if(container.dataset.v5GraphicsContext==='restored-paused')container.dataset.v5GraphicsContext='ready';
+  simulateStep(.20)
+ }}
  function pause(){playing=false}
  function setSpeed(n){speed=Math.max(.5,Math.min(3,Number(n)||1))}
  function warningFx(item){
