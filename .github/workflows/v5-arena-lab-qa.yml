@@ -44,6 +44,8 @@ on:
       - 'qa/v5-phase2-navigation.cjs'
       - 'qa/v5-ranged-counterplay.cjs'
       - 'qa/v5-hp-balance.cjs'
+      - 'qa/v5-endgame-replay.cjs'
+      - 'qa/v5-endgame-browser.cjs'
       - '.github/workflows/v5-arena-lab-qa.yml'
   workflow_dispatch:
 permissions:
@@ -90,6 +92,8 @@ jobs:
           node --check qa/v5-phase2-navigation.cjs
           node --check qa/v5-ranged-counterplay.cjs
           node --check qa/v5-hp-balance.cjs
+          node --check qa/v5-endgame-replay.cjs
+          node --check qa/v5-endgame-browser.cjs
           node qa/v5-coliseum-scale.cjs
           node qa/v5-arena-pacing.cjs
           node qa/v5-engagement-spread.cjs
@@ -97,6 +101,7 @@ jobs:
           node qa/v5-phase2-navigation.cjs
           node qa/v5-ranged-counterplay.cjs
           node qa/v5-hp-balance.cjs
+          node qa/v5-endgame-replay.cjs
           node qa/v5-arena-lab.cjs
           node qa/v5-arena-navigation.cjs
           node qa/v5-arena-targeting.cjs
@@ -129,6 +134,7 @@ jobs:
           node qa/v5-phase2-browser.cjs
           node qa/v5-talent-vfx-browser.cjs
           node qa/v5-talent-sprites-browser.cjs
+          node qa/v5-endgame-browser.cjs
           node qa/v5-talent-choreography-browser.cjs
           node qa/v5-build-identity-browser.cjs
       - uses: actions/upload-artifact@v4
