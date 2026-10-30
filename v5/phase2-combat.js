@@ -60,7 +60,15 @@ function effectiveness(f,id){
  const t=ALL[f.build.klass].find(t=>t.id===id);
  return Math.min(1.2,.75+.025*f.build.attributes[t.primary]+.0125*f.build.attributes[t.secondary]);
 }
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null}={}){
+// H.3 diagnostic ablation groups. These disable *whole talent effects*, including
+// secondary effects; they are not a proposed live balance patch. No default changes.
+const GUARDIAN_ABLATION_GROUPS=Object.freeze({
+ shields:Object.freeze(['G01','G05','G10','J09','L05','L07']),
+ healing:Object.freeze(['G09','L01','L03','L06','L09']),
+ reactions:Object.freeze(['G02','G03','G07','J06']),
+ mitigation:Object.freeze(['G04','G06','G08','L10'])
+});
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  const spreadAggro=engagementMode==='spaced';
@@ -96,6 +104,16 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   if(!Number.isInteger(experimentalCritSeed)||experimentalCritSeed<0||experimentalCritSeed>0xffffffff)
    throw Error('Seed experimental de crítico inválida');
  }
+ // Strictly opt-in, M10-only. Selection and stats remain identical between
+ // paired baseline/ablation runs; never expose as a gameplay setting.
+ if(experimentalGuardianAblation!==null&&
+   (arenaMission!==10||typeof experimentalGuardianAblation!=='string'||
+    !['shields','healing','reactions','mitigation','all'].includes(experimentalGuardianAblation)))
+  throw Error('Ablação experimental do Guardião exige M10 e grupo conhecido');
+ const suppressedGuardianTalents=experimentalGuardianAblation===null?null:
+  new Set(experimentalGuardianAblation==='all'?
+   Object.values(GUARDIAN_ABLATION_GROUPS).flat():
+   GUARDIAN_ABLATION_GROUPS[experimentalGuardianAblation]);
  const r=rng(seed),scale=clamp(arenaScale,1,5),used=new Set(),events=[],projectiles=[];
  let time=0,sequence=0,finished=false,winner=null,pid=0;
  const pending=[],zones=[];
@@ -184,7 +202,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   const length=Math.max(.0001,Math.hypot(nx,nz));
   return {x:nx/length,z:nz/length};
  }
- const has=(f,id)=>f.build.talents.includes(id);
+ const has=(f,id)=>f.build.talents.includes(id)&&
+  !(suppressedGuardianTalents&&f.build.klass==='guardian'&&suppressedGuardianTalents.has(id));
  function use(f,id,target=null){
   f.cooldowns[id]=ALL[f.build.klass].find(t=>t.id===id).cooldown;
   f.gcd=.7;f.usage[id]=(f.usage[id]||0)+1;f.animation='cast';
