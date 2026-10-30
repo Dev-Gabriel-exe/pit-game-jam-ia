@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T22:18:00Z",
+  "last_completed_at": "2026-10-30T23:12:52.142Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar CI nativa Node e Browser QA M10 nos commits 38d2aea/2d69796; auditar evidências M01–M03, começando por M03.",
+  "priority": "Confirmar Browser QA do commit 23ca528; auditar recuperação das evidências antigas da M02, depois M01; preservar notas privadas recolhidas e a prioridade pedagógica.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M10-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M03-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2684,12 +2684,25 @@
       "task": "V4-M10-LEGACY-EVIDENCE-GUARD",
       "commit": "2d69796df9b06b7d31c7dd553fcf84dfbc94bcf8",
       "summary": "M10 parser previously inferred local route from invalid route and silently accepted partial, duplicate and flattened evidence. Now enforces exact 9-line schema, valid route, ordered field labels, length bounds and HTTP(S) gd.games link; hydrate preserves check-only local drafts and does not invent manual tests. 16 isolated V8 production checks PASS, QA source V8 syntax PASS; native Node/Chrome new CI not confirmed. Previous M08 static and Browser QA jobs 41129958546/41129958152 SUCCESS. Roadmap 54/59 unchanged; main, production and student data untouched; HDMI/GDevelop/mobile/human NOT_RUN."
+    },
+    {
+      "id": "V4-M03-LEGACY-EVIDENCE-GUARD",
+      "completed_at": "2026-10-30T23:12:52.142Z",
+      "commit": "23ca528335a8f37c626d873fc6b5b574ceb42843",
+      "files": [
+        "v3/student-mission-three.js",
+        "qa/v3-m03-legacy-evidence.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Native static QA SUCCESS 41143034496; M03 regression step PASS; Browser QA 41143034524 in progress. Physical HDMI/GDevelop/mobile/peer tests NOT_RUN.",
+      "notes": "Strict M03 recovery validates 11 lines, unique ordered labels, known 2D/3D route, field budgets and required fields; refuses flattened/corrupt evidence without overwriting local progress or claiming Preview tests."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M10-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M03-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T22:18:00Z",
+    "updated_at": "2026-10-30T23:12:52.142Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2802,7 +2815,11 @@
       "7c6cdc3f26f71213fa60e3ff646e0c891dbc17cf",
       "88bd93653fc6e2fe80ac7baf1dd6cb863b27b75b",
       "38d2aea72d4e9ce2f9dd1dc39247281735e3e9c4",
-      "2d69796df9b06b7d31c7dd553fcf84dfbc94bcf8"
+      "2d69796df9b06b7d31c7dd553fcf84dfbc94bcf8",
+      "033a4f55f224dcd993411bce64dbecc11a4ba1df",
+      "a6f9d80707798fd5461ed9dc901e48ffecf62a21",
+      "474c5f7bcfbca8f6da5c49a8c7e7a082b86faeb1",
+      "23ca528335a8f37c626d873fc6b5b574ceb42843"
     ],
     "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
@@ -3727,6 +3744,18 @@
         "name": "M10 full QA compatibility execution on committed files",
         "sha": "2d69796df9b06b7d31c7dd553fcf84dfbc94bcf8",
         "result": "PASS: 73 assertions executed from committed qa/v3-m10-field-guidance.cjs against fetched student/teacher production modules, CSS and app using a V8 Node-compatible fs/vm/assert shim. Not native Node, browser, HDMI, or GDevelop."
+      },
+      {
+        "name": "M03 legacy structured evidence and local draft guard",
+        "run_id": 41143034496,
+        "sha": "23ca528335a8f37c626d873fc6b5b574ceb42843",
+        "result": "SUCCESS: native Node CI including M03 regression; malformed/flattened/duplicated/invalid evidence rejected, local drafts and manual checks preserved. No real GDevelop or student data."
+      },
+      {
+        "name": "M03 Browser QA",
+        "run_id": 41143034524,
+        "sha": "23ca528335a8f37c626d873fc6b5b574ceb42843",
+        "result": "IN_PROGRESS at checkpoint; not yet verified"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
