@@ -280,6 +280,41 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   m08RouteChecks.push({routeIndex,selected,total,steps,verifications,pass:selected==='true'&&total===10&&steps.length===4&&verifications.length===4&&steps.every((x,i)=>x.id==='M08:'+i&&x.complete)&&verifications.every((x,i)=>x.id==='M08:'+i&&x.complete)});
  }
 
+ // M10: all three optional delivery routes must project the four steps in full.
+ // These DOM checks never imply a real editor save/export or publication.
+ const m10RouteChecks=[];
+ await page.locator('.stage-btn[data-stage="10"]').click();
+ await page.locator('#phasebar [data-phase="demo"]').click();
+ for(const routeIndex of [0,1,2]){
+  await page.locator('#g10Guide [data-g10-route="'+routeIndex+'"]').click();
+  const selected=await page.locator('#g10Guide [data-g10-route="'+routeIndex+'"]').getAttribute('aria-selected');
+  await page.locator('#pitProjectorLaunch').click();
+  const total=Number((await page.locator('#pitProjectorCount').innerText()).split('/')[1]?.trim())||0;
+  const actions=[],verifications=[];
+  for(let i=0;i<total;i++){
+   const action=page.locator('#pitProjectorContent [data-pit-projector-m10^="action:"]');
+   if(await action.count())actions.push(await action.evaluate(el=>({
+    id:el.dataset.pitProjectorM10,
+    labels:[...el.querySelectorAll('dt')].map(x=>x.textContent.trim()),
+    privateNotes:el.querySelectorAll('.pit-private-teacher-notes').length
+   })));
+   const verify=page.locator('#pitProjectorContent [data-pit-projector-m10^="verify:"]');
+   if(await verify.count())verifications.push(await verify.evaluate(el=>({
+    id:el.dataset.pitProjectorM10,
+    labels:[...el.querySelectorAll('dt')].map(x=>x.textContent.trim()),
+    source:!!el.querySelector('a[href^="https://wiki.gdevelop.io/"]'),
+    preview:el.textContent.includes('Preview'),
+    privateNotes:el.querySelectorAll('.pit-private-teacher-notes').length
+   })));
+   if(i<total-1)await page.locator('#pitProjectorNext').click();
+  }
+  await page.locator('#pitProjectorClose').click();
+  m10RouteChecks.push({routeIndex,selected,total,actions,verifications,
+   pass:selected==='true'&&total===10&&actions.length===4&&verifications.length===4&&
+    actions.every((x,i)=>x.id==='action:'+i&&x.labels.includes('ONDE CLICAR')&&x.labels.includes('O QUE FAZER')&&x.privateNotes===0)&&
+    verifications.every((x,i)=>x.id==='verify:'+i&&x.labels.includes('RESULTADO A VERIFICAR')&&x.labels.includes('SE NÃO FUNCIONAR')&&x.source&&x.preview&&x.privateNotes===0)
+  });
+ }
  const m07RouteChecks=[];
  await page.locator('.stage-btn[data-stage="7"]').click();
  await page.locator('#phasebar [data-phase="demo"]').click();
@@ -357,7 +392,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
  }
  await page.locator('#pitProjectorClose').click();
  fs.mkdirSync('qa/projector-audit-artifacts',{recursive:true});
- fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors,m04RouteChecks,m05RouteChecks,m07RouteChecks,navigationCheck},null,2));
+ fs.writeFileSync('qa/projector-audit-artifacts/metrics.json',JSON.stringify({rows,errors,m04RouteChecks,m05RouteChecks,m07RouteChecks,m10RouteChecks,navigationCheck},null,2));
  const fail=rows.filter(x=>x.error||!x.slides||x.retainedRatio<.4||x.slidesWithOverflowX).map(x=>({mission:x.mission,phase:x.phase,error:x.error||'coverage_or_overflow',ratio:x.retainedRatio}));
  const m01Practice=rows.find(x=>x.mission===1&&x.phase==='practice');
  const m03Practice=rows.find(x=>x.mission===3&&x.phase==='practice');
@@ -391,6 +426,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   {name:'M05: five GDevelop event steps projected separately',pass:JSON.stringify(m05?.guideSteps)===JSON.stringify(expected05)},
   {name:'M05: action and verification screens preserve instructions, result, recovery, source and no private notes',pass:m05?.m05Sections?.length===5&&m05.m05Verifications?.length===5&&m05.m05Sections.every(x=>x.where&&x.source&&x.privateNotes===0)&&m05.m05Verifications.every((x,i)=>x.id==='M05:'+i&&x.result&&x.fix&&x.source&&x.preview&&x.privateNotes===0)},
   {name:'M05: RPG, puzzle and 3D routes each project five actions and five verifications',pass:m05RouteChecks.length===3&&m05RouteChecks.every(x=>x.pass)},
+  {name:'M10 demo: all three delivery routes project four public actions and four verifications',pass:m10RouteChecks.length===3&&m10RouteChecks.every(x=>x.pass)},
   {name:'M08 demo: all three genres project four actions and four verifications without private notes',pass:m08RouteChecks.length===3&&m08RouteChecks.every(x=>x.pass)},
    {name:'M08 briefing: six concepts, simulator, acceptance and evidence on 11 slides without private notes',pass:m08Briefing?.m08BriefingSteps?.length===11&&JSON.stringify(m08Briefing.m08BriefingSteps.map(x=>x.id))===JSON.stringify(['M08:intro',...Array.from({length:6},(_,i)=>'M08:concept-'+(i+1)),'M08:simulation-intro','M08:simulation','M08:accept','M08:evidence'])&&m08Briefing.m08BriefingSteps.every(x=>x.privateNotes===0)&&(m08Briefing.retainedRatio||0)>.6},
   {name:'M08 briefing: all UX labels and Preview evidence caveat projected',pass:['AFFORDANCE','INSTRUÇÃO','HUD','CONTRASTE','RESPOSTA AO INPUT','ERRO RECUPERÁVEL'].every((label,i)=>m08Briefing?.m08BriefingSteps?.[i+1]?.text.includes(label))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:accept'&&x.text.includes('antes/depois'))&&!!m08Briefing?.m08BriefingSteps?.find(x=>x.id==='M08:evidence'&&x.text.includes('simulação'))},
