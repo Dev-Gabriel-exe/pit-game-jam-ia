@@ -1,1 +1,11 @@
 .t10v-root{background:#121d2b;color:#f1e3d3;padding:clamp(14px,3vw,28px);border:1px solid #937659;font:15px/1.6 Arial,sans-serif}.t10v-root h2,.t10v-root h3{font-family:Georgia,serif;color:#ffe2b9}.t10v-root header{background:linear-gradient(110deg,#31223c,#1e313b);border-left:4px solid #e7c28d;padding:18px}.t10v-root small{color:#f0c38b;font-weight:800}.t10v-rubric{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.t10v-rubric article{display:flex;gap:12px;padding:16px;background:#21313f;border:1px solid #90785f}.t10v-rubric article>span{font:700 25px Georgia,serif;color:#e8c18d}.t10v-rubric h3{font-size:20px;margin:4px 0}.t10v-root footer{background:#233c33;padding:15px;border-left:3px solid #a5d1ad}@media(max-width:700px){.t10v-rubric{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){.t10v-root *{animation:none!important;transition:none!important}}
+
+/* Public M10 practice checklist mirrors the student form; not a private teacher script. */
+.t10v-practice-guide{margin:18px 0;padding:16px;border:1px solid #a88a66;background:#192936}
+.t10v-practice-guide>h3{margin:0 0 8px}
+.t10v-practice-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.t10v-practice-fields article,.t10v-practice-tests{min-width:0;padding:14px;background:#253644;border:1px solid #856c52}
+.t10v-practice-fields h4{margin:8px 0 3px;color:#ffe2b9;font:700 18px/1.3 Georgia,serif}
+.t10v-practice-fields p{margin:0 0 9px;overflow-wrap:anywhere}
+.t10v-practice-tests ol{padding-left:1.5em}
+@media(max-width:700px){.t10v-practice-fields{grid-template-columns:1fr}}
