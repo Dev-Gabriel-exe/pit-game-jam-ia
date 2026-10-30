@@ -181,15 +181,9 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
   const longest=Math.max(extent.x,extent.y,extent.z,.01);
   const scale=cfg.size/longest;
   const group=new THREE.Group();group.name='cc0-'+cfg.file;
-  let pieces=0;
-  const place=(x,z,yaw)=>{
-   const object=raw.clone(true);
-   object.scale.setScalar(scale);
-   object.position.set(x,-bounds.min.y*scale,z);
-   object.rotation.y=yaw;
-   object.traverse(part=>{if(part.isMesh){part.castShadow=!low;part.receiveShadow=true}});
-   group.add(object);pieces++;
-  };
+  // Record original transformations, reusing each source mesh/material below.
+  const placements=[];
+  const place=(x,z,yaw)=>placements.push({x,z,yaw});
   if(cfg.pattern==='ring'){
    for(let n=0;n<cfg.count;n++){
     const a=n/cfg.count*Math.PI*2;
@@ -206,13 +200,51 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
     }
    }
   }
+  raw.updateMatrixWorld(true);
+  const sourceMeshes=[];let unsupported=false;
+  raw.traverse(part=>{
+   if(part.isSkinnedMesh||part.isLight||part.isLine||part.isPoints||part.isSprite)unsupported=true;
+   if(part.isMesh){
+    if(!part.geometry||!part.material||part.morphTargetInfluences?.length)unsupported=true;
+    else sourceMeshes.push(part);
+   }
+  });
+  let batches=0;
+  if(sourceMeshes.length&&!unsupported){
+   // Each original GLB mesh becomes one instanced draw call, even when
+   // repeated around all four walls. Keep coordinates, scale, and textures.
+   const up=new THREE.Vector3(0,1,0),q=new THREE.Quaternion(),position=new THREE.Vector3();
+   const uniform=new THREE.Vector3(scale,scale,scale);
+   const transform=new THREE.Matrix4(),worldMatrix=new THREE.Matrix4();
+   for(const part of sourceMeshes){
+    const instances=new THREE.InstancedMesh(part.geometry,part.material,placements.length);
+    for(let i=0;i<placements.length;i++){
+     const p=placements[i];position.set(p.x,-bounds.min.y*scale,p.z);q.setFromAxisAngle(up,p.yaw);
+     transform.compose(position,q,uniform);
+     worldMatrix.multiplyMatrices(transform,part.matrixWorld);
+     instances.setMatrixAt(i,worldMatrix);
+    }
+    instances.instanceMatrix.needsUpdate=true;instances.computeBoundingSphere();
+    instances.castShadow=!low;instances.receiveShadow=true;
+    group.add(instances);batches++;
+   }
+  }else for(const p of placements){
+   // Keep exact fallback for unusual animated/morphed environment GLBs.
+   const object=raw.clone(true);
+   object.scale.setScalar(scale);
+   object.position.set(p.x,-bounds.min.y*scale,p.z);
+   object.rotation.y=p.yaw;
+   object.traverse(part=>{if(part.isMesh){part.castShadow=!low;part.receiveShadow=true}});
+   group.add(object);
+  }
   root.add(group);
-  return {file:cfg.file,pieces};
+  return {file:cfg.file,pieces:placements.length,batches};
  })).then(results=>{
   const loaded=results.filter(x=>x.status==='fulfilled').map(x=>x.value);
   container.dataset.v5Environment=loaded.length===distinct.length?'loaded':loaded.length?'partial':'failed';
   container.dataset.v5EnvironmentAssets=loaded.map(x=>x.file).join(',');
   container.dataset.v5EnvironmentParts=String(loaded.reduce((sum,x)=>sum+x.pieces,0));
+  container.dataset.v5EnvironmentInstancedBatches=String(loaded.reduce((sum,x)=>sum+x.batches,0));
  });
 }
 export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',onEvent=()=>{}}={}){
