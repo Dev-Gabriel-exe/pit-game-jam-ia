@@ -58,3 +58,16 @@ F.3 — visão do aluno vivo e ao morrer transição para a mesma câmera global
 - **Limite:** testes de WebGL no CI usam SwiftShader renderizado por software. Não afirmar que FPS em PCs dos alunos/S24 foi homologado; isso é Fase G. Também não afirmar que todas as geometrias reais do cenário estão sempre desobstruídas; a checagem é contra os obstáculos do motor e foi aprovada na cena final deste seed.
 
 **Próximo item F.3:** câmera local de participante vivo e, ao morrer, transição para a MESMA visão global professor + espectadores (servidor e autenticação reais exclusivamente em H); depois G/H/I.
+
+## F.3 — Câmera individual e visão compartilhada (entrega experimental, outubro/2026)
+
+**Implementada no laboratório M5, sem identidades de alunos, sem rede e sem alterações na `main`.**
+
+- `v5/camera-viewer.js`: máquina de estados pura para visualização de professor, aluno vivo (`following`) e aluno eliminado (`spectating`), com transição uma única vez por derrota e `feedId` único. Seu `publicFeed` é somente um contrato serializável **local**, NÃO sincronização entre computadores.
+- `v5/arena-three.js`: reutiliza a mesma simulação M5 e o único diretor F.1/F.2; acompanha heroína/herói vivo em terceira pessoa; ao eliminar, remove o seguimento do personagem morto e retoma a mesma sequência cinematográfica já calculada. O professor consegue reassumir a câmera sem reiniciar o diretor. A seleção manual do professor ao clicar no canvas cancela sua câmera automática; o aluno não interfere no diretor.
+- `v5/arena-lab.html/css/js`: seletor de 4 ou 30 personagens **fictícios**, botão "Ver como aluno" e "Voltar ao professor"; informa claramente que é simulação local sem login real. Missão 10 legada desabilita o modo.
+- `qa/v5-camera-viewer.cjs`: verifica IDs de heróis válidos, troca de modo uma vez após eliminação, reuso do mesmo `feedId`, retorno ao professor, resultado/dano/talentos do motor **idênticos** com ou sem câmera. Passou no workflow 40992989976.
+- `qa/v5-camera-viewer-browser.cjs`: Chromium/WebGL, 4 e 30 GLBs reais, seed `4175863657`; seleciona Guerreiro 0 (4 jogadores) e Arcanista 17 (30), acompanha sua eliminação real e transição automática para espectador; verifica o mesmo feed ao voltar para professor e isolamento de M10. **PASS completo** em https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/40992989976.
+- Foi identificada regressão do arrasto manual no browser F.1 em commit intermediário. Adicionada captura `pointerdown` no canvas e cleanup em `v5/arena-three.js`; a correção está nos runs mais recentes **40993245807** (diretor F.1/F.2) e **40993245678** (F.3). Conferir conclusão antes de declarar homologação final.
+
+**Restrições:** "mesma câmera" refere-se a usar o mesmo diretor/plano na página de laboratório. NÃO há transmissão multiusuário entre dispositivos nem autenticação de professor/aluno; essas dependências permanecem na Fase H. FPS em PCs reais e teste de dispositivos fazem parte da Fase G. **Não fazer merge na `main`.**
