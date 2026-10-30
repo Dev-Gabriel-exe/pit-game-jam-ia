@@ -318,3 +318,20 @@ Separar efeito de **build versus slot/posição/ordem** com rotações completas
 - **Próximo passo:** conferir resultado do CI e artefato JSON, corrigir qualquer falha, registrar taxas de vitória por braço e variabilidade entre seeds, sem inferir causalidade exclusiva de um efeito ou aplicar nerf. G.2 nos PCs físicos, H.1/H.2 com alunos, V3, produção e `main` continuam bloqueados.
 
 **Correção de contagem:** o primeiro CI focal (run 41092263259) passou em todas as verificações, mas o relatório inicial chamou incorretamente de 432 *batalhas* as 432 observações pareadas (baseline contado duas vezes por seed). O código foi corrigido em `8952cda`, e o workflow em `00ff729`; conferir o novo CI antes de aceitar a contagem de 384 batalhas distintas. Não há alteração nos resultados de combate.
+
+
+### H.3 — fatorial M10: CI final confirmado (30/10/2026)
+
+**Aprovado apenas como experimento sintético, não como balanceamento homologado.** [Run 41092435984](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41092435984), SHA testado `00ff729facd359850e3f3d8aef7389ef97e7ac1d`, job `m10-factorial` SUCCESS: **384 batalhas distintas**, 432 observações dos quatro braços (o baseline é reutilizado para os dois deslocamentos), 324 comparações pareadas, 18 replays exatos; H.0/M10/E.7/M5 e sintaxe aprovados. Artefato [m10-factorial-seed-crossover](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41092435984/artifacts/12995090103), hash `4a638770dd158a990c39`. O erro de rotulagem do primeiro relatório foi corrigido e retestado.
+
+**Com 30 personagens equilibrados, 8 seeds independentes por arquétipo e duas permutações correlacionadas (16 observações por braço):**
+
+| Build | Guardião baseline | Só geometria | Só ordem | Ambos |
+|---|---:|---:|---:|---:|
+| Ofensiva | 6/16 | 6/16 | 6/16 | 7/16 |
+| Defensiva | 8/16 | 9/16 | 6/16 | 7/16 |
+| Pseudoaleatória | 6/16 | 7/16 | 9/16 | 8/16 |
+
+Em 30 equilibrados, a mudança **somente de geometria** alterou a identidade vencedora em 13–16 dos 16 pares conforme o arquétipo; mudar **somente a ordem** alterou 8–12/16. A maior sensibilidade individual a spawn não implica uma direção uniforme para a taxa de vitórias do Guardião. As observações de duas rotações do mesmo seed não são independentes, e oito seeds ainda são insuficientes para homologar justiça entre classes.
+
+**Checkpoint final desta rodada:** commit de código `8952cda`, workflow `00ff729`, documentação anterior `3c44fb5`; resultados acima validados no CI. Próximo incremento: analisar variância entre seeds e efeitos de interação geometria×ordem por arquétipo; ampliar seeds sem confundir pares correlacionados com amostras independentes. Sem nerf nem alteração do motor M5/M10 canônico. G.2 físico pendente, H.1/H.2 reais e integração/merge não autorizados.
