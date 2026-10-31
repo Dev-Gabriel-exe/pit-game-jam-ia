@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T19:21:20.612Z",
+  "last_completed_at": "2026-10-31T20:18:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09: mudança de resultado agora invalida decisão anterior e terceira confirmação; mudança de decisão invalida terceira confirmação. 6 cenários V8 + DOM event PASS; JS parse PASS. CI do novo SHA ainda NÃO CONFIRMADA. Próxima auditoria transversal M10 e confirmar CI. GDevelop GUI, HDMI, celular físico e playtest humano NOT_RUN.",
+  "priority": "M10: edição de projeto/acesso/mecânica/regra/demo invalida confirmações manuais relacionadas; 13 cenários V8+DOM PASS, regressão Node registrada, CI nova NÃO CONFIRMADA. Próxima: confirmar CI M09/M10 e continuar auditoria transversal 20 faces antes da estética. GDevelop GUI, HDMI, mobile físico e testes humanos NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-OUTCOME-DECISION-RECONFIRM",
+  "last_task": "V4-AUD-M10-FIELD-RECONFIRM",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2941,43 +2941,51 @@
       ],
       "tests": "Direct V8 6/6 core cases PASS; DOM reset simulation PASS; both JS files parse PASS. Prior M08 static QA 41229050778 and Browser QA 41229050819 completed SUCCESS. New M09 GitHub CI NOT_CONFIRMED; GDevelop GUI/HDMI/mobile/peer NOT_RUN.",
       "notes": "M09 outcome changes clear obsolete decision and third manual attestation; decision changes clear third attestation. UI radios and checkbox synced; no fictitious peer tests. Roadmap 54/59 unchanged; no main/production/student data changes."
+    },
+    {
+      "id": "V4-AUD-M10-FIELD-RECONFIRM",
+      "completed_at": "2026-10-31T20:18:00Z",
+      "commit": "9dc05aaae439f6010d97360d7a0e2f369f46a825",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-m10-storage-failsafe.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "13 direct V8 assertions on fetched current M10 source PASS; fake DOM and blocked localStorage. JS syntax PASS. Full Node static-qa and Browser QA of new commit NOT_CONFIRMED; M09 CI status also unverified. Physical GDevelop GUI/HDMI/mobile/humans NOT_RUN.",
+      "notes": "Changed project invalidates all three checks; changed access invalidates checks 1/2; mechanic/rule/demo invalidate execution check. Visual checkboxes and warning sync. Teacher M10 still mirrors eight fields and three manual checks with private notes closed. Master roadmap remains 54/59; no main/production/student data changes."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-OUTCOME-DECISION-RECONFIRM",
+    "task": "V4-AUD-M10-FIELD-RECONFIRM",
     "status": "CODE_TEST_DOC_COMMITTED_CI_PENDING",
-    "updated_at": "2026-10-31T19:21:20.612Z",
-    "code_commit": "8fb90213aeb28b5228e9d571edc2e7884da0492d",
+    "updated_at": "2026-10-31T20:18:00Z",
+    "code_commit": "4d1e475c798ead146711705398a430fb8516092a",
     "regression_commits": [
-      "1a4b6031e4ca3fc56566ae9e92c23e4643d9b8ac"
+      "9dc05aaae439f6010d97360d7a0e2f369f46a825"
     ],
-    "documentation_commit": "cd6b86c55747c6a72653558c6fcbceafc4587122",
+    "documentation_commit": "42166ffbc841f06f3719aa90d341cbb3313e4ab9",
     "tests": [
       {
-        "name": "Previous M08 static-qa and browser-qa",
+        "name": "M10 field edit direct V8 + simulated DOM",
         "result": "PASS",
-        "runs": [
-          41229050778,
-          41229050819
-        ],
-        "details": "GitHub workflow jobs completed/success"
+        "details": "13/13 checks: project/access/mechanic selective reset, no-op, blocked storage, checkbox synchronization, warning"
       },
       {
-        "name": "M09 new direct V8 logic + DOM interaction",
-        "result": "PASS",
-        "details": "6/6 core logic cases plus radio/checkbox UI reset with blocked storage; both JS files parse"
-      },
-      {
-        "name": "M09 new Node regression and browser QA",
+        "name": "M10 Node regression and Browser QA",
         "result": "PENDING",
-        "details": "Regression committed and wired into existing static-qa workflow; GitHub Actions status for latest SHA not yet verified"
+        "details": "Regression updated in existing qa/v3-m10-storage-failsafe.cjs; CI not verified on latest SHA"
+      },
+      {
+        "name": "M09 latest static and browser QA",
+        "result": "UNVERIFIED",
+        "details": "Combined status connector returned no statuses; no success claim"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar CI do M09 e auditar M10: troca de rota local/web/gd.games, evidências, confirmações manuais e sincronização professor/aluno.",
-    "blocker": "Manual GDevelop GUI, HDMI, physical mobile and human peer-test not executed; no automatic sign-off."
+    "next_task": "Confirmar CI M09/M10 no SHA exato e continuar auditoria pedagógica transversal 01–10 (professor/aluno) antes de estética.",
+    "blocker": "Manual GDevelop GUI, HDMI, physical mobile and peer playtest not executed; final sign-off unavailable."
   }
 }
