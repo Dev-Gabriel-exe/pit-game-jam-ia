@@ -58,7 +58,7 @@ function within(inner,outer,tolerance=3){
      status:box('#arenaStatus'),spotlight:box('#battleSpotlight'),
      spotlightText:box('#spotlightText'),legend:box('.battle-legend'),
      telemetry:box('#talentTelemetry'),talentText:box('#talentLast'),
-     controls:box('.controls'),canvas:box('#arenaStage canvas'),
+     controls:box('.controls'),viewerControls:box('#studentViewControls'),canvas:box('#arenaStage canvas'),
      toolbarItems:[...document.querySelectorAll('.controls > button:not([hidden]), .controls > .camera-director-status')].map(el=>{
       const r=el.getBoundingClientRect(),s=getComputedStyle(el);
       return {id:el.id||'directorStatus',left:r.left,right:r.right,top:r.top,bottom:r.bottom,
@@ -78,8 +78,10 @@ function within(inner,outer,tolerance=3){
    const minimumHeight=screen.width===1366?500:800;
    assert(metric.stage.height>=minimumHeight,
     'Compact immersive controls must preserve '+minimumHeight+'px stage height: '+JSON.stringify(metric.stage));
-   assert(metric.controls.height<=100,
-    'Desktop immersive toolbar must fit two compact rows: '+JSON.stringify(metric.controls));
+   assert(metric.controls.height<=150,
+    'Desktop immersive toolbar and F3 viewer must fit three compact rows: '+JSON.stringify(metric.controls));
+   assert(metric.viewerControls?.visible&&within(metric.viewerControls,metric.controls),
+    'F3 student/teacher controls must remain visible within compact toolbar');
    assert(metric.toolbarItems.length===12,
     'All 11 commands and director status must remain available in immersive mode');
    for(const item of metric.toolbarItems){
