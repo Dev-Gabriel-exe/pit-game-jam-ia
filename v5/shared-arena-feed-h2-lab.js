@@ -150,6 +150,8 @@
   let lastSeq=-1,frame=null,connected=true,needSnapshot=false;
   function validateNext(next){
    validateFrame(next,scope);
+   // A finished match is terminal regardless of any later forged timestamp.
+   if(frame?.status==='finished'&&next.seq>lastSeq)reject('partida já encerrada');
    if(frame&&next.logicalTime<frame.logicalTime)reject('relógio recuou');
    // Every newly emitted frame advances simulation time. A replay at the same
    // cursor is still idempotent, but a higher cursor cannot freeze the clock.
@@ -176,7 +178,6 @@
      if(!old.alive&&fighter.alive)reject('ressurreição não permitida no torneio');
     }
    }
-   if(frame?.status==='finished'&&next.seq>lastSeq)reject('partida já encerrada');
    if(frame?.status==='running'&&next.status==='ready')reject('estado retrocedeu');
   }
   function accept(next){
