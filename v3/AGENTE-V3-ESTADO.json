@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T08:20:00.000Z",
+  "last_completed_at": "2026-10-31T09:17:47.084Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M04: fallback volátil por sessão, aviso de falha de localStorage na prática/revisão e 17 regressões adicionais implementados; QA estática nativa 41184094461 SUCCESS. Confirmar Browser QA 41184094448; seguir auditoria pedagógica M05 professor/aluno antes da estética.",
+  "priority": "M05: proteção volátil por sessão e aviso honesto de armazenamento bloqueado implementados; QA estática nativa 41188076145 SUCCESS com 16 regressões novas. Confirmar Browser QA 41188076219; seguir auditoria comparada professor/aluno da M06 antes de qualquer estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M04-DRAFT-STORAGE-FAILSAFE",
+  "last_task": "V4-M05-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2806,12 +2806,24 @@
       ],
       "tests": "GitHub Actions native static QA 41184094461 SUCCESS including 17 new denied-storage regressions; Browser QA 41184094448 IN_PROGRESS; M03 Browser QA 41179996596 SUCCESS. Physical/human NOT_RUN.",
       "notes": "M04 retains route, text and manual checks in-tab when localStorage is blocked; honest practice/review warning and copy guidance. No main, production or real student data changes. Master roadmap 54/59."
+    },
+    {
+      "id": "V4-M05-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T09:17:47.084Z",
+      "commit": "2f9bd052244f79ce7fabca161d4be07b9508d342",
+      "files": [
+        "v3/student-mission-five.js",
+        "qa/v3-m05-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "V8 direct denied-storage scenario PASS; GitHub Actions native static QA 41188076145 SUCCESS including 16 new storage-denial regressions; Browser QA 41188076219 IN_PROGRESS. HDMI, GDevelop GUI, physical mobile, human playtest NOT_RUN.",
+      "notes": "M05 session-isolated in-tab fallback, accurate save status and review copy warning; no automatic Preview attestations; no main or real student data. Roadmap stays 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M04-DRAFT-STORAGE-FAILSAFE",
+    "task": "V4-M05-DRAFT-STORAGE-FAILSAFE",
     "status": "in_progress",
-    "updated_at": "2026-10-31T08:20:00.000Z",
+    "updated_at": "2026-10-31T09:17:47.084Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2951,9 +2963,11 @@
       "5b1a336da192767cd82f80c7e78b0e158e004aa4",
       "7add3ee5b6a0a59d7150902ae303eb1a0d9b69c8",
       "0f153e3b3f9764f3278b05e290be0685e0cd6e4d",
-      "3e8bc3df86e438136006912bf27fe3ed90113355"
+      "3e8bc3df86e438136006912bf27fe3ed90113355",
+      "14190c6c003f2da3658ae685ee3eb2a50910084b",
+      "2f9bd052244f79ce7fabca161d4be07b9508d342"
     ],
-    "documentation_commit": "6b42f00eb9544e7a59cb306f41116a1f78166f9d",
+    "documentation_commit": "5447a3f600c8441358451099f283c7f3709fd17c",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -4037,13 +4051,39 @@
         "run_id": 41184094448,
         "sha": "3e8bc3df86e438136006912bf27fe3ed90113355",
         "result": "IN_PROGRESS at last check; not claimed passed"
+      },
+      {
+        "name": "M04 Browser QA confirmed",
+        "run_id": 41184094448,
+        "sha": "3e8bc3df86e438136006912bf27fe3ed90113355",
+        "result": "SUCCESS verified on 2026-10-31"
+      },
+      {
+        "name": "M05 storage denial direct V8",
+        "result": "PASS: executed denied-storage scenario; volatile 3D route, Preview checkboxes and practice/review warnings preserved; not a Chrome/GDevelop test"
+      },
+      {
+        "name": "M05 static QA with 16 new assertions",
+        "run_id": 41188076145,
+        "sha": "2f9bd052244f79ce7fabca161d4be07b9508d342",
+        "result": "SUCCESS: native GitHub Actions Node syntax and qa/v3-m05-student.cjs regressions"
+      },
+      {
+        "name": "M05 Browser QA",
+        "run_id": 41188076219,
+        "sha": "2f9bd052244f79ce7fabca161d4be07b9508d342",
+        "result": "IN_PROGRESS at last check; no pass claimed"
+      },
+      {
+        "name": "Physical HDMI, GDevelop GUI, mobile device, human playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar Browser QA M04 (41184094448), comparar professor/aluno M05 e verificar falha silenciosa de armazenamento na M05 antes de qualquer estética.",
-    "blocker": "Browser QA M04 pendente; GDevelop GUI, HDMI físico, aparelho físico e playtest humano NOT_RUN. Cinco release gates seguem bloqueados."
+    "next_task": "Confirm M05 Browser QA and audit M06 professor/student evidence and persistence; preserve private teacher notes HDMI guard",
+    "blocker": "Real HDMI, GDevelop GUI, physical mobile and human validation remain unverified; Browser QA pending."
   }
 }
