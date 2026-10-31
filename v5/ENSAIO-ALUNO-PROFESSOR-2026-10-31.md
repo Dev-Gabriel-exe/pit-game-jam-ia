@@ -53,3 +53,11 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - Workflow `.github/workflows/v5-duel-invitations-lab-qa.yml` atualizado com job Playwright Chromium.
 - SHA do código: `b099d81d`. **CI ainda em fila na consulta; não afirmar que o navegador passou.**
 - Escopo: somente maquete fictícia. Ainda falta arena 1×1 WebGL real, autorização professor M5/M10 e teste ponta a ponta V3; H.1/H.2 reais bloqueadas por G.2.
+
+## Rodada: isolamento acessível da janela de duelo
+
+- CI anterior `41198761906`: jobs de contrato e navegador aprovados.
+- `v5/duel-window-lab.html`: ao abrir janela, irmãos de `#arena` tornam-se `inert`, preservando o estado anterior; ao fechar por Esc/botão, restaura estado, rolagem e foco. Não altera lógica do convite.
+- `qa/v5-duel-window-browser.cjs`: valida fundo inerte, diálogo ativo, reversão do isolamento e foco.
+- Código: `1c49b1df`; testes: `ddf9464b`. CI do novo teste pendente na consulta, **não homologado**.
+- Próximo passo: revisar CI; depois arena WebGL fictícia 1x1 e controle professor M5/M10. G.2 não realizado; H.1/H.2 reais bloqueados.
