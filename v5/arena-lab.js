@@ -524,6 +524,25 @@ function immersiveTabStops(){
  return [...immersiveTheater.querySelectorAll(immersiveFocusable)].filter(el=>
   !el.closest('[hidden]')&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
 }
+// A focus trap alone does not hide the rest of the page from screen readers.
+// Mark every sibling along the dialog's ancestor chain inert, then restore
+// ONLY elements we changed (respecting any pre-existing inert state).
+let immersiveBackgroundInert=[];
+function setImmersiveBackgroundInert(on){
+ if(!on){
+  for(const el of immersiveBackgroundInert)el.inert=false;
+  immersiveBackgroundInert=[];
+  return;
+ }
+ if(immersiveBackgroundInert.length)return;
+ for(let current=immersiveTheater;current&&current!==document.body;current=current.parentElement){
+  for(const sibling of current.parentElement?.children||[]){
+   if(sibling===current||sibling.inert)continue;
+   sibling.inert=true;
+   immersiveBackgroundInert.push(sibling);
+  }
+ }
+}
 function setImmersive(on){
  document.body.classList.toggle('arena-immersive',on);
  expandButton.setAttribute('aria-pressed',String(on));
@@ -532,10 +551,12 @@ function setImmersive(on){
   immersiveTheater.setAttribute('role','dialog');
   immersiveTheater.setAttribute('aria-modal','true');
   immersiveTheater.setAttribute('aria-label','Arena de combate ampliada');
+  setImmersiveBackgroundInert(true);
  }else{
   immersiveTheater.removeAttribute('role');
   immersiveTheater.removeAttribute('aria-modal');
   immersiveTheater.removeAttribute('aria-label');
+  setImmersiveBackgroundInert(false);
  }
  expandButton.focus({preventScroll:true});
  requestAnimationFrame(()=>state.stage?.resize());
