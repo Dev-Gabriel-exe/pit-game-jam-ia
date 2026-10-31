@@ -136,3 +136,13 @@ Portanto, a jornada fictícia completa inclusive a vitória **real do motor visu
 - **GitHub Actions verde:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41203797984 — `teacher-contract` + `teacher-chromium` com success.
 - Documento completo: `v5/FASE-H4-LIBERACAO-COLETIVA.md`.
 - **Limite:** 30 validados no motor Node; Chromium WebGL do novo painel testado em 3–4 GLBs, sem equivaler à prova G.2 física. Nenhum aluno real, API, autenticação, XP, deploy ou main alterados. H.1b/H.2 ainda não implementados.
+
+## H.1b/H.2 — contratos isolados de lock e feed compartilhado (31/10/2026)
+
+- Após auditoria somente de leitura de `chat-api/api/classroom.js`, `chat-api/api/arena.js`, `chat-api/lib/v5-hero-core.js`: banco atual armazena o modelo antigo de personagens; integrar com o motor KayKit/Phase2 sem schema versionado seria incompatível. Nenhum arquivo de API ou banco foi modificado.
+- `v5/build-lock-cas-h1b-lab.js`: revisão CAS, idempotência por comando, congelamento de atributos/talentos na entrada M5, aprovações 6–10 consecutivas e lock M10 irreversível — exclusivamente memória fictícia.
+- `v5/shared-arena-feed-h2-lab.js`: um único `phase2-combat.js` e `camera-director.js` geram snapshots numerados para múltiplos receptores passivos e escopados por turma/partida; reconexão, replay e snapshot para lacunas. Não há SSE/WebSocket ou dispositivos reais.
+- **CI H.1b success:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41205214502 .
+- **CI H.2 success:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41205008747 .
+- Desenho de schema versionado e requisitos de transações/autoridade: `v5/FASE-H1B-H2-CONTRATOS-E-INTEGRACAO-PENDENTE.md`. Nenhuma migração foi executada.
+- Próximo gate: G.2 PCs reais, implementação de backend/migração apenas após autorização explícita, e prova de sincronização real com dois navegadores autenticados em ambiente de teste. Sem alteração em main, contas, notas ou XP.
