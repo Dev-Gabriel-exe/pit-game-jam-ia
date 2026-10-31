@@ -116,6 +116,16 @@ const assert=require('node:assert/strict');
   await page.locator('#pitProjectorLaunch').click();
   assert.equal(await projectedNote.evaluate(el=>el.open),false,'projector launch closes previously open private note');
   assert.equal(await page.locator('#pitProjectorContent details.pit-private-teacher-notes').count(),0,'projector excludes private note markup');
+  // The modal must not allow Tab to reach the underlying teacher panel,
+  // where the private-note paper icon would otherwise remain focusable.
+  await page.locator('#pitProjectorClose').focus();
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'pitProjectorNext','Shift+Tab wraps to the final projected control');
+  await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'pitProjectorClose','Tab wraps to the first projected control');
+  await page.locator('#pitProjectorLaunch').focus();
+  await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'pitProjectorClose','Tab recovers focus if background is focused programmatically');
   await page.locator('#pitProjectorClose').click();
   assert.equal(await projectedNote.evaluate(el=>el.open),false,'private note stays closed after returning to mirrored panel');
 
