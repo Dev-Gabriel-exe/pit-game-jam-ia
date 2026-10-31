@@ -8,6 +8,8 @@ on:
       - 'qa/v5-duel-window-lab.cjs'
       - 'qa/v5-duel-window-browser.cjs'
       - 'v5/duel-window-lab.html'
+      - 'v5/duel-battle-lab.js'
+      - 'qa/v5-duel-battle-lab.cjs'
       - '.github/workflows/v5-duel-invitations-lab-qa.yml'
   workflow_dispatch:
 jobs:
@@ -23,6 +25,9 @@ jobs:
       - run: node --check qa/v5-duel-invitations-lab.cjs
       - run: node qa/v5-duel-invitations-lab.cjs
       - run: node qa/v5-duel-window-lab.cjs
+      - run: node --check v5/duel-battle-lab.js
+      - run: node --check qa/v5-duel-battle-lab.cjs
+      - run: node qa/v5-duel-battle-lab.cjs
 
   fictional-duel-browser:
     runs-on: ubuntu-latest
