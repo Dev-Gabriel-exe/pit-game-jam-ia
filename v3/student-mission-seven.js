@@ -56,6 +56,12 @@ function routeFor(ctx,d){
  if(ctx.playable&&ctx.playable.route===3)return 1;
  return 0;
 }
+function selectRoute(d,index){
+ const next=index===1?'3d':'2d';
+ if(d.route!==next)d.checks=[]; // Tests from a different GDevelop route are not evidence.
+ d.route=next;d.routeChosen=true;
+ return d;
+}
 function brief(ctx){const p=profile(ctx);return '<section class="m7s-brief"><h3>Um jogo começa, desafia e termina.</h3><p>O objetivo original de <b>'+esc(p.title)+'</b> era: '+esc(p.goal)+'. Agora transforme essa intenção em uma condição testável de vitória ou derrota, sem criar várias fases.</p><ol><li>Preserve movimento, regra e asset das missões anteriores.</li><li>Implemente uma condição de conclusão no GDevelop.</li><li>Mostre o resultado final e teste a tentativa prematura.</li></ol><button type="button" data-m7s-nav="practice">CRIAR CONCLUSÃO ›</button></section>'}
 function practice(ctx){const d=load(ctx.session),p=profile(ctx),locked=['submitted','approved'].includes(ctx.status),r=routeFor(ctx,d);
 const guide=window.PIT_GDEVELOP_M07_GUIDE?window.PIT_GDEVELOP_M07_GUIDE.render(r):'<p>Guia indisponível. Consulte a documentação oficial do GDevelop.</p>';
@@ -78,11 +84,11 @@ function review(ctx){const d=load(ctx.session),locked=['submitted','approved'].i
 '<small>O envio não concede aprovação automática. A conclusão deve ser observada no Preview.</small>'+(writeStatus.get(key(ctx.session))===false?'<p class="m7s-warning" role="status">⚠ Não foi possível salvar permanentemente. Copie a evidência acima antes de sair desta aba.</p>':'')+'</section>'}
 function render(ctx){const p=profile(ctx);return '<section class="m7s-root" id="m7sRoot"><header><small>MISSÃO 07 / 10 · DAR VIDA AO UNIVERSO</small><h2>O final precisa acontecer no jogo.</h2><p>'+esc(p.title)+' · '+esc(p.genre)+' · 50 minutos</p></header>'+(ctx.phase==='practice'?practice(ctx):ctx.phase==='review'?review(ctx):brief(ctx))+'</section>'}
 function mount(ctx){const root=document.querySelector('#m7sRoot');if(!root)return;const d=load(ctx.session),locked=['submitted','approved'].includes(ctx.status);
-if(ctx.phase==='practice'&&window.PIT_GDEVELOP_M07_GUIDE){const r=routeFor(ctx,d);if(!locked&&!fields.some(f=>d[f.id].trim())&&d.checks.length===0){d.route=r===1?'3d':'2d';save(ctx.session,d)}const guide=root.querySelector('#g7Guide');window.PIT_GDEVELOP_M07_GUIDE.mount(guide,{initialRoute:r,onRouteChange:(_,index)=>{if(locked)return;d.route=index===1?'3d':'2d';d.routeChosen=true;save(ctx.session,d);const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}});if(locked)guide?.querySelectorAll('button').forEach(b=>b.disabled=true)}
+if(ctx.phase==='practice'&&window.PIT_GDEVELOP_M07_GUIDE){const r=routeFor(ctx,d);if(!locked&&!fields.some(f=>d[f.id].trim())&&d.checks.length===0){d.route=r===1?'3d':'2d';save(ctx.session,d)}const guide=root.querySelector('#g7Guide');window.PIT_GDEVELOP_M07_GUIDE.mount(guide,{initialRoute:r,onRouteChange:(_,index)=>{if(locked)return;const changed=d.route!==(index===1?'3d':'2d');selectRoute(d,index);save(ctx.session,d);root.querySelectorAll('[data-m7s-check]').forEach(el=>{el.checked=d.checks.includes(Number(el.dataset.m7sCheck))});const status=root.querySelector('#m7sStatus');if(status)status.textContent=(changed?'Rota alterada: refaça os três testes no Preview. ':'')+draftNotice(ctx.session)}});if(locked)guide?.querySelectorAll('button').forEach(b=>b.disabled=true)}
 root.querySelectorAll('[data-m7s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m7sField]=el.value;const ok=save(ctx.session,d),status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m7s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m7sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(ctx.session,d);const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m7s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m7sNav==='practice'){ctx.onPhase('practice');return}const v=validate(ctx.session);if(!v.ok){ctx.onMessage(v.label);root.querySelector(v.field==='checks'?'[data-m7s-check]':'#m7s-'+v.field)?.focus();return}ctx.onPhase('review')}));
 const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session);
 }
-window.PIT_STUDENT_MISSION_SEVEN={fields,load,save,draftNotice,validate,evidence,parseEvidence,hydrate,profile,routeFor,render,mount};
+window.PIT_STUDENT_MISSION_SEVEN={fields,load,save,draftNotice,validate,evidence,parseEvidence,hydrate,profile,routeFor,selectRoute,render,mount};
 })();
