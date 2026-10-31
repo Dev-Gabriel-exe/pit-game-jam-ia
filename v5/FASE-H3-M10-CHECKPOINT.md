@@ -699,3 +699,20 @@ No SHA funcional `5b94724e9d70b7554c6ca6111df15de065eeb74d`, o [run M10 WebGL 41
 - QA geral e browser disparados no mesmo SHA: [41215780981](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41215780981) e [41215780985](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41215780985); **ainda IN_PROGRESS na consulta**, não marcar aprovados sem confirmar.
 
 **Próximo passo na MESMA M10:** conferir os jobs gerais/browser, depois ampliar testes adversariais de reconexão e consistência de câmera/replay, revisar legibilidade de nicks e balanceamento com builds mistas. A validação G.2 nos PCs físicos **não foi realizada**; integração H.1/H.2 com alunos reais, autenticação, XP, aprovações, notas, usuários, turmas, V3, `main`, merge e deploy continuam bloqueados. Preservados M5 5 talentos/10 atributos, M10 10 talentos/20 atributos, quatro KayKit, 120 talentos, câmera e arquibancadas.
+
+
+## H.3/M10 — revisão da câmera imutável no feed e reconexão (31/10/2026)
+
+**Missão única nesta rodada:** impedir que um receptor fictício H.2 aceite troca silenciosa de plano cinematográfico com a mesma revisão, tanto em quadros consecutivos quanto após restaurar um snapshot de reconexão. O trabalho foi feito somente na branch `feature/v5-arena-dos-criadores`, sem tocar na `main`, integração real, XP, notas, usuários, turmas, aprovações ou deploy.
+
+**Commits funcionais:**
+- `27bf4f3677c99a77840ccf350f9b755ee2c4bee3` — `v5/shared-arena-feed-h2-lab.js`: revisão igual exige modo e IDs de câmera iguais; revisão maior permite um novo plano; revisão menor continua rejeitada. Sem alterar motor de combate ou diretor.
+- `2c050b4d0f12dc6ab8579ad0caf6efc597e0c875` — `qa/v5-shared-arena-feed-h2.cjs`: ataques adversariais em M5 e M10 (mudança de modo/IDs sem revisão, snapshot adulterado, rollback de revisão), preservação do cursor e estado após rejeição, e aceitação de corte com revisão nova.
+
+**CI no SHA funcional `2c050b4d`:**
+- [H.2 feed e ataques M5/M10 — run 41220669054](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41220669054): **SUCCESS**.
+- [M10 30 participantes e replay — run 41220668970](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41220668970): **SUCCESS**.
+- [QA geral — run 41220668955](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41220668955): **SUCCESS**.
+- [QA navegador — run 41220669041](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41220669041): **IN_PROGRESS** na consulta, não homologado neste checkpoint.
+
+**Próximo passo da mesma M10:** confirmar o QA browser e, depois, reforçar invariantes de reconexão/ordenação temporal da câmera e revisar legibilidade visual de nicks e builds mistas. **G.2 em PCs físicos não foi executado**; H.1/H.2 operacionais com alunos reais seguem bloqueadas até hardware validado e autorização explícita. M5 5 talentos/10 pontos, M10 10 talentos/20 pontos, quatro KayKit, 120 talentos, balanceamento, arquibancadas e câmera original preservados.
