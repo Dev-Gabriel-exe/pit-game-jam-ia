@@ -69,15 +69,28 @@ for(const [route,term] of [['hud','contador'],['puzzle','pontuação'],['3d','co
 }
 // Simulate the tutorial's tab callback without claiming a real browser test.
 const testPlan={textContent:''},guideRoot={querySelectorAll:()=>[]};
+const checkboxes=[{checked:true},{checked:true},{checked:true}];
 const fakeRoot={
  querySelector:sel=>sel==='#g8Guide'?guideRoot:sel==='#m8sRouteTestPlan'?testPlan:null,
- querySelectorAll:()=>[]
+ querySelectorAll:sel=>sel==='[data-m8s-check]'?checkboxes:[]
 };
+const beforeSwitch=student.load('student-route');
+beforeSwitch.route='hud';beforeSwitch.checks=[0,1,2];
+student.save('student-route',beforeSwitch);
+assert.equal(student.selectRoute({...beforeSwitch},'hud'),false,'same route must not invalidate tests');
+assert.equal(student.selectRoute({...beforeSwitch},'invalid'),false,'unknown route ignored');
 ctx.document.querySelector=sel=>sel==='#m8sRoot'?fakeRoot:null;
 ctx.window.PIT_GDEVELOP_M08_GUIDE={mount:(_guide,options)=>options.onRouteChange('3d')};
 student.mount({phase:'practice',session:'student-route',status:'draft'});
 assert.equal(student.load('student-route').route,'3d','route selection persisted by tutorial callback');
+assert.equal(student.load('student-route').checks.length,0,'old Preview confirmations invalidated after route change');
+assert(checkboxes.every(x=>!x.checked),'visible checkboxes reset with saved checks');
 assert(testPlan.textContent.includes('colisão'),'negative-test prompt updates on route selection');
+const unchanged=student.load('student-route');unchanged.checks=[0,1,2];
+assert.equal(student.selectRoute(unchanged,'3d'),false,'same route preserves confirmations');
+assert.equal(unchanged.checks.length,3,'same route does not erase valid confirmations');
+assert.equal(student.selectRoute(unchanged,'puzzle'),true,'new route triggers retest');
+assert.equal(unchanged.checks.length,0,'direct route change invalidates confirmations');
 
 const studentCss=fs.readFileSync('v3/student-mission-eight.css','utf8');
 assert(studentCss.includes('.m8s-field-hint'),'M08 guidance is styled for legibility');
