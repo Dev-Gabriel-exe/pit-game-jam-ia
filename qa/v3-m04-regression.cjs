@@ -61,6 +61,51 @@ M.hydrate('local-m04',evidence,'revision');
 ok(M.load('local-m04').response==='Minha versão local preservada',
    'Keep existing student draft instead of overwriting with server evidence');
 
+// Browser storage can be blocked (privacy settings, quota, SecurityError).
+// The M04 form must retain the student's work in this tab and never report a durable save.
+const blockedWindow={},blockedStorage={
+ getItem:()=>{throw new Error('SecurityError')},
+ setItem:()=>{throw new Error('QuotaExceededError')}
+};
+vm.runInNewContext(read('v3/student-mission-four.js'),
+ {window:blockedWindow,localStorage:blockedStorage,console},{filename:'student-mission-four.js'});
+const blocked=blockedWindow.PIT_STUDENT_MISSION_FOUR;
+const denied={...good,route:3,checks:[0,1,2]};
+ok(blocked.save('offline',denied)===false,'M04 denied localStorage reports failure');
+ok(blocked.load('offline').route===3,'M04 3D route survives in-tab storage denial');
+ok(blocked.load('offline').checks.length===3,'M04 manual checks survive in-tab storage denial');
+ok(blocked.load('offline').response===good.response,'M04 response survives in-tab storage denial');
+ok(blocked.load('other').command===''&&blocked.load('other').route===null,
+ 'M04 volatile fallback is isolated per session');
+const offlineContext={...ctx,session:'offline',status:'draft',phase:'practice'};
+const offlinePractice=blocked.render(offlineContext);
+ok(offlinePractice.includes('Não foi possível salvar neste navegador'),
+ 'M04 practice discloses denied storage');
+ok(offlinePractice.includes('Copie sua ficha antes de sair'),
+ 'M04 practice provides manual fallback');
+ok(!offlinePractice.includes('rascunho salvo neste navegador'),
+ 'M04 practice never claims denied draft persisted');
+ok(offlinePractice.includes('Confira o aviso de salvamento'),
+ 'M04 explains the storage warning in its student instructions');
+const offlineReview=blocked.render({...offlineContext,phase:'review'});
+ok(offlineReview.includes('O rascunho não foi salvo no navegador'),
+ 'M04 review discloses denied storage');
+ok(offlineReview.includes('Copie o texto da ficha antes de sair'),
+ 'M04 review provides copyable evidence');
+ok(blocked.render({...offlineContext,session:'new'}).includes('comece a preencher para salvar'),
+ 'M04 new unsaved session is not falsely marked saved');
+blocked.hydrate('recovered',evidence,'approved');
+ok(blocked.load('recovered').command===good.command,
+ 'M04 historical evidence hydrates into in-tab fallback when storage is denied');
+ok(blocked.load('recovered').checks.length===0,
+ 'M04 hydration never invents GDevelop Preview checks');
+blocked.hydrate('offline',evidence,'approved');
+ok(blocked.load('offline').route===3&&blocked.load('offline').checks.length===3,
+ 'M04 approved evidence never overwrites in-tab 3D draft or manually marked tests');
+ok(M.save('persistent',good)===true,'M04 writable storage reports success');
+ok(M.render({...ctx,session:'persistent'}).includes('rascunho salvo neste navegador'),
+ 'M04 persisted draft correctly displays saved state');
+
 const max={route:3,command:'C'.repeat(99),response:'R'.repeat(150),boundary:'B'.repeat(150),retest:'T'.repeat(150),saved:'S'.repeat(99),issue:'I'.repeat(99),checks:[0,1,2]};
 M.save('max',max);
 const long=M.evidence('max',{...ctx,idea:{genre:'Narrativa interativa',title:'X'.repeat(100)},previous:{project:'P'.repeat(100),scene:'Z'.repeat(100)}});
