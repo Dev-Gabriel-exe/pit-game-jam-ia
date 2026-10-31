@@ -17,15 +17,33 @@ small{color:#bdb6ac}.status{min-height:2em;color:#f5d9a0}
 .arena-nickname{position:absolute;display:none;padding:4px 7px;border:1px solid #d7ae74;border-radius:6px;background:#120f19e8;color:#fff0d7;font:800 13px system-ui,sans-serif;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis;will-change:transform}
 .battle-float{position:absolute;font:900 18px system-ui,sans-serif;color:#ffcf8a;text-shadow:0 2px 4px black;white-space:nowrap;will-change:transform,opacity}.battle-float.critical{color:#ffea89}.battle-float.dodge{color:#a4f5f3}.battle-float.special{color:#e6b5ff}
 .duel-hud{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.duel-hud>div{min-width:0;padding:10px;border:1px solid #83654d;border-radius:9px;background:#26202d}.duel-hud strong{display:block;font-size:13px;overflow-wrap:anywhere}.hp-track{height:11px;border-radius:8px;background:#100f15;overflow:hidden;margin-top:8px}.hp-track span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#a84646,#d6ad70);transition:width .15s}.duel-hud small{display:block;margin-top:5px}
+.mission-dock{border:1px solid #7f6b4d;background:linear-gradient(115deg,#201a27,#312223);padding:16px 20px;border-radius:12px;margin:14px 0}
+.mission-dock strong{color:#f3ca89;font-size:15px}.mission-dock p{margin:7px 0 0;color:#d4c4b7}
+.journey-status{font-size:12px;letter-spacing:.08em;color:#f0d09b;margin:10px 0}
+#duelCurtain{position:absolute;z-index:20;inset:0;display:grid;place-content:center;text-align:center;background:radial-gradient(circle at 50% 47%,#5d293a,#0c0814 75%);pointer-events:none;opacity:0;visibility:hidden}
+#duelCurtain.show{visibility:visible;animation:portal-arrival 1.15s ease-out both}
+#duelCurtain strong{font-size:clamp(24px,5vw,51px);font-weight:900;letter-spacing:.07em;color:#eac28b;text-shadow:0 0 30px #e6a16d80}
+#duelCurtain span{font-size:14px;letter-spacing:.3em;color:#f2dac1;margin-top:12px}
+@keyframes portal-arrival{0%{opacity:0;transform:scale(1.04)}18%,72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+#duelEpilogue[hidden]{display:none}#duelEpilogue{border:1px solid #d5a663;background:linear-gradient(115deg,#38212b,#211b2a);padding:16px 22px;border-radius:12px;margin:15px 0;box-shadow:0 6px 25px #0005}
+#duelEpilogue strong{color:#f0c987;font-size:clamp(19px,3vw,29px)}#duelEpilogue p{color:#dfd1c3}
+#returnMission{background:linear-gradient(110deg,#b06b3d,#d5a065);color:#170f1b;font-weight:900}
+@media(prefers-reduced-motion:reduce){#duelCurtain.show{animation:none;opacity:0;visibility:hidden}}
 @media(max-width:550px){body{padding:12px}#arena{inset:1%;padding:12px}.duel-stage{height:340px}.duel-hud strong{font-size:11px}}
 </style></head><body>
 <h1>Coliseu — simulação aluno e professor</h1>
 <p><strong>Somente laboratório.</strong> Personagens fictícios, sem API, WebSocket, contas, XP ou progressão real. Após um convite aceito, é possível testar o motor real de combate da V5 em uma visualização 3D experimental, sem integração com alunos.</p>
+<section class="mission-dock" aria-label="Missão fictícia em andamento">
+<strong>✦ MISSÃO 3 · AGUARDANDO OS COLEGAS</strong>
+<p id="missionDock" role="status" aria-live="polite">Concluiu as atividades fictícias da missão? Convide um colega que também esteja esperando.</p>
+</section>
 <div class="panel"><label><input id="teacher" type="checkbox" checked> Professor habilitou duelos (missão fictícia 3)</label><p id="summary" class="status" role="status" aria-live="polite"></p></div>
 <div class="grid"><section class="panel"><h2>Aluna A — convite</h2><button id="invite">Convidar B</button><div id="sender" class="status" role="status" aria-live="polite"></div></section>
 <section class="panel"><h2>Aluno B — notificação</h2><div id="recipient" class="status" role="status" aria-live="polite"></div><button id="accept">Sim, aceitar</button><button id="decline">Não, recusar</button></section></div>
 <section class="panel"><h2>Controle da simulação</h2><button id="open">Abrir janela de duelo</button><button id="reset">Reiniciar cenário</button><small>Após o aceite, simule um combate determinístico M5 ou M10 sem dados reais.</small></section>
 <section id="arena" role="dialog" aria-modal="true" aria-label="Arena de duelo fictícia" tabindex="-1" hidden>
+<div id="duelCurtain" aria-hidden="true"><strong>⚔ O PORTAL SE ABRE ⚔</strong><span>DOIS HERÓIS · UM DESTINO</span></div>
+<p id="journeyStatus" class="journey-status" role="status" aria-live="polite">Aguardando entrada na arena.</p>
 <h2>Duelo 1 × 1 — arena dos criadores</h2>
 <p>Dois personagens KayKit CC0 em combate automático experimental. A versão 3D usa o renderizador e motor existentes da V5; sem servidor, XP ou alunos reais.</p>
 <label for="battleMission">Arena experimental</label>
@@ -43,6 +61,11 @@ small{color:#bdb6ac}.status{min-height:2em;color:#f5d9a0}
 </div>
 <div id="fallbackStage" class="stage" aria-hidden="true"><span>⚔️ A</span><span>VS</span><span>🛡️ B</span></div>
 <p id="battleResult" class="status" role="status" aria-live="polite">Aguardando simulação.</p>
+<section id="duelEpilogue" aria-label="Resultado da batalha" hidden tabindex="-1">
+ <strong id="epilogueWinner">✦ Fim do duelo</strong>
+ <p id="epilogueDetails">Nenhum XP é concedido nesta demonstração.</p>
+ <button id="returnMission" type="button">↩ Retornar à Missão 3</button>
+</section>
 <button id="close" type="button">Fechar arena</button>
 </section>
 <script src="./hero-core.js"></script>
@@ -57,19 +80,62 @@ small{color:#bdb6ac}.status{min-height:2em;color:#f5d9a0}
 <script src="./build-identity.js"></script>
 <script src="./character-assets.js"></script>
 <script src="./duel-invitations-lab.js"></script>
+<script src="./duel-journey-lab.js"></script>
 <script src="./duel-battle-lab.js"></script>
 <script>
 (function(){
 'use strict';
 const D=window.PIT_V5_DUEL_INVITATIONS_LAB;
+const J=window.PIT_V5_DUEL_JOURNEY_LAB;
 const el=id=>document.getElementById(id);
 const context=()=>({currentStage:3,duelsEnabled:el('teacher').checked});
 const view=key=>({rosterKey:'trial-'+key,progress:{currentStage:3,awaitingPeers:true},duel:{eligible:true,mission:3}});
 const a={view:view('aluna-a'),roomKey:'trial-room-demo',online:true};
 const b={view:view('aluno-b'),roomKey:'trial-room-demo',online:true};
 let state=D.createState(),lastFocus=null,backgroundInert=null,acceptedDescriptor=null;
-let duelVisual=null,visualGeneration=0;
+let duelVisual=null,visualGeneration=0,journey=J.create(),curtainTimer=null;
 const notification=key=>D.notificationsFor(state,key).at(-1);
+const journeyNames={mission:'Na missão',invited:'Convite enviado',declined:'Convite recusado',accepted:'Convite aceito',entering:'Entrando no coliseu',fighting:'Duelo em andamento',finished:'Resultado disponível',returned:'Retorno à missão'};
+function step(event,detail){journey=J.advance(journey,event,detail);renderJourney()}
+function renderJourney(){
+ const phase=journey.phase;
+ el('missionDock').textContent=phase==='returned'?
+  'Você voltou à Missão 3 e continua aguardando seus colegas. O duelo foi encerrado sem XP. Pode convidar alguém novamente.':
+  phase==='declined'?'Convite recusado. Continue aguardando seus colegas ou faça outro convite.':
+  phase==='finished'?'Duelo encerrado. Consulte o resultado e volte à missão.':
+  phase==='fighting'?'Dois alunos fictícios estão duelando no coliseu. A Missão 3 não foi alterada.':
+  phase==='accepted'?'Convite aceito. Entre no coliseu quando estiver preparado.':
+  phase==='invited'?'Convite enviado. Aguardando a resposta do colega.':
+  'Você está na Missão 3, aguardando seus colegas; nenhuma pontuação está em jogo.';
+ el('journeyStatus').textContent='Jornada do aluno · '+journeyNames[phase]+' · Missão 3 fictícia';
+ el('arena').dataset.journeyPhase=phase;
+}
+function showEntrance(){
+ if(curtainTimer!==null)clearTimeout(curtainTimer);
+ const veil=el('duelCurtain');
+ veil.classList.remove('show');void veil.offsetWidth;veil.classList.add('show');
+ curtainTimer=setTimeout(()=>{veil.classList.remove('show');curtainTimer=null},1180);
+}
+function finishJourney(result,mode,mission){
+ if(journey.phase!=='entering'&&journey.phase!=='fighting')return;
+ const winner=result?.winner;
+ if(!winner?.id||!acceptedDescriptor)throw Error('Resultado de duelo não autorizado');
+ const aliases=acceptedDescriptor.players;
+ step('finish',{mode,winner:winner.id,seconds:result.time,players:aliases});
+ const title='✦ Vencedor: '+winner.name;
+ el('battleResult').textContent='M'+mission+' · '+title+' · '+result.time+'s · 2 participantes fictícios';
+ el('epilogueWinner').textContent=title;
+ el('epilogueDetails').textContent='Duração simulada: '+result.time+'s · Arena experimental M'+mission+'. Retorne à Missão 3 sem alterar progresso, XP ou nota.';
+ el('duelEpilogue').hidden=false;el('returnMission').focus();
+}
+function returnMission(){
+ if(journey.phase!=='finished'||!acceptedDescriptor)return false;
+ const id=acceptedDescriptor.invitationId;
+ state=D.close(state,{id,actor:'trial-aluna-a',nowMs:3000,expectedRevision:state.revision});
+ step('return');
+ close();draw();
+ return true;
+}
 function draw(){
  const sender=notification('trial-aluna-a'),recipient=notification('trial-aluno-b');
  el('sender').textContent=sender?'Convite #'+sender.invitationId+': '+sender.status:'Nenhum convite enviado';
@@ -83,19 +149,26 @@ function draw(){
 }
 function action(fn){try{fn()}catch(err){el('summary').textContent=err.message}draw()}
 el('teacher').addEventListener('change',draw);
-el('invite').addEventListener('click',()=>action(()=>{state=D.invite(state,{from:a,to:b,context:context(),nowMs:1000,expectedRevision:state.revision})}));
-function reply(decision){action(()=>{state=D.respond(state,{id:state.invitations.at(-1).id,actor:'trial-aluno-b',decision,from:a,to:b,context:context(),nowMs:2000,expectedRevision:state.revision})})}
+el('invite').addEventListener('click',()=>action(()=>{
+ state=D.invite(state,{from:a,to:b,context:context(),nowMs:1000,expectedRevision:state.revision});
+ step('invite',{invitationId:state.invitations.at(-1).id});
+}));
+function reply(decision){action(()=>{
+ state=D.respond(state,{id:state.invitations.at(-1).id,actor:'trial-aluno-b',decision,from:a,to:b,context:context(),nowMs:2000,expectedRevision:state.revision});
+ step(decision==='accept'?'accept':'decline');
+})}
 el('accept').addEventListener('click',()=>reply('accept'));
 el('decline').addEventListener('click',()=>reply('decline'));
 el('open').addEventListener('click',()=>action(()=>{
  if(!context().duelsEnabled)throw Error('Professor bloqueou os duelos');
  const descriptor=D.arenaWindowFor(state,{id:state.invitations.at(-1).id,actor:'trial-aluna-a'});
  if(descriptor.kind!=='fictional-duel-window')throw Error('Janela não autorizada');
- acceptedDescriptor=descriptor;el('battleResult').textContent='Aguardando simulação.';
+ acceptedDescriptor=descriptor;step('enter');
+ el('battleResult').textContent='Aguardando simulação.';el('duelEpilogue').hidden=true;
  lastFocus=document.activeElement;
  backgroundInert=[...document.body.children].filter(node=>node!==el('arena')&&node.tagName!=='SCRIPT').map(node=>[node,node.inert]);
  for(const [node] of backgroundInert)node.inert=true;
- el('arena').hidden=false;document.body.style.overflow='hidden';el('close').focus();
+ el('arena').hidden=false;document.body.style.overflow='hidden';showEntrance();el('close').focus();
 }));
 function stopVisual(){
  visualGeneration++;
@@ -106,6 +179,10 @@ function stopVisual(){
  el('simulate').disabled=false;
 }
 function close(){
+ if(curtainTimer!==null){clearTimeout(curtainTimer);curtainTimer=null}
+ el('duelCurtain').classList.remove('show');
+ if(journey.phase==='finished')returnMission();
+ else if(journey.phase==='entering'||journey.phase==='fighting')step('leave');
  stopVisual();
  if(el('arena').hidden)return;
  el('arena').hidden=true;document.body.style.overflow='';
@@ -126,7 +203,11 @@ function paintHud(snapshot){
   el('simulate').disabled=false;
  }
 }
-el('battleMission').addEventListener('change',()=>{stopVisual();el('battleResult').textContent='Aguardando simulação.'});
+el('battleMission').addEventListener('change',()=>{
+ if(journey.phase==='fighting')step('leave');
+ if(journey.phase==='accepted')step('enter');
+ stopVisual();el('battleResult').textContent='Aguardando simulação.';
+});
 el('visualize').addEventListener('click',async()=>{
  if(el('arena').hidden||!acceptedDescriptor)return;
  stopVisual();const generation=++visualGeneration;
@@ -143,11 +224,15 @@ el('visualize').addEventListener('click',async()=>{
     el('visualStatus').textContent=message;
     if(message.startsWith('Modelos GLB indisponíveis'))el('simulate').disabled=false;
    }},
-   onUpdate:snapshot=>{if(generation===visualGeneration)paintHud(snapshot)},
+   onUpdate:snapshot=>{
+    if(generation!==visualGeneration)return;
+    if(snapshot.modelsReady&&journey.phase==='entering')step('ready');
+    paintHud(snapshot);
+   },
    onFinish:result=>{
     if(generation!==visualGeneration)return;
     el('pauseVisual').disabled=true;
-    el('battleResult').textContent='M'+el('battleMission').value+' · Duelo 3D concluído · Vencedor: '+(result.winner?.name||'nenhum')+' · '+result.time+'s · 2 participantes fictícios';
+    finishJourney(result,'3d',Number(el('battleMission').value));
     el('visualStatus').textContent='Combate encerrado no motor da V5. Nenhum XP foi atribuído.';
    }
   });
@@ -171,9 +256,10 @@ el('simulate').addEventListener('click',()=>{
   const trial=window.PIT_V5_DUEL_BATTLE_LAB.createTrial(acceptedDescriptor,window.PIT_V5_PHASE2,{mission,seed:4252});
   const result=trial.run();
   if(!result.finished||!result.winner)throw Error('Combate não terminou');
-  el('battleResult').textContent='M'+mission+' · Vencedor: '+result.winner.name+' · '+result.time+'s · 2 participantes fictícios';
+  finishJourney(result,'text',mission);
  }catch(error){el('battleResult').textContent='Falha no laboratório: '+error.message}
 });
+el('returnMission').addEventListener('click',returnMission);
 el('close').addEventListener('click',close);
 el('arena').addEventListener('keydown',event=>{
  if(event.key==='Escape'){event.preventDefault();close();return}
@@ -183,7 +269,10 @@ el('arena').addEventListener('keydown',event=>{
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
 });
-el('reset').addEventListener('click',()=>{close();state=D.createState();draw()});
-draw();
+el('reset').addEventListener('click',()=>{
+ close();state=D.createState();journey=J.create();el('duelEpilogue').hidden=true;
+ renderJourney();draw();
+});
+renderJourney();draw();
 })();
 </script></body></html>
