@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Auditoria transversal M08: correção de teclado no simulador projetado concluída; QA estática 41213884000 SUCCESS, Browser QA 41213884055 SUCCESS, Projector Content Audit 41213866716 SUCCESS. Próximo: verificar autonomia aluno/professor e conteúdo projetado das 10 missões, antes da estética. HDMI, GDevelop GUI, celular físico e testes humanos NOT_RUN.",
+  "priority": "Auditoria transversal: foco de teclado contido no modal projetado; correção e regressão Chrome commitadas, CI ainda NÃO VERIFICADA. Próximo: confirmar QA do novo SHA e continuar matriz pedagógica professor/aluno M01–M10 antes de estética. HDMI, GDevelop GUI, celular físico e testes humanos NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
+  "last_task": "V4-AUD-TRANSVERSAL-PROJECTOR-TAB-FOCUS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2892,48 +2892,45 @@
       ],
       "tests": "M10 Browser QA 41209811383 SUCCESS; projector keyboard static QA 41213884000 SUCCESS; Browser QA 41213884055 SUCCESS (M08 radio keyboard 390/1280px); Projector Content Audit 41213866716 SUCCESS. Physical HDMI, GDevelop GUI, mobile and humans NOT_RUN.",
       "notes": "M08 projected before/after radio was hijacked by document-level ArrowRight; native interactive key behavior now preserved while Escape remains available. No main/production/real student data changes."
+    },
+    {
+      "id": "V4-AUD-TRANSVERSAL-PROJECTOR-TAB-FOCUS",
+      "completed_at": "2026-10-31T16:17:58.759Z",
+      "commit": "b9e1ace84674c188ecd82d22f624041c40a7b20e",
+      "files": [
+        "v3/teacher-projector-m01.js",
+        "qa/v3-private-teacher-notes-browser.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Regressão Chrome 390/1280px adicionada mas NÃO EXECUTADA/CI NÃO CONFIRMADA neste ciclo; GitHub connector retornou zero workflow runs e status checks para SHA b9e1ace. Inspeção estática dos pontos de edição e anchors executada; HDMI, GDevelop GUI, mobile físico, humanos NOT_RUN.",
+      "notes": "P1: apresentação aria-modal permitia Tab alcançar painel professor atrás dos slides. Contenção de Tab/Shift+Tab e recuperação do foco de fundo implementadas. Sem alteração de main/produção/dados reais. Roadmap 54/59 inalterado."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
-    "status": "CODE_COMMITTED_STATIC_BROWSER_PROJECTOR_QA_PASS",
-    "updated_at": "2026-10-31T15:17:23.155Z",
+    "task": "V4-AUD-TRANSVERSAL-PROJECTOR-TAB-FOCUS",
+    "status": "CODE_COMMITTED_CI_UNVERIFIED",
+    "updated_at": "2026-10-31T16:17:58.759Z",
     "code_commits": [
-      "b0896af5d2054041eabeaef77d3835f2483cd69d",
-      "7efeef476ade4407cc8faed4fc2072f4ddcaf739"
+      "2a46295aea5581da16b7ab40d24b26f68079625d",
+      "b9e1ace84674c188ecd82d22f624041c40a7b20e"
     ],
-    "documentation_commit": "ee49b4310abb6e74c6d85adf890e6826c78a921b",
+    "documentation_commit": "dd51e373c0a100946c641061652ab0854fc76c41",
     "tests": [
       {
-        "name": "M10 Browser QA prior checkpoint",
-        "run_id": 41209811383,
-        "sha": "835c5c12323e086481655dd782cf9a8e149fb8a1",
-        "result": "SUCCESS"
+        "name": "GitHub workflow/check lookup for regression commit",
+        "sha": "b9e1ace84674c188ecd82d22f624041c40a7b20e",
+        "result": "NO_RUNS_RETURNED_UNVERIFIED"
       },
       {
-        "name": "Cross-mission projector keyboard static QA",
-        "run_id": 41213884000,
-        "sha": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M08 projected radio native keyboard Chrome regression",
-        "run_id": 41213884055,
-        "sha": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "Projector Content Audit on source fix",
-        "run_id": 41213866716,
-        "sha": "b0896af5d2054041eabeaef77d3835f2483cd69d",
-        "result": "SUCCESS"
+        "name": "New Chrome 390/1280 projector Tab regression",
+        "result": "NOT_RUN_CI_PENDING"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Auditar a autonomia de aluno e professor nas 10 missões com foco em conteúdo projetado e seis passos (o que/onde/como/teste/evidência); corrigir falhas reais antes da estética.",
-    "blocker": "A auditoria pedagógica transversal das dez missões ainda não foi concluída; testes físicos de HDMI, GDevelop GUI, celular e testes humanos NOT_RUN."
+    "next_task": "Verificar QA estática e Browser QA do commit atual; depois auditar autonomia das 20 faces professor/aluno com seis passos e corrigir falhas concretas.",
+    "blocker": "CI do novo teste ainda não confirmada; testes físicos/humanos não realizados."
   }
 }
