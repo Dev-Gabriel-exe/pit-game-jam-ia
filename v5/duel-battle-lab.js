@@ -22,6 +22,12 @@
   }));
   const arena=combat.battle(entries,{seed,arenaMission:mission,limit:95});
   return Object.freeze({kind:'fictional-1v1',mission,aliases:Object.freeze([...descriptor.players]),
+   // Hand the *same validated fictional builds* to the existing Three.js stage.
+   // Defensive snapshots: the renderer cannot mutate the source roster.
+   get roster(){return entries.map(entry=>({id:entry.id,name:entry.name,
+    approvedMissions:entry.build.approvedMissions,finalTrial:entry.finalTrial===true,
+    build:{...entry.build,attributes:{...entry.build.attributes},
+     talents:[...entry.build.talents],appearance:{...entry.build.appearance}}}))},
    run:(steps=3000)=>arena.run(steps),get finished(){return arena.finished},
    get result(){return arena.result()}});
  }
