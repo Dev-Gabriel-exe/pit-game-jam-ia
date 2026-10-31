@@ -77,6 +77,10 @@ const offlineHtml=blocked.render({session:'offline',phase:'practice',status:'dra
 check(offlineHtml.includes('Não foi possível salvar neste navegador'),'Student sees explicit storage failure');
 check(offlineHtml.includes('Copie sua ficha antes de sair'),'Student sees safe fallback action');
 check(!offlineHtml.includes('rascunho salvo neste navegador'),'Student is not falsely told draft persisted');
+check(offlineHtml.includes('confira o aviso de salvamento'),'Instructions direct student to real save indicator');
+const offlineReview=blocked.render({session:'offline',phase:'review',status:'draft',preview:true,canSubmit:true});
+check(offlineReview.includes('O rascunho não foi salvo no navegador'),'Review warns before student exits');
+check(offlineReview.includes('Copie o texto da ficha'),'Review offers manual recovery');
 const emptyHtml=blocked.render({session:'new',phase:'practice',status:'draft',preview:true});
 check(emptyHtml.includes('comece a preencher para salvar'),'New draft is not falsely marked as saved');
 const savedHtml=m.render({session:'source',phase:'practice',status:'draft',preview:true});
