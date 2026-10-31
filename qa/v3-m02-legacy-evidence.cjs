@@ -38,7 +38,7 @@ const bad=[
  valid.replace('MISSÃO 02 — MVP EM FOCO','MISSÃO 02 — OUTRA'),
  valid+'\nCampo extra: indevido',
  valid.replace('Gênero: Puzzle\n',''),
- valid.slice(0,-8)
+ valid.slice(0,valid.indexOf('Depois: ')+3)
 ];
 for(const [i,raw] of bad.entries()){
  check(m.parseEvidence(raw)===null,'Reject ambiguous historical record '+i);
