@@ -78,3 +78,10 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - `qa/v5-duel-window-browser.cjs`: após aceite verifica execução M5 e M10 na janela e resultado textual.
 - Commits: `e13fa8e1`, `3f78f092`, `77902c91`. CI desta nova ligação ainda pendente na consulta; não homologar antes de resultado.
 - Próximo: confirmar CI, resolver falhas e criar visualização animada WebGL na janela, preservando a separação de dados e gates G.2/H.
+
+## Correção de regressão no CI do duelo (rodada atual)
+
+- Identificada falha concreta em `V5 Duel Invitations Fictional Contract QA` run `41200058396`: `qa/v5-duel-window-lab.cjs` ainda exigia texto antigo `Sem dano, talentos, XP`, removido legitimamente ao conectar o motor.
+- Corrigida asserção estática para exigir a declaração de isolamento sem contas/XP e presença real dos scripts do motor e controles M5/M10; commit `b99a6548`.
+- O job Chromium anterior reportou sucesso, mas **a suíte completa falhou**; não considerar o conjunto homologado até novo run verde.
+- Pendente: verificar novo CI e validar renderização 3D WebGL 1×1; a janela atual ainda mostra somente resultado textual.
