@@ -7,6 +7,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
+import {selectNicknameCandidates} from './nickname-layout.mjs';
 import {createArenaAudio} from './arena-audio.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
@@ -329,6 +330,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const nicknameLayer=document.createElement('div');nicknameLayer.className='arena-nickname-layer';nicknameLayer.setAttribute('aria-hidden','true');container.append(nicknameLayer);
  const floatingLayer=document.createElement('div');floatingLayer.className='battle-float-layer';floatingLayer.setAttribute('aria-hidden','true');container.append(floatingLayer);
  const floating=new Set(),floatDebounce=new Map();
+ // DOM HUD boxes are measured at most once per 15 rendered frames to avoid
+ // layout reads per fighter; viewport changes invalidate the cache immediately.
+ let nicknameHudRects=[],nicknameLayoutTick=0,nicknameHudSize='';
  let modelLoadedCount=0,modelErrorCount=0;
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
   const arenaAudio=createArenaAudio();let victoryAudioPlayed=false;
@@ -1368,15 +1372,26 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    const rank=(chosen?-100000:0)+(u.spectator?50000:0)+Math.hypot(sx-rectW*.5,sy-rectH*.55);
    nickCandidates.push({u,sx,sy,rank});
   }
-  nickCandidates.sort((a,b)=>a.rank-b.rank);
-  const placed=[],maxLabels=rectW<500?4:rectW<900?6:9;
-  for(const item of nickCandidates){
-   if(placed.length>=maxLabels)break;
-   const near=placed.some(other=>Math.abs(item.sx-other.sx)<(rectW<500?102:126)&&Math.abs(item.sy-other.sy)<29);
-   if(near)continue;
+  // Projected names must not cover the talent readout, combat spotlight,
+  // legend or decorative footer, even when 30 KayKits cluster in one shot.
+  const sizeKey=rectW+'x'+rectH;
+  if(++nicknameLayoutTick%15===1||nicknameHudSize!==sizeKey){
+   nicknameHudSize=sizeKey;
+   const stageRect=container.getBoundingClientRect();
+   nicknameHudRects=[...document.querySelectorAll('#battleSpotlight,#talentTelemetry,.battle-legend,.stage-flair')]
+    .filter(el=>el.getClientRects().length>0)
+    .map(el=>{
+     const r=el.getBoundingClientRect();
+     return {left:r.left-stageRect.left,right:r.right-stageRect.left,
+      top:r.top-stageRect.top,bottom:r.bottom-stageRect.top};
+    });
+  }
+  const placed=selectNicknameCandidates(nickCandidates,{
+   stageWidth:rectW,stageHeight:rectH,blockedRects:nicknameHudRects
+  });
+  for(const item of placed){
    item.u.nick.style.display='block';
    item.u.nick.style.transform='translate(-50%,-100%) translate('+Math.round(item.sx)+'px,'+Math.round(item.sy)+'px)';
-   placed.push(item);
   }
   container.dataset.v5VisibleNicks=String(placed.length);
   for(const fl of [...floating]){
