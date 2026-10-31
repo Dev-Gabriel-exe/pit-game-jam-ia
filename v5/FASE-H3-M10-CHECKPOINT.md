@@ -569,3 +569,10 @@ O teste de projeção, o contrato do roster e o teste F.3 de espectador passaram
 **CI ainda sem conclusão neste checkpoint:** [run M10 41173168691](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41173168691) no SHA `c9a9abbe88e6a2654606eecb35070e8a74e86f9f`, inicialmente em fila; QA geral [41173168776](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41173168776) e browser geral [41173168805](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41173168805) também pendentes. **Não declarar teste aprovado antes do resultado.** Se o novo teste falhar, corrigir e retestar na mesma missão.
 
 **Próximo passo:** confirmar o job `projector-legibility-webgl` e demais regressões, revisar foco no Chromium e somente então marcar o incremento como validado. G.2 nos PCs físicos continua NÃO realizado; seletor LOS opt-in desligado; H.1/H.2 reais, V3, main, merge, deploy, XP, aprovações, notas, usuários e turmas não tocados.
+
+
+### Fechamento do incremento de teclado — CI confirmado (31/10/2026)
+
+**Evidência verificada:** o workflow [M10 WebGL 41173168691](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41173168691), no SHA `c9a9abbe88e6a2654606eecb35070e8a74e86f9f`, terminou **SUCCESS em todos os quatro jobs**: `final-roster`, `final-webgl`, `projector-legibility-webgl` (inclui Tab, Shift+Tab, Escape, Enter, foco restaurado, 30 GLBs e métricas de 1366/1920) e `spectator-camera-webgl`. Artefato de projeção `m10-projector-legibility` ID **13031811900**. QA estático [41173168776](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41173168776) e Browser QA geral [41173168805](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41173168805) também **SUCCESS**. Este fechamento documenta a execução comprovada; não é homologação visual humana.
+
+**Próxima missão H.3:** verificar visualmente as capturas desktop/telão, revisar acessibilidade de leitores de tela e navegação quando a arena sofre reinicialização/alteração de foco. **G.2 físico não aprovado/não realizado; H.1/H.2 reais e main bloqueadas.** Nenhum ajuste de M5/M10, talentos, XP, usuários ou dados reais.
