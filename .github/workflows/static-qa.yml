@@ -32,6 +32,8 @@ jobs:
         run: |
           node --check v3/student-mission-nine.js
           node qa/v3-m09-field-guidance.cjs
+          node --check qa/v3-m09-storage-failsafe.cjs
+          node qa/v3-m09-storage-failsafe.cjs
       - name: Verify M10 student launch field guidance and private notes
         run: |
           node --check v3/student-mission-ten.js
