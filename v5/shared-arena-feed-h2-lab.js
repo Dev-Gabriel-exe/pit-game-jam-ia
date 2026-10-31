@@ -48,6 +48,7 @@
     observed.has(f.id)||!['warrior','mage','hunter','guardian'].includes(f.klass)||
     !finite(f.hp)||!finite(f.maxHp)||f.maxHp<=0||f.hp<0||f.hp>f.maxHp+0.0001||
     !finite(f.x)||!finite(f.z)||typeof f.alive!=='boolean')reject('lutador fora do contrato');
+   if(f.alive!==(f.hp>0))reject('vida e eliminação incompatíveis');
    observed.add(f.id);
   }
   if(!exact(frame.camera,['revision','mode','ids'])||
@@ -59,6 +60,7 @@
   if(frame.winner!==null&&(!ALIAS.test(frame.winner)||!players.has(frame.winner)))reject('vencedor fora da partida');
   if((frame.status==='finished')!== (frame.winner!==null))reject('resultado incompatível com estado');
   if(frame.status==='ready'&&(frame.seq!==0||frame.logicalTime!==0))reject('início não canônico');
+  if(frame.seq===0&&frame.status!=='ready')reject('primeiro pacote deve estar pronto');
   return true;
  }
  function createPublisher({releaseState,engine,director,matchId='trial-match-classroom',historyLimit=32,
@@ -138,6 +140,15 @@
    validateFrame(next,scope);
    if(frame&&next.logicalTime<frame.logicalTime)reject('relógio recuou');
    if(frame&&next.camera.revision<frame.camera.revision)reject('diretor recuou');
+   if(frame){
+    const previous=new Map(frame.fighters.map(f=>[f.id,f]));
+    for(const fighter of next.fighters){
+     const old=previous.get(fighter.id);
+     if(fighter.klass!==old.klass||fighter.maxHp!==old.maxHp)
+      reject('identidade ou HP máximo do lutador mudou');
+     if(!old.alive&&fighter.alive)reject('ressurreição não permitida no torneio');
+    }
+   }
    if(frame?.status==='finished'&&next.seq>lastSeq)reject('partida já encerrada');
    if(frame?.status==='running'&&next.status==='ready')reject('estado retrocedeu');
   }
