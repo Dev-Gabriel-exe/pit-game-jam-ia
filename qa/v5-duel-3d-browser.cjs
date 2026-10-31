@@ -43,7 +43,26 @@ const {chromium}=require('playwright');
   await page.locator('#close').click();
   assert.equal(await page.locator('#duelStage canvas').count(),0,'M10 scene must be released');
   assert.equal(await page.locator('#arena').isHidden(),true);
+  // Full live 3D victory path — not a text-only simulated shortcut.
+  await page.locator('#open').click();
+  await page.locator('#battleMission').selectOption('5');
+  await page.locator('#visualize').click();
+  await page.waitForFunction(()=>document.getElementById('duelStage')?.dataset.v5ModelsLoaded==='2',null,{timeout:80000});
+  await page.locator('#speedVisual').waitFor({state:'visible'});
+  await page.waitForFunction(()=>!document.getElementById('speedVisual').disabled,null,{timeout:10000});
+  await page.locator('#speedVisual').click();
+  await page.locator('#speedVisual').click();
+  assert.match(await page.locator('#speedVisual').innerText(),/×3/);
+  await page.locator('#duelEpilogue').waitFor({state:'visible',timeout:125000});
+  assert.match(await page.locator('#battleResult').innerText(),/M5 · ✦ Vencedor: trial-/);
+  assert.match(await page.locator('#journeyStatus').innerText(),/Resultado disponível/);
+  await page.locator('#returnMission').click();
+  assert.equal(await page.locator('#arena').isHidden(),true);
+  assert.equal(await page.locator('#duelStage canvas').count(),0);
+  assert.equal(await page.locator('#open').isDisabled(),true);
+  assert.equal(await page.locator('#invite').isEnabled(),true);
+  assert.match(await page.locator('#missionDock').innerText(),/voltou à Missão 3/);
   assert.deepEqual(errors,[],'no unhandled browser errors');
-  console.log('PASS: two authentic KayKit GLBs render for accepted 1v1 M5 and M10; cleanup on both exits');
+  console.log('PASS: 3D KayKit M5/M10 preview, real M5 victory, XP-free mission return and cleanup');
  }finally{await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});
