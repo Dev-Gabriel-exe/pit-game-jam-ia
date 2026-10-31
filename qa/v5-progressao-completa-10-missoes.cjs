@@ -21,7 +21,7 @@ const buildFor=(klass,n)=>{
 };
 let assertions=0;
 for(const klass of V2.CLASSES){
- let persisted=null,previousXp=0,previousBuild=null,baseline=null;
+ let persisted=null,previousXp=0,baseline=null;
  const stageRows=[];
  const snaps=[];
  for(let mission=1;mission<=10;mission++){
@@ -67,7 +67,7 @@ for(const klass of V2.CLASSES){
    assert.equal(freeze.kind,'freeze-m5');
    baseline=structuredClone(freeze.snapshot);
    persisted.m5_snapshot=structuredClone(baseline);
-   assert.deepEqual(baseline,b.attributes?{attributes:b.attributes,talents:b.talents}:null);
+   assert.deepEqual(baseline,{attributes:b.attributes,talents:b.talents});
    assert.equal(V2.planM5Entry(persisted,progress).kind,'noop');
    const candidate={rosterKey:'trial-'+klass,klass,completedMissions:[1,2,3,4,5],
     build:{attributes:{...b.attributes},talents:[...b.talents]},
@@ -76,9 +76,9 @@ for(const klass of V2.CLASSES){
    assert.equal(engine.canonical(b,5).talents.length,5);
   }
   if(mission===10){
-   const frozen={...persisted,attributes:{...persisted.attributes, [priority[klass]]:9}};
+   const secondary=ATTR.find(k=>k!==priority[klass]);
    assert.throws(()=>V2.planSave(persisted,{
-    ...b,attributes:{...b.attributes,[priority[klass]]:9,FOR:11}
+    ...b,attributes:{...b.attributes,[priority[klass]]:9,[secondary]:11}
    },progress),/congelados|pontos acima|talentos inválidos/);
    const locked=V2.planM10Lock(persisted,progress);
    assert.equal(locked.kind,'lock-m10');
@@ -96,7 +96,6 @@ for(const klass of V2.CLASSES){
    assert.equal(policy.m10ArenaAdapter(candidate).build.talents.length,10);
   }
   previousXp=progress.approvedBaseXp;
-  previousBuild=b;
   snaps.push({mission,xp:previousXp,attributes:2*mission,talents:mission});
   assertions+=12;
  }
