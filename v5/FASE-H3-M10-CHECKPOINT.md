@@ -672,3 +672,14 @@ No SHA funcional `5b94724e9d70b7554c6ca6111df15de065eeb74d`, o [run M10 WebGL 41
 **Escopo exato do PASS:** teste de estilos computados e amostragem conservadora dos fundos sob HUD semitransparente durante batalha M10 fictícia de 30 KayKits. Não valida contraste de cada pixel da cena, leitura humana em telão, colisão visual dos nomes, textos flutuantes sem painel, NVDA/VoiceOver ou G.2 nos computadores físicos. Não foi necessário alterar CSS, talentos, HP, câmera ou lógica. A Missão 10 continua **em homologação**, não concluída para uso real.
 
 **Próxima rodada:** revisar oclusão e posicionamento de nicks/overlays sobre a arena animada e, depois, balanceamento M10 com builds mistas; sem alterar regras canônicas antes de evidência. G.2 e H.1/H.2 reais seguem bloqueados; não fazer merge, deploy ou modificar XP, usuários, turmas e notas.
+
+
+## H.3/M10 — endurecimento do feed fictício de 30 participantes (31/10/2026)
+
+**Missão única executada:** validar estados impossíveis nos quadros do feed H.2, exclusivamente em simulação da M10, com regressão M5. O trabalho começou após leitura de ROADMAP D–I, checkpoints E/F/G/H.0/H.3 e inspeção de testes e commits; nenhuma integração operacional H.1/H.2 foi iniciada.
+
+**Arquivos e SHAs:** `v5/shared-arena-feed-h2-lab.js` (`b2905eb`) agora rejeita HP zero com `alive=true`, HP positivo com `alive=false`, quadro inicial marcado como `running`, mudança de classe/HP máximo entre quadros e ressurreição de personagem eliminado. `qa/v5-shared-arena-feed-h2.cjs` (`8140920`, corrigido em `853b46f`) injeta quadros falsos e garante que o cursor do receptor não avance após rejeição. `.github/workflows/v5-m10-h2-fullstream-qa.yml` (`ee517e02cb5cb82c34a007453e46157c9c3f69e8`) passa a reagir também às alterações do QA adversarial.
+
+**Evidência CI:** [run 41211429486](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41211429486) **SUCCESS**, job `m10-fullstream-fictional` e suas quatro etapas: sintaxe, M10 com 30 participantes e três espectadores passivos, ataques adversariais M5/M10 e regressão do motor M10. A primeira execução intermediária [41211383681](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41211383681) falhou por expectativa antiga no QA (esperava `replay divergente`, mas o novo validador corretamente rejeitava o estado inicial); a expectativa foi corrigida e o CI completo passou. Sem ocultar essa falha histórica.
+
+**Próximo passo:** revisar invariantes de vencedor/finalização e casos de snapshot malicioso com testes de replay, mantendo o feed como contrato fictício. Em paralelo ao planejamento, a homologação visual de nicks/overlays e balanceamento M10 permanece aberta. **G.2 nos PCs físicos não foi realizada; NVDA/VoiceOver humano e H.1/H.2 com alunos reais seguem bloqueados.** M5 5 talentos/10 pontos, M10 10/20, quatro KayKit, 120 talentos, câmera, arquibancadas, XP, notas, turmas, aprovações, V3, `main`, merge e deploy preservados.
