@@ -4,6 +4,8 @@ on:
     branches: [feature/v5-arena-dos-criadores]
     paths:
       - 'v5/duel-invitations-lab.js'
+      - 'v5/duel-journey-lab.js'
+      - 'qa/v5-duel-journey-lab.cjs'
       - 'qa/v5-duel-invitations-lab.cjs'
       - 'qa/v5-duel-window-lab.cjs'
       - 'qa/v5-duel-window-browser.cjs'
@@ -29,6 +31,8 @@ jobs:
       - run: node --check v5/duel-invitations-lab.js
       - run: node --check qa/v5-duel-invitations-lab.cjs
       - run: node qa/v5-duel-invitations-lab.cjs
+      - run: node --check v5/duel-journey-lab.js
+      - run: node qa/v5-duel-journey-lab.cjs
       - run: node qa/v5-duel-window-lab.cjs
       - run: node --check v5/duel-battle-lab.js
       - run: node --check qa/v5-duel-battle-lab.cjs
