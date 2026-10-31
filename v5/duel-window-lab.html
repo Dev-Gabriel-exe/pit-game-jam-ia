@@ -118,7 +118,8 @@ function paintHud(snapshot){
   el(prefix+'Hp').style.width=Math.max(0,Math.min(100,fighter.hp/fighter.maxHp*100)).toFixed(1)+'%';
   el(prefix+'HpText').textContent=Math.ceil(fighter.hp)+' / '+fighter.maxHp+' PV'+(fighter.alive?'':' · eliminado');
  });
- if(snapshot.modelsFailed>0)el('visualStatus').textContent='Algum modelo KayKit não carregou. Feche e tente novamente; o resultado em texto segue disponível.';
+ el('pauseVisual').disabled=!snapshot.modelsReady;
+ if(snapshot.modelsFailed>0)el('visualStatus').textContent='Algum modelo KayKit não carregou. Reinicie o 3D; o resultado em texto segue disponível.';
 }
 el('battleMission').addEventListener('change',()=>{stopVisual();el('battleResult').textContent='Aguardando simulação.'});
 el('visualize').addEventListener('click',async()=>{
@@ -143,12 +144,12 @@ el('visualize').addEventListener('click',async()=>{
    }
   });
   duelVisual.start(acceptedDescriptor,{mission:Number(el('battleMission').value),seed:4252});
-  el('visualize').textContent='↻ Reiniciar arena 3D';el('pauseVisual').disabled=false;
+  el('visualize').textContent='↻ Reiniciar arena 3D';el('pauseVisual').disabled=true;
  }catch(error){
   if(generation!==visualGeneration)return;
   stopVisual();
   el('visualStatus').textContent='3D indisponível: '+String(error.message||error)+'. Você ainda pode simular o resultado em texto.';
- }finally{if(generation===visualGeneration)el('visualize').disabled=false;else el('visualize').disabled=false}
+ }finally{el('visualize').disabled=false}
 });
 el('pauseVisual').addEventListener('click',()=>{
  if(!duelVisual)return;
