@@ -8,6 +8,7 @@ on:
       - 'v5/arena-three.js'
       - 'v5/arena-lab.*'
       - 'qa/v5-m10-visual*.cjs'
+      - 'qa/v5-m10-spectator-browser.cjs'
       - '.github/workflows/v5-m10-visual-qa.yml'
   workflow_dispatch:
 permissions:
@@ -47,4 +48,29 @@ jobs:
         with:
           name: m10-webgl-final-30
           path: qa/v5-m10-visual-30.png
+          if-no-files-found: ignore
+
+  spectator-camera-webgl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - run: |
+          node --check qa/v5-m10-spectator-browser.cjs
+          node qa/v5-m10-visual-roster.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-m10-spectator.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-m10-spectator-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-spectator-camera-30
+          path: qa/v5-m10-spectator-30.png
           if-no-files-found: ignore
