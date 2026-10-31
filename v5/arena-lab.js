@@ -51,6 +51,9 @@ const PACES=[
 const state={damageIndex:3,mission:m10Preview?10:5,count:importedBuild||params.get('count')==='4'?4:30,customBuild:importedBuild,phase2:m10Preview||params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
+// Announce only lifecycle changes; the fast combat log and HUD remain readable
+// on demand, without a live stream of every hit from 30 characters.
+function announce(text){$('battleAnnouncement').textContent=text;}
 function roster(mission,count=30){
  if(mission===10&&m10Preview)
   return M10_VISUAL.createRoster(PHASE2,m10Policy,{count,variant:state.phase2Variant});
@@ -207,6 +210,7 @@ function onEvent(event){
   spotlight(title,champion?'Dano total: '+Math.round(champion.damage)+' · KOs: '+champion.kills:'Fim de confronto',winner?.id,'knockout',6,t);
   appendLog('✶ '+title,'end');
   message('CONFRONTO FINALIZADO','finished');
+  announce('Missão '+state.mission+' finalizada. '+(winner?'Vencedor: '+winner.name+'.':'Sem vencedor.'));
   $('startBattle').disabled=true;$('pauseBattle').disabled=true;$('resetBattle').disabled=false;
  }
  // Updating 30 fighter DOM cards for every projectile hit starves the
@@ -290,6 +294,7 @@ function initRound({sameSeed=false}={}){
   'MOTOR B.6 · 120 talentos executáveis, 30 opções por classe; 5 talentos escolhidos e até 10 pontos por herói na missão 5. Sem animações exclusivas, servidor ou arena final.'):
   'Motor legado · os 120 talentos finais ainda não foram integrados; modo experimental B.1 disponível.';
  state.round++;
+ announce('Missão '+mission+'. Partida '+state.round+' '+(state.round===1?'preparada':'reiniciada')+'. '+state.count+' personagens fictícios. Aguarde o carregamento dos modelos.');
  // Keep identical starting positions, talent build and RNG when comparing
  // 100%, 75% and 60%. Reset/New Mission still creates a fresh scenario.
  if(!sameSeed||!state.seed){
@@ -343,16 +348,19 @@ function begin(){
  $('startBattle').disabled=true;$('pauseBattle').disabled=false;$('pauseBattle').textContent='Ⅱ Pausar';
  message('BATALHA EM ANDAMENTO','running');
  appendLog('⚔ O confronto da missão '+String(state.mission).padStart(2,'0')+' começou!','special');
+ announce('Confronto iniciado na missão '+state.mission+', com '+state.count+' personagens fictícios.');
 }
 function pause(){
  if(!state.stage?.simulation||state.fought)return;
  if(state.stage.playing){
   state.stage.pause();$('pauseBattle').textContent='▶ Continuar';
   message('BATALHA PAUSADA');
+  announce('Confronto pausado. Use Continuar para retomar.');
  }else{
   if(state.stage.graphicsContext==='lost'){message('GPU INDISPONÍVEL — AGUARDE A RESTAURAÇÃO');return}
   state.stage.resume();$('pauseBattle').textContent='Ⅱ Pausar';
   message('BATALHA EM ANDAMENTO','running');
+  announce('Confronto retomado.');
  }
 }
 document.querySelectorAll('.roster-mode').forEach(button=>button.addEventListener('click',()=>{
@@ -397,6 +405,7 @@ $('arenaStage').addEventListener('v5-graphics-lost',()=>{
  $('pauseBattle').textContent='▶ Continuar';
  $('pauseBattle').disabled=true;
  message('GPU REINICIANDO — BATALHA PAUSADA');
+ announce('GPU indisponível. Confronto pausado automaticamente.');
  $('perfContext').textContent='Contexto perdido';
  $('performancePanel').dataset.status='context-lost';
 });
@@ -404,6 +413,7 @@ $('arenaStage').addEventListener('v5-graphics-restored',()=>{
  $('pauseBattle').disabled=!state.stage?.simulation||state.fought;
  $('pauseBattle').textContent='▶ Continuar';
  message('GPU RESTAURADA — TOQUE EM CONTINUAR');
+ announce('GPU restaurada. Use Continuar para retomar o confronto.');
  $('perfContext').textContent='Restaurada · pausada';
  $('performancePanel').dataset.status='measuring';
 });
