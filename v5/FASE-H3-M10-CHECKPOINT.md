@@ -744,3 +744,18 @@ No SHA funcional `5b94724e9d70b7554c6ca6111df15de065eeb74d`, o [run M10 WebGL 41
 
 
 **Atualização de CI após a última asserção pós-vitória (`fa2d86773`):** [H.2 41230706800](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230706800) **SUCCESS**; [M10 fullstream 41230706799](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230706799) **SUCCESS**; [QA geral 41230707002](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230707002) **SUCCESS**. [Browser 41230706878](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230706878) **IN_PROGRESS** na verificação. O commit de documentação `b6253d9395b5de66ecd934765b9ae8cde8cf0e11` é posterior ao código/testes; não confundir com SHA funcional. Não homologar navegador/G.2 antes de evidência.
+
+
+## H.3/M10 — legibilidade de nicks e proteção dos HUDs (31/10/2026)
+
+**Missão em andamento:** legibilidade visual da arena fictícia com 30 KayKits, sem modificar motor, classe, talento, atributos, balanceamento, câmera, XP ou progresso.
+
+**Estado inicial verificado:** branch `4318b0478a7905f557b74458db221a97a20a3e28`; o QA navegador anterior, antes pendente, terminou com **SUCCESS** no [run 41230746254](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230746254). Também passaram [QA geral 41230746185](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230746185) e [browser no SHA funcional fa2d867 41230706878](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41230706878).
+
+**Incremento técnico implementado:** `v5/nickname-layout.mjs` seleciona até 4/6/9 rótulos conforme largura, com envelopes de tamanho conservadores, prioridade ao personagem acompanhado e exclusão de regiões ocupadas por HUD, além de impedir colisões entre nicks. `v5/arena-three.js` projeta os nomes reais dos personagens e mede caixas do destaque, telemetria, legenda e rodapé a cada 15 quadros de renderização ou mudança de tamanho, evitando leitura de layout por personagem. `qa/v5-nickname-layout.cjs` testa 30 candidatos fictícios, HUD, mobile, prioridade e ausência de mutação. `qa/v5-m10-legibility-browser.cjs` verifica em WebGL que nicks exibidos não encobrem HUDs nem outros nomes no projetor 1920×1080 e desktop 1366×768. Workflow `.github/workflows/v5-m10-visual-qa.yml` inclui teste puro e teste de navegador.
+
+**Commits desta tarefa:** `b39204966b1632948fbf286214e25ae318983118` (layout puro), `744fdfcf13877e115edce24a78b6093400f8fa42` (integração), `58553c44835e394283ba3ea0bbfca223887188cf` (teste puro), `3a1f95c794975b2f44507ba3bc69c0031eea11d1` (auditoria WebGL), `18059fbd9f2cfd4c43f28e0479a500a418d84d74` (workflow).
+
+**CI aguardando conclusão no SHA `18059fbd9f`:** [M10 visual/WebGL 41235100049](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41235100049), [QA geral 41235100017](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41235100017), [Browser QA 41235100014](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41235100014). **Não declarar aprovado até os jobs concluírem**; investigar e corrigir qualquer falha, inclusive se houver nomes ocultos em enquadramento cinematográfico.
+
+**Próximo passo:** verificar CI específico, registrar quantos nicks permanecem legíveis em cada viewport, revisar screenshots sem alegar homologação humana e manter a mesma Missão 10 até validação. **G.2 nos PCs físicos NÃO EXECUTADO**; H.1/H.2 reais e `main`/merge/deploy seguem bloqueados, sem alterar alunos, notas, turmas, aprovações ou XP.
