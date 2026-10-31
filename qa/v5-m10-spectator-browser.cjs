@@ -44,6 +44,14 @@ const R=require('../v5/m10-visual-roster.js');
   assert.equal(await page.locator('#studentViewControls').isVisible(),true);
   assert.equal(await page.locator('#studentViewHero option').count(),30);
   assert.equal(await page.locator('[data-fighter]').count(),30);
+  const announcement=page.locator('#battleAnnouncement');
+  assert.equal(await announcement.getAttribute('role'),'status');
+  assert.equal(await announcement.getAttribute('aria-live'),'polite');
+  assert.equal(await announcement.getAttribute('aria-atomic'),'true');
+  assert.equal(await page.locator('#battleLog').getAttribute('aria-live'),'off',
+   'Rapid combat log must not flood screen readers');
+  assert.equal(await announcement.evaluate(el=>getComputedStyle(el).position),'absolute',
+   'Announcements must not obstruct the 3D scene');
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents))
    .every(x=>x.ids.length===10),'Every M10 hero must have 10 talents');
   await page.locator('#studentViewHero').selectOption(watched);
@@ -54,11 +62,14 @@ const R=require('../v5/m10-visual-roster.js');
   assert.equal(await stage.getAttribute('data-v5-camera-audience'),'student');
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
   await page.locator('#startBattle').click();
+  assert.match(await announcement.textContent(),/Confronto iniciado na missão 10/);
   await page.locator('#pauseBattle').click();
   assert.match(await page.locator('#arenaStatus').textContent(),/PAUSAD/);
   assert.match(await page.locator('#pauseBattle').textContent(),/Continuar/);
+  assert.match(await announcement.textContent(),/Confronto pausado/);
   await page.locator('#pauseBattle').click();
   assert.match(await page.locator('#arenaStatus').textContent(),/BATALHA EM ANDAMENTO/);
+  assert.match(await announcement.textContent(),/Confronto retomado/);
   await page.waitForFunction(()=>
    document.querySelector('#arenaStage')?.dataset.v5StudentCamera==='spectating',
    null,{timeout:245000});
@@ -86,7 +97,11 @@ const R=require('../v5/m10-visual-roster.js');
    expected.winner.id,'WebGL camera must not change deterministic M10 winner');
   assert.equal(Number(await stage.getAttribute('data-v5-spectators')),29);
   assert.match(await page.locator('#result').textContent(),/Vencedor/);
+  assert.match(await announcement.textContent(),/Missão 10 finalizada.*Vencedor/);
   await page.locator('#resetBattle').click();
+  assert.match(await announcement.textContent(),/Missão 10.*Partida .*reiniciada/);
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'resetBattle',
+   'Reset should not steal keyboard focus');
   assert.equal(Number(await stage.getAttribute('data-v5-spectators')),0);
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m10');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),10);
@@ -95,6 +110,7 @@ const R=require('../v5/m10-visual-roster.js');
   await page.locator('[data-mission="5"]').click();
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),5);
+  assert.match(await announcement.textContent(),/Missão 5.*preparada|Missão 5.*reiniciada/);
   assert.deepEqual(errors,[],'Uncaught Chromium errors: '+errors.join(' | '));
   console.log('PASS M10 spectator 30 KayKit: living -> shared camera on KO, teacher same feed, pause/resume, deterministic winner, reset and M5 regression. '+JSON.stringify({
    watched,expectedWinner:expected.winner.id,firstKO:!!firstKO,
