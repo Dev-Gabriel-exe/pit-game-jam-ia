@@ -58,6 +58,32 @@ check(maximum.length<=750,'Maximum legal fields do not truncate the final line')
 check(maximum.split('\n').length===8,'Maximum evidence retains all labels');
 check(m.parseEvidence(maximum)?.later==='g'.repeat(120),'Maximum record round trips');
 check(m.load('fresh').scene===initial.scene,'Session isolation');
+
+ // Imported/legacy local drafts may exceed HTML maxlength. They must not be
+ // silently truncated or counted as complete, including optional backlog text.
+ const oversized=[
+  ['scene','S'.repeat(87),0],
+  ['mechanic','M'.repeat(106),1],
+  ['elements','A'.repeat(40)+', '+'B'.repeat(40)+', '+'C'.repeat(40),2],
+  ['test','T'.repeat(156),3],
+  ['later','L'.repeat(121),null]
+ ];
+ for(const [field,value,fragment] of oversized){
+  const id='legacy-overlong-'+field;
+  store.set('pit_v3_missao02_rascunho_'+id,JSON.stringify({...initial,[field]:value}));
+  const recovered=m.load(id),result=m.validate(id);
+  check(recovered[field]===value,'Preserve full legacy text for '+field);
+  check(result.ok===false&&result.field===field,'Reject overlong '+field);
+  const limit={scene:86,mechanic:105,elements:120,test:155,later:120}[field];
+  check(result.label.includes('no máximo '+limit),'Explain maximum length for '+field);
+  if(fragment!==null)check(m.progress(recovered)[fragment]===false,'Overlong '+field+' cannot count toward 4/4');
+  const html=m.render({session:id,phase:'review',status:'draft',preview:true,canSubmit:true,
+   idea:{title:'Meu jogo',genre:'Puzzle'}});
+  check(/id="submitWork"[^>]*disabled/.test(html),'Reject submission for overlong '+field);
+ }
+ check(m.validate('source').ok,'Original valid MVP still validates');
+ check(m.progress(m.load('source')).every(Boolean),'Original four decisions still complete');
+
 // A denied storage write must not silently discard the student's MVP.
 const blockedWindow={},blockedStorage={
  getItem:()=>{throw new Error('SecurityError')},
