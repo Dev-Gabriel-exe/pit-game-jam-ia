@@ -321,6 +321,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  container.dataset.v5SpriteVisualEvents='0';container.dataset.v5SpriteVisualActive='0';
  container.dataset.v5SpriteVisualDropped='0';container.dataset.v5SpriteStyleLast='';
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
+  // Successful on-screen cues, not merely combat events. Diagnostics only.
+  const visualByType={ativo:0,passivo:0,reativo:0},droppedByType={ativo:0,passivo:0,reativo:0};
+  function recordVisualType(cue,dropped=false){
+   const kind=cue?.type;if(!Object.hasOwn(visualByType,kind))return;
+   const counter=dropped?droppedByType:visualByType;
+   counter[kind]++;
+   container.dataset['v5TalentFx'+(dropped?'Dropped':'Rendered')+kind[0].toUpperCase()+kind.slice(1)]=String(counter[kind]);
+  }
  let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0,hitReactions=0;
  const visualBudget=quality==='low'||reduce?9:18;
  const isPhase2=()=>['phase2-m5','phase2-m10'].includes(container.dataset.v5CombatEngine);
@@ -646,6 +654,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
   talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;hitReactions=0;
+   for(const kind of Object.keys(visualByType)){
+    visualByType[kind]=0;droppedByType[kind]=0;
+    container.dataset['v5TalentFxRendered'+kind[0].toUpperCase()+kind.slice(1)]='0';
+    container.dataset['v5TalentFxDropped'+kind[0].toUpperCase()+kind.slice(1)]='0';
+   }
   container.dataset.v5AnimationEvents='0';container.dataset.v5SpecialFx='0';
   container.dataset.v5TalentFxEvents='0';container.dataset.v5TalentFxDropped='0';
   container.dataset.v5TalentCueLast='';container.dataset.v5TalentCueStyle='';
@@ -752,6 +765,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   }
   if(effects.filter(e=>e.isAbility).length>=visualBudget){
    talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);
+   recordVisualType(cue,true);
    if(spriteKit){spriteVisualDropped++;container.dataset.v5SpriteVisualDropped=String(spriteVisualDropped)}
    return false;
   }
@@ -761,6 +775,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    const spawned=spawnSpriteCue(cue,x,z,subtle);
    if(spawned){
     talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
+    recordVisualType(cue);
     container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
     container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
    }
@@ -857,6 +872,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   const duration=reduce?.48:(subtle?Math.max(.78,cue.duration*1.45):Math.max(1.45,cue.duration*1.9));
   effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors,subtle});
   talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
+  recordVisualType(cue);
   container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   return true;
