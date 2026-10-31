@@ -34,7 +34,8 @@
  <div class="layout">
   <section class="theater">
    <div class="theater-head"><div><span class="eyebrow">01 · CIDADELA DO ECLIPSE · CAMPO AMPLIADO</span><h2 id="arenaTitle">Missão 05 · Arena de Teste</h2></div><div class="combat-stats"><span id="aliveCount" class="counter alive">30 em combate</span><span id="spectatorsCount" class="counter audience">0 na arquibancada</span><span class="live" id="arenaStatus">INICIALIZANDO WEBGL</span></div></div>
-   <div class="real-model-proof" id="realModelProof" data-ready="false">
+   <p id="battleAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true">Arena experimental em preparação.</p>
+    <div class="real-model-proof" id="realModelProof" data-ready="false">
     <div><strong>✦ Quatro personagens KayKit Adventurers</strong><span>⚔ Bárbaro · ✦ Mago · ➶ Ladino Encapuzado · ◆ Cavaleiro</span></div>
     <a href="./personagens-lab.html">Ver os quatro modelos originais lado a lado</a>
    </div>
@@ -59,7 +60,7 @@
       <button id="retryModels" type="button" hidden>↻ Tentar carregar os modelos novamente</button>
      <button id="phase2Builds" type="button" disabled title="Alternar as onze estratégias de talentos das quatro classes">✦ Combinações: Originais</button>
      <button id="cinematicCamera" type="button" disabled aria-pressed="true">◈ Cena cinematográfica</button> <button id="overviewCamera" type="button" disabled>◎ Visão geral</button>
-     <button id="actionCamera" type="button" disabled aria-pressed="false">◎ Diretor automático</button><span id="directorStatus" class="camera-director-status" role="status">Câmera: manual</span>
+     <button id="actionCamera" type="button" disabled aria-pressed="false">◎ Diretor automático</button><span id="directorStatus" class="camera-director-status" role="status" aria-live="off">Câmera: manual</span>
      <button id="expandStage" type="button" aria-pressed="false">⛶ Ampliar arena</button>
 
      <button id="damagePace" type="button" title="Altere o dano e reinicie a simulação para comparar: sem alterar o balanceamento definitivo">⚔ Dano 50% · lendário</button>
@@ -97,7 +98,7 @@
      <div class="result" id="result" role="status">Ainda não há vencedor. Prepare o coliseu.</div>
    </section>
    <section class="panel logpanel"><span class="eyebrow">03 · CRÔNICAS DA BATALHA</span><h2>O que aconteceu</h2><p class="log-hint">As ações mostram atacante, alvo, dano real e habilidade. Toque em <strong>Seguir</strong> para focar um participante.</p>
-     <div id="battleLog" class="battle-log" role="log" aria-live="polite"><p>As ações aparecerão aqui quando a batalha começar.</p></div>
+     <div id="battleLog" class="battle-log" role="log" aria-live="off"><p>As ações aparecerão aqui quando a batalha começar.</p></div>
    </section>
   </aside>
  </div>
