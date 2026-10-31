@@ -145,9 +145,9 @@ function within(inner,outer,tolerance=3){
    // and any text whose actual background requires pixel-level/human review.
    const contrast=await page.evaluate(()=>{
     const rgba=value=>{
-     const m=value.match(/^rgba?\\(([^)]+)\\)$/);
+     const m=value.match(/^rgba?\(([^)]+)\)$/);
      if(!m)return null;
-     const n=m[1].match(/[\\d.]+/g)?.map(Number);
+     const n=m[1].match(/[\d.]+/g)?.map(Number);
      if(!n||n.length<3)return null;
      return {rgb:n.slice(0,3),alpha:n.length>3?n[3]:1};
     };
