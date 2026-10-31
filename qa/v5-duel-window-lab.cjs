@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const html=fs.readFileSync(require('node:path').join(__dirname,'../v5/duel-window-lab.html'),'utf8');
-for(const id of ['teacher','invite','sender','recipient','accept','decline','open','reset','arena','close','duelStage','visualize','pauseVisual','hudAName','hudBName','hudAHp','hudBHp','visualStatus','missionDock','journeyStatus','duelCurtain','duelEpilogue','returnMission','epilogueWinner'])assert.match(html,new RegExp('id="'+id+'"'));
+for(const id of ['teacher','invite','sender','recipient','accept','decline','open','reset','arena','close','duelStage','visualize','pauseVisual','hudAName','hudBName','hudAHp','hudBHp','visualStatus','missionDock','journeyStatus','duelCurtain','duelEpilogue','returnMission','epilogueWinner','speedVisual'])assert.match(html,new RegExp('id="'+id+'"'));
 for(const method of ['D.invite','D.respond','D.notificationsFor','D.arenaWindowFor','D.createState'])assert(html.includes(method),method);
 assert(html.includes('aria-modal="true"'));
 assert(html.includes('role="status" aria-live="polite"'));
@@ -33,5 +33,6 @@ assert(visual.includes('arenaScale:2.6'));
 assert(visual.includes('modelsLoaded===2'),'combat must wait for both CC0 GLBs');
 assert(visual.includes('stage.enableAutoCamera(true)'));
 assert(visual.includes('stage.dispose()'));
+assert(visual.includes('stage.setSpeed(value)'),'optional 3D playback controls use stage only');
 assert(!/fetch\s*\(|localStorage|sessionStorage|\bWebSocket\b|\/api\/|approvedStages/.test(visual),'isolated rendering only');
 console.log('PASS: duel modal lab static UI contract, consent paths, a11y hooks and no gameplay claims');
