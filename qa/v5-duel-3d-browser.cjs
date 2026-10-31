@@ -29,7 +29,21 @@ const {chromium}=require('playwright');
   await page.locator('#close').click();
   assert.equal(await page.locator('#duelStage canvas').count(),0,'closing must dispose WebGL canvas');
   assert.equal(await page.locator('#arena').isHidden(),true);
+  // Opt-in M10 uses the same two actual rigs, with a full 10-talent build.
+  await page.locator('#open').click();
+  await page.locator('#battleMission').selectOption('10');
+  await page.locator('#visualize').click();
+  await page.locator('#duelStage canvas').waitFor({timeout:90000});
+  await page.waitForFunction(()=>{
+   const node=document.getElementById('duelStage');
+   return node?.dataset.v5CombatEngine==='phase2-m10'&&node?.dataset.v5ModelsExpected==='2'&&node?.dataset.v5ApprovedTalentSlots==='10';
+  },null,{timeout:60000});
+  await page.waitForFunction(()=>document.getElementById('duelStage')?.dataset.v5ModelsLoaded==='2',null,{timeout:80000});
+  assert.equal(await page.locator('#duelStage').getAttribute('data-v5-camera-director'),'on');
+  await page.locator('#close').click();
+  assert.equal(await page.locator('#duelStage canvas').count(),0,'M10 scene must be released');
+  assert.equal(await page.locator('#arena').isHidden(),true);
   assert.deepEqual(errors,[],'no unhandled browser errors');
-  console.log('PASS: accepted 1x1 creates authentic KayKit GLBs + Three.js canvas; modal close disposes stage');
+  console.log('PASS: two authentic KayKit GLBs render for accepted 1v1 M5 and M10; cleanup on both exits');
  }finally{await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});
