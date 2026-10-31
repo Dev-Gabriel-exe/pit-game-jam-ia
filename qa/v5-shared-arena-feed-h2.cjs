@@ -59,7 +59,7 @@ for(const mission of [5,10]){
   fighters:initial.fighters}),/ressurreição não permitida/);
  assert.equal(deathProbe.cursor,1,'rejected resurrection does not advance cursor');
 
- assert.throws(()=>studentA.accept({...initial,status:'running'}),/replay divergente/);
+ assert.throws(()=>studentA.accept({...initial,status:'running'}),/primeiro pacote deve estar pronto/);
  const forged={...initial,studentId:'42'};
  assert.throws(()=>studentA.accept(forged),/fora da partida/);
  assert.throws(()=>studentA.accept({...initial,roomKey:'trial-room-foreign'}),/fora da partida/);
