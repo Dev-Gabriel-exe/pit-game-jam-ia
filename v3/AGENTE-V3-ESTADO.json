@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T01:18:31.000Z",
+  "last_completed_at": "2026-10-31T02:13:55.612Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Concluir auditoria pedagógica real das 20 faces professor/aluno (P0→P1→P2), confirmar CI Node/Chrome da M01 e verificar regras de projeção HDMI sem teste humano inventado; estética só depois.",
+  "priority": "Confirmar Browser QA da proteção HDMI do modo Apresentação, continuar auditoria pedagógica real das 20 faces professor/aluno (P0→P1→P2); não iniciar estética antes da conclusão.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M01-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-HDMI-PROJECTOR-CLOSE-NOTES",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2722,12 +2722,24 @@
       ],
       "tests": "49 checks from committed M01 QA passed in V8 Node-compatible shims; 19 direct functional checks passed. Native Node/Chrome CI on new M01 commit NOT_CONFIRMED. Previous M02 Browser QA 41149705879 SUCCESS. HDMI/GDevelop GUI/physical mobile/human NOT_RUN.",
       "notes": "M01 strict ordered seven-line recovery, genre and field bounds, malformed/flattened/duplicated records rejected. Local drafts win even if approved/submitted. Main, production and real student data untouched. V3 master roadmap remains 54/59."
+    },
+    {
+      "id": "V4-HDMI-PROJECTOR-CLOSE-NOTES",
+      "completed_at": "2026-10-31T02:13:55.612Z",
+      "commit": "6b11744fafb45682a7eff67e9b9678089634fb8f",
+      "files": [
+        "v3/teacher-projector-m01.js",
+        "qa/v3-private-teacher-notes-browser.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Static QA 41158994628 SUCCESS. Browser QA 41158994606 IN_PROGRESS, pending Chrome confirmation. Physical HDMI, GDevelop GUI, human tests NOT_RUN.",
+      "notes": "Actual projector safety defect: previously open private note could remain exposed after ending presentation. Launch now closes all notes before rendering. M01–M10 teacher/student full pedagogical homologation remains pending. Main unchanged; roadmap 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M01-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-HDMI-PROJECTOR-CLOSE-NOTES",
     "status": "in_progress",
-    "updated_at": "2026-10-31T01:18:31.000Z",
+    "updated_at": "2026-10-31T02:13:55.612Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2851,9 +2863,11 @@
       "ba385961d4b2f3cd1e62182013532788f3722611",
       "cd2f6438f61d9ca4c64e3710500200769d00d6f6",
       "6e2710716118c227a77780cc3c72d59faf623f98",
-      "aae502a3b4935edcf57cb2de19fc6e7972495704"
+      "aae502a3b4935edcf57cb2de19fc6e7972495704",
+      "8c68087ff5a8adef4ce3737a60039d6b632163ff",
+      "6b11744fafb45682a7eff67e9b9678089634fb8f"
     ],
-    "documentation_commit": "7f49adb1622adbe5e2fc0753a1111e6184e2c4a6",
+    "documentation_commit": "a344e3c9e70f89723b9b591d5559205e3c0c8108",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3821,6 +3835,18 @@
         "name": "M01 strict evidence recovery and draft precedence",
         "sha": "aae502a3b4935edcf57cb2de19fc6e7972495704",
         "result": "PASS: 19 direct V8 checks + 49 assertions in committed QA source under V8 Node-compatible shims; native Node/Chrome GitHub Actions for M01 NOT_CONFIRMED"
+      },
+      {
+        "name": "HDMI-safe projector launch, teacher note state",
+        "run_id": 41158994606,
+        "sha": "6b11744fafb45682a7eff67e9b9678089634fb8f",
+        "result": "Browser QA IN_PROGRESS at checkpoint; new Chrome regression verifies open note -> launch closes -> slides exclude -> return remains closed. No human HDMI test."
+      },
+      {
+        "name": "HDMI-safe projector static QA",
+        "run_id": 41158994628,
+        "sha": "6b11744fafb45682a7eff67e9b9678089634fb8f",
+        "result": "SUCCESS"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
