@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T04:21:17.306Z",
+  "last_completed_at": "2026-10-31T05:16:39.000Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar CI nativa Node/Chrome do endurecimento de evidências M09; continuar auditoria pedagógica comparada professor/aluno, sem estética.",
+  "priority": "Confirmar CI Node/Chrome da M01 (commit ab05cad6) e auditar avisos de salvamento e autonomia da M02; manter pedagogia antes da estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-LEGACY-EVIDENCE-STRICT",
+  "last_task": "V4-M01-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2758,12 +2758,24 @@
       ],
       "tests": "Native Node static QA run 41168176406 SUCCESS, including M09 negative regression step; Browser QA run 41168176450 IN_PROGRESS. Prior M07 projector Chrome run 41163495885 SUCCESS. No physical/human tests.",
       "notes": "M09 parseEvidence exige cabeçalho exato, nove campos ordenados e dentro dos limites, decisão compatível com resultado e sem truncamento; hydrate preserva inclusive rascunhos apenas com rádio ou checkbox. Regressões adicionadas à suíte já integrada à CI. Roadmap 54/59; main intacta."
+    },
+    {
+      "id": "V4-M01-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T05:16:39.000Z",
+      "commit": "ab05cad6057540c513dd02f52f525095a5bc712b",
+      "files": [
+        "v3/mission-one.js",
+        "qa/v3-m01-legacy-evidence.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Native Node static QA 41172039227 SUCCESS on earlier test commit; latest commit static and Chrome NOT_CONFIRMED; no manual/hardware tests",
+      "notes": "M01 previously claimed local draft saved even when browser denied storage. Added per-session volatile fallback, explicit live save failure warning in practice and review, no false persistence guarantee. Main unchanged, roadmap 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-LEGACY-EVIDENCE-STRICT",
+    "task": "V4-M01-DRAFT-STORAGE-FAILSAFE",
     "status": "in_progress",
-    "updated_at": "2026-10-31T04:21:55.224Z",
+    "updated_at": "2026-10-31T05:16:39.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2893,9 +2905,13 @@
       "3d431691d07353baa66b541357c400b691964a32",
       "120eff231eec32bf1f73f6f5dffc75fc261bd17f",
       "e14c2a0af7a8a4a5523c7ab4711c2d0700fde887",
-      "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf"
+      "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf",
+      "b4d27ff44e275c2b110cbf32346410f1aef74bca",
+      "79946132438412cea2da6157fda6bf2c1222cb33",
+      "6d2ee904246ce424987f9cd1c07bab275b3f9c9a",
+      "ab05cad6057540c513dd02f52f525095a5bc712b"
     ],
-    "documentation_commit": "0747732b487a1dbfe95da1ad8772c43a2d07a251",
+    "documentation_commit": "3d4fc07ebc29826fff1461fc02a93c925d0af794",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3895,6 +3911,21 @@
           41168176406,
           41168176450
         ]
+      },
+      {
+        "name": "M01 draft storage-denial regression",
+        "run_id": 41172039227,
+        "sha": "79946132438412cea2da6157fda6bf2c1222cb33",
+        "result": "SUCCESS GitHub Actions native Node static QA"
+      },
+      {
+        "name": "M01 final QA static and Browser",
+        "sha": "ab05cad6057540c513dd02f52f525095a5bc712b",
+        "result": "IN_PROGRESS at checkpoint; do not claim success"
+      },
+      {
+        "name": "Manual HDMI, GDevelop GUI, physical mobile, human tests",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
