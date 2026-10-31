@@ -68,11 +68,13 @@ const GUARDIAN_ABLATION_GROUPS=Object.freeze({
  reactions:Object.freeze(['G02','G03','G07','J06']),
  mitigation:Object.freeze(['G04','G06','G08','L10'])
 });
-function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null,experimentalGuardianShieldScale=null,experimentalVisibilityAwareTargets=false}={}){
+function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamageBonus=1,stormDelay=18,stormRateFactor=1,engagementMode='free',navigationMode='direct',rangedCommitment='none',balancePreset='baseline',arenaMission=5,experimentalSpawnPositions=null,experimentalTurnOrder=null,experimentalCritSeed=null,experimentalGuardianAblation=null,experimentalGuardianTalentAblation=null,experimentalGuardianShieldScale=null,experimentalVisibilityAwareTargets=false,experimentalTargetTrace=false}={}){
  // Opt-in M10 laboratory only: no authentication, XP or student-state writes.
  if(arenaMission!==5&&arenaMission!==10)throw Error('Somente arena M5 ou M10 experimental');
  if(typeof experimentalVisibilityAwareTargets!=='boolean'||(experimentalVisibilityAwareTargets&&arenaMission!==10))
   throw Error('Visibilidade experimental de alvos exige M10 e opção booleana');
+ if(typeof experimentalTargetTrace!=='boolean'||(experimentalTargetTrace&&arenaMission!==10))
+  throw Error('Telemetria de alvos disponível somente na M10 experimental');
  const spreadAggro=engagementMode==='spaced';
  // Experimental E navigation: legacy direct movement remains the default.
  const obstacleSteering=navigationMode==='steer';
@@ -180,6 +182,8 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    lastHitAt:-999,hitWindow:[],prevX:null,prevZ:null,eliminatedAt:null};
  });
  const byId=new Map(fighters.map(f=>[f.id,f]));
+ // Diagnostic-only, first tick, exact decision coordinates; no RNG or combat events.
+ const targetSelectionTrace=[];
  // Only the actor processing loop is permuted. Fighter array, spawn positions,
  // projectile order, and initial random draws stay fixed per identity.
  if(experimentalTurnOrder!==null&&experimentalTurnOrder.some(id=>!byId.has(id)))
@@ -1087,6 +1091,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      if(score<best-1e-7){best=score;target=rival}
     }
    }else for(const rival of enemies)if(dist(f,rival)<dist(f,target))target=rival;
+   const beforeSelection=experimentalTargetTrace&&time<=.0500001?target:null;
    // Experimental M10 only: if the chosen opponent is behind a static pillar,
    // prefer a nearby clear segment. Preserve bounded range and spaced aggro
    // penalties; recompute reservation AFTER the actual selection.
@@ -1106,6 +1111,17 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
      }
     }
     if(alternative)target=alternative;
+   }
+   if(beforeSelection){
+    // Coordinates captured BEFORE movement of this actor, AFTER earlier actors
+    // have moved. This resolves the misleading pre-tick LOS proxy.
+    const snapshot=t=>Object.freeze({id:t.id,x:t.x,z:t.z,
+     distance:dist(f,t),blocked:staticProjectileLaneBlocked(f,t)});
+    targetSelectionTrace.push(Object.freeze({time:+time.toFixed(4),actor:f.id,
+     klass:f.build.klass,from:Object.freeze({x:f.x,z:f.z}),
+     before:snapshot(beforeSelection),after:snapshot(target),
+     aggroBefore:aggroReservations.get(beforeSelection.id)||0,
+     aggroAfter:aggroReservations.get(target.id)||0}));
    }
    if(spreadAggro)aggroReservations.set(target.id,(aggroReservations.get(target.id)||0)+1);
    // Expose the selected opponent in both modes for deterministic crowding QA.
@@ -1320,7 +1336,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
  function result(){return {finished,time:+time.toFixed(2),winner:winner?{id:winner.id,name:winner.name,klass:winner.build.klass}:null,
   events,standings:fighters.map(f=>({id:f.id,name:f.name,klass:f.build.klass,hp:f.hp,damage:f.damage,kills:f.kills,usage:{...f.usage},passives:{...f.passives}}))}}
  function run(steps=3000){for(let i=0;i<steps&&!finished;i++)update(.05);return result()}
- return {fighters,projectiles,obstacles,events,update,run,result,get time(){return time},get finished(){return finished},get winner(){return winner}};
+ return {fighters,projectiles,obstacles,events,update,run,result,
+  get targetSelectionTrace(){return targetSelectionTrace.slice()},
+  get time(){return time},get finished(){return finished},get winner(){return winner}};
 }
 return Object.freeze({VERSION,ATTR,CLASSES,TALENTS:ALL,canonical,exampleBuild,battle});
 });
