@@ -85,3 +85,17 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - Corrigida asserção estática para exigir a declaração de isolamento sem contas/XP e presença real dos scripts do motor e controles M5/M10; commit `b99a6548`.
 - O job Chromium anterior reportou sucesso, mas **a suíte completa falhou**; não considerar o conjunto homologado até novo run verde.
 - Pendente: verificar novo CI e validar renderização 3D WebGL 1×1; a janela atual ainda mostra somente resultado textual.
+
+## Incremento — visualização 3D de duelo fictício KayKit (31/10)
+
+**Validação de base:** `V5 Duel Invitations Fictional Contract QA` run `41200951226` concluído com sucesso. Log Chromium confirma carregamento de **dois GLBs KayKit reais**, canvas Three.js e descarte da cena no fechamento, em M5.
+
+**Implementações isoladas (branch experimental):**
+- `v5/duel-battle-lab.js`: expõe cópias defensivas da mesma dupla de builds fictícias usadas pelo motor (M5/M10).
+- `v5/duel-3d-lab.js`: instancia `createStage` de `arena-three.js` (não renderizador paralelo), entra com exatamente dois aliases fictícios, mantém câmera cinematográfica, atualiza PV e reporta vencedor/tempo. **Só inicia o motor quando `v5ModelsLoaded === 2`;** se houver falha ou timeout, informa e preserva opção textual. Libera GPU, mixers e listeners ao fechar.
+- `v5/duel-window-lab.html`: modal real com palco WebGL 3D, HUD de PV, início, pausa, retomada, seleção M5/M10, preservação da opção textual e isolamento `inert`. Controle professor bloqueia abertura de convite aceito quando desabilitado.
+- `qa/v5-duel-3d-browser.cjs`: smoke Chromium que verifica modelo KayKit, motor e limpeza em M5 **e M10**; testes de contrato conferem roster, consentimento e ausência de operações com alunos.
+
+**Commits:** `1d2d7b02` adapter, `bfabf163` renderer, `5f70fce0` modal, `8225aefe` gate de GLBs, `509c90f1` HUD, `78e82c0c` CI 3D, `cccbc988` bloqueio professor, `a749f215` smoke M10, `b0c46a88` fallback coerente.
+
+**Gates:** CI da rodada final com M10/fallback ainda não confirmado na consulta; não homologar até verde. G.2 nos PCs reais e H com estudantes reais continuam bloqueados. Não houve merge na main, deploy, integração nem alteração de XP/nota/conta.
