@@ -462,3 +462,19 @@ Em 30 equilibrados, a mudança **somente de geometria** alterou a identidade ven
 **CI focal em execução na escrita deste checkpoint:** [run 41151028293](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41151028293), SHA de teste `574dc21149e2689654c208444af73979524dff6d`. O passo de sintaxe/contrato/regressões passou; a matriz estratificada ainda estava em andamento. **Não declarar 192 batalhas concluídas nem balanceamento aprovado sem resultado final e relatório.** QA geral e browser do mesmo SHA também foram iniciados.
 
 **Próximo passo da MESMA missão:** verificar conclusão do CI, ler os totais por classe/variante e possíveis regressões, corrigir falhas e atualizar evidência. Depois, medir seleção no instante exato do aggro e comportamento visual no Chromium, antes de cogitar qualquer alteração padrão. **G.2 nos PCs físicos ainda não realizado; H.1/H.2 com alunos reais, `main`, merge, deploy, XP, aprovações, usuários, notas e turmas continuam bloqueados.**
+
+
+### H.3/M10 — resultado do cruzamento LOS por build e classe (30/10/2026)
+
+**CI focal SUCCESS:** [run 41151028293](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41151028293), SHA do código `574dc21149e2689654c208444af73979524dff6d`. Passaram sintaxe, contrato H.0, regressões M5/M10, replay e teste estratificado. Artefato `m10-los-combat-trial-report` [ID 13023385653](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41151028293/artifacts/13023385653), hash `47a27d953d99d0f49990`, retenção 14 dias. QA geral do SHA também **SUCCESS** no [run 41151028263](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41151028263). Browser QA do SHA ainda estava em execução na consulta; não declarar browser aprovado.
+
+**192 batalhas realmente concluídas:** 96 pares, 12 estratos (builds 0/3/5 × 4/30 personagens × aggro livre/espaçado), oito seeds por estrato, **24 replays exatos**. Primeiro alvo mudou 90 vezes; segmentos inicialmente obstruídos no snapshot pré-tick caíram de **128 para 53**. O vencedor mudou em **44/96 pares**. Não há violações detectadas do limite de distância inicial da alternativa escolhida. As 96 comparações compartilham seeds e configurações: não são 96 experimentos independentes.
+
+| Tamanho | Pares | Vencedor mudou | Segmentos obstruídos antes → depois | Vitórias Guardião antes → depois | Vitórias Caçador antes → depois |
+|---|---:|---:|---:|---:|---:|
+| 4 | 48 | 16 | 21 → 0 | 19 → 7 | 12 → 18 |
+| 30 | 48 | 28 | 107 → 53 | 29 → 25 | 6 → 13 |
+
+**Segmentação por classe no primeiro tick:** em 30 personagens, as 69 mudanças de primeiro alvo se concentraram em Guerreiro (12), Mago (30) e Caçador (27); nenhuma mudança de primeiro alvo do Guardião foi observada nas posições/builds amostradas. Isso **não** significa que a política ignore o Guardião ou que não mude seu combate posteriormente. Em 4 personagens, 21 mudanças de alvo ocorreram todas com o Mago. Os segmentos são avaliados no snapshot anterior ao tick, não no exato instante da escolha; em 15 mudanças, o alvo parecia inicialmente livre no snapshot. Não interpretar isso como erro comprovado de LOS.
+
+**Interpretação e pendências:** o protótipo pode melhorar a escolha geométrica inicial, mas alterou vencedores em 45,8% dos pares e não comprovou melhora real de colisão/projéteis ou equidade de classes. **Manter `experimentalVisibilityAwareTargets` desligado por padrão.** Próxima missão H.3: instrumentar o alvo no instante de escolha, incluir métricas de projétil/aggro e executar QA visual M10 3D Chromium antes de qualquer proposta de ativação. G.2 em PCs físicos, H.1/H.2 reais, `main`, merge, deploy e dados reais permanecem bloqueados.
