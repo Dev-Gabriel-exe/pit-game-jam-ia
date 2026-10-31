@@ -21,6 +21,16 @@ function save(s,d){const x=blank();x.route=routes.includes(d.route)?d.route:'loc
 function draftNotice(session){const k=key(session);if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. O rascunho permanece apenas nesta aba: copie a ficha de lançamento antes de sair.';if(writeStatus.get(k)===true)return 'Rascunho salvo neste navegador. Não enviado.';try{if(localStorage.getItem(k)!==null)return 'Rascunho salvo neste navegador. Não enviado.'}catch{}return 'Rascunho local. Não enviado.'}
 // Switching delivery methods changes what was actually verified. Preserve only the editable-project check.
 function switchRoute(d,route){if(!routes.includes(route)||d.route===route)return false;d.route=route;d.access='';d.checks=(Array.isArray(d.checks)?d.checks:[]).filter(n=>n===0);return true}
+// A declaração manual só vale para a versão do projeto, acesso e demonstração realmente conferidos.
+function updateField(d,id,value){
+ const f=fields.find(x=>x.id===id);
+ if(!f||typeof value!=='string'||d[id]===value)return [];
+ d[id]=value;
+ const affected=id==='project'?[0,1,2]:id==='access'?[1,2]:['mechanic','rule','demo'].includes(id)?[1]:[];
+ const old=Array.isArray(d.checks)?d.checks:[];
+ d.checks=old.filter(n=>!affected.includes(n));
+ return affected.filter(n=>old.includes(n));
+}
 function validLink(s){return /^https?:\/\/[^\s/@:?#]+\.[^\s/@:?#]+(?:[/:?#][^\s]*)?$/i.test(s)&&!/[?&](token|key|secret|password|auth|session)=/i.test(s)&&!s.includes('@')}
 function validate(s){const d=load(s);for(const f of fields)if(clean(d[f.id]).length<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};if(d.route==='gd'&&!validLink(d.access))return {ok:false,field:'access',label:'Informe link HTTP(S) sem credenciais, ou escolha Preview local.'};if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview.'};return {ok:true,label:'Ficha pronta para revisão humana.'}}
 const names={pitch:'Experiência',mechanic:'Mecânica',rule:'Regra',demo:'Demo',test:'Playtest',next:'Próximo',project:'Projeto',access:'Acesso'};
@@ -69,8 +79,8 @@ const review='<section class="m10s-review"><h3>O professor conseguirá jogar?</h
 return '<section class="m10s-root" id="m10sRoot">'+head+(c.phase==='practice'?form:c.phase==='review'?review:brief)+(window.PIT_FINAL_ACHIEVEMENT?window.PIT_FINAL_ACHIEVEMENT.render(c.approvedStages,c.preview):'')+'</section>'}
 function mount(c){const root=document.querySelector('#m10sRoot');if(!root)return;const d=load(c.session),locked=['submitted','approved'].includes(c.status);
 if(c.phase==='practice'&&window.PIT_GDEVELOP_M10_GUIDE){const g=root.querySelector('#g10Guide');window.PIT_GDEVELOP_M10_GUIDE.mount(g,{initialRoute:routes.indexOf(d.route),onRouteChange:id=>{if(!locked){const changed=switchRoute(d,id),hint=root.querySelector('#m10sAccessHelp'),access=root.querySelector('#m10s-access');if(changed){const ok=save(c.session,d);if(access)access.value='';root.querySelectorAll('[data-m10s-check]').forEach(el=>{if(Number(el.dataset.m10sCheck)>0)el.checked=false});const status=root.querySelector('#m10sStatus');if(status)status.textContent='Forma de entrega alterada: informe o novo acesso e repita as conferências de execução e privacidade. '+draftNotice(c.session)}if(hint)hint.textContent=accessHelp(id);if(access)access.placeholder=accessPlaceholder(id)}}});if(locked)g?.querySelectorAll('button').forEach(b=>b.disabled=true)}
-root.querySelectorAll('[data-m10s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m10sField]=el.value;const ok=save(c.session,d),status=root.querySelector('#m10sStatus');if(status)status.textContent=draftNotice(c.session)}));
+root.querySelectorAll('[data-m10s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const invalidated=updateField(d,el.dataset.m10sField,el.value);save(c.session,d);if(invalidated.length)root.querySelectorAll('[data-m10s-check]').forEach(box=>{box.checked=d.checks.includes(Number(box.dataset.m10sCheck))});const status=root.querySelector('#m10sStatus');if(status)status.textContent=(invalidated.length?'Campo alterado: repita as conferências desmarcadas antes de enviar. ':'')+draftNotice(c.session)}));
 root.querySelectorAll('[data-m10s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m10sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(c.session,d);const status=root.querySelector('#m10sStatus');if(status)status.textContent=draftNotice(c.session)}));
 root.querySelectorAll('[data-m10s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m10sNav==='practice'){c.onPhase('practice');return}const v=validate(c.session);if(!v.ok){c.onMessage(v.label);root.querySelector(v.field==='checks'?'[data-m10s-check]':'#m10s-'+v.field)?.focus();return}c.onPhase('review')}))}
-window.PIT_STUDENT_MISSION_TEN={fields,fieldHints,routes,accessHelp,accessPlaceholder,load,save,draftNotice,switchRoute,validLink,validate,evidence,parseEvidence,hydrate,profile,render,mount};
+window.PIT_STUDENT_MISSION_TEN={fields,fieldHints,routes,accessHelp,accessPlaceholder,load,save,draftNotice,switchRoute,updateField,validLink,validate,evidence,parseEvidence,hydrate,profile,render,mount};
 })();
