@@ -118,9 +118,32 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#pitProjectorContent details.pit-private-teacher-notes').count(),0,'projector excludes private note markup');
   await page.locator('#pitProjectorClose').click();
   assert.equal(await projectedNote.evaluate(el=>el.open),false,'private note stays closed after returning to mirrored panel');
+
+  // Defense-in-depth: tutorial cards generated directly without cleanCopy
+  // must never display private teacher notes, even if supplied accidentally.
+  await page.locator('.stage-btn[data-stage="7"]').click();
+  await page.locator('#phasebar [data-phase="demo"]').click();
+  const injected=await page.evaluate(()=>{
+   const guide=window.PIT_GDEVELOP_M07_GUIDE;
+   if(!guide||typeof guide.projectorCard!=='function')return false;
+   const original=guide.projectorCard;
+   guide.projectorCard=(route,step)=>original(route,step)+
+    '<details class="pit-private-teacher-notes" open><summary>▤</summary><p>QA_PRIVATE_M07_DO_NOT_PROJECT</p></details>'+
+    '<div data-private-note>QA_PRIVATE_ATTRIBUTE_DO_NOT_PROJECT</div>'+
+    '<aside class="teacher-private-note">QA_PRIVATE_CLASS_DO_NOT_PROJECT</aside>';
+   return true;
+  });
+  assert.equal(injected,true,'M07 dynamic projector tutorial available');
+  await page.locator('#pitProjectorLaunch').click();
+  await page.locator('#pitProjectorNext').click();
+  await page.locator('#pitProjectorNext').click();
+  assert.equal(await page.locator('#pitProjectorContent [data-pit-projector-step="M07:0"]').count(),1,'M07 raw generated tutorial slide rendered');
+  assert.equal(await page.locator('#pitProjectorContent .pit-private-teacher-notes, #pitProjectorContent [data-private-note], #pitProjectorContent .teacher-private-note').count(),0,'all private note selectors stripped from raw projector HTML');
+  assert.equal((await page.locator('#pitProjectorContent').textContent()).includes('QA_PRIVATE_'),false,'private synthetic text not projected');
+  await page.locator('#pitProjectorClose').click();
   assert.deepEqual(errors,[],width+'px no JavaScript errors');
   await context.close();
  }
  await browser.close();
- console.log('PASS V4 private teacher notes: M01-M10 practice and M04-M10 review; M09 neutral form and M10 student editor handoff in Chrome 390/1280px, default closed, discreet icon, keyboard open/close, Escape/stage navigation/pagehide guard');
+ console.log('PASS V4 private teacher notes: M01-M10 practice and M04-M10 review; M09 neutral form and M10 student editor handoff in Chrome 390/1280px, default closed, discreet icon, keyboard open/close, Escape/stage navigation/pagehide guard and raw M07 slide filtering');
 })().catch(e=>{console.error(e);process.exit(1)});
