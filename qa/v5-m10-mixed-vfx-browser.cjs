@@ -69,7 +69,7 @@ function within(a,b,gap=3){
      spriteFx:+stage.dataset.v5SpriteVisualEvents,
      spriteDropped:+stage.dataset.v5SpriteVisualDropped,
      cue:stage.dataset.v5TalentCueLast,style:stage.dataset.v5TalentCueStyle,
-     camera:stage.dataset.v5CameraShot,alive:+document.querySelector('#aliveCount').textContent.match(/\\d+/)?.[0],
+     camera:stage.dataset.v5CameraShot,alive:+document.querySelector('#aliveCount').textContent.match(/\d+/)?.[0],
      stage:box(stage),
      names:[...document.querySelectorAll('.arena-nickname')].filter(visible).map(el=>({id:el.dataset.fighterId,...box(el)})),
      hud:[...document.querySelectorAll('#battleSpotlight,#talentTelemetry,.battle-legend,.stage-flair')]
@@ -94,7 +94,7 @@ function within(a,b,gap=3){
    const screenshot=PREFIX+'-'+label+'.png';
    fs.writeFileSync(screenshot,Buffer.from(shot.data,'base64'));
    report.samples.push({label,threshold,...data,screenshot});
-   fs.writeFileSync(PREFIX+'.json',JSON.stringify(report,null,2)+'\\n');
+   fs.writeFileSync(PREFIX+'.json',JSON.stringify(report,null,2)+'\n');
    await page.locator('#pauseBattle').click();
   }
   await sample('early',5);
@@ -116,7 +116,7 @@ function within(a,b,gap=3){
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).every(b=>b.ids.length===5));
   report.m5Regression='5 talents, legacy M5 engine restored';
   assert.deepEqual(errors,[],'Uncaught browser errors: '+errors.join(' | '));
-  fs.writeFileSync(PREFIX+'.json',JSON.stringify(report,null,2)+'\\n');
+  fs.writeFileSync(PREFIX+'.json',JSON.stringify(report,null,2)+'\n');
   await cdp.detach();
   console.log('PASS M10 mixed-build VFX timeline: 30 GLBs, 3 visual snapshots, sprite cues, 29 spectators and M5 rollback.');
  }finally{await browser.close();}
