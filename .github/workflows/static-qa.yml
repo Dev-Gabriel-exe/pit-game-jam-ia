@@ -82,6 +82,11 @@ jobs:
         run: |
           node --check v3/hosting-policy.js
           node qa/v3-hosting-audit.cjs
+      - name: Verify M01 structured evidence recovery and local draft precedence
+        run: |
+          node --check v3/mission-one.js
+          node --check qa/v3-m01-legacy-evidence.cjs
+          node qa/v3-m01-legacy-evidence.cjs
       - name: Verify M02 structured evidence recovery and local draft precedence
         run: |
           node --check v3/student-mission-two.js
