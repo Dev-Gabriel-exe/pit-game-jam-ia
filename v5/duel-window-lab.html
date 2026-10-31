@@ -1,25 +1,62 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>V5 — Laboratório fictício de convites</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
 <style>
 :root{color-scheme:dark;font-family:system-ui;background:#10111b;color:#f5e9d5}
 body{max-width:1050px;margin:auto;padding:28px}h1{color:#e9c078}.panel{background:#202131;border:1px solid #6e5b45;border-radius:16px;padding:20px;margin:14px 0}
 button{background:#8b622d;color:white;border:1px solid #c7a56a;padding:12px 16px;border-radius:8px;cursor:pointer;margin:4px}
-button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible{outline:3px solid #f9da89}
+button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,select:focus-visible{outline:3px solid #f9da89;outline-offset:2px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
-#arena[hidden]{display:none}#arena{position:fixed;inset:5%;background:#161320;border:3px solid #b78a45;border-radius:18px;padding:24px;z-index:5;overflow:auto;box-shadow:0 0 0 100vmax #000b}
+#arena[hidden],#duelVisual[hidden],#fallbackStage[hidden]{display:none!important}#arena{position:fixed;inset:3%;background:#161320;border:3px solid #b78a45;border-radius:18px;padding:20px;z-index:5;overflow:auto;box-shadow:0 0 0 100vmax #000b}
 .stage{height:240px;background:radial-gradient(ellipse at center,#493f57,#151520 70%);display:flex;align-items:center;justify-content:space-around;border:2px solid #8d7044;border-radius:14px;font-size:3rem}
 small{color:#bdb6ac}.status{min-height:2em;color:#f5d9a0}
+#arena select{background:#2b2536;color:#fff;border:1px solid #b78a45;padding:10px;border-radius:7px;max-width:100%}
+#duelVisual{margin-top:12px} .duel-stage{position:relative;height:clamp(310px,46vh,525px);width:100%;overflow:hidden;background:#100d18;border:2px solid #8a6652;border-radius:12px}
+.duel-stage canvas{display:block;width:100%;height:100%}.arena-nickname-layer,.battle-float-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.arena-nickname-layer{z-index:4}.battle-float-layer{z-index:6}
+.arena-nickname{position:absolute;display:none;padding:4px 7px;border:1px solid #d7ae74;border-radius:6px;background:#120f19e8;color:#fff0d7;font:800 13px system-ui,sans-serif;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis;will-change:transform}
+.battle-float{position:absolute;font:900 18px system-ui,sans-serif;color:#ffcf8a;text-shadow:0 2px 4px black;white-space:nowrap;will-change:transform,opacity}.battle-float.critical{color:#ffea89}.battle-float.dodge{color:#a4f5f3}.battle-float.special{color:#e6b5ff}
+.duel-hud{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.duel-hud>div{min-width:0;padding:10px;border:1px solid #83654d;border-radius:9px;background:#26202d}.duel-hud strong{display:block;font-size:13px;overflow-wrap:anywhere}.hp-track{height:11px;border-radius:8px;background:#100f15;overflow:hidden;margin-top:8px}.hp-track span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#a84646,#d6ad70);transition:width .15s}.duel-hud small{display:block;margin-top:5px}
+@media(max-width:550px){body{padding:12px}#arena{inset:1%;padding:12px}.duel-stage{height:340px}.duel-hud strong{font-size:11px}}
 </style></head><body>
 <h1>Coliseu — simulação aluno e professor</h1>
-<p><strong>Somente laboratório.</strong> Personagens fictícios, sem API, WebSocket, contas, XP ou progressão real. Esta janela é uma maquete de duelo, não o motor WebGL.</p>
+<p><strong>Somente laboratório.</strong> Personagens fictícios, sem API, WebSocket, contas, XP ou progressão real. Após um convite aceito, é possível testar o motor real de combate da V5 em uma visualização 3D experimental, sem integração com alunos.</p>
 <div class="panel"><label><input id="teacher" type="checkbox" checked> Professor habilitou duelos (missão fictícia 3)</label><p id="summary" class="status" role="status" aria-live="polite"></p></div>
 <div class="grid"><section class="panel"><h2>Aluna A — convite</h2><button id="invite">Convidar B</button><div id="sender" class="status" role="status" aria-live="polite"></div></section>
 <section class="panel"><h2>Aluno B — notificação</h2><div id="recipient" class="status" role="status" aria-live="polite"></div><button id="accept">Sim, aceitar</button><button id="decline">Não, recusar</button></section></div>
 <section class="panel"><h2>Controle da simulação</h2><button id="open">Abrir janela de duelo</button><button id="reset">Reiniciar cenário</button><small>Após o aceite, simule um combate determinístico M5 ou M10 sem dados reais.</small></section>
-<section id="arena" role="dialog" aria-modal="true" aria-label="Arena de duelo fictícia" tabindex="-1" hidden><h2>Duelo 1 × 1 — laboratório</h2><p>Simulação determinística do motor de combate; não é visualização WebGL ou duelo real.</p><label for="battleMission">Arena experimental</label> <select id="battleMission"><option value="5">M5 — 5 talentos / 10 pontos</option><option value="10">M10 — 10 talentos / 20 pontos</option></select><button id="simulate">Simular combate</button><p id="battleResult" class="status" role="status" aria-live="polite">Aguardando simulação.</p><div class="stage"><span>⚔️ A</span><span>VS</span><span>🛡️ B</span></div><button id="close">Fechar arena</button></section>
-<script src="./duel-invitations-lab.js"></script>
+<section id="arena" role="dialog" aria-modal="true" aria-label="Arena de duelo fictícia" tabindex="-1" hidden>
+<h2>Duelo 1 × 1 — arena dos criadores</h2>
+<p>Dois personagens KayKit CC0 em combate automático experimental. A versão 3D usa o renderizador e motor existentes da V5; sem servidor, XP ou alunos reais.</p>
+<label for="battleMission">Arena experimental</label>
+<select id="battleMission"><option value="5">M5 — 5 talentos / 10 pontos</option><option value="10">M10 — 10 talentos / 20 pontos</option></select>
+<button id="visualize" type="button">▶ Iniciar arena 3D</button>
+<button id="pauseVisual" type="button" disabled>Ⅱ Pausar 3D</button>
+<button id="simulate" type="button">Simular resultado (texto)</button>
+<p id="visualStatus" class="status" role="status" aria-live="polite">Pronto para iniciar uma batalha 3D fictícia.</p>
+<div id="duelVisual" hidden>
+ <div class="duel-hud" aria-label="Vida dos dois participantes">
+  <div><strong id="hudAName">Aluna A</strong><div class="hp-track"><span id="hudAHp"></span></div><small id="hudAHpText">— PV</small></div>
+  <div><strong id="hudBName">Aluno B</strong><div class="hp-track"><span id="hudBHp"></span></div><small id="hudBHpText">— PV</small></div>
+ </div>
+ <div id="duelStage" class="duel-stage" aria-label="Arena WebGL 3D com exatamente dois personagens fictícios"></div>
+</div>
+<div id="fallbackStage" class="stage" aria-hidden="true"><span>⚔️ A</span><span>VS</span><span>🛡️ B</span></div>
+<p id="battleResult" class="status" role="status" aria-live="polite">Aguardando simulação.</p>
+<button id="close" type="button">Fechar arena</button>
+</section>
+<script src="./hero-core.js"></script>
 <script src="./phase2-combat.js"></script>
+<script src="./talent-vfx.js"></script>
+<script src="./talent-sprites.js"></script>
+<script src="./talent-choreography.js"></script>
+<script src="./camera-director.js"></script>
+<script src="./camera-framing.js"></script>
+<script src="./camera-viewer.js"></script>
+<script src="./performance-monitor.js"></script>
+<script src="./build-identity.js"></script>
+<script src="./character-assets.js"></script>
+<script src="./duel-invitations-lab.js"></script>
 <script src="./duel-battle-lab.js"></script>
 <script>
 (function(){
@@ -31,6 +68,7 @@ const view=key=>({rosterKey:'trial-'+key,progress:{currentStage:3,awaitingPeers:
 const a={view:view('aluna-a'),roomKey:'trial-room-demo',online:true};
 const b={view:view('aluno-b'),roomKey:'trial-room-demo',online:true};
 let state=D.createState(),lastFocus=null,backgroundInert=null,acceptedDescriptor=null;
+let duelVisual=null,visualGeneration=0;
 const notification=key=>D.notificationsFor(state,key).at(-1);
 function draw(){
  const sender=notification('trial-aluna-a'),recipient=notification('trial-aluno-b');
@@ -58,12 +96,65 @@ el('open').addEventListener('click',()=>action(()=>{
  for(const [node] of backgroundInert)node.inert=true;
  el('arena').hidden=false;document.body.style.overflow='hidden';el('close').focus();
 }));
+function stopVisual(){
+ visualGeneration++;
+ duelVisual?.dispose();duelVisual=null;
+ el('duelVisual').hidden=true;el('fallbackStage').hidden=false;
+ el('visualize').textContent='▶ Iniciar arena 3D';
+ el('pauseVisual').disabled=true;el('pauseVisual').textContent='Ⅱ Pausar 3D';
+}
 function close(){
+ stopVisual();
  if(el('arena').hidden)return;
  el('arena').hidden=true;document.body.style.overflow='';
  for(const [node,wasInert] of backgroundInert||[])node.inert=wasInert;
- backgroundInert=null;lastFocus?.focus();lastFocus=null;
+ backgroundInert=null;acceptedDescriptor=null;lastFocus?.focus();lastFocus=null;
 }
+function paintHud(snapshot){
+ if(!snapshot||snapshot.fighters.length!==2)return;
+ snapshot.fighters.forEach((fighter,i)=>{
+  const prefix=i===0?'hudA':'hudB';
+  el(prefix+'Name').textContent=fighter.name+' · '+fighter.klass;
+  el(prefix+'Hp').style.width=Math.max(0,Math.min(100,fighter.hp/fighter.maxHp*100)).toFixed(1)+'%';
+  el(prefix+'HpText').textContent=Math.ceil(fighter.hp)+' / '+fighter.maxHp+' PV'+(fighter.alive?'':' · eliminado');
+ });
+ if(snapshot.modelsFailed>0)el('visualStatus').textContent='Algum modelo KayKit não carregou. Feche e tente novamente; o resultado em texto segue disponível.';
+}
+el('battleMission').addEventListener('change',()=>{stopVisual();el('battleResult').textContent='Aguardando simulação.'});
+el('visualize').addEventListener('click',async()=>{
+ if(el('arena').hidden||!acceptedDescriptor)return;
+ stopVisual();const generation=++visualGeneration;
+ el('duelVisual').hidden=false;el('fallbackStage').hidden=true;
+ el('visualStatus').textContent='Preparando WebGL e personagens KayKit CC0…';
+ el('visualize').disabled=true;
+ try{
+  // Delayed import prevents a failed Three.js/CDN request from breaking invitations.
+  const module=await import('./duel-3d-lab.js');
+  if(generation!==visualGeneration||el('arena').hidden)return;
+  duelVisual=module.createDuelVisualization({
+   container:el('duelStage'),
+   onStatus:message=>{if(generation===visualGeneration)el('visualStatus').textContent=message},
+   onUpdate:snapshot=>{if(generation===visualGeneration)paintHud(snapshot)},
+   onFinish:result=>{
+    if(generation!==visualGeneration)return;
+    el('pauseVisual').disabled=true;
+    el('battleResult').textContent='M'+el('battleMission').value+' · Duelo 3D concluído · Vencedor: '+(result.winner?.name||'nenhum')+' · '+result.time+'s · 2 participantes fictícios';
+    el('visualStatus').textContent='Combate encerrado no motor da V5. Nenhum XP foi atribuído.';
+   }
+  });
+  duelVisual.start(acceptedDescriptor,{mission:Number(el('battleMission').value),seed:4252});
+  el('visualize').textContent='↻ Reiniciar arena 3D';el('pauseVisual').disabled=false;
+ }catch(error){
+  if(generation!==visualGeneration)return;
+  stopVisual();
+  el('visualStatus').textContent='3D indisponível: '+String(error.message||error)+'. Você ainda pode simular o resultado em texto.';
+ }finally{if(generation===visualGeneration)el('visualize').disabled=false;else el('visualize').disabled=false}
+});
+el('pauseVisual').addEventListener('click',()=>{
+ if(!duelVisual)return;
+ if(duelVisual.playing){duelVisual.pause();el('pauseVisual').textContent='▶ Continuar 3D'}
+ else if(duelVisual.resume()){el('pauseVisual').textContent='Ⅱ Pausar 3D'}
+});
 el('simulate').addEventListener('click',()=>{
  try{
   if(el('arena').hidden||!acceptedDescriptor)throw Error('Aceite obrigatório');
@@ -75,8 +166,15 @@ el('simulate').addEventListener('click',()=>{
  }catch(error){el('battleResult').textContent='Falha no laboratório: '+error.message}
 });
 el('close').addEventListener('click',close);
-el('arena').addEventListener('keydown',event=>{if(event.key==='Escape')close();if(event.key==='Tab'){event.preventDefault();el('close').focus()}});
-el('reset').addEventListener('click',()=>{close();acceptedDescriptor=null;state=D.createState();draw()});
+el('arena').addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();close();return}
+ if(event.key!=='Tab')return;
+ const tabs=[...el('arena').querySelectorAll('button:not(:disabled),select:not(:disabled)')];
+ const first=tabs[0],last=tabs.at(-1);
+ if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+ else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+});
+el('reset').addEventListener('click',()=>{close();state=D.createState();draw()});
 draw();
 })();
 </script></body></html>
