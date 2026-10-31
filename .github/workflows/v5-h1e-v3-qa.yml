@@ -12,6 +12,9 @@ on:
       - 'v5/duel-teacher-d1c.js'
       - 'qa/v5-h1e-v3-browser.cjs'
       - 'index.html'
+      - 'homologacao-v5.html'
+      - 'v5/shared-arena-feed-h2-lab.js'
+      - 'v5/build-lock-cas-h1b-lab.js'
       - 'v5/duel-window-lab.html'
       - 'v5/teacher-arena-lab.html'
       - '.github/workflows/v5-h1e-v3-qa.yml'
@@ -21,7 +24,7 @@ permissions:
 jobs:
   v3-integration:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,6 +40,10 @@ jobs:
           node --check qa/v5-h1e-v3-browser.cjs
           node --check v5/duel-invitations-lab.js
           node --check v5/teacher-arena-release-lab.js
+          node qa/v5-duel-journey-lab.cjs
+          node qa/v5-teacher-arena-release-lab.cjs
+          node qa/v5-build-lock-cas-h1b.cjs
+          node qa/v5-shared-arena-feed-h2.cjs
       - name: Install headless Chromium and locally mapped Three.js
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
@@ -48,3 +55,6 @@ jobs:
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           sleep 2
           node qa/v5-h1e-v3-browser.cjs
+          node qa/v5-duel-window-browser.cjs
+          node qa/v5-duel-3d-browser.cjs
+          node qa/v5-teacher-arena-browser.cjs
