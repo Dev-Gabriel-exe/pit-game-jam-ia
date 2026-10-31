@@ -91,4 +91,44 @@ m.save('existing',{...data,condition:'Meu rascunho local deve permanecer'});
 m.hydrate('existing',evid,'approved');
 ok(m.load('existing').condition==='Meu rascunho local deve permanecer',
  'Existing M05 draft survives remote hydration');
+// Denied localStorage must not silently discard a student's GDevelop rule.
+const deniedWindow={},deniedStorage={
+ getItem:()=>{throw Error('SecurityError')},
+ setItem:()=>{throw Error('QuotaExceededError')}
+};
+vm.runInNewContext(studentCode,{window:deniedWindow,localStorage:deniedStorage});
+const denied=deniedWindow.PIT_STUDENT_MISSION_FIVE;
+const offline={...data,route:2,checks:[0,1,2]};
+ok(denied.save('offline',offline)===false,'M05 denied storage reports failure');
+ok(denied.load('offline').route===2,'M05 3D route retained in current tab');
+ok(denied.load('offline').condition===data.condition,'M05 SE condition retained in current tab');
+ok(denied.load('offline').checks.length===3,'M05 manual Preview checks retained in current tab');
+ok(denied.load('another').condition===''&&denied.load('another').route===null,
+ 'M05 volatile fallback isolated per session');
+const offlineCtx={...ctx,session:'offline',phase:'practice'};
+const offlinePractice=denied.render(offlineCtx);
+ok(offlinePractice.includes('Não foi possível salvar neste navegador'),
+ 'M05 practice discloses denied storage');
+ok(offlinePractice.includes('Copie sua ficha antes de sair'),
+ 'M05 practice gives an actionable fallback');
+ok(!offlinePractice.includes('rascunho salvo neste navegador'),
+ 'M05 practice does not falsely claim durable storage');
+const offlineReview=denied.render({...offlineCtx,phase:'review'});
+ok(offlineReview.includes('O rascunho não foi salvo no navegador'),
+ 'M05 review discloses denied storage');
+ok(offlineReview.includes('Copie o texto da ficha antes de sair'),
+ 'M05 review offers copyable evidence');
+ok(denied.render({...ctx,session:'new',phase:'practice'}).includes('comece a preencher para salvar'),
+ 'M05 new session is not incorrectly marked saved');
+denied.hydrate('restored',evid,'approved');
+ok(denied.load('restored').condition===data.condition,
+ 'M05 legacy evidence restores in volatile fallback');
+ok(denied.load('restored').checks.length===0,
+ 'M05 historical evidence never invents manual Preview tests');
+denied.hydrate('offline',evid,'approved');
+ok(denied.load('offline').route===2&&denied.load('offline').checks.length===3,
+ 'M05 remote approval never overwrites local volatile draft');
+ok(m.save('writable',data)===true,'M05 writable storage returns success');
+ok(m.render({...ctx,session:'writable'}).includes('rascunho salvo neste navegador'),
+ 'M05 writable storage correctly reports persisted draft');
 console.log('PASS '+count+' M05 student module regressions. Browser/GDevelop/API E2E not run.');
