@@ -170,8 +170,83 @@ function within(inner,outer,tolerance=3){
    assert(contrast.length>=5,'Expected at least five visible solid-background controls for AA audit');
    for(const item of contrast)assert(item.ratio>=4.5,
     'WCAG AA normal-text contrast below 4.5:1 on '+screen.label+': '+JSON.stringify(item));
+   // H.3/M10: scene-facing HUD is translucent over animated WebGL. Audit
+   // conservative black/grey/white backdrop samples under CSS overlays,
+   // including gradient stops and midpoints. This is not pixel OCR, a claim
+   // about every rendered frame, or a substitute for human projector review.
+   const hudSceneContrast=await page.evaluate(()=>{
+    const parseColor=value=>{
+     const match=String(value).match(/rgba?\(([^)]+)\)/i);
+     const nums=match?.[1].match(/[\d.]+/g)?.map(Number);
+     if(!nums||nums.length<3||nums.some(n=>!Number.isFinite(n)))return null;
+     return {rgb:nums.slice(0,3),alpha:nums.length>3?nums[3]:1};
+    };
+    const mix=(front,back,alpha)=>front.map((v,i)=>v*alpha+back[i]*(1-alpha));
+    const luminance=rgb=>{
+     const linear=rgb.map(v=>{const s=v/255;return s<=.04045?s/12.92:((s+.055)/1.055)**2.4});
+     return .2126*linear[0]+.7152*linear[1]+.0722*linear[2];
+    };
+    const ratio=(a,b)=>{const x=luminance(a),y=luminance(b);
+     return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
+    };
+    const audits=[
+     ['spotlight-heading','.spotlight-heading','#battleSpotlight'],
+     ['spotlight-event','#spotlightText','#battleSpotlight'],
+     ['spotlight-detail','.spotlight-detail','#battleSpotlight'],
+     ['legend-hit','.battle-legend span:nth-child(1)','.battle-legend'],
+     ['legend-dodge','.battle-legend span:nth-child(2)','.battle-legend'],
+     ['legend-special','.battle-legend span:nth-child(3)','.battle-legend'],
+     ['legend-elimination','.battle-legend span:nth-child(4)','.battle-legend'],
+     ['talent-label','#talentTelemetry span','#talentTelemetry'],
+     ['talent-name','#talentLast','#talentTelemetry'],
+     ['talent-count','#talentCount','#talentTelemetry'],
+     ['nickname-style','.arena-nickname','.arena-nickname']
+    ];
+    return audits.map(([id,textSelector,panelSelector])=>{
+     const label=document.querySelector(textSelector),panel=document.querySelector(panelSelector);
+     if(!label||!panel)return {id,error:'missing HUD element'};
+     const textStyle=getComputedStyle(label),panelStyle=getComputedStyle(panel);
+     const foreground=parseColor(textStyle.color);
+     const stops=[...panelStyle.backgroundImage.matchAll(/rgba?\([^)]+\)/gi)]
+      .map(m=>parseColor(m[0])).filter(Boolean);
+     if(!stops.length){
+      const solid=parseColor(panelStyle.backgroundColor);
+      if(solid)stops.push(solid);
+     }
+     if(!foreground||!stops.length)return {id,error:'unparseable foreground or background'};
+     if(Number(textStyle.opacity)<.99||Number(panelStyle.opacity)<.99)
+      return {id,error:'translucent element opacity needs pixel-level review'};
+     const backdrops=[[0,0,0],[127,127,127],[255,255,255]];
+     const samples=[];
+     for(let k=0;k<stops.length-1;k++){
+      for(const t of [0,.25,.5,.75]){
+       const from=stops[k],to=stops[k+1];
+       const stop={rgb:from.rgb.map((v,i)=>v*(1-t)+to.rgb[i]*t),
+        alpha:from.alpha*(1-t)+to.alpha*t};
+       for(const backdrop of backdrops){
+        const bg=mix(stop.rgb,backdrop,stop.alpha);
+        const fg=mix(foreground.rgb,bg,foreground.alpha);
+        samples.push(ratio(fg,bg));
+       }
+      }
+     }
+     for(const backdrop of backdrops){
+      const stop=stops.at(-1),bg=mix(stop.rgb,backdrop,stop.alpha);
+      samples.push(ratio(mix(foreground.rgb,bg,foreground.alpha),bg));
+     }
+     return {id,minRatio:+Math.min(...samples).toFixed(3),sampleCount:samples.length,
+      backdropExtremes:'black / gray / white',gradientStops:stops.length,
+      proxyStyle:id==='nickname-style'};
+    });
+   });
+   assert.equal(hudSceneContrast.length,11,'Expected eleven HUD text contrast probes');
+   for(const item of hudSceneContrast){
+    assert(!item.error,'Scene HUD contrast could not be audited: '+JSON.stringify(item));
+    assert(item.minRatio>=4.5,'Scene HUD contrast below WCAG AA sampled 4.5:1 on '+
+     screen.label+': '+JSON.stringify(item));
+   }
    const filename=OUT+'-'+screen.label+'.png';
-   report.screens.push({label:screen.label,...metric,contrast,screenshot:filename});
+   report.screens.push({label:screen.label,...metric,contrast,hudSceneContrast,screenshot:filename});
    fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
    // CDP avoids Playwright's animation-stability wait on a live WebGL canvas.
    const cdp=await page.context().newCDPSession(page);
