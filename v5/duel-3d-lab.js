@@ -10,13 +10,13 @@ export function createDuelVisualization({
  if(!container)throw Error('Recipiente 3D obrigatório');
  const combat=window.PIT_V5_PHASE2,adapter=window.PIT_V5_DUEL_BATTLE_LAB;
  if(!combat||!adapter)throw Error('Motor V5 de laboratório não foi carregado');
- let stage=null,interval=null,disposed=false,ended=false;
+ let stage=null,interval=null,disposed=false,ended=false,started=false,loadStartedAt=0;
  const stopMonitor=()=>{if(interval!==null){clearInterval(interval);interval=null}};
  function stop(){
   stopMonitor();
   if(stage){stage.dispose();stage=null}
   container.replaceChildren();
-  ended=false;
+  ended=false;started=false;
  }
  function snapshot(){
   if(!stage?.simulation)return null;
@@ -28,7 +28,8 @@ export function createDuelVisualization({
     hp:Math.max(0,Number(f.hp)||0),maxHp:f.stats.hp
    })),
    modelsLoaded:Number(container.dataset.v5ModelsLoaded||0),
-   modelsFailed:Number(container.dataset.v5ModelsFailed||0)
+   modelsFailed:Number(container.dataset.v5ModelsFailed||0),
+   modelsReady:started
   };
  }
  function start(descriptor,{mission=5,seed=4252}={}){
@@ -54,13 +55,24 @@ export function createDuelVisualization({
    });
    stage.fighters(roster,{arenaMission:mission,seed,limit:95});
    stage.enableAutoCamera(true);
-   stage.resume();
-   onStatus('Câmera cinematográfica ativa. Carregando dois modelos KayKit CC0…');
+   loadStartedAt=Date.now();started=false;
+   onStatus('Carregando os dois personagens KayKit CC0. O combate só começa quando ambos estiverem visíveis.');
    onUpdate(snapshot());
    interval=setInterval(()=>{
     if(disposed||!stage)return;
     const s=snapshot();
-    if(s)onUpdate(s);
+    if(!started){
+     if(s?.modelsFailed>0||Date.now()-loadStartedAt>35000){
+      stopMonitor();stage.pause();
+      onStatus('Modelos GLB indisponíveis. Não iniciaremos um duelo invisível. Tente reiniciar ou use a simulação textual.');
+      onUpdate(s);return;
+     }
+     if(s?.modelsLoaded===2){
+      started=true;stage.resume();
+      onStatus('Os dois heróis KayKit carregaram. Duelo 3D iniciado com câmera cinematográfica.');
+     }
+    }
+    if(s)onUpdate({...s,modelsReady:started});
     if(stage.simulation?.finished&&!ended){
      ended=true;stopMonitor();onFinish(stage.simulation.result());
     }
@@ -68,8 +80,8 @@ export function createDuelVisualization({
    return {mission,players:trial.aliases};
   }catch(error){stop();throw error}
  }
- function pause(){if(stage?.playing){stage.pause();onStatus('Combate 3D pausado');return true}return false}
- function resume(){if(stage&&!stage.playing&&!stage.simulation?.finished){stage.resume();onStatus('Combate 3D retomado');return true}return false}
+ function pause(){if(started&&stage?.playing){stage.pause();onStatus('Combate 3D pausado');return true}return false}
+ function resume(){if(started&&stage&&!stage.playing&&!stage.simulation?.finished){stage.resume();onStatus('Combate 3D retomado');return true}return false}
  function dispose(){if(disposed)return;disposed=true;stop()}
  return Object.freeze({start,pause,resume,dispose,
   get playing(){return !!stage?.playing},
