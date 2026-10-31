@@ -9,7 +9,7 @@ for(const [klass,cues] of Object.entries(map))for(const cue of cues){
  const spec=S.spec(cue.style);
  assert(spec,'Missing sprite for '+klass+':'+cue.id);
  assert(spec.duration>0&&spec.duration<=1.0);
- assert(spec.frames===6);
+ assert(spec.frames===8);
  assert(spec.size>=1.25);
  assert(spec.opacity>0&&spec.opacity<=1);
  assert(spec.family&&spec.style===cue.style);
