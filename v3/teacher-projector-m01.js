@@ -727,6 +727,13 @@ function render(){
  $('pitProjectorPrev').disabled=index===0;$('pitProjectorNext').disabled=index===slides.length-1;
  $('pitProjectorProgress').style.width=((index+1)/slides.length*100)+'%';
 }
+// The projected lesson is a modal. Keep keyboard focus on its own controls;
+// otherwise Tab can reach the mirrored teacher workspace behind the slides.
+function projectorFocusable(){
+ if(!overlay)return [];
+ return [...overlay.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]),[contenteditable="true"]')]
+  .filter(el=>!el.closest('[hidden],[inert]')&&el.getClientRects().length>0);
+}
 function close(){
  if(!overlay)return;
  projectorResizeObserver?.disconnect();projectorResizeObserver=null;
@@ -757,6 +764,15 @@ function open(){
  render();$('pitProjectorClose').focus();
 }
 document.addEventListener('keydown',e=>{if(!overlay)return;
+ if(e.key==='Tab'){
+  const items=projectorFocusable();
+  if(!items.length){e.preventDefault();overlay.tabIndex=-1;overlay.focus();return;}
+  const first=items[0],last=items[items.length-1],active=document.activeElement;
+  if(!overlay.contains(active)){e.preventDefault();(e.shiftKey?last:first).focus();return;}
+  if(e.shiftKey&&active===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&active===last){e.preventDefault();first.focus();}
+  return;
+ }
  // Keep native keyboard behavior in interactive projected examples (e.g. M08 radio controls).
  // Escape must still close the projector even when a control has focus.
  if(e.key!=='Escape'&&e.target?.closest?.('input,textarea,select,[contenteditable="true"],[role="radio"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"]'))return;
