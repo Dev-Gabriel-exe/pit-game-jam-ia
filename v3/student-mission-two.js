@@ -22,17 +22,30 @@ function load(session){
 }
 function save(session,data){try{localStorage.setItem(key(session),JSON.stringify(data))}catch{}}
 function parseEvidence(raw){
- if(typeof raw!=='string'||!raw.startsWith('MISSÃO 02 — MVP EM FOCO'))return null;
- const lines=raw.split('\n'),take=prefix=>{const line=lines.find(l=>l.startsWith(prefix));return line?line.slice(prefix.length).trim():''};
- const later=take('Depois: ');
-  return {scene:take('Cena: '),mechanic:take('Mecânica: '),elements:take('Elementos: '),test:take('Teste: '),later:later==='Não informado'?'':later};
+ // API antiga podia achatar as linhas. Nao reconstruir respostas por suposicao.
+ if(typeof raw!=='string')return null;
+ const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+ const labels=['Jogo: ','Gênero: ','Cena: ','Mecânica: ','Elementos: ','Teste: ','Depois: '];
+ if(lines.length!==labels.length+1||lines[0]!=='MISSÃO 02 — MVP EM FOCO')return null;
+ const values=[];
+ for(let i=0;i<labels.length;i++){
+  if(!lines[i+1].startsWith(labels[i]))return null;
+  const value=lines[i+1].slice(labels[i].length);
+  if(value!==value.trim())return null;
+  values.push(value);
+ }
+ const [title,genre,scene,mechanic,elements,test,later]=values;
+ if(title.length>50||genre.length>25)return null;
+ const d={scene,mechanic,elements,test,later:later==='Não informado'?'':later};
+ if(FIELDS.some(f=>clean(d[f.id]).length<f.min||d[f.id].length>f.max))return null;
+ if(parts(d.elements).length!==3)return null;
+ return d;
 }
 function hydrate(session,raw,status){
  const obj=parseEvidence(raw);if(!obj)return;
- if(Object.values(load(session)).some(Boolean)&&!['approved','submitted'].includes(status))return;
- // Uma entrega remota parcial nao pode apagar um rascunho local valido,
-  // inclusive quando o status ja estiver submitted/approved.
-  if(FIELDS.every(f=>clean(obj[f.id]).length>=f.min&&obj[f.id].length<=f.max)&&parts(obj.elements).length===3)save(session,obj);
+ // Rascunhos locais sempre prevalecem, inclusive com entrega aprovada.
+ if(Object.values(load(session)).some(Boolean))return;
+ save(session,obj);
 }
 function validate(session){
  const d=load(session);
@@ -147,10 +160,11 @@ function delivery(ctx){
 }
 function evidence(session,source){
  const i=getIdea({idea:source}),d=load(session);
- const lines=['MISSÃO 02 — MVP EM FOCO','Jogo: '+clean(i.title),'Gênero: '+clean(i.genre),
+ // Orçamento total máximo: 747 caracteres; nunca truncar um campo no meio.
+ const lines=['MISSÃO 02 — MVP EM FOCO','Jogo: '+clean(i.title).slice(0,50),'Gênero: '+clean(i.genre).slice(0,25),
   'Cena: '+clean(d.scene),'Mecânica: '+clean(d.mechanic),'Elementos: '+clean(d.elements),
   'Teste: '+clean(d.test),'Depois: '+clean(d.later||'Não informado')];
- return lines.join('\n').slice(0,750);
+ return lines.join('\n');
 }
 function render(ctx){return '<div class="m2-root" id="m2Root">'+header(ctx.phase,ctx)+(ctx.phase==='practice'?building(ctx):ctx.phase==='review'?delivery(ctx):intro(ctx))+'</div>'}
 function mount(ctx){
@@ -194,5 +208,5 @@ function mount(ctx){
  }));
  redraw();
 }
-window.PIT_STUDENT_MISSION_TWO={render,mount,load,save,hydrate,validate,evidence,progress,example};
+window.PIT_STUDENT_MISSION_TWO={render,mount,load,save,parseEvidence,hydrate,validate,evidence,progress,example};
 })();
