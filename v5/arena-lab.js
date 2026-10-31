@@ -156,7 +156,7 @@ function onEvent(event){
  const hero=heroName(event.hero),target=heroName(event.target);
  if(event.type==='talent'){
   const name=event.name||event.talent;
-  spotlight('✦ '+hero+' usou '+name,'Talento '+event.talent+' · Missão 5',event.hero,'special',3,t);
+  spotlight('✦ '+hero+' usou '+name,'Talento '+event.talent+' · Missão '+state.mission,event.hero,'special',3,t);
   appendLog('✦ '+hero+' ativou '+name+' ('+event.talent+')','special');
   state.abilityCount++;
   $('talentLast').textContent=name+' · '+hero;
