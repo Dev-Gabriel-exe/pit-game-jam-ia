@@ -103,6 +103,7 @@ function stopVisual(){
  el('duelVisual').hidden=true;el('fallbackStage').hidden=false;
  el('visualize').textContent='▶ Iniciar arena 3D';
  el('pauseVisual').disabled=true;el('pauseVisual').textContent='Ⅱ Pausar 3D';
+ el('simulate').disabled=false;
 }
 function close(){
  stopVisual();
@@ -120,7 +121,10 @@ function paintHud(snapshot){
   el(prefix+'HpText').textContent=Math.ceil(fighter.hp)+' / '+fighter.maxHp+' PV'+(fighter.alive?'':' · eliminado');
  });
  el('pauseVisual').disabled=!snapshot.modelsReady;
- if(snapshot.modelsFailed>0)el('visualStatus').textContent='Algum modelo KayKit não carregou. Reinicie o 3D; o resultado em texto segue disponível.';
+ if(snapshot.modelsFailed>0){
+  el('visualStatus').textContent='Algum modelo KayKit não carregou. Reinicie o 3D; o resultado em texto segue disponível.';
+  el('simulate').disabled=false;
+ }
 }
 el('battleMission').addEventListener('change',()=>{stopVisual();el('battleResult').textContent='Aguardando simulação.'});
 el('visualize').addEventListener('click',async()=>{
@@ -128,14 +132,17 @@ el('visualize').addEventListener('click',async()=>{
  stopVisual();const generation=++visualGeneration;
  el('duelVisual').hidden=false;el('fallbackStage').hidden=true;
  el('visualStatus').textContent='Preparando WebGL e personagens KayKit CC0…';
- el('visualize').disabled=true;
+ el('visualize').disabled=true;el('simulate').disabled=true;
  try{
   // Delayed import prevents a failed Three.js/CDN request from breaking invitations.
   const module=await import('./duel-3d-lab.js');
   if(generation!==visualGeneration||el('arena').hidden)return;
   duelVisual=module.createDuelVisualization({
    container:el('duelStage'),
-   onStatus:message=>{if(generation===visualGeneration)el('visualStatus').textContent=message},
+   onStatus:message=>{if(generation===visualGeneration){
+    el('visualStatus').textContent=message;
+    if(message.startsWith('Modelos GLB indisponíveis'))el('simulate').disabled=false;
+   }},
    onUpdate:snapshot=>{if(generation===visualGeneration)paintHud(snapshot)},
    onFinish:result=>{
     if(generation!==visualGeneration)return;
