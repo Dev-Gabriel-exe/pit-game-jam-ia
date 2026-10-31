@@ -78,7 +78,7 @@ function draw(){
  el('invite').disabled=!context().duelsEnabled||state.invitations.some(x=>['pending','accepted'].includes(x.status));
  el('accept').disabled=!pending||!context().duelsEnabled;
  el('decline').disabled=!pending||!context().duelsEnabled;
- el('open').disabled=recipient?.status!=='accepted';
+ el('open').disabled=recipient?.status!=='accepted'||!context().duelsEnabled;
  el('summary').textContent='Revisão '+state.revision+' · '+(context().duelsEnabled?'Duelos habilitados':'Duelos bloqueados');
 }
 function action(fn){try{fn()}catch(err){el('summary').textContent=err.message}draw()}
@@ -88,6 +88,7 @@ function reply(decision){action(()=>{state=D.respond(state,{id:state.invitations
 el('accept').addEventListener('click',()=>reply('accept'));
 el('decline').addEventListener('click',()=>reply('decline'));
 el('open').addEventListener('click',()=>action(()=>{
+ if(!context().duelsEnabled)throw Error('Professor bloqueou os duelos');
  const descriptor=D.arenaWindowFor(state,{id:state.invitations.at(-1).id,actor:'trial-aluna-a'});
  if(descriptor.kind!=='fictional-duel-window')throw Error('Janela não autorizada');
  acceptedDescriptor=descriptor;el('battleResult').textContent='Aguardando simulação.';
