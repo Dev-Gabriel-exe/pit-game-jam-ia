@@ -220,6 +220,13 @@ for(const mission of [5,10]){
  assert.equal(teacher.cursor,studentA.cursor);assert.equal(studentA.cursor,studentB.cursor);
  assert.deepEqual(teacher.snapshot,studentA.snapshot);
  assert.deepEqual(studentA.snapshot,studentB.snapshot);
+ // A late pre-victory packet may arrive after the final result; it is not a
+ // new match and must not revive a fighter or alter the winner on screen.
+ const finalFrame=studentA.snapshot,finalCursor=studentA.cursor;
+ assert.equal(studentA.accept(initial),false,'stale frame after victory is ignored');
+ assert.equal(studentA.cursor,finalCursor);
+ assert.deepEqual(studentA.snapshot,finalFrame);
+ assert.equal(studentA.needsSnapshot,false);
  assert.equal(publisher.historySize<=12,true);
  assert.equal(JSON.stringify(teacher.snapshot).includes('approvedBaseXp'),false);
  assert.equal(JSON.stringify(teacher.snapshot).includes('build'),false);
