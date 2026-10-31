@@ -22,10 +22,12 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const clean=x=>String(x??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
 const fresh=()=>({route:null,checks:[],...Object.fromEntries(fields.map(f=>[f.key,'']))});
 const key=id=>'pit_v3_m05_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+// Volatile fallback is isolated per session and lives only in this tab.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function load(id){
  const d=fresh();
  try{
-  const x=JSON.parse(localStorage.getItem(key(id))||'{}');
+  const k=key(id),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');
   if(Number.isInteger(x.route)&&x.route>=0&&x.route<3)d.route=x.route;
   for(const f of fields)if(typeof x[f.key]==='string')d[f.key]=x[f.key].slice(0,f.max);
   d.checks=Array.isArray(x.checks)?[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
@@ -37,8 +39,16 @@ function save(id,raw){
  d.route=Number.isInteger(raw.route)&&raw.route>=0&&raw.route<3?raw.route:null;
  for(const f of fields)d[f.key]=String(raw[f.key]??'').slice(0,f.max);
  d.checks=Array.isArray(raw.checks)?[...new Set(raw.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
- try{localStorage.setItem(key(id),JSON.stringify(d))}catch{}
- return d;
+ const k=key(id);volatileDrafts.set(k,d);
+ try{localStorage.setItem(k,JSON.stringify(d));writeStatus.set(k,true);return true;}
+ catch{writeStatus.set(k,false);return false;}
+}
+function draftNotice(id,completed){
+ const k=key(id),prefix=completed+'/8 critérios registrados · ';
+ if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(k)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(k)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
 }
 function suggestedRoute(ctx={}){
  const m4=ctx.playable||{};
@@ -229,7 +239,7 @@ function practice(ctx){
  '<div class="m5s-lab"><section class="m5s-form"><small>◈ CADERNO DE ENGENHARIA · REGISTRO AUTORAL</small><h3>O que você implementou e comprovou?</h3>'+
  '<p>Os exemplos nos campos são apenas pistas; cada resposta descreve o que aconteceu no SEU jogo, não no exemplo da página.</p>'+
  fields.map(f=>input(f,d,ctx,r,locked)).join('')+checks(d,locked)+
- '<div class="m5s-form-footer"><span id="m5sStatus" aria-live="polite">Rascunho salvo neste navegador.</span>'+
+ '<div class="m5s-form-footer"><span id="m5sStatus" aria-live="polite" role="status">'+esc(draftNotice(ctx.session,completed))+'</span>'+
  '<button type="button" class="m5s-primary" data-m5s-nav="review">CONFERIR MINHA EVIDÊNCIA ›</button></div></section>'+
  '<aside class="m5s-aside"><div class="m5s-aside-art"><span>✦ A PRIMEIRA REGRA</span></div>'+
  '<div class="m5s-aside-content"><small>PAINEL DO PROTÓTIPO</small><h4>'+esc(p.title)+'</h4>'+
@@ -253,7 +263,8 @@ function review(ctx){
  '<div class="m5s-summary-grid">'+summary.map(([label,value])=>'<div><small>'+esc(label)+'</small><p>'+esc(value)+'</p></div>').join('')+'</div>'+
  '<label for="evidenceInput">Evidência estruturada para o professor</label>'+
  '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx))+'</textarea>'+
- '<small>Esta evidência é um relato. Se necessário, demonstre o resultado no Preview.</small></div>'+
+ '<small>Esta evidência é um relato. Se necessário, demonstre o resultado no Preview.</small>'+ 
+ (writeStatus.get(key(ctx.session))===false?'<p class="m5s-warning" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+
  (!fixed&&!v.ok?'<div class="m5s-warning">'+esc(v.label)+'</div>':'')+
  '<div class="m5s-actions"><button type="button" class="m5s-back" data-m5s-nav="practice" '+(fixed?'disabled':'')+'>‹ CORRIGIR REGISTRO</button>'+
  '<button type="button" class="m5s-primary" id="submitWork" '+(!v.ok||fixed||(!ctx.canSubmit&&!ctx.preview)?'disabled':'')+'>'+
@@ -289,7 +300,7 @@ function mount(ctx){
   const c=root.querySelector('#m5sComplete'),g=root.querySelector('#m5sGauge'),s=root.querySelector('#m5sStatus');
   if(c)c.textContent=String(count);
   if(g)g.style.width=(count/8*100)+'%';
-  if(s)s.textContent=count+'/8 critérios preenchidos · rascunho salvo neste navegador';
+  if(s)s.textContent=draftNotice(ctx.session,count);
   root.querySelectorAll('[data-m5s-preview]').forEach(el=>{
    el.textContent=clean(d[el.dataset.m5sPreview])||'Aguardando resultado real';
   });
@@ -316,5 +327,5 @@ function mount(ctx){
  }));
  redraw();
 }
-window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,evidence,parseEvidence,hydrate,render,mount};
+window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,draftNotice,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,evidence,parseEvidence,hydrate,render,mount};
 })();
