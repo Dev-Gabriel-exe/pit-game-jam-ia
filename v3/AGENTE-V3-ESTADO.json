@@ -2756,14 +2756,14 @@
         "qa/v3-m09-field-guidance.cjs",
         "v3/AUDITORIA-V4-MISSOES.md"
       ],
-      "tests": "Static QA do código e14c2a0 SUCCESS via GitHub Actions; regressão f6334ff static QA e Browser QA IN_PROGRESS na consulta. QA anterior do filtro HDMI 120eff23 SUCCESS em Chrome. Nenhum teste humano/GDevelop GUI/HDMI físico executado.",
+      "tests": "Native Node static QA run 41168176406 SUCCESS, including M09 negative regression step; Browser QA run 41168176450 IN_PROGRESS. Prior M07 projector Chrome run 41163495885 SUCCESS. No physical/human tests.",
       "notes": "M09 parseEvidence exige cabeçalho exato, nove campos ordenados e dentro dos limites, decisão compatível com resultado e sem truncamento; hydrate preserva inclusive rascunhos apenas com rádio ou checkbox. Regressões adicionadas à suíte já integrada à CI. Roadmap 54/59; main intacta."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-M09-LEGACY-EVIDENCE-STRICT",
     "status": "in_progress",
-    "updated_at": "2026-10-31T04:21:17.306Z",
+    "updated_at": "2026-10-31T04:21:55.224Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2895,7 +2895,7 @@
       "e14c2a0af7a8a4a5523c7ab4711c2d0700fde887",
       "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf"
     ],
-    "documentation_commit": "96174ff7a39422f76652c67dc310660873a10455",
+    "documentation_commit": "0747732b487a1dbfe95da1ad8772c43a2d07a251",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3890,7 +3890,11 @@
       {
         "name": "M09 strict historical evidence + draft guard",
         "sha": "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf",
-        "result": "Code commit e14c2a0 static QA SUCCESS. New regression commit f6334ff native Node static QA and Chrome Browser QA IN_PROGRESS at last GitHub workflow inspection; no PASS claimed. M07 projector filter previous Browser QA on 120eff23 SUCCESS."
+        "result": "SUCCESS: native Node static QA run 41168176406, including M09 field guidance negative regression step. Browser QA run 41168176450 IN_PROGRESS at latest inspection. Prior M07 HDMI filter Browser QA run 41163495885 SUCCESS. Physical HDMI/GDevelop GUI/real mobile/human NOT_RUN.",
+        "run_ids": [
+          41168176406,
+          41168176450
+        ]
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
@@ -3898,6 +3902,6 @@
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
     "next_task": "Confirmar GitHub Actions Node/Chrome do commit f6334ff; corrigir se falhar. Prosseguir com auditoria pedagógica das 20 faces, verificando evidências e apresentação espelhada.",
-    "blocker": "CI nativa do novo teste M09 pendente; homologação humana, HDMI físico, GDevelop GUI e celular físico NOT_RUN. Cinco tarefas do release gate bloqueadas por validação presencial."
+    "blocker": "M09 native static QA SUCCESS; Chrome Browser QA run 41168176450 pending. Physical HDMI, GDevelop GUI, mobile and peer playtest NOT_RUN. Five release gate tasks remain blocked."
   }
 }
