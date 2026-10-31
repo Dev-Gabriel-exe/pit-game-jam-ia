@@ -69,7 +69,7 @@ for(const [route,term] of [['hud','contador'],['puzzle','pontuação'],['3d','co
 }
 // Simulate the tutorial's tab callback without claiming a real browser test.
 const testPlan={textContent:''},guideRoot={querySelectorAll:()=>[]};
-const checkboxes=[{checked:true},{checked:true},{checked:true}];
+const checkboxes=Array.from({length:3},()=>({checked:true,addEventListener:()=>{}}));
 const fakeRoot={
  querySelector:sel=>sel==='#g8Guide'?guideRoot:sel==='#m8sRouteTestPlan'?testPlan:null,
  querySelectorAll:sel=>sel==='[data-m8s-check]'?checkboxes:[]
