@@ -484,3 +484,12 @@
 - **Correção:** fallback volátil por chave de sessão, preservação de campos/rota/checks, retorno booleano de `save()`, estado de gravação honesto na prática (inclusive leitor de tela) e aviso na revisão com orientação de copiar a evidência. Hidratação de texto remoto não substitui um rascunho local nem marca automaticamente testes de Preview.
 - **Verificações:** execução direta V8 do cenário de armazenamento negado passou (rota, checks, prática e revisão); `qa/v3-m05-student.cjs` recebeu 16 verificações adicionais de regressão. A CI Node e a Browser QA do commit final devem ser conferidas no GitHub Actions; não atribuir aprovação antes do resultado.
 - **Limitações:** fallback existe apenas enquanto a aba está aberta. Teste humano, HDMI físico, celular real, GDevelop GUI e submissão autenticada real permanecem **NOT_RUN**. Nada foi enviado à `main` ou à turma real.
+
+
+## M06 — Persistência honesta da Forja de IA (2026-10-31)
+
+- **Auditoria comparada:** `teacher-mission-six-foundations.js` explica os formatos PNG/WAV/MP4/GLB, importação, licenças e verificação no Preview; `student-mission-six.js` exige um asset no projeto existente, oito campos de registro, três confirmações manuais e revisão pelo professor. A prática usa `asset-forge-tutorial.js` e o link explícito do editor GDevelop. A interface não deve confundir marcações com prova de execução.
+- **Falha P1 reproduzida:** com `localStorage.setItem` bloqueado (`QuotaExceededError`/`SecurityError`), a rota escolhida, o relato de importação e as marcações desapareciam ao navegar, apesar de o aluno poder acreditar que havia salvo.
+- **Correção:** fallback volátil por sessão/aba, retorno booleano de `save()`, aviso honesto e acessível no formulário após digitação, troca de rota e checkbox, e aviso na revisão para copiar a evidência antes de sair. A hidratação remota não sobrescreve rascunhos locais ou marcações manuais. O fallback não é persistência após fechar a aba.
+- **Testes realmente executados:** execução direta V8 de cenário normal e armazenamento bloqueado (validação, rota, evidência e aviso) passou. Acrescentadas regressões Node em `qa/v3-m06-student.cjs` para isolamento por sessão, campos, três checks, mensagens de prática/revisão e hidratação. A CI nativa e Browser QA do novo commit **ainda não foram confirmadas** neste checkpoint.
+- **Pendências:** GDevelop GUI drag-and-drop, HDMI físico, celular físico e testes humanos permanecem **NOT_RUN**; não houve alteração em `main` nem dados reais.
