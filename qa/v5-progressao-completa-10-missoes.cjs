@@ -36,7 +36,7 @@ for(const klass of V2.CLASSES){
    assert.equal(bridge.approvedMissions,mission-1);
    assert.equal(progress.awaitingPeers,pending==='submitted');
    const early=buildFor(klass,mission);
-   assert.throws(()=>V2.normalizeBuild(early,progress),/pontos acima|talentos inválidos/);
+   assert.throws(()=>V2.normalizeBuild(early,progress.approvedMissions),/pontos acima|talentos inválidos/);
    assert.throws(()=>policy.validateBuild(early,klass,mission-1),/pontos excedem|mais de 1 talento/);
    assertions+=7;
   }
