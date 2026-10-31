@@ -119,6 +119,31 @@ const assert=require('node:assert/strict');
   await page.locator('#pitProjectorClose').click();
   assert.equal(await projectedNote.evaluate(el=>el.open),false,'private note stays closed after returning to mirrored panel');
 
+  // Cross-mission pedagogy/keyboard regression: M08 before/after is a real
+  // projected simulation. ArrowRight inside its radio group must select the
+  // next option, NOT skip the teaching slide.
+  await page.locator('.stage-btn[data-stage="8"]').click();
+  await page.locator('#phasebar [data-phase="briefing"]').click();
+  await page.locator('#pitProjectorLaunch').click();
+  let uxFound=false;
+  for(let step=0;step<20;step++){
+   if(await page.locator('#pitProjectorContent [data-pit-projector-briefing="M08:simulation"]').count()){uxFound=true;break}
+   if(await page.locator('#pitProjectorNext').isDisabled())break;
+   await page.locator('#pitProjectorNext').click();
+  }
+  assert.equal(uxFound,true,'M08 interactive before/after slide is projected');
+  const slideBeforeRadio=await page.locator('#pitProjectorCount').innerText();
+  const rawRadio=page.locator('#pitProjectorContent input[name="t8fMode"][value="raw"]');
+  const polishedRadio=page.locator('#pitProjectorContent input[name="t8fMode"][value="polished"]');
+  assert.equal(await rawRadio.isChecked(),true,'M08 simulator begins in the unpolished state');
+  await rawRadio.focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await page.locator('#pitProjectorCount').innerText(),slideBeforeRadio,'radio ArrowRight must not skip slide');
+  assert.equal(await polishedRadio.isChecked(),true,'native radio keyboard selection changes to polished state');
+  assert.equal(await page.locator('#pitProjectorContent [data-t8f-scene]').getAttribute('data-t8f-scene'),'polished','projected feedback follows keyboard radio change');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#pitProjector').count(),0,'Escape still closes projection with a radio focused');
+
   // Defense-in-depth: tutorial cards generated directly without cleanCopy
   // must never display private teacher notes, even if supplied accidentally.
   await page.locator('.stage-btn[data-stage="7"]').click();
