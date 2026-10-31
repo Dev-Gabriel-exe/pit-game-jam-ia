@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar CI Node/Chrome da M01 (commit ab05cad6) e auditar avisos de salvamento e autonomia da M02; manter pedagogia antes da estética.",
+  "priority": "CI estática M01 confirmada (run 41172062731 SUCCESS); confirmar Browser QA 41172062689 e continuar auditoria pedagógica M02 (salvamento de rascunho), sem estética.",
   "current_phase": "MISSOES",
   "last_task": "V4-M01-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
@@ -2768,7 +2768,7 @@
         "qa/v3-m01-legacy-evidence.cjs",
         "v3/AUDITORIA-V4-MISSOES.md"
       ],
-      "tests": "Native Node static QA 41172039227 SUCCESS on earlier test commit; latest commit static and Chrome NOT_CONFIRMED; no manual/hardware tests",
+      "tests": "Native Node static QA 41172062731 SUCCESS on final code/test SHA ab05cad6; Browser QA 41172062689 IN_PROGRESS; no manual/hardware tests.",
       "notes": "M01 previously claimed local draft saved even when browser denied storage. Added per-session volatile fallback, explicit live save failure warning in practice and review, no false persistence guarantee. Main unchanged, roadmap 54/59."
     }
   ],
@@ -3926,6 +3926,18 @@
       {
         "name": "Manual HDMI, GDevelop GUI, physical mobile, human tests",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M01 final code and regressions native Node static QA",
+        "run_id": 41172062731,
+        "sha": "ab05cad6057540c513dd02f52f525095a5bc712b",
+        "result": "SUCCESS confirmed"
+      },
+      {
+        "name": "M01 final code Browser QA",
+        "run_id": 41172062689,
+        "sha": "ab05cad6057540c513dd02f52f525095a5bc712b",
+        "result": "IN_PROGRESS at last check"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
