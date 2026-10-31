@@ -64,4 +64,34 @@ listeners.check();
 assert(status.textContent.includes('apenas nesta aba'),'checkbox shows blocked-storage warning');
 assert.equal(m.load('fictional-ui').pitch,input.value,'typed field preserved in tab');
 assert.deepEqual(Array.from(m.load('fictional-ui').checks),[1],'checkbox preserved in tab');
+// Changing a real launch artifact invalidates only the attestations affected by that change.
+const changed=m.load('fictional-check-revision');
+changed.checks=[0,1,2];
+assert.deepEqual(Array.from(m.updateField(changed,'project','Outra cópia editável e assets')),[0,1,2],'new project requires all three rechecks');
+assert.deepEqual(Array.from(changed.checks),[],'old project confirmations cleared');
+changed.checks=[0,1,2];
+assert.deepEqual(Array.from(m.updateField(changed,'access','Outro link ou pasta')),[1,2],'new access requires execution/privacy recheck');
+assert.deepEqual(Array.from(changed.checks),[0],'project re-open confirmation remains valid');
+changed.checks=[0,1,2];
+assert.deepEqual(Array.from(m.updateField(changed,'demo','Outra sequência no Preview')),[1],'new demonstration requires execution recheck');
+assert.deepEqual(Array.from(changed.checks),[0,2],'unrelated checks remain valid');
+assert.deepEqual(Array.from(m.updateField(changed,'demo','Outra sequência no Preview')),[],'same value is idempotent');
+assert.deepEqual(Array.from(m.updateField(changed,'pitch','Outro público autoral')),[],'pitch edit does not erase real checks');
+assert.deepEqual(Array.from(m.updateField(changed,'invalid','texto')),[],'unknown field cannot mutate draft');
+const revised=m.load('fictional-revision-ui');
+revised.checks=[0,1,2];m.save('fictional-revision-ui',revised);
+const listeners2={},checks2=[0,1,2].map(n=>({dataset:{m10sCheck:String(n)},checked:true,addEventListener(){}}));
+const projectInput={dataset:{m10sField:'project'},value:'Nova pasta do projeto completo',addEventListener:(type,fn)=>{if(type==='input')listeners2.input=fn}};
+const status2={textContent:''};
+const root2={
+ querySelectorAll(sel){if(sel==='[data-m10s-field]')return [projectInput];if(sel==='[data-m10s-check]')return checks2;return []},
+ querySelector(sel){return sel==='#m10sStatus'?status2:null}
+};
+ctx.document.querySelector=sel=>sel==='#m10sRoot'?root2:null;
+m.mount({session:'fictional-revision-ui',status:'',phase:'practice',onPhase(){},onMessage(){}});
+listeners2.input();
+assert.deepEqual(checks2.map(x=>x.checked),[false,false,false],'visible checkboxes reset with project change');
+assert.equal(m.load('fictional-revision-ui').checks.length,0,'reset persisted even when localStorage denied');
+assert(status2.textContent.includes('repita as conferências'),'student gets explicit retest warning');
+assert(status2.textContent.includes('apenas nesta aba'),'storage failure remains visible');
 console.log('PASS M10 blocked-storage: eight fields, delivery route, manual checks, session isolation, hydration, warning and simulated UI. Human/GDevelop/HDMI NOT_RUN.');
