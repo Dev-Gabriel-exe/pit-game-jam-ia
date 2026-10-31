@@ -820,3 +820,16 @@ O primeiro [run 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 ### Evidência de CI da correção D07 — 31/10/2026
 
 **Aprovado:** [H.3 passive/reactive 41248883811](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41248883811), SHA do teste `66a6f22dbe04ebb3fcff7b269918029098b491a1`: quatro seeds fictícias, 30 personagens, **13 consumos D07 atribuídos ao Guerreiro de origem e ao alvo correto, zero anomalias**, 761 eventos `talent`, 1.451 `proc` válidos e 469 `charge`; M5 padrão e M5 explícita com resultado idêntico. [QA geral 41248883656](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41248883656) **SUCCESS**. [QA navegador 41248883676](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41248883676) **IN_PROGRESS** na consulta; não afirmar sucesso do navegador antes da conclusão. **Próximo passo:** confirmar browser e testar em WebGL os passivos/reativos menos frequentes. G.2 nos PCs físicos não realizado; nenhuma integração real autorizada.
+
+
+## H.3/M10 — telemetria visual de passivos e reativos (31/10/2026)
+
+**Missão em andamento:** distinguir cues de talento **realmente renderizados** de eventos apenas emitidos pelo motor, e separar os que foram descartados por orçamento gráfico, em Chromium/WebGL com 30 KayKits fictícios. Não altera regras de combate, 120 talentos, M5, M10, câmera, XP, turmas ou contas.
+
+**Base consultada:** branch `feature/v5-arena-dos-criadores`, SHA inicial `348794de930c9ef028a299b49ee02ad6d516d47f`; roadmaps D–I, E/F/G/H.0, checkpoint H.3, commits e Actions recentes. O browser QA do checkpoint anterior terminou **SUCCESS** em [41248977582](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41248977582), assim como QA geral [41248977559](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41248977559).
+
+**Alterações:** `v5/arena-three.js` (commit `edf5ab12e352dc3028edf146f89f2183577329c3`) instrumenta contadores de sprites/cues **renderizados** e **descartados** por tipo canônico `ativo/passivo/reativo`, reiniciados a cada combate, sem tocar no motor ou criar eventos falsos. `qa/v5-m10-mixed-vfx-browser.cjs` (commit `7a5bd6579982fa78d6fa5cdca0085c5cee063f26`) compara somas com o contador de efeitos, exige cues de passivos e reativos realmente renderizados até a vitória, registra as contagens e preserva as três capturas, os 29 espectadores e a regressão M5.
+
+**CI:** [workflow de VFX temporal](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-m10-mixed-vfx-qa.yml) disparado; **não declarar sucesso até verificar execução no SHA final**. A primeira execução de `arena-three.js` foi [41253563449](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253563449), ainda em andamento na consulta. Se o teste revelar ausência de passivos/reativos visíveis, corrigir instrumentação ou construir caso focal isolado antes de aprovar a missão.
+
+**Próximo passo:** verificar CI e relatório com renderizados/descartados por tipo, corrigir falhas observadas, depois investigar casos raros não cobertos e balanceamento sem ajuste arbitrário. **G.2 PCs físicos NÃO EXECUTADO; H.1/H.2 reais, homologação humana, merge e deploy continuam bloqueados.**
