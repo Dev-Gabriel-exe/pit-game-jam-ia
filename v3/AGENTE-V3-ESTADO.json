@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T21:17:58.431Z",
+  "last_completed_at": "2026-10-31T22:13:48Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "CI M09/M10: static QA 41242816387 SUCCESS after correcting radio-event simulation; Browser QA 41242816289 pending. Next: confirm Browser QA on exact SHA, continue pedagogical 20-face audit before aesthetics. Physical GDevelop/HDMI/mobile/human NOT_RUN.",
+  "priority": "Auditoria pedagógica M01: rascunho legado acima do maxlength não pode marcar 3/3 nem liberar entrega. QA estática 41247202852 SUCCESS no SHA 9e806b1a; Browser QA 41247202851 pendente. Próximo: confirmar Browser QA do checkpoint e continuar M02→M10 professor/aluno antes de estética. GDevelop GUI/HDMI/mobile/humano NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-M10-STATIC-CI-REPAIR",
+  "last_task": "V4-AUD-M01-OVERSIZED-DRAFT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2964,34 +2964,56 @@
       ],
       "tests": "Static QA 41238380702 FAILED (M09 fake radio unchecked after outcome); corrected test simulates user reselecting decision. Static QA 41242816387 completed SUCCESS on 32db46e; Browser QA 41242816289 IN_PROGRESS at last check. No physical HDMI/GDevelop GUI/mobile/human tests.",
       "notes": "Fixed false negative in M09 regression, not production code. Old decision must still be invalidated. M09/M10 static suite green. Main/production/real student data untouched; master 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M01-OVERSIZED-DRAFT",
+      "completed_at": "2026-10-31T22:13:48Z",
+      "commit": "9e806b1a8c24c3eb4eaf12f9bbee65968517e0f5",
+      "files": [
+        "v3/mission-one.js",
+        "qa/v3-m01-legacy-evidence.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "7 direct V8 functional checks PASS; 26 assertions added to M01 Node regression; GitHub static QA 41247202852 completed SUCCESS on 9e806b1a; Browser QA 41247202851 IN_PROGRESS. Previous M09/M10 static and browser QA green on 64eacf9c. Human/GDevelop GUI/HDMI/mobile NOT_RUN.",
+      "notes": "M01 legacy draft can exceed input maxlength; validation now blocks oversized content, progress no longer reports complete fragment, message states field max; preserves draft. Professor projected criteria unchanged and private notes closed. 54/59 unchanged; main/production/real students untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-M10-STATIC-CI-REPAIR",
+    "task": "V4-AUD-M01-OVERSIZED-DRAFT",
     "status": "STATIC_CI_SUCCESS_BROWSER_PENDING",
-    "updated_at": "2026-10-31T21:17:58.431Z",
-    "code_commit": "32db46ef02842d91ff7f7b90963c84c9f8678864",
+    "updated_at": "2026-10-31T22:13:48Z",
+    "code_commit": "ec269b84c760f251ce284d7c66dfa7a89345d63b",
     "regression_commits": [
-      "32db46ef02842d91ff7f7b90963c84c9f8678864"
+      "9e806b1a8c24c3eb4eaf12f9bbee65968517e0f5"
     ],
-    "documentation_commit": "98239f825213b2151b1a25d9e0b028fddc1a3c0d",
+    "documentation_commit": "8896d3091c9d834cdd0da105b075a9f6e7ed6d83",
     "tests": [
       {
-        "name": "M09/M10 static QA on regression SHA",
+        "name": "M01 direct V8 functional regression",
         "result": "PASS",
-        "details": "GitHub Actions run 41242816387 completed/success after previous run 41238380702 failed at M09 simulated radio event"
+        "details": "7 checks: six overlong fields reject, progress fragment invalidated, submit disabled, valid record remains 3/3"
       },
       {
-        "name": "Browser QA on regression SHA",
+        "name": "M01 Node regression in static QA",
+        "result": "PASS",
+        "details": "Run 41247202852 completed/success on 9e806b1a; qa/v3-m01-legacy-evidence.cjs extended by 26 assertions"
+      },
+      {
+        "name": "M01 Browser QA on regression SHA",
         "result": "PENDING",
-        "details": "GitHub Actions run 41242816289 was in_progress at last check; prior Browser QA run 41238380753 completed/success on previous SHA"
+        "details": "Run 41247202851 in_progress at last check"
+      },
+      {
+        "name": "Previous M09/M10 static and browser QA",
+        "result": "PASS",
+        "details": "Runs 41242932531 and 41242932252 completed/success on 64eacf9c"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar Browser QA no SHA atualizado e continuar auditoria pedagógica transversal 01–10 professor/aluno antes de estética.",
-    "blocker": "Testes humanos e GDevelop GUI/HDMI/mobile físico pendentes; homologação final não autorizada."
+    "next_task": "Confirmar Browser QA no SHA final; auditar M02 (critério de aceitação e sincronia professor/aluno) antes de estética.",
+    "blocker": "Homologação final depende de GDevelop GUI, HDMI, celular físico e playtest humano com evidência."
   }
 }
