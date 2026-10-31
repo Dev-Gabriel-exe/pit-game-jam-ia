@@ -65,10 +65,14 @@ function hydrate(session,serverEvidence,status){
  save(session,parsed);
 }
 function stepProgress(draft){
+ const ready=id=>{
+  const field=FIELDS.find(f=>f.id===id),value=draft[id]||'';
+  return value.trim().length>=field.min&&value.length<=field.max;
+ };
  return [
-  !!(draft.genre&&draft.title.trim().length>=3&&draft.hero.trim().length>=3),
-  !!(draft.action.trim().length>=3&&draft.objective.trim().length>=5),
-  !!(draft.victory.trim().length>=5&&draft.feedback.trim().length>=5)
+  !!(draft.genre&&GENRES.includes(draft.genre)&&ready('title')&&ready('hero')),
+  ready('action')&&ready('objective'),
+  ready('victory')&&ready('feedback')
  ];
 }
 function validate(session){
@@ -76,6 +80,7 @@ function validate(session){
  if(!GENRES.includes(d.genre)||!d.genre)return {ok:false,field:'genre',label:'Escolha o gênero do jogo.'};
  for(const field of FIELDS){
   if(d[field.id].trim().length<field.min)return {ok:false,field:field.id,label:'Preencha "'+field.label+'" com pelo menos '+field.min+' caracteres.'};
+  if(d[field.id].length>field.max)return {ok:false,field:field.id,label:'Reduza "'+field.label+'" para no máximo '+field.max+' caracteres.'};
  }
  return {ok:true,field:null,label:'Pronta para entregar.'};
 }
