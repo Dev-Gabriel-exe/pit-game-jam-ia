@@ -9,6 +9,10 @@ const SCREENS=[
  {width:1920,height:1080,label:'projector-1920'},
  {width:1366,height:768,label:'desktop-1366'}
 ];
+function overlap(a,b,tolerance=1){
+ return a.left<b.right+tolerance&&a.right>b.left-tolerance&&
+  a.top<b.bottom+tolerance&&a.bottom>b.top-tolerance;
+}
 function within(inner,outer,tolerance=3){
  return inner.left>=outer.left-tolerance&&inner.right<=outer.right+tolerance&&
   inner.top>=outer.top-tolerance&&inner.bottom<=outer.bottom+tolerance;
@@ -104,6 +108,16 @@ function within(inner,outer,tolerance=3){
      talentTruncated:!!t&&t.scrollWidth>t.clientWidth+2,
      nicknamesVisible:[...document.querySelectorAll('.arena-nickname')].filter(
       el=>getComputedStyle(el).display!=='none').length,
+     nicknameBoxes:[...document.querySelectorAll('.arena-nickname')].filter(
+      el=>getComputedStyle(el).display!=='none').map(el=>{
+       const r=el.getBoundingClientRect();
+       return {id:el.dataset.fighterId,left:r.left,right:r.right,top:r.top,bottom:r.bottom};
+      }),
+     protectedHudBoxes:[...document.querySelectorAll('#battleSpotlight,#talentTelemetry,.battle-legend,.stage-flair')]
+      .filter(el=>el.getClientRects().length>0).map(el=>{
+       const r=el.getBoundingClientRect();
+       return {id:el.id||el.className,left:r.left,right:r.right,top:r.top,bottom:r.bottom};
+      }),
      combatants:document.querySelectorAll('[data-fighter]').length
     };
    });
@@ -139,6 +153,17 @@ function within(inner,outer,tolerance=3){
    assert(metric.spotlightText.fontPx>=13,'Combat spotlight too small for desktop');
    assert(metric.talentText.fontPx>=12,'Talent telemetry too small for desktop');
    assert(metric.combatants===30,'All thirty fictitious fighters must remain in roster');
+   assert(metric.nicknameBoxes.length===metric.nicknamesVisible,'Nickname sample must match displayed DOM');
+   assert(metric.nicknameBoxes.length>0,'Cinematic 30-player shot should expose at least one readable fighter name');
+   for(let i=0;i<metric.nicknameBoxes.length;i++){
+    const nick=metric.nicknameBoxes[i];
+    assert(within(nick,metric.stage),'Projected fighter nickname must remain inside stage: '+JSON.stringify(nick));
+    for(const hud of metric.protectedHudBoxes)
+     assert(!overlap(nick,hud),'Fighter nickname obscures '+hud.id+': '+JSON.stringify(nick));
+    for(let j=0;j<i;j++)
+     assert(!overlap(nick,metric.nicknameBoxes[j]),
+      'Fighter nicknames overlap: '+nick.id+' / '+metric.nicknameBoxes[j].id);
+   }
    assert(metric.pageWidth<=screen.width+3,'Horizontal overflow in immersive mode');
    // Automated AA contrast audit for controls with opaque, solid CSS backgrounds.
    // Excludes gradient CTAs, translucent HUD over moving WebGL, disabled buttons
