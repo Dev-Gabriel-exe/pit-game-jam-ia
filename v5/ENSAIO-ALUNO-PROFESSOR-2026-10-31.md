@@ -126,3 +126,13 @@ No commit `0ce7d1df`, o workflow `V5 Duel Invitations Fictional Contract QA`, ru
 - `PASS: 3D KayKit M5/M10 preview, real M5 victory, XP-free mission return and cleanup`
 
 Portanto, a jornada fictícia completa inclusive a vitória **real do motor visual 3D M5** está validada no Chromium. A M10 foi validada para renderizar 2 GLBs e para resultado determinístico textual, mas não foi executada até a vitória 3D neste smoke específico. O gate G.2 físico permanece pendente.
+
+## Fase H.4 — liberação coletiva M5/M10 (laboratório fictício)
+
+- Painel `v5/teacher-arena-lab.html`, controlador `v5/teacher-arena-lab.js` e contrato puro `v5/teacher-arena-release-lab.js`; acesso direto a partir da prévia `v5/arena-lab.html`.
+- Liberação explícita pelo alias `trial-teacher`, prévia de 30, controles de prontidão/online, segregação por turma, aprovações M5/M10 com `progression-contract-h0.js`, exclusão justificada, revisão, locks e captura imutável de elegíveis. Alias **não autentica** professor.
+- Ação separada de *preparar modelos GLB* e de *iniciar confronto*: nunca iniciar com modelo ausente. Reutiliza `arena-three.js` e quatro GLBs KayKit; pausa, aborto, câmera automática, resultado e limpeza WebGL.
+- `qa/v5-teacher-arena-release-lab.cjs`: roda M5 e M10 com 30 personagens liberados, executando motor real determinístico; testa exclusões 26/30, nenhum real, consentimento docente fictício, aborto, resultado correto.
+- **GitHub Actions verde:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41203797984 — `teacher-contract` + `teacher-chromium` com success.
+- Documento completo: `v5/FASE-H4-LIBERACAO-COLETIVA.md`.
+- **Limite:** 30 validados no motor Node; Chromium WebGL do novo painel testado em 3–4 GLBs, sem equivaler à prova G.2 física. Nenhum aluno real, API, autenticação, XP, deploy ou main alterados. H.1b/H.2 ainda não implementados.
