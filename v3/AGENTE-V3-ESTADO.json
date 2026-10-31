@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Auditoria transversal: foco de teclado contido no modal projetado; correção e regressão Chrome commitadas, CI ainda NÃO VERIFICADA. Próximo: confirmar QA do novo SHA e continuar matriz pedagógica professor/aluno M01–M10 antes de estética. HDMI, GDevelop GUI, celular físico e testes humanos NOT_RUN.",
+  "priority": "Auditoria pedagógica transversal: M07 corrigida (rota 2D explícita prevalece sobre sugestão 3D; troca de rota invalida checks antigos). V8 direto PASS, parser V8 PASS; CI estática/Chrome NÃO CONFIRMADAS. Próximo: verificar CI dos SHAs recentes e continuar auditoria das 20 faces, autonomia do aluno e projeção segura. HDMI, GDevelop GUI, celular físico e testes humanos NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-TRANSVERSAL-PROJECTOR-TAB-FOCUS",
+  "last_task": "V4-AUD-M07-EXPLICIT-ROUTE-AND-PREVIEW-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2904,33 +2904,60 @@
       ],
       "tests": "Regressão Chrome 390/1280px adicionada mas NÃO EXECUTADA/CI NÃO CONFIRMADA neste ciclo; GitHub connector retornou zero workflow runs e status checks para SHA b9e1ace. Inspeção estática dos pontos de edição e anchors executada; HDMI, GDevelop GUI, mobile físico, humanos NOT_RUN.",
       "notes": "P1: apresentação aria-modal permitia Tab alcançar painel professor atrás dos slides. Contenção de Tab/Shift+Tab e recuperação do foco de fundo implementadas. Sem alteração de main/produção/dados reais. Roadmap 54/59 inalterado."
+    },
+    {
+      "id": "V4-AUD-M07-EXPLICIT-ROUTE-AND-PREVIEW-RETEST",
+      "completed_at": "2026-10-31T17:15:09.144Z",
+      "commit": "561a83024862e15d6fb2864b0c9397d8b269970f",
+      "files": [
+        "v3/student-mission-seven.js",
+        "qa/v3-m07-student.cjs",
+        "qa/v3-private-teacher-notes-browser.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Direct V8 actual-source execution PASS (inherited 3D, explicit 2D, module reload, check invalidation, blocked localStorage); V8 syntax parsing PASS for three JS files. GitHub static/Browser QA new commits UNVERIFIED; physical HDMI, GDevelop GUI, mobile, human tests NOT_RUN.",
+      "notes": "Fixed M07 pedagogical 2D/3D tutorial mismatch and stale manual Preview confirmations. Roadmap master 54/59 unchanged; main, production and student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-TRANSVERSAL-PROJECTOR-TAB-FOCUS",
-    "status": "CODE_COMMITTED_CI_UNVERIFIED",
-    "updated_at": "2026-10-31T16:17:58.759Z",
+    "task": "V4-AUD-M07-EXPLICIT-ROUTE-AND-PREVIEW-RETEST",
+    "status": "CODE_COMMITTED_DIRECT_V8_PASS_CI_UNVERIFIED",
+    "updated_at": "2026-10-31T17:15:09.144Z",
     "code_commits": [
-      "2a46295aea5581da16b7ab40d24b26f68079625d",
-      "b9e1ace84674c188ecd82d22f624041c40a7b20e"
+      "3841970102b26d9b0ae26e43fde142a858cffa44",
+      "780e0fa4e1e49ce23764a70e4760cd5716a8bd57"
     ],
-    "documentation_commit": "dd51e373c0a100946c641061652ab0854fc76c41",
+    "regression_commits": [
+      "0c37d950b078e812132ad8ba65060de7fbefaf73",
+      "6263c9c930a6c0a74d48a04a197c46bd5b9cfc54",
+      "561a83024862e15d6fb2864b0c9397d8b269970f"
+    ],
+    "documentation_commit": "97a122b9d698f9a1cbd32475c538992469038534",
     "tests": [
       {
-        "name": "GitHub workflow/check lookup for regression commit",
-        "sha": "b9e1ace84674c188ecd82d22f624041c40a7b20e",
-        "result": "NO_RUNS_RETURNED_UNVERIFIED"
+        "name": "Direct V8 execution of actual student-mission-seven.js source",
+        "result": "PASS",
+        "details": "Inherited 3D route 1; explicit 2D route 0 after selection and module reload; old checks reset 3→0; blocked storage returns false but keeps 2D in-tab"
       },
       {
-        "name": "New Chrome 390/1280 projector Tab regression",
-        "result": "NOT_RUN_CI_PENDING"
+        "name": "V8 parse for M07 source, Node static regression and Playwright browser regression",
+        "result": "PASS_SYNTAX_ONLY"
+      },
+      {
+        "name": "GitHub Actions static and Browser QA for new commits",
+        "result": "UNVERIFIED",
+        "details": "Connector workflow/status lookup returns empty; no CI pass claimed"
+      },
+      {
+        "name": "Previous projector focus regression CI",
+        "result": "UNVERIFIED"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Verificar QA estática e Browser QA do commit atual; depois auditar autonomia das 20 faces professor/aluno com seis passos e corrigir falhas concretas.",
-    "blocker": "CI do novo teste ainda não confirmada; testes físicos/humanos não realizados."
+    "next_task": "Confirmar CI de M07 e contenção de foco do projetor; continuar auditoria pedagógica professor/aluno das 20 faces, sem estética até fechar lacunas reais.",
+    "blocker": "CI não confirmada; homologação física/humana pendente."
   }
 }
