@@ -23,10 +23,13 @@
  const clean=x=>String(x??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
  const blank=()=>({route:null,command:'',response:'',boundary:'',retest:'',saved:'',issue:'',checks:[]});
  const storageKey=id=>'pit_v3_missao04_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+ // In-tab fallback is not persistent: never claim a successful save after storage denial.
+ const volatileDrafts=new Map(),writeStatus=new Map();
  function load(id){
   const d=blank();
   try{
-   const source=JSON.parse(localStorage.getItem(storageKey(id))||'{}');
+   const key=storageKey(id);
+   const source=volatileDrafts.get(key)||JSON.parse(localStorage.getItem(key)||'{}');
    if(Number.isInteger(source.route)&&source.route>=0&&source.route<4)d.route=source.route;
    for(const field of keys)if(typeof source[field]==='string')d[field]=source[field].slice(0,config[field].max);
    d.checks=Array.isArray(source.checks)?[...new Set(source.checks.filter(x=>Number.isInteger(x)&&x>=0&&x<3))]:[];
@@ -34,13 +37,26 @@
   return d;
  }
  function save(id,d){
+  const safeData=blank(),key=storageKey(id);
+  safeData.route=Number.isInteger(d.route)&&d.route>=0&&d.route<=3?d.route:null;
+  for(const name of keys)safeData[name]=String(d[name]??'').slice(0,config[name].max);
+  safeData.checks=Array.isArray(d.checks)?[...new Set(d.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
+  volatileDrafts.set(key,safeData);
   try{
-   const safeData=blank();
-   safeData.route=Number.isInteger(d.route)&&d.route>=0&&d.route<=3?d.route:null;
-   for(const name of keys)safeData[name]=String(d[name]??'').slice(0,config[name].max);
-   safeData.checks=Array.isArray(d.checks)?[...new Set(d.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
-   localStorage.setItem(storageKey(id),JSON.stringify(safeData));
-  }catch{}
+   localStorage.setItem(key,JSON.stringify(safeData));
+   writeStatus.set(key,true);
+   return true;
+  }catch{
+   writeStatus.set(key,false);
+   return false;
+  }
+ }
+ function draftNotice(id,filled){
+  const key=storageKey(id),prefix=filled+'/6 registros e testes · ';
+  if(writeStatus.get(key)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+  if(writeStatus.get(key)===true)return prefix+'rascunho salvo neste navegador';
+  try{if(localStorage.getItem(key)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+  return prefix+'comece a preencher para salvar seu rascunho';
  }
  function suggestedRoute(ctx={}){
   const requested=ctx?.previous?.objectType==='3D Box/Modelo';
@@ -221,7 +237,7 @@
   const count=validity(d,ctx).filter(Boolean).length;
   return '<div class="m4s-page m4s-practice"><div class="m4s-lead"><small>◈ 36 MIN DE PRÁTICA · GDEVELOP</small>'+
    '<h3>Implemente um controle. Teste um limite.</h3><p>Continue o projeto <strong>'+esc(i.project)+'</strong>, salve a versão atualizada e descreva apenas o que realmente funcionou. O tutorial apresenta quatro rotas; <b>você precisa executar somente uma.</b></p>'+
-   '<div class="m4s-continue" role="note"><strong>COMO REALIZAR ESTA PRÁTICA</strong><p><b>Onde:</b> abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop (nova aba)</a> ou o aplicativo já instalado e reabra o projeto salvo na Missão 03. Abrir o link não importa nem recupera seu projeto automaticamente; se estiver sem internet, use o aplicativo instalado e o arquivo local. <b>1.</b> Escolha somente uma das quatro rotas do tutorial abaixo, conforme seu gênero. <b>2.</b> Siga os cliques do tutorial para configurar um controle ou clique que produza resposta visível. <b>3.</b> Acrescente uma parede, chão, limite ou área clicável, conforme a rota. <b>4.</b> Abra o Preview e faça três testes: comando válido, tentativa contra o limite e repetição com caso inválido. <b>5.</b> Salve o projeto editável. <b>6.</b> Nesta página, descreva o comando, a resposta, o limite, a repetição e onde salvou. Marque apenas os testes que realmente fez. <b>Entrega:</b> clique em “Verificar minha entrega” e depois envie ao professor quando estiver liberado.</p><p><b>Se algo falhar:</b> confira se o comportamento foi adicionado ao objeto correto, se existe instância do obstáculo na cena e se a condição de colisão também possui uma ação de bloqueio. Não declare como concluído um Preview que não executou.</p></div>'+
+   '<div class="m4s-continue" role="note"><strong>COMO REALIZAR ESTA PRÁTICA</strong><p><b>Onde:</b> abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop (nova aba)</a> ou o aplicativo já instalado e reabra o projeto salvo na Missão 03. Abrir o link não importa nem recupera seu projeto automaticamente; se estiver sem internet, use o aplicativo instalado e o arquivo local. <b>1.</b> Escolha somente uma das quatro rotas do tutorial abaixo, conforme seu gênero. <b>2.</b> Siga os cliques do tutorial para configurar um controle ou clique que produza resposta visível. <b>3.</b> Acrescente uma parede, chão, limite ou área clicável, conforme a rota. <b>4.</b> Abra o Preview e faça três testes: comando válido, tentativa contra o limite e repetição com caso inválido. <b>5.</b> Salve o projeto editável. <b>6.</b> Nesta página, descreva o comando, a resposta, o limite, a repetição e onde salvou. Marque apenas os testes que realmente fez. <b>Entrega:</b> clique em “Verificar minha entrega” e depois envie ao professor quando estiver liberado. Confira o aviso de salvamento antes de sair; se o navegador bloquear o armazenamento, copie a ficha na revisão.</p><p><b>Se algo falhar:</b> confira se o comportamento foi adicionado ao objeto correto, se existe instância do obstáculo na cena e se a condição de colisão também possui uma ação de bloqueio. Não declare como concluído um Preview que não executou.</p></div>'+
    (locked?'<div class="m4s-locked">Entrega '+(ctx.status==='approved'?'aprovada':'enviada')+'; campos preservados para consulta.</div>':'')+
    '<div class="m4s-timebox"><span><b>12 min</b> · controle/entrada</span><span><b>15 min</b> · obstáculo ou restrição</span><span><b>9 min</b> · três testes e salvar</span></div></div>'+
    '<div class="m4s-3d-hint" id="m4s3DHint" '+(r===3?'':'hidden')+'>'+
@@ -236,7 +252,7 @@
    field('boundary',d,ctx,r,locked)+field('retest',d,ctx,r,locked)+
    field('saved',d,ctx,r,locked)+field('issue',d,ctx,r,locked)+
    tests(d,locked)+
-   '<div class="m4s-form-footer"><span id="m4sNotice" aria-live="polite">Rascunho guardado neste navegador</span>'+
+   '<div class="m4s-form-footer"><span id="m4sNotice" role="status" aria-live="polite">'+esc(draftNotice(ctx.session,count))+'</span>'+
    '<button type="button" class="m4s-action" data-m4s-nav="review">VERIFICAR MINHA ENTREGA ›</button></div></section>'+
    '<aside class="m4s-aside"><div class="m4s-aside-image"><span>JOGO EM CONSTRUÇÃO</span></div>'+
    '<div class="m4s-aside-inner"><small>◈ PROTÓTIPO · PRIMEIRO JOGÁVEL</small><h4>'+esc(i.title)+'</h4>'+
@@ -263,7 +279,8 @@
    ].map(([label,value])=>'<div><small>'+label+'</small><p>'+esc(value||'Não informado')+'</p></div>').join('')+'</div>'+
    '<label for="evidenceInput">Texto estruturado enviado ao professor</label>'+
    '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx))+'</textarea>'+
-   '<small>A evidência é uma declaração do aluno; o caderno não testa o jogo por conta própria.</small></div>'+
+   '<small>A evidência é uma declaração do aluno; o caderno não testa o jogo por conta própria.</small>'+
+    (writeStatus.get(storageKey(ctx.session))===false?'<p class="m4s-warning" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+
    (!submitted&&!v.ok?'<div class="m4s-warning">'+esc(v.label)+'</div>':'')+
    '<div class="m4s-submit"><button type="button" class="m4s-back" data-m4s-nav="practice" '+(submitted?'disabled':'')+'>‹ REVISAR TESTES</button>'+
    '<button type="button" class="m4s-action" id="submitWork" '+(!v.ok||submitted||(!ctx.canSubmit&&!ctx.preview)?'disabled':'')+'>'+
@@ -301,7 +318,7 @@
    const count=root.querySelector('#m4sCount'),bar=root.querySelector('#m4sBar'),notice=root.querySelector('#m4sNotice');
    if(count)count.textContent=String(done);
    if(bar)bar.style.width=done/6*100+'%';
-   if(notice)notice.textContent=done+'/6 registros e testes · rascunho guardado neste navegador';
+   if(notice)notice.textContent=draftNotice(ctx.session,done);
    root.querySelectorAll('[data-m4s-preview]').forEach(el=>{
     const k=el.dataset.m4sPreview;
     el.textContent=clean(d[k])||'Aguardando teste real';
