@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T15:14:30Z",
+  "last_completed_at": "2026-10-31T15:17:23.155Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "Auditoria transversal antes da estética: M10 Browser QA 41209811383 SUCCESS; corrigida interferência de ArrowRight em radio da M08 projetada, com regressão Chrome no SHA 7efeef4. Aguardar QA estática 41213884000 e Browser QA 41213884055; depois seguir conferência professor/aluno das dez missões, sem afirmar homologação física.",
+  "priority": "Auditoria transversal M08: correção de teclado no simulador projetado concluída; QA estática 41213884000 SUCCESS, Browser QA 41213884055 SUCCESS, Projector Content Audit 41213866716 SUCCESS. Próximo: verificar autonomia aluno/professor e conteúdo projetado das 10 missões, antes da estética. HDMI, GDevelop GUI, celular físico e testes humanos NOT_RUN.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
   "completed_count": 54,
@@ -2890,19 +2890,19 @@
         "qa/v3-private-teacher-notes-browser.cjs",
         "v3/AUDITORIA-V4-MISSOES.md"
       ],
-      "tests": "M10 Browser QA 41209811383 SUCCESS; projector keyboard static QA 41213884000 and Chrome Browser QA 41213884055 IN_PROGRESS at checkpoint. Physical HDMI, GDevelop GUI, mobile and humans NOT_RUN.",
+      "tests": "M10 Browser QA 41209811383 SUCCESS; projector keyboard static QA 41213884000 SUCCESS; Browser QA 41213884055 SUCCESS (M08 radio keyboard 390/1280px); Projector Content Audit 41213866716 SUCCESS. Physical HDMI, GDevelop GUI, mobile and humans NOT_RUN.",
       "notes": "M08 projected before/after radio was hijacked by document-level ArrowRight; native interactive key behavior now preserved while Escape remains available. No main/production/real student data changes."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
-    "status": "CODE_COMMITTED_CI_PENDING",
-    "updated_at": "2026-10-31T15:14:30Z",
+    "status": "CODE_COMMITTED_STATIC_BROWSER_PROJECTOR_QA_PASS",
+    "updated_at": "2026-10-31T15:17:23.155Z",
     "code_commits": [
       "b0896af5d2054041eabeaef77d3835f2483cd69d",
       "7efeef476ade4407cc8faed4fc2072f4ddcaf739"
     ],
-    "documentation_commit": "7b546a443ca013283716ba7d27313534bf1a88b8",
+    "documentation_commit": "ee49b4310abb6e74c6d85adf890e6826c78a921b",
     "tests": [
       {
         "name": "M10 Browser QA prior checkpoint",
@@ -2914,20 +2914,26 @@
         "name": "Cross-mission projector keyboard static QA",
         "run_id": 41213884000,
         "sha": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
-        "result": "IN_PROGRESS at last inspection"
+        "result": "SUCCESS"
       },
       {
         "name": "M08 projected radio native keyboard Chrome regression",
         "run_id": 41213884055,
         "sha": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
-        "result": "IN_PROGRESS at last inspection"
+        "result": "SUCCESS"
+      },
+      {
+        "name": "Projector Content Audit on source fix",
+        "run_id": 41213866716,
+        "sha": "b0896af5d2054041eabeaef77d3835f2483cd69d",
+        "result": "SUCCESS"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm static/browser CI on keyboard fix, then continue cross-10 pedagogical/projection and student six-step autonomy audit; aesthetics later.",
-    "blocker": "Chrome regression not yet confirmed; physical HDMI, GDevelop GUI, physical mobile and human tests NOT_RUN."
+    "next_task": "Auditar a autonomia de aluno e professor nas 10 missões com foco em conteúdo projetado e seis passos (o que/onde/como/teste/evidência); corrigir falhas reais antes da estética.",
+    "blocker": "A auditoria pedagógica transversal das dez missões ainda não foi concluída; testes físicos de HDMI, GDevelop GUI, celular e testes humanos NOT_RUN."
   }
 }
