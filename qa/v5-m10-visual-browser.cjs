@@ -28,11 +28,26 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,
    null,{timeout:15000});
   assert.equal(await page.locator('#startBattle').isDisabled(),false);
+  // Capture live talent HUD labels (not just the mission selector) to
+  // prevent the M10 coliseum from announcing M5 during final abilities.
+  await page.evaluate(()=>{
+   const label=document.querySelector('#spotlightSource');
+   window.__m10TalentLabels=[];
+   new MutationObserver(()=>{
+    const value=label.textContent.trim();
+    if(value.startsWith('Talento '))window.__m10TalentLabels.push(value);
+   }).observe(label,{childList:true,subtree:true,characterData:true});
+  });
   await page.locator('#actionCamera').click();
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
   await page.locator('#startBattle').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.talentEvents>1,
    null,{timeout:110000});
+  await page.waitForFunction(()=>window.__m10TalentLabels?.length>0,
+   null,{timeout:30000});
+  const liveTalentLabels=await page.evaluate(()=>window.__m10TalentLabels);
+  assert(liveTalentLabels.every(label=>/ · Missão 10$/.test(label)),
+   'M10 live talent spotlight must not claim Missão 5: '+liveTalentLabels.join(' | '));
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.finished,
    null,{timeout:180000});
   assert(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner?.id));
