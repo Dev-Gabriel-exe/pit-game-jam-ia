@@ -118,3 +118,11 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - Commits: `eea005e4`, `b95344ba`, `7ae651ed`, `7099fec4`, `f7a0fcbd`, `40689401`, `18db5b33`, `9c66f998`, `473dbd71`, `0ce7d1df`.
 
 **Limites explícitos:** tudo é exclusivamente laboratório; M5/M10 no modal são presets fictícios de luta, não liberação real das missões. Não há sincronização entre dispositivos, entrega de notificações, persistência, XP ou autenticação. A integração com alunos e liberação real pelo professor continuam aguardando G.2 no PC físico, critérios H e autorização explícita; `main` permanece intacta.
+
+### Homologação do ciclo fictício — CI verde
+
+No commit `0ce7d1df`, o workflow `V5 Duel Invitations Fictional Contract QA`, run `41202348355`, foi concluído com **success** nos dois jobs: contrato Node e navegador Chromium. O log confirma explicitamente:
+- `PASS browser: consent, teacher gate, modal focus, cinematic entry, M5/M10 result, return mission and re-invite`
+- `PASS: 3D KayKit M5/M10 preview, real M5 victory, XP-free mission return and cleanup`
+
+Portanto, a jornada fictícia completa inclusive a vitória **real do motor visual 3D M5** está validada no Chromium. A M10 foi validada para renderizar 2 GLBs e para resultado determinístico textual, mas não foi executada até a vitória 3D neste smoke específico. O gate G.2 físico permanece pendente.
