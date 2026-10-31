@@ -4,6 +4,7 @@ on:
     branches: [feature/v5-arena-dos-criadores]
     paths:
       - 'qa/v5-m10-h2-fullstream.cjs'
+      - 'qa/v5-shared-arena-feed-h2.cjs'
       - 'v5/shared-arena-feed-h2-lab.js'
       - 'v5/phase2-combat.js'
       - 'v5/camera-director.js'
