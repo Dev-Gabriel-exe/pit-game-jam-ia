@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T12:13:00Z",
+  "last_completed_at": "2026-10-31T13:19:34.053Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08: proteção de rascunhos ANTES/DEPOIS por sessão concluída. CI estática M08 SUCCESS; Browser QA M08 IN_PROGRESS na última consulta. Próximo: confirmar Browser QA e auditar M09 professor/aluno antes da estética.",
+  "priority": "M09: armazenamento bloqueado corrigido com fallback volátil, avisos e teste CI. QA estática M09 SUCCESS (41204988864); Browser QA M09 IN_PROGRESS (41204988886). M08 Browser QA SUCCESS (41200066734). Próximo: confirmar Browser QA M09 e auditar M10 professor/aluno antes da estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M08-DRAFT-STORAGE-FAILSAFE",
+  "last_task": "V4-M09-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2854,34 +2854,49 @@
       ],
       "tests": "QA estática Node 41200066711 SUCCESS no SHA 6835a890, incluindo regressões de armazenamento bloqueado, sessão, rota, checks, aviso e hidratação. Browser QA 41200066734 IN_PROGRESS. Browser QA anterior M07 41196176060 SUCCESS. GDevelop GUI, HDMI, celular físico e testes humanos NOT_RUN.",
       "notes": "M08 agora preserva comparação ANTES/DEPOIS e testes manuais na aba se armazenamento permanente falhar, com avisos honestos. Não implica persistência após fechar aba. Roadmap 54/59; main e dados reais intocados."
+    },
+    {
+      "id": "V4-M09-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T13:19:34.053Z",
+      "commit": "adc7db2b374ee54d8c6d686680c448c03236c236",
+      "files": [
+        "v3/student-mission-nine.js",
+        "qa/v3-m09-storage-failsafe.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "GitHub Actions static QA 41204988864 SUCCESS including blocked-storage regression (9 fields, radio, checkboxes, session isolation, hydration, warnings, simulated UI events). Browser QA 41204988886 IN_PROGRESS. Prior M08 Browser QA 41200066734 SUCCESS. Human peer test, physical HDMI, GDevelop GUI, mobile NOT_RUN.",
+      "notes": "M09 professor/student aligned at 25 min with real peer-test boundaries. Volatile per-tab fallback warns that draft is not persisted when localStorage fails. Master roadmap 54/59 unchanged; main, production and real student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M08-DRAFT-STORAGE-FAILSAFE",
+    "task": "V4-M09-DRAFT-STORAGE-FAILSAFE",
     "status": "CODE_COMMITTED_STATIC_QA_PASS_BROWSER_PENDING",
-    "updated_at": "2026-10-31T12:13:00Z",
+    "updated_at": "2026-10-31T13:19:34.053Z",
     "code_commits": [
-      "94dbfbc6bbfe55cf0ee3fdf9ad4c053d3d261c95",
-      "6835a8901e5a91820779f2b05a565744c496ec18"
+      "71e52fdc5c1a776a5ff621fa0cc55042ae143ae0",
+      "5d46a2bcb43e2540f9487419b16e1d6eb842ab74",
+      "9e2d6e478a326416a3438497d547d0ec95ff65fc",
+      "adc7db2b374ee54d8c6d686680c448c03236c236"
     ],
-    "documentation_commit": "4f5ceb07a1ec58baeab6a8c71b1fbd4cec032d75",
+    "documentation_commit": "e6cac622d2aed1f889c70e6d660d270a658f05c6",
     "tests": [
       {
-        "name": "M07 Browser QA confirmed",
-        "run_id": 41196176060,
-        "sha": "de0f84469bb585890d922c5117c334cefcf5551f",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M08 native static QA",
-        "run_id": 41200066711,
-        "sha": "6835a8901e5a91820779f2b05a565744c496ec18",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M08 Browser QA",
+        "name": "M08 Browser QA confirmed",
         "run_id": 41200066734,
         "sha": "6835a8901e5a91820779f2b05a565744c496ec18",
+        "result": "SUCCESS"
+      },
+      {
+        "name": "M09 native static QA with blocked-storage regression",
+        "run_id": 41204988864,
+        "sha": "adc7db2b374ee54d8c6d686680c448c03236c236",
+        "result": "SUCCESS"
+      },
+      {
+        "name": "M09 Browser QA",
+        "run_id": 41204988886,
+        "sha": "adc7db2b374ee54d8c6d686680c448c03236c236",
         "result": "IN_PROGRESS at last inspection"
       }
     ],
@@ -2889,7 +2904,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M08 Browser QA on SHA 6835a890, then audit M09 professor/student draft persistence and projection safety",
-    "blocker": "M08 Browser QA pending; physical HDMI, GDevelop GUI, mobile and human playtest NOT_RUN."
+    "next_task": "Confirm M09 Browser QA on SHA adc7db2b; audit M10 teacher/student draft persistence, pitch, editable project, privacy and final evidence",
+    "blocker": "Browser QA M09 pending; human peer playtest, physical HDMI, GDevelop GUI and mobile NOT_RUN."
   }
 }
