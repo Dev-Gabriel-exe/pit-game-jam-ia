@@ -109,6 +109,9 @@ function within(a,b,gap=3){
   assert(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner?.id));
   assert.equal(Number(await stage.getAttribute('data-v5-spectators')),29);
   report.result={finished:true,spectators:29,winnerClass:await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner?.klass)};
+  // Exit the accessible immersive dialog before interacting with the background mission selector.
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>!document.body.classList.contains('arena-immersive'));
   await page.locator('[data-mission="5"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:160000});
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
