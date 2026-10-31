@@ -70,3 +70,11 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - `.github/workflows/v5-duel-invitations-lab-qa.yml`: adiciona execução do novo teste Node.
 - Commits: `78c6bcbf`, `fa496621`, `3bc1fea4`. **CI novo ainda não confirmado; não declarar motor 1×1 validado.**
 - Próxima ação: inspecionar o CI, corrigir eventuais falhas e ligar visualmente o motor à janela experimental; controles de professor M5/M10 coletivos ainda pendentes. G.2 físico e H operacional bloqueados.
+
+## Incremento — resultado do motor M5/M10 na janela fictícia
+
+- CI anterior `41199881150` aprovado (adaptador 1×1 e testes de contrato).
+- `v5/duel-window-lab.html`: carrega `phase2-combat.js` e `duel-battle-lab.js`; após aceite fictício permite selecionar M5/M10 e exibe vencedor/tempo. Ainda **não renderiza GLB/WebGL**.
+- `qa/v5-duel-window-browser.cjs`: após aceite verifica execução M5 e M10 na janela e resultado textual.
+- Commits: `e13fa8e1`, `3f78f092`, `77902c91`. CI desta nova ligação ainda pendente na consulta; não homologar antes de resultado.
+- Próximo: confirmar CI, resolver falhas e criar visualização animada WebGL na janela, preservando a separação de dados e gates G.2/H.
