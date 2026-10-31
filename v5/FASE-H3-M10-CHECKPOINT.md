@@ -833,3 +833,12 @@ O primeiro [run 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 **CI:** [workflow de VFX temporal](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-m10-mixed-vfx-qa.yml) disparado; **não declarar sucesso até verificar execução no SHA final**. A primeira execução de `arena-three.js` foi [41253563449](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253563449), ainda em andamento na consulta. Se o teste revelar ausência de passivos/reativos visíveis, corrigir instrumentação ou construir caso focal isolado antes de aprovar a missão.
 
 **Próximo passo:** verificar CI e relatório com renderizados/descartados por tipo, corrigir falhas observadas, depois investigar casos raros não cobertos e balanceamento sem ajuste arbitrário. **G.2 PCs físicos NÃO EXECUTADO; H.1/H.2 reais, homologação humana, merge e deploy continuam bloqueados.**
+
+
+### Verificação do incremento de cues passivos/reativos (31/10/2026)
+
+**CI específico aprovado:** [run 41253574189](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253574189), SHA funcional `7a5bd6579982fa78d6fa5cdca0085c5cee063f26`. O job instalou Chromium, executou a prévia WebGL M10 fictícia com 30 KayKits, três capturas temporais e verificou **cues realmente renderizados dos três tipos** (ativo, passivo e reativo), somas de renderização/descarte, 29 espectadores e retorno à M5. Artefato de capturas/JSON: [13062022377](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253574189/artifacts/13062022377). A aprovação é dos asserts do teste, **não** prova legibilidade humana nem que os 120 talentos tenham aparecido.
+
+**QA do checkpoint `44c9f6d9ce9fa257793f2da622b02fb08811a777`:** [geral 41253587440](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253587440) **SUCCESS**; [navegador 41253587466](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253587466) **SUCCESS**. A branch continua isolada; nenhum merge, deploy, dados reais, XP ou progressão alterados.
+
+**Próxima tarefa da mesma M10:** examinar distribuição de cues descartados e focalizar talentos passivos/reativos raros que não surgem nas quatro seeds anteriores; depois retomar balanceamento e G.2 presencial. **G.2 não executado; H.1/H.2 reais e homologação humana bloqueadas.**
