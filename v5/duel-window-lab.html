@@ -28,7 +28,7 @@ const context=()=>({currentStage:3,duelsEnabled:el('teacher').checked});
 const view=key=>({rosterKey:'trial-'+key,progress:{currentStage:3,awaitingPeers:true},duel:{eligible:true,mission:3}});
 const a={view:view('aluna-a'),roomKey:'trial-room-demo',online:true};
 const b={view:view('aluno-b'),roomKey:'trial-room-demo',online:true};
-let state=D.createState(),lastFocus=null;
+let state=D.createState(),lastFocus=null,backgroundInert=null;
 const notification=key=>D.notificationsFor(state,key).at(-1);
 function draw(){
  const sender=notification('trial-aluna-a'),recipient=notification('trial-aluno-b');
@@ -50,9 +50,17 @@ el('decline').addEventListener('click',()=>reply('decline'));
 el('open').addEventListener('click',()=>action(()=>{
  const descriptor=D.arenaWindowFor(state,{id:state.invitations.at(-1).id,actor:'trial-aluna-a'});
  if(descriptor.kind!=='fictional-duel-window')throw Error('Janela não autorizada');
- lastFocus=document.activeElement;el('arena').hidden=false;document.body.style.overflow='hidden';el('close').focus();
+ lastFocus=document.activeElement;
+ backgroundInert=[...document.body.children].filter(node=>node!==el('arena')&&node.tagName!=='SCRIPT').map(node=>[node,node.inert]);
+ for(const [node] of backgroundInert)node.inert=true;
+ el('arena').hidden=false;document.body.style.overflow='hidden';el('close').focus();
 }));
-function close(){el('arena').hidden=true;document.body.style.overflow='';lastFocus?.focus()}
+function close(){
+ if(el('arena').hidden)return;
+ el('arena').hidden=true;document.body.style.overflow='';
+ for(const [node,wasInert] of backgroundInert||[])node.inert=wasInert;
+ backgroundInert=null;lastFocus?.focus();lastFocus=null;
+}
 el('close').addEventListener('click',close);
 el('arena').addEventListener('keydown',event=>{if(event.key==='Escape')close();if(event.key==='Tab'){event.preventDefault();el('close').focus()}});
 el('reset').addEventListener('click',()=>{close();state=D.createState();draw()});
