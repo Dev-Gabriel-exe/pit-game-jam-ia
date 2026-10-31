@@ -83,8 +83,14 @@ function within(inner,outer,tolerance=3){
    assert(metric.combatants===30,'All thirty fictitious fighters must remain in roster');
    assert(metric.pageWidth<=screen.width+3,'Horizontal overflow in immersive mode');
    const filename=OUT+'-'+screen.label+'.png';
-   await page.screenshot({path:filename,timeout:30000});
    report.screens.push({label:screen.label,...metric,screenshot:filename});
+   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
+   // CDP avoids Playwright's animation-stability wait on a live WebGL canvas.
+   const cdp=await page.context().newCDPSession(page);
+   try{
+    const capture=await cdp.send('Page.captureScreenshot',{format:'png',fromSurface:true,captureBeyondViewport:false});
+    fs.writeFileSync(filename,Buffer.from(capture.data,'base64'));
+   }finally{await cdp.detach();}
   }
   assert.deepEqual(errors,[],'Chromium errors: '+errors.join(' | '));
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
