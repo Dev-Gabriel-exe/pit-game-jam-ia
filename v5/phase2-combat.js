@@ -416,7 +416,12 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   if(attacker.weak>0)amount*=1-attacker.weakPower;
   if(!reflect&&attacker.d07WeakUntil>time){
    amount*=1-attacker.d07WeakPower;attacker.d07WeakUntil=0;
-   emit('proc',attacker,{talent:'D07',kind:'weakened'});
+   if(arenaMission===10){
+    // Debuff consumption is NOT a new D07 activation by the affected hero.
+    const source=byId.get(attacker.d07WeakOwner);
+    if(source)emit('debuff',source,{talent:'D07',target:attacker.id,kind:'next-hit-weaken-consumed'});
+    attacker.d07WeakOwner=null;
+   }else emit('proc',attacker,{talent:'D07',kind:'weakened'});
   }
   if(attacker.solarUntil>time&&attacker.shield>0)amount*=.88;
   if(attacker.rage>0)amount*=1+.10*effectiveness(attacker,'B08');
@@ -833,7 +838,9 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
    }
    if(ready(f,'D07')&&d<f.stats.range){
     use(f,'D07',target);applyHit(f,target,atk*.85*scaleSkill('D07'),{kind:'melee',skill:'D07'});
-    if(target.alive){target.d07WeakUntil=time+3;target.d07WeakPower=.12*scaleSkill('D07');emit('debuff',f,{target:target.id,kind:'next-hit-weaken',seconds:3})}
+    if(target.alive){target.d07WeakUntil=time+3;target.d07WeakPower=.12*scaleSkill('D07');
+     if(arenaMission===10)target.d07WeakOwner=f.id;
+     emit('debuff',f,{target:target.id,kind:'next-hit-weaken',seconds:3})}
     return true;
    }
    if(ready(f,'D03')&&d<f.stats.range){
