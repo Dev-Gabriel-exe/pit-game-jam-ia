@@ -82,8 +82,12 @@ export function createDuelVisualization({
  }
  function pause(){if(started&&stage?.playing){stage.pause();onStatus('Combate 3D pausado');return true}return false}
  function resume(){if(started&&stage&&!stage.playing&&!stage.simulation?.finished){stage.resume();onStatus('Combate 3D retomado');return true}return false}
+ function setSpeed(value){
+  if(!started||!stage||![1,2,3].includes(value))return false;
+  stage.setSpeed(value);return true;
+ }
  function dispose(){if(disposed)return;disposed=true;stop()}
- return Object.freeze({start,pause,resume,dispose,
+ return Object.freeze({start,pause,resume,setSpeed,dispose,
   get playing(){return !!stage?.playing},
   get finished(){return !!stage?.simulation?.finished},
   snapshot
