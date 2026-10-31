@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T13:19:34.053Z",
+  "last_completed_at": "2026-10-31T14:22:30Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09: armazenamento bloqueado corrigido com fallback volátil, avisos e teste CI. QA estática M09 SUCCESS (41204988864); Browser QA M09 IN_PROGRESS (41204988886). M08 Browser QA SUCCESS (41200066734). Próximo: confirmar Browser QA M09 e auditar M10 professor/aluno antes da estética.",
+  "priority": "M10: fallback volátil de rascunho implementado (8 campos, rota, 3 checks, hidratação e aviso). M09 Browser QA 41204988886 SUCCESS. M10 QA estática 41209811446 e Browser QA 41209811383 IN_PROGRESS no último acesso. Próximo: confirmar CI, corrigir falhas e seguir auditoria pedagógica transversal professor/aluno antes da estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M09-DRAFT-STORAGE-FAILSAFE",
+  "last_task": "V4-M10-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2867,36 +2867,54 @@
       ],
       "tests": "GitHub Actions static QA 41204988864 SUCCESS including blocked-storage regression (9 fields, radio, checkboxes, session isolation, hydration, warnings, simulated UI events). Browser QA 41204988886 IN_PROGRESS. Prior M08 Browser QA 41200066734 SUCCESS. Human peer test, physical HDMI, GDevelop GUI, mobile NOT_RUN.",
       "notes": "M09 professor/student aligned at 25 min with real peer-test boundaries. Volatile per-tab fallback warns that draft is not persisted when localStorage fails. Master roadmap 54/59 unchanged; main, production and real student data untouched."
+    },
+    {
+      "id": "V4-M10-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T14:22:30Z",
+      "commit": "835c5c12323e086481655dd782cf9a8e149fb8a1",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-m10-storage-failsafe.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "M09 Browser QA 41204988886 SUCCESS; M10 source static QA 41209781635 SUCCESS; M10 new blocked-storage regression static QA 41209811446 IN_PROGRESS and Browser QA 41209811383 IN_PROGRESS. GDevelop GUI, HDMI, mobile and humans NOT_RUN.",
+      "notes": "M10 keeps 8 launch fields, delivery route and three manual checks in tab on localStorage failure; honest warnings in practice/review; hydration protects partial draft. Roadmap 54/59 unchanged. Main/production/student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M09-DRAFT-STORAGE-FAILSAFE",
-    "status": "CODE_COMMITTED_STATIC_QA_PASS_BROWSER_PENDING",
-    "updated_at": "2026-10-31T13:19:34.053Z",
+    "task": "V4-M10-DRAFT-STORAGE-FAILSAFE",
+    "status": "CODE_COMMITTED_CI_PENDING",
+    "updated_at": "2026-10-31T14:22:30Z",
     "code_commits": [
-      "71e52fdc5c1a776a5ff621fa0cc55042ae143ae0",
-      "5d46a2bcb43e2540f9487419b16e1d6eb842ab74",
-      "9e2d6e478a326416a3438497d547d0ec95ff65fc",
-      "adc7db2b374ee54d8c6d686680c448c03236c236"
+      "7b295836b31e2b6d3da2a96bb043020203c0fefe",
+      "2c420ed47c88a13fce165705adf2732df559e844",
+      "835c5c12323e086481655dd782cf9a8e149fb8a1"
     ],
-    "documentation_commit": "e6cac622d2aed1f889c70e6d660d270a658f05c6",
+    "documentation_commit": "23179ce2e43a9c961d3cb384b2ca7156c0f8000d",
     "tests": [
       {
-        "name": "M08 Browser QA confirmed",
-        "run_id": 41200066734,
-        "sha": "6835a8901e5a91820779f2b05a565744c496ec18",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M09 native static QA with blocked-storage regression",
-        "run_id": 41204988864,
-        "sha": "adc7db2b374ee54d8c6d686680c448c03236c236",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M09 Browser QA",
+        "name": "M09 Browser QA confirmed",
         "run_id": 41204988886,
         "sha": "adc7db2b374ee54d8c6d686680c448c03236c236",
+        "result": "SUCCESS"
+      },
+      {
+        "name": "M10 source static QA before new regression",
+        "run_id": 41209781635,
+        "sha": "7b295836b31e2b6d3da2a96bb043020203c0fefe",
+        "result": "SUCCESS"
+      },
+      {
+        "name": "M10 static QA with new blocked-storage regression",
+        "run_id": 41209811446,
+        "sha": "835c5c12323e086481655dd782cf9a8e149fb8a1",
+        "result": "IN_PROGRESS at last inspection"
+      },
+      {
+        "name": "M10 Browser QA",
+        "run_id": 41209811383,
+        "sha": "835c5c12323e086481655dd782cf9a8e149fb8a1",
         "result": "IN_PROGRESS at last inspection"
       }
     ],
@@ -2904,7 +2922,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M09 Browser QA on SHA adc7db2b; audit M10 teacher/student draft persistence, pitch, editable project, privacy and final evidence",
-    "blocker": "Browser QA M09 pending; human peer playtest, physical HDMI, GDevelop GUI and mobile NOT_RUN."
+    "next_task": "Confirm M10 static/browser QA; if green, perform transversal audit of professor projected slides and student six-step autonomy, then aesthetics",
+    "blocker": "M10 new regression CI not yet confirmed; GDevelop GUI, physical HDMI, mobile and human pitch/playtest NOT_RUN."
   }
 }
