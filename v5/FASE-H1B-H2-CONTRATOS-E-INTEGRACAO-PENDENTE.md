@@ -52,3 +52,18 @@ Os testes não usam `DATABASE_URL`, não geram XP e não abrem porta de rede. A 
 - **H.1/H.2/I final:** vincular o professor e os alunos ao fluxo V3 e publicar somente com teste e aprovação explícita.
 
 Os arquivos do laboratório não têm permissão nem dependência para modificar alunos, XP, notas, turmas ou banco. Nenhum deploy/merge.
+
+
+## Checkpoint M10/H.2 — fluxo integral de 30 participantes (31/10/2026)
+
+**Missão técnica concluída como QA isolado:** cobrir a lacuna do teste H.2 anterior, que verificava somente um quadro da M10 com 30 personagens. Nenhuma mudança no motor, câmera, estatísticas, KayKit, progresso pedagógico ou backend.
+
+- **Arquivos:** `qa/v5-m10-h2-fullstream.cjs` e `.github/workflows/v5-m10-h2-fullstream-qa.yml`.
+- **Commit de implementação/CI:** `7a657ab33b4fd271bd8c64ef33cbed3b2921766c` (precedido pelo teste `af197fc` e correção do cursor `f33c47d`).
+- **CI verde:** [GitHub Actions 41206733096](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41206733096). Os quatro comandos do job passaram: sintaxe, fluxo integral 30, regressão H.2 M5/M10 e regressão do motor M10.
+- **Evidência do log:** M10 com 30 heróis fictícios, 10 talentos e 20 pontos por build, 4 classes KayKit/120 talentos disponíveis no catálogo, **339 quadros sequenciais**, 3 receptores passivos, 1 motor por partida, histórico limitado a 8 quadros, recuperação por backlog e por snapshot após perda prolongada, câmera `overview/duel/highlight/climax/victory`, vencedor e replay idênticos com a mesma seed. O teste não alega que os 120 talentos sejam ativados numa única partida.
+- **Preservação:** testes existentes de M5 (5 talentos/10 pontos) e M10 passaram. Nenhuma chamada a rede, autenticação, banco, turmas, notas ou XP. Nenhum merge nem deploy.
+
+**Próxima tarefa permitida:** endurecer o contrato do receptor H.2 contra quadros sintéticos semanticamente impossíveis (ex.: ressuscitar lutador, trocar classe ou vencedor), com testes negativos e compatibilidade com as transições reais do motor, ainda inteiramente fictício. Não ligar SSE/WebSocket, dados reais ou V3.
+
+**Gates não concluídos:** G.2 (FPS/P10 nos PCs físicos da escola), autorização explícita para H.1/H.2 operacionais, homologação professor/alunos e merge final. CI no GitHub não equivale a teste em hardware físico.
