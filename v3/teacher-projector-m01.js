@@ -756,7 +756,11 @@ function open(){
  window.addEventListener('resize',updateScrollHint);
  render();$('pitProjectorClose').focus();
 }
-document.addEventListener('keydown',e=>{if(!overlay)return;if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'){e.preventDefault();move(1)}
+document.addEventListener('keydown',e=>{if(!overlay)return;
+ // Keep native keyboard behavior in interactive projected examples (e.g. M08 radio controls).
+ // Escape must still close the projector even when a control has focus.
+ if(e.key!=='Escape'&&e.target?.closest?.('input,textarea,select,[contenteditable="true"],[role="radio"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"]'))return;
+ if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowRight'){e.preventDefault();move(1)}
  else if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}
  else if(e.key==='PageDown'||e.key==='PageUp'){
   e.preventDefault();
