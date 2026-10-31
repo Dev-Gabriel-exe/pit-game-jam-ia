@@ -143,7 +143,7 @@ function prepare(){
   $('stagePlaceholder').hidden=true;
   currentStage=createStage($('arenaStage'),{
    quality:(navigator.deviceMemory||4)<4?'low':'auto',arenaScale:5,
-   spriteEffects:mission===5?'on':'off',
+   spriteEffects:'on',
    onEvent:event=>{
     if(runGeneration!==generation)return;
     if(event.type==='talent')eventLog('✧ '+event.hero+' ativou '+(event.name||event.talent));

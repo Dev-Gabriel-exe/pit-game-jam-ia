@@ -26,8 +26,8 @@ const m10Policy=m10Preview?PROGRESSION.createPolicy(PHASE2.TALENTS):null;
 const experimentalSteering=params.get('nav')==='steer';
 const experimentalCounterplay=params.get('counterplay')==='1';
 const experimentalHpBalance=params.get('balance')==='hp2';
-// E.6: original animated talent sprites in M5 only (never progression or M10).
-const experimentalTalentSprites=params.get('sprites')==='1';
+// E.7: original animated talent sprites default-on for fictional M5/M10 Phase2; ?sprites=0 disables them.
+const experimentalTalentSprites=params.get('sprites')!=='0';
 // G.1: explicitly opt-in local diagnostics; no forced low graphics quality.
 const performanceDiagnostics=params.get('perf')==='1';
 // Reproduce a reported lab run exactly without touching student data.

@@ -12,7 +12,7 @@ function spec(style,{subtle=false,reducedMotion=false,quality='auto'}={}){
  if(!STYLES.includes(style))return null;
  const ground=FLOOR.has(style),impact=style==='impact';
  return Object.freeze({style,family:STYLE_FAMILY[style],ground,
-  frames:reducedMotion?2:quality==='low'?3:6,
+  frames:reducedMotion?2:quality==='low'?3:8,
   duration:impact?.29:reducedMotion?.44:subtle?.63:style==='barrier'?.95:.76,
   size:impact?1.25:subtle?1.7:ground?3.6:style==='arc'?2.85:2.55,
   opacity:subtle?.52:.91,priority:impact?0:subtle?1:2});
@@ -20,7 +20,7 @@ function spec(style,{subtle=false,reducedMotion=false,quality='auto'}={}){
 function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
  if(!THREE?.CanvasTexture||!THREE?.Sprite)throw Error('E.6 requer Three.js');
  if(typeof document==='undefined')throw Error('E.6 requer Canvas 2D');
- const dim=quality==='low'?80:160,frames=reducedMotion?2:quality==='low'?3:6;
+ const dim=quality==='low'?80:160,frames=reducedMotion?2:quality==='low'?3:8;
  const textures=new Map(),cache=new Map();
  function trace(ctx,pts,closed=false){
   ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
@@ -51,11 +51,12 @@ function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
   ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,.98,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,.97)';ctx.fillStyle='rgba(255,255,255,.94)';
   ctx.lineJoin='round';ctx.lineCap='round';
-  ctx.shadowColor='rgba(255,255,255,.88)';ctx.shadowBlur=dim*.06;
+  ctx.shadowColor='rgba(255,255,255,.93)';ctx.shadowBlur=dim*.085;
   switch(style){
    case 'arc':
     ctx.rotate(-.48+t*.64);ring(ctx,.47+rise*.24,.23,-2.3,1.1);
-    ring(ctx,.76,.055,-2.15,.36);rays(ctx,3,.47,.85,-.6,.08);break;
+    ring(ctx,.76,.055,-2.15,.36);rays(ctx,3,.47,.85,-.6,.08);
+    line(ctx,[[-.72,.43],[-.40,.28],[.04,-.16],[.45,-.53]],.085);break;
    case 'barrier':
     ctx.rotate(Math.PI/6);ring(ctx,.70,.10);
     line(ctx,[[0,-.73],[.60,-.36],[.53,.45],[0,.78],[-.53,.45],[-.60,-.36],[0,-.73]],.10);
@@ -72,9 +73,13 @@ function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
      trace(ctx,[[0,.85],[-.30,.28],[-.16,-.24],[-.02,-.75],[.20,-.18],[.37,.39],[0,.85]],true);
      ctx.lineWidth=.11;ctx.stroke();ctx.restore();
     }
+    line(ctx,[[0,.62],[-.10,.13],[.06,-.31],[.19,.16],[0,.62]],.09);
     break;
    case 'frost':
-    rays(ctx,6,.12,.82,t*.22,.11);ring(ctx,.25,.075);rays(ctx,12,.46,.70,t*.22,.065);break;
+    rays(ctx,6,.12,.82,t*.22,.11);ring(ctx,.25,.075);rays(ctx,12,.46,.70,t*.22,.065);
+    for(let i=0;i<6;i++){ctx.save();ctx.rotate(i*Math.PI/3);
+     line(ctx,[[-.17,-.55],[0,-.72],[.17,-.55]],.052);ctx.restore()}
+    break;
    case 'heal':
     ring(ctx,.67,.085);line(ctx,[[0,-.55],[0,.55]],.19);line(ctx,[[-.55,0],[.55,0]],.19);
     rays(ctx,8,.73,.86,t*.15,.05);break;
@@ -85,7 +90,8 @@ function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
    case 'arrow':
     ctx.rotate(.72);line(ctx,[[0,.77],[0,-.68]],.16);
     line(ctx,[[-.35,-.25],[0,-.77],[.35,-.25]],.18);
-    line(ctx,[[-.26,.40],[0,.65],[.26,.40]],.10);break;
+    line(ctx,[[-.26,.40],[0,.65],[.26,.40]],.10);
+    line(ctx,[[-.45,.51],[-.18,.40]],.052);line(ctx,[[.45,.51],[.18,.40]],.052);break;
    case 'radiance':
     ring(ctx,.43,.18);rays(ctx,10,.56,.91,t*.22,.10);
     ring(ctx,.17,.10);break;
@@ -100,6 +106,17 @@ function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
    case 'impact':
     ctx.scale(.7+burst*.35,.7+burst*.35);rays(ctx,9,.14,.72,t*.9,.13);
     ring(ctx,.25+rise*.48,.13);break;
+  }
+  // Secondary hand-crafted star glints travel along the moving skill sheet,
+  // rather than adding billboards or expensive particle systems per talent.
+  ctx.shadowBlur=dim*.025;
+  ctx.globalAlpha=(.27+.42*burst)*(1-t*.58);
+  for(let i=0;i<4;i++){
+   const a=i*Math.PI*.5+t*1.7+(style.charCodeAt(0)%7)*.13;
+   const rad=.68+Math.sin(t*Math.PI+i*1.9)*.08;
+   const px=Math.cos(a)*rad,py=Math.sin(a)*rad;
+   line(ctx,[[px-.065,py],[px+.065,py]],.037);
+   line(ctx,[[px,py-.065],[px,py+.065]],.037);
   }
   // Strong readable center core, class color comes from SpriteMaterial tint.
   ctx.shadowBlur=0;ctx.globalAlpha=.36+burst*.46;ctx.beginPath();

@@ -11,6 +11,7 @@ import {createArenaAudio} from './arena-audio.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
 const SPRITE_FX=window.PIT_V5_TALENT_SPRITES;
+const TALENT_MOTION=window.PIT_V5_TALENT_MOTION;
 const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
 const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
@@ -313,12 +314,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const individuals=new Map(),effects=[],labels=new Map();
  // E.6: shared local texture frames, opt-in for M5 and disposed with this stage.
  const spriteKit=spriteEffects==='on'&&SPRITE_FX?SPRITE_FX.makeAtlas(THREE,{quality,reducedMotion:reduce}):null;
- let spriteVisualEvents=0,spriteVisualDropped=0;
+ let spriteVisualEvents=0,spriteVisualDropped=0,talentMotionEvents=0,projectileMotionEvents=0;
  container.dataset.v5SpriteMode=spriteKit?'on':'off';
  container.dataset.v5SpriteTextures=String(spriteKit?.textureCount||0);
  container.dataset.v5SpriteFrames=String(spriteKit?.frameCount||0);
  container.dataset.v5SpriteVisualEvents='0';container.dataset.v5SpriteVisualActive='0';
  container.dataset.v5SpriteVisualDropped='0';container.dataset.v5SpriteStyleLast='';
+ container.dataset.v5TalentMotionEvents='0';container.dataset.v5TalentProjectiles='0';
+ container.dataset.v5SpriteEchoActive='0';
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
  let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0,hitReactions=0;
  const visualBudget=quality==='low'||reduce?9:18;
@@ -358,6 +361,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  container.dataset.v5DrawCalls='0';
  container.dataset.v5Triangles='0';
  function discardEffect(e){
+  if(e.spriteEcho){root.remove(e.spriteEcho.mesh);e.spriteEcho.mesh.material.dispose()}
   for(const d of e.decors||[]){root.remove(d);d.geometry.dispose();d.material.dispose()}
   root.remove(e.mesh);
   // THREE.Sprite reuses a shared quad geometry; disposing it per VFX is unsafe.
@@ -646,7 +650,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5TalentFxEvents='0';container.dataset.v5TalentFxDropped='0';
   container.dataset.v5TalentCueLast='';container.dataset.v5TalentCueStyle='';
   container.dataset.v5TalentFxActive='0';
-  spriteVisualEvents=0;spriteVisualDropped=0;
+  spriteVisualEvents=0;spriteVisualDropped=0;talentMotionEvents=0;projectileMotionEvents=0;
+  container.dataset.v5TalentMotionEvents='0';container.dataset.v5TalentProjectiles='0';
+  container.dataset.v5SpriteEchoActive='0';
   container.dataset.v5SpriteVisualEvents='0';container.dataset.v5SpriteVisualActive='0';
   container.dataset.v5SpriteVisualDropped='0';container.dataset.v5SpriteStyleLast='';
   container.dataset.v5TalentFxCatalog=String(CUES?Object.values(CUES).flat().length:0);
@@ -713,11 +719,36 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   burst(x,z,color,9);
  }
  // E.6 sprites are created only for genuine combat-engine actions and impacts.
- function spawnSpriteCue(cue,x,z,subtle=false){
+ function spawnSpriteCue(cue,x,z,subtle=false,target=null){
   if(!spriteKit||!cue)return false;
+  // Both positions are read from the combat engine; these movements never
+  // change hit detection, cooldowns, damage or XP.
+  const motion=TALENT_MOTION?.plan(cue,{
+   from:{x,z},to:target?{x:target.x,z:target.z}:null,
+   subtle,reducedMotion:reduce
+  })||null;
   const fx=spriteKit.spawn({style:cue.style,color:cue.color,scale:cue.scale,subtle,x,z});
   if(!fx)return false;
   fx.talentCue=cue;fx.subtle=subtle;
+  if(motion){
+   fx.motionPlan=motion;fx.maxLife=motion.duration;fx.life=motion.duration;
+   fx.visualOrigin={x,z};
+   talentMotionEvents++;
+   container.dataset.v5TalentMotionEvents=String(talentMotionEvents);
+   if(motion.mode==='projectile'){
+    projectileMotionEvents++;container.dataset.v5TalentProjectiles=String(projectileMotionEvents);
+   }
+   // A low-cost afterglow makes each strike readable without multiplying
+   // ability event counts. Disable the extra sprite on low-power devices,
+   // with reduced motion enabled, and for subdued passive procs.
+   if(quality!=='low'&&!reduce&&!subtle){
+    const echo=spriteKit.spawn({
+     style:motion.mode==='projectile'?'dash':motion.mode==='ward'?'barrier':'impact',
+     color:cue.color,scale:cue.scale*.76,subtle:true,x,z
+    });
+    if(echo){fx.spriteEcho=echo;root.add(echo.mesh)}
+   }
+  }
   root.add(fx.mesh);effects.push(fx);
   spriteVisualEvents++;container.dataset.v5SpriteVisualEvents=String(spriteVisualEvents);
   container.dataset.v5SpriteStyleLast=cue.style;
@@ -754,7 +785,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   const x=Number.isFinite(position?.x)?position.x:item.mesh.root.position.x;
   const z=Number.isFinite(position?.z)?position.z:item.mesh.root.position.z;
   if(spriteKit){
-   const spawned=spawnSpriteCue(cue,x,z,subtle);
+   const target=event.target!=null?individuals.get(String(event.target)):null;
+   const targetPos=target&&!target.spectator?target.mesh.root.position:null;
+   const spawned=spawnSpriteCue(cue,x,z,subtle,targetPos);
    if(spawned){
     talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
     container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
@@ -1267,10 +1300,30 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     const progress=Math.max(0,Math.min(.999,1-e.life/e.maxLife));
     const step=Math.min(e.frames.length-1,Math.floor(progress*e.frames.length));
     if(step!==e.frameIndex){e.frameIndex=step;e.mesh.material.map=e.frames[step]}
-    const swell=reduce?1:1+Math.sin(progress*Math.PI)*.45;
-    e.mesh.scale.set(e.baseScale*swell,e.baseScale*swell,1);
-    e.mesh.material.opacity=e.config.opacity*(1-progress)*(.58+.42*Math.sin(Math.PI*progress));
-    if(!reduce)e.mesh.material.rotation+=dt*(e.style==='arc'?-1:1)*.58;
+    if(e.motionPlan&&TALENT_MOTION){
+     const pose=TALENT_MOTION.sample(e.motionPlan,e.maxLife-e.life);
+     const scale=e.baseScale*(pose.scale/e.motionPlan.scale);
+     e.mesh.position.set(pose.x,pose.y,pose.z);
+     e.mesh.scale.set(scale,scale,1);
+     e.mesh.material.opacity=e.config.opacity*pose.opacity;
+     e.mesh.material.rotation=pose.rotation;
+     if(e.spriteEcho){
+      const echo=e.spriteEcho.mesh;
+      const behind=e.motionPlan.mode==='projectile'?
+       TALENT_MOTION.sample(e.motionPlan,Math.max(0,e.maxLife-e.life-.13)):null;
+      echo.position.set(behind?.x??e.visualOrigin.x,
+       behind?.y??.47,behind?.z??e.visualOrigin.z);
+      const glowScale=e.spriteEcho.baseScale*(.72+pose.energy*.62);
+      echo.scale.set(glowScale,glowScale,1);
+      echo.material.opacity=Math.min(.49,pose.opacity*.48)*(behind?.progress>.9?.20:1);
+      echo.material.rotation=pose.rotation*.4;
+     }
+    }else{
+     const swell=reduce?1:1+Math.sin(progress*Math.PI)*.45;
+     e.mesh.scale.set(e.baseScale*swell,e.baseScale*swell,1);
+     e.mesh.material.opacity=e.config.opacity*(1-progress)*(.58+.42*Math.sin(Math.PI*progress));
+     if(!reduce)e.mesh.material.rotation+=dt*(e.style==='arc'?-1:1)*.58;
+    }
    }else if(e.isAbility){
     const progress=1-e.life/e.maxLife;
     e.mesh.scale.setScalar((e.baseScale||.7)*(1+progress*(e.talentCue?.style==='barrier'?.8:1.7)));
@@ -1298,6 +1351,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   }
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
+  container.dataset.v5SpriteEchoActive=String(effects.filter(e=>e.spriteEcho).length);
   container.dataset.v5ChoreographiesActive=String([...individuals.values()].filter(u=>u.choreography).length);
   if(autoCamera&&simulation){
    const shot=autoDirector?.snapshot().plan;
