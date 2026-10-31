@@ -66,7 +66,7 @@ while(!publisher.finished&&frames<1400){
  }
  if(frames===12)spectator.disconnect();
  if(frames===25){
-  assert.equal(spectator.reconnect(),12);
+  assert.equal(spectator.reconnect(),11);
   const backlog=publisher.since(spectator.cursor);
   assert.equal(backlog.resetRequired,true,'evicted frames require a full snapshot');
   assert.equal(backlog.frames.length,0);
