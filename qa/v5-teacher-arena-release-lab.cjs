@@ -75,6 +75,12 @@ for(const mission of [5,10]){
  tiny=dispatch(tiny,'alter',{rosterKey:participants[1].rosterKey,ready:true});
  tiny=dispatch(tiny,'release',{policy});
  assert.equal(tiny.release.entrants.length,2);
+ tiny=dispatch(tiny,'abort');
+ assert.equal(tiny.status,'aborted');
+ assert.equal(tiny.result,null);
+ assert.throws(()=>dispatch(tiny,'start'),/não foi liberada/);
+ tiny=dispatch(tiny,'reset');
+ assert.equal(tiny.status,'draft');
 }
 // No real account IDs can enter this fictional state.
 assert.throws(()=>T.createState({mission:5,participants:[
