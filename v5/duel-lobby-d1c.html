@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#120e17">
+<title>Sala de Duelos V5 — PIT Game Jam IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./hero-lab-h1c.css">
+<link rel="stylesheet" href="./duel-lab-d1a.css">
+<link rel="stylesheet" href="./duel-lobby-d1c.css">
+<script src="./duel-client-d1c.js"></script><script src="./duel-lobby-d1c.js" defer></script>
+</head><body>
+<div class="backdrop" aria-hidden="true"></div>
+<header class="topbar"><a class="brand" href="./arena-lab.html?m10preview=1&amp;count=30"><span>⚔</span> PIT GAME JAM <small>V5</small></a>
+<span class="top-label">SALÃO DOS DESAFIOS <span>FLUXO COMPLETO DO ALUNO · D.1c</span></span>
+<a class="back" href="./hero-lab-h1c.html">FORJAR PERSONAGEM ↗</a></header>
+<main>
+<div class="eyebrow">CONTINUE JOGANDO ENQUANTO ESPERA SEUS COLEGAS</div>
+<h1>Seu próximo <em>duelo.</em></h1>
+<p class="intro">Ao terminar a missão, você pode desafiar um colega que também terminou. O convite chega ao outro aluno, que pode aceitar ou recusar. Quando ele aceita, o Coliseu abre automaticamente para os dois.</p>
+<div class="notice" id="safetyNote" role="status" aria-live="polite">
+<strong>HOMOLOGAÇÃO RESTRITA</strong> — sem conta de teste autorizada não há acesso ao banco. Nada é conectado automaticamente às turmas reais.
+<a href="./duel-lab-d1a.html" class="safe-link">Testar convites fictícios</a>
+<a href="./duel-replay-d1b.html?demo=1" class="safe-link">Ver a batalha 3D fictícia</a>
+</div>
+<div class="duel-layout" id="lobbyLayout">
+<section class="card duel-main">
+<div class="section-title"><span>01 / MISSÃO CONCLUÍDA</span><h2>Você está pronto?</h2>
+<p>Concluir ou entregar a missão atual permite entrar na sala de espera. Os talentos e pontos continuam dependendo da aprovação do professor.</p></div>
+<div class="duel-strip">
+<div><span>MISSÃO LIBERADA</span><strong id="mission">—</strong></div>
+<div><span>PROGRESSO</span><strong id="progress">Aguardando sessão</strong></div>
+<div><span>STATUS DOS DUELOS</span><strong id="teacherStatus">—</strong></div>
+</div>
+<label class="duel-toggle" for="availableToggle"><input type="checkbox" id="availableToggle" disabled>
+Disponível para duelos enquanto aguardo a turma</label>
+<p class="muted" id="availabilityHint">Conecte uma sessão fictícia autorizada de homologação para habilitar.</p>
+<div class="section-title"><span>02 / ESCOLHA SEU ADVERSÁRIO</span><h2>Colegas disponíveis</h2>
+<p>Somente jogadores da mesma turma, com a missão entregue ou aprovada, aparecem aqui.</p></div>
+<div id="peers" class="duel-peers"><div class="duel-empty">Aguardando conexão de homologação.</div></div>
+</section>
+<aside class="duel-aside">
+<section class="card">
+<div class="section-title"><span>03 / CONVITES</span><h2>Notificações</h2>
+<p>Convites têm duração de 45 segundos. Se você recusar, o colega poderá escolher outro jogador.</p></div>
+<div id="feedback" class="feedback" role="status" aria-live="polite">Nenhuma conexão iniciada.</div>
+<div id="currentInvite" class="duel-inbox"><div class="duel-empty">Nenhum convite.</div></div>
+<button id="refresh" class="button secondary-button" type="button" disabled>↻ Atualizar convites</button>
+</section>
+<section class="card">
+<div class="section-title"><span>04 / ÚLTIMOS CONFRONTOS</span><h2>Histórico</h2></div>
+<div id="history" class="duel-history"><p class="muted">Sem partidas neste laboratório.</p></div>
+</section>
+</aside></div>
+<section id="arenaPanel" class="arena-panel card" hidden>
+<div class="arena-panel-heading"><div><div class="eyebrow">DESAFIO ACEITO</div><h2>⚔ A batalha começou!</h2>
+<p>O servidor gera uma partida única. Cada jogador pode escolher sua câmera e acompanhar o resultado.</p></div>
+<button type="button" id="backToLobby" class="button secondary-button">← Voltar ao salão</button></div>
+<iframe id="arenaFrame" title="Batalha 3D sincronizada entre os dois alunos" loading="eager" allow="autoplay"></iframe>
+</section>
+<div class="footer">D.1c · Ambiente fictício de teste · Sem nota, XP, controle de turma real ou publicação na versão principal</div>
+</main></body></html>

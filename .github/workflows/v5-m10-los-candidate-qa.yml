@@ -1,0 +1,38 @@
+name: V5 M10 LOS Candidate — Isolated QA
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-los-candidate.cjs'
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+      - '.github/workflows/v5-m10-los-candidate-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  m10-los-counterfactual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and progression safeguards
+        run: |
+          node --check qa/v5-m10-los-candidate.cjs
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-m10-engine.cjs
+          node qa/v5-endgame-replay.cjs
+      - name: Bounded LOS candidate (read-only synthetic M10)
+        run: node qa/v5-m10-los-candidate.cjs
+        env:
+          M10_LOS_REPORT_FILE: qa/out/m10-los-candidate.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-los-candidate-diagnostic
+          path: qa/out/m10-los-candidate.json
+          retention-days: 14
+          if-no-files-found: ignore

@@ -11,6 +11,10 @@ on:
       - 'biblioteca.js'
       - 'cover.jpg'
       - 'homologacao-v5/**'
+      - 'aluno-v3.html'
+      - 'professor-v3.html'
+      - 'v3/**'
+      - 'v5/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 permissions:

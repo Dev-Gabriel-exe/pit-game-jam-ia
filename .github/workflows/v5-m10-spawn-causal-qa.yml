@@ -1,0 +1,39 @@
+name: V5 M10 — Geometria vs Ordem-RNG
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-spawn-causal.cjs'
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+      - '.github/workflows/v5-m10-spawn-causal-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  causal-spawn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax validation
+        run: |
+          node --check v5/phase2-combat.js
+          node --check qa/v5-m10-spawn-causal.cjs
+      - name: Controlled M10 geometry/order-RNG experiment
+        env:
+          M10_SPAWN_REPORT_FILE: ${{ runner.temp }}/m10-spawn-causal.json
+        run: node qa/v5-m10-spawn-causal.cjs
+      - name: M5 and M10 regression
+        run: |
+          node qa/v5-m10-engine.cjs
+          node qa/v5-endgame-replay.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - name: Archive anonymous experiment
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: v5-m10-spawn-causal
+          path: ${{ runner.temp }}/m10-spawn-causal.json
+          if-no-files-found: warn
+          retention-days: 14

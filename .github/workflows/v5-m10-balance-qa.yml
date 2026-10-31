@@ -1,0 +1,32 @@
+name: V5 M10 — Matriz de Balanceamento
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-balance-matrix.cjs'
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+      - '.github/workflows/v5-m10-balance-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  balance-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate syntax
+        run: node --check qa/v5-m10-balance-matrix.cjs
+      - name: Run deterministic M10 balance matrix
+        env:
+          M10_REPORT_FILE: ${{ runner.temp }}/m10-balance-matrix.json
+        run: node qa/v5-m10-balance-matrix.cjs
+      - name: Preserve anonymized matrix report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: v5-m10-balance-matrix
+          path: ${{ runner.temp }}/m10-balance-matrix.json
+          if-no-files-found: warn
+          retention-days: 14

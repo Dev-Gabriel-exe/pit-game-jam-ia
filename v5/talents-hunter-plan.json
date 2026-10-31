@@ -1,0 +1,427 @@
+{
+  "schema": "pit-v5-talent-planning-v1",
+  "klass": "hunter",
+  "status": "planning-only",
+  "talents": [
+    {
+      "id": "P01",
+      "name": "Flecha Perfurante",
+      "tree": "Pontaria",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "Disparo de 140% do ataque físico e ignora 10% da mitigação defensiva; CD 10 s",
+      "animation": {
+        "id": "hunter_p01",
+        "storyboard": "Arqueiro ajoelha, estica o arco em ângulo baixo e libera flecha com trilha dourada perfurante"
+      },
+      "synergyAndCounter": "P05; escudos continuam absorvendo"
+    },
+    {
+      "id": "P02",
+      "name": "Mira Firme",
+      "tree": "Pontaria",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Após 3 s sem deslocamento, próximo tiro recebe +12% de dano; uma carga, trava 10 s",
+      "animation": {
+        "id": "hunter_p02",
+        "storyboard": "Olho direito brilha, círculo de mira fecha sobre a corda antes do disparo"
+      },
+      "synergyAndCounter": "P01; perseguição força a andar"
+    },
+    {
+      "id": "P03",
+      "name": "Tiro Duplo",
+      "tree": "Pontaria",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "Duas flechas de 58% ataque cada contra um alvo; 116% total, CD 8 s",
+      "animation": {
+        "id": "hunter_p03",
+        "storyboard": "Puxa duas flechas entre dedos e dispara em ângulos divergentes que se encontram no alvo"
+      },
+      "synergyAndCounter": "P07 acumula impactos; bloqueio de projéteis"
+    },
+    {
+      "id": "P04",
+      "name": "Olhar Predador",
+      "tree": "Pontaria",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Ao atacar o mesmo alvo duas vezes, próximo tiro recebe +8% dano; trava 12 s, uma carga",
+      "animation": {
+        "id": "hunter_p04",
+        "storyboard": "Visão de águia delineia o inimigo por dois pulsos âmbar"
+      },
+      "synergyAndCounter": "P03; troca de alvo frequente"
+    },
+    {
+      "id": "P05",
+      "name": "Flecha Marcadora",
+      "tree": "Pontaria",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "100% ataque, marca alvo por 4 s; próximo golpe seu contra ele +12% de dano; CD 15 s",
+      "animation": {
+        "id": "hunter_p05",
+        "storyboard": "Ponta da flecha abre selo circular vermelho no peito do alvo"
+      },
+      "synergyAndCounter": "P01 e P10; remoção de marca"
+    },
+    {
+      "id": "P06",
+      "name": "Disparo de Ruptura",
+      "tree": "Pontaria",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "DES",
+      "effect": "125% ataque; dano extra de 60% apenas contra escudos, não contra vida; CD 19 s",
+      "animation": {
+        "id": "hunter_p06",
+        "storyboard": "Flecha de ponta tripla quebra em fragmentos ao tocar barreira"
+      },
+      "synergyAndCounter": "P01 não ignora escudos, complementando ruptura; builds sem escudo"
+    },
+    {
+      "id": "P07",
+      "name": "Pulsação da Corda",
+      "tree": "Pontaria",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "Após 3 impactos com flechas próprias, próximo básico ganha +10% velocidade de execução; trava 10 s",
+      "animation": {
+        "id": "hunter_p07",
+        "storyboard": "Corda do arco vibra e emite três ondas finas circulares"
+      },
+      "synergyAndCounter": "P03 dispara múltiplos impactos; investida de melee"
+    },
+    {
+      "id": "P08",
+      "name": "Olho do Caçador",
+      "tree": "Pontaria",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Ao ser atacado de mais de 6 m, reduz 15% do impacto e ganha +8% de alcance no próximo tiro; trava 18 s",
+      "animation": {
+        "id": "hunter_p08",
+        "storyboard": "Visor dourado desce diante dos olhos e arco ergue instantaneamente"
+      },
+      "synergyAndCounter": "P10 contra arqueiros; corpo a corpo"
+    },
+    {
+      "id": "P09",
+      "name": "Tiro de Interrupção",
+      "tree": "Pontaria",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Se inimigo começa conjuração de preparo maior que 0,4 s em até 8 m, atira por 55% ataque e atrasa em 0,5 s a execução; trava 21 s",
+      "animation": {
+        "id": "hunter_p09",
+        "storyboard": "Flecha curta azul é disparada de quadril durante o gesto adversário"
+      },
+      "synergyAndCounter": "P10; habilidades instantâneas"
+    },
+    {
+      "id": "P10",
+      "name": "Chuva de Setas",
+      "tree": "Pontaria",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "VIT",
+      "effect": "Três impactos de 48% do ataque em raio 2 m após aviso 0,7 s; CD 25 s",
+      "animation": {
+        "id": "hunter_p10",
+        "storyboard": "Levanta arco ao céu, três setas luminosas caem em triângulo no solo"
+      },
+      "synergyAndCounter": "P05 marca antes; alvos móveis"
+    },
+    {
+      "id": "E01",
+      "name": "Armadilha de Espinhos",
+      "tree": "Emboscada e armadilhas",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "Instala armadilha por até 8 s; primeiro inimigo em raio 1,5 m sofre 90% ataque e lentidão 20% por 2 s; CD 17 s",
+      "animation": {
+        "id": "hunter_e01",
+        "storyboard": "Caçador finca estaca e espinhos metálicos saltam do chão ao ativar"
+      },
+      "synergyAndCounter": "E04 força passagem; evitar a zona"
+    },
+    {
+      "id": "E02",
+      "name": "Passo de Sombra",
+      "tree": "Emboscada e armadilhas",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "VIT",
+      "effect": "Desloca 3 m lateralmente até espaço livre e ganha 10% velocidade por 2 s; CD 18 s",
+      "animation": {
+        "id": "hunter_e02",
+        "storyboard": "Giro ágil para trás de fumaça cinza, reaparece com folhas escuras"
+      },
+      "synergyAndCounter": "E07 ativa mobilidade; tiros de longo alcance"
+    },
+    {
+      "id": "E03",
+      "name": "Venenos de Caça",
+      "tree": "Emboscada e armadilhas",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "Após habilidade de armadilha acertar, adiciona dano de 2,5% ataque/s por 3 s; uma aplicação própria, trava 12 s",
+      "animation": {
+        "id": "hunter_e03",
+        "storyboard": "Líquido verde percorre a flecha até formar gotas no solo"
+      },
+      "synergyAndCounter": "E01 e E10; purificação de veneno"
+    },
+    {
+      "id": "E04",
+      "name": "Isca do Deserto",
+      "tree": "Emboscada e armadilhas",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Coloca isca até 7 s; inimigos que se aproximarem a 2 m têm velocidade -12% por 2 s, sem controlar sua vontade; CD 20 s",
+      "animation": {
+        "id": "hunter_e04",
+        "storyboard": "Lança placa de madeira com brilho laranja e miragem de pegadas"
+      },
+      "synergyAndCounter": "E01 facilita acertar; alvos à distância"
+    },
+    {
+      "id": "E05",
+      "name": "Corda de Aprisionamento",
+      "tree": "Emboscada e armadilhas",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Causa 75% ataque e desacelera 25% por 1,5 s a alvo até 7 m; CD 15 s",
+      "animation": {
+        "id": "hunter_e05",
+        "storyboard": "Arqueiro lança corda em laço que enrola os tornozelos e se desfaz"
+      },
+      "synergyAndCounter": "E10 mantém alvo na área; resistência a controle"
+    },
+    {
+      "id": "E06",
+      "name": "Camuflagem das Folhas",
+      "tree": "Emboscada e armadilhas",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Ao receber ataque corpo a corpo, reduz 25% deste golpe e move 1 m para trás; trava 19 s",
+      "animation": {
+        "id": "hunter_e06",
+        "storyboard": "Manto espalha folhas e deixa réplica translucida da silhueta"
+      },
+      "synergyAndCounter": "E02 compõe evasão; golpes em área"
+    },
+    {
+      "id": "E07",
+      "name": "Predador Invisível",
+      "tree": "Emboscada e armadilhas",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "Depois de se reposicionar 3 m sem receber dano, próximo ataque ganha +10% dano; trava 14 s",
+      "animation": {
+        "id": "hunter_e07",
+        "storyboard": "Pegadas apagam, capuz adquire brilho esverdeado e arco brilha só no disparo"
+      },
+      "synergyAndCounter": "E02; perseguição constante"
+    },
+    {
+      "id": "E08",
+      "name": "Armadilha Reflexa",
+      "tree": "Emboscada e armadilhas",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Ao ficar abaixo de 40% HP, solta uma armadilha de 70% ataque no próprio chão; uma vez por duelo, sem imobilização",
+      "animation": {
+        "id": "hunter_e08",
+        "storyboard": "Rola pequena esfera com gancho que se abre ao toque do inimigo"
+      },
+      "synergyAndCounter": "E03; disparos à distância"
+    },
+    {
+      "id": "E09",
+      "name": "Rede Preparada",
+      "tree": "Emboscada e armadilhas",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "Primeira armadilha acionada no duelo aumenta em 12% o dano da próxima habilidade ofensiva; uma carga",
+      "animation": {
+        "id": "hunter_e09",
+        "storyboard": "Rede de fios dourados surge brevemente sob as armadilhas antes de retrair"
+      },
+      "synergyAndCounter": "E01 e E10; ignorar armadilhas"
+    },
+    {
+      "id": "E10",
+      "name": "Mina de Estilhaços",
+      "tree": "Emboscada e armadilhas",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "FOR",
+      "effect": "Coloca mina até 8 s; primeiro inimigo em raio 1,5 m recebe 115% ataque em área raio 2 m; CD 25 s",
+      "animation": {
+        "id": "hunter_e10",
+        "storyboard": "Lança disco metálico no solo, luz vermelha pisca e explode em lascas geométricas"
+      },
+      "synergyAndCounter": "E05 segura na zona; desviar de armadilhas"
+    },
+    {
+      "id": "S01",
+      "name": "Rolamento Tático",
+      "tree": "Sobrevivência",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "VIT",
+      "effect": "Rola 2,5 m para espaço livre e reduz 18% dano recebido por 1,5 s; CD 16 s",
+      "animation": {
+        "id": "hunter_s01",
+        "storyboard": "Rolamento de ombro com capa levantando poeira em espiral"
+      },
+      "synergyAndCounter": "P02 ganha distância depois; controle de rota"
+    },
+    {
+      "id": "S02",
+      "name": "Respiração do Bosque",
+      "tree": "Sobrevivência",
+      "type": "passivo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Após 5 s sem sofrer dano, regenera 2% HP máximo em 4 s; trava 15 s; não acumula",
+      "animation": {
+        "id": "hunter_s02",
+        "storyboard": "Herói respira fundo, folhas translúcidas sobem em volta do peito"
+      },
+      "synergyAndCounter": "S01; danos periódicos interrompem"
+    },
+    {
+      "id": "S03",
+      "name": "Flecha de Retirada",
+      "tree": "Sobrevivência",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "FOR",
+      "effect": "Disparo de 90% ataque e recuo de 1,5 m até espaço livre; CD 12 s",
+      "animation": {
+        "id": "hunter_s03",
+        "storyboard": "Atira de lado enquanto salta para trás, poeira marca novo posicionamento"
+      },
+      "synergyAndCounter": "P05 mantém pressão; perseguidor veloz"
+    },
+    {
+      "id": "S04",
+      "name": "Vigilância da Floresta",
+      "tree": "Sobrevivência",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Após receber ataque especial, próximo ataque especial recebido nos 4 s seguintes causa -10% de dano; trava 14 s",
+      "animation": {
+        "id": "hunter_s04",
+        "storyboard": "Símbolo de casca de árvore se fecha sobre os ombros"
+      },
+      "synergyAndCounter": "S05; básicos não sofrem redução"
+    },
+    {
+      "id": "S05",
+      "name": "Tiro Enfraquecedor",
+      "tree": "Sobrevivência",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "INT",
+      "effect": "95% ataque, reduz 10% do ataque inimigo por 3 s; CD 18 s",
+      "animation": {
+        "id": "hunter_s05",
+        "storyboard": "Flecha cinza atinge punho do inimigo com dispersão de névoa"
+      },
+      "synergyAndCounter": "S04 sobrevive a rajadas; escudos não prejudicados"
+    },
+    {
+      "id": "S06",
+      "name": "Garra do Sobrevivente",
+      "tree": "Sobrevivência",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Ao cair abaixo de 30% HP recebe escudo de 10% HP máximo por 3 s; uma vez por duelo",
+      "animation": {
+        "id": "hunter_s06",
+        "storyboard": "Arqueiro fixa joelho no chão e ergue bracelete de couro luminoso"
+      },
+      "synergyAndCounter": "S02 ganha tempo; anti-escudo"
+    },
+    {
+      "id": "S07",
+      "name": "Instinto de Fuga",
+      "tree": "Sobrevivência",
+      "type": "passivo",
+      "primary": "DES",
+      "secondary": "VIT",
+      "effect": "Abaixo de 50% HP ganha +10% velocidade de movimento, sem aceleração de ataques",
+      "animation": {
+        "id": "hunter_s07",
+        "storyboard": "Orelhas da capa se levantam, pés deixam faíscas verdes curtas"
+      },
+      "synergyAndCounter": "S01 sustenta distanciamento; lentidão"
+    },
+    {
+      "id": "S08",
+      "name": "Salto da Corça",
+      "tree": "Sobrevivência",
+      "type": "ativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Salta até 3 m para espaço livre e produz um tiro de 65% ataque na direção do perseguidor; CD 20 s",
+      "animation": {
+        "id": "hunter_s08",
+        "storyboard": "Salto alto lateral com giro do arco e flecha em pleno ar"
+      },
+      "synergyAndCounter": "S03; inimigo distante demais"
+    },
+    {
+      "id": "S09",
+      "name": "Guarda de Último Fôlego",
+      "tree": "Sobrevivência",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Ao sofrer golpe que removeria 20%+ HP máximo, reduz esse golpe em 18%; trava 22 s",
+      "animation": {
+        "id": "hunter_s09",
+        "storyboard": "Arco cruza peito em guarda, anel verde absorve parte do golpe"
+      },
+      "synergyAndCounter": "S06; muitos danos baixos"
+    },
+    {
+      "id": "S10",
+      "name": "Trilha de Armadilhas",
+      "tree": "Sobrevivência",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "Deixa 2 marcas por 5 s em posições recentes; cada inimigo recebe no máximo 1 impacto de 55% ataque e lentidão 12% por 1 s; CD 28 s",
+      "animation": {
+        "id": "hunter_s10",
+        "storyboard": "Dois glifos de folha se acendem atrás do arqueiro durante corrida"
+      },
+      "synergyAndCounter": "S01 e E05; inimigo pode contornar marcas"
+    }
+  ]
+}

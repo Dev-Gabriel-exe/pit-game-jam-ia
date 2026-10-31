@@ -1,0 +1,427 @@
+{
+  "schema": "pit-v5-talent-planning-v1",
+  "klass": "guardian",
+  "status": "planning-only",
+  "talents": [
+    {
+      "id": "G01",
+      "name": "Escudo da Alvorada",
+      "tree": "Égide",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Escudo absorve 20 + 1,5 por DEF + 0,5 por VIT investidos por 4 s; CD 14 s",
+      "animation": {
+        "id": "guardian_g01",
+        "storyboard": "Ergue espada diante do rosto, painel octogonal azul-dourado se fecha"
+      },
+      "synergyAndCounter": "G03 e L03; talento antiescudo"
+    },
+    {
+      "id": "G02",
+      "name": "Armadura Consagrada",
+      "tree": "Égide",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Após 4 s recebendo dano sem cair, reduz próximo impacto em 12%; trava 12 s",
+      "animation": {
+        "id": "guardian_g02",
+        "storyboard": "Placas da armadura brilham em sequência do peito ao ombro"
+      },
+      "synergyAndCounter": "G04 prolonga resistência; explosão inicial"
+    },
+    {
+      "id": "G03",
+      "name": "Retorno da Égide",
+      "tree": "Égide",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "FOR",
+      "effect": "Após escudo próprio absorver dano, rebate 35% ataque físico em até 3 m; trava 18 s; reflexo não reflete",
+      "animation": {
+        "id": "guardian_g03",
+        "storyboard": "Painel protetor se dobra num bumerangue dourado curto"
+      },
+      "synergyAndCounter": "G01 e G10; atacantes distantes"
+    },
+    {
+      "id": "G04",
+      "name": "Postura da Cidadela",
+      "tree": "Égide",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "VIT",
+      "effect": "Por 4 s, +18% mitigação defensiva e -15% velocidade de movimento; CD 20 s",
+      "animation": {
+        "id": "guardian_g04",
+        "storyboard": "Finco da espada no chão, pedras formam quatro contrafortes"
+      },
+      "synergyAndCounter": "G09 assegura sobrevivência; kite e artilharia"
+    },
+    {
+      "id": "G05",
+      "name": "Aço Resiliente",
+      "tree": "Égide",
+      "type": "passivo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Ao perder mais de 15% do HP em 3 s, recebe escudo de 7 por 3 s; trava 16 s",
+      "animation": {
+        "id": "guardian_g05",
+        "storyboard": "Costuras metálicas se unem sobre a placa rachada do torso"
+      },
+      "synergyAndCounter": "G02; ataques espaçados"
+    },
+    {
+      "id": "G06",
+      "name": "Rota de Guarda",
+      "tree": "Égide",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "DES",
+      "effect": "Avança até 2 m na direção de inimigo próximo e recebe -12% de dano do próximo golpe por 3 s; CD 17 s",
+      "animation": {
+        "id": "guardian_g06",
+        "storyboard": "Passada com ombro à frente e faixa quadrada de luz como escudo"
+      },
+      "synergyAndCounter": "J04 aproxima; atacante que recua"
+    },
+    {
+      "id": "G07",
+      "name": "Reflexo da Sentinela",
+      "tree": "Égide",
+      "type": "reativo",
+      "primary": "DES",
+      "secondary": "DEF",
+      "effect": "Quando inimigo começa golpe corpo a corpo, bloqueia 20% do primeiro impacto; trava 15 s",
+      "animation": {
+        "id": "guardian_g07",
+        "storyboard": "Guarda repentina com espada em diagonal, faísca branca na lâmina"
+      },
+      "synergyAndCounter": "G03; magias instantâneas"
+    },
+    {
+      "id": "G08",
+      "name": "Peso da Armadura",
+      "tree": "Égide",
+      "type": "passivo",
+      "primary": "DEF",
+      "secondary": "FOR",
+      "effect": "Após 3 ataques básicos completos ganha +8% mitigação por 3 s, sem acumular; trava 10 s",
+      "animation": {
+        "id": "guardian_g08",
+        "storyboard": "Cada passo carimba runa pesada no solo e terceira acende ombreiras"
+      },
+      "synergyAndCounter": "J03 mantém ataque; armadilha de lentidão"
+    },
+    {
+      "id": "G09",
+      "name": "Vigília de Pedra",
+      "tree": "Égide",
+      "type": "ativo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Regenera 4% HP máximo ao longo de 4 s enquanto reduz velocidade de movimento em 12%; CD 24 s",
+      "animation": {
+        "id": "guardian_g09",
+        "storyboard": "Ajoelha com espada sobre o joelho, raízes de pedra restauram armadura"
+      },
+      "synergyAndCounter": "G04; interrupção e dano explosivo"
+    },
+    {
+      "id": "G10",
+      "name": "Bastião Solar",
+      "tree": "Égide",
+      "type": "ativo",
+      "primary": "DEF",
+      "secondary": "INT",
+      "effect": "Escudo absorve 35 + 1,7 por DEF + 0,6 por INT por 4 s; enquanto durar -12% dano causado; CD 28 s",
+      "animation": {
+        "id": "guardian_g10",
+        "storyboard": "Abre disco dourado de seis painéis com sol no centro e coroa giratória"
+      },
+      "synergyAndCounter": "G03 + L05; quebra de escudo"
+    },
+    {
+      "id": "L01",
+      "name": "Bênção da Aurora",
+      "tree": "Luz sagrada",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Restaura 6% HP máximo ao longo de 3 s; CD 19 s; sujeita a teto global de cura",
+      "animation": {
+        "id": "guardian_l01",
+        "storyboard": "Aponta espada ao coração, feixe dourado percorre braços e fecha feridas"
+      },
+      "synergyAndCounter": "L04 estende janela segura; burst anticurativo"
+    },
+    {
+      "id": "L02",
+      "name": "Luz Persistente",
+      "tree": "Luz sagrada",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Após receber cura de talento, próximo ataque básico ganha +9% dano; uma carga e trava 12 s",
+      "animation": {
+        "id": "guardian_l02",
+        "storyboard": "Pequena auréola transfere luz do peito para o gume"
+      },
+      "synergyAndCounter": "L01; anti-cura e pressão"
+    },
+    {
+      "id": "L03",
+      "name": "Fagulha Reparadora",
+      "tree": "Luz sagrada",
+      "type": "passivo",
+      "primary": "VIT",
+      "secondary": "INT",
+      "effect": "Após o próprio escudo bloquear impacto, cura 1,5% HP máximo; trava 15 s e teto global",
+      "animation": {
+        "id": "guardian_l03",
+        "storyboard": "Faíscas azuis da barreira voltam ao corpo como vaga-lumes"
+      },
+      "synergyAndCounter": "G01 e G10; destruição de escudos"
+    },
+    {
+      "id": "L04",
+      "name": "Clarão Purificador",
+      "tree": "Luz sagrada",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "Causa 70% ataque sagrado e reduz duração de lentidão própria em 50%; CD 16 s",
+      "animation": {
+        "id": "guardian_l04",
+        "storyboard": "Lâmina aponta para cima, coluna de luz dissolve correntes ao redor das botas"
+      },
+      "synergyAndCounter": "L01 e G04; ataque à distância"
+    },
+    {
+      "id": "L05",
+      "name": "Voto da Luz",
+      "tree": "Luz sagrada",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "Causa 90% ataque sagrado e gera escudo de 8 por 3 s; CD 15 s",
+      "animation": {
+        "id": "guardian_l05",
+        "storyboard": "Desenha cruz luminosa com espada, lança traço vertical ao inimigo"
+      },
+      "synergyAndCounter": "G10 e G03; anti-escudo"
+    },
+    {
+      "id": "L06",
+      "name": "Resplendor de Esperança",
+      "tree": "Luz sagrada",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "INT",
+      "effect": "Primeira vez abaixo de 35% HP restaura 5% HP máximo ao longo de 3 s; uma vez por duelo",
+      "animation": {
+        "id": "guardian_l06",
+        "storyboard": "Aurora surge atrás do personagem, pétalas douradas caem em espiral"
+      },
+      "synergyAndCounter": "L01; dano imediato"
+    },
+    {
+      "id": "L07",
+      "name": "Sopro da Graça",
+      "tree": "Luz sagrada",
+      "type": "passivo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "Após ficar 4 s sem sofrer dano, próxima cura ou escudo recebe +10% ao seu valor, uma carga e trava 13 s",
+      "animation": {
+        "id": "guardian_l07",
+        "storyboard": "Quatro velas de luz giram ao redor da espada e convergem na guarda"
+      },
+      "synergyAndCounter": "L01 e G01; contato constante"
+    },
+    {
+      "id": "L08",
+      "name": "Julgamento Luminoso",
+      "tree": "Luz sagrada",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "FOR",
+      "effect": "Feixe de 120% ataque sagrado até 7 m com preparo de 0,45 s; CD 18 s",
+      "animation": {
+        "id": "guardian_l08",
+        "storyboard": "Estende espada horizontal, símbolo solar abre e feixe reto atravessa o ar"
+      },
+      "synergyAndCounter": "J01 aumenta pressão; movimento lateral"
+    },
+    {
+      "id": "L09",
+      "name": "Orvalho de Misericórdia",
+      "tree": "Luz sagrada",
+      "type": "reativo",
+      "primary": "INT",
+      "secondary": "VIT",
+      "effect": "Ao receber queimadura ou veneno, reduz sua duração em 50% e cura 2% HP máximo ao longo de 3 s; trava 22 s",
+      "animation": {
+        "id": "guardian_l09",
+        "storyboard": "Gotas verdes-douradas extinguem faíscas e limpam aura tóxica"
+      },
+      "synergyAndCounter": "L01; dano físico sem DOT"
+    },
+    {
+      "id": "L10",
+      "name": "Círculo de Santuário",
+      "tree": "Luz sagrada",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DEF",
+      "effect": "Cria zona por 4 s; enquanto dentro, recebe -12% dano mágico, sem acumular com igual categoria; CD 26 s",
+      "animation": {
+        "id": "guardian_l10",
+        "storyboard": "Ergue espada, vitral de luz surge no piso com quatro colunas transparentes"
+      },
+      "synergyAndCounter": "G04 contra magia; afastar o guardião da zona"
+    },
+    {
+      "id": "J01",
+      "name": "Golpe do Veredito",
+      "tree": "Julgamento",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "INT",
+      "effect": "Corte de 140% ataque físico contra alvo em alcance; CD 11 s",
+      "animation": {
+        "id": "guardian_j01",
+        "storyboard": "Espada traça V de fogo dourado e selo do veredito fica sobre o chão"
+      },
+      "synergyAndCounter": "L08 complementa ataque; esquiva"
+    },
+    {
+      "id": "J02",
+      "name": "Vontade do Justo",
+      "tree": "Julgamento",
+      "type": "passivo",
+      "primary": "FOR",
+      "secondary": "VIT",
+      "effect": "Após 2 ataques básicos próprios, próximo ataque básico recebe +10% dano; uma carga, trava 10 s",
+      "animation": {
+        "id": "guardian_j02",
+        "storyboard": "Duas marcas solares surgem no peito e a terceira corre à espada"
+      },
+      "synergyAndCounter": "J03 mantém pressão; kiting"
+    },
+    {
+      "id": "J03",
+      "name": "Investida do Tribunal",
+      "tree": "Julgamento",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "DES",
+      "effect": "Avança até 3 m em linha livre e atinge por 105% ataque físico; CD 18 s",
+      "animation": {
+        "id": "guardian_j03",
+        "storyboard": "Cavaleiro baixa ombro e espada, avança com rastro de bandeira dourada"
+      },
+      "synergyAndCounter": "J02; armadilha em rota"
+    },
+    {
+      "id": "J04",
+      "name": "Marca do Veredito",
+      "tree": "Julgamento",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "FOR",
+      "effect": "85% ataque sagrado e aplica marca de 4 s: seu próximo básico recebe +12% dano, consumindo marca; CD 15 s",
+      "animation": {
+        "id": "guardian_j04",
+        "storyboard": "Carimba glifo hexagonal acima do inimigo com arco brilhante"
+      },
+      "synergyAndCounter": "J01; purificação de marca"
+    },
+    {
+      "id": "J05",
+      "name": "Coração Corajoso",
+      "tree": "Julgamento",
+      "type": "passivo",
+      "primary": "VIT",
+      "secondary": "FOR",
+      "effect": "Enquanto acima de 70% HP, +7% dano dos ataques básicos; não afeta habilidades",
+      "animation": {
+        "id": "guardian_j05",
+        "storyboard": "Halo firme ilumina coroa do elmo e se apaga ao perder vida"
+      },
+      "synergyAndCounter": "G01 preserva condição; desgaste contínuo"
+    },
+    {
+      "id": "J06",
+      "name": "Resposta Implacável",
+      "tree": "Julgamento",
+      "type": "reativo",
+      "primary": "DEF",
+      "secondary": "FOR",
+      "effect": "Ao sofrer dano de habilidade, devolve 55% ataque físico se inimigo em 3 m; trava 18 s",
+      "animation": {
+        "id": "guardian_j06",
+        "storyboard": "Absorve golpe com manopla e executa estocada curta"
+      },
+      "synergyAndCounter": "G04; conjuradores distantes"
+    },
+    {
+      "id": "J07",
+      "name": "Justiça Cintilante",
+      "tree": "Julgamento",
+      "type": "ativo",
+      "primary": "INT",
+      "secondary": "DES",
+      "effect": "Causa 100% ataque sagrado em cone de 2,5 m e lentidão 15% por 1,5 s; CD 20 s",
+      "animation": {
+        "id": "guardian_j07",
+        "storyboard": "Desenha arco amplo com espada e três lascas de vitral acompanham o corte"
+      },
+      "synergyAndCounter": "J03 pressiona ao aproximar; redução de controle"
+    },
+    {
+      "id": "J08",
+      "name": "Inspiração da Lâmina",
+      "tree": "Julgamento",
+      "type": "passivo",
+      "primary": "FOR",
+      "secondary": "INT",
+      "effect": "Após bloquear 2 ataques, próximo ataque especial causa +10% dano; uma carga, trava 14 s",
+      "animation": {
+        "id": "guardian_j08",
+        "storyboard": "Inscrições percorrem a lâmina da base à ponta em dois pulsos"
+      },
+      "synergyAndCounter": "G07; inimigos que evitam melee"
+    },
+    {
+      "id": "J09",
+      "name": "Fé Inflexível",
+      "tree": "Julgamento",
+      "type": "reativo",
+      "primary": "VIT",
+      "secondary": "DEF",
+      "effect": "Na primeira vez abaixo de 30% HP recebe escudo de 10% HP máximo por 3 s; uma vez por duelo",
+      "animation": {
+        "id": "guardian_j09",
+        "storyboard": "Anjo geométrico de luz se abre como asas atrás do cavaleiro"
+      },
+      "synergyAndCounter": "L06 aumenta sobrevivência; anti-escudo"
+    },
+    {
+      "id": "J10",
+      "name": "Martelo do Amanhecer",
+      "tree": "Julgamento",
+      "type": "ativo",
+      "primary": "FOR",
+      "secondary": "INT",
+      "effect": "155% ataque físico em raio 2 m após preparo de 0,55 s; CD 27 s",
+      "animation": {
+        "id": "guardian_j10",
+        "storyboard": "Salta com espada alçada, desce com coluna dourada e onda circular de pedra"
+      },
+      "synergyAndCounter": "J07 mantém alvo próximo; movimentação após aviso"
+    }
+  ]
+}

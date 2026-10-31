@@ -46,8 +46,12 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  }
  const forged=await call(classroom,'GET','state',{},'f'.repeat(64));
  assert.equal(forged.statusCode,401,'invalid token denied by real Postgres lookup');
- const release=await call(classroom,'POST','stage',{stage:4,phase:'practice'},'',pin);
- assert.equal(release.statusCode,200);
+ // Classroom intentionally rejects jumping from stage 1 to 4.
+ // Release the three stages sequentially under the teacher's own authority.
+ for(const stage of [2,3,4]){
+  const release=await call(classroom,'POST','stage',{stage,phase:'practice'},'',pin);
+  assert.equal(release.statusCode,200,'teacher sequential release '+stage);
+ }
  for(const [i,route,status] of [[0,'2d','submitted'],[1,'3d','submitted'],[2,'2d','working']]){
   const r=await call(classroom,'POST','progress',{stage:4,route,status,evidence:'Evidencia ficticia '+names[i]+' com caso positivo e negativo.'},users[i].token);
   assert.equal(r.statusCode,200,'stage progress persisted in Postgres');
