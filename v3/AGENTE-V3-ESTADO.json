@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T14:22:50Z",
+  "last_completed_at": "2026-10-31T15:14:30Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10: fallback volátil para rascunho concluído. QA estática com regressão 41209811446 SUCCESS no SHA 835c5c123; Browser QA 41209811383 ainda IN_PROGRESS. M09 Browser QA SUCCESS. Próximo: confirmar Browser QA M10 e auditar projeção professor/aluno transversalmente antes de estética.",
-  "current_phase": "MISSOES",
-  "last_task": "V4-M10-DRAFT-STORAGE-FAILSAFE",
+  "priority": "Auditoria transversal antes da estética: M10 Browser QA 41209811383 SUCCESS; corrigida interferência de ArrowRight em radio da M08 projetada, com regressão Chrome no SHA 7efeef4. Aguardar QA estática 41213884000 e Browser QA 41213884055; depois seguir conferência professor/aluno das dez missões, sem afirmar homologação física.",
+  "current_phase": "AUDITORIA",
+  "last_task": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2880,41 +2880,46 @@
       ],
       "tests": "M09 Browser QA 41204988886 SUCCESS; M10 source static QA 41209781635 SUCCESS; M10 new blocked-storage regression static QA 41209811446 SUCCESS and Browser QA 41209811383 IN_PROGRESS. GDevelop GUI, HDMI, mobile and humans NOT_RUN.",
       "notes": "M10 keeps 8 launch fields, delivery route and three manual checks in tab on localStorage failure; honest warnings in practice/review; hydration protects partial draft. Roadmap 54/59 unchanged. Main/production/student data untouched."
+    },
+    {
+      "id": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
+      "completed_at": "2026-10-31T15:14:30Z",
+      "commit": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
+      "files": [
+        "v3/teacher-projector-m01.js",
+        "qa/v3-private-teacher-notes-browser.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "M10 Browser QA 41209811383 SUCCESS; projector keyboard static QA 41213884000 and Chrome Browser QA 41213884055 IN_PROGRESS at checkpoint. Physical HDMI, GDevelop GUI, mobile and humans NOT_RUN.",
+      "notes": "M08 projected before/after radio was hijacked by document-level ArrowRight; native interactive key behavior now preserved while Escape remains available. No main/production/real student data changes."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M10-DRAFT-STORAGE-FAILSAFE",
-    "status": "CODE_COMMITTED_STATIC_QA_PASS_BROWSER_PENDING",
-    "updated_at": "2026-10-31T14:22:50Z",
+    "task": "V4-AUD-TRANSVERSAL-M08-PROJECTOR-KEYBOARD",
+    "status": "CODE_COMMITTED_CI_PENDING",
+    "updated_at": "2026-10-31T15:14:30Z",
     "code_commits": [
-      "7b295836b31e2b6d3da2a96bb043020203c0fefe",
-      "2c420ed47c88a13fce165705adf2732df559e844",
-      "835c5c12323e086481655dd782cf9a8e149fb8a1"
+      "b0896af5d2054041eabeaef77d3835f2483cd69d",
+      "7efeef476ade4407cc8faed4fc2072f4ddcaf739"
     ],
-    "documentation_commit": "23179ce2e43a9c961d3cb384b2ca7156c0f8000d",
+    "documentation_commit": "7b546a443ca013283716ba7d27313534bf1a88b8",
     "tests": [
       {
-        "name": "M09 Browser QA confirmed",
-        "run_id": 41204988886,
-        "sha": "adc7db2b374ee54d8c6d686680c448c03236c236",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M10 source static QA before new regression",
-        "run_id": 41209781635,
-        "sha": "7b295836b31e2b6d3da2a96bb043020203c0fefe",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M10 static QA with new blocked-storage regression",
-        "run_id": 41209811446,
-        "sha": "835c5c12323e086481655dd782cf9a8e149fb8a1",
-        "result": "SUCCESS"
-      },
-      {
-        "name": "M10 Browser QA",
+        "name": "M10 Browser QA prior checkpoint",
         "run_id": 41209811383,
         "sha": "835c5c12323e086481655dd782cf9a8e149fb8a1",
+        "result": "SUCCESS"
+      },
+      {
+        "name": "Cross-mission projector keyboard static QA",
+        "run_id": 41213884000,
+        "sha": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
+        "result": "IN_PROGRESS at last inspection"
+      },
+      {
+        "name": "M08 projected radio native keyboard Chrome regression",
+        "run_id": 41213884055,
+        "sha": "7efeef476ade4407cc8faed4fc2072f4ddcaf739",
         "result": "IN_PROGRESS at last inspection"
       }
     ],
@@ -2922,7 +2927,7 @@
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M10 static/browser QA; if green, perform transversal audit of professor projected slides and student six-step autonomy, then aesthetics",
-    "blocker": "M10 Browser QA 41209811383 pendente; GDevelop GUI, HDMI, mobile e pitch humano NOT_RUN."
+    "next_task": "Confirm static/browser CI on keyboard fix, then continue cross-10 pedagogical/projection and student six-step autonomy audit; aesthetics later.",
+    "blocker": "Chrome regression not yet confirmed; physical HDMI, GDevelop GUI, physical mobile and human tests NOT_RUN."
   }
 }
