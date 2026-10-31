@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-30T23:12:52.142Z",
+  "last_completed_at": "2026-10-31T00:21:43.504Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar Browser QA do commit 23ca528; auditar recuperação das evidências antigas da M02, depois M01; preservar notas privadas recolhidas e a prioridade pedagógica.",
+  "priority": "Confirmar Browser QA do commit ba385961; auditar recuperação das evidências antigas da M01 e concluir revisão pedagógica professor/aluno antes da estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M03-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M02-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2697,12 +2697,24 @@
       ],
       "tests": "Native static QA SUCCESS 41143034496; M03 regression step PASS; Browser QA 41143034524 in progress. Physical HDMI/GDevelop/mobile/peer tests NOT_RUN.",
       "notes": "Strict M03 recovery validates 11 lines, unique ordered labels, known 2D/3D route, field budgets and required fields; refuses flattened/corrupt evidence without overwriting local progress or claiming Preview tests."
+    },
+    {
+      "id": "V4-M02-LEGACY-EVIDENCE-GUARD",
+      "completed_at": "2026-10-31T00:21:43.504Z",
+      "commit": "ba385961d4b2f3cd1e62182013532788f3722611",
+      "files": [
+        "v3/student-mission-two.js",
+        "qa/v3-m02-legacy-evidence.cjs",
+        ".github/workflows/static-qa.yml"
+      ],
+      "tests": "Static QA run 41149705894 SUCCESS, M02 negative cases and max 750 chars; Browser QA run 41149705879 pending",
+      "notes": "M02 legacy flattened/partial/duplicated evidence cannot auto-fill; local drafts prevail even if approved; M03 prior Browser QA confirmed. No live student or physical/editor tests."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M03-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M02-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-30T23:12:52.142Z",
+    "updated_at": "2026-10-31T00:21:43.504Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2819,7 +2831,11 @@
       "033a4f55f224dcd993411bce64dbecc11a4ba1df",
       "a6f9d80707798fd5461ed9dc901e48ffecf62a21",
       "474c5f7bcfbca8f6da5c49a8c7e7a082b86faeb1",
-      "23ca528335a8f37c626d873fc6b5b574ceb42843"
+      "23ca528335a8f37c626d873fc6b5b574ceb42843",
+      "141adfd2f97a973cdca5582159a2155e4a3c2406",
+      "3aed763a6e5eaa347159364cd3703ada281bbab7",
+      "057a603fc9a6ac72cb943fd62a015aa872310e28",
+      "ba385961d4b2f3cd1e62182013532788f3722611"
     ],
     "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
     "tests": [
@@ -3756,6 +3772,28 @@
         "run_id": 41143034524,
         "sha": "23ca528335a8f37c626d873fc6b5b574ceb42843",
         "result": "IN_PROGRESS at checkpoint; not yet verified"
+      },
+      {
+        "name": "M03 previous Browser QA",
+        "run_id": 41143034524,
+        "sha": "23ca528335a8f37c626d873fc6b5b574ceb42843",
+        "result": "SUCCESS verified 2026-10-30"
+      },
+      {
+        "name": "M02 historical evidence structured parsing and draft precedence",
+        "run_id": 41149705894,
+        "sha": "ba385961d4b2f3cd1e62182013532788f3722611",
+        "result": "SUCCESS: GitHub static QA including new M02 regression, Node syntax and all previous checks"
+      },
+      {
+        "name": "M02 Browser QA",
+        "run_id": 41149705879,
+        "sha": "ba385961d4b2f3cd1e62182013532788f3722611",
+        "result": "IN_PROGRESS at checkpoint; not claimed passed"
+      },
+      {
+        "name": "GDevelop GUI, HDMI, physical mobile, observed peer playtest",
+        "result": "NOT_RUN"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
