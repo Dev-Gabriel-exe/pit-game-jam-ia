@@ -68,4 +68,44 @@ assert(status.textContent.includes('apenas nesta aba'),'checkbox shows blocked-s
 assert.equal(m.load('fictional-ui').outcome,'passed','radio persisted in volatile tab');
 assert.equal(m.load('fictional-ui').resolution,'nochange','decision persisted in volatile tab');
 assert.equal(m.load('fictional-ui').checks.length,1,'checkbox persisted in volatile tab');
+// A different playtest outcome or resolution must never reuse the old third attestation.
+const decisionId='fictional-decision';
+const decision=m.load(decisionId);
+decision.outcome='passed';decision.resolution='nochange';decision.checks=[0,1,2];
+for(const f of m.fields)decision[f.id]='Relato fictício suficiente para teste '+f.id;
+m.save(decisionId,decision);
+assert.equal(m.changeOutcome(decisionId,decision,'issue'),true,'outcome change recognized');
+assert.equal(m.load(decisionId).resolution,'','old decision cleared after outcome change');
+assert.equal(m.load(decisionId).checks.length,2,'third attestation cleared on outcome change');
+assert.equal(m.validate(decisionId).ok,false,'new outcome requires a fresh decision');
+assert.equal(m.changeOutcome(decisionId,decision,'issue'),false,'same outcome is idempotent');
+assert.equal(m.load(decisionId).checks.length,2,'same outcome does not reset valid confirmations');
+decision.resolution='fixed';decision.checks=[0,1,2];m.save(decisionId,decision);
+assert.equal(m.changeResolution(decisionId,decision,'backlog'),true,'resolution change recognized');
+assert.equal(m.load(decisionId).resolution,'backlog','new decision persisted in volatile tab');
+assert.equal(m.load(decisionId).checks.length,2,'third attestation cleared on decision change');
+assert.equal(m.changeResolution(decisionId,decision,'backlog'),false,'same decision is idempotent');
+assert.equal(m.load(decisionId).checks.length,2,'same decision does not reset valid confirmations');
+// Real event callback must also uncheck stale radio/checkbox UI, not just draft state.
+const uiReset='fictional-ui-reset',uiDraft=m.load(uiReset);
+uiDraft.outcome='passed';uiDraft.resolution='nochange';uiDraft.checks=[0,1,2];
+m.save(uiReset,uiDraft);
+let onOutcome;
+const outcomeIssue={checked:true,value:'issue',addEventListener:(type,fn)=>{onOutcome=fn}};
+const resolutionOld={checked:true,value:'nochange',addEventListener(){}};
+const thirdCheck={checked:true,dataset:{m9sCheck:'2'},addEventListener(){}};
+const resetStatus={textContent:''};
+const resetRoot={querySelectorAll(sel){
+ if(sel==='input[name="m9Outcome"]')return [outcomeIssue];
+ if(sel==='input[name="m9Resolution"]')return [resolutionOld];
+ if(sel==='[data-m9s-check]')return [thirdCheck];
+ return [];
+},querySelector(sel){return sel==='#m9sStatus'?resetStatus:null}};
+ctx.document.querySelector=sel=>sel==='#m9sRoot'?resetRoot:null;
+m.mount({session:uiReset,status:'',phase:'practice',onPhase(){},onMessage(){}});
+onOutcome();
+assert.equal(resolutionOld.checked,false,'old decision radio unselected in visible form');
+assert.equal(thirdCheck.checked,false,'old third confirmation unchecked in visible form');
+assert(resetStatus.textContent.includes('Selecione novamente a decisão'),'student gets actionable explanation');
+assert.equal(m.load(uiReset).resolution,'','visible form and saved draft remain aligned');
 console.log('PASS M09 blocked-storage: nine fields, radio/checkbox, session isolation, warnings, hydration and fictional UI events. Human playtest NOT_RUN.');
