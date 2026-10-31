@@ -32,8 +32,19 @@ assert.equal(m.routeFor({playable:{route:3}},m.load('novo')),1);
  assert.equal(m.routeFor(inherited3D,m.load('novo')),1,'new student still inherits 3D suggestion');
  assert.equal(m.parseEvidence('M07 | 2d'+evidence.slice('M07 | 3d'.length)).routeChosen,true,
    'submitted 2D route is an explicit choice, not a fallback suggestion');
- assert.match(read('v3/student-mission-seven.js'),/d\\.routeChosen=true;save\\(ctx\\.session,d\\)/,
-   'guide route-change callback persists explicit selection');
+ assert.match(read('v3/student-mission-seven.js'),/selectRoute\(d,index\);save\(ctx\.session,d\)/,
+   'guide route-change callback persists explicit selection and resets old checks');
+ const withChecks=m.load('route-retest');
+ withChecks.route='3d';withChecks.checks=[0,1,2];
+ m.selectRoute(withChecks,0);
+ assert.equal(withChecks.route,'2d','explicit route switches to 2D');
+ assert.equal(withChecks.routeChosen,true,'explicit route is distinguished from inherited suggestion');
+ assert.equal(withChecks.checks.length,0,'old 3D Preview checks are invalidated after switching to 2D');
+ withChecks.checks=[0,1,2];
+ m.selectRoute(withChecks,0);
+ assert.equal(withChecks.checks.length,3,'reselecting same route does not erase legitimate checks');
+ m.save('route-retest',withChecks);
+ assert.equal(m.routeFor(inherited3D,m.load('route-retest')),0,'retested route stays 2D');
 
 const max=m.load('ficticioA');for(const f of m.fields)max[f.id]='X'.repeat(f.max);m.save('max',max);
 assert.ok(m.evidence('max').length<=750);assert.equal(m.parseEvidence(m.evidence('max')).saved.length,65);
