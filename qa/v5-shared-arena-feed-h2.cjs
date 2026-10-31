@@ -59,6 +59,38 @@ for(const mission of [5,10]){
   fighters:initial.fighters}),/ressurreição não permitida/);
  assert.equal(deathProbe.cursor,1,'rejected resurrection does not advance cursor');
 
+ // A camera shot cannot silently change mode/targets without a new revision.
+ // Exercise both sequential packets and full reconnection snapshots for M5/M10.
+ const cameraProbe=F.createReceiver(publisher.scope);
+ cameraProbe.accept(initial);
+ const ids=[initial.fighters[0].id,initial.fighters[1].id];
+ const otherMode=initial.camera.mode==='duel'?'overview':'duel';
+ const forgedCameraPackets=[
+  fakeFrame({camera:{...initial.camera,mode:otherMode}}),
+  fakeFrame({camera:{...initial.camera,ids:initial.camera.ids.length?[]:[ids[0]]}}),
+ ];
+ for(const packet of forgedCameraPackets){
+  assert.throws(()=>cameraProbe.accept(packet),/plano mudou sem revisão/);
+  assert.equal(cameraProbe.cursor,0,'camera forgery cannot move cursor');
+  assert.deepEqual(cameraProbe.snapshot,initial,'camera forgery cannot mutate view');
+ }
+ const revisedCamera={revision:initial.camera.revision+1,mode:'duel',ids};
+ assert.equal(cameraProbe.accept(fakeFrame({camera:revisedCamera})),true,
+  'new director revision permits a legitimate cut');
+ const cursorAfterCut=cameraProbe.cursor;
+ const swapped={...fakeFrame({camera:{...revisedCamera,ids:[...ids].reverse()}}),
+  seq:9,logicalTime:1.8};
+ assert.throws(()=>cameraProbe.restore(swapped),/plano mudou sem revisão/,
+  'reconnect snapshot must not bypass camera revision');
+ assert.equal(cameraProbe.cursor,cursorAfterCut);
+ assert.deepEqual(cameraProbe.snapshot.camera,revisedCamera);
+ assert.throws(()=>cameraProbe.restore({...swapped,camera:initial.camera}),/diretor recuou/);
+ assert.equal(cameraProbe.cursor,cursorAfterCut);
+ const newerShot={...swapped,camera:{...swapped.camera,revision:revisedCamera.revision+1}};
+ assert.equal(cameraProbe.restore(newerShot).seq,9,
+  'new camera revision is accepted across a snapshot gap');
+ assert.deepEqual(cameraProbe.snapshot.camera,newerShot.camera);
+
  // Adversarial full snapshots: a reconnect cannot bypass terminal invariants.
  const snapshotProbe=F.createReceiver(publisher.scope);
  snapshotProbe.accept(initial);
