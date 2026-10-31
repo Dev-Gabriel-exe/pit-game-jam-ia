@@ -45,6 +45,9 @@ const BASE='http://127.0.0.1:8899';
    'Original V3 curriculum must have 10 mission cards');
   assert.equal((await S.evaluate(()=>window.PIT_V5_H1E.snapshot)).role,'student');
   assert.equal(await S.locator('#pitV5HubButton').isVisible(),true);
+  // The V3 mission carousel intentionally opens first and intercepts clicks.
+  if(await S.locator('#missionGallery').evaluate(el=>el.classList.contains('open')))
+   await S.locator('#missionGalleryClose').click();
   await S.locator('#pitV5HubButton').click();
   assert.equal(await S.locator('#pitV5Hub').isVisible(),true);
   const src=await S.locator('#pitV5HubFrame').getAttribute('src');
@@ -90,6 +93,8 @@ const BASE='http://127.0.0.1:8899';
   const T=teacher.page;
   await T.waitForFunction(()=>window.PIT_V5_H1E.snapshot.visualPreview,{timeout:30000});
   assert.equal(await T.locator('#pitV5HubButton').isVisible(),true);
+  if(await T.locator('#missionGallery').evaluate(el=>el.classList.contains('open')))
+   await T.locator('#missionGalleryClose').click();
   await T.locator('#pitV5HubButton').click();
   assert.equal(await T.locator('#pitV5HubFrame').getAttribute('src'),
    './v5/duel-teacher-d1c.html?demo=1');
@@ -118,6 +123,8 @@ const BASE='http://127.0.0.1:8899';
    role:'student',stage:3,status:'working',approved:2,
    authenticated:true,visualPreview:false
   }));
+  if(await N.locator('#missionGallery').evaluate(el=>el.classList.contains('open')))
+   await N.locator('#missionGalleryClose').click();
   await N.locator('#pitV5HubButton').click();
   assert.equal(await N.locator('[data-tab=duel]').isDisabled(),true);
   assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),true);
