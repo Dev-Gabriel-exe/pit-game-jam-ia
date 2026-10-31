@@ -30,3 +30,11 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 **Commits:** `f4bb446a` (contrato), `ef5d712f` (QA), `9700720b` (workflow). Checkpoint criado após essas alterações.
 
 **Pendente para esta solicitação:** CI específico, integrar simulação com `student-bridge-h1.js` real, interface de notificações SIM/NÃO e janela 1×1 no navegador, controle docente de arenas coletivas M5/M10, teste end-to-end aluno/professor e revisão do layout de duelos. G.2 físico e H.1/H.2 operacional seguem bloqueados. A prioridade da arena final M10 permanece; este incremento prepara apenas o contrato isolado solicitado, sem alterar M5/M10 ou os 120 talentos.
+
+
+### Verificação do CI (31/10/2026)
+
+- **PASS**: [V5 Duel Invitations Fictional Contract QA — run 41197655128](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41197655128), SHA `9700720bc12bb6a20b9f6d4a748dc77380a013b1`; executou análise sintática do módulo e QA com dez cenários.
+- **PASS**: [PIT Game Jam QA — run 41197655157](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41197655157), mesmo SHA.
+- Browser QA de commits próximos estava em andamento na última consulta. Não confundir com validação da interface de duelos (não implementada).
+- **Checkpoint anterior:** `aa5206c863fd1b0048599d6fa625097331c4026c`. Este adendo atualiza a evidência de CI; o próximo passo continua sendo um ensaio fictício da janela 1×1 e notificações no navegador, sem dados reais.
