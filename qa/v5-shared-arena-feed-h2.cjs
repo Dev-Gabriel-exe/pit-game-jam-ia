@@ -59,6 +59,33 @@ for(const mission of [5,10]){
   fighters:initial.fighters}),/ressurreição não permitida/);
  assert.equal(deathProbe.cursor,1,'rejected resurrection does not advance cursor');
 
+ // A spectator must not accept an apparently newer frame with a frozen clock
+ // or a reshuffled roster: both break deterministic camera/label indexing.
+ // Verify ordinary delivery and full snapshot restore for M5 and M10.
+ const orderProbe=F.createReceiver(publisher.scope);
+ orderProbe.accept(initial);
+ const shuffled=[initial.fighters[1],initial.fighters[0],...initial.fighters.slice(2)];
+ const reordered=fakeFrame({fighters:shuffled});
+ assert.throws(()=>orderProbe.accept(reordered),/ordem do plantel mudou/);
+ assert.equal(orderProbe.cursor,0);
+ assert.deepEqual(orderProbe.snapshot,initial);
+ assert.throws(()=>orderProbe.restore({...reordered,seq:9,logicalTime:2}),
+  /ordem do plantel mudou/);
+ assert.equal(orderProbe.cursor,0,'invalid reordered snapshot does not advance');
+ const clockProbe=F.createReceiver(publisher.scope);
+ clockProbe.accept(initial);
+ const frozenClock=fakeFrame({logicalTime:0});
+ assert.throws(()=>clockProbe.accept(frozenClock),/relógio não avançou/);
+ assert.throws(()=>clockProbe.restore({...frozenClock,seq:9}),
+  /relógio não avançou/);
+ assert.equal(clockProbe.cursor,0,'invalid clock snapshot does not advance');
+ assert.deepEqual(clockProbe.snapshot,initial);
+ assert.equal(clockProbe.accept(fakeFrame()),true);
+ assert.throws(()=>clockProbe.accept({...fakeFrame(),seq:2}),
+  /relógio não avançou/,'later sequence must advance logical time');
+ assert.equal(clockProbe.cursor,1);
+ assert.equal(clockProbe.accept(fakeFrame()),false,'same cursor replay stays idempotent');
+
  // A camera shot cannot silently change mode/targets without a new revision.
  // Exercise both sequential packets and full reconnection snapshots for M5/M10.
  const cameraProbe=F.createReceiver(publisher.scope);
