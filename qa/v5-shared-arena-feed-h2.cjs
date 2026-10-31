@@ -30,6 +30,35 @@ for(const mission of [5,10]){
  assert.equal(studentA.accept(initial),true);
  assert.equal(studentB.accept(initial),true);
  assert.equal(studentA.accept(initial),false,'duplicate delivery idempotent');
+
+ // Malformed yet structurally plausible packets must never reach passive viewers.
+ assert.throws(()=>F.validateFrame({...initial,fighters:[
+  {...initial.fighters[0],hp:0,alive:true},...initial.fighters.slice(1)
+ ]},publisher.scope),/vida e eliminação incompatíveis/);
+ assert.throws(()=>F.validateFrame({...initial,fighters:[
+  {...initial.fighters[0],hp:1,alive:false},...initial.fighters.slice(1)
+ ]},publisher.scope),/vida e eliminação incompatíveis/);
+ assert.throws(()=>F.validateFrame({...initial,status:'running'},publisher.scope),/primeiro pacote deve estar pronto/);
+ const fakeFrame=(changes={})=>({...initial,seq:1,logicalTime:0.2,status:'running',...changes});
+ const identityProbe=F.createReceiver(publisher.scope);
+ identityProbe.accept(initial);
+ const anotherClass=initial.fighters[0].klass==='mage'?'hunter':'mage';
+ assert.throws(()=>identityProbe.accept(fakeFrame({fighters:[
+  {...initial.fighters[0],klass:anotherClass},...initial.fighters.slice(1)
+ ]})),/identidade ou HP máximo/);
+ assert.throws(()=>identityProbe.accept(fakeFrame({fighters:[
+  {...initial.fighters[0],maxHp:initial.fighters[0].maxHp+1},...initial.fighters.slice(1)
+ ]})),/identidade ou HP máximo/);
+ const deathProbe=F.createReceiver(publisher.scope);
+ deathProbe.accept(initial);
+ const defeated=fakeFrame({fighters:[
+  {...initial.fighters[0],hp:0,alive:false},...initial.fighters.slice(1)
+ ]});
+ assert.equal(deathProbe.accept(defeated),true);
+ assert.throws(()=>deathProbe.accept({...defeated,seq:2,logicalTime:0.4,
+  fighters:initial.fighters}),/ressurreição não permitida/);
+ assert.equal(deathProbe.cursor,1,'rejected resurrection does not advance cursor');
+
  assert.throws(()=>studentA.accept({...initial,status:'running'}),/replay divergente/);
  const forged={...initial,studentId:'42'};
  assert.throws(()=>studentA.accept(forged),/fora da partida/);
