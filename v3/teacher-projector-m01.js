@@ -6,9 +6,19 @@ const CARD_SELECTOR=['.tm1-hero-line','.tm1-concept','.tm1-key','.tm2-intro','.t
 function missionNumber(){const match=($('missionNumber')?.textContent||'').match(/MISSÃO\s+(\d+)/i);return match?Number(match[1]):0;}
 const $=id=>document.getElementById(id);
 function eligible(){return document.body.dataset.role==='teacher'&&missionNumber()>=1&&missionNumber()<=10&&!$('workspace')?.hidden;}
+const PRIVATE_NOTE_SELECTOR='.pit-private-teacher-notes,[data-private-note],.teacher-private-note';
+// A single final filter protects every slide source, including generated
+// tutorial cards that bypass cleanCopy. Notes are never part of the projection.
+function stripPrivateMarkup(html){
+ const template=document.createElement('template');
+ template.innerHTML=String(html||'');
+ template.content.querySelectorAll(PRIVATE_NOTE_SELECTOR).forEach(el=>el.remove());
+ return template.innerHTML;
+}
 function cleanCopy(node){
+ if(node.matches?.(PRIVATE_NOTE_SELECTOR))return '';
  const copy=node.cloneNode(true);
- copy.querySelectorAll('.pit-private-teacher-notes,[data-private-note],.teacher-private-note').forEach(el=>el.remove());
+ copy.querySelectorAll(PRIVATE_NOTE_SELECTOR).forEach(el=>el.remove());
  return copy.outerHTML;
 }
 function pedagogicalDemoSlides(root,mission){
@@ -709,7 +719,7 @@ function updateScrollHint(){
 }
 function render(){
  if(!overlay)return;
- const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+slide.html+'</div>';content.scrollTop=0;activateProjectorControls(content);content.classList.add('pit-projector-enter');
+ const slide=slides[index];const content=$('pitProjectorContent');content.classList.remove('pit-projector-enter');void content.offsetWidth;content.innerHTML='<div class="pit-projector-card">'+stripPrivateMarkup(slide.html)+'</div>';content.scrollTop=0;activateProjectorControls(content);content.classList.add('pit-projector-enter');
  content.querySelectorAll('img').forEach(img=>img.addEventListener('load',updateScrollHint,{once:true}));
  updateScrollHint();
  $('pitProjectorCount').textContent=(index+1)+' / '+slides.length;
