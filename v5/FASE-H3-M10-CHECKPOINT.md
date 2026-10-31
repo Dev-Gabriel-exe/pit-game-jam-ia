@@ -532,3 +532,23 @@ Em 30 equilibrados, a mudança **somente de geometria** alterou a identidade ven
 **Artefato:** [m10-projector-legibility, ID 13029470754](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41165418298/artifacts/13029470754), com screenshots 1920/1366 e JSON. As capturas foram geradas pelo Chromium e anexadas; não foram homologadas por observação humana. QA geral do SHA SUCCESS no [run 41165418346](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41165418346). O job spectator-camera-webgl também SUCCESS; final-webgl e browser QA geral ainda estavam em andamento na consulta, portanto não afirmar aprovação total do workflow antes do encerramento.
 
 **Próximo passo da MESMA M10:** revisar as capturas e experimentar layout compacto dos controles no modo imersivo em 1366×768, medindo ganho real de área do palco sem ocultar comandos de professor nem mudar a câmera/combate. Depois, validação G.2 nos PCs físicos com aceite humano. O seletor LOS segue desligado por padrão; M5, M10, classes, 120 talentos, XP, notas, turmas, dados reais, V3, main, merge e produção não foram alterados.
+
+
+## H.3/M10 — controles imersivos compactos e ganho medido de palco (31/10/2026)
+
+**Missão técnica da rodada:** ampliar a área de combate visível no modo imersivo de 1366×768, sem ocultar controles do professor, do espectador ou alterar regras de combate. Foram consultados roadmap D–I, checkpoints E/F/G/H.0, histórico de commits e GitHub Actions. HEAD inicial: `fc4f5971c7f3677c18816a8c8b4d64e85b2d8ff9`.
+
+**Implementação isolada:** `v5/arena-lab.css` define grade compacta de seis colunas para comandos imersivos desktop (>700px), preserva título/contadores, retira somente o bloco informativo redundante dos modelos durante a ampliação e compacta a faixa F.3 de aluno/professor sem esconder seleção, câmera ou status. `v5/arena-lab.html` move o bloco F.3 para o final dos comandos, alinhando ordem visual e ordem de tabulação. `qa/v5-m10-legibility-browser.cjs` agora exige altura mínima do palco (500px em 1366; 800px em 1920), toolbar até 150px, todos os 11 botões + status do diretor visíveis, F.3 acessível, canvas e overlays contidos, sem overflow horizontal. O modo normal não recebe essa compactação.
+
+**Falhas de QA e correções:** no run [41169183782](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41169183782), a primeira tentativa não atingiu 800px de palco no projetor (765px), porque a faixa F.3 ainda ocupava muitas linhas. No run [41169311090](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41169311090), o palco cresceu para 847px, mas a toolbar media 175px, porque os últimos dois botões vinham depois da faixa F.3 e geravam uma quarta linha. O HTML foi reordenado mantendo todos os comandos, e o teste focal passou no [run 41169455267](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41169455267), SHA `2a10e66fef1f31e54716370917269ed78e225ba8`.
+
+**Medições reais do Chromium/SwiftShader, com 30 KayKits fictícios e talentos disparados:**
+
+| Viewport | Antes | Depois | Ganho de palco | Destaque/talento |
+| --- | ---: | ---: | ---: | --- |
+| 1920×1080 | 1900×702 | **1900×885** | **+183px (+26,1%)** | 16px / 12px |
+| 1366×768 | 1346×342 | **1346×573** | **+231px (+67,5%)** | 16px / 12px |
+
+O teste de projeção, o contrato do roster e o teste F.3 de espectador passaram; o job `final-webgl` ainda estava em execução no instante deste registro. Relatório JSON e capturas: [artefato m10-projector-legibility, ID 13030387343](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41169455267/artifacts/13030387343). QA geral passou no [run 41169455212](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41169455212). **A captura automatizada não substitui avaliação visual humana nem teste G.2 em PCs físicos.**
+
+**Próximo passo da MESMA M10:** verificar conclusão de todos os jobs do SHA final, inspecionar visualmente as capturas em telão e desktop, testar foco/tabulação em modo imersivo e registrar aceite humano. G.2 em hardware real permanece pendente; seletor LOS continua opt-in e desligado por padrão. Não alterar M5 (5 talentos/10 pontos), M10 (10/20), quatro classes KayKit, 120 talentos, XP, dados reais, V3, main, merge ou deploy. H.1/H.2 reais continuam bloqueadas.
