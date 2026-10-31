@@ -151,6 +151,14 @@
   function validateNext(next){
    validateFrame(next,scope);
    if(frame&&next.logicalTime<frame.logicalTime)reject('relógio recuou');
+   // Every newly emitted frame advances simulation time. A replay at the same
+   // cursor is still idempotent, but a higher cursor cannot freeze the clock.
+   if(frame&&next.seq>lastSeq&&next.logicalTime===frame.logicalTime)
+    reject('relógio não avançou');
+   // Rendering consumers may index fighters by their initial slot. Preserve
+   // roster ordering across ordinary packets AND full reconnect snapshots.
+   if(frame&&next.fighters.some((f,i)=>f.id!==frame.fighters[i].id))
+    reject('ordem do plantel mudou');
    if(frame&&next.camera.revision<frame.camera.revision)reject('diretor recuou');
    // A director revision identifies one immutable shot. Catch a forged camera
    // swap even after reconnect/snapshot recovery; newer revisions may cut.
