@@ -50,6 +50,7 @@ small{color:#bdb6ac}.status{min-height:2em;color:#f5d9a0}
 <select id="battleMission"><option value="5">M5 — 5 talentos / 10 pontos</option><option value="10">M10 — 10 talentos / 20 pontos</option></select>
 <button id="visualize" type="button">▶ Iniciar arena 3D</button>
 <button id="pauseVisual" type="button" disabled>Ⅱ Pausar 3D</button>
+<button id="speedVisual" type="button" disabled>Velocidade ×1</button>
 <button id="simulate" type="button">Simular resultado (texto)</button>
 <p id="visualStatus" class="status" role="status" aria-live="polite">Pronto para iniciar uma batalha 3D fictícia.</p>
 <div id="duelVisual" hidden>
@@ -93,7 +94,7 @@ const view=key=>({rosterKey:'trial-'+key,progress:{currentStage:3,awaitingPeers:
 const a={view:view('aluna-a'),roomKey:'trial-room-demo',online:true};
 const b={view:view('aluno-b'),roomKey:'trial-room-demo',online:true};
 let state=D.createState(),lastFocus=null,backgroundInert=null,acceptedDescriptor=null;
-let duelVisual=null,visualGeneration=0,journey=J.create(),curtainTimer=null;
+let duelVisual=null,visualGeneration=0,journey=J.create(),curtainTimer=null,visualSpeed=1;
 const notification=key=>D.notificationsFor(state,key).at(-1);
 const journeyNames={mission:'Na missão',invited:'Convite enviado',declined:'Convite recusado',accepted:'Convite aceito',entering:'Entrando no coliseu',fighting:'Duelo em andamento',finished:'Resultado disponível',returned:'Retorno à missão'};
 function step(event,detail){journey=J.advance(journey,event,detail);renderJourney()}
@@ -128,6 +129,7 @@ function finishJourney(result,mode,mission){
  el('epilogueDetails').textContent='Duração simulada: '+result.time+'s · Arena experimental M'+mission+'. Retorne à Missão 3 sem alterar progresso, XP ou nota.';
  el('duelEpilogue').hidden=false;
  el('battleMission').disabled=true;el('visualize').disabled=true;el('simulate').disabled=true;
+ el('speedVisual').disabled=true;
  el('returnMission').focus();
 }
 function returnMission(){
@@ -167,6 +169,7 @@ el('open').addEventListener('click',()=>action(()=>{
  if(descriptor.kind!=='fictional-duel-window')throw Error('Janela não autorizada');
  acceptedDescriptor=descriptor;step('enter');
  el('battleMission').disabled=false;el('visualize').disabled=false;el('simulate').disabled=false;
+ el('speedVisual').disabled=true;visualSpeed=1;el('speedVisual').textContent='Velocidade ×1';
  el('battleResult').textContent='Aguardando simulação.';el('duelEpilogue').hidden=true;
  lastFocus=document.activeElement;
  backgroundInert=[...document.body.children].filter(node=>node!==el('arena')&&node.tagName!=='SCRIPT').map(node=>[node,node.inert]);
@@ -179,6 +182,7 @@ function stopVisual(){
  el('duelVisual').hidden=true;el('fallbackStage').hidden=false;
  el('visualize').textContent='▶ Iniciar arena 3D';
  el('pauseVisual').disabled=true;el('pauseVisual').textContent='Ⅱ Pausar 3D';
+ el('speedVisual').disabled=true;visualSpeed=1;el('speedVisual').textContent='Velocidade ×1';
  el('simulate').disabled=false;
 }
 function close(){
@@ -202,6 +206,7 @@ function paintHud(snapshot){
   el(prefix+'HpText').textContent=Math.ceil(fighter.hp)+' / '+fighter.maxHp+' PV'+(fighter.alive?'':' · eliminado');
  });
  el('pauseVisual').disabled=!snapshot.modelsReady;
+ el('speedVisual').disabled=!snapshot.modelsReady;
  if(snapshot.modelsFailed>0){
   el('visualStatus').textContent='Algum modelo KayKit não carregou. Reinicie o 3D; o resultado em texto segue disponível.';
   el('simulate').disabled=false;
@@ -237,7 +242,7 @@ el('visualize').addEventListener('click',async()=>{
    },
    onFinish:result=>{
     if(generation!==visualGeneration)return;
-    el('pauseVisual').disabled=true;
+    el('pauseVisual').disabled=true;el('speedVisual').disabled=true;
     finishJourney(result,'3d',Number(el('battleMission').value));
     el('visualStatus').textContent='Combate encerrado no motor da V5. Nenhum XP foi atribuído.';
    }
@@ -254,6 +259,11 @@ el('pauseVisual').addEventListener('click',()=>{
  if(!duelVisual)return;
  if(duelVisual.playing){duelVisual.pause();el('pauseVisual').textContent='▶ Continuar 3D'}
  else if(duelVisual.resume()){el('pauseVisual').textContent='Ⅱ Pausar 3D'}
+});
+el('speedVisual').addEventListener('click',()=>{
+ if(!duelVisual||!duelVisual.playing)return;
+ const next=visualSpeed===1?2:visualSpeed===2?3:1;
+ if(duelVisual.setSpeed(next)){visualSpeed=next;el('speedVisual').textContent='Velocidade ×'+next}
 });
 el('simulate').addEventListener('click',()=>{
  try{
