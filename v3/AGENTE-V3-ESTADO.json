@@ -2840,7 +2840,7 @@
         "qa/v3-m07-student.cjs",
         "v3/AUDITORIA-V4-MISSOES.md"
       ],
-      "tests": "15 verificações funcionais V8 diretas PASS e JS parse PASS; GitHub Actions static-qa 41196176053 SUCCESS; browser-qa 41196176060 IN_PROGRESS no último acesso. M06 final static 41192310180 e browser 41192310171 SUCCESS. HDMI, GDevelop GUI, mobile físico, humanos NOT_RUN.",
+      "tests": "14 verificações funcionais V8 diretas PASS e JS parse PASS; GitHub Actions static-qa 41196176053 SUCCESS; browser-qa 41196176060 IN_PROGRESS no último acesso. M06 final static 41192310180 e browser 41192310171 SUCCESS. HDMI, GDevelop GUI, mobile físico, humanos NOT_RUN.",
       "notes": "M07 protege rota, sete campos e três declarações manuais com fallback volátil por sessão; prática/revisão avisam sobre gravação negada. Material professor mantém notas privadas em details fechado por padrão. Roadmap 54/59; main e dados reais intocados."
     }
   ],
@@ -3990,7 +3990,7 @@
       {
         "name": "M07 direct V8 normal/denied storage and evidence",
         "sha": "b636e867d8d437363e63f457ed59eae775b7afcc",
-        "result": "PASS 15 direct checks, JS parse; no browser/human claim"
+        "result": "PASS 14 direct checks, JS parse; no browser/human claim"
       },
       {
         "name": "M07 final native Node static and Browser QA",
