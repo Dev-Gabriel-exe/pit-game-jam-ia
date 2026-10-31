@@ -140,8 +140,38 @@ function within(inner,outer,tolerance=3){
    assert(metric.talentText.fontPx>=12,'Talent telemetry too small for desktop');
    assert(metric.combatants===30,'All thirty fictitious fighters must remain in roster');
    assert(metric.pageWidth<=screen.width+3,'Horizontal overflow in immersive mode');
+   // Automated AA contrast audit for controls with opaque, solid CSS backgrounds.
+   // Excludes gradient CTAs, translucent HUD over moving WebGL, disabled buttons
+   // and any text whose actual background requires pixel-level/human review.
+   const contrast=await page.evaluate(()=>{
+    const rgba=value=>{
+     const m=value.match(/^rgba?\\(([^)]+)\\)$/);
+     if(!m)return null;
+     const n=m[1].match(/[\\d.]+/g)?.map(Number);
+     if(!n||n.length<3)return null;
+     return {rgb:n.slice(0,3),alpha:n.length>3?n[3]:1};
+    };
+    const lum=rgb=>{
+     const c=rgb.map(v=>{const s=v/255;return s<=.04045?s/12.92:((s+.055)/1.055)**2.4});
+     return .2126*c[0]+.7152*c[1]+.0722*c[2];
+    };
+    const selectors=['.controls > button:not(:disabled)','.controls > .camera-director-status'];
+    return selectors.flatMap(selector=>[...document.querySelectorAll(selector)]).flatMap(el=>{
+     const style=getComputedStyle(el),rect=el.getBoundingClientRect();
+     if(style.display==='none'||style.visibility==='hidden'||rect.width<1||rect.height<1)return [];
+     if(style.backgroundImage!=='none')return [];
+     const fg=rgba(style.color),bg=rgba(style.backgroundColor);
+     if(!fg||!bg||fg.alpha!==1||bg.alpha!==1)return [];
+     const a=lum(fg.rgb),b=lum(bg.rgb),ratio=(Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+     return [{id:el.id||el.textContent.trim().slice(0,24),ratio:+ratio.toFixed(3),
+      fontPx:parseFloat(style.fontSize),fontWeight:style.fontWeight}];
+    });
+   });
+   assert(contrast.length>=5,'Expected at least five visible solid-background controls for AA audit');
+   for(const item of contrast)assert(item.ratio>=4.5,
+    'WCAG AA normal-text contrast below 4.5:1 on '+screen.label+': '+JSON.stringify(item));
    const filename=OUT+'-'+screen.label+'.png';
-   report.screens.push({label:screen.label,...metric,screenshot:filename});
+   report.screens.push({label:screen.label,...metric,contrast,screenshot:filename});
    fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
    // CDP avoids Playwright's animation-stability wait on a live WebGL canvas.
    const cdp=await page.context().newCDPSession(page);
