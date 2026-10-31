@@ -1,5 +1,5 @@
 'use strict';
-/* H.3/M10: isolated paired trial of static-pillar-aware target selection.
+/* H.3/M10: stratified paired trial of static-pillar-aware target selection.
  * Does NOT change M5, default M10, projectile collision, XP or students.
  * Static ray/circle is a proxy, not full visibility of spells or moving units.
  */
@@ -46,18 +46,19 @@ function firstTick(entries,options){
  g.update(.05);
  return {initial,obstacles,targets:Object.fromEntries(g.fighters.map(f=>[f.id,f.lastTarget]))};
 }
-const report={schema:'pit-v5-m10-los-combat-trial-v1',
+const report={schema:'pit-v5-m10-los-combat-trial-v2',
  scope:'M10 synthetic only; optional targeting, default unchanged',
  limitations:[
   'Static pillar ray uses projectile radius r+.2; no moving-unit interception or spell LOS.',
   'Opt-in modifies target choice and therefore combat; not a production balance change.',
   'Seeds are paired between arms, not independent across modes or roster variants.',
+  'Samples are stratified by build, roster size and aggro; paired seeds are reused across builds and modes.',
   'Sample sizes are exploratory; changes in wins do not establish fair class balance.',
   'G.2 physical PC test pending; H.1/H.2 real integration blocked.'
  ],fixtures:{},groups:[],totals:{pairedBattles:0,fullBattles:0,changedFirstTargets:0,
  blockedBaselineFirstTargets:0,blockedTrialFirstTargets:0,changedWinners:0,
  changedWithClearInitial:0,changedWithBlockedInitial:0,boundAtSpawnViolations:0,
- exactReplays:0,m5Unchanged:false,defaultM10Unchanged:false}};
+ exactReplays:0,m5Unchanged:false,defaultM10Unchanged:false,buildVariants:[0,3,5],seedsPerStratum:8}};
 assert.throws(()=>P.battle(roster(4,0),{...OPT,arenaMission:5,experimentalVisibilityAwareTargets:true}));
 assert.throws(()=>P.battle(roster(4,0),{...OPT,experimentalVisibilityAwareTargets:'true'}));
 {
@@ -87,15 +88,16 @@ assert.throws(()=>P.battle(roster(4,0),{...OPT,experimentalVisibilityAwareTarget
  assert.deepEqual(P.battle(m5,{seed:42}).run(),P.battle(m5,{seed:42,arenaMission:5}).run());
  report.totals.m5Unchanged=true;
 }
-for(const count of [4,30])for(const mode of ['free','spaced']){
- const group={count,mode,seeds:6,pairedBattles:0,changedFirstTargets:0,
+for(const variant of [0,3,5])for(const count of [4,30])for(const mode of ['free','spaced']){
+ const group={variant,count,mode,seeds:8,pairedBattles:0,changedFirstTargets:0,
  blockedBaselineFirstTargets:0,blockedTrialFirstTargets:0,changedWinners:0,
  changedWithClearInitial:0,changedWithBlockedInitial:0,boundAtSpawnViolations:0,
  baselineWins:{},trialWins:{},meanBaselineSeconds:0,meanTrialSeconds:0,
- baselineTalentEvents:0,trialTalentEvents:0,baselinePillarBlocks:0,trialPillarBlocks:0};
+ baselineTalentEvents:0,trialTalentEvents:0,baselinePillarBlocks:0,trialPillarBlocks:0,
+  byClass:Object.fromEntries(CLASSES.map(c=>[c,{actors:0,changedTargets:0,blockedBaseline:0,blockedTrial:0}]))};
  let baselineSeconds=0,trialSeconds=0;
- const entries=roster(count,count===30?5:0);
- for(let k=0;k<6;k++){
+ const entries=roster(count,variant);
+ for(let k=0;k<8;k++){
   const seed=(Math.imul(k+1,2246822519)^Math.imul(count,3266489917)^0x75e1932b)>>>0;
   const options={...OPT,seed,engagementMode:mode};
   const original=firstTick(entries,options);
@@ -103,11 +105,15 @@ for(const count of [4,30])for(const mode of ['free','spaced']){
   assert.deepEqual(original.initial,trial.initial);
   assert.deepEqual(original.obstacles,trial.obstacles);
   for(const e of entries){
-   const id=e.id,chosen=original.targets[id],next=trial.targets[id];
+   const id=e.id,klass=e.build.klass,chosen=original.targets[id],next=trial.targets[id];
+   const classStats=group.byClass[klass];classStats.actors++;
    const oldBlocked=blocked(original.initial[id],original.initial[chosen],original.obstacles);
    const newBlocked=blocked(trial.initial[id],trial.initial[next],trial.obstacles);
    group.blockedBaselineFirstTargets+=Number(oldBlocked);
    group.blockedTrialFirstTargets+=Number(newBlocked);
+   classStats.blockedBaseline+=Number(oldBlocked);
+   classStats.blockedTrial+=Number(newBlocked);
+   classStats.changedTargets+=Number(chosen!==next);
    if(chosen!==next){
     group.changedFirstTargets++;
     // Snapshot coordinates are captured BEFORE the tick; previous fighters
@@ -147,9 +153,19 @@ for(const count of [4,30])for(const mode of ['free','spaced']){
   'changedWithBlockedInitial','boundAtSpawnViolations'])report.totals[key]+=group[key];
  report.groups.push(group);
 }
-assert.equal(report.totals.pairedBattles,24);
-assert.equal(report.totals.fullBattles,48);
-assert.equal(report.totals.exactReplays,8);
+assert.equal(report.groups.length,12);
+assert.equal(report.totals.pairedBattles,96);
+assert.equal(report.totals.fullBattles,192);
+assert.equal(report.totals.exactReplays,24);
+for(const group of report.groups){
+ assert.equal(group.pairedBattles,8);
+ assert.equal(Object.values(group.byClass).reduce((sum,c)=>sum+c.actors,0),group.count*8);
+ assert.equal(Object.values(group.byClass).reduce((sum,c)=>sum+c.changedTargets,0),group.changedFirstTargets);
+ assert.equal(Object.values(group.byClass).reduce((sum,c)=>sum+c.blockedBaseline,0),group.blockedBaselineFirstTargets);
+ assert.equal(Object.values(group.byClass).reduce((sum,c)=>sum+c.blockedTrial,0),group.blockedTrialFirstTargets);
+ assert.equal(Object.values(group.baselineWins).reduce((sum,n)=>sum+n,0),8);
+ assert.equal(Object.values(group.trialWins).reduce((sum,n)=>sum+n,0),8);
+}
 assert(report.totals.changedFirstTargets>0,'trial should actually change some first targets');
 // Selection-time guarantees are tested by the fixed three-hero fixture.
 // Aggregate pre-tick positions are observational, not selection-time proofs.
