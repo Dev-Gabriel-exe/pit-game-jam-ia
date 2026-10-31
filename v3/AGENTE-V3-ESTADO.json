@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T02:13:55.612Z",
+  "last_completed_at": "2026-10-31T03:14:46.058Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar Browser QA da proteção HDMI do modo Apresentação, continuar auditoria pedagógica real das 20 faces professor/aluno (P0→P1→P2); não iniciar estética antes da conclusão.",
+  "priority": "Confirmar CI nativa Chrome do filtro final de notas privadas no projetor M07; continuar auditoria pedagógica das 20 faces professor/aluno antes de estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-HDMI-PROJECTOR-CLOSE-NOTES",
+  "last_task": "V4-HDMI-PROJECTOR-FAIL-CLOSED",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2734,12 +2734,24 @@
       ],
       "tests": "Static QA 41158994628 SUCCESS. Browser QA 41158994606 IN_PROGRESS, pending Chrome confirmation. Physical HDMI, GDevelop GUI, human tests NOT_RUN.",
       "notes": "Actual projector safety defect: previously open private note could remain exposed after ending presentation. Launch now closes all notes before rendering. M01–M10 teacher/student full pedagogical homologation remains pending. Main unchanged; roadmap 54/59."
+    },
+    {
+      "id": "V4-HDMI-PROJECTOR-FAIL-CLOSED",
+      "completed_at": "2026-10-31T03:14:46.058Z",
+      "commit": "120eff231eec32bf1f73f6f5dffc75fc261bd17f",
+      "files": [
+        "v3/teacher-projector-m01.js",
+        "qa/v3-private-teacher-notes-browser.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "PASS V8 syntax for both JS files; previous browser QA 41158994606 SUCCESS; new M07 injection Chrome QA NOT_CONFIRMED",
+      "notes": "Cross-mission final sanitizer removes private teacher markup even from dynamically generated tutorial slides; regression injects private markup into raw M07 tutorial. No HDMI physical or human tests; main unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-HDMI-PROJECTOR-CLOSE-NOTES",
+    "task": "V4-HDMI-PROJECTOR-FAIL-CLOSED",
     "status": "in_progress",
-    "updated_at": "2026-10-31T02:13:55.612Z",
+    "updated_at": "2026-10-31T03:14:46.058Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2865,9 +2877,11 @@
       "6e2710716118c227a77780cc3c72d59faf623f98",
       "aae502a3b4935edcf57cb2de19fc6e7972495704",
       "8c68087ff5a8adef4ce3737a60039d6b632163ff",
-      "6b11744fafb45682a7eff67e9b9678089634fb8f"
+      "6b11744fafb45682a7eff67e9b9678089634fb8f",
+      "3d431691d07353baa66b541357c400b691964a32",
+      "120eff231eec32bf1f73f6f5dffc75fc261bd17f"
     ],
-    "documentation_commit": "a344e3c9e70f89723b9b591d5559205e3c0c8108",
+    "documentation_commit": "cc93e0892f58555be28bac7864a9d4ffdb5cf40e",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3847,13 +3861,24 @@
         "run_id": 41158994628,
         "sha": "6b11744fafb45682a7eff67e9b9678089634fb8f",
         "result": "SUCCESS"
+      },
+      {
+        "name": "Prior HDMI-safe Browser QA",
+        "run_id": 41158994606,
+        "sha": "6b11744fafb45682a7eff67e9b9678089634fb8f",
+        "result": "SUCCESS: GitHub Actions browser-qa job 124412080793 completed successfully; all steps including private-note projector regression."
+      },
+      {
+        "name": "Final projector sanitization + M07 injection regression",
+        "sha": "120eff231eec32bf1f73f6f5dffc75fc261bd17f",
+        "result": "PASS: both modified JS files parsed with V8 new Function. Chrome test committed, native GitHub Actions on new SHA NOT_CONFIRMED."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar GitHub Actions Node/Chrome do SHA aae502a3; retomar auditoria pedagógica cruzada M01–M10 professor/aluno, corrigindo lacunas reais antes de estética. Bloqueios finais 5/59 exigem homologação autorizada.",
-    "blocker": "CI nova M01 não confirmada; dados históricos sem quebras não são reconstruíveis com segurança; GDevelop GUI, HDMI físico, celular físico e playtest humano NOT_RUN. Nenhum dado real de turma acessado."
+    "next_task": "Confirmar GitHub Actions Browser QA do commit 120eff23, corrigir se necessário; seguir revisão pedagógica comparada M01–M10 professor/aluno.",
+    "blocker": "Chrome CI do novo teste ainda não confirmada; HDMI físico, GDevelop GUI, celular físico e playtest humano NOT_RUN. 5 tarefas do release gate permanecem bloqueadas por validação autorizada."
   }
 }
