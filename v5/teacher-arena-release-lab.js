@@ -114,11 +114,16 @@
   return freeze({...state,revision:state.revision+1,status:'finished',
    result:{winner,time,mission:state.mission,participants:state.release.entrants.length}});
  }
+ function abort(state,{actor,expectedRevision}={}){
+  revision(state,expectedRevision);teacher(actor);
+  if(!['released','running'].includes(state.status))invalid('não há arena coletiva para interromper');
+  return freeze({...state,revision:state.revision+1,status:'aborted',result:null});
+ }
  function reset(state,{actor,expectedRevision}={}){
   revision(state,expectedRevision);teacher(actor);
   if(state.status==='running')invalid('partida em andamento exige encerramento do motor');
   return freeze({...state,revision:state.revision+1,status:'draft',
    teacherEnabled:false,release:null,result:null});
  }
- return Object.freeze({VERSION,createRoster,createState,eligible,alter,release,start,finish,reset});
+ return Object.freeze({VERSION,createRoster,createState,eligible,alter,release,start,finish,abort,reset});
 });
