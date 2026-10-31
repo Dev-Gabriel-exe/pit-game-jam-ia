@@ -71,9 +71,9 @@
    rotation=motion.reducedMotion?0:p*motion.spin*.18;
   }
   const opacity=clamp(alpha*(motion.subtle?.59:1),0,1);
-  return Object.freeze({phase:p<motion.phase.windup?'charge':p<motion.phase.flight?'release':'afterglow',
+  return {phase:p<motion.phase.windup?'charge':p<motion.phase.flight?'release':'afterglow',
    x,z,y,scale:Math.max(.02,scale),opacity,rotation,progress:p,
-   active:p<1,energy:motion.reducedMotion?0:Math.max(0,Math.sin(Math.PI*p))*cast});
+   active:p<1,energy:motion.reducedMotion?0:Math.max(0,Math.sin(Math.PI*p))*cast};
  }
  return Object.freeze({PROJECTILES,GROUND,plan,sample});
 });
