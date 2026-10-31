@@ -51,6 +51,22 @@ function within(inner,outer,tolerance=3){
    header:true,intro:true,side:true,footer:true,
    dialog:'dialog',dialogName:'Arena de combate ampliada'
   },'Immersive mode must make every background region inert');
+  // Inspect the role-based accessibility surface, not just DOM inert flags.
+  // This checks Chromium's exposed roles/names; NVDA/VoiceOver still require
+  // manual validation on the actual classroom hardware.
+  const a11yOpen={
+   dialog:await page.getByRole('dialog',{name:'Arena de combate ampliada'}).count(),
+   backgroundNav:await page.getByRole('navigation',{name:'Simulação de marco da oficina'}).count(),
+   backgroundLink:await page.getByRole('link',{name:/Seleção de heróis/}).count(),
+   closeButton:await page.getByRole('button',{name:/Fechar arena/}).count()
+  };
+  assert.deepEqual(a11yOpen,{dialog:1,backgroundNav:0,backgroundLink:0,closeButton:1},
+   'Immersive dialog must expose itself but not background navigation to accessibility roles');
+  const liveSnapshot=await page.locator('#battleAnnouncement').ariaSnapshot();
+  assert.match(liveSnapshot,/status/,'Combat announcements must expose a status role');
+  assert.match(liveSnapshot,/Confronto pausado/,'Paused combat must be available to assistive technology');
+  report.accessibility={expanded:a11yOpen,announcementRole:true,
+   announcementPaused:true,screenReaderHardwareValidated:false};
   for(const screen of SCREENS){
    await page.setViewportSize({width:screen.width,height:screen.height});
    await page.waitForTimeout(350);
@@ -165,6 +181,14 @@ function within(inner,outer,tolerance=3){
   assert.equal(restored.intro,false,'Intro must be interactive after closing');
   assert.equal(restored.side,false,'Sidebar must be interactive after closing');
   assert.equal(restored.footer,false,'Footer must be interactive after closing');
+  const a11yClosed={
+   dialog:await page.getByRole('dialog',{name:'Arena de combate ampliada'}).count(),
+   backgroundNav:await page.getByRole('navigation',{name:'Simulação de marco da oficina'}).count(),
+   backgroundLink:await page.getByRole('link',{name:/Seleção de heróis/}).count()
+  };
+  assert.deepEqual(a11yClosed,{dialog:0,backgroundNav:1,backgroundLink:1},
+   'Closing the immersive arena must restore background accessibility roles');
+  report.accessibility.closed=a11yClosed;
   await page.locator('#expandStage').press('Enter');
   assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('arena-immersive')),true,
    'Keyboard Enter must reopen immersive arena');
