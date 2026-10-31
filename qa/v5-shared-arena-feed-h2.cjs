@@ -86,6 +86,22 @@ for(const mission of [5,10]){
  assert.equal(clockProbe.cursor,1);
  assert.equal(clockProbe.accept(fakeFrame()),false,'same cursor replay stays idempotent');
 
+ // Reordered delivery is not tampering: a structurally valid older frame must
+ // be ignored without triggering the clock/camera regression checks or
+ // modifying the last accepted frame, cursor, or recovery state.
+ const acceptedBeforeLate=clockProbe.snapshot;
+ assert.equal(clockProbe.accept(initial),false,'delayed valid frame is ignored');
+ assert.equal(clockProbe.cursor,1,'late packet cannot roll back cursor');
+ assert.equal(clockProbe.needsSnapshot,false,'late packet cannot trigger recovery');
+ assert.deepEqual(clockProbe.snapshot,acceptedBeforeLate,'late packet cannot roll back view');
+ assert.throws(()=>clockProbe.accept({...initial,roomKey:'trial-room-foreign'}),
+  /fora da partida/,'late foreign packet is still rejected');
+ assert.throws(()=>clockProbe.accept({...initial,fighters:[
+  {...initial.fighters[0],hp:-1},...initial.fighters.slice(1)
+ ]}),/lutador fora do contrato/,'late malformed packet is still rejected');
+ assert.equal(clockProbe.cursor,1);
+ assert.deepEqual(clockProbe.snapshot,acceptedBeforeLate);
+
  // A camera shot cannot silently change mode/targets without a new revision.
  // Exercise both sequential packets and full reconnection snapshots for M5/M10.
  const cameraProbe=F.createReceiver(publisher.scope);
