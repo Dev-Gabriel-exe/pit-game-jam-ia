@@ -1,7 +1,7 @@
 name: V5 H1d Two-Browser Staging Integration
 on:
   push:
-    branches: [feature/v5-h1b-integration-safe]
+    branches: [main, feature/v5-h1b-integration-safe]
     paths:
       - 'v5/hero-lab-h1d.html'
       - 'v5/hero-lab-h1d.js'
@@ -15,6 +15,8 @@ on:
       - 'qa/v5-hero-h1d-server.cjs'
       - 'qa/v5-hero-h1d-two-browser.cjs'
       - '.github/workflows/v5-hero-h1d-staging-qa.yml'
+      - 'aluno-v3.html'
+      - 'professor-v3.html'
   workflow_dispatch:
 permissions:
   contents: read
