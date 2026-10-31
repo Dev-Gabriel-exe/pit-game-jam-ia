@@ -20,7 +20,7 @@ const report={schema:'m10-passive-reactive-event-audit-v1',synthetic:true,
     'SwiftShader/GitHub Actions cannot substitute physical G.2'],
   seeds,selected:{ativo:new Set(),passivo:new Set(),reativo:new Set()},
   observed:{ativo:new Set(),passivo:new Set(),reativo:new Set()},
-  events:{talent:0,proc:0,charge:0},perSeed:[]};
+  events:{talent:0,proc:0,charge:0},anomalies:[],perSeed:[]};
 const entries=Array.from({length:30},(_,i)=>{
  const klass=classes[i%4],name='trial-m10-vfx-'+i,variant=i%11;
  const m5=P.exampleBuild(klass,name,5,variant);
@@ -57,6 +57,14 @@ for(const seed of seeds){
   if(!['talent','proc','charge'].includes(event.type)||!event.talent)continue;
   const owner=byHero.get(event.hero);
   assert(owner,'Event has no fictional owner: '+JSON.stringify(event));
+  // Known engine telemetry anomaly: D07 is a Warrior debuff, but its
+  // consumption is emitted on the affected hero (potentially another class).
+  // Do not misrepresent it as that hero activating a talent.
+  if(event.type==='proc'&&event.talent==='D07'&&event.kind==='weakened'){
+   report.anomalies.push({seed,seq:event.seq,heroClass:owner.build.klass,
+    talent:'D07',kind:'foreign-debuff-consumption-attributed-to-victim'});
+   continue;
+  }
   const talent=P.TALENTS[owner.build.klass].find(t=>t.id===event.talent);
   assert(talent,'Unknown talent in event: '+JSON.stringify(event));
   assert(owner.build.talents.includes(event.talent),
@@ -98,4 +106,4 @@ fs.writeFileSync('qa/v5-m10-passive-reactive-report.json',JSON.stringify(output,
 console.log('PASS M10 passive/reactive event audit: '+JSON.stringify({
  seeds:seeds.length,selected:Object.fromEntries(Object.entries(output.selected).map(([k,v])=>[k,v.count])),
  observed:Object.fromEntries(Object.entries(output.observed).map(([k,v])=>[k,v.count])),
- events:report.events,m5:'identical'}));
+ events:report.events,anomalies:report.anomalies.length,m5:'identical'}));
