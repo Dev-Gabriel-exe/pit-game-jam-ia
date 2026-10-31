@@ -1,0 +1,44 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+(async()=>{
+ const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ try{
+  const page=await browser.newPage({viewport:{width:1366,height:768}});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('http://127.0.0.1:8899/v5/duel-window-lab.html',{waitUntil:'load'});
+  assert.equal(await page.locator('#accept').isDisabled(),true);
+  assert.equal(await page.locator('#open').isDisabled(),true);
+  await page.locator('#teacher').uncheck();
+  assert.equal(await page.locator('#invite').isDisabled(),true);
+  await page.locator('#teacher').check();
+  await page.locator('#invite').click();
+  assert.match(await page.locator('#recipient').innerText(),/pending/);
+  assert.equal(await page.locator('#accept').isEnabled(),true);
+  await page.locator('#decline').click();
+  assert.match(await page.locator('#sender').innerText(),/declined/);
+  assert.equal(await page.locator('#open').isDisabled(),true);
+  assert.equal(await page.locator('#arena').isHidden(),true);
+  await page.locator('#reset').click();
+  await page.locator('#invite').click();
+  await page.locator('#teacher').uncheck();
+  assert.equal(await page.locator('#accept').isDisabled(),true);
+  await page.locator('#teacher').check();
+  await page.locator('#accept').click();
+  assert.match(await page.locator('#recipient').innerText(),/accepted/);
+  assert.equal(await page.locator('#open').isEnabled(),true);
+  await page.locator('#open').click();
+  assert.equal(await page.locator('#arena').isVisible(),true);
+  assert.equal(await page.locator('#close').evaluate(el=>el===document.activeElement),true);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#arena').isHidden(),true);
+  assert.equal(await page.locator('#open').evaluate(el=>el===document.activeElement),true);
+  await page.locator('#open').click();
+  await page.locator('#close').click();
+  assert.equal(await page.locator('#arena').isHidden(),true);
+  await page.locator('#reset').click();
+  assert.equal(await page.locator('#open').isDisabled(),true);
+  assert.deepEqual(errors,[]);
+  console.log('PASS browser: teacher toggle, invite, decline, accept, modal open, Escape, focus restore, close and reset');
+ }finally{await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});
