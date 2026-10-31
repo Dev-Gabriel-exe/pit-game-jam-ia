@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T05:16:39.000Z",
+  "last_completed_at": "2026-10-31T06:12:32.000Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "CI estática M01 confirmada (run 41172062731 SUCCESS); confirmar Browser QA 41172062689 e continuar auditoria pedagógica M02 (salvamento de rascunho), sem estética.",
+  "priority": "M02: fallback volátil e aviso de falha de armazenamento implementados; 57 verificações QA em V8 passaram. Confirmar CI nativa Node/Chrome no commit 033ac9ba e continuar auditoria pedagógica professor/aluno; sem estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M01-DRAFT-STORAGE-FAILSAFE",
+  "last_task": "V4-M02-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2770,12 +2770,24 @@
       ],
       "tests": "Native Node static QA 41172062731 SUCCESS on final code/test SHA ab05cad6; Browser QA 41172062689 IN_PROGRESS; no manual/hardware tests.",
       "notes": "M01 previously claimed local draft saved even when browser denied storage. Added per-session volatile fallback, explicit live save failure warning in practice and review, no false persistence guarantee. Main unchanged, roadmap 54/59."
+    },
+    {
+      "id": "V4-M02-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T06:12:32.000Z",
+      "commit": "033ac9ba2e8e7979ede507f499fc27c99d74c3e5",
+      "files": [
+        "v3/student-mission-two.js",
+        "qa/v3-m02-legacy-evidence.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "15 functional V8 checks + 57 V8 Node-compatible QA assertions passed. Previous M01 Browser QA 41172062689 and M09 Browser QA 41168176450 SUCCESS. Native Node/Chrome on new M02 code NOT_CONFIRMED; physical/human NOT_RUN.",
+      "notes": "M02 no longer silently claims persistence on storage denial; per-session volatile fallback, explicit live warning and review copy guidance. No main or real student data changes. Master roadmap 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M01-DRAFT-STORAGE-FAILSAFE",
+    "task": "V4-M02-DRAFT-STORAGE-FAILSAFE",
     "status": "in_progress",
-    "updated_at": "2026-10-31T05:16:39.000Z",
+    "updated_at": "2026-10-31T06:12:32.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2909,9 +2921,11 @@
       "b4d27ff44e275c2b110cbf32346410f1aef74bca",
       "79946132438412cea2da6157fda6bf2c1222cb33",
       "6d2ee904246ce424987f9cd1c07bab275b3f9c9a",
-      "ab05cad6057540c513dd02f52f525095a5bc712b"
+      "ab05cad6057540c513dd02f52f525095a5bc712b",
+      "dfff575ae16ddb5671c3ec2bcb976c53deb4281c",
+      "033ac9ba2e8e7979ede507f499fc27c99d74c3e5"
     ],
-    "documentation_commit": "3d4fc07ebc29826fff1461fc02a93c925d0af794",
+    "documentation_commit": "9595cf639b90aef8150f824cd638697b328bc4f2",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3938,13 +3952,26 @@
         "run_id": 41172062689,
         "sha": "ab05cad6057540c513dd02f52f525095a5bc712b",
         "result": "IN_PROGRESS at last check"
+      },
+      {
+        "name": "Previous M01 and M09 Browser QA",
+        "run_ids": [
+          41172062689,
+          41168176450
+        ],
+        "result": "SUCCESS: both Chrome browser-qa jobs completed with all steps green, verified via GitHub connector 2026-10-31"
+      },
+      {
+        "name": "M02 storage-denial code and regression suite",
+        "sha": "033ac9ba2e8e7979ede507f499fc27c99d74c3e5",
+        "result": "PASS: 15 direct functional checks + 57 QA assertions under V8 Node-compatible shims; native Node/Chrome GitHub Actions on final SHA NOT_CONFIRMED; no human/physical tests"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar GitHub Actions Node/Chrome do commit f6334ff; corrigir se falhar. Prosseguir com auditoria pedagógica das 20 faces, verificando evidências e apresentação espelhada.",
-    "blocker": "M09 native static QA SUCCESS; Chrome Browser QA run 41168176450 pending. Physical HDMI, GDevelop GUI, mobile and peer playtest NOT_RUN. Five release gate tasks remain blocked."
+    "next_task": "Confirmar GitHub Actions static QA/Browser QA da M02 (commit 033ac9ba); prosseguir na auditoria pedagógica de M03 e riscos de rascunhos, professor/aluno antes de estética.",
+    "blocker": "CI Node/Chrome final M02 NOT_CONFIRMED. HDMI físico, GDevelop GUI, mobile físico, playtest humano NOT_RUN. Cinco release gates seguem bloqueados."
   }
 }
