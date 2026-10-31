@@ -59,6 +59,22 @@ invalid.forEach((raw,i)=>{
 });
 check(m.validate('fresh').ok,'Recovered complete evidence validates');
 check(m.evidence('fresh')===valid,'Recovered evidence is lossless');
+
+ // An imported/legacy local draft can exceed HTML maxlength. Never call it complete or enable submission.
+ const limits=[['title',55,0],['hero',55,0],['action',80,1],['objective',105,1],['victory',105,2],['feedback',105,2]];
+ for(const [field,max,fragment] of limits){
+  const id='oversized_'+field;
+  store.set('pit_v3_missao01_rascunho_'+id,JSON.stringify({...data,[field]:'X'.repeat(max+1)}));
+  const result=m.validate(id),flags=m.stepProgress(m.load(id));
+  check(result.ok===false&&result.field===field,'Overlong '+field+' rejected without losing draft');
+  check(result.label.includes('no máximo '+max),'Student sees the actual limit for '+field);
+  check(flags[fragment]===false,'Overlong '+field+' cannot complete fragment '+fragment);
+  const html=m.render({session:id,phase:'review',status:'draft',preview:true,canSubmit:true});
+  check(/id="submitWork"[^>]*disabled/.test(html),'Overlong '+field+' disables submission');
+ }
+ check(m.validate('source').ok,'Valid existing local record still passes');
+ check(m.stepProgress(m.load('source')).every(Boolean),'Valid fragments remain complete');
+
 // Storage may be unavailable (private mode/quota/security policy). Never claim
 // the draft was saved; preserve it in this tab and warn before the student leaves.
 const blockedWindow={};
