@@ -61,6 +61,18 @@
   if((frame.status==='finished')!== (frame.winner!==null))reject('resultado incompatível com estado');
   if(frame.status==='ready'&&(frame.seq!==0||frame.logicalTime!==0))reject('início não canônico');
   if(frame.seq===0&&frame.status!=='ready')reject('primeiro pacote deve estar pronto');
+  // Final snapshots may be restored after a gap: validate what is provable
+  // without replaying combat. A time-limit can leave multiple survivors;
+  // simultaneous elimination can leave none. Never invent a lone winner.
+  const survivors=frame.fighters.filter(f=>f.alive);
+  if(frame.status==='ready'&&survivors.length!==frame.fighters.length)
+   reject('partida pronta contém eliminado');
+  if(frame.status==='running'&&survivors.length===0)
+   reject('partida ativa sem sobreviventes');
+  if(frame.status==='finished'&&survivors.length>0&&
+   (survivors.length===1?survivors[0].id!==frame.winner:
+    !survivors.some(f=>f.id===frame.winner)))
+   reject('vencedor incompatível com sobreviventes');
   return true;
  }
  function createPublisher({releaseState,engine,director,matchId='trial-match-classroom',historyLimit=32,
