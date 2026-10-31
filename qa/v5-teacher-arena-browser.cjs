@@ -62,6 +62,7 @@ const {chromium}=require('playwright');
     el?.dataset.v5ApprovedTalentSlots==='10'&&el?.dataset.v5ModelsExpected==='4';
   },null,{timeout:60000});
   await page.waitForFunction(()=>document.getElementById('arenaStage')?.dataset.v5ModelsLoaded==='4',null,{timeout:100000});
+  await page.waitForFunction(()=>!document.getElementById('start').disabled,null,{timeout:10000});
   assert.equal(await page.locator('#start').isEnabled(),true);
   await page.locator('#abort').click();
   assert.equal(await page.locator('#arenaStage canvas').count(),0);
