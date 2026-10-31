@@ -1,0 +1,133 @@
+/* PIT Game Jam IA — Gothic typography V3.
+ * Diablo-like atmosphere, independently styled with free open-source families.
+ * Decorative glyphs ONLY for display; readable text for instruction and interaction.
+ * Google Fonts with system fallbacks; no proprietary franchise font or asset.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Grenze+Gotisch:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700;800&display=swap');
+:root{
+  --pit-font-gothic:"Cinzel Decorative","Cinzel","Palatino Linotype",Georgia,serif;
+  --pit-font-chapter:"Cinzel","Palatino Linotype",Georgia,serif;
+  --pit-font-blackletter:"Grenze Gotisch",Georgia,serif;
+  --pit-font-reading:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  --pit-font-display:var(--pit-font-chapter);
+  --pit-font-ui:var(--pit-font-reading);
+}
+/* Brand: engraved fantasy typography, with the original gold palette preserved. */
+body:is([data-role="teacher"],[data-role="student"]) .hero .brand-title{
+  font-family:var(--pit-font-gothic)!important;
+  font-weight:900;
+  font-size:clamp(26px,3.25vw,54px);
+  line-height:1.08;
+  letter-spacing:-.005em;
+  text-wrap:balance;
+  filter:drop-shadow(0 5px 14px #000c);
+}
+body:is([data-role="teacher"],[data-role="student"]) .hero .brand-title em{font-style:normal}
+body:is([data-role="teacher"],[data-role="student"]) .hero .brand-sub{
+  font:750 clamp(10px,.8vw,13px)/1.4 var(--pit-font-reading);
+  letter-spacing:.075em;
+  text-wrap:balance;
+}
+body:is([data-role="teacher"],[data-role="student"]) .hero .hero-slogan{
+  font-family:var(--pit-font-chapter)!important;
+  font-weight:700;
+  line-height:1.5;
+  font-size:clamp(13px,1vw,18px);
+  letter-spacing:.005em;
+}
+body:is([data-role="teacher"],[data-role="student"]) .topnav .navbrand{
+  font-family:var(--pit-font-chapter)!important;
+  font-size:clamp(13px,1.08vw,18px);
+  letter-spacing:-.015em;
+}
+body:is([data-role="teacher"],[data-role="student"]) :is(.panel-heading,.drawer-head h2,.gallery-title h2,.pit-art-title){
+  font-family:var(--pit-font-chapter)!important;
+  font-weight:700;
+  letter-spacing:.007em;
+  text-wrap:balance;
+}
+body:is([data-role="teacher"],[data-role="student"]) .stage-btn .stage-main>strong{
+  font-family:var(--pit-font-blackletter)!important;
+  font-size:clamp(18px,1.17vw,22px);
+  font-weight:800;
+  line-height:1.04;
+  letter-spacing:.012em;
+  text-wrap:balance;
+}
+body:is([data-role="teacher"],[data-role="student"]) .stage-btn .stage-main :is(.stage-time,small,.stage-state){
+  font-family:var(--pit-font-reading)!important;
+  line-height:1.18;
+}
+/* The dashboard's chapter title is dramatic; dates, times and actions stay legible. */
+body[data-role="teacher"] .main-pane .mainhead h1,
+body[data-role="student"] .main-pane .mainhead h1{
+  font-family:var(--pit-font-gothic)!important;
+  font-weight:700;
+  font-size:clamp(26px,2.3vw,39px);
+  line-height:1.2;
+  letter-spacing:.005em;
+}
+body[data-role="teacher"] :is(.tm1-chapter h2,.tm1-headline h2,.tm-pro-lead h3,.tm2-masthead h2,.tm3-mast h2,.tm4f-hero-title,.tm5-hero h2,.f6-head h2),
+body[data-role="student"] :is(.gallery-title h2,#arcadeHeading,#arcadeTitle,.arcade-title,.pit-gallery-title){
+  font-family:var(--pit-font-chapter)!important;
+  font-weight:700;
+  line-height:1.18;
+  letter-spacing:.005em;
+  text-wrap:balance;
+}
+/* Unified screen projector: ornamental headings, readable teaching content. */
+#pitProjector.pit-projector-m01 .pit-projector-top h1{
+  font-family:var(--pit-font-gothic)!important;
+  font-weight:700;
+  font-size:clamp(25px,2.15vw,39px);
+  line-height:1.18;
+  letter-spacing:.003em;
+  text-wrap:balance;
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-deck h2,.pit-m01-finale h2,.pit-u-finale h2){
+  font-family:var(--pit-font-gothic)!important;
+  font-weight:700;
+  line-height:1.16;
+  letter-spacing:.002em;
+  text-wrap:balance;
+}
+#pitProjector.pit-projector-m01 .pit-u-cover h2{
+  font-family:var(--pit-font-gothic)!important;
+  font-size:clamp(40px,4vw,66px);
+  line-height:1.11;
+}
+#pitProjector.pit-projector-m01 .pit-m01-cover h2{font-size:clamp(39px,3.75vw,66px);line-height:1.13}
+#pitProjector.pit-projector-m01 :is(.pit-m01-deck h3,.pit-u-instruction h3){
+  font-family:var(--pit-font-chapter)!important;
+  font-weight:700;
+  line-height:1.22;
+  text-wrap:balance;
+}
+#pitProjector.pit-projector-m01 :is(.pit-projector-top small,.pit-m01-kicker){
+  font-family:var(--pit-font-blackletter)!important;
+  font-weight:700;
+  letter-spacing:.045em;
+  font-size:clamp(17px,1.36vw,23px);
+  line-height:1.17;
+}
+#pitProjector.pit-projector-m01 .pit-projector-top small{font-size:clamp(15px,1.13vw,19px)}
+#pitProjector.pit-projector-m01 :is(.pit-m01-deck p,.pit-m01-deck li,.pit-u-explainer .pit-u-point,.pit-m01-concept p,.pit-u-instruction p,.pit-m01-lead,.pit-m01-cover p,.pit-u-cover p,.pit-m01-field p,.pit-m01-action p){
+  font-family:var(--pit-font-reading)!important;
+  letter-spacing:0;
+}
+#pitProjector.pit-projector-m01 :is(.pit-projector-footer button,.pit-projector-top button,.pit-u-component button,.pit-m01-sim button){
+  font-family:var(--pit-font-reading)!important;
+  font-weight:750;
+}
+#pitProjector.pit-projector-m01 :is(code,pre,.pit-m01-pseudocode){font-family:"Cascadia Code",Consolas,monospace!important;letter-spacing:0}
+@media(max-width:900px){
+ body:is([data-role="teacher"],[data-role="student"]) .hero .brand-title{font-size:clamp(25px,4.4vw,40px)}
+ body:is([data-role="teacher"],[data-role="student"]) .stage-btn .stage-main>strong{font-size:19px}
+ #pitProjector.pit-projector-m01 :is(.pit-u-cover h2,.pit-m01-cover h2){font-size:clamp(32px,5vw,51px)}
+}
+@media(max-width:560px){
+ body:is([data-role="teacher"],[data-role="student"]) .hero .brand-title{font-size:clamp(22px,5.5vw,34px)}
+ body:is([data-role="teacher"],[data-role="student"]) .hero .hero-slogan{font-size:11px}
+ #pitProjector.pit-projector-m01 .pit-projector-top h1{font-size:23px}
+}
+/* The font family changes remain in reduced-motion mode; animations remain governed by the existing accessibility stylesheet. */

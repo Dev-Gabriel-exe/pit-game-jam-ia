@@ -1,0 +1,148 @@
+# Ensaio aluno/professor V3-V5 — 31/10/2026
+
+Escopo: auditoria de contrato fictício, **não homologação operacional**. Branch experimental somente. Nenhuma conta, XP ou turma real.
+
+| Cenário | Evidência/resultado |
+|---|---|
+| XP 100 por aprovação | H1a `progressOf`: `approvedBaseXp=approved*100`; `submitted` não libera XP. Valor de leitura, não crédito persistido. |
+| 2 atributos + 1 talento | H0/H1a valida orçamento por aprovações e catálogo da classe. Não comprova liberação visual nem persistência. |
+| Elegibilidade ao duelo | H1a exige opt-in e `submitted` ou `approved` na missão corrente; checagem de mesma turma/presença/habilitação do professor ainda não implementada. |
+| Convite, notificação SIM/NÃO | **NÃO IMPLEMENTADOS** na ponte H1a; aceite, recusa, expiração, cancelamento e notificações ainda exigem contrato/serviço isolado. |
+| Aceite abre arena em janela | **NÃO VALIDADO**; não há fluxo end-to-end na ponte H1a. |
+| Professor libera arena M5 | H1a exige 5 aprovações e lock M5; controle operacional professor/partida compartilhada não validado. |
+| Professor libera arena M10 | H1a exige 10 aprovações e lock M10; controle operacional professor/partida compartilhada não validado. |
+| Novo layout de duelo | Arena WebGL de laboratório não comprova layout de duelo 1x1 integrado na V3. |
+
+**Bloqueios:** G.2 hardware físico não realizado; H.1/H.2 com dados reais não autorizados. API V5 legada possui schema incompatível (6 classes e atributos antigos), não conectá-la ao motor KayKit de 4 classes.
+
+**Próximo incremento técnico:** criar contrato puro de convites com estados pendente/aceito/recusado/expirado/cancelado e testes de autorização fictícia, sem WebSocket ou banco; depois ensaiar a janela 1x1 isolada. Nenhum resultado deste documento representa execução de interface de aluno/professor.
+
+
+## Incremento D.1 — contrato de convites fictícios (31/10/2026)
+
+**Estado:** módulo e teste de unidade publicados somente na branch experimental; **não há interface de duelo, WebSocket, janela aberta, contas reais ou crédito de XP**.
+
+- `v5/duel-invitations-lab.js`: estados `pending → accepted/declined/expired/cancelled` e `accepted → closed`; convites imutáveis com revisão otimista e relógio lógico injetado. Exige visão H1 elegível de dois aliases `trial-...` online, mesma sala fictícia, missão liberada e duelos habilitados pelo professor. Impede autoconvite, respostas por terceiros, segundo convite ativo, aceite tardio e replays por revisão antiga.
+- `notificationsFor`: projeções distintas para remetente (cancelar) e destinatário (aceitar/recusar), sem dados reais. `arenaWindowFor`: **somente descritor fictício** após aceite; não abre navegador nem autoriza uma batalha.
+- `qa/v5-duel-invitations-lab.cjs`: dez cenários incluindo aceite, recusa, expiração, cancelamento, autorização do professor, mesma turma, concorrência, privacidade, fechamento e preservação do XP. Teste local Node 22: **10/10 PASS** em 31/10/2026. A execução local usa visões H1 artificiais, não uma sessão real V3.
+- `.github/workflows/v5-duel-invitations-lab-qa.yml`: job específico de CI criado. **Consultar execução e conclusão antes de marcar CI aprovado.**
+
+**Commits:** `f4bb446a` (contrato), `ef5d712f` (QA), `9700720b` (workflow). Checkpoint criado após essas alterações.
+
+**Pendente para esta solicitação:** CI específico, integrar simulação com `student-bridge-h1.js` real, interface de notificações SIM/NÃO e janela 1×1 no navegador, controle docente de arenas coletivas M5/M10, teste end-to-end aluno/professor e revisão do layout de duelos. G.2 físico e H.1/H.2 operacional seguem bloqueados. A prioridade da arena final M10 permanece; este incremento prepara apenas o contrato isolado solicitado, sem alterar M5/M10 ou os 120 talentos.
+
+
+### Verificação do CI (31/10/2026)
+
+- **PASS**: [V5 Duel Invitations Fictional Contract QA — run 41197655128](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41197655128), SHA `9700720bc12bb6a20b9f6d4a748dc77380a013b1`; executou análise sintática do módulo e QA com dez cenários.
+- **PASS**: [PIT Game Jam QA — run 41197655157](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41197655157), mesmo SHA.
+- Browser QA de commits próximos estava em andamento na última consulta. Não confundir com validação da interface de duelos (não implementada).
+- **Checkpoint anterior:** `aa5206c863fd1b0048599d6fa625097331c4026c`. Este adendo atualiza a evidência de CI; o próximo passo continua sendo um ensaio fictício da janela 1×1 e notificações no navegador, sem dados reais.
+
+## Incremento seguinte — janela fictícia de duelo (31/10/2026)
+
+- `v5/duel-window-lab.html`: maquete isolada, sem API ou XP, com aluno A convidando, aluno B aceitando/recusando, bloqueio de convite pelo professor e janela modal após aceite. Não é arena WebGL nem integração com V3.
+- `qa/v5-duel-window-lab.cjs`: verificação estática de IDs, contratos, acessibilidade e mensagens; **não é teste browser ponta a ponta**.
+- `.github/workflows/v5-duel-invitations-lab-qa.yml`: gatilho atualizado para os novos arquivos e execução do QA estático.
+- HEAD da implementação: `9b28751d`; CI do novo commit pendente de verificação no momento do checkpoint. Link de acompanhamento: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-duel-invitations-lab-qa.yml
+- Próximo passo: Playwright real para aceitar/recusar, abrir/fechar modal e bloquear com professor; em seguida conectar somente um combate fictício 1×1 WebGL e testar liberações M5/M10 em laboratório. G.2 e H operacional seguem bloqueadas.
+
+## Rodada seguinte — automação Chromium de notificações e janela
+
+- Novo teste `qa/v5-duel-window-browser.cjs`: recusa não abre janela, aceite abre, bloqueio do professor, Esc e foco restaurado, reset e ausência de erros JS.
+- Workflow `.github/workflows/v5-duel-invitations-lab-qa.yml` atualizado com job Playwright Chromium.
+- SHA do código: `b099d81d`. **CI ainda em fila na consulta; não afirmar que o navegador passou.**
+- Escopo: somente maquete fictícia. Ainda falta arena 1×1 WebGL real, autorização professor M5/M10 e teste ponta a ponta V3; H.1/H.2 reais bloqueadas por G.2.
+
+## Rodada: isolamento acessível da janela de duelo
+
+- CI anterior `41198761906`: jobs de contrato e navegador aprovados.
+- `v5/duel-window-lab.html`: ao abrir janela, irmãos de `#arena` tornam-se `inert`, preservando o estado anterior; ao fechar por Esc/botão, restaura estado, rolagem e foco. Não altera lógica do convite.
+- `qa/v5-duel-window-browser.cjs`: valida fundo inerte, diálogo ativo, reversão do isolamento e foco.
+- Código: `1c49b1df`; testes: `ddf9464b`. CI do novo teste pendente na consulta, **não homologado**.
+- Próximo passo: revisar CI; depois arena WebGL fictícia 1x1 e controle professor M5/M10. G.2 não realizado; H.1/H.2 reais bloqueados.
+
+## Incremento: adaptador fictício de combate 1×1
+
+- CI anterior do isolamento modal: `41199302756` aprovado, incluindo navegador Chromium.
+- `v5/duel-battle-lab.js`: adaptador isolado de descritor de convite aceito para `phase2-combat.battle` com exatamente 2 aliases `trial-*`, M5 ou M10, classes canônicas KayKit, sem persistência ou XP.
+- `qa/v5-duel-battle-lab.cjs`: cobre convite recusado, descritor inválido, execução M5/M10 e replays determinísticos.
+- `.github/workflows/v5-duel-invitations-lab-qa.yml`: adiciona execução do novo teste Node.
+- Commits: `78c6bcbf`, `fa496621`, `3bc1fea4`. **CI novo ainda não confirmado; não declarar motor 1×1 validado.**
+- Próxima ação: inspecionar o CI, corrigir eventuais falhas e ligar visualmente o motor à janela experimental; controles de professor M5/M10 coletivos ainda pendentes. G.2 físico e H operacional bloqueados.
+
+## Incremento — resultado do motor M5/M10 na janela fictícia
+
+- CI anterior `41199881150` aprovado (adaptador 1×1 e testes de contrato).
+- `v5/duel-window-lab.html`: carrega `phase2-combat.js` e `duel-battle-lab.js`; após aceite fictício permite selecionar M5/M10 e exibe vencedor/tempo. Ainda **não renderiza GLB/WebGL**.
+- `qa/v5-duel-window-browser.cjs`: após aceite verifica execução M5 e M10 na janela e resultado textual.
+- Commits: `e13fa8e1`, `3f78f092`, `77902c91`. CI desta nova ligação ainda pendente na consulta; não homologar antes de resultado.
+- Próximo: confirmar CI, resolver falhas e criar visualização animada WebGL na janela, preservando a separação de dados e gates G.2/H.
+
+## Correção de regressão no CI do duelo (rodada atual)
+
+- Identificada falha concreta em `V5 Duel Invitations Fictional Contract QA` run `41200058396`: `qa/v5-duel-window-lab.cjs` ainda exigia texto antigo `Sem dano, talentos, XP`, removido legitimamente ao conectar o motor.
+- Corrigida asserção estática para exigir a declaração de isolamento sem contas/XP e presença real dos scripts do motor e controles M5/M10; commit `b99a6548`.
+- O job Chromium anterior reportou sucesso, mas **a suíte completa falhou**; não considerar o conjunto homologado até novo run verde.
+- Pendente: verificar novo CI e validar renderização 3D WebGL 1×1; a janela atual ainda mostra somente resultado textual.
+
+## Incremento — visualização 3D de duelo fictício KayKit (31/10)
+
+**Validação de base:** `V5 Duel Invitations Fictional Contract QA` run `41200951226` concluído com sucesso. Log Chromium confirma carregamento de **dois GLBs KayKit reais**, canvas Three.js e descarte da cena no fechamento, em M5.
+
+**Implementações isoladas (branch experimental):**
+- `v5/duel-battle-lab.js`: expõe cópias defensivas da mesma dupla de builds fictícias usadas pelo motor (M5/M10).
+- `v5/duel-3d-lab.js`: instancia `createStage` de `arena-three.js` (não renderizador paralelo), entra com exatamente dois aliases fictícios, mantém câmera cinematográfica, atualiza PV e reporta vencedor/tempo. **Só inicia o motor quando `v5ModelsLoaded === 2`;** se houver falha ou timeout, informa e preserva opção textual. Libera GPU, mixers e listeners ao fechar.
+- `v5/duel-window-lab.html`: modal real com palco WebGL 3D, HUD de PV, início, pausa, retomada, seleção M5/M10, preservação da opção textual e isolamento `inert`. Controle professor bloqueia abertura de convite aceito quando desabilitado.
+- `qa/v5-duel-3d-browser.cjs`: smoke Chromium que verifica modelo KayKit, motor e limpeza em M5 **e M10**; testes de contrato conferem roster, consentimento e ausência de operações com alunos.
+
+**Commits:** `1d2d7b02` adapter, `bfabf163` renderer, `5f70fce0` modal, `8225aefe` gate de GLBs, `509c90f1` HUD, `78e82c0c` CI 3D, `cccbc988` bloqueio professor, `a749f215` smoke M10, `b0c46a88` fallback coerente.
+
+**Gates:** CI da rodada final com M10/fallback ainda não confirmado na consulta; não homologar até verde. G.2 nos PCs reais e H com estudantes reais continuam bloqueados. Não houve merge na main, deploy, integração nem alteração de XP/nota/conta.
+
+### Fechamento da rodada: CI WebGL real verde
+
+- Workflow `V5 Duel Invitations Fictional Contract QA` no commit `b0c46a88`: **success**; run `41201158624`.
+- Job Node de contratos aprovado; job Chromium WebGL aprovado com mensagem explícita: `PASS: two authentic KayKit GLBs render for accepted 1v1 M5 and M10; cleanup on both exits`.
+- Revalidados no navegador: convite, consentimento, recusa, bloqueio pelo professor, fechamento da janela, restaurar foco, renderização 3D **M5 e M10** com dois GLBs KayKit, câmera e descarte do canvas.
+- O gate G.2 no PC real e a autorização para integrar com contas/alunos continuam pendentes; a aprovação do GitHub Actions não substitui essa validação.
+
+## H.1 Lab — Jornada completa de duelo e retorno à missão (31/10/2026)
+
+**Concluído em branch experimental, sem contas reais:**
+- `v5/duel-journey-lab.js` implementa fases puras `mission → invited → accepted → entering → fighting → finished → returned`, com caminho de recusa e saída antes do resultado. Valida resultado/winner, impede vitória dupla e não contém XP, persistência ou rede.
+- `v5/duel-window-lab.html`: seção da Missão 3, entrada cinematográfica temporizada com redução de movimento, status de jornada, resultado/epílogo com vencedor, botão de retorno à Missão 3 e fechamento autorizado do convite aceito por `D.close`. Depois do retorno, os dois aliases fictícios podem se convidar novamente. Modal continua com `inert`, Escape e restauração do foco.
+- `v5/duel-3d-lab.js`: controle opcional de velocidade ×1/×2/×3 somente no palco Three.js; regras e builds imutáveis.
+- `qa/v5-duel-journey-lab.cjs`, `qa/v5-duel-window-browser.cjs`, `qa/v5-duel-3d-browser.cjs`: contratos, recusa, consentimento, M5/M10, re-convite e smoke WebGL. Novo smoke de conclusão de combate 3D, apresentação do vencedor e retorno à missão adicionado.
+- CI de ciclo convite→resultado textual→retorno→novo convite e GLBs M5/M10 previamente aprovado: `41202111839`. A versão mais recente com a simulação 3D até a vitória ainda está em verificação; **não tratá-la como homologada sem CI verde**.
+- Commits: `eea005e4`, `b95344ba`, `7ae651ed`, `7099fec4`, `f7a0fcbd`, `40689401`, `18db5b33`, `9c66f998`, `473dbd71`, `0ce7d1df`.
+
+**Limites explícitos:** tudo é exclusivamente laboratório; M5/M10 no modal são presets fictícios de luta, não liberação real das missões. Não há sincronização entre dispositivos, entrega de notificações, persistência, XP ou autenticação. A integração com alunos e liberação real pelo professor continuam aguardando G.2 no PC físico, critérios H e autorização explícita; `main` permanece intacta.
+
+### Homologação do ciclo fictício — CI verde
+
+No commit `0ce7d1df`, o workflow `V5 Duel Invitations Fictional Contract QA`, run `41202348355`, foi concluído com **success** nos dois jobs: contrato Node e navegador Chromium. O log confirma explicitamente:
+- `PASS browser: consent, teacher gate, modal focus, cinematic entry, M5/M10 result, return mission and re-invite`
+- `PASS: 3D KayKit M5/M10 preview, real M5 victory, XP-free mission return and cleanup`
+
+Portanto, a jornada fictícia completa inclusive a vitória **real do motor visual 3D M5** está validada no Chromium. A M10 foi validada para renderizar 2 GLBs e para resultado determinístico textual, mas não foi executada até a vitória 3D neste smoke específico. O gate G.2 físico permanece pendente.
+
+## Fase H.4 — liberação coletiva M5/M10 (laboratório fictício)
+
+- Painel `v5/teacher-arena-lab.html`, controlador `v5/teacher-arena-lab.js` e contrato puro `v5/teacher-arena-release-lab.js`; acesso direto a partir da prévia `v5/arena-lab.html`.
+- Liberação explícita pelo alias `trial-teacher`, prévia de 30, controles de prontidão/online, segregação por turma, aprovações M5/M10 com `progression-contract-h0.js`, exclusão justificada, revisão, locks e captura imutável de elegíveis. Alias **não autentica** professor.
+- Ação separada de *preparar modelos GLB* e de *iniciar confronto*: nunca iniciar com modelo ausente. Reutiliza `arena-three.js` e quatro GLBs KayKit; pausa, aborto, câmera automática, resultado e limpeza WebGL.
+- `qa/v5-teacher-arena-release-lab.cjs`: roda M5 e M10 com 30 personagens liberados, executando motor real determinístico; testa exclusões 26/30, nenhum real, consentimento docente fictício, aborto, resultado correto.
+- **GitHub Actions verde:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41203797984 — `teacher-contract` + `teacher-chromium` com success.
+- Documento completo: `v5/FASE-H4-LIBERACAO-COLETIVA.md`.
+- **Limite:** 30 validados no motor Node; Chromium WebGL do novo painel testado em 3–4 GLBs, sem equivaler à prova G.2 física. Nenhum aluno real, API, autenticação, XP, deploy ou main alterados. H.1b/H.2 ainda não implementados.
+
+## H.1b/H.2 — contratos isolados de lock e feed compartilhado (31/10/2026)
+
+- Após auditoria somente de leitura de `chat-api/api/classroom.js`, `chat-api/api/arena.js`, `chat-api/lib/v5-hero-core.js`: banco atual armazena o modelo antigo de personagens; integrar com o motor KayKit/Phase2 sem schema versionado seria incompatível. Nenhum arquivo de API ou banco foi modificado.
+- `v5/build-lock-cas-h1b-lab.js`: revisão CAS, idempotência por comando, congelamento de atributos/talentos na entrada M5, aprovações 6–10 consecutivas e lock M10 irreversível — exclusivamente memória fictícia.
+- `v5/shared-arena-feed-h2-lab.js`: um único `phase2-combat.js` e `camera-director.js` geram snapshots numerados para múltiplos receptores passivos e escopados por turma/partida; reconexão, replay e snapshot para lacunas. Não há SSE/WebSocket ou dispositivos reais.
+- **CI H.1b success:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41205214502 .
+- **CI H.2 success:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41205008747 .
+- Desenho de schema versionado e requisitos de transações/autoridade: `v5/FASE-H1B-H2-CONTRATOS-E-INTEGRACAO-PENDENTE.md`. Nenhuma migração foi executada.
+- Próximo gate: G.2 PCs reais, implementação de backend/migração apenas após autorização explícita, e prova de sincronização real com dois navegadores autenticados em ambiente de teste. Sem alteração em main, contas, notas ou XP.

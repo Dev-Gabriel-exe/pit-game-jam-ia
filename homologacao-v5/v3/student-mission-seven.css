@@ -1,0 +1,22 @@
+/* M07-03 · aluno · condição de conclusão */
+.m7s-root{color:#f2dfc6;background:#101b25;font:15px/1.6 Arial,sans-serif;border:1px solid #876246}
+.m7s-root *{box-sizing:border-box}.m7s-root h2,.m7s-root h3{font-family:Georgia,serif;color:#ffe2bd}
+.m7s-root header{padding:clamp(16px,3vw,30px);background:linear-gradient(110deg,#1a1621ec,#32252edb),url("./assets/missions/missao-07.webp") center/cover}
+.m7s-root header small{color:#f0bc85;letter-spacing:.12em;font-weight:bold}.m7s-root h2{font-size:clamp(26px,3vw,39px);margin:10px 0}
+.m7s-brief,.m7s-practice,.m7s-review{padding:clamp(14px,3vw,26px)}
+.m7s-brief{max-width:850px}.m7s-brief li{margin:10px 0}
+.m7s-root button{padding:12px 18px;background:#795032;border:1px solid #e5b781;color:#fff6e7;cursor:pointer;font-weight:bold}
+.m7s-root button:disabled{opacity:.45;cursor:not-allowed}
+.m7s-plan{padding:18px;background:#21313b;border-left:3px solid #dba46e;margin-bottom:16px}
+.m7s-plan>small{color:#eab67d;font-weight:bold}.m7s-plan>div{display:flex;flex-wrap:wrap;gap:10px}
+.m7s-plan span{padding:8px;border:1px solid #82684e;background:#312a2a}
+.m7s-log{padding:clamp(14px,3vw,25px);margin-top:20px;background:#1b2932;border:1px solid #947254}
+.m7s-log label{display:block;margin:15px 0}.m7s-log label b{display:block;margin-bottom:6px}
+.m7s-log textarea,.m7s-review textarea{width:100%;background:#101b25;color:#fff2de;border:1px solid #aa835e;padding:12px;font:inherit;resize:vertical}
+.m7s-checks{display:grid;gap:9px;padding:15px;background:#23392f;border:1px solid #769a80}
+.m7s-checks label{display:flex;align-items:flex-start;gap:10px;margin:0}.m7s-checks input{margin-top:6px;accent-color:#d9ae73}
+.m7s-warning{padding:12px;background:#3f2a2c;border-left:3px solid #e6a78a}
+.m7s-summary{padding:15px;background:#1b2a35;border:1px solid #7d614d}.m7s-summary p{border-bottom:1px solid #3d4e58;padding-bottom:7px}.m7s-summary strong{display:block;color:#f4c18b}
+.m7s-actions{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.m7s-root :is(button,textarea,input):focus-visible{outline:3px solid #ffe08b;outline-offset:3px}
+@media(max-width:650px){.m7s-root header{padding:15px}.m7s-practice{padding:10px}}

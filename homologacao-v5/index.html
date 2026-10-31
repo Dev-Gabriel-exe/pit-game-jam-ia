@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100b18">
+<meta name="description" content="PIT Game Jam IA V5 — ambiente separado para testar as dez missões, personagens KayKit, duelos e Coliseu com turma fictícia.">
+<title>PIT Game Jam IA V5 · Portal de Homologação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--gold:#f3c98f;--muted:#d1c1b1;--border:#a37f5290;--dark:#140d1c}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#110b16;color:#f5e9dd;font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 72% 0%,#702f395e,transparent 48%),radial-gradient(ellipse at 10% 55%,#4b294b55,transparent 45%),linear-gradient(125deg,#0c0b15,#221423 59%,#0a0b15);z-index:-2}
+body:after{content:"";position:fixed;inset:0;opacity:.35;pointer-events:none;background:radial-gradient(#b68e6952 .6px,transparent .7px);background-size:25px 25px;mask-image:linear-gradient(180deg,#000,transparent 80%);z-index:-1}
+a{color:inherit}a:focus-visible{outline:3px solid #ffe6a3;outline-offset:4px}header{border-bottom:1px solid #b58d584a;background:#0c0a11b5;backdrop-filter:blur(14px)}
+.wrap{width:min(1220px,calc(100% - 38px));margin:auto}.bar{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.brand{font-family:Cinzel,Georgia,serif;font-weight:900;letter-spacing:.07em;color:var(--gold);font-size:16px}.tag{font-weight:800;font-size:11px;letter-spacing:.12em;border:1px solid var(--border);color:#eed3a7;border-radius:100px;padding:7px 12px;background:#2e1d26}
+.hero{padding:clamp(48px,9vw,112px) 0 50px;position:relative}.label{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#d5a971;font-weight:900}
+h1,h2,h3{font-family:Cinzel,Georgia,serif;line-height:1.22}h1{font-size:clamp(33px,6.8vw,81px);letter-spacing:-.015em;margin:17px 0 23px;max-width:930px;color:#f7e4c8;text-shadow:0 4px 40px #e9ad6e36}h1 em{font-style:normal;background:linear-gradient(105deg,#e4ae68,#ffdfa5,#c88a60);background-clip:text;color:transparent}.lead{max-width:790px;font-size:clamp(16px,2vw,21px);color:#d9c5b8;margin:0 0 29px}
+.safe{padding:17px 19px;border:1px solid #b28b5c94;border-left:4px solid #efb969;background:#322427b8;color:#eed4be;border-radius:9px;max-width:920px;font-size:13px}.safe strong{color:#ffe0a7}
+section.cards{padding:25px 0 52px}.heading{margin:0 0 8px;font-size:clamp(23px,3vw,31px);color:#efd0a0}.section-copy{margin:0 0 22px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{display:flex;flex-direction:column;border:1px solid #946e4a8a;background:linear-gradient(145deg,#32232bde,#1b1625eb);border-radius:14px;min-height:275px;overflow:hidden;position:relative;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);border-color:#e5b978;box-shadow:0 14px 30px #0008}
+.card:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,transparent,#e8b87a,transparent)}
+.card>*{margin-left:20px;margin-right:20px}.card-icon{font-size:32px;margin-top:23px;filter:drop-shadow(0 2px 12px #c4835188)}.card h3{margin-top:13px;margin-bottom:8px;color:#f6d5a8;font-size:19px}.card p{color:#d7c4b5;font-size:13px;line-height:1.65;margin-top:0;flex:1}
+.card a{display:block;text-align:center;text-decoration:none;background:linear-gradient(110deg,#dfb37c,#f9dca2);color:#1c1020;font-weight:900;font-size:13px;letter-spacing:.01em;border-radius:8px;padding:13px 12px;margin-bottom:20px}
+.card a:hover{filter:brightness(1.08)}.card:nth-child(2):before,.card:nth-child(5):before{background:linear-gradient(90deg,transparent,#b18bdf,transparent)}
+.note{background:#201823;border:1px solid #80634b7c;padding:20px 23px;border-radius:13px;margin-bottom:52px}.note h2{font-size:21px;margin:0 0 7px;color:#f1d1a2}.note p{margin:0;color:#d2bdae;font-size:14px}
+footer{border-top:1px solid #715b4955;padding:23px 0 45px;font-size:12px;color:#aa9b98}
+@media(max-width:940px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:590px){.grid{grid-template-columns:1fr}.bar{padding:15px 0}.card{min-height:250px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<header><nav class="wrap bar" aria-label="Cabeçalho"><span class="brand">⚔ PIT GAME JAM IA · V5</span><span class="tag">LABORATÓRIO DE HOMOLOGAÇÃO</span></nav></header>
+<main class="wrap">
+<section class="hero" aria-labelledby="portal-title">
+<div class="label">Jornada das dez missões · Oficina de 6 horas</div>
+<h1 id="portal-title">O <em>Coliseu</em> dos Criadores</h1>
+<p class="lead">Entre no caderno da oficina e descubra os quatro heróis KayKit, a Forja dos Talentos, os duelos 1 × 1 e as arenas coletivas das Missões 5 e 10.</p>
+<div class="safe"><strong>AMBIENTE FICTÍCIO DE TESTE.</strong> Esta versão não acessa cadastros reais, não registra notas nem concede XP. Nenhum PIN ou token de aluno deve ser digitado aqui. Os recursos experimentais de sincronização ainda não representam uma turma conectada.</div>
+</section>
+<section class="cards" aria-labelledby="experiences"><h2 id="experiences" class="heading">Escolha o que deseja testar</h2><p class="section-copy">As telas aluno e professor incluem as dez missões originais e o menu integrado para a V5.</p>
+<div class="grid">
+<article class="card"><div class="card-icon" aria-hidden="true">🧙</div><h3>Caderno do Aluno</h3><p>Carrossel das dez missões, conteúdo pedagógico e menu Personagem &amp; Duelos, com Forja, convites e arena em abas.</p><a href="./aluno-v3.html?preview=1&amp;v5lab=1">Entrar como aluno</a></article>
+<article class="card"><div class="card-icon" aria-hidden="true">♛</div><h3>Painel do Professor</h3><p>Apresentações, acompanhamento, Controle de Duelos e acesso à nova liberação coletiva fictícia das arenas.</p><a href="./professor-v3.html?preview=1&amp;v5lab=1">Entrar como professor</a></article>
+<article class="card"><div class="card-icon" aria-hidden="true">🏟</div><h3>Coliseu 3D</h3><p>Arena ampla com quatro classes animadas KayKit, câmera cinematográfica e testes de 4 ou até 30 participantes.</p><a href="./v5/arena-lab.html?phase2=1&amp;count=4&amp;nav=steer&amp;counterplay=1&amp;sprites=1">Explorar a arena</a></article>
+<article class="card"><div class="card-icon" aria-hidden="true">⚔</div><h3>Duelo 1 × 1</h3><p>Convite, aceite, portal cinematográfico, combate 3D M5/M10 e retorno à missão sem alterar progressão.</p><a href="./v5/duel-window-lab.html">Testar duelo completo</a></article>
+<article class="card"><div class="card-icon" aria-hidden="true">📜</div><h3>Liberação Coletiva</h3><p>Professor fictício filtra até 30 heróis elegíveis, prepara modelos e inicia ou interrompe a M5 ou M10.</p><a href="./v5/teacher-arena-lab.html">Abrir Painel do Mestre</a></article>
+<article class="card"><div class="card-icon" aria-hidden="true">✦</div><h3>Forja dos Heróis</h3><p>Personalize Guerreiro, Arcanista, Caçador ou Guardião. Teste atributos, talentos e travas das arenas.</p><a href="./v5/hero-lab-h1c.html">Testar a Forja</a></article>
+</div></section>
+<section class="note" aria-labelledby="next"><h2 id="next">Como testar sem comprometer a oficina</h2><p>Confira primeiro os cadernos do aluno e professor. Depois abra o Coliseu e o Duelo 3D. Por último, simule a liberação coletiva com 30 participantes. A homologação real de desempenho precisa ser feita nos computadores que serão utilizados na aula. Esta branch não substitui a versão pública atual do GitHub Pages.</p></section>
+</main>
+<footer><div class="wrap">PIT Game Jam IA · Homologação 2026-10-31 · Branch independente da main · KayKit Adventurers CC0</div></footer>
+</body>
+</html>

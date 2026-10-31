@@ -1,0 +1,122 @@
+/* ART-01 — PIT Game Jam IA V3 semantic design tokens.
+ * Original dark fantasy/arcade palette; no franchise assets or paid fonts.
+ * Existing mission components keep their approved layout and hierarchy.
+ */
+:root{
+ color-scheme:dark;
+ --pit-abyss:#090b0e;
+ --pit-iron:#25282b;
+ --pit-steel:#72716d;
+ --pit-bronze:#ac7050;
+ --pit-gold:#f6c781;
+ --pit-gold-muted:#e9bb83;
+ --pit-chat-gold:#f2c58b;
+ --pit-ember:#ff662b;
+ --pit-paper:#f1e4cf;
+ --pit-chat-paper:#f7e9d5;
+ --pit-focus:#d7ffa7;
+ --pit-success:#9de3c4;
+ --pit-danger:#f2a0aa;
+ --pit-font-display:Georgia,"Times New Roman",serif;
+ --pit-font-ui:"Segoe UI",Arial,sans-serif;
+ --pit-space-1:4px;
+ --pit-space-2:8px;
+ --pit-space-3:12px;
+ --pit-space-4:16px;
+ --pit-space-6:24px;
+ --pit-radius-sm:6px;
+ --pit-radius-md:10px;
+ --pit-radius-lg:15px;
+ --pit-motion-fast:150ms;
+ --pit-motion-reveal:380ms;
+ --pit-shadow-modal:0 20px 70px #000d;
+}
+
+/* ART-01 · Shared semantic layers. Existing M01–M03 content remains unchanged. */
+:root{
+ --pit-surface:#14171b;
+ --pit-surface-raised:#202126;
+ --pit-text-muted:#c5b8a8;
+ --pit-divider:#705844;
+ --pit-motion-ease:cubic-bezier(.2,.7,.2,1);
+ --pit-motion-slow:620ms;
+ --pit-shadow-card:0 10px 32px #0009;
+}
+::selection{background:var(--pit-bronze);color:var(--pit-abyss)}
+.shell .panel{border-radius:var(--pit-radius-md)}
+.shell .main-content{scrollbar-color:var(--pit-bronze) var(--pit-abyss)}
+.pit-art-panel{
+ position:relative;isolation:isolate;
+ background:linear-gradient(155deg,var(--pit-surface-raised),var(--pit-abyss));
+ border:1px solid var(--pit-divider);border-radius:var(--pit-radius-lg);
+ box-shadow:var(--pit-shadow-card);color:var(--pit-paper);
+}
+.pit-art-panel:focus-within{border-color:var(--pit-gold)}
+.pit-art-eyebrow{font:700 .78rem/1.4 var(--pit-font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--pit-gold)}
+.pit-art-title{font-family:var(--pit-font-display);font-weight:700;line-height:1.15;color:var(--pit-paper)}
+.pit-art-muted{color:var(--pit-text-muted)}
+.pit-art-state{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--pit-divider);border-radius:var(--pit-radius-sm);font:700 .8rem/1.3 var(--pit-font-ui)}
+.pit-art-state[data-status="approved"]{color:var(--pit-success);border-color:var(--pit-success)}
+.pit-art-state[data-status="revision"]{color:var(--pit-gold);border-color:var(--pit-bronze)}
+.pit-art-state[data-status="blocked"]{color:var(--pit-danger);border-color:var(--pit-danger)}
+.pit-art-reveal{animation:pit-art-reveal var(--pit-motion-reveal) var(--pit-motion-ease) both}
+@keyframes pit-art-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.pit-art-reveal{animation:none!important}}
+@media(prefers-contrast:more){.pit-art-panel{border-width:2px}.pit-art-muted{color:var(--pit-paper)}}
+
+/* ART-02 · Original SVG illustration layers, with CSS-only fallback. */
+#inicio.hero::before{
+ background-image:linear-gradient(90deg,#090b0ef2 0%,#090b0ed8 37%,#090b0e52 80%),url("./assets/art/portal-arcano.svg");
+ background-position:center,center;
+ background-size:cover;
+}
+body[data-role="teacher"]>.shell>.hero{
+ background-image:linear-gradient(90deg,#090b0eea,#090b0e91),url("./assets/art/mesa-do-mestre.svg");
+ background-position:center,right center;
+ background-size:cover;
+}
+#recursos.resources{
+ background-image:linear-gradient(90deg,#0c0b10f7 0%,#0c0b10e8 48%,#0c0b10bb 100%),url("./assets/art/biblioteca-arcana.svg");
+ background-position:center,right top;
+ background-size:cover;
+}
+.final-award.is-earned{
+ background-image:linear-gradient(90deg,#11141af7,#11141aeb 65%,#11141a80),url("./assets/art/conquista-dez-missoes.svg");
+ background-size:cover,auto 100%;
+ background-position:center,right center;
+ background-repeat:no-repeat;
+}
+@media(max-width:700px){
+ #inicio.hero::before{background-position:center,63% center}
+ #recursos.resources{background-position:center,65% top}
+ .final-award.is-earned{background-size:cover,auto 55%;background-position:center,right bottom}
+}
+
+/* ART-03 · Original icon sprites: status from API state, formats from real asset type.
+ * Text labels remain visible if CSS/images are unavailable. */
+.stage-btn[data-mission-state]:not([data-mission-state="preview"]) .stage-status-dot{
+ display:block;width:22px;height:22px;font-size:0;color:transparent;
+ background:url("./assets/art/estados-missao.svg") no-repeat 0 50% / 500% 100%;
+}
+.stage-btn[data-mission-state="locked"] .stage-status-dot{background-position:0% 50%}
+.stage-btn[data-mission-state="active"] .stage-status-dot{background-position:25% 50%}
+.stage-btn[data-mission-state="submitted"] .stage-status-dot{background-position:50% 50%}
+.stage-btn[data-mission-state="revision"] .stage-status-dot{background-position:75% 50%}
+.stage-btn[data-mission-state="approved"] .stage-status-dot{background-position:100% 50%}
+.resource-card[data-asset-format] .res-inner>small:first-child::before,
+[data-quick-kit]::before{
+ content:"";display:inline-block;vertical-align:-4px;margin-right:7px;
+ width:20px;height:20px;background:url("./assets/art/tipos-recurso.svg") no-repeat 0 50% / 400% 100%;
+}
+.resource-card[data-asset-format="png"] .res-inner>small:first-child::before{background-position:0% 50%}
+.resource-card[data-asset-format="glb"] .res-inner>small:first-child::before{background-position:33.333% 50%}
+.resource-card[data-asset-format="wav"] .res-inner>small:first-child::before{background-position:66.667% 50%}
+[data-quick-kit]::before{background-position:100% 50%}
+
+/* ART-04 · Optional poster images never carry essential mission information. */
+.stage-art,.tm1-gallery-art{object-fit:cover}
+@media(prefers-reduced-motion:reduce){
+ .stage-art,.tm1-gallery-art,.arcade-mission-photo{
+  animation:none!important;transition:none!important;transform:none!important;
+ }
+}

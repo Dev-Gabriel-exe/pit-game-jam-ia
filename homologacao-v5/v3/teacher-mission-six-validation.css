@@ -1,0 +1,17 @@
+/* M06-05 · revisão pedagógica */
+.t6v-root{padding:clamp(15px,3vw,32px);background:#101920;color:#f1dec5;font:15px/1.6 Arial,sans-serif;border:1px solid #7c5c43}
+.t6v-root *{box-sizing:border-box}.t6v-root h2,.t6v-root h3{font-family:Georgia,serif;color:#ffe0b9}
+.t6v-root header{padding:22px;background:linear-gradient(110deg,#302128,#172d34);border-left:4px solid #d9a26b}
+.t6v-root header small{color:#f3c18a;letter-spacing:.11em;font-weight:800}
+.t6v-root h2{font-size:clamp(25px,3vw,38px);line-height:1.2;margin:10px 0}
+.t6v-rubric{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:18px}
+.t6v-rubric article{display:flex;gap:13px;min-width:0;padding:17px;background:#1b2730;border:1px solid #866b52}
+.t6v-rubric article>span{flex:0 0 35px;color:#f2c087;font:700 22px Georgia,serif}
+.t6v-rubric small{color:#e8b582;font-weight:bold;letter-spacing:.1em}
+.t6v-rubric h3{font-size:20px;margin:7px 0}.t6v-rubric p{margin:0}
+.t6v-decisions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.t6v-decisions article{padding:17px;border:1px solid #8c765c;background:#28302d}
+.t6v-decisions article:last-child{background:#352829}.t6v-offline{margin-top:16px;padding:17px;background:#22343b;border-left:3px solid #8ac6cb}
+.t6v-root footer{border-top:1px solid #8c6e54;margin-top:18px;padding-top:15px;font-size:12px;color:#d8bda4}
+@media(max-width:760px){.t6v-rubric,.t6v-decisions{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.t6v-root *{animation:none!important;transition:none!important}}

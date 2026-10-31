@@ -1,0 +1,103 @@
+{
+  "schema": "pit-game-jam-v5-fase2-planning-v1",
+  "status": "planning-only",
+  "version": 1,
+  "classes": [
+    "warrior",
+    "mage",
+    "hunter",
+    "guardian"
+  ],
+  "totalClasses": 4,
+  "talentsPerClass": 30,
+  "treesPerClass": 3,
+  "talentsPerTree": 10,
+  "talentsChosenPerApprovedMission": 1,
+  "attributes": [
+    {
+      "id": "FOR",
+      "label": "Força",
+      "combat": "ataque físico e golpes pesados"
+    },
+    {
+      "id": "DES",
+      "label": "Destreza",
+      "combat": "mobilidade, cadência e precisão"
+    },
+    {
+      "id": "INT",
+      "label": "Inteligência",
+      "combat": "ataque mágico, utilidade e magia sagrada"
+    },
+    {
+      "id": "VIT",
+      "label": "Vitalidade",
+      "combat": "vida, recuperação e resistência física"
+    },
+    {
+      "id": "DEF",
+      "label": "Defesa",
+      "combat": "mitigação, bloqueio e escudos"
+    }
+  ],
+  "maxInvestedPerAttribute": 12,
+  "approvedMissionXp": 100,
+  "attributePointsPerApprovedMission": 2,
+  "talentChoicesPerApprovedMission": 1,
+  "maxApprovedMissions": 10,
+  "milestones": [
+    {
+      "approvedMissions": 5,
+      "arena": "trial",
+      "awardedXp": 500,
+      "attributePoints": 10,
+      "talentChoices": 5,
+      "locksBuild": false,
+      "mayRespecAfter": true,
+      "recordsSnapshot": true
+    },
+    {
+      "approvedMissions": 10,
+      "arena": "final",
+      "awardedXp": 1000,
+      "attributePoints": 20,
+      "talentChoices": 10,
+      "locksBuildOnFirstEntry": true,
+      "mayRespecBeforeFirstEntry": true,
+      "recordsSnapshot": true
+    }
+  ],
+  "freelyMixTrees": true,
+  "requiresTalentsWithinTree": false,
+  "distinctTalentsOnly": true,
+  "attributesAndTalentsFromApprovedMissionsOnly": true,
+  "bonusXpUnlocksPoints": false,
+  "scalar": {
+    "formula": "min(1.20, 0.75 + 0.025*primaryInvested + 0.0125*secondaryInvested)",
+    "min": 0.75,
+    "max": 1.2,
+    "appliesTo": "base damage or effect magnitude only, not cooldown or duration",
+    "noDoubleScaleForExplicitStatFormula": true
+  },
+  "combat": {
+    "autoBattle": true,
+    "activeGlobalActionGapSeconds": 0.7,
+    "shieldCapFractionMaxHp": 0.3,
+    "sameCategoryDebuffsStack": false,
+    "reflectedDamageTriggersReflection": false,
+    "animation": "one unique composite signature per talent, 120 total; visual plan not implemented",
+    "expectedCategoryCountsPerClass": {
+      "ativo": 15,
+      "passivo": 9,
+      "reativo": 6
+    }
+  },
+  "persistence": {
+    "serverIsAuthoritative": true,
+    "saveDraftUntilFinal": true,
+    "trialDoesNotLock": true,
+    "finalEntryRequiresExplicitConfirmation": true,
+    "finalFirstEntryIsAtomicLock": true,
+    "noDataMigrationYet": true
+  }
+}

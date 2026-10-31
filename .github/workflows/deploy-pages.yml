@@ -10,6 +10,7 @@ on:
       - 'pit-quest.js'
       - 'biblioteca.js'
       - 'cover.jpg'
+      - 'homologacao-v5/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 permissions:

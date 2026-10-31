@@ -1,0 +1,109 @@
+/* PIT Game Jam V3 — cinematic lesson moments using the original LTX mission MP4s.
+   One media element per projected slide, with offline WebP fallbacks.
+   Decorative motion stays away from quizzes, GDevelop tutorials and explanatory copy. */
+#pitProjector.pit-projector-m01 .pit-projector-tools{display:flex;gap:8px;align-items:center;flex:none}
+#pitProjector.pit-projector-m01 #pitProjectorMotionToggle{
+  background:#201d22;border-color:#725943;color:#e4c4a5;
+  font:750 clamp(12px,1vw,16px)/1.2 var(--pit-font-reading,"Segoe UI",sans-serif);
+  white-space:nowrap;padding:11px 15px
+}
+#pitProjector.pit-projector-m01 #pitProjectorMotionToggle[aria-pressed="true"]{color:#ffe1b7;border-color:#c58c50}
+#pitProjector.pit-projector-m01 #pitProjectorMotionToggle:disabled{opacity:.6;cursor:default}
+#pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel){
+  position:relative;isolation:isolate;overflow:hidden;align-self:stretch;
+  min-height:clamp(270px,42vh,435px);max-height:47vh;
+  border:1px solid #bd8b54;border-radius:18px;
+  background:radial-gradient(ellipse at 50% 60%,#573625,#0a1018 72%);
+  box-shadow:0 0 0 1px #d6a65d22,0 20px 60px #000b,0 0 32px #ab6d2730,inset 0 0 20px #000a;
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel)::before{
+  content:"";position:absolute;inset:8px;z-index:5;border:1px solid #ffdb9738;
+  border-radius:11px;pointer-events:none;
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel) :is(.pit-cinema-poster,.pit-cinema-film){
+  display:block;position:absolute;inset:0;width:100%;height:100%;
+  max-width:none;max-height:none;object-fit:cover;object-position:center;
+  filter:contrast(1.08) saturate(.95);pointer-events:none;
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel) .pit-cinema-poster{z-index:0}
+#pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel) .pit-cinema-film{
+  z-index:1;opacity:0;transition:opacity .65s ease;transform:none!important;animation:none!important
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel) .pit-cinema-film.pit-cinema-playing{opacity:.98}
+#pitProjector.pit-projector-m01 .pit-m01-cover{
+  grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr);gap:clamp(22px,3vw,44px);align-items:center;
+}
+#pitProjector.pit-projector-m01 .pit-m01-cover h2{max-width:850px}
+#pitProjector.pit-projector-m01 .pit-m01-cover .pit-m01-chips{margin-top:23px;gap:8px}
+#pitProjector.pit-projector-m01 .pit-m01-cover .pit-m01-chips span{font-size:clamp(13px,1.05vw,18px);padding:9px 13px}
+#pitProjector.pit-projector-m01 .pit-m01-cinema-shade,
+#pitProjector.pit-projector-m01 .pit-u-cinema-glaze{
+ position:absolute;inset:0;z-index:2;pointer-events:none;
+ background:linear-gradient(180deg,#05080c20 15%,transparent 37%,#09080ddd 100%),linear-gradient(90deg,#090c1730,transparent 50%,#120b152b);
+}
+#pitProjector.pit-projector-m01 .pit-m01-cinema-legend,
+#pitProjector.pit-projector-m01 .pit-u-cinema-label{
+ position:absolute;left:clamp(18px,2.4vw,34px);right:20px;bottom:23px;z-index:6;
+ color:#fff0cc;text-shadow:0 2px 14px #000,0 0 28px #000;
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-cinema-legend,.pit-u-cinema-label) span{
+ display:block;font:800 clamp(13px,1.1vw,19px)/1.25 var(--pit-font-blackletter,Georgia,serif);
+ letter-spacing:.075em;color:#efb675;margin-bottom:8px;
+}
+#pitProjector.pit-projector-m01 :is(.pit-m01-cinema-legend,.pit-u-cinema-label) strong{
+ display:block;font:700 clamp(20px,1.76vw,29px)/1.2 var(--pit-font-chapter,Georgia,serif);
+ letter-spacing:.017em;color:#f9e9ce;
+}
+#pitProjector.pit-projector-m01 .pit-m01-cinema-runes{position:absolute;top:20px;right:22px;z-index:6;display:flex;gap:11px;color:#f5c282;font-size:clamp(16px,2vw,31px);text-shadow:0 0 16px #ed9b52}
+#pitProjector.pit-projector-m01 .pit-m01-cinema-runes span:nth-child(2){animation:pitCinRune 5s ease-in-out infinite alternate}
+#pitProjector.pit-projector-m01 .pit-u-cover{grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:clamp(24px,3vw,52px);align-items:center}
+#pitProjector.pit-projector-m01 .pit-u-cinema-panel{min-height:clamp(275px,42vh,445px)}
+#pitProjector.pit-projector-m01 .pit-u-cover .pit-m01-chips{max-width:720px}
+#pitProjector.pit-projector-m01 .pit-u-cover .pit-m01-chips span{font-size:clamp(14px,1.18vw,19px)}
+/* One quiet piece of motion on a conceptual diagram, not on every paragraph. */
+#pitProjector.pit-projector-m01 .pit-m01-flow span{
+ animation:pitCinFlow 5.6s ease-in-out infinite;animation-delay:0s;
+ will-change:box-shadow;
+}
+#pitProjector.pit-projector-m01 .pit-m01-flow span:nth-of-type(2){animation-delay:1.4s}
+#pitProjector.pit-projector-m01 .pit-m01-flow span:nth-of-type(3){animation-delay:2.8s}
+#pitProjector.pit-projector-m01 .pit-m01-flow span:nth-of-type(4){animation-delay:4.2s}
+#pitProjector.pit-projector-m01 .pit-m01-flow b{color:#e6b47e}
+#pitProjector.pit-projector-m01 .pit-m01-hero-cinema::after,
+#pitProjector.pit-projector-m01 .pit-u-cinema-panel::after{
+ content:"";position:absolute;z-index:3;inset:-60% -115%;
+ background:linear-gradient(120deg,transparent 46%,#ffd18a00 49%,#ffd18a15 50%,transparent 52%);
+ pointer-events:none;transform:translateX(-18%);
+ animation:pitCinGlimmer 13s ease-in-out infinite;
+}
+@keyframes pitCinRune{from{opacity:.3;transform:scale(.93) rotate(-7deg)}to{opacity:1;transform:scale(1.06) rotate(7deg)}}
+@keyframes pitCinGlimmer{0%,38%{transform:translateX(-28%)}70%,100%{transform:translateX(34%)}}
+@keyframes pitCinFlow{0%,16%,100%{background:#34231c;box-shadow:none;border-color:#9e7447}4%,11%{background:#5e3a27;box-shadow:0 0 0 1px #f0b76e70,0 0 26px #ed8c3a4a;border-color:#e6b276}}
+#pitProjector.pit-motion-off .pit-cinema-film{opacity:0!important;display:none!important}
+#pitProjector.pit-motion-off :is(.pit-m01-flow span,.pit-m01-cinema-runes span,.pit-m01-hero-cinema::after,.pit-u-cinema-panel::after){animation:none!important}
+#pitProjector.pit-motion-off .pit-projector-card,
+#pitProjector.pit-motion-off .pit-projector-card *{animation:none!important;transition:none!important}
+#pitProjector.pit-motion-off .pit-projector-motion video{display:none!important}
+@media(max-height:780px) and (min-width:901px){
+ #pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel){min-height:clamp(240px,40vh,310px);max-height:43vh}
+ #pitProjector.pit-projector-m01 .pit-m01-cover{gap:25px}
+ #pitProjector.pit-projector-m01 .pit-u-cover{gap:26px}
+ #pitProjector.pit-projector-m01 .pit-m01-cover .pit-m01-chips{margin-top:10px}
+ #pitProjector.pit-projector-m01 :is(.pit-m01-cinema-legend,.pit-u-cinema-label){bottom:18px}
+}
+@media(max-width:900px){
+ #pitProjector.pit-projector-m01 :is(.pit-m01-cover,.pit-u-cover){grid-template-columns:1fr;gap:16px}
+ #pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel){min-height:230px;max-height:260px}
+ #pitProjector.pit-projector-m01 .pit-projector-tools{gap:5px}
+ #pitProjector.pit-projector-m01 #pitProjectorMotionToggle{padding:9px 10px}
+}
+@media(max-width:540px){
+ #pitProjector.pit-projector-m01 .pit-projector-top{flex-wrap:wrap}
+ #pitProjector.pit-projector-m01 .pit-projector-tools{width:100%;justify-content:flex-end}
+ #pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel){min-height:190px;max-height:235px}
+}
+@media(prefers-reduced-motion:reduce){
+ #pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel) video{display:none!important}
+ #pitProjector.pit-projector-m01 :is(.pit-m01-flow span,.pit-m01-cinema-runes span){animation:none!important}
+ #pitProjector.pit-projector-m01 :is(.pit-m01-hero-cinema,.pit-u-cinema-panel)::after{animation:none!important}
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-label="Biblioteca arcana com prateleiras e artefatos originais">
+<defs><linearGradient id="vault" x2="0" y2="1"><stop stop-color="#101017"/><stop offset="1" stop-color="#2c1d20"/></linearGradient><radialGradient id="lamp"><stop stop-color="#f6c781" stop-opacity=".6"/><stop offset="1" stop-color="#f6c781" stop-opacity="0"/></radialGradient></defs><rect width="1200" height="560" fill="url(#vault)"/>
+<path d="M145 540V130Q145 42 240 42h720q95 0 95 88v410" fill="none" stroke="#705844" stroke-width="28"/><path d="M183 540V131q0-51 57-51h720q57 0 57 51v409" fill="none" stroke="#c59a68" stroke-width="4" opacity=".55"/>
+<circle cx="600" cy="112" r="184" fill="url(#lamp)"/>
+<g fill="#17171e" stroke="#7e5b44" stroke-width="8"><rect x="245" y="172" width="710" height="98"/><rect x="245" y="303" width="710" height="98"/><rect x="245" y="434" width="710" height="95"/></g>
+<g fill="#9d7454"><rect x="282" y="193" width="24" height="59"/><rect x="312" y="187" width="32" height="65"/><rect x="349" y="201" width="18" height="51"/><rect x="730" y="185" width="27" height="67"/><rect x="763" y="198" width="22" height="54"/><rect x="790" y="188" width="35" height="64"/><rect x="833" y="193" width="18" height="59"/></g>
+<g fill="#252a34" stroke="#e7c18a" stroke-width="4"><path d="M490 204l50-30 50 30v53H490Z"/><circle cx="540" cy="222" r="19" fill="#4f9fa0"/><path d="M320 335l54-24 54 24v48H320Z"/><path d="M730 344l54-31 54 31v41H730Z"/><path d="M492 468l48-24 48 24v40H492Z"/></g>
+<g stroke="#f6c781" stroke-width="5" fill="none"><path d="M541 310l23 33-23 32-23-32z"/><path d="M540 447v52m-26-26h52"/><circle cx="782" cy="352" r="19"/><path d="M353 348l16 16 19-27"/></g>
+<path d="M0 550h1200" stroke="#e4b57a" stroke-width="20" opacity=".35"/><path d="M0 0h1200v560H0Z" fill="none" stroke="#080a10" stroke-width="28"/>
+</svg>

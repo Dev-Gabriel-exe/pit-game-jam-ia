@@ -1,0 +1,43 @@
+/* Game Jam — projection/teacher motion; existing local video assets, offline WebP fallback. */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Pirata+One&display=swap');
+:root{--pit-gothic-title:"Cinzel","Palatino Linotype",Georgia,serif;--pit-gothic-accent:"Pirata One",Georgia,serif}
+body[data-role="teacher"] .hero .brand-title{font-family:var(--pit-gothic-title);font-weight:800;letter-spacing:.025em;text-shadow:0 4px 19px #000,0 0 22px #b7793833}
+body[data-role="teacher"] .hero-slogan{font-family:var(--pit-gothic-title);font-weight:800;line-height:1.35}
+body[data-role="teacher"] :is(.mainhead h1,.panel-heading,.tm1-chapter h2,.gallery-title h2){font-family:var(--pit-gothic-title);letter-spacing:.012em}
+body[data-role="teacher"] .panel-heading{font-size:clamp(16px,1.15vw,21px);font-weight:800}
+body[data-role="teacher"] .main-pane .mainhead{position:relative;overflow:hidden;isolation:isolate;min-height:155px;box-shadow:inset 0 -3px 18px #0008}
+body[data-role="teacher"] .main-pane .mainhead>*:not(.pit-mission-cinema){position:relative;z-index:2}
+body[data-role="teacher"] .pit-mission-cinema{position:absolute;inset:0;z-index:0;background-position:center 43%;background-size:cover;overflow:hidden;pointer-events:none}
+body[data-role="teacher"] .pit-mission-cinema:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 76% 37%,transparent 8%,#100f19ac 95%)}
+body[data-role="teacher"] .pit-mission-cinema video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 44%;opacity:0;filter:saturate(.85) contrast(1.08);transform:scale(1.065);transition:opacity .8s ease;pointer-events:none}
+body[data-role="teacher"] .pit-mission-cinema.pit-cinema-playing video{opacity:.63}
+body[data-role="teacher"] .pit-cinema-overlay{position:absolute;inset:0;background:linear-gradient(90deg,#0a0b12ed 0%,#0d0d13d9 42%,#1010149c 72%,#0c0b13d6 100%)}
+body[data-role="teacher"] .pit-cinema-rune{position:absolute;right:clamp(10px,2.4vw,34px);top:16px;display:flex;gap:8px;align-items:center;font:700 28px var(--pit-gothic-accent);color:#e2af72;text-shadow:0 0 20px #f0a4526a;opacity:.9}
+body[data-role="teacher"] .pit-cinema-rune span{font:800 10px/1.2 var(--pit-gothic-title);letter-spacing:.07em;color:#ebc9a3}
+body[data-role="teacher"] .main-pane .mainhead h1{font-size:clamp(27px,2.7vw,45px);color:#ffe3b0;text-shadow:0 2px 10px #000,0 0 23px #d89c4c3d}
+body[data-role="teacher"] .main-pane .mainhead .subline{font-size:clamp(16px,1.2vw,20px);text-shadow:0 2px 6px #000}
+body[data-role="teacher"] .stage-btn{transition:transform .25s ease,border-color .22s ease,box-shadow .22s ease,background-color .22s ease}
+body[data-role="teacher"] .stage-btn:hover:not(:disabled){transform:translate3d(3px,-2px,0);border-color:#f0b46f;box-shadow:inset 3px 0 #e1ab63,0 6px 22px #0009}
+body[data-role="teacher"] .stage-btn.current .stage-art{animation:pit-still-breathe 8s ease-in-out infinite alternate}
+body[data-role="teacher"] .stage-btn .stage-art{transition:transform .5s ease,filter .5s ease}
+body[data-role="teacher"] .stage-btn:hover .stage-art{transform:scale(1.09);filter:saturate(1.25)}
+body[data-role="teacher"] .dashboard>.panel,body[data-role="teacher"] .dashboard>.side .panel{box-shadow:inset 0 0 0 1px #a8743018,0 9px 30px #0007}
+body[data-role="teacher"] #navPrimary:disabled{opacity:.66;cursor:not-allowed}
+body[data-role="teacher"] #roomState{font:750 clamp(13px,1vw,17px) var(--pit-gothic-title);color:#eec28b}
+#pitProjector.pit-projector-m01 .pit-projector-top h1{font-family:var(--pit-gothic-title);font-weight:800;letter-spacing:.015em}
+#pitProjector.pit-projector-m01 .pit-m01-deck h2,#pitProjector.pit-projector-m01 .pit-u-cover h2,#pitProjector.pit-projector-m01 .pit-m01-finale h2{font-family:var(--pit-gothic-title);font-weight:700;letter-spacing:.015em}
+#pitProjector.pit-projector-m01 .pit-projector-top small,#pitProjector.pit-projector-m01 .pit-m01-kicker{font-family:var(--pit-gothic-title);letter-spacing:.08em}
+#pitProjector.pit-projector-m01 .pit-projector-slide{isolation:isolate}
+#pitProjector.pit-projector-m01 .pit-projector-motion{position:absolute;inset:0;z-index:0;pointer-events:none;background:#111218}
+#pitProjector.pit-projector-m01 .pit-projector-motion video{width:100%;height:100%;object-fit:cover;object-position:center;opacity:.55;filter:saturate(.88) brightness(.63) contrast(1.12)}
+#pitProjector.pit-projector-m01 .pit-projector-motion:after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,#090b10f4 4%,#0b0e13c9 48%,#0b0e13aa 100%)}
+#pitProjector.pit-projector-m01 .pit-projector-slide>.pit-projector-card{position:relative;z-index:1}
+#pitProjector.pit-projector-m01 .pit-projector-slide.pit-projector-has-motion{background:#0a0c12}
+#pitProjector.pit-projector-m01 .pit-projector-slide.pit-projector-has-motion .pit-m01-deck{position:relative}
+#pitProjector.pit-projector-m01 .pit-projector-slide.pit-projector-has-motion :is(.pit-m01-cover-art,.pit-u-insignia){background:#1c1a1ba9;backdrop-filter:blur(5px)}
+#pitProjector.pit-projector-m01 .pit-projector-slide.pit-projector-enter .pit-projector-card{animation:pit-cinematic-reveal .5s cubic-bezier(.18,.75,.25,1) both}
+@keyframes pit-cinematic-reveal{from{opacity:.4;transform:translateX(30px) scale(.992);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+@keyframes pit-still-breathe{from{transform:scale(1.015)}to{transform:scale(1.07)}}
+@media(max-width:900px){body[data-role="teacher"] .pit-cinema-rune span{display:none}body[data-role="teacher"] .main-pane .mainhead{min-height:145px}}
+@media(prefers-reduced-motion:reduce){body[data-role="teacher"] .pit-mission-cinema video,#pitProjector.pit-projector-m01 .pit-projector-motion video{display:none!important}body[data-role="teacher"] .stage-btn.current .stage-art,#pitProjector.pit-projector-m01 .pit-projector-slide.pit-projector-enter .pit-projector-card{animation:none!important}body[data-role="teacher"] .stage-btn{transition:none!important}}
+@media print{body[data-role="teacher"] .pit-mission-cinema video,#pitProjector .pit-projector-motion{display:none!important}}

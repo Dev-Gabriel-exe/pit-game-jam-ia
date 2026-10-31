@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 625" role="img" aria-labelledby="t d">
+<title id="t">Mapa esquemático: movimento e colisões no GDevelop</title><desc id="d">Diagrama autoral em português que ilustra a passagem de entrada para movimento, limite e teste no Preview. Não é uma captura de tela do editor.</desc>
+<defs><linearGradient id="a" x2="1" y2="1"><stop stop-color="#303035"/><stop offset="1" stop-color="#11151d"/></linearGradient><linearGradient id="b" x2="1" y2="1"><stop stop-color="#ad7449"/><stop offset="1" stop-color="#5b3326"/></linearGradient></defs>
+<rect width="1100" height="625" fill="#101016"/><rect x="16" y="16" width="1068" height="592" rx="15" fill="url(#a)" stroke="#e1a778" stroke-width="3"/>
+<text x="41" y="58" fill="#ffe0af" font-family="Arial,sans-serif" font-size="27" font-weight="bold">GDEVELOP — CONTROLES + LIMITES</text>
+<text x="41" y="87" fill="#bb9b85" font-family="Arial,sans-serif" font-size="17">MAPA DIDÁTICO · NÃO É PRINT DO EDITOR</text>
+<g font-family="Arial,sans-serif" font-size="20" text-anchor="middle">
+<rect x="54" y="123" width="285" height="91" rx="8" fill="#25272b" stroke="#8e6549"/><text x="196" y="156" fill="#f8be88" font-size="15">1 · ENTRADA DO JOGADOR</text><text x="196" y="188" fill="#f3e3d5" font-weight="bold">Setas / Clique / Toque</text>
+<path d="M346 170h62" stroke="#d5a572" stroke-width="4"/><path d="M396 158l12 12-12 12" fill="none" stroke="#d5a572" stroke-width="4"/>
+<rect x="419" y="123" width="285" height="91" rx="8" fill="#30231f" stroke="#cf9a65"/><text x="563" y="156" fill="#f8be88" font-size="15">2 · COMPORTAMENTO</text><text x="563" y="188" fill="#f3e3d5" font-weight="bold">Movement / Platformer</text>
+<path d="M712 170h62" stroke="#d5a572" stroke-width="4"/><path d="M762 158l12 12-12 12" fill="none" stroke="#d5a572" stroke-width="4"/>
+<rect x="788" y="123" width="255" height="91" rx="8" fill="#25272b" stroke="#8e6549"/><text x="915" y="156" fill="#f8be88" font-size="15">3 · RESULTADO</text><text x="915" y="188" fill="#f3e3d5" font-weight="bold">Objeto se move</text></g>
+<rect x="96" y="262" width="903" height="212" fill="#1e2932" stroke="#536474" stroke-width="3" rx="8"/>
+<rect x="145" y="296" width="72" height="137" fill="#8d523e" stroke="#c18b60" stroke-width="3"/><text x="182" y="452" fill="#f1d0b0" font-size="16" font-family="Arial,sans-serif" text-anchor="middle">PAREDE</text>
+<circle cx="444" cy="365" r="37" fill="url(#b)" stroke="#edc397" stroke-width="4"/><circle cx="432" cy="354" r="5" fill="#161a1d"/><circle cx="458" cy="354" r="5" fill="#161a1d"/><path d="M430 378q14 10 27 0" fill="none" stroke="#231818" stroke-width="3"/>
+<path d="M401 365H231" stroke="#edbd7f" stroke-width="6" stroke-dasharray="16 11"/><path d="M242 353l-14 12 14 12" stroke="#edbd7f" stroke-width="5" fill="none"/>
+<text x="638" y="327" fill="#f0c591" font-family="Arial,sans-serif" font-size="21" font-weight="bold">A COLISÃO É DETECTADA</text>
+<text x="638" y="361" fill="#f1ded0" font-family="Arial,sans-serif" font-size="19">A resposta bloqueia ou separa.</text>
+<text x="638" y="389" fill="#bea997" font-family="Arial,sans-serif" font-size="17">Apenas detectar não basta.</text>
+<g font-family="Arial,sans-serif" font-size="18"><rect x="84" y="516" width="444" height="64" rx="6" fill="#38271f" stroke="#b98a61"/><text x="306" y="555" fill="#ffdbac" text-anchor="middle">4 · TESTAR NO PREVIEW</text><rect x="572" y="516" width="444" height="64" rx="6" fill="#27372c" stroke="#92ae8d"/><text x="794" y="555" fill="#e3ffcb" text-anchor="middle">5 · SALVAR O PROJETO</text></g>
+</svg>

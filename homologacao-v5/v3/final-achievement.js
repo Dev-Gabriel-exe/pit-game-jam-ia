@@ -1,0 +1,10 @@
+/* M10-04 · Conquista condicionada a dez aprovações do backend.
+ * Não usa localStorage para concessão, não cria aprovação e não simula nota.
+ */
+(function(){'use strict';
+const stages=Array.from({length:10},(_,i)=>i+1);
+function approvedList(raw){return [...new Set((Array.isArray(raw)?raw:[]).filter(n=>Number.isInteger(n)&&n>=1&&n<=10))].sort((a,b)=>a-b)}
+function eligible(raw,preview=false){if(preview)return false;const a=approvedList(raw);return a.length===10&&stages.every(n=>a.includes(n))}
+function render(raw,preview=false){const a=approvedList(raw),ready=eligible(a,preview),missing=stages.filter(n=>!a.includes(n));return '<section class="final-award '+(ready?'is-earned':'is-pending')+'" data-award-state="'+(ready?'earned':preview?'preview':'pending')+'" id="pitFinalAward" role="status" aria-live="polite" aria-label="Conquista final da jornada"><div class="final-award-symbol" aria-hidden="true">'+(ready?'✦':'◇')+'</div><div class="final-award-content"><small>JORNADA PIT GAME JAM IA · 10 MISSÕES</small><h3>'+(ready?'CONQUISTA VALIDADA · CRIADOR DE UNIVERSOS':preview?'PRÉVIA · SEM CONQUISTA REAL':'CONQUISTA AINDA NÃO VALIDADA')+'</h3><p>'+(ready?'As dez missões possuem status aprovado no progresso retornado pela oficina. O projeto editável e a demonstração continuam sujeitos à preservação e revisão.':preview?'Esta visualização não consulta aprovações reais nem concede insígnias.':'A conclusão depende de dez aprovações registradas pelo professor. Enviar uma ficha ou marcar um checklist não concede a conquista.')+'</p><div class="final-award-progress" aria-label="'+a.length+' de 10 missões aprovadas"><strong>'+a.length+' / 10</strong><div class="final-award-rail"><i style="width:'+(a.length*10)+'%"></i></div></div>'+(ready?'<p class="final-award-verified">✓ Dez aprovações verificadas no estado da turma; nenhuma aprovação foi criada nesta tela.</p>':'<p class="final-award-pending">Missões sem aprovação: '+(missing.map(n=>String(n).padStart(2,'0')).join(' · ')||'nenhuma')+'</p>')+'</div></section>'}
+window.PIT_FINAL_ACHIEVEMENT={stages,approvedList,eligible,render};
+})();

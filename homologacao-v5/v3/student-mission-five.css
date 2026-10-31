@@ -1,0 +1,62 @@
+/* Student M05 — cinematic game rule studio */
+.m5s-root{background:#101419;color:#ead7bd;font-family:Arial,sans-serif;min-width:0;overflow:hidden}
+.m5s-root *{box-sizing:border-box}.m5s-root h2,.m5s-root h3,.m5s-root h4{font-family:Georgia,serif;color:#ffe3bb}
+.m5s-hero{padding:23px clamp(14px,3vw,38px);background:linear-gradient(90deg,#111117ef,#16141aaf),url("./assets/missions/missao-05.webp") center/cover;border-bottom:1px solid #ae7b53}
+.m5s-hero>span,.m5s-hero-main small,.m5s-inherit small,.m5s-lead>small,.m5s-leadtext>small{color:#e9b582;font-size:11px;letter-spacing:.1em}
+.m5s-hero-main{display:flex;gap:17px;align-items:center;margin:15px 0}
+.m5s-chapter{display:grid;place-items:center;width:70px;height:82px;flex:0 0 70px;border:2px ridge #e9b882;background:#70432a;color:#ffe8c3;font:700 37px Georgia,serif}
+.m5s-hero-main h2{font-size:clamp(26px,3vw,42px);margin:9px 0}
+.m5s-hero-main p{font:italic 16px Georgia,serif;color:#dfc3a5}
+.m5s-inherit{display:grid;gap:5px;max-width:850px;padding:12px;border-left:3px solid #edb57e;background:#38281ec9}
+.m5s-inherit strong{font:700 21px Georgia,serif;color:#ffddb5}
+.m5s-brief,.m5s-practice,.m5s-review{padding:20px clamp(13px,3vw,38px) 30px}
+.m5s-brief{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(0,1.2fr);gap:20px}
+.m5s-cover{min-height:320px;background:linear-gradient(0deg,#13131ad5,transparent),url("./assets/missions/missao-05.webp") center/cover;display:flex;align-items:end;padding:15px}
+.m5s-cover span{color:#ffe0b0;background:#26171ade;padding:10px;border:1px solid #e1ac75;font-size:11px;letter-spacing:.08em}
+.m5s-lead{align-self:center}.m5s-lead h3,.m5s-leadtext h3{font-size:clamp(25px,2.6vw,36px);line-height:1.17}
+.m5s-lead p,.m5s-leadtext p,.m5s-context p{color:#dfc9b2;font-size:14px;line-height:1.6}
+.m5s-lead em{color:#f2bd84}.m5s-mechanic,.m5s-context,.m5s-route-intro,.m5s-3d-note{background:#30231e;border:1px solid #9d704e;padding:15px;margin:13px 0}
+.m5s-mechanic small,.m5s-context small,.m5s-route-intro small{display:block;color:#ebae78;font-size:10px;letter-spacing:.11em}
+.m5s-mechanic strong,.m5s-context>strong,.m5s-route-intro>b{display:block;font:700 20px Georgia,serif;color:#ffe0bb;margin-top:8px}
+.m5s-brief-steps,.m5s-timebox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0}
+.m5s-brief-steps article,.m5s-timebox span{border:1px solid #896544;background:#30221d;padding:13px}
+.m5s-brief-steps span,.m5s-timebox b{color:#f1bd85;font-weight:900}
+.m5s-brief-steps p{font-size:13px;color:#dbc5af;line-height:1.5}.m5s-timebox{text-align:center;font-size:12px;color:#e9d0b9}
+.m5s-3d-note[hidden]{display:none!important}.m5s-3d-note strong{color:#eccb9b;font-size:11px}
+.m5s-lab,.m5s-review-body{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(235px,.7fr);gap:16px;margin-top:20px;align-items:start}
+.m5s-form,.m5s-aside,.m5s-summary,.m5s-finale{min-width:0;border:1px solid #906748;background:linear-gradient(150deg,#2e211c,#15191d);padding:18px}
+.m5s-form>small,.m5s-summary>small,.m5s-aside-content>small{color:#e6af7b;font-size:10px;letter-spacing:.12em}
+.m5s-form>p,.m5s-aside-content>p{color:#ccb9a6;font-size:13px;line-height:1.55}
+.m5s-field{display:grid;gap:8px;margin:15px 0}.m5s-field>b{font-size:13px;color:#f1dbc4}
+.m5s-field input,.m5s-field textarea{width:100%;background:#10161a;color:#ffe4c7;border:1px solid #916747;padding:11px 12px;font:14px/1.5 Arial,sans-serif;resize:vertical}
+.m5s-field input::placeholder,.m5s-field textarea::placeholder{color:#a99b8d;opacity:1}
+.m5s-field small{font-size:11px;color:#c7b3a1;line-height:1.55}
+.m5s-checks{display:grid;gap:9px;padding:15px;border:1px solid #916646;background:#261f1c;margin-top:17px}
+.m5s-checks>b,.m5s-checks strong{color:#e8b47c;font-size:11px}
+.m5s-checks label{display:flex;align-items:flex-start;gap:11px;padding:12px;background:#3a2b21;border:1px solid #866242;cursor:pointer}
+.m5s-checks input{min-width:19px;min-height:19px;accent-color:#dba371}
+.m5s-checks label span{display:grid;gap:6px}.m5s-checks small,.m5s-checks p{font-size:12px;color:#d7bfab;line-height:1.5}
+.m5s-form-footer{display:grid;gap:12px;margin-top:17px;padding-top:15px;border-top:1px solid #806044}
+.m5s-primary{cursor:pointer;color:#23170e;background:linear-gradient(#ffe0a7,#d59d62);border:2px ridge #efc18c;padding:12px 18px;font-size:12px;font-weight:900;min-height:46px}
+.m5s-primary:disabled,.m5s-back:disabled{opacity:.45;cursor:not-allowed}
+.m5s-aside{position:sticky;top:10px;padding:0}.m5s-aside-art{min-height:185px;display:flex;align-items:end;padding:12px;background:linear-gradient(0deg,#211724cd,transparent),url("./assets/missions/missao-05.webp") center/cover}
+.m5s-aside-art span{font-size:11px;color:#f6c18d;background:#25191ddd;border:1px solid #be8856;padding:8px}
+.m5s-aside-content{padding:16px}.m5s-aside-content h4{font-size:25px;overflow-wrap:anywhere}
+.m5s-card-row{border:1px solid #6f543c;background:#17191c;margin:10px 0;padding:11px;overflow-wrap:anywhere}
+.m5s-card-row strong{display:block;color:#e8b179;font-size:10px;letter-spacing:.09em;margin-bottom:7px}
+.m5s-card-row span,.m5s-card-row p{color:#e4ccb4;font-size:13px;line-height:1.5;margin:0}
+.m5s-gauge{display:grid;gap:8px}.m5s-gauge b{color:#f3bc80;font:700 28px Georgia,serif}.m5s-gauge small{color:#cab49e;font-size:12px}
+.m5s-gauge>div{height:9px;background:#402d21;border:1px solid #986e47}.m5s-gauge i{display:block;background:#e9b27c;height:100%}
+.m5s-status,.m5s-warning,.m5s-feedback{border:1px solid #b38a58;background:#3a291f;color:#f3ca96;padding:13px;margin:12px 0;font-size:13px;line-height:1.55}
+.m5s-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.m5s-summary-grid>div{padding:11px;border:1px solid #70513b;background:#201d1b;min-width:0}
+.m5s-summary-grid small{color:#e5af7b;font-size:10px}.m5s-summary-grid p{font-size:13px;color:#e7ccb4;overflow-wrap:anywhere}
+.m5s-summary label{display:block;margin-top:15px;font-size:12px}.m5s-summary textarea{width:100%;min-height:270px;resize:vertical;margin-top:8px;background:#0e151a;color:#e9d3bb;border:1px solid #986d4b;padding:12px}
+.m5s-actions{display:flex;gap:11px;justify-content:flex-end;flex-wrap:wrap;margin-top:15px}
+.m5s-back{padding:12px;background:#3c2d22;border:1px solid #ac865b;color:#f6d8ba;cursor:pointer}
+.m5s-finale{text-align:center}.m5s-finale>strong{font:700 46px Georgia,serif;color:#f3c38d}.m5s-finale p{line-height:1.6;font-size:13px;color:#d9c3ae}
+.m5s-root button:focus-visible,.m5s-root input:focus-visible,.m5s-root textarea:focus-visible{outline:2px solid #ffd392;outline-offset:3px}
+@media(max-width:1000px){.m5s-lab{grid-template-columns:1fr}.m5s-aside{position:static}}
+@media(max-width:760px){.m5s-brief,.m5s-review-body{grid-template-columns:1fr}.m5s-cover{min-height:200px}}
+@media(max-width:580px){.m5s-brief-steps,.m5s-timebox,.m5s-summary-grid{grid-template-columns:1fr}.m5s-hero-main{gap:10px}.m5s-chapter{width:45px;height:56px;flex-basis:45px;font-size:25px}.m5s-hero-main h2{font-size:26px}.m5s-form,.m5s-summary{padding:12px}.m5s-actions{flex-direction:column}.m5s-actions button{width:100%}}
+@media(prefers-reduced-motion:reduce){.m5s-root *{animation:none!important;transition:none!important}}

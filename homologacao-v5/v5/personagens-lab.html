@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#120e18">
+<meta name="description" content="Prévia isolada das quatro classes com modelos 3D prontos e animados, da mesma fonte gratuita e CC0.">
+<title>Os Quatro Heróis · Game Jam IA V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./personagens-lab.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script src="./character-assets.js"></script>
+<script type="module" src="./personagens-lab.js"></script>
+</head><body>
+<div class="background" aria-hidden="true"></div>
+<header class="site-header"><a class="logo" href="./seletor.html">PIT <span>GAME JAM</span><sup>V5</sup></a><span class="site-label">OS QUATRO HERÓIS <small>PRÉVIA · MODELOS 3D PRONTOS, SEM MONTAGENS</small></span><a class="back" href="./arena-lab.html?phase2=1">⚔ Coliseu</a></header>
+<main>
+ <section class="intro"><div class="eyebrow">✦ CIDADELA DO ECLIPSE · CLASSES ORIGINAIS ✦</div>
+ <h1>Uma classe. <em>Um herói.</em></h1>
+ <p>Quatro personagens 3D realmente diferentes, todos do pacote gratuito KayKit Adventurers, com animações originais e a mesma altura visual. Talentos e atributos continuam definindo a jogabilidade.</p>
+ <div class="scope">QUATRO MODELOS ORIGINAIS GRÁTIS CC0 · KAYKIT ADVENTURERS · MESMA FAMÍLIA VISUAL · SEM COMPRAS · SEM ALTERAR A PROGRESSÃO DOS ALUNOS</div>
+ </section>
+ <section class="class-section" aria-labelledby="classesTitle">
+  <div class="section-top"><span class="eyebrow">01 · ESCOLHA A CLASSE PARA VISUALIZAR</span><h2 id="classesTitle">Quatro estilos de combate</h2></div>
+  <div class="class-tabs" id="classTabs" role="group" aria-label="Selecionar classe"></div>
+  <div class="four-heroes-gallery" id="fourHeroesGallery" role="group" aria-label="Os quatro modelos 3D diferentes em comparação"><p class="four-heroes-loading" id="fourHeroesLoading">Carregando comparação visual dos quatro personagens originais…</p></div>
+  <p class="gallery-caption">As imagens são capturas automáticas dos quatro modelos GLB reais. Toque em um personagem para vê-lo girando em 3D abaixo.</p>
+ </section>
+ <div class="main-grid">
+  <section class="viewer-panel" aria-labelledby="viewerTitle">
+   <div class="viewer-head"><div><span class="eyebrow">02 · PERSONAGEM 3D ORIGINAL</span><h2 id="viewerTitle">Guerreiro</h2></div><span id="assetStatus" class="asset-status">CARREGANDO GLB</span></div>
+   <div id="avatarStage" class="avatar-stage" role="img" aria-label="Personagem 3D que pode ser girado com o mouse ou com o dedo"><div class="loading" id="loading" role="status">✧ Carregando personagem original...</div></div>
+   <div class="viewer-bottom"><strong id="avatarName">Guerreiro</strong><span id="avatarEquipment">Modelo original CC0</span><small>Arraste para girar · pinça ou roda para zoom · animação original</small></div>
+  </section>
+  <aside class="details-panel">
+   <span class="eyebrow">03 · IDENTIDADE DE CLASSE</span><h2 id="className">Guerreiro</h2>
+   <p id="classDescription">Força e ataques corpo a corpo.</p>
+   <div class="stat"><span>Altura visual padronizada</span><strong>2,55 unidades</strong></div>
+   <div class="stat"><span>Modelo 3D utilizado</span><strong id="modelFile">Barbarian.glb</strong></div>
+   <div class="stat"><span>Fonte de todos os heróis</span><strong>KayKit Adventurers CC0</strong></div>
+   <p class="note">Quatro modelos completos e distintos: Bárbaro, Mago, Ladino Encapuzado e Cavaleiro. Sem sobrepor roupas ou membros improvisados. Dentro de cada classe, os alunos compartilham o modelo e se diferenciam pelos atributos e talentos.</p>
+   <a id="arenaPreviewChoice" class="arena-preview-choice" href="./arena-lab.html?phase2=1&amp;count=4">⚔ Testar os quatro heróis na Arena</a>
+   <a class="source-link" href="https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/blob/672074b73ba276876a19e8816ecdc5241817ab47/LICENSE.txt" target="_blank" rel="noopener noreferrer">Ver origem dos modelos e licença CC0</a>
+  </aside>
+ </div>
+ <footer><span>Quatro modelos diferentes, prontos e animados, sem peças artificiais nem compras.</span><a href="./arena-lab.html?phase2=1">Ir ao Coliseu →</a></footer>
+</main>
+</body></html>
