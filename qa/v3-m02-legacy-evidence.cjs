@@ -58,4 +58,35 @@ check(maximum.length<=750,'Maximum legal fields do not truncate the final line')
 check(maximum.split('\n').length===8,'Maximum evidence retains all labels');
 check(m.parseEvidence(maximum)?.later==='g'.repeat(120),'Maximum record round trips');
 check(m.load('fresh').scene===initial.scene,'Session isolation');
+// A denied storage write must not silently discard the student's MVP.
+const blockedWindow={},blockedStorage={
+ getItem:()=>{throw new Error('SecurityError')},
+ setItem:()=>{throw new Error('QuotaExceededError')}
+};
+vm.runInNewContext(fs.readFileSync('v3/student-mission-two.js','utf8'),
+ {window:blockedWindow,localStorage:blockedStorage,console},{timeout:3000});
+const blocked=blockedWindow.PIT_STUDENT_MISSION_TWO;
+check(blocked.save('offline',initial)===false,'Denied storage write reports failure');
+check(blocked.load('offline').mechanic===initial.mechanic,'Denied storage preserves in-tab MVP');
+check(blocked.load('another').scene==='','Volatile fallback isolated by session');
+const offlineContext={session:'offline',phase:'practice',status:'draft',preview:true,
+ idea:{title:'Meu jogo',genre:'Puzzle'},canSubmit:true};
+const offlinePractice=blocked.render(offlineContext);
+check(offlinePractice.includes('Não foi possível salvar neste navegador'),'Practice warns of storage denial');
+check(offlinePractice.includes('Copie sua ficha antes de sair'),'Practice provides manual fallback');
+check(!offlinePractice.includes('rascunho salvo neste navegador'),'Practice never claims denied draft persisted');
+check(offlinePractice.includes('Confira o aviso de salvamento'),'Practice explains save indicator');
+const offlineReview=blocked.render({...offlineContext,phase:'review'});
+check(offlineReview.includes('O rascunho não foi salvo no navegador'),'Review warns of storage denial');
+check(offlineReview.includes('Copie o texto da ficha'),'Review provides copyable evidence');
+check(blocked.render({...offlineContext,session:'new'}).includes('comece a preencher para salvar'),
+ 'New unsaved MVP is not falsely marked saved');
+blocked.hydrate('recovered',valid,'approved');
+check(blocked.load('recovered').scene===initial.scene,'Recovery works when storage unavailable');
+blocked.save('local-only',{...initial,scene:'Minha cena local'});
+blocked.hydrate('local-only',valid,'approved');
+check(blocked.load('local-only').scene==='Minha cena local','Remote approved evidence does not overwrite volatile draft');
+check(m.save('persistent',initial)===true,'Writable storage reports success');
+check(m.render({...offlineContext,session:'persistent'}).includes('rascunho salvo neste navegador'),
+ 'Persisted draft still displays saved state');
 console.log('PASS: '+count+' M02 legacy evidence assertions; no real student data, browser or GDevelop used.');
