@@ -506,14 +506,43 @@ $('arenaStage').addEventListener('v5-student-view',event=>{
  }
 });
 const expandButton=$('expandStage');
+const immersiveTheater=document.querySelector('.theater');
+// The expanded arena is a keyboard-contained dialog, not a new page.
+// Keep the same DOM controls, combat simulation and camera untouched.
+const immersiveFocusable='button:not(:disabled):not([hidden]),select:not(:disabled):not([hidden]),a[href],input:not(:disabled):not([hidden]),[tabindex]:not([tabindex="-1"])';
+function immersiveTabStops(){
+ return [...immersiveTheater.querySelectorAll(immersiveFocusable)].filter(el=>
+  !el.closest('[hidden]')&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
+}
 function setImmersive(on){
  document.body.classList.toggle('arena-immersive',on);
  expandButton.setAttribute('aria-pressed',String(on));
  expandButton.textContent=on?'✕ Fechar arena':'⛶ Ampliar arena';
+ if(on){
+  immersiveTheater.setAttribute('role','dialog');
+  immersiveTheater.setAttribute('aria-modal','true');
+  immersiveTheater.setAttribute('aria-label','Arena de combate ampliada');
+ }else{
+  immersiveTheater.removeAttribute('role');
+  immersiveTheater.removeAttribute('aria-modal');
+  immersiveTheater.removeAttribute('aria-label');
+ }
+ expandButton.focus({preventScroll:true});
  requestAnimationFrame(()=>state.stage?.resize());
 }
 expandButton.addEventListener('click',()=>setImmersive(!document.body.classList.contains('arena-immersive')));
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('arena-immersive'))setImmersive(false)});
+document.addEventListener('keydown',event=>{
+ if(!document.body.classList.contains('arena-immersive'))return;
+ if(event.key==='Escape'){event.preventDefault();setImmersive(false);return}
+ if(event.key!=='Tab')return;
+ const stops=immersiveTabStops();if(!stops.length)return;
+ const first=stops[0],last=stops[stops.length-1],active=document.activeElement;
+ if(event.shiftKey&&(active===first||!immersiveTheater.contains(active))){
+  event.preventDefault();last.focus({preventScroll:true});
+ }else if(!event.shiftKey&&(active===last||!immersiveTheater.contains(active))){
+  event.preventDefault();first.focus({preventScroll:true});
+ }
+});
 $('fighters').addEventListener('click',event=>{const btn=event.target.closest('[data-focus]');if(btn){if(state.stage?.viewerSnapshot()?.viewer?.audience==='student')state.stage.setTeacherCamera();state.stage?.focusFighter(btn.dataset.focus)}});
 $('damagePace').addEventListener('click',()=>{
  state.damageIndex=(state.damageIndex+1)%PACES.length;
