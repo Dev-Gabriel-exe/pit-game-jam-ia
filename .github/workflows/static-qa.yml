@@ -41,6 +41,8 @@ jobs:
           node --check v3/teacher-mission-ten-validation.js
           node --check v3/teacher-projector-m01.js
           node qa/v3-m10-practice-alignment.cjs
+          node --check qa/v3-m10-storage-failsafe.cjs
+          node qa/v3-m10-storage-failsafe.cjs
       - name: Audit V3 teacher/student alignment
         run: node qa/v3-audit-alignment.cjs
       - name: Verify M07 student/teacher flow and shared tutorial offline
