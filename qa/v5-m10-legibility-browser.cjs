@@ -81,6 +81,13 @@ function within(inner,outer,tolerance=3){
   for(const screen of SCREENS){
    await page.setViewportSize({width:screen.width,height:screen.height});
    await page.waitForTimeout(350);
+   // SwiftShader may render below 1 FPS after viewport resize. Wait for the
+   // stage to reproject nicknames instead of inspecting stale 1920px positions.
+   await page.waitForFunction(()=>{
+    const stage=document.querySelector('#arenaStage');
+    return stage&&stage.dataset.v5NickLayoutWidth===String(stage.clientWidth)&&
+     Number(stage.dataset.v5VisibleNicks)>0;
+   },null,{timeout:45000});
    const metric=await page.evaluate(()=>{
     const box=(selector)=>{
      const el=document.querySelector(selector);
