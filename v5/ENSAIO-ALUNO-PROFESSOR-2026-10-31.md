@@ -106,3 +106,15 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - Job Node de contratos aprovado; job Chromium WebGL aprovado com mensagem explícita: `PASS: two authentic KayKit GLBs render for accepted 1v1 M5 and M10; cleanup on both exits`.
 - Revalidados no navegador: convite, consentimento, recusa, bloqueio pelo professor, fechamento da janela, restaurar foco, renderização 3D **M5 e M10** com dois GLBs KayKit, câmera e descarte do canvas.
 - O gate G.2 no PC real e a autorização para integrar com contas/alunos continuam pendentes; a aprovação do GitHub Actions não substitui essa validação.
+
+## H.1 Lab — Jornada completa de duelo e retorno à missão (31/10/2026)
+
+**Concluído em branch experimental, sem contas reais:**
+- `v5/duel-journey-lab.js` implementa fases puras `mission → invited → accepted → entering → fighting → finished → returned`, com caminho de recusa e saída antes do resultado. Valida resultado/winner, impede vitória dupla e não contém XP, persistência ou rede.
+- `v5/duel-window-lab.html`: seção da Missão 3, entrada cinematográfica temporizada com redução de movimento, status de jornada, resultado/epílogo com vencedor, botão de retorno à Missão 3 e fechamento autorizado do convite aceito por `D.close`. Depois do retorno, os dois aliases fictícios podem se convidar novamente. Modal continua com `inert`, Escape e restauração do foco.
+- `v5/duel-3d-lab.js`: controle opcional de velocidade ×1/×2/×3 somente no palco Three.js; regras e builds imutáveis.
+- `qa/v5-duel-journey-lab.cjs`, `qa/v5-duel-window-browser.cjs`, `qa/v5-duel-3d-browser.cjs`: contratos, recusa, consentimento, M5/M10, re-convite e smoke WebGL. Novo smoke de conclusão de combate 3D, apresentação do vencedor e retorno à missão adicionado.
+- CI de ciclo convite→resultado textual→retorno→novo convite e GLBs M5/M10 previamente aprovado: `41202111839`. A versão mais recente com a simulação 3D até a vitória ainda está em verificação; **não tratá-la como homologada sem CI verde**.
+- Commits: `eea005e4`, `b95344ba`, `7ae651ed`, `7099fec4`, `f7a0fcbd`, `40689401`, `18db5b33`, `9c66f998`, `473dbd71`, `0ce7d1df`.
+
+**Limites explícitos:** tudo é exclusivamente laboratório; M5/M10 no modal são presets fictícios de luta, não liberação real das missões. Não há sincronização entre dispositivos, entrega de notificações, persistência, XP ou autenticação. A integração com alunos e liberação real pelo professor continuam aguardando G.2 no PC físico, critérios H e autorização explícita; `main` permanece intacta.
