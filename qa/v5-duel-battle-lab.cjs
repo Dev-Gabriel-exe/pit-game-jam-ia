@@ -13,6 +13,16 @@ const descriptor=D.arenaWindowFor(state,{id:1,actor:'trial-ana'});
 for(const mission of [5,10]){
  const opts={seed:412,mission,classes:['warrior','guardian']};
  const first=B.createTrial(descriptor,P,opts);
+ const roster=first.roster;
+ assert.equal(roster.length,2);
+ assert.deepEqual(roster.map(x=>x.id),['trial-ana','trial-bia']);
+ assert(roster.every(x=>x.approvedMissions===mission));
+ assert(roster.every(x=>x.build.talents.length===mission));
+ assert(roster.every(x=>Object.values(x.build.attributes).reduce((a,b)=>a+b,0)===mission*2));
+ assert(roster.every(x=>x.finalTrial===(mission===10)));
+ const untouched=first.roster[0].build.attributes.FOR;
+ roster[0].build.attributes.FOR=999;
+ assert.equal(first.roster[0].build.attributes.FOR,untouched,'stage receives defensive snapshots');
  const result=first.run();
  assert(result.finished,'battle must finish');
  assert(result.winner,'must report a winner');
