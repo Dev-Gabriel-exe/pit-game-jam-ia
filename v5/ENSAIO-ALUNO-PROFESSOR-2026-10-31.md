@@ -61,3 +61,12 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - `qa/v5-duel-window-browser.cjs`: valida fundo inerte, diálogo ativo, reversão do isolamento e foco.
 - Código: `1c49b1df`; testes: `ddf9464b`. CI do novo teste pendente na consulta, **não homologado**.
 - Próximo passo: revisar CI; depois arena WebGL fictícia 1x1 e controle professor M5/M10. G.2 não realizado; H.1/H.2 reais bloqueados.
+
+## Incremento: adaptador fictício de combate 1×1
+
+- CI anterior do isolamento modal: `41199302756` aprovado, incluindo navegador Chromium.
+- `v5/duel-battle-lab.js`: adaptador isolado de descritor de convite aceito para `phase2-combat.battle` com exatamente 2 aliases `trial-*`, M5 ou M10, classes canônicas KayKit, sem persistência ou XP.
+- `qa/v5-duel-battle-lab.cjs`: cobre convite recusado, descritor inválido, execução M5/M10 e replays determinísticos.
+- `.github/workflows/v5-duel-invitations-lab-qa.yml`: adiciona execução do novo teste Node.
+- Commits: `78c6bcbf`, `fa496621`, `3bc1fea4`. **CI novo ainda não confirmado; não declarar motor 1×1 validado.**
+- Próxima ação: inspecionar o CI, corrigir eventuais falhas e ligar visualmente o motor à janela experimental; controles de professor M5/M10 coletivos ainda pendentes. G.2 físico e H operacional bloqueados.
