@@ -68,4 +68,31 @@ assert.equal(MOTION.plan(manifest.mage.find(x=>x.id==='E01'),{
 assert.throws(()=>MOTION.plan(null,{from:{x:0,z:0}}),/descritor/);
 assert.throws(()=>MOTION.plan(manifest.mage[0],{from:{x:Infinity,z:0}}),/origem/);
 assert.throws(()=>MOTION.sample(null,1),/timeline/);
-console.log('PASS cinematic talent VFX: 120 canonical talents, '+paths+' aimed projectile plans, charge/flight/afterglow, reduced motion and no battle state changes');
+// Verify that aimed cinematic movement corresponds to actual emitted actions
+// from the same deterministic battle engine, not injected visual demo casts.
+const fighters=Object.keys(manifest).map(klass=>({
+ id:'trial-'+klass,name:'trial-'+klass,
+ build:ENGINE.exampleBuild(klass,'trial-'+klass,5,0),approvedMissions:5
+}));
+let aimed=0,activated=0;
+for(const seed of [4252,20261031,314159,742]){
+ const real=ENGINE.battle(fighters,{seed,arenaMission:5,arenaScale:2.6,
+  damageScale:.5,stormDelay:35,engagementMode:'spaced',navigationMode:'steer',
+  rangedCommitment:'recovery',balancePreset:'e-hp2'}).run();
+ assert(real.finished&&real.winner,'real battle must finish');
+ const talents=real.events.filter(e=>e.type==='talent');
+ activated+=talents.length;
+ for(const e of talents){
+  const source=fighters.find(x=>x.id===e.hero);
+  const cue=manifest[source?.build?.klass]?.find(c=>c.id===e.talent);
+  if(e.target&&cue&&MOTION.PROJECTILES.includes(cue.style)){
+   const trace=MOTION.plan(cue,{from:{x:0,z:0},to:{x:7,z:2}});
+   assert.equal(trace.mode,'projectile');
+   aimed++;
+  }
+ }
+}
+assert(activated>20,'real combat must activate talents across seeds');
+assert(aimed>0,'at least one genuine targeted projectile talent must exist in actual battles');
+console.log('PASS cinematic talent VFX: 120 canonical talents, '+paths+' aimed plans, '+
+ aimed+' aimed REAL talent events across '+activated+' activated casts; three phases, no combat modifications');
