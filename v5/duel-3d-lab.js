@@ -42,7 +42,7 @@ export function createDuelVisualization({
   try{
    stage=createStage(container,{
     quality:(navigator.deviceMemory||4)<4?'low':'auto',
-    arenaScale:2.6,spriteEffects:mission===5?'on':'off',
+    arenaScale:2.6,spriteEffects:'on',
     onEvent:event=>{
      if(disposed||!stage)return;
      if(event.type==='talent')onStatus('✦ '+String(event.hero||'Herói')+' ativou '+String(event.name||event.talent));
