@@ -147,7 +147,7 @@ function within(inner,outer,tolerance=3){
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(()=>document.activeElement.id),'expandStage');
   report.keyboard={...focusEnds,tabWrap:true,shiftTabWrap:true,escapeRestoresFocus:true,enterReopens:true};
-  fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\\n');
+  fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
   assert.deepEqual(errors,[],'Chromium errors: '+errors.join(' | '));
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
   console.log('PASS M10 projector/desktop readability gates: '+JSON.stringify(
