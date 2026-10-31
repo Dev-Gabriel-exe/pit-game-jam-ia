@@ -48,6 +48,33 @@ const duplicate=ev.replace('\nObservado:', '\nEsperado:');
 assert.equal(student.parseEvidence(duplicate),null,'duplicate field rejected');
 assert.equal(student.parseEvidence(ev.replace('M09 | issue', 'M09 | unknown')),null,'unknown result rejected');
 
+const reportLines=ev.split('\n');
+const reordered=[...reportLines];
+[reordered[1],reordered[2]]=[reordered[2],reordered[1]];
+assert.equal(student.parseEvidence(reordered.join('\n')),null,'reordered labels cannot be mapped by guess');
+assert.equal(student.parseEvidence(ev.replace('M09 | issue | backlog','M09 | issue | backlog | extra')),null,'extra header component rejected');
+assert.equal(student.parseEvidence(ev.replace('M09 | issue | backlog','M09 | passed | backlog')),null,'contradictory historical decision rejected');
+assert.equal(student.parseEvidence(ev.replace(/^Testador: .*$/m,'Testador: A')),null,'too-short historical field rejected');
+assert.equal(student.parseEvidence(ev.replace(/^Testador: .*$/m,'Testador: '+('A'.repeat(26)))),null,'oversized historical field not silently truncated');
+assert.equal(student.parseEvidence(ev.replace(/^Testador: .*$/m,'Testador:  Colega A')),null,'noncanonical historical whitespace rejected');
+assert.equal(student.parseEvidence(ev.replace(/\n/g,'\r\n')).outcome,'issue','valid CRLF evidence accepted');
+const savedBefore=store.size;
+student.hydrate('m09-malformed',ev.replace('M09 | issue | backlog','M09 | passed | backlog'),'approved');
+assert.equal(store.size,savedBefore,'invalid historical outcome cannot create a draft');
+const checksOnly=student.load('m09-checks-only');
+checksOnly.checks=[0,2];
+assert(student.save('m09-checks-only',checksOnly),'partial manual checklist saved');
+const beforeChecks=store.get('pit_v3_m09_m09-checks-only');
+student.hydrate('m09-checks-only',ev,'approved');
+assert.equal(store.get('pit_v3_m09_m09-checks-only'),beforeChecks,'manual check-only draft preserved');
+const radioOnly=student.load('m09-radio-only');
+radioOnly.outcome='passed';
+assert(student.save('m09-radio-only',radioOnly),'partial outcome selection saved');
+const beforeRadio=store.get('pit_v3_m09_m09-radio-only');
+student.hydrate('m09-radio-only',ev,'submitted');
+assert.equal(store.get('pit_v3_m09_m09-radio-only'),beforeRadio,'radio-only draft preserved');
+
+
 student.hydrate('student-c',ev,'submitted');
 assert.equal(student.load('student-c').checks.length,0,'hydrated submission never fabricates manual peer checks');
 const impossible={...draft,outcome:'passed',resolution:'fixed'};
