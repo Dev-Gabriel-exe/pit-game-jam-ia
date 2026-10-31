@@ -1044,6 +1044,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   if(!live)return;
   const w=Math.max(10,container.clientWidth),h=Math.max(10,container.clientHeight);
   camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
+  // Hide stale screen coordinates immediately on a projector/desktop resize.
+  // WebGL may take seconds to draw the next frame under software rendering.
+  if(nicknameHudSize&&nicknameHudSize!==w+'x'+h){
+   nicknameHudSize='';
+   for(const u of individuals.values())if(u.nick)u.nick.style.display='none';
+   container.dataset.v5VisibleNicks='0';
+   container.dataset.v5NickLayoutWidth='0';
+  }
  }
  resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
  const now=()=>performance.now();
@@ -1394,6 +1402,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    item.u.nick.style.transform='translate(-50%,-100%) translate('+Math.round(item.sx)+'px,'+Math.round(item.sy)+'px)';
   }
   container.dataset.v5VisibleNicks=String(placed.length);
+  container.dataset.v5NickLayoutWidth=String(rectW);
   for(const fl of [...floating]){
    const age=elapsed-fl.started;
    if(age>1.1||!fl.unit.mesh.root.visible){fl.node.remove();floating.delete(fl);continue}
