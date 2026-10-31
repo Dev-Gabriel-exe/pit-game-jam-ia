@@ -126,7 +126,9 @@ function finishJourney(result,mode,mission){
  el('battleResult').textContent='M'+mission+' · '+title+' · '+result.time+'s · 2 participantes fictícios';
  el('epilogueWinner').textContent=title;
  el('epilogueDetails').textContent='Duração simulada: '+result.time+'s · Arena experimental M'+mission+'. Retorne à Missão 3 sem alterar progresso, XP ou nota.';
- el('duelEpilogue').hidden=false;el('returnMission').focus();
+ el('duelEpilogue').hidden=false;
+ el('battleMission').disabled=true;el('visualize').disabled=true;el('simulate').disabled=true;
+ el('returnMission').focus();
 }
 function returnMission(){
  if(journey.phase!=='finished'||!acceptedDescriptor)return false;
@@ -164,6 +166,7 @@ el('open').addEventListener('click',()=>action(()=>{
  const descriptor=D.arenaWindowFor(state,{id:state.invitations.at(-1).id,actor:'trial-aluna-a'});
  if(descriptor.kind!=='fictional-duel-window')throw Error('Janela não autorizada');
  acceptedDescriptor=descriptor;step('enter');
+ el('battleMission').disabled=false;el('visualize').disabled=false;el('simulate').disabled=false;
  el('battleResult').textContent='Aguardando simulação.';el('duelEpilogue').hidden=true;
  lastFocus=document.activeElement;
  backgroundInert=[...document.body.children].filter(node=>node!==el('arena')&&node.tagName!=='SCRIPT').map(node=>[node,node.inert]);
@@ -184,6 +187,7 @@ function close(){
  if(journey.phase==='finished')returnMission();
  else if(journey.phase==='entering'||journey.phase==='fighting')step('leave');
  stopVisual();
+ el('battleMission').disabled=false;el('visualize').disabled=false;
  if(el('arena').hidden)return;
  el('arena').hidden=true;document.body.style.overflow='';
  for(const [node,wasInert] of backgroundInert||[])node.inert=wasInert;
@@ -204,12 +208,14 @@ function paintHud(snapshot){
  }
 }
 el('battleMission').addEventListener('change',()=>{
+ if(journey.phase==='finished')return;
  if(journey.phase==='fighting')step('leave');
  if(journey.phase==='accepted')step('enter');
  stopVisual();el('battleResult').textContent='Aguardando simulação.';
 });
 el('visualize').addEventListener('click',async()=>{
- if(el('arena').hidden||!acceptedDescriptor)return;
+ if(el('arena').hidden||!acceptedDescriptor||journey.phase==='finished')return;
+ if(journey.phase==='fighting'){step('leave');step('enter')}
  stopVisual();const generation=++visualGeneration;
  el('duelVisual').hidden=false;el('fallbackStage').hidden=true;
  el('visualStatus').textContent='Preparando WebGL e personagens KayKit CC0…';
