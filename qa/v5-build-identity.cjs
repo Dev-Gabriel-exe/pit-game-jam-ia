@@ -27,7 +27,15 @@ for(const klass of classes){
  const alt=E.exampleBuild(klass,'B',5,1);
  assert.notEqual(I.describe(initial,E,V).visualId,I.describe(alt,E,V).visualId);
  assert.throws(()=>I.describe({...initial,talents:[...initial.talents,'INEXISTENTE']},E,V));
- assert.throws(()=>I.describe({...initial,approvedMissions:10},E,V));
+ // H.3 M10 is now a valid opt-in canonical build: legacy rejection is obsolete.
+ const final=E.exampleBuild(klass,'Final fictícia',10,0,{experimentalFinal:true});
+ const finalIdentity=I.describe(final,E,V);
+ assert.equal(finalIdentity.mix.reduce((n,x)=>n+x.count,0),10);
+ assert.equal(Object.values(final.attributes).reduce((n,x)=>n+x,0),20);
+ assert.notEqual(finalIdentity.visualId,I.describe(initial,E,V).visualId);
+ assert(!finalIdentity.signature.includes('Final fictícia'),'No name in final visual key');
+ assert.throws(()=>I.describe({...final,talents:[...final.talents,'INEXISTENTE']},E,V));
+ assert.throws(()=>I.describe({...final,attributes:{...final.attributes,FOR:final.attributes.FOR+1}},E,V));
  assert.throws(()=>I.describe({...initial,schema:'legacy'},E,V),/canônica/);
 }
 assert(signatures.size>=32);
