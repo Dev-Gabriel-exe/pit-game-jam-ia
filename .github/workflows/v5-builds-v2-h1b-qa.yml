@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/v5-h1b-integration-safe
+      - main
     paths:
       - 'chat-api/lib/v5-phase2-talent-ids.json'
       - 'chat-api/lib/v5-build-v2-contract.js'
