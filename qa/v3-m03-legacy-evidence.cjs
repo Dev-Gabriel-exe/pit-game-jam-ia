@@ -55,4 +55,39 @@ m.save('route-only',{...m.load('empty'),objectType:'3D Box/Modelo'});
 m.hydrate('route-only',valid,'submitted');
 check(m.load('route-only').project===''&&m.load('route-only').objectType==='3D Box/Modelo','3D route-only draft preserved');
 check(m.load('fresh').project==='MeuJogo','Other sessions remain isolated');
+// Denied localStorage must not silently discard the student's technical report.
+const blockedWindow={},blockedStorage={
+ getItem:()=>{throw new Error('SecurityError')},
+ setItem:()=>{throw new Error('QuotaExceededError')}
+};
+vm.runInNewContext(fs.readFileSync('v3/student-mission-three.js','utf8'),
+ {window:blockedWindow,localStorage:blockedStorage,console},{timeout:3000});
+const blocked=blockedWindow.PIT_STUDENT_MISSION_THREE;
+check(blocked.save('offline',initial)===false,'Denied storage write reports failure');
+check(blocked.load('offline').project===initial.project,'Denied storage preserves in-tab project');
+check(blocked.load('another').project==='','Volatile fallback isolated by session');
+check(blocked.load('offline').checks.length===3,'Manual checkboxes survive denied storage in tab');
+check(blocked.load('offline').objectType==='3D Box/Modelo','3D route survives denied storage in tab');
+const offlineContext={session:'offline',phase:'practice',status:'draft',preview:true,
+ idea:{title:'Jogo de Teste',genre:'Puzzle'},canSubmit:true};
+const offlinePractice=blocked.render(offlineContext);
+check(offlinePractice.includes('Não foi possível salvar neste navegador'),'Practice warns of denied storage');
+check(offlinePractice.includes('Copie sua ficha antes de sair'),'Practice offers a manual fallback');
+check(!offlinePractice.includes('registros e verificações · rascunho salvo neste navegador'),
+ 'Practice never claims denied draft persisted');
+check(offlinePractice.includes('Confira o aviso de salvamento'),'Practice explains save warning');
+const offlineReview=blocked.render({...offlineContext,phase:'review'});
+check(offlineReview.includes('O rascunho não foi salvo no navegador'),'Review warns of denied storage');
+check(offlineReview.includes('Copie o texto da ficha'),'Review provides copyable evidence');
+check(blocked.render({...offlineContext,session:'new'}).includes('comece a preencher para salvar'),
+ 'New unsaved project is not falsely marked saved');
+blocked.hydrate('recovered',valid,'approved');
+check(blocked.load('recovered').project===initial.project,'Recovery works with denied storage');
+check(blocked.load('recovered').checks.length===0,'Recovery never attests manual Preview checks');
+blocked.save('local-only',{...initial,project:'Projeto local'});
+blocked.hydrate('local-only',valid,'approved');
+check(blocked.load('local-only').project==='Projeto local','Approved remote evidence does not replace volatile draft');
+check(m.save('persistent',initial)===true,'Writable storage reports success');
+check(m.render({...offlineContext,session:'persistent'}).includes('rascunho salvo neste navegador'),
+ 'Persisted project still displays saved state');
 console.log('PASS: '+count+' M03 legacy recovery assertions; no real student data, editor or browser used.');
