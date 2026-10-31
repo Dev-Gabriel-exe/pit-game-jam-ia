@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T18:21:50.577Z",
+  "last_completed_at": "2026-10-31T19:21:20.612Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08: corrigida preservação indevida dos três testes de Preview ao trocar rota HUD/Puzzle/3D; testes de regressão adicionados. CI estática do código cf3a198 SUCCESS; primeira versão do teste falhou por mock incompleto, corrigida em 9dfa2d6. Aguardar CI do último SHA e continuar auditoria das 20 faces. GDevelop GUI/HDMI/celular/humanos NOT_RUN.",
+  "priority": "M09: mudança de resultado agora invalida decisão anterior e terceira confirmação; mudança de decisão invalida terceira confirmação. 6 cenários V8 + DOM event PASS; JS parse PASS. CI do novo SHA ainda NÃO CONFIRMADA. Próxima auditoria transversal M10 e confirmar CI. GDevelop GUI, HDMI, celular físico e playtest humano NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M08-ROUTE-SWITCH-PREVIEW-RETEST",
+  "last_task": "V4-AUD-M09-OUTCOME-DECISION-RECONFIRM",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2929,49 +2929,55 @@
       ],
       "tests": "M07 latest static CI 41223614974 SUCCESS and Browser QA 41223614966 SUCCESS. M08 code-only static CI 41228967656 SUCCESS. New M08 regression initially failed CI 41228981478 because fake DOM checkbox lacked addEventListener; corrected mock in 9dfa2d6, CI pending. Browser QA on latest SHA pending. GDevelop GUI, physical HDMI/mobile and human testing NOT_RUN.",
       "notes": "M08 route switch previously retained old three Preview confirmations. Added selectRoute to reset checks only on actual change; synced DOM checkboxes and visible retest notice. No main, production or student data writes. Master 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M09-OUTCOME-DECISION-RECONFIRM",
+      "completed_at": "2026-10-31T19:21:20.612Z",
+      "commit": "1a4b6031e4ca3fc56566ae9e92c23e4643d9b8ac",
+      "files": [
+        "v3/student-mission-nine.js",
+        "qa/v3-m09-storage-failsafe.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Direct V8 6/6 core cases PASS; DOM reset simulation PASS; both JS files parse PASS. Prior M08 static QA 41229050778 and Browser QA 41229050819 completed SUCCESS. New M09 GitHub CI NOT_CONFIRMED; GDevelop GUI/HDMI/mobile/peer NOT_RUN.",
+      "notes": "M09 outcome changes clear obsolete decision and third manual attestation; decision changes clear third attestation. UI radios and checkbox synced; no fictitious peer tests. Roadmap 54/59 unchanged; no main/production/student data changes."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M08-ROUTE-SWITCH-PREVIEW-RETEST",
-    "status": "CODE_AND_TEST_COMMITTED_CI_PENDING",
-    "updated_at": "2026-10-31T18:21:50.577Z",
-    "code_commit": "cf3a1986286b4037050b7b687d8056ed18e2e5f6",
+    "task": "V4-AUD-M09-OUTCOME-DECISION-RECONFIRM",
+    "status": "CODE_TEST_DOC_COMMITTED_CI_PENDING",
+    "updated_at": "2026-10-31T19:21:20.612Z",
+    "code_commit": "8fb90213aeb28b5228e9d571edc2e7884da0492d",
     "regression_commits": [
-      "7fb3caa5bc0d033537095f075d6ba2026757b645",
-      "9dfa2d6cc17ce4c714cd6342eb0111b5dedc83c6"
+      "1a4b6031e4ca3fc56566ae9e92c23e4643d9b8ac"
     ],
-    "documentation_commit": "cec7a94df3e16a6d41d0a4539ee81319ae542536",
+    "documentation_commit": "cd6b86c55747c6a72653558c6fcbceafc4587122",
     "tests": [
       {
-        "name": "M07 preceding SHA static and browser QA",
+        "name": "Previous M08 static-qa and browser-qa",
         "result": "PASS",
         "runs": [
-          41223614974,
-          41223614966
-        ]
+          41229050778,
+          41229050819
+        ],
+        "details": "GitHub workflow jobs completed/success"
       },
       {
-        "name": "M08 code-only static QA",
+        "name": "M09 new direct V8 logic + DOM interaction",
         "result": "PASS",
-        "run": 41228967656
+        "details": "6/6 core logic cases plus radio/checkbox UI reset with blocked storage; both JS files parse"
       },
       {
-        "name": "M08 new regression first attempt",
-        "result": "FAIL_FIXED_MOCK",
-        "run": 41228981478,
-        "details": "Mock checkbox lacked addEventListener; corrected in 9dfa2d6."
-      },
-      {
-        "name": "M08 updated regression static and browser QA",
+        "name": "M09 new Node regression and browser QA",
         "result": "PENDING",
-        "details": "Await Actions for latest test commit; no claim of pass."
+        "details": "Regression committed and wired into existing static-qa workflow; GitHub Actions status for latest SHA not yet verified"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar CI da regressão M08 e continuar auditoria pedagógica transversal professor/aluno; manter notas privadas recolhidas e estética em segundo plano.",
-    "blocker": "Physical and human acceptance still pending; no automatic signoff."
+    "next_task": "Confirmar CI do M09 e auditar M10: troca de rota local/web/gd.games, evidências, confirmações manuais e sincronização professor/aluno.",
+    "blocker": "Manual GDevelop GUI, HDMI, physical mobile and human peer-test not executed; no automatic sign-off."
   }
 }
