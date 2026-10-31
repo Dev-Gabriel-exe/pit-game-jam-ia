@@ -613,3 +613,14 @@ O teste de projeção, o contrato do roster e o teste F.3 de espectador passaram
 **Falha intermediária corrigida, sem esconder o histórico:** [run M10 41181391178](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41181391178) teve 3/4 jobs aprovados; `spectator-camera-webgl` falhou em `page.screenshot` após timeout de 25s esperando captura de canvas WebGL animado. O log mostra a falha em `qa/v5-m10-spectator-browser.cjs:86`, **não** uma falha de câmera/KO ou de talentos. Commit `01c6fc3b` substituiu apenas a captura Playwright por `Page.captureScreenshot` via CDP, já usado pelo teste de legibilidade. A reexecução no novo SHA passou e produziu evidência. Não foi alterado o motor.
 
 **Resultado limitado:** modal acessível em Chromium e QA WebGL verificados; **não** significa certificação de leitor de tela NVDA/VoiceOver, legibilidade humana ou G.2 em PCs físicos. A mesma Missão 10 continua aguardando essas homologações e revisão de balanceamento. H.1/H.2, V3, main, merge, deploy, XP, notas, turmas, contas e aprovações reais seguem intocados.
+
+
+## H.3/M10 — auditoria de papéis acessíveis no Chromium (31/10/2026)
+
+**Uma missão técnica, ainda em validação:** após reler ROADMAP D–I, E/F/G/H.0/H.3 e consultar commits/Actions da branch, foi confirmado que [M10 WebGL 41181560447](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41181560447), QA geral 41181560437 e Browser QA 41181560438 passaram no SHA funcional anterior `01c6fc3b`. HEAD inicial da rodada: `225ad4324e6f5b26f9966e000a24dfb542607095`.
+
+**Incremento entregue:** commit `336cac17c4325a68618a42d8f818dffc238eb705` altera exclusivamente `qa/v5-m10-legibility-browser.cjs` para verificar a superfície acessível da M10 em Chromium (papel/nome do diálogo imersivo, botão de fechamento, exclusão da navegação e do link de fundo, status de pausa anunciado e restauração dos papéis ao fechar). Os resultados são registrados em `report.accessibility` no JSON do artefato existente. O teste anterior verificava `inert` no DOM e foco; este novo gate verifica também a descoberta por papéis acessíveis. **Não equivale a teste com NVDA/VoiceOver real.**
+
+**CI novo:** [run M10 WebGL 41185584927](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41185584927) disparado pelo commit; na primeira consulta, `final-roster` estava SUCCESS e os três jobs WebGL ainda IN_PROGRESS. **Não declarar aprovação antes de conferir `projector-legibility-webgl` e demais jobs.** Se houver falha, corrigir nesta mesma missão.
+
+**Próximo passo:** conferir o resultado e artefato JSON do CI; corrigir eventual falha na descoberta de papéis, depois continuar o teste de acessibilidade humana e a revisão do balanceamento M10. G.2 nos PCs físicos **não realizado**; H.1/H.2 reais, V3, main, merge, deploy, XP, notas, usuários, aprovações e turmas permanecem bloqueados. M5 5/10, M10 10/20, quatro classes KayKit e 120 talentos canônicos intocados.
