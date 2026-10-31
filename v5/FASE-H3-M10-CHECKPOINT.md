@@ -683,3 +683,19 @@ No SHA funcional `5b94724e9d70b7554c6ca6111df15de065eeb74d`, o [run M10 WebGL 41
 **Evidência CI:** [run 41211429486](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41211429486) **SUCCESS**, job `m10-fullstream-fictional` e suas quatro etapas: sintaxe, M10 com 30 participantes e três espectadores passivos, ataques adversariais M5/M10 e regressão do motor M10. A primeira execução intermediária [41211383681](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41211383681) falhou por expectativa antiga no QA (esperava `replay divergente`, mas o novo validador corretamente rejeitava o estado inicial); a expectativa foi corrigida e o CI completo passou. Sem ocultar essa falha histórica.
 
 **Próximo passo:** revisar invariantes de vencedor/finalização e casos de snapshot malicioso com testes de replay, mantendo o feed como contrato fictício. Em paralelo ao planejamento, a homologação visual de nicks/overlays e balanceamento M10 permanece aberta. **G.2 nos PCs físicos não foi realizada; NVDA/VoiceOver humano e H.1/H.2 com alunos reais seguem bloqueados.** M5 5 talentos/10 pontos, M10 10/20, quatro KayKit, 120 talentos, câmera, arquibancadas, XP, notas, turmas, aprovações, V3, `main`, merge e deploy preservados.
+
+
+## H.3/M10 — invariantes de encerramento e snapshots adversariais H.2 (31/10/2026)
+
+**Missão única:** endurecer o contrato de recepção fictícia de quadros M10 sem autenticação, alunos, servidor ou alterações no combate. Branch exclusiva `feature/v5-arena-dos-criadores`; HEAD funcional `a291a7de00a3be7c5ab1a1b4d99736dc41605dfd`. Antes do incremento foram lidos ROADMAP D–I, checkpoints E/F/G/H.0/H.3, commits recentes e execuções GitHub Actions; nenhum merge ou deploy.
+
+**Mudanças:**
+- `v5/shared-arena-feed-h2-lab.js` — commit `0464947e895bb759699d5c96534f562352613fa4`: rejeita snapshot `ready` com eliminado, `running` sem sobrevivente e `finished` cujo vencedor não corresponde ao único sobrevivente ou está morto enquanto outros sobrevivem. Permite legitimamente final por limite de tempo com múltiplos vivos e empate por eliminação simultânea sem sobreviventes, conforme motor existente. Não tenta provar resultado criptograficamente: snapshots continuam **fictícios e não autenticados**.
+- `qa/v5-shared-arena-feed-h2.cjs` — commit `a291a7de00a3be7c5ab1a1b4d99736dc41605dfd`: injeta cinco snapshots inválidos (incluindo encerramento forjado) em M5 e M10, confirma que cursor/estado não avançam e cobre final sem sobreviventes como caso admitido pelo contrato.
+
+**CI no SHA funcional `a291a7de`:**
+- [H2 Shared Feed run 41215781053](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41215781053): **SUCCESS**, incluindo sintaxe, testes adversariais M5/M10 e liberação docente fictícia.
+- [M10 Fullstream run 41215780988](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41215780988): **SUCCESS**, 30 personagens fictícios, três receptores, reconexão/replay, motor M10 e regressão adversarial.
+- QA geral e browser disparados no mesmo SHA: [41215780981](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41215780981) e [41215780985](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41215780985); **ainda IN_PROGRESS na consulta**, não marcar aprovados sem confirmar.
+
+**Próximo passo na MESMA M10:** conferir os jobs gerais/browser, depois ampliar testes adversariais de reconexão e consistência de câmera/replay, revisar legibilidade de nicks e balanceamento com builds mistas. A validação G.2 nos PCs físicos **não foi realizada**; integração H.1/H.2 com alunos reais, autenticação, XP, aprovações, notas, usuários, turmas, V3, `main`, merge e deploy continuam bloqueados. Preservados M5 5 talentos/10 atributos, M10 10 talentos/20 atributos, quatro KayKit, 120 talentos, câmera e arquibancadas.
