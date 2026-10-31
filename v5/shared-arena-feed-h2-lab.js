@@ -182,12 +182,16 @@
   }
   function accept(next){
    if(!connected)reject('receptor desconectado');
-   validateNext(next);
+   // Validate the packet's scope and shape even when it arrives late.
+   // Delayed valid frames are routine on a reordered transport: they must
+   // never roll back the viewer or be rejected as forged clock/camera state.
+   validateFrame(next,scope);
+   if(next.seq<lastSeq)return false;
    if(next.seq===lastSeq){
     if(JSON.stringify(next)!==JSON.stringify(frame))reject('replay divergente');
     return false; // Duplicate delivery is idempotent.
    }
-   if(next.seq<lastSeq)return false;
+   validateNext(next); // Cross-frame invariants apply only to newer packets.
    if(next.seq!==lastSeq+1){needSnapshot=true;reject('lacuna detectada; solicitar snapshot');}
    frame=freeze(next);lastSeq=next.seq;needSnapshot=false;return true;
   }
