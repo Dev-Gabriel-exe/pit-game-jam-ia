@@ -59,4 +59,26 @@ invalid.forEach((raw,i)=>{
 });
 check(m.validate('fresh').ok,'Recovered complete evidence validates');
 check(m.evidence('fresh')===valid,'Recovered evidence is lossless');
+// Storage may be unavailable (private mode/quota/security policy). Never claim
+// the draft was saved; preserve it in this tab and warn before the student leaves.
+const blockedWindow={};
+const blockedStorage={
+ getItem:()=>null,
+ setItem:()=>{throw new Error('QuotaExceededError')}
+};
+vm.runInNewContext(fs.readFileSync('v3/mission-one.js','utf8'),
+ {window:blockedWindow,localStorage:blockedStorage,console},{timeout:3000});
+const blocked=blockedWindow.PIT_MISSION_ONE;
+blocked.hydrate('offline',valid,'approved');
+check(blocked.load('offline').title===data.title,'Storage failure keeps the draft in memory');
+check(blocked.load('offline').hero===data.hero,'Storage failure preserves all fields');
+check(!blocked.load('another').title,'Volatile fallback remains isolated by session');
+const offlineHtml=blocked.render({session:'offline',phase:'practice',status:'draft',preview:true});
+check(offlineHtml.includes('Não foi possível salvar neste navegador'),'Student sees explicit storage failure');
+check(offlineHtml.includes('Copie sua ficha antes de sair'),'Student sees safe fallback action');
+check(!offlineHtml.includes('rascunho salvo neste navegador'),'Student is not falsely told draft persisted');
+const emptyHtml=blocked.render({session:'new',phase:'practice',status:'draft',preview:true});
+check(emptyHtml.includes('comece a preencher para salvar'),'New draft is not falsely marked as saved');
+const savedHtml=m.render({session:'source',phase:'practice',status:'draft',preview:true});
+check(savedHtml.includes('rascunho salvo neste navegador'),'Persisted draft still shows correct saved status');
 console.log('PASS: M01 legacy evidence '+count.n+' checks');
