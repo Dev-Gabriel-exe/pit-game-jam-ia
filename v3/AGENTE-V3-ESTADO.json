@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T00:21:43.504Z",
+  "last_completed_at": "2026-10-31T01:18:31.000Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar Browser QA do commit ba385961; auditar recuperação das evidências antigas da M01 e concluir revisão pedagógica professor/aluno antes da estética.",
+  "priority": "Concluir auditoria pedagógica real das 20 faces professor/aluno (P0→P1→P2), confirmar CI Node/Chrome da M01 e verificar regras de projeção HDMI sem teste humano inventado; estética só depois.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M02-LEGACY-EVIDENCE-GUARD",
+  "last_task": "V4-M01-LEGACY-EVIDENCE-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2709,12 +2709,25 @@
       ],
       "tests": "Static QA run 41149705894 SUCCESS, M02 negative cases and max 750 chars; Browser QA run 41149705879 pending",
       "notes": "M02 legacy flattened/partial/duplicated evidence cannot auto-fill; local drafts prevail even if approved; M03 prior Browser QA confirmed. No live student or physical/editor tests."
+    },
+    {
+      "id": "V4-M01-LEGACY-EVIDENCE-GUARD",
+      "completed_at": "2026-10-31T01:18:31.000Z",
+      "commit": "7f49adb1622adbe5e2fc0753a1111e6184e2c4a6",
+      "files": [
+        "v3/mission-one.js",
+        "qa/v3-m01-legacy-evidence.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "49 checks from committed M01 QA passed in V8 Node-compatible shims; 19 direct functional checks passed. Native Node/Chrome CI on new M01 commit NOT_CONFIRMED. Previous M02 Browser QA 41149705879 SUCCESS. HDMI/GDevelop GUI/physical mobile/human NOT_RUN.",
+      "notes": "M01 strict ordered seven-line recovery, genre and field bounds, malformed/flattened/duplicated records rejected. Local drafts win even if approved/submitted. Main, production and real student data untouched. V3 master roadmap remains 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M02-LEGACY-EVIDENCE-GUARD",
+    "task": "V4-M01-LEGACY-EVIDENCE-GUARD",
     "status": "in_progress",
-    "updated_at": "2026-10-31T00:21:43.504Z",
+    "updated_at": "2026-10-31T01:18:31.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2835,9 +2848,12 @@
       "141adfd2f97a973cdca5582159a2155e4a3c2406",
       "3aed763a6e5eaa347159364cd3703ada281bbab7",
       "057a603fc9a6ac72cb943fd62a015aa872310e28",
-      "ba385961d4b2f3cd1e62182013532788f3722611"
+      "ba385961d4b2f3cd1e62182013532788f3722611",
+      "cd2f6438f61d9ca4c64e3710500200769d00d6f6",
+      "6e2710716118c227a77780cc3c72d59faf623f98",
+      "aae502a3b4935edcf57cb2de19fc6e7972495704"
     ],
-    "documentation_commit": "b7b3844d485c99276792188e189b12877d380e82",
+    "documentation_commit": "7f49adb1622adbe5e2fc0753a1111e6184e2c4a6",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3794,13 +3810,24 @@
       {
         "name": "GDevelop GUI, HDMI, physical mobile, observed peer playtest",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M02 Browser QA confirmed",
+        "run_id": 41149705879,
+        "sha": "ba385961d4b2f3cd1e62182013532788f3722611",
+        "result": "SUCCESS: Chrome job 124383040811 all steps passed; verified this run"
+      },
+      {
+        "name": "M01 strict evidence recovery and draft precedence",
+        "sha": "aae502a3b4935edcf57cb2de19fc6e7972495704",
+        "result": "PASS: 19 direct V8 checks + 49 assertions in committed QA source under V8 Node-compatible shims; native Node/Chrome GitHub Actions for M01 NOT_CONFIRMED"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar CI M10 no commit 2d69796; depois M03 parseEvidence/hydrate e testes, seguindo M01/M02.",
-    "blocker": "Dados legados com quebras de linha removidas não podem ser reconstruídos com segurança. CI M10 nova não confirmada; HDMI, GDevelop GUI, celular físico e playtest humano NOT_RUN."
+    "next_task": "Confirmar GitHub Actions Node/Chrome do SHA aae502a3; retomar auditoria pedagógica cruzada M01–M10 professor/aluno, corrigindo lacunas reais antes de estética. Bloqueios finais 5/59 exigem homologação autorizada.",
+    "blocker": "CI nova M01 não confirmada; dados históricos sem quebras não são reconstruíveis com segurança; GDevelop GUI, HDMI físico, celular físico e playtest humano NOT_RUN. Nenhum dado real de turma acessado."
   }
 }
