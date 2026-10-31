@@ -1,0 +1,75 @@
+name: V5 — Talentos Cinematográficos M5/M10 QA
+on:
+  push:
+    branches: [feature/v5-talentos-cinematograficos-20261031, main]
+    paths:
+      - 'v5/talent-motion-cinematic.js'
+      - 'v5/talent-vfx.js'
+      - 'v5/talent-sprites.js'
+      - 'v5/arena-three.js'
+      - 'v5/arena-lab.js'
+      - 'v5/arena-lab.html'
+      - 'v5/duel-window-lab.html'
+      - 'v5/duel-3d-lab.js'
+      - 'v5/teacher-arena-lab.js'
+      - 'v5/teacher-arena-lab.html'
+      - 'qa/v5-talent-cinematic.cjs'
+      - 'qa/v5-talent-cinematic-browser.cjs'
+      - 'qa/v5-talent-vfx.cjs'
+      - 'qa/v5-talent-sprites.cjs'
+      - 'qa/v5-talent-sprites-browser.cjs'
+      - '.github/workflows/v5-talentos-cinematograficos-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cinematic-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and 120-talent route contract
+        run: |
+          node --check v5/talent-motion-cinematic.js
+          node --check v5/talent-sprites.js
+          node --input-type=module --check < v5/arena-three.js
+          node --check qa/v5-talent-cinematic.cjs
+          node qa/v5-talent-vfx.cjs
+          node qa/v5-talent-sprites.cjs
+          node qa/v5-talent-choreography.cjs
+          node qa/v5-talent-cinematic.cjs
+      - name: Verify battle engine and rewards are unchanged
+        run: |
+          node qa/v5-phase2-expansion.cjs
+          node qa/v5-progressao-completa-10-missoes.cjs
+  cinematic-webgl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
+          npx playwright install --with-deps chromium
+      - name: Verify cinematic 3D FX with real GLBs and clean scene lifecycle
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-v5-cinematic.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-talent-cinematic-browser.cjs
+          node qa/v5-talent-sprites-browser.cjs
+          node qa/v5-talent-vfx-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v5-talentos-cinematograficos
+          path: qa/v5-arena-lab-sprites-e6.png
+          retention-days: 7
+          if-no-files-found: ignore
