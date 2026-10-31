@@ -59,6 +59,36 @@ for(const mission of [5,10]){
   fighters:initial.fighters}),/ressurreição não permitida/);
  assert.equal(deathProbe.cursor,1,'rejected resurrection does not advance cursor');
 
+ // Adversarial full snapshots: a reconnect cannot bypass terminal invariants.
+ const snapshotProbe=F.createReceiver(publisher.scope);
+ snapshotProbe.accept(initial);
+ const dead=f=>({...f,hp:0,alive:false});
+ const oneAlive=initial.fighters.map((f,i)=>i===0?f:dead(f));
+ const twoAlive=initial.fighters.map((f,i)=>i<2?f:dead(f));
+ const allDead=initial.fighters.map(dead);
+ const future=(changes={})=>({...initial,seq:9,logicalTime:2,
+  status:'finished',winner:initial.fighters[0].id,...changes});
+ const forgedSnapshots=[
+  {packet:{...initial,fighters:[dead(initial.fighters[0]),...initial.fighters.slice(1)]},
+   reason:/partida pronta contém eliminado/},
+  {packet:future({status:'running',winner:null,fighters:allDead}),
+   reason:/partida ativa sem sobreviventes/},
+  {packet:future({fighters:oneAlive,winner:initial.fighters[1].id}),
+   reason:/vencedor incompatível com sobreviventes/},
+  {packet:future({fighters:twoAlive,winner:initial.fighters[2].id}),
+   reason:/vencedor incompatível com sobreviventes/},
+  {packet:future({fighters:oneAlive,winner:initial.fighters[0].id,
+   camera:{...initial.camera,revision:-1}}),reason:/plano cinematográfico inválido/},
+ ];
+ for(const {packet,reason} of forgedSnapshots){
+  assert.throws(()=>snapshotProbe.restore(packet),reason);
+  assert.equal(snapshotProbe.cursor,0,'rejected snapshot must not advance cursor');
+  assert.deepEqual(snapshotProbe.snapshot,initial,'rejected snapshot must not mutate viewer');
+ }
+ // Simultaneous last eliminations are legal at the engine time limit: do not
+ // impose a fictitious surviving champion when all HP values are zero.
+ assert.equal(F.validateFrame(future({fighters:allDead}),publisher.scope),true);
+
  assert.throws(()=>studentA.accept({...initial,status:'running'}),/primeiro pacote deve estar pronto/);
  const forged={...initial,studentId:'42'};
  assert.throws(()=>studentA.accept(forged),/fora da partida/);
