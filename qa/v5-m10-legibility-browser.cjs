@@ -54,12 +54,19 @@ function within(inner,outer,tolerance=3){
   // Inspect the role-based accessibility surface, not just DOM inert flags.
   // This checks Chromium's exposed roles/names; NVDA/VoiceOver still require
   // manual validation on the actual classroom hardware.
-  const a11yOpen={
-   dialog:await page.getByRole('dialog',{name:'Arena de combate ampliada'}).count(),
-   backgroundNav:await page.getByRole('navigation',{name:'Simulação de marco da oficina'}).count(),
-   backgroundLink:await page.getByRole('link',{name:/Seleção de heróis/}).count(),
-   closeButton:await page.getByRole('button',{name:/Fechar arena/}).count()
-  };
+  // Playwright role locators can include DOM nodes that are inert; inspect
+  // Chromium's actual accessibility tree and ignore its excluded nodes.
+  const axClient=await page.context().newCDPSession(page);
+  async function exposedRoles(){
+   const {nodes}=await axClient.send('Accessibility.getFullAXTree');
+   const count=(role,name)=>nodes.filter(n=>!n.ignored&&n.role?.value===role&&
+    (name===undefined||n.name?.value===name)).length;
+   return {dialog:count('dialog','Arena de combate ampliada'),
+    backgroundNav:count('navigation','Simulação de marco da oficina'),
+    backgroundLink:count('link','← Seleção de heróis'),
+    closeButton:count('button','✕ Fechar arena')};
+  }
+  const a11yOpen=await exposedRoles();
   assert.deepEqual(a11yOpen,{dialog:1,backgroundNav:0,backgroundLink:0,closeButton:1},
    'Immersive dialog must expose itself but not background navigation to accessibility roles');
   const liveSnapshot=await page.locator('#battleAnnouncement').ariaSnapshot();
@@ -181,12 +188,8 @@ function within(inner,outer,tolerance=3){
   assert.equal(restored.intro,false,'Intro must be interactive after closing');
   assert.equal(restored.side,false,'Sidebar must be interactive after closing');
   assert.equal(restored.footer,false,'Footer must be interactive after closing');
-  const a11yClosed={
-   dialog:await page.getByRole('dialog',{name:'Arena de combate ampliada'}).count(),
-   backgroundNav:await page.getByRole('navigation',{name:'Simulação de marco da oficina'}).count(),
-   backgroundLink:await page.getByRole('link',{name:/Seleção de heróis/}).count()
-  };
-  assert.deepEqual(a11yClosed,{dialog:0,backgroundNav:1,backgroundLink:1},
+  const a11yClosed=await exposedRoles();
+  assert.deepEqual(a11yClosed,{dialog:0,backgroundNav:1,backgroundLink:1,closeButton:0},
    'Closing the immersive arena must restore background accessibility roles');
   report.accessibility.closed=a11yClosed;
   await page.locator('#expandStage').press('Enter');
