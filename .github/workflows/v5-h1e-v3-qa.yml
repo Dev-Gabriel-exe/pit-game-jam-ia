@@ -1,7 +1,7 @@
 name: V5 H1e V3 Sunday Integration QA
 on:
   push:
-    branches: [feature/v5-h1e-v3-integracao-domingo]
+    branches: [feature/v5-h1e-v3-integracao-domingo, feature/v5-homologacao-20261031]
     paths:
       - 'v3/v5-h1e-*'
       - 'v3/app.js'
@@ -11,6 +11,9 @@ on:
       - 'v5/duel-lobby-d1c.js'
       - 'v5/duel-teacher-d1c.js'
       - 'qa/v5-h1e-v3-browser.cjs'
+      - 'index.html'
+      - 'v5/duel-window-lab.html'
+      - 'v5/teacher-arena-lab.html'
       - '.github/workflows/v5-h1e-v3-qa.yml'
   workflow_dispatch:
 permissions:
@@ -32,6 +35,8 @@ jobs:
           node --check v5/duel-lobby-d1c.js
           node --check v5/duel-teacher-d1c.js
           node --check qa/v5-h1e-v3-browser.cjs
+          node --check v5/duel-invitations-lab.js
+          node --check v5/teacher-arena-release-lab.js
       - name: Install headless Chromium and locally mapped Three.js
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
