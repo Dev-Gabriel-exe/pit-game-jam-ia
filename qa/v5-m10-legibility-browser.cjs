@@ -59,6 +59,11 @@ function within(inner,outer,tolerance=3){
      spotlightText:box('#spotlightText'),legend:box('.battle-legend'),
      telemetry:box('#talentTelemetry'),talentText:box('#talentLast'),
      controls:box('.controls'),canvas:box('#arenaStage canvas'),
+     toolbarItems:[...document.querySelectorAll('.controls > button:not([hidden]), .controls > .camera-director-status')].map(el=>{
+      const r=el.getBoundingClientRect(),s=getComputedStyle(el);
+      return {id:el.id||'directorStatus',left:r.left,right:r.right,top:r.top,bottom:r.bottom,
+       width:r.width,height:r.height,visible:s.display!=='none'&&s.visibility!=='hidden'};
+     }),
      talentTruncated:!!t&&t.scrollWidth>t.clientWidth+2,
      nicknamesVisible:[...document.querySelectorAll('.arena-nickname')].filter(
       el=>getComputedStyle(el).display!=='none').length,
@@ -69,6 +74,20 @@ function within(inner,outer,tolerance=3){
    assert(metric.stage.width>=700&&metric.stage.height>=280,
     'Insufficient usable stage for 30 KayKits: '+JSON.stringify(metric.stage));
    assert(within(metric.canvas,metric.stage),'Canvas must fit its stage');
+   // Prior 1366×768 immersive stage was only 342px; require a measurable gain.
+   const minimumHeight=screen.width===1366?500:800;
+   assert(metric.stage.height>=minimumHeight,
+    'Compact immersive controls must preserve '+minimumHeight+'px stage height: '+JSON.stringify(metric.stage));
+   assert(metric.controls.height<=100,
+    'Desktop immersive toolbar must fit two compact rows: '+JSON.stringify(metric.controls));
+   assert(metric.toolbarItems.length===12,
+    'All 11 commands and director status must remain available in immersive mode');
+   for(const item of metric.toolbarItems){
+    assert(item.visible&&item.height>=32&&item.width>=90,
+     'Toolbar command inaccessible: '+JSON.stringify(item));
+    assert(within(item,metric.controls),
+     'Toolbar command outside compact controls: '+JSON.stringify(item));
+   }
    for(const key of ['spotlight','legend','telemetry']){
     assert(metric[key]?.visible,key+' must be visible in projector mode');
     assert(within(metric[key],metric.wrap),key+' must remain inside the stage');
