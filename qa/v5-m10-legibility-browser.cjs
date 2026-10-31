@@ -113,6 +113,41 @@ function within(inner,outer,tolerance=3){
     fs.writeFileSync(filename,Buffer.from(capture.data,'base64'));
    }finally{await cdp.detach();}
   }
+  // Immersive M10 must not send keyboard users to invisible page navigation.
+  // Test both wrap directions, Escape, and focus restoration on the same WebGL run.
+  const focusEnds=await page.evaluate(()=>{
+   const theater=document.querySelector('.theater');
+   const selector='button:not(:disabled):not([hidden]),select:not(:disabled):not([hidden]),a[href],input:not(:disabled):not([hidden]),[tabindex]:not([tabindex="-1"])';
+   const stops=[...theater.querySelectorAll(selector)].filter(el=>
+    !el.closest('[hidden]')&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
+   return {first:stops[0]?.id,last:stops.at(-1)?.id,count:stops.length,
+    modal:theater.getAttribute('aria-modal'),role:theater.getAttribute('role')};
+  });
+  assert(focusEnds.count>=8&&focusEnds.first&&focusEnds.last,
+   'Expected usable keyboard controls in expanded arena: '+JSON.stringify(focusEnds));
+  assert.equal(focusEnds.modal,'true','Expanded arena must expose modal semantics');
+  assert.equal(focusEnds.role,'dialog','Expanded arena must expose dialog semantics');
+  await page.locator('#'+focusEnds.last).focus();
+  await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),focusEnds.first,
+   'Tab from last immersive control must wrap to first, not background page');
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),focusEnds.last,
+   'Shift+Tab from first immersive control must wrap to last');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('arena-immersive')),false,
+   'Escape must close immersive arena');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'expandStage',
+   'Closing immersive arena must restore focus to its toggle');
+  assert.equal(await page.locator('.theater').getAttribute('aria-modal'),null,
+   'Modal semantics must be removed after closing');
+  await page.locator('#expandStage').press('Enter');
+  assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('arena-immersive')),true,
+   'Keyboard Enter must reopen immersive arena');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'expandStage');
+  report.keyboard={...focusEnds,tabWrap:true,shiftTabWrap:true,escapeRestoresFocus:true,enterReopens:true};
+  fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\\n');
   assert.deepEqual(errors,[],'Chromium errors: '+errors.join(' | '));
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
   console.log('PASS M10 projector/desktop readability gates: '+JSON.stringify(
