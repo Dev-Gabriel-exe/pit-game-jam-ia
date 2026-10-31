@@ -68,6 +68,11 @@ function within(a,b,gap=3){
      talentFx:+stage.dataset.v5TalentFxEvents,
      spriteFx:+stage.dataset.v5SpriteVisualEvents,
      spriteDropped:+stage.dataset.v5SpriteVisualDropped,
+     cueTypes:Object.fromEntries(['ativo','passivo','reativo'].map(kind=>{
+      const suffix=kind[0].toUpperCase()+kind.slice(1);
+      return [kind,{rendered:Number(stage.dataset['v5TalentFxRendered'+suffix]),
+       dropped:Number(stage.dataset['v5TalentFxDropped'+suffix])}];
+     })),
      cue:stage.dataset.v5TalentCueLast,style:stage.dataset.v5TalentCueStyle,
      camera:stage.dataset.v5CameraShot,alive:+document.querySelector('#aliveCount').textContent.match(/\d+/)?.[0],
      stage:box(stage),
@@ -81,6 +86,11 @@ function within(a,b,gap=3){
    assert.match(data.cue,/^(warrior|mage|hunter|guardian):[A-Z][0-9]{2}$/);
    assert(data.style,'M10 talent must select a visual motif');
    assert(Number.isFinite(data.spriteDropped)&&data.spriteDropped>=0);
+   assert.equal(Object.values(data.cueTypes).reduce((n,t)=>n+t.rendered,0),data.talentFx,
+    'Rendered cue-type totals must equal genuine visual events');
+   assert.equal(Object.values(data.cueTypes).reduce((n,t)=>n+t.dropped,0),
+    Number(await stage.getAttribute('data-v5-talent-fx-dropped')),
+    'Dropped cue-type totals must match the visual budget counter');
    for(let i=0;i<data.names.length;i++){
     const nick=data.names[i];
     assert(within(nick,data.stage),'Nickname outside stage at '+label+': '+nick.id);
@@ -108,6 +118,18 @@ function within(a,b,gap=3){
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.finished,null,{timeout:240000});
   assert(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner?.id));
   assert.equal(Number(await stage.getAttribute('data-v5-spectators')),29);
+  const finalTypes=await page.evaluate(()=>{
+   const d=document.querySelector('#arenaStage').dataset;
+   return Object.fromEntries(['ativo','passivo','reativo'].map(kind=>{
+    const suffix=kind[0].toUpperCase()+kind.slice(1);
+    return [kind,{rendered:Number(d['v5TalentFxRendered'+suffix]),
+     dropped:Number(d['v5TalentFxDropped'+suffix])}];
+   }));
+  });
+  report.finalCueTypes=finalTypes;
+  assert(finalTypes.ativo.rendered>0,'No active talent visual was rendered');
+  assert(finalTypes.passivo.rendered>0,'No passive proc visual was rendered');
+  assert(finalTypes.reativo.rendered>0,'No reactive proc visual was rendered');
   report.result={finished:true,spectators:29,winnerClass:await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner?.klass)};
   // Exit the accessible immersive dialog before interacting with the background mission selector.
   await page.keyboard.press('Escape');
@@ -121,6 +143,6 @@ function within(a,b,gap=3){
   assert.deepEqual(errors,[],'Uncaught browser errors: '+errors.join(' | '));
   fs.writeFileSync(PREFIX+'.json',JSON.stringify(report,null,2)+'\n');
   await cdp.detach();
-  console.log('PASS M10 mixed-build VFX timeline: 30 GLBs, 3 visual snapshots, sprite cues, 29 spectators and M5 rollback.');
+  console.log('PASS M10 mixed-build VFX timeline: 30 GLBs, 3 snapshots, genuine active/passive/reactive sprite cues, 29 spectators and M5 rollback.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
