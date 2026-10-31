@@ -21,24 +21,33 @@ function load(session){
  }catch{return initial();}
 }
 function save(session,draft){try{localStorage.setItem(key(session),JSON.stringify(draft))}catch{}}
+function parseEvidence(raw){
+ // Evidencias legadas achatadas nao permitem reconstruir campos com seguranca.
+ if(typeof raw!=='string')return null;
+ const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+ const labels=['Jogo: ','Gênero: ','Ação principal: ','Objetivo do jogador: ','Condição de conclusão: ','Feedback da conquista: '];
+ if(lines.length!==labels.length+1||lines[0]!=='MISSÃO 01 — O CHAMADO')return null;
+ const values=[];
+ for(let i=0;i<labels.length;i++){
+  if(!lines[i+1].startsWith(labels[i]))return null;
+  const value=lines[i+1].slice(labels[i].length);
+  if(value!==value.trim())return null;
+  values.push(value);
+ }
+ const [title,pair,action,objective,victory,feedback]=values;
+ const separator='; Protagonista: ',split=pair.indexOf(separator);
+ if(split<=0||pair.indexOf(separator,split+separator.length)!==-1)return null;
+ const genre=pair.slice(0,split),hero=pair.slice(split+separator.length);
+ const parsed={genre,title,hero,action,objective,victory,feedback};
+ if(!GENRES.includes(genre)||!genre)return null;
+ if(FIELDS.some(field=>parsed[field.id].trim().length<field.min||parsed[field.id].length>field.max))return null;
+ return parsed;
+}
 function hydrate(session,serverEvidence,status){
- if(!serverEvidence||typeof serverEvidence!=='string'||!serverEvidence.startsWith('MISSÃO 01 — O CHAMADO'))return;
- const stored=load(session),exists=Object.values(stored).some(x=>!!x);
- // A entrega aprovada/enviada é a versão oficial, não um rascunho antigo.
- if(exists&&status!=='approved'&&status!=='submitted')return;
- const lines=serverEvidence.split('\n'),parsed=initial();
- const take=prefix=>{const line=lines.find(x=>x.startsWith(prefix));return line?line.slice(prefix.length).trim():''};
- parsed.title=take('Jogo: ');
- const pair=take('Gênero: ');
- const split=pair.indexOf('; Protagonista: ');
- if(split>=0){parsed.genre=pair.slice(0,split);parsed.hero=pair.slice(split+'; Protagonista: '.length)}
- parsed.action=take('Ação principal: ');
- parsed.objective=take('Objetivo do jogador: ');
- parsed.victory=take('Condição de conclusão: ');
- parsed.feedback=take('Feedback da conquista: ');
- // Nunca substituir uma ficha local por uma evidencia remota incompleta ou truncada.
-  // Em uma entrega valida, todos os campos obrigatorios e o genero precisam sobreviver ao roundtrip.
-  if(GENRES.includes(parsed.genre)&&parsed.genre&&FIELDS.every(f=>parsed[f.id].trim().length>=f.min&&parsed[f.id].length<=f.max))save(session,parsed);
+ const parsed=parseEvidence(serverEvidence);if(!parsed)return;
+ // Rascunhos locais prevalecem, mesmo se a entrega remota ja foi aprovada.
+ if(Object.values(load(session)).some(Boolean))return;
+ save(session,parsed);
 }
 function stepProgress(draft){
  return [
@@ -229,5 +238,5 @@ function mount(ctx){
  }));
  update(root,ctx.session);
 }
-window.PIT_MISSION_ONE={render,mount,validate,evidence,load,hydrate,stepProgress};
+window.PIT_MISSION_ONE={render,mount,validate,evidence,load,hydrate,parseEvidence,stepProgress};
 })();
