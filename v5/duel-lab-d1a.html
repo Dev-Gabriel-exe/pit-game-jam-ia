@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Salão dos Desafios — PIT Game Jam IA V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./hero-lab-h1c.css"><link rel="stylesheet" href="./duel-lab-d1a.css">
+<script src="./duel-lab-d1a.js" defer></script>
+</head><body>
+<div class="backdrop" aria-hidden="true"></div>
+<header class="topbar"><a class="brand" href="./arena-lab.html?m10preview=1&amp;count=30"><span>⚔</span> PIT GAME JAM <small>V5</small></a><span class="top-label">SALÃO DOS DESAFIOS <span>CONFRONTOS 1 × 1</span></span><a class="back" href="./arena-lab.html?m10preview=1&amp;count=30">VER COLISEU ↗</a></header>
+<main>
+<div class="eyebrow">ARENA DE ESPERA · MISSÕES CONCLUÍDAS</div><h1>Desafie um <em>rival.</em></h1><p class="intro">Terminou antes dos colegas? Convide outro aluno disponível. Ele pode aceitar, recusar ou deixar o convite expirar.</p>
+<div class="notice" role="note"><strong>PRÉVIA FICTÍCIA INTERATIVA</strong> — alterne entre alunos simulados para testar convites. Nenhuma conta, turma, banco, nota ou XP real é acessado. A luta 3D compartilhada será conectada na próxima fase.</div>
+<div class="duel-layout"><section class="duel-main card">
+<div class="section-title"><span>01 / IDENTIDADE</span><h2>Quem está jogando?</h2><p>Envie um desafio e depois troque para o aluno convidado.</p></div>
+<div id="players" class="player-switches" aria-label="Personagens fictícios"></div>
+<div class="duel-strip"><div><span>MISSÃO</span><strong>03 — Forja de Recursos</strong></div><div><span>SITUAÇÃO</span><strong id="actorStatus">—</strong></div><div><span>DUELAR</span><strong id="actorAvailability">—</strong></div></div>
+<div class="section-title"><span>02 / CONVIDAR</span><h2>Rivais à espera</h2><p>Só aparecem colegas que terminaram a missão e aceitaram convites.</p></div><div id="peerList" class="duel-peers"></div>
+</section>
+<aside class="duel-aside"><section class="card">
+<div class="section-title"><span>03 / CORRESPONDÊNCIA</span><h2>Convites</h2></div>
+<div id="message" class="feedback" role="status" aria-live="polite">Selecione um colega para desafiá-lo.</div><div id="inbox" class="duel-inbox"></div><div class="divider"></div>
+<label class="duel-toggle"><input type="checkbox" id="availableToggle"> Estou disponível para duelos</label>
+<p class="muted">O professor pode interromper os duelos sem alterar a progressão.</p><label class="duel-toggle teacher-control"><input id="teacherToggle" type="checkbox" checked> Professor liberou os duelos (simulação)</label>
+</section><section class="card"><div class="section-title"><span>04 / HISTÓRICO</span><h2>Desafios recentes</h2></div><div id="duelHistory" class="duel-history"></div></section></aside></div>
+<section id="duelStage" class="duel-stage" hidden aria-live="polite"></section>
+<div class="footer">D.1a: convites 1×1 • sem combate compartilhado, ranking ou pontos • dez missões preservadas</div>
+</main></body></html>

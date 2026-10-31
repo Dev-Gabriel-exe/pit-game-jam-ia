@@ -530,7 +530,26 @@ function renderMain(){
  }}
  const status=$('missionStatus');if(status)status.title=TEACHER?'Conteúdo local; avançar slides não altera a missão liberada para os alunos.':'';
 }
-function renderAll(){renderJourney();renderRight();renderMain();}
+// H.1e: read-only V3→V5 integration contract. The classroom continues to be
+// authoritative: a submitted mission enables waiting-room eligibility but
+// only teacher-approved missions grant talent and attribute points.
+// A token provider is handed to the isolated staging bridge only in-memory;
+// no V3 teacher PIN is ever provided to the V5 integration.
+function syncV5Integration(){
+ const bridge=window.PIT_V5_H1E;
+ if(!bridge||typeof bridge.update!=='function')return;
+ bridge.update({
+  role,
+  stage:state.current_stage,
+  status:TEACHER?null:entry(state.current_stage)?.status||null,
+  approved:TEACHER?0:progress.filter(p=>p.status==='approved').length,
+  authenticated:TEACHER?!!teacherPin:!!studentSession?.token,
+  visualPreview,
+  tokenProvider:!TEACHER&&!visualPreview&&studentSession?.token?
+    ()=>studentSession?.token||null:null
+ });
+}
+function renderAll(){renderJourney();renderRight();renderMain();syncV5Integration();}
 function selectStage(n,fromServer=false){
  if(!Number.isInteger(n)||n<1||n>10||(!TEACHER&&n>state.current_stage))return;
  activeStage=n;activePhase='briefing';
@@ -727,6 +746,7 @@ async function poll(){
      else {$('roomState').textContent='NOVA ETAPA LIBERADA · '+state.current_stage;setToast('Nova etapa disponível. Termine seu registro antes de avançar.');}
     } else {renderRight();renderJourney();}
   }else{if(state.current_stage!==oldStage){renderAll();}}
+  syncV5Integration();
   if(!TEACHER&&window.PIT_ARCADE?.isOpen())window.PIT_ARCADE.refresh({activeStage,currentStage:state.current_stage,progress,studentName:studentSession?.name||'AVENTUREIRO'});
    if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
   if(rosterOpen)await loadRoster();
