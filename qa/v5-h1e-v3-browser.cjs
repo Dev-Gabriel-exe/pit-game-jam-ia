@@ -66,6 +66,12 @@ const BASE='http://127.0.0.1:8899';
   await F.locator('button[data-action=accept]').click();
   assert.equal(await F.locator('#duelStage').isVisible(),true);
   assert.equal(await F.locator('a[href="./duel-replay-d1b.html?demo=1"]').count(),1);
+  // V5 newest 3D duel is available inside the V3 hub, not a separate login.
+  await S.locator('[data-tab=duel3d]').click();
+  assert.equal(await S.locator('#pitV5HubFrame').getAttribute('src'),'./v5/duel-window-lab.html');
+  const D=S.frameLocator('#pitV5HubFrame');
+  await D.locator('#invite').waitFor();
+  assert.equal(await D.locator('#open').isDisabled(),true);
   await S.locator('[data-tab=arena]').click();
   await S.waitForFunction(()=>document.querySelector('#pitV5HubFrame')
    ?.contentWindow?.PIT_V5_D1B_VIEW?.snapshot.ready,
@@ -93,6 +99,13 @@ const BASE='http://127.0.0.1:8899';
   assert.equal(await TF.locator('#teacherStatus').textContent(),'LIBERADOS');
   await TF.locator('#pauseDuels').click();
   assert.equal(await TF.locator('#teacherStatus').textContent(),'PAUSADOS');
+  // Teacher collective gate is also inside the V3 experience.
+  await T.locator('[data-tab=collective]').click();
+  assert.equal(await T.locator('#pitV5HubFrame').getAttribute('src'),'./v5/teacher-arena-lab.html');
+  const C=T.frameLocator('#pitV5HubFrame');
+  await C.locator('#eligibleCount').waitFor();
+  assert.equal(await C.locator('#eligibleCount').innerText(),'30');
+  assert.equal(await C.locator('#release').isDisabled(),true);
   const teaching=await T.evaluate(()=>window.PIT_V5_H1E.snapshot);
   assert.equal(teaching.role,'teacher');
   assert.equal(teaching.tokenExposed,false);
@@ -107,17 +120,19 @@ const BASE='http://127.0.0.1:8899';
   }));
   await N.locator('#pitV5HubButton').click();
   assert.equal(await N.locator('[data-tab=duel]').isDisabled(),true);
+  assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),true);
   await N.evaluate(()=>window.PIT_V5_H1E.update({
    role:'student',stage:3,status:'submitted',approved:2,
    authenticated:true,visualPreview:false
   }));
   assert.equal(await N.locator('[data-tab=duel]').isDisabled(),false);
+  assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),false);
   assert.equal((await N.evaluate(()=>window.PIT_V5_H1E.snapshot)).connectedToStaging,false);
   await noPreview.context.close();
 
   assert(!urls.some(x=>/\/api\/|neon\.tech|vercel\.app/.test(x)),
    'Static preview must make ZERO real API calls');
   assert.deepEqual(errors,[],'Unexpected JS errors: '+errors.join(' | '));
-  console.log('PASS H1e V3 integration: 10 untouched missions, student hero + duel + 3D arena, fictitious teacher gate, submitted-only eligibility, no tokens or API.');
+  console.log('PASS staging V3+V5: 10 original missions, H1e forge, duels, new 3D duel and teacher collective gate; static-only, no PIN, token or API.');
  }finally{await browser.close()}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
