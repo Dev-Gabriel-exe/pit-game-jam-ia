@@ -14,7 +14,7 @@ assert(m&&typeof m.draftNotice==='function','draft warning must be exported');
 const id='fictional-a';
 const draft=m.load(id);
 draft.outcome='issue';draft.resolution='backlog';draft.checks=[0,1,2];
-for(const f of m.fields)draft[f.id]='Observação real simulada apenas para teste '+f.id;
+for(const f of m.fields)draft[f.id]=f.id==='peer'?'Colega A fictício':'Observação real simulada apenas para teste '+f.id;
 assert.equal(m.save(id,draft),false,'blocked storage must report failure');
 const recovered=m.load(id);
 assert.equal(recovered.outcome,'issue','outcome stays in current tab');
