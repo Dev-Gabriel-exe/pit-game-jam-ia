@@ -726,6 +726,10 @@ function close(){
 function move(step){index=Math.max(0,Math.min(slides.length-1,index+step));render();}
 function open(){
  if(!eligible())return;
+ // Close any teacher-only note BEFORE presenting; otherwise the HDMI mirror
+ // can expose an already-open practice note when the presentation ends.
+ if(window.PIT_PRIVATE_NOTES_GUARD?.closeAll)window.PIT_PRIVATE_NOTES_GUARD.closeAll();
+ else document.querySelectorAll('details.pit-private-teacher-notes[open]').forEach(note=>{note.open=false});
  slides=build();if(!slides.length)return;
  origin=document.activeElement;index=0;
  overlay=document.createElement('div');overlay.id='pitProjector';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Apresentação da missão atual');
