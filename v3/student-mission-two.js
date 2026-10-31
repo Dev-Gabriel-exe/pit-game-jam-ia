@@ -13,14 +13,29 @@ const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
 const parts=s=>String(s??'').split(/[,;·•\n]/).map(clean).filter(Boolean);
 const essential=d=>[clean(d.scene).length>=5,clean(d.mechanic).length>=5,clean(d.elements).length>=9&&parts(d.elements).length===3,clean(d.test).length>=12];
 const key=id=>'pit_v3_missao02_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+// Preserve in-tab edits if storage is denied; never describe volatile data as saved.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function load(session){
+ const id=key(session);
  try{
-  const obj=JSON.parse(localStorage.getItem(key(session))||'{}'),out=blank();
+  const obj=volatileDrafts.get(id)||JSON.parse(localStorage.getItem(id)||'{}'),out=blank();
   for(const f of FIELDS)if(typeof obj[f.id]==='string')out[f.id]=obj[f.id].slice(0,f.max);
   return out;
  }catch{return blank()}
 }
-function save(session,data){try{localStorage.setItem(key(session),JSON.stringify(data))}catch{}}
+function save(session,data){
+ const id=key(session);
+ volatileDrafts.set(id,{...data});
+ try{localStorage.setItem(id,JSON.stringify(data));writeStatus.set(id,true);return true;}
+ catch{writeStatus.set(id,false);return false;}
+}
+function draftNotice(session,filled){
+ const id=key(session),prefix=filled+' de 4 decisões essenciais definidas · ';
+ if(writeStatus.get(id)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(id)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(id)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
+}
 function parseEvidence(raw){
  // API antiga podia achatar as linhas. Nao reconstruir respostas por suposicao.
  if(typeof raw!=='string')return null;
@@ -126,11 +141,11 @@ function building(ctx){
  ];
  return '<div class="m2-page"><div class="m2-lead"><span class="m2-brow">✦ DO CONCEITO AO ESCOPO</span><h3>Seu jogo cabe em <em>uma primeira versão?</em></h3>'+
  '<p>Use sua ideia como ponto de partida e escolha um recorte possível. O importante é preservar a ação central e um resultado verificável.</p>'+ 
- '<div class="m2-hint" role="note"><strong>PASSO A PASSO · SEM ABRIR O GDEVELOP</strong><p><b>Onde:</b> preencha os campos dos três fragmentos desta página. <b>1.</b> Descreva uma cena pequena, como uma sala. <b>2.</b> Escreva uma única ação jogável, como coletar. <b>3.</b> Liste exatamente três elementos, separados por vírgulas (ex.: Jogador, Chave, Porta). <b>4.</b> Escreva o teste: “Dado que o jogador tem a chave, quando tocar a porta, então a saída abre”. <b>5.</b> Se quiser, registre o que ficará para depois. <b>Como conferir:</b> observe as quatro decisões no resumo ao lado e o contador “3 de 3 elementos”. <b>Entrega:</b> clique em “Ver meu plano de jogo”, revise a ficha e selecione “Enviar ao professor” quando a prática estiver liberada. O rascunho salvo neste navegador não equivale à entrega.</p><p>Se o envio não estiver disponível, confira campos incompletos, a quantidade de elementos, a liberação da prática e se o plano já foi enviado.</p></div>'+
+ '<div class="m2-hint" role="note"><strong>PASSO A PASSO · SEM ABRIR O GDEVELOP</strong><p><b>Onde:</b> preencha os campos dos três fragmentos desta página. <b>1.</b> Descreva uma cena pequena, como uma sala. <b>2.</b> Escreva uma única ação jogável, como coletar. <b>3.</b> Liste exatamente três elementos, separados por vírgulas (ex.: Jogador, Chave, Porta). <b>4.</b> Escreva o teste: “Dado que o jogador tem a chave, quando tocar a porta, então a saída abre”. <b>5.</b> Se quiser, registre o que ficará para depois. <b>Como conferir:</b> observe as quatro decisões no resumo ao lado e o contador “3 de 3 elementos”. <b>Entrega:</b> clique em “Ver meu plano de jogo”, revise a ficha e selecione “Enviar ao professor” quando a prática estiver liberada. O rascunho deste navegador não equivale à entrega. Confira o aviso de salvamento abaixo do formulário; se o navegador bloquear o armazenamento, copie sua ficha antes de sair.</p><p>Se o envio não estiver disponível, confira campos incompletos, a quantidade de elementos, a liberação da prática e se o plano já foi enviado.</p></div>'+
  (locked?'<div class="m2-state-notice">Entrega '+(ctx.status==='approved'?'aprovada':'enviada')+'. Seu documento está disponível somente para leitura.</div>':'')+
  '</div><div class="m2-workspace"><div class="m2-sections">'+blocks.map(([num,icon,name,description,fields])=>
  '<section class="m2-panel"><div class="m2-panel-heading"><span>'+icon+' FRAGMENTO '+num+' / 03</span><h4>'+name+'</h4><p>'+description+'</p></div>'+fields+'</section>').join('')+
- '<div class="m2-next"><span id="m2Notice" aria-live="polite">'+progress(d).filter(Boolean).length+' de 4 decisões essenciais definidas · rascunho salvo neste navegador</span>'+
+ '<div class="m2-next"><span id="m2Notice" role="status" aria-live="polite">'+esc(draftNotice(ctx.session,progress(d).filter(Boolean).length))+'</span>'+
  '<button class="m2-primary" type="button" data-m2-action="review">VER MEU PLANO DE JOGO ›</button></div></div>'+
  '<div class="m2-asides">'+live(d,ctx)+
  '<div class="m2-hint"><span>✧ EXEMPLO PARA '+esc((idea.genre||'UM JOGO').toUpperCase())+'</span>'+
@@ -148,7 +163,8 @@ function delivery(ctx){
  (ctx.feedback?'<div class="m2-feedback"><strong>RETORNO DO PROFESSOR</strong><p>'+esc(ctx.feedback)+'</p></div>':'')+
  live(d,ctx)+
  '<div class="m2-evidence"><strong>◈ FICHA DO MVP PARA AVALIAÇÃO</strong><label for="evidenceInput">Registro enviado ao professor</label>'+
- '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx.idea))+'</textarea><small>O texto é criado a partir do que você definiu. Para alterar, volte à construção.</small></div>'+
+ '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx.idea))+'</textarea><small>O texto é criado a partir do que você definiu. Para alterar, volte à construção.</small>'+
+ (writeStatus.get(key(ctx.session))===false?'<p class="m2-warning" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+
  '<div class="m2-actions"><button type="button" class="m2-back" data-m2-action="back" '+(submitted?'disabled':'')+'>‹ REVISAR MVP</button>'+
  '<button type="button" class="m2-primary" id="submitWork" '+(!v.ok||submitted||!ctx.canSubmit?'disabled':'')+'>'+
  (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
@@ -181,7 +197,7 @@ function mount(ctx){
    el.closest('.m2-live-row')?.classList.toggle('ready',index!==undefined?results[index]:!!clean(d[k]));
   });
   const notice=root.querySelector('#m2Notice'),done=root.querySelector('#m2Done'),bar=root.querySelector('#m2Rail');
-  if(notice)notice.textContent=filled+' de 4 decisões essenciais definidas · rascunho salvo neste navegador';
+  if(notice)notice.textContent=draftNotice(ctx.session,filled);
   if(done)done.textContent=filled;
   if(bar)bar.style.width=filled*25+'%';
   const counter=root.querySelector('#m2ElementsCount');
