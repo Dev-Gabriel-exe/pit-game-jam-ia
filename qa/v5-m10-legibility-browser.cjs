@@ -37,6 +37,20 @@ function within(inner,outer,tolerance=3){
   assert.match(await page.locator('#arenaStatus').textContent(),/PAUSAD/);
   await page.locator('#expandStage').click();
   assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('arena-immersive')),true);
+  // A modal keyboard trap must also exclude background content from the
+  // accessibility tree; CSS overlays and aria-modal alone do not do this.
+  const background=()=>page.evaluate(()=>({
+   header:document.querySelector('.topbar').inert,
+   intro:document.querySelector('.intro').inert,
+   side:document.querySelector('.side').inert,
+   footer:document.querySelector('.footer-note').inert,
+   dialog:document.querySelector('.theater').getAttribute('role'),
+   dialogName:document.querySelector('.theater').getAttribute('aria-label')
+  }));
+  assert.deepEqual(await background(),{
+   header:true,intro:true,side:true,footer:true,
+   dialog:'dialog',dialogName:'Arena de combate ampliada'
+  },'Immersive mode must make every background region inert');
   for(const screen of SCREENS){
    await page.setViewportSize({width:screen.width,height:screen.height});
    await page.waitForTimeout(350);
@@ -127,6 +141,11 @@ function within(inner,outer,tolerance=3){
    'Expected usable keyboard controls in expanded arena: '+JSON.stringify(focusEnds));
   assert.equal(focusEnds.modal,'true','Expanded arena must expose modal semantics');
   assert.equal(focusEnds.role,'dialog','Expanded arena must expose dialog semantics');
+  // Programmatic background focus must also be blocked, not just Tab keys.
+  await page.locator('#expandStage').focus();
+  await page.evaluate(()=>document.querySelector('.topbar a').focus());
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'expandStage',
+   'Background navigation must not steal focus from immersive dialog');
   await page.locator('#'+focusEnds.last).focus();
   await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(()=>document.activeElement.id),focusEnds.first,
@@ -141,12 +160,19 @@ function within(inner,outer,tolerance=3){
    'Closing immersive arena must restore focus to its toggle');
   assert.equal(await page.locator('.theater').getAttribute('aria-modal'),null,
    'Modal semantics must be removed after closing');
+  const restored=await background();
+  assert.equal(restored.header,false,'Header must be interactive after closing');
+  assert.equal(restored.intro,false,'Intro must be interactive after closing');
+  assert.equal(restored.side,false,'Sidebar must be interactive after closing');
+  assert.equal(restored.footer,false,'Footer must be interactive after closing');
   await page.locator('#expandStage').press('Enter');
   assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('arena-immersive')),true,
    'Keyboard Enter must reopen immersive arena');
+  assert.equal((await background()).side,true,'Background must become inert again on reopen');
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(()=>document.activeElement.id),'expandStage');
-  report.keyboard={...focusEnds,tabWrap:true,shiftTabWrap:true,escapeRestoresFocus:true,enterReopens:true};
+  report.keyboard={...focusEnds,tabWrap:true,shiftTabWrap:true,escapeRestoresFocus:true,enterReopens:true,
+   backgroundInert:true,backgroundRestored:true,programmaticFocusBlocked:true};
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
   assert.deepEqual(errors,[],'Chromium errors: '+errors.join(' | '));
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
