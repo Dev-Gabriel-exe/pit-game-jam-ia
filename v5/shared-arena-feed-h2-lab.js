@@ -152,6 +152,13 @@
    validateFrame(next,scope);
    if(frame&&next.logicalTime<frame.logicalTime)reject('relógio recuou');
    if(frame&&next.camera.revision<frame.camera.revision)reject('diretor recuou');
+   // A director revision identifies one immutable shot. Catch a forged camera
+   // swap even after reconnect/snapshot recovery; newer revisions may cut.
+   if(frame&&next.camera.revision===frame.camera.revision&&
+    (next.camera.mode!==frame.camera.mode||
+     next.camera.ids.length!==frame.camera.ids.length||
+     next.camera.ids.some((id,i)=>id!==frame.camera.ids[i])))
+    reject('plano mudou sem revisão');
    if(frame){
     const previous=new Map(frame.fighters.map(f=>[f.id,f]));
     for(const fighter of next.fighters){
