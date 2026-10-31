@@ -66,7 +66,7 @@ const R=require('../v5/m10-visual-roster.js');
   assert.equal(dead.viewer.mode,'spectating');
   assert.equal(dead.viewer.studentId,watched);
   assert.equal(dead.viewer.feedId,begin.viewer.feedId);
-  assert.equal(dead.feed.feedId,begin.feed.feedId);
+  assert.equal(dead.feed.feedId,begin.viewer.feedId,'The first global feed is created when the student becomes spectator');
   assert(dead.feed.revision>0,'One global camera must advance after elimination');
   assert.equal(await stage.getAttribute('data-v5-camera-director'),'on');
   assert.notEqual(await stage.getAttribute('data-v5-follow-target'),watched);
