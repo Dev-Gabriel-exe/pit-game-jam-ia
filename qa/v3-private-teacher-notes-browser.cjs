@@ -102,6 +102,22 @@ const assert=require('node:assert/strict');
   assert.equal(launch.noPrivate,true,'M10 no teacher notes in student view');
   assert.equal(launch.unchecked,true,'M10 cannot predeclare successful tests');
   assert.equal(launch.initialField,'pitch','M10 requires real student evidence');
+  // Regression: launching a projected lesson must close an already-open
+  // teacher-only note, and closing the slides must not reveal it again.
+  await page.goto('http://127.0.0.1:8899/professor-v3.html?preview=1',{waitUntil:'domcontentloaded'});
+  await page.locator('#workspace:visible').waitFor({timeout:12000});
+  if(await page.locator('#missionGallery.open').count())await page.locator('#missionGalleryClose').click();
+  await page.locator('.stage-btn[data-stage="10"]').click();
+  await page.locator('#phasebar [data-phase="practice"]').click();
+  const projectedNote=page.locator('#mainContent details.pit-private-teacher-notes');
+  assert.equal(await projectedNote.count(),1,'M10 practice contains a private teacher note');
+  await projectedNote.locator('summary').click();
+  assert.equal(await projectedNote.evaluate(el=>el.open),true,'private note explicitly opened before projection');
+  await page.locator('#pitProjectorLaunch').click();
+  assert.equal(await projectedNote.evaluate(el=>el.open),false,'projector launch closes previously open private note');
+  assert.equal(await page.locator('#pitProjectorContent details.pit-private-teacher-notes').count(),0,'projector excludes private note markup');
+  await page.locator('#pitProjectorClose').click();
+  assert.equal(await projectedNote.evaluate(el=>el.open),false,'private note stays closed after returning to mirrored panel');
   assert.deepEqual(errors,[],width+'px no JavaScript errors');
   await context.close();
  }
