@@ -12,15 +12,30 @@ const FIELDS=[
 const GENRES=['','Aventura','RPG','Terror','Plataforma','Corrida','Puzzle','Narrativa interativa','Exploração','Outro'];
 const escapeHTML=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=()=>({genre:'',title:'',hero:'',action:'',objective:'',victory:'',feedback:''});
+// Keep work usable in this tab if the browser denies persistent storage.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function key(session){return 'pit_v3_missao01_rascunho_'+String(session||'preview').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80);}
 function load(session){
+ const id=key(session);
  try{
-  const data=JSON.parse(localStorage.getItem(key(session))||'{}');
+  const data=volatileDrafts.get(id)||JSON.parse(localStorage.getItem(id)||'{}');
   const base=initial();for(const field of ['genre',...FIELDS.map(f=>f.id)])if(typeof data[field]==='string')base[field]=data[field].slice(0,110);
   return base;
  }catch{return initial();}
 }
-function save(session,draft){try{localStorage.setItem(key(session),JSON.stringify(draft))}catch{}}
+function save(session,draft){
+ const id=key(session);
+ volatileDrafts.set(id,{...draft});
+ try{localStorage.setItem(id,JSON.stringify(draft));writeStatus.set(id,true);return true;}
+ catch{writeStatus.set(id,false);return false;}
+}
+function draftNotice(session,completed){
+ const id=key(session),prefix='✧ '+completed+'/3 fragmentos definidos · ';
+ if(writeStatus.get(id)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(id)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(id)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
+}
 function parseEvidence(raw){
  // Evidencias legadas achatadas nao permitem reconstruir campos com seguranca.
  if(typeof raw!=='string')return null;
@@ -116,11 +131,11 @@ function designFlow(d){
  '<span class="qo-cycle-step-number">'+num+'</span><div><strong>'+label+'</strong><p data-q-flow="'+id+'">'+escapeHTML(d[id].trim()||empty)+'</p></div></div>').join('')+
  '</div><p class="qo-cycle-explain">Durante a partida, o jogador tenta, observa o resultado e decide novamente. A condição e o feedback acima definem quando esse ciclo termina.</p></section>';
 }
-function progressMarkup(d){
+function progressMarkup(d,session){
  const steps=stepProgress(d),done=steps.filter(Boolean).length;
  return '<div class="qo-fragments" aria-label="Progresso do planejamento">'+
  steps.map((yes,i)=>'<div class="qo-fragment '+(yes?'complete':'')+'"><span>'+(yes?'✦':'0'+(i+1))+'</span><small>'+['IDENTIDADE','MECÂNICA','CONCLUSÃO'][i]+'</small></div>').join('')+
- '</div><div class="qo-save-notice" id="qoSaveNotice" aria-live="polite">✧ '+done+'/3 fragmentos definidos · rascunho salvo neste navegador</div>';
+ '</div><div class="qo-save-notice" id="qoSaveNotice" role="status" aria-live="polite">'+escapeHTML(draftNotice(session,done))+'</div>';
 }
 function intro(d){
  const idea=chosenExample(d),personal=d.genre&&idea?'<div class="qo-genre-intro">✧ SEU UNIVERSO: '+escapeHTML(d.genre.toUpperCase())+' · '+escapeHTML(idea.intro)+'</div>':'';
@@ -151,7 +166,7 @@ function building(session,status,preview){
  '<section class="qo-section">'+heading('03','✦','A conquista final','Um bom jogo deixa claro quando a missão terminou.')+
  field('victory','O que precisa acontecer para terminar?','Defina uma condição que outra pessoa possa testar.',d,'Ex.: Abrir a porta com os três fragmentos',disabled)+
  field('feedback','Como o jogador percebe a conquista?','Uma mensagem, mudança de cena, cor ou som já resolve.',d,'Ex.: Surge a mensagem “Castelo libertado!”',disabled)+'</section>'+
- '<div class="qo-builder-bottom">'+progressMarkup(d)+
+ '<div class="qo-builder-bottom">'+progressMarkup(d,session)+
  '<button class="qo-action" type="button" data-q-action="review">VER MINHA FICHA DE MISSÃO <span aria-hidden="true">›</span></button></div>'+
  '</div><div class="qo-preview-column">'+worldPreview(d)+designFlow(d)+
  '<div class="qo-tip"><span id="qoGenreLabel">✧ EXEMPLO DE '+escapeHTML((d.genre||'AVENTURA').toUpperCase())+'</span><p id="qoGenreExample">'+escapeHTML(idea?idea.intro:'Em um jogo de aventura, uma personagem pode coletar itens para abrir uma saída.')+'</p><p class="qo-inspiration-note">Exemplo de referência, não uma resposta pronta. Você pode criar outra mecânica.</p></div>'+
@@ -216,7 +231,7 @@ function update(root,session){
  if(a)a.textContent=d.action||'[FAZER ALGO]';if(b)b.textContent=d.objective||'[ALCANÇAR O OBJETIVO]';
  const flags=stepProgress(d),count=flags.filter(Boolean).length;
  root.querySelectorAll('.qo-fragment').forEach((node,i)=>{node.classList.toggle('complete',flags[i]);node.querySelector('span').textContent=flags[i]?'✦':'0'+(i+1)});
- const notice=root.querySelector('#qoSaveNotice');if(notice)notice.textContent='✧ '+count+'/3 fragmentos definidos · rascunho salvo neste navegador';
+ const notice=root.querySelector('#qoSaveNotice');if(notice)notice.textContent=draftNotice(session,count);
 }
 function mount(ctx){
  const root=document.getElementById('qOne');if(!root)return;
