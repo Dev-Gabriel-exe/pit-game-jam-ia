@@ -16,6 +16,25 @@ m.hydrate('ficticioC',evidence,'submitted');assert.equal(m.load('ficticioC').che
 m.hydrate('ficticioA','M07 | 2d\nInício: sobrescrito','submitted');assert.equal(m.load('ficticioA').route,'3d');
 assert.equal(m.routeFor({rule:{route:2}},m.load('novo')),1);
 assert.equal(m.routeFor({playable:{route:3}},m.load('novo')),1);
+
+ // A student may deliberately switch the M07 GDevelop guide to 2D even when
+ // the previous M04/M05 route was 3D. It must survive rerender and reload.
+ const inherited3D={rule:{route:2},playable:{route:3}};
+ const chosen2D=m.load('rota-2d-manual');
+ chosen2D.route='2d';chosen2D.routeChosen=true;
+ m.save('rota-2d-manual',chosen2D);
+ assert.equal(m.routeFor(inherited3D,m.load('rota-2d-manual')),0,'explicit 2D overrides previous 3D');
+ assert.equal(m.load('rota-2d-manual').routeChosen,true,'manual selection persists');
+ const reloadCtx={window:{},document:{},localStorage:ctx.localStorage};
+ vm.runInNewContext(read('v3/student-mission-seven.js'),reloadCtx);
+ assert.equal(reloadCtx.window.PIT_STUDENT_MISSION_SEVEN.routeFor(inherited3D,
+   reloadCtx.window.PIT_STUDENT_MISSION_SEVEN.load('rota-2d-manual')),0,'2D selection survives module reload');
+ assert.equal(m.routeFor(inherited3D,m.load('novo')),1,'new student still inherits 3D suggestion');
+ assert.equal(m.parseEvidence('M07 | 2d'+evidence.slice('M07 | 3d'.length)).routeChosen,true,
+   'submitted 2D route is an explicit choice, not a fallback suggestion');
+ assert.match(read('v3/student-mission-seven.js'),/d\\.routeChosen=true;save\\(ctx\\.session,d\\)/,
+   'guide route-change callback persists explicit selection');
+
 const max=m.load('ficticioA');for(const f of m.fields)max[f.id]='X'.repeat(f.max);m.save('max',max);
 assert.ok(m.evidence('max').length<=750);assert.equal(m.parseEvidence(m.evidence('max')).saved.length,65);
 // Regression: API legada pode achatar quebras de linha. Nunca reconstruir
@@ -60,6 +79,12 @@ assert.equal(denied.load('ficticio-bloqueado').checks.length,3);
 assert.equal(denied.load('ficticio-bloqueado').condition,deniedDraft.condition);
 assert.equal(denied.validate('ficticio-bloqueado').ok,true);
 assert.equal(denied.load('ficticio-outro').start,'');
+ const denied2D=denied.load('manual2d-bloqueado');
+ denied2D.route='2d';denied2D.routeChosen=true;
+ assert.equal(denied.save('manual2d-bloqueado',denied2D),false);
+ assert.equal(denied.routeFor({rule:{route:2}},denied.load('manual2d-bloqueado')),0,
+   'blocked localStorage must not reset explicit 2D guide choice');
+
 assert.match(denied.draftNotice('ficticio-bloqueado'),/apenas nesta aba/);
 assert.doesNotMatch(denied.draftNotice('ficticio-bloqueado'),/Rascunho salvo neste navegador/);
 const deniedRender={session:'ficticio-bloqueado',phase:'practice',status:'draft',idea:{}};
