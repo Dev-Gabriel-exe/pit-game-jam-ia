@@ -66,7 +66,16 @@ for(const mission of [5,10]){
  assert.equal(state.status,'draft');
  assert.equal(state.teacherEnabled,false);
  assert.equal(state.release,null);
- checks.push('M'+mission+' / 26 eligible + 4 excluded / 30 present / replay deterministic');
+ let full=T.createState({mission,participants});
+ full=dispatch(full,'alter',{enabled:true});
+ full=dispatch(full,'release',{policy,seed:20261031});
+ assert.equal(full.release.entrants.length,30,'collective class must allow all 30 eligible');
+ const all=full.release.entrants.map(e=>({...e,
+  build:engine.canonical(e.build,mission,{experimentalFinal:mission===10})}));
+ const complete=engine.battle(all,options).run();
+ assert.equal(complete.standings.length,30,'30 genuine entrants in the engine');
+ assert(complete.finished&&complete.winner);
+ checks.push('M'+mission+' / 30 eligible released + full engine; 4 exclusions tested / replay deterministic');
  // At least two are mandatory, never launch a one-player victory.
  let tiny=T.createState({mission,participants:participants.slice(0,2)});
  tiny=dispatch(tiny,'alter',{enabled:true});
