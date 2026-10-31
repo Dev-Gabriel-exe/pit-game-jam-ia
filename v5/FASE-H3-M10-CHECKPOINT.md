@@ -773,3 +773,13 @@ No SHA funcional `5b94724e9d70b7554c6ca6111df15de065eeb74d`, o [run M10 WebGL 41
 - Inspeção visual do screenshot desktop confirmou os rótulos sobre personagens, sem invadir os painéis de talentos/destaques. **Não confundir inspeção do artefato CI com homologação humana de telão ou teste de GPU física.**
 
 **Estado:** incremento técnico de legibilidade M10 **concluído no laboratório automatizado**; a Missão 10 completa permanece **em validação**. **Próxima tarefa:** auditoria visual de builds mistas/efeitos em outros instantes da partida, sem reequilibrar classes com base em uma única seed; depois G.2 nos PCs físicos e homologação humana. **G.2 NÃO EXECUTADO**, H.1/H.2 operacionais com alunos reais continuam bloqueados até G.2 e autorização explícita. M5 (5 talentos/10 pontos), M10 (10 talentos/20 pontos), quatro KayKits, 120 talentos, câmera, arquibancadas, XP e as dez missões pedagógicas não foram alterados. Nenhum merge, deploy, `main`, V3, turma, usuário, aprovação ou nota tocados.
+
+## H.3/M10 — auditoria temporal de efeitos em builds mistas (31/10/2026)
+
+**Tarefa atual:** testar a prévia M10 opt-in com 30 KayKits fictícios, builds variadas das quatro classes, 10 talentos/20 pontos por personagem, sprites reais disparados por eventos de combate, câmera e nomes ao longo de três instantes da partida. Não alterar a M5, os 120 talentos, balanceamento, progressão, XP ou conteúdo pedagógico.
+
+**Incremento de QA criado:** `qa/v5-m10-mixed-vfx-browser.cjs` (3 capturas WebGL durante combate com sprites habilitados; checagem de rótulos/HUD, classes e builds mistas, efeitos reais, vitória com 29 espectadores e retorno a M5) e `.github/workflows/v5-m10-mixed-vfx-qa.yml` (CI isolado, artefatos JSON/PNG). Commits `9118195f1bb791904b67def8d24d08a88f53976a`, `adf463a12cf92b4e57ba8aefe428daa494ba1dca`, `febbbdfbb145aa145739d067734de5c801a693ca`.
+
+**CI inicial:** [M10 VFX temporal 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41239727134) **EM EXECUÇÃO** na criação deste checkpoint; [QA geral 41239727031](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41239727031) **SUCCESS** no SHA `febbbdfb`; [QA navegador 41239727042](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41239727042) **EM EXECUÇÃO**. Não declarar auditoria visual aprovada antes do job específico e dos artefatos.
+
+**Próximo passo:** conferir CI e relatório dos três instantes; corrigir qualquer falha observada, preservar a mesma missão até aprovação. O SwiftShader não valida FPS de PCs físicos nem legibilidade humana. **G.2 NÃO EXECUTADO; H.1/H.2 reais, `main`, merge e deploy continuam bloqueados.**
