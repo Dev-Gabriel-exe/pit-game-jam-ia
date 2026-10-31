@@ -16,9 +16,11 @@ small{color:#bdb6ac}.status{min-height:2em;color:#f5d9a0}
 <div class="panel"><label><input id="teacher" type="checkbox" checked> Professor habilitou duelos (missão fictícia 3)</label><p id="summary" class="status" role="status" aria-live="polite"></p></div>
 <div class="grid"><section class="panel"><h2>Aluna A — convite</h2><button id="invite">Convidar B</button><div id="sender" class="status" role="status" aria-live="polite"></div></section>
 <section class="panel"><h2>Aluno B — notificação</h2><div id="recipient" class="status" role="status" aria-live="polite"></div><button id="accept">Sim, aceitar</button><button id="decline">Não, recusar</button></section></div>
-<section class="panel"><h2>Controle da simulação</h2><button id="open">Abrir janela de duelo</button><button id="reset">Reiniciar cenário</button><small>O aceite apenas habilita uma janela de demonstração local.</small></section>
-<section id="arena" role="dialog" aria-modal="true" aria-label="Arena de duelo fictícia" tabindex="-1" hidden><h2>Duelo 1 × 1 — maquete</h2><p>Somente dois personagens fictícios. Sem dano, talentos, XP ou resultado de batalha.</p><div class="stage"><span>⚔️ A</span><span>VS</span><span>🛡️ B</span></div><button id="close">Fechar arena</button></section>
+<section class="panel"><h2>Controle da simulação</h2><button id="open">Abrir janela de duelo</button><button id="reset">Reiniciar cenário</button><small>Após o aceite, simule um combate determinístico M5 ou M10 sem dados reais.</small></section>
+<section id="arena" role="dialog" aria-modal="true" aria-label="Arena de duelo fictícia" tabindex="-1" hidden><h2>Duelo 1 × 1 — laboratório</h2><p>Simulação determinística do motor de combate; não é visualização WebGL ou duelo real.</p><label for="battleMission">Arena experimental</label> <select id="battleMission"><option value="5">M5 — 5 talentos / 10 pontos</option><option value="10">M10 — 10 talentos / 20 pontos</option></select><button id="simulate">Simular combate</button><p id="battleResult" class="status" role="status" aria-live="polite">Aguardando simulação.</p><div class="stage"><span>⚔️ A</span><span>VS</span><span>🛡️ B</span></div><button id="close">Fechar arena</button></section>
 <script src="./duel-invitations-lab.js"></script>
+<script src="./phase2-combat.js"></script>
+<script src="./duel-battle-lab.js"></script>
 <script>
 (function(){
 'use strict';
@@ -28,7 +30,7 @@ const context=()=>({currentStage:3,duelsEnabled:el('teacher').checked});
 const view=key=>({rosterKey:'trial-'+key,progress:{currentStage:3,awaitingPeers:true},duel:{eligible:true,mission:3}});
 const a={view:view('aluna-a'),roomKey:'trial-room-demo',online:true};
 const b={view:view('aluno-b'),roomKey:'trial-room-demo',online:true};
-let state=D.createState(),lastFocus=null,backgroundInert=null;
+let state=D.createState(),lastFocus=null,backgroundInert=null,acceptedDescriptor=null;
 const notification=key=>D.notificationsFor(state,key).at(-1);
 function draw(){
  const sender=notification('trial-aluna-a'),recipient=notification('trial-aluno-b');
@@ -50,6 +52,7 @@ el('decline').addEventListener('click',()=>reply('decline'));
 el('open').addEventListener('click',()=>action(()=>{
  const descriptor=D.arenaWindowFor(state,{id:state.invitations.at(-1).id,actor:'trial-aluna-a'});
  if(descriptor.kind!=='fictional-duel-window')throw Error('Janela não autorizada');
+ acceptedDescriptor=descriptor;el('battleResult').textContent='Aguardando simulação.';
  lastFocus=document.activeElement;
  backgroundInert=[...document.body.children].filter(node=>node!==el('arena')&&node.tagName!=='SCRIPT').map(node=>[node,node.inert]);
  for(const [node] of backgroundInert)node.inert=true;
@@ -61,9 +64,19 @@ function close(){
  for(const [node,wasInert] of backgroundInert||[])node.inert=wasInert;
  backgroundInert=null;lastFocus?.focus();lastFocus=null;
 }
+el('simulate').addEventListener('click',()=>{
+ try{
+  if(el('arena').hidden||!acceptedDescriptor)throw Error('Aceite obrigatório');
+  const mission=Number(el('battleMission').value);
+  const trial=window.PIT_V5_DUEL_BATTLE_LAB.createTrial(acceptedDescriptor,window.PIT_V5_PHASE2_COMBAT,{mission,seed:4252});
+  const result=trial.run();
+  if(!result.finished||!result.winner)throw Error('Combate não terminou');
+  el('battleResult').textContent='M'+mission+' · Vencedor: '+result.winner.name+' · '+result.time+'s · 2 participantes fictícios';
+ }catch(error){el('battleResult').textContent='Falha no laboratório: '+error.message}
+});
 el('close').addEventListener('click',close);
 el('arena').addEventListener('keydown',event=>{if(event.key==='Escape')close();if(event.key==='Tab'){event.preventDefault();el('close').focus()}});
-el('reset').addEventListener('click',()=>{close();state=D.createState();draw()});
+el('reset').addEventListener('click',()=>{close();acceptedDescriptor=null;state=D.createState();draw()});
 draw();
 })();
 </script></body></html>
