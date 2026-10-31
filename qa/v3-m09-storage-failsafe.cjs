@@ -61,6 +61,8 @@ listeners.input();
 assert(status.textContent.includes('apenas nesta aba'),'typing shows blocked-storage warning');
 listeners.outcome();
 assert(status.textContent.includes('apenas nesta aba'),'outcome radio shows blocked-storage warning');
+// The outcome callback clears the old resolution radio; a real user must select it again.
+resolution.checked=true;
 listeners.resolution();
 assert(status.textContent.includes('apenas nesta aba'),'decision radio shows blocked-storage warning');
 listeners.check();
