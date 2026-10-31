@@ -14,7 +14,7 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
   const textures=Number(await stage.getAttribute('data-v5-sprite-textures'));
   const frames=Number(await stage.getAttribute('data-v5-sprite-frames'));
   assert(textures===13*frames);
-  assert([2,3,6].includes(frames));
+  assert([2,3,8].includes(frames));
   assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'No fake visual effects before action');
   // Examine actual raster alpha, not only event counters: frames must contain
   // painted pixels and distinct animation phases.
@@ -83,7 +83,7 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    'Reset after 30 actors must free every sprite');
   await page.locator('[data-mission="10"]').click();
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.combatEngine==='legacy',null,{timeout:45000});
-  assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'M10 never triggers M5 sprites');
+  assert.equal(Number(await stage.getAttribute('data-v5-sprite-visual-events')),0,'Legacy M10 never triggers Phase2 sprites');
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
   await page.close();
   console.log('PASS E.6 browser: real-ability animated sprites, capped rendering, clean reset, 4 GLBs, M10 isolation');
