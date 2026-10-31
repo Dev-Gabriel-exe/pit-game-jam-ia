@@ -83,6 +83,30 @@ const assert=require('node:assert/strict');
   assert.equal(student.choices,3,'M09 supports no-change after a passed test');
   assert.equal(student.initialValidation.field,'outcome','M09 requires explicit real test result');
   assert.equal(student.editor,true,'M09 GDevelop handoff rendered');
+  // M07 student tutorial must respect a deliberate 2D choice even when the
+  // inherited project from M04/M05 suggests 3D. Route changes invalidate
+  // only the old manual Preview checks, never invent a new successful test.
+  await page.addScriptTag({url:'http://127.0.0.1:8899/v3/gdevelop-mission-seven-guide.js'});
+  await page.addScriptTag({url:'http://127.0.0.1:8899/v3/student-mission-seven.js'});
+  const m07ctx={session:'qa-v4-m07-route-'+width,phase:'practice',status:'draft',idea:{title:'Jogo fictício'},rule:{route:2},playable:{route:3}};
+  await page.evaluate(ctx=>{
+   document.querySelector('#mount').innerHTML=window.PIT_STUDENT_MISSION_SEVEN.render(ctx);
+   window.PIT_STUDENT_MISSION_SEVEN.mount({...ctx,onPhase:()=>{},onMessage:()=>{}});
+  },m07ctx);
+  assert.equal(await page.locator('#g7Guide [data-g7-route="1"]').getAttribute('aria-selected'),'true','M07 inherits 3D before manual selection');
+  await page.locator('#g7Guide [data-g7-route="0"]').click();
+  assert.equal(await page.locator('#g7Guide [data-g7-route="0"]').getAttribute('aria-selected'),'true','M07 accepts explicit 2D route');
+  for(let n=0;n<3;n++)await page.locator('[data-m7s-check="'+n+'"]').check();
+  await page.locator('#g7Guide [data-g7-route="1"]').click();
+  assert.equal(await page.locator('[data-m7s-check]:checked').count(),0,'M07 switching to 3D clears old 2D Preview confirmations');
+  await page.locator('#g7Guide [data-g7-route="0"]').click();
+  await page.evaluate(ctx=>{
+   document.querySelector('#mount').innerHTML=window.PIT_STUDENT_MISSION_SEVEN.render(ctx);
+   window.PIT_STUDENT_MISSION_SEVEN.mount({...ctx,onPhase:()=>{},onMessage:()=>{}});
+  },m07ctx);
+  assert.equal(await page.locator('#g7Guide [data-g7-route="0"]').getAttribute('aria-selected'),'true','M07 explicit 2D survives practice rerender');
+  assert.equal(await page.locator('[data-m7s-check]:checked').count(),0,'M07 never restores stale manual Preview checks');
+  assert.equal(await page.locator('#m7sStatus').textContent().then(s=>s.includes('Rascunho salvo')),true,'M07 route choice saved to fictional browser draft');
   // M10 student must see the real editor handoff and an audience-neutral GDevelop guide.
   await page.addScriptTag({url:'http://127.0.0.1:8899/v3/gdevelop-mission-ten-guide.js'});
   await page.addScriptTag({url:'http://127.0.0.1:8899/v3/student-mission-ten.js'});
