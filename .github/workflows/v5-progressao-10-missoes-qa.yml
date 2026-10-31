@@ -1,0 +1,38 @@
+name: V5 Progression M01-M10 — XP Atributos Talentos
+on:
+  push:
+    branches: [feature/v5-homologacao-20261031, main]
+    paths:
+      - 'qa/v5-progressao-completa-10-missoes.cjs'
+      - 'qa/v5-progression-contract-h0.cjs'
+      - 'v5/progression-contract-h0.js'
+      - 'v5/student-bridge-h1.js'
+      - 'v5/phase2-combat.js'
+      - 'chat-api/lib/v5-build-v2-contract.js'
+      - 'chat-api/lib/v5-phase2-talent-ids.json'
+      - '.github/workflows/v5-progressao-10-missoes-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mission-rewards-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check static progression and sandbox policy
+        run: |
+          node --check qa/v5-progressao-completa-10-missoes.cjs
+          node --check qa/v5-progression-contract-h0.cjs
+          node --check v5/phase2-combat.js
+      - name: Simulate four classes and ten teacher approvals
+        run: node qa/v5-progressao-completa-10-missoes.cjs
+      - name: Verify full talent catalog, frozen M5 and locked M10
+        run: node qa/v5-progression-contract-h0.cjs
+      - name: Validate V2 approved-only budgets and server-side CAS model
+        run: node qa/v5-builds-v2-h1b.cjs
+      - name: Validate 30 eligible fighters in M5/M10 engines
+        run: node qa/v5-teacher-arena-release-lab.cjs
