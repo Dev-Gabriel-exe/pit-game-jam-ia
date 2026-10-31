@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T10:20:11.087Z",
+  "last_completed_at": "2026-10-31T11:17:41.623Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M06: fallback volátil por sessão e aviso honesto ao bloquear armazenamento implementados; V8 direto PASS; regressão Node commitada. Confirmar CI nativa/Browser QA da M06 e auditar M07 professor/aluno antes de estética.",
+  "priority": "M07: correção de perda silenciosa de rascunho, auditoria professor/aluno e regressões concluídas. CI estática M07 SUCCESS; Browser QA M07 IN_PROGRESS. Próximo: confirmar Browser QA e auditar M08 antes da estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M06-DRAFT-STORAGE-FAILSAFE",
+  "last_task": "V4-M07-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2830,17 +2830,29 @@
       ],
       "tests": "V8 direct normal+denied storage/evidence/render PASS. qa/v3-m06-student.cjs updated with negative-storage regressions, native Node CI and Browser QA on final SHA NOT_CONFIRMED. Prior M05 Browser QA run 41188076219 SUCCESS.",
       "notes": "M06 session-isolated volatile fallback, accurate practice/review save warnings and no automatic Preview attestations. Master roadmap remains 54/59; no main, production or real student data changes."
+    },
+    {
+      "id": "V4-M07-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T11:17:41.623Z",
+      "commit": "de0f84469bb585890d922c5117c334cefcf5551f",
+      "files": [
+        "v3/student-mission-seven.js",
+        "qa/v3-m07-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "15 verificações funcionais V8 diretas PASS e JS parse PASS; GitHub Actions static-qa 41196176053 SUCCESS; browser-qa 41196176060 IN_PROGRESS no último acesso. M06 final static 41192310180 e browser 41192310171 SUCCESS. HDMI, GDevelop GUI, mobile físico, humanos NOT_RUN.",
+      "notes": "M07 protege rota, sete campos e três declarações manuais com fallback volátil por sessão; prática/revisão avisam sobre gravação negada. Material professor mantém notas privadas em details fechado por padrão. Roadmap 54/59; main e dados reais intocados."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M06-DRAFT-STORAGE-FAILSAFE",
-    "status": "completed_code_qa_pending",
-    "updated_at": "2026-10-31T10:20:11.087Z",
+    "task": "V4-M07-DRAFT-STORAGE-FAILSAFE",
+    "status": "completed_static_ci_pass_browser_pending",
+    "updated_at": "2026-10-31T11:17:41.623Z",
     "code_commits": [
-      "43ca5b7a50f28df49427c202282047e534b91a95",
-      "31a00ebb87e2faf94d50f26d964bfdc8f4417b80"
+      "b636e867d8d437363e63f457ed59eae775b7afcc",
+      "de0f84469bb585890d922c5117c334cefcf5551f"
     ],
-    "documentation_commit": "bc4f0d19af125f59ea529f4e7842c64171f26067",
+    "documentation_commit": "8e3b8453112d786214b5c49b8911e64d7194b989",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3965,13 +3977,36 @@
       {
         "name": "M06 physical and human checks",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M06 final native Node and Browser QA confirmed",
+        "sha": "31a00ebb87e2faf94d50f26d964bfdc8f4417b80",
+        "run_ids": [
+          41192310180,
+          41192310171
+        ],
+        "result": "SUCCESS both, verified from public GitHub Actions 2026-10-31"
+      },
+      {
+        "name": "M07 direct V8 normal/denied storage and evidence",
+        "sha": "b636e867d8d437363e63f457ed59eae775b7afcc",
+        "result": "PASS 15 direct checks, JS parse; no browser/human claim"
+      },
+      {
+        "name": "M07 final native Node static and Browser QA",
+        "sha": "de0f84469bb585890d922c5117c334cefcf5551f",
+        "run_ids": [
+          41196176053,
+          41196176060
+        ],
+        "result": "static SUCCESS; browser IN_PROGRESS at latest check"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirm M06 native CI and Browser QA; audit M07 professor/student draft persistence and projection guard",
-    "blocker": "M06 final native CI not yet confirmed; GDevelop GUI, HDMI, physical mobile, human playtest NOT_RUN."
+    "next_task": "Confirm M07 Browser QA on final code commit, then audit M08 professor/student draft persistence and projection guard",
+    "blocker": "M07 Browser QA not yet confirmed; physical HDMI, GDevelop GUI, mobile and human playtest NOT_RUN."
   }
 }
