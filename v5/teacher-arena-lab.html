@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#120f1c">
+<title>Coliseu · Painel de Liberação Coletiva · Laboratório V5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<style>
+:root{color-scheme:dark;font-family:system-ui,"Segoe UI",sans-serif;color:#efe3d3;background:#100d15}
+*{box-sizing:border-box}body{margin:0;min-width:310px;background:radial-gradient(ellipse at 60% 5%,#5b304033,transparent 43%),linear-gradient(125deg,#100d15,#1e1623 65%,#0b0a12)}
+main{max-width:1440px;padding:clamp(14px,3vw,34px);margin:auto}
+a{color:#e9bb7c}h1,h2,h3{font-family:Cinzel,Georgia,serif}h1{font-size:clamp(25px,4vw,43px);line-height:1.2;margin:12px 0;color:#f1c98d}
+h2{font-size:19px;margin:0 0 12px}p{line-height:1.6;color:#d0c0b6}
+.top{display:flex;align-items:start;justify-content:space-between;gap:15px}.eyebrow{color:#d9a971;font-size:12px;letter-spacing:.17em;font-weight:800}
+.notice{background:#3c2b24;border:1px solid #bd8e55;padding:11px 14px;border-radius:9px;font-size:13px;color:#f2d8ae;line-height:1.6;margin:15px 0}
+.layout{display:grid;grid-template-columns:minmax(290px,405px) minmax(0,1fr);gap:16px}
+.panel{background:linear-gradient(140deg,#211b2b,#191620);border:1px solid #94734d84;border-radius:13px;padding:18px;margin-bottom:14px;min-width:0}
+label{display:block;font-weight:700;font-size:13px;color:#e8d6c3;margin:12px 0 5px}
+label:has(input[type=checkbox]){display:flex;gap:9px;align-items:center;cursor:pointer}
+input[type=checkbox]{accent-color:#d5a45f;inline-size:19px;block-size:19px}
+select{width:100%;border:1px solid #99764d;padding:10px;background:#34293c;color:#fff;border-radius:8px;font:inherit}
+button{font:700 13px system-ui,sans-serif;background:#493328;color:#fff1d8;border:1px solid #ad8357;border-radius:8px;padding:11px 14px;cursor:pointer;min-height:42px}
+button.primary{color:#1b1320;background:linear-gradient(100deg,#deb17d,#f4c887);border-color:#efd0a2;font-weight:900}
+button.danger{background:#552b32;border-color:#bd6f75}
+button:disabled{opacity:.37;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #ffda8b;outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.meter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.metric{border:1px solid #705947;background:#18141e;padding:12px;border-radius:8px;text-align:center}
+.metric strong{font-size:25px;color:#f1bd79;display:block}.metric span{font-size:10px;letter-spacing:.06em;color:#d9c5ae}
+#teacherStatus,#arenaStatus{min-height:28px;color:#f4cb8f;font-size:13px;line-height:1.5}
+#roster{max-height:530px;overflow:auto;padding:2px;scrollbar-color:#a07a53 transparent}
+.member{display:grid;grid-template-columns:minmax(120px,1fr) auto auto;gap:8px;align-items:center;padding:10px 5px;border-bottom:1px solid #7256404a}
+.member strong{display:block;font-size:12px;overflow-wrap:anywhere}.member small{display:block;font-size:11px;color:#b8a99d;margin-top:3px}
+.member label{margin:0;font-size:11px;font-weight:500;display:flex;flex-direction:column;gap:4px;align-items:center}
+.member[data-eligible=false]{opacity:.65}
+.stage-box{min-height:360px;background:#0d0b12;position:relative;border:1px solid #9b7652;border-radius:12px;overflow:hidden}
+#arenaStage{height:clamp(390px,46vw,620px);position:relative;overflow:hidden}
+#arenaStage canvas{display:block;width:100%;height:100%}
+.arena-nickname-layer,.battle-float-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.arena-nickname-layer{z-index:4}.battle-float-layer{z-index:6}
+.arena-nickname{position:absolute;display:none;padding:3px 6px;border:1px solid #d4a568;background:#140f1bdd;font:800 12px system-ui;border-radius:5px;max-width:170px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.battle-float{position:absolute;color:#f5cc8c;text-shadow:0 2px 4px #000;font-weight:800;white-space:nowrap}
+.battle-float.critical{color:#fbea9f}.battle-float.special{color:#ddb4ff}.battle-float.dodge{color:#9ceadd}
+#stagePlaceholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;pointer-events:none}
+#stagePlaceholder strong{font:700 25px Cinzel,serif;color:#ddba8e}#stagePlaceholder p{font-size:13px;max-width:420px}
+#stagePlaceholder[hidden]{display:none}
+.scores{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.log{max-height:235px;overflow:auto;padding:10px;background:#130f18;border:1px solid #574335;border-radius:8px;font:12px/1.7 system-ui;color:#d9c5b5}
+.result{padding:14px;border:1px solid #b38b59;background:#2b2026;color:#f9d6a2;border-radius:9px;margin-top:12px}
+.result[hidden]{display:none}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.member{grid-template-columns:minmax(0,1fr) auto auto}}
+@media(max-width:560px){.top{display:block}#arenaStage{height:410px}.meter{gap:4px}.metric{padding:7px}.metric strong{font-size:19px}}
+</style>
+</head><body><main>
+<header class="top"><div><span class="eyebrow">PIT GAME JAM IA V5 · FASE H · LABORATÓRIO</span><h1>O Mestre abre o Coliseu</h1><p>Painel experimental do professor para liberar os confrontos coletivos da Missão 5 ou da final Missão 10.</p></div>
+<a href="./arena-lab.html?phase2=1&amp;count=30">Explorar Coliseu V5</a></header>
+<div class="notice"><strong>SIMULAÇÃO FICTÍCIA.</strong> Não existe autorização real de professor aqui. Os 4/30 heróis são aliases de laboratório. Nenhuma conta, turma verdadeira, missão, XP, nota, servidor ou banco de dados é acessado ou alterado. G.2 físico e a integração H ainda estão pendentes.</div>
+<div class="layout">
+<div>
+<section class="panel" aria-label="Configuração do professor">
+<h2>01 · Controle do Mestre</h2>
+<label for="mission">Arena a liberar</label><select id="mission"><option value="5">Missão 05 · Primeira arena</option><option value="10">Missão 10 · Arena final</option></select>
+<label for="count">Participantes fictícios</label><select id="count"><option value="30">30 heróis · turma completa</option><option value="4">4 heróis · teste rápido</option></select>
+<label><input id="teacherEnabled" type="checkbox"> Professor fictício habilita esta arena</label>
+<div class="actions"><button id="release" class="primary" disabled>✦ Liberar participantes elegíveis</button><button id="reset" type="button">↻ Nova simulação</button></div>
+<p id="teacherStatus" role="status" aria-live="polite">Selecione uma missão e habilite a arena.</p>
+</section>
+<section class="panel" aria-label="Elegibilidade dos alunos fictícios"><h2>02 · Prévia de elegibilidade</h2>
+<div class="meter"><div class="metric"><strong id="totalCount">30</strong><span>NO GRUPO</span></div><div class="metric"><strong id="eligibleCount">30</strong><span>ELEGÍVEIS</span></div><div class="metric"><strong id="excludedCount">0</strong><span>BLOQUEADOS</span></div></div>
+<p style="font-size:12px">Somente quem concluiu as aprovações, possui a build travada e está pronto pode entrar. Desmarque “Pronto” ou “Online” para testar bloqueios.</p>
+<div id="roster" role="list" aria-label="Heróis fictícios e disponibilidade"></div>
+</section>
+</div>
+<div>
+<section class="panel" aria-label="Arena coletiva 3D">
+<h2>03 · Coliseu dos Criadores</h2>
+<p id="arenaStatus" role="status" aria-live="polite">Aguardando a liberação fictícia do professor.</p>
+<div class="actions">
+<button id="prepare" disabled>◈ Preparar modelos 3D</button>
+<button id="start" class="primary" disabled>▶ Iniciar confronto coletivo</button>
+<button id="pause" disabled>Ⅱ Pausar</button>
+<button id="abort" class="danger" disabled>■ Interromper teste</button>
+</div>
+<div class="stage-box"><div id="arenaStage" aria-label="Coliseu 3D fictício com até 30 lutadores"></div><div id="stagePlaceholder"><strong>✦ O PORTAL ESTÁ FECHADO</strong><p>O professor fictício deve liberar pelo menos dois participantes elegíveis para preparar a arena.</p></div></div>
+<div class="scores"><div class="metric"><strong id="alive">—</strong><span>EM COMBATE</span></div><div class="metric"><strong id="models">0</strong><span>GLBs REAIS CARREGADOS</span></div></div>
+<p style="font-size:12px">A câmera usa o diretor cinematográfico da V5. O combate não começa antes de todos os modelos KayKit carregarem e do clique explícito em “Iniciar”.</p>
+<div id="result" class="result" role="status" aria-live="polite" hidden></div>
+<h3 style="font-size:15px">Crônicas da arena</h3><div id="battleLog" class="log" role="log" aria-live="off">Nenhuma batalha iniciada.</div>
+</section></div>
+</div>
+</main>
+<script src="./hero-core.js"></script><script src="./phase2-combat.js"></script><script src="./progression-contract-h0.js"></script>
+<script src="./talent-vfx.js"></script><script src="./talent-sprites.js"></script><script src="./talent-choreography.js"></script><script src="./camera-director.js"></script><script src="./camera-framing.js"></script><script src="./camera-viewer.js"></script><script src="./performance-monitor.js"></script><script src="./build-identity.js"></script><script src="./character-assets.js"></script>
+<script src="./teacher-arena-release-lab.js"></script><script type="module" src="./teacher-arena-lab.js"></script>
+</body></html>
