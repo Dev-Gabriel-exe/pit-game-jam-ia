@@ -450,3 +450,12 @@
 - **Commits:** `b4d27ff44e275c2b110cbf32346410f1aef74bca` (fallback), `79946132438412cea2da6157fda6bf2c1222cb33` (regressão), `6d2ee904246ce424987f9cd1c07bab275b3f9c9a` (orientação), `ab05cad6057540c513dd02f52f525095a5bc712b` (regressão da revisão).
 - **Validação:** GitHub Actions QA estática do commit `799461324`, run [41172039227](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41172039227), **SUCCESS**. CI do último commit e Browser QA **aguardam confirmação**; nenhum teste humano, HDMI físico, GDevelop GUI ou aparelho real foi executado.
 - **Próxima etapa:** conferir CI nativa do último commit e continuar a comparação pedagógica de professor/aluno, com atenção aos demais avisos de rascunho em missões 02–10. A correção não homologa integralmente a M01 nem muda o total 54/59.
+
+
+## M02 — Salvamento honesto sob bloqueio do navegador (31/10/2026)
+
+- **Falha real:** `v3/student-mission-two.js` engolia exceções de `localStorage.setItem` e exibia “rascunho salvo neste navegador” mesmo quando quota, política de privacidade ou `SecurityError` impediam o armazenamento. Ao navegar para a revisão, `load` podia retornar campos vazios e perder trabalho.
+- **Correção:** cache volátil separado por sessão, retorno booleano de `save`, aviso dinâmico com `role="status"` e `aria-live="polite"` na construção, mensagem explícita na revisão e instrução de copiar a ficha antes de sair. O aviso não promete persistência quando só existe cópia na aba. Evidências remotas válidas podem ser recuperadas na memória; rascunhos locais prevalecem, mesmo com status `approved`.
+- **Prova automatizada:** `qa/v3-m02-legacy-evidence.cjs` expandido com bloqueio simulado de leitura/gravação, isolamento de sessão, aviso nas duas telas, recuperação remota, precedência de rascunho e armazenamento normal. **57 verificações do arquivo passaram em V8 com shims Node**, além de 15 verificações funcionais diretas no código modificado. A suíte Node nativa/Browser QA do GitHub para o commit final deve ser confirmada separadamente; V8 não substitui Chrome.
+- **Não executados:** GDevelop GUI, projeção HDMI física, celular físico, teste humano, API de turma real. Sem alterações em `main`, produção ou dados de alunos.
+- **Próxima prioridade:** confirmar CI Node/Chrome no commit final e continuar a revisão de riscos concretos das próximas missões, preservando a prioridade pedagógica.
