@@ -64,9 +64,14 @@ assert.throws(()=>h.checkTransition(ten,{...ten,build:{...ten.build,
  talents:[...ten.build.talents].reverse()}}),/imutável/);
 assert.throws(()=>h.validateCandidate({...finalCandidate,m5Entered:false,m5Frozen:null},{mission:10}),/primeira entrada/);
 assert.throws(()=>h.validateCandidate({...finalCandidate,build:{...finalBuild,talents:[...tenTalent,'D01']}},{mission:10}),/1 talento/);
-// Explicit integration gate: Phase2 battle is still M5-only, NOT a working M10.
+// M10 is an implemented *opt-in experimental* engine; it is never the default mode.
 assert.throws(()=>P.canonical({klass:ten.klass,attributes:finalBuild.attributes,
- talents:finalBuild.talents},10),/no máximo cinco/);
+ talents:finalBuild.talents},10),/opt-in experimental/);
+const m10=P.canonical({klass:ten.klass,attributes:finalBuild.attributes,
+ talents:finalBuild.talents},10,{experimentalFinal:true});
+assert.equal(m10.approvedMissions,10);
+assert.equal(m10.talents.length,10);
+assert.equal(Object.values(m10.attributes).reduce((a,b)=>a+b,0),20);
 let count=0;
 for(const klass of H.CLASSES){
  for(const talent of P.TALENTS[klass]){
