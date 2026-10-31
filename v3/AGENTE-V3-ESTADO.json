@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T03:14:46.058Z",
+  "last_completed_at": "2026-10-31T04:21:17.306Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Confirmar CI nativa Chrome do filtro final de notas privadas no projetor M07; continuar auditoria pedagógica das 20 faces professor/aluno antes de estética.",
+  "priority": "Confirmar CI nativa Node/Chrome do endurecimento de evidências M09; continuar auditoria pedagógica comparada professor/aluno, sem estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-HDMI-PROJECTOR-FAIL-CLOSED",
+  "last_task": "V4-M09-LEGACY-EVIDENCE-STRICT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2746,12 +2746,24 @@
       ],
       "tests": "PASS V8 syntax for both JS files; previous browser QA 41158994606 SUCCESS; new M07 injection Chrome QA NOT_CONFIRMED",
       "notes": "Cross-mission final sanitizer removes private teacher markup even from dynamically generated tutorial slides; regression injects private markup into raw M07 tutorial. No HDMI physical or human tests; main unchanged."
+    },
+    {
+      "id": "V4-M09-LEGACY-EVIDENCE-STRICT",
+      "completed_at": "2026-10-31T04:21:17.306Z",
+      "commit": "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf",
+      "files": [
+        "v3/student-mission-nine.js",
+        "qa/v3-m09-field-guidance.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Static QA do código e14c2a0 SUCCESS via GitHub Actions; regressão f6334ff static QA e Browser QA IN_PROGRESS na consulta. QA anterior do filtro HDMI 120eff23 SUCCESS em Chrome. Nenhum teste humano/GDevelop GUI/HDMI físico executado.",
+      "notes": "M09 parseEvidence exige cabeçalho exato, nove campos ordenados e dentro dos limites, decisão compatível com resultado e sem truncamento; hydrate preserva inclusive rascunhos apenas com rádio ou checkbox. Regressões adicionadas à suíte já integrada à CI. Roadmap 54/59; main intacta."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-HDMI-PROJECTOR-FAIL-CLOSED",
+    "task": "V4-M09-LEGACY-EVIDENCE-STRICT",
     "status": "in_progress",
-    "updated_at": "2026-10-31T03:14:46.058Z",
+    "updated_at": "2026-10-31T04:21:17.306Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2879,9 +2891,11 @@
       "8c68087ff5a8adef4ce3737a60039d6b632163ff",
       "6b11744fafb45682a7eff67e9b9678089634fb8f",
       "3d431691d07353baa66b541357c400b691964a32",
-      "120eff231eec32bf1f73f6f5dffc75fc261bd17f"
+      "120eff231eec32bf1f73f6f5dffc75fc261bd17f",
+      "e14c2a0af7a8a4a5523c7ab4711c2d0700fde887",
+      "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf"
     ],
-    "documentation_commit": "cc93e0892f58555be28bac7864a9d4ffdb5cf40e",
+    "documentation_commit": "96174ff7a39422f76652c67dc310660873a10455",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -3872,13 +3886,18 @@
         "name": "Final projector sanitization + M07 injection regression",
         "sha": "120eff231eec32bf1f73f6f5dffc75fc261bd17f",
         "result": "PASS: both modified JS files parsed with V8 new Function. Chrome test committed, native GitHub Actions on new SHA NOT_CONFIRMED."
+      },
+      {
+        "name": "M09 strict historical evidence + draft guard",
+        "sha": "f6334ffcbfee35b4abc59c72213c81bdea8d2cdf",
+        "result": "Code commit e14c2a0 static QA SUCCESS. New regression commit f6334ff native Node static QA and Chrome Browser QA IN_PROGRESS at last GitHub workflow inspection; no PASS claimed. M07 projector filter previous Browser QA on 120eff23 SUCCESS."
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar GitHub Actions Browser QA do commit 120eff23, corrigir se necessário; seguir revisão pedagógica comparada M01–M10 professor/aluno.",
-    "blocker": "Chrome CI do novo teste ainda não confirmada; HDMI físico, GDevelop GUI, celular físico e playtest humano NOT_RUN. 5 tarefas do release gate permanecem bloqueadas por validação autorizada."
+    "next_task": "Confirmar GitHub Actions Node/Chrome do commit f6334ff; corrigir se falhar. Prosseguir com auditoria pedagógica das 20 faces, verificando evidências e apresentação espelhada.",
+    "blocker": "CI nativa do novo teste M09 pendente; homologação humana, HDMI físico, GDevelop GUI e celular físico NOT_RUN. Cinco tarefas do release gate bloqueadas por validação presencial."
   }
 }
