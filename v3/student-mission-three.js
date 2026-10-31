@@ -15,14 +15,28 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const clean=s=>String(s??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
 const blank=()=>({project:'',scene:'',object:'',source:'',preview:'',saved:'',fix:'',objectType:'2D Sprite',checks:[]});
 const key=id=>'pit_v3_missao03_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+// Keep in-tab changes when storage is denied, without pretending they are persistent.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function load(id){
- try{const o=JSON.parse(localStorage.getItem(key(id))||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key].slice(0,f.max);
+ try{const storageKey=key(id),o=volatileDrafts.get(storageKey)||JSON.parse(localStorage.getItem(storageKey)||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key].slice(0,f.max);
  if(['2D Sprite','3D Box/Modelo'].includes(o.objectType))d.objectType=o.objectType;
  d.checks=Array.isArray(o.checks)?o.checks.filter(x=>[0,1,2].includes(x)):[];
  return d;
  }catch{return blank()}
 }
-function save(id,d){try{localStorage.setItem(key(id),JSON.stringify(d))}catch{}}
+function save(id,d){
+ const storageKey=key(id);
+ volatileDrafts.set(storageKey,{...d,checks:[...(d.checks||[])]});
+ try{localStorage.setItem(storageKey,JSON.stringify(d));writeStatus.set(storageKey,true);return true;}
+ catch{writeStatus.set(storageKey,false);return false;}
+}
+function draftNotice(id,filled){
+ const storageKey=key(id),prefix=filled+'/7 registros e verificações · ';
+ if(writeStatus.get(storageKey)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(storageKey)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(storageKey)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
+}
 function parseEvidence(raw){
  // Legacy API snapshots without line breaks are ambiguous: never guess field values.
  if(typeof raw!=='string')return null;
@@ -144,7 +158,7 @@ function practice(ctx){
  ['03','PREVIEW E SALVAR','Execute o jogo, observe o resultado e salve o projeto editável.','preview','saved','fix']
  ];
  return '<div class="m3-page m3-work"><div class="m3-lead"><span>◈ PRIMEIRO PROJETO REAL</span><h3>Construa o começo do seu jogo.</h3>'+
- '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo é ver o objeto no Preview, não movimentá-lo.</p><p>Este caderno mostra o tutorial e registra sua evidência; ele não abre nem cria o jogo automaticamente. Abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop em outra aba</a> e siga as etapas abaixo. Se a internet falhar, use o aplicativo instalado, se disponível.</p><div class="m3-time-plan"><span><b>4 min</b> · projeto e cena</span><span><b>8 min</b> · um asset</span><span><b>6 min</b> · Preview e salvar</span></div></div>'+
+ '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo é ver o objeto no Preview, não movimentá-lo. Confira o aviso de salvamento abaixo do formulário: se o navegador bloquear o armazenamento, copie sua ficha antes de sair.</p><p>Este caderno mostra o tutorial e registra sua evidência; ele não abre nem cria o jogo automaticamente. Abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop em outra aba</a> e siga as etapas abaixo. Se a internet falhar, use o aplicativo instalado, se disponível.</p><div class="m3-time-plan"><span><b>4 min</b> · projeto e cena</span><span><b>8 min</b> · um asset</span><span><b>6 min</b> · Preview e salvar</span></div></div>'+
  (locked?'<div class="m3-notice">Esta entrega está '+(ctx.status==='approved'?'aprovada':'em análise')+'. O registro permanece disponível para leitura.</div>':'')+
  (window.PIT_GDEVELOP_FIRST_RUN?window.PIT_GDEVELOP_FIRST_RUN.render('student'):'<p>Projeto vazio → cena → objeto → Preview → salvar.</p>')+
  '<div class="m3-asset-bridge"><strong>✦ UM ASSET VISUAL, DUAS ROTAS</strong><p>Use Gemini ou o Asset Store integrado ao GDevelop. Não perca tempo com animação, música ou vídeo agora: Flow, Suno e ElevenLabs ficam para a Missão 06. O primeiro recurso deve aparecer no Preview.</p></div>'+
@@ -156,7 +170,7 @@ function practice(ctx){
  '</div></div>':'')+
  keys.map(k=>field(FIELDS.find(f=>f.key===k),d,i,locked)).join('')+
  (num==='03'?checklist(d,locked):'')+'</section>').join('')+
- '<div class="m3-controls"><span id="m3Notice" aria-live="polite">Rascunho guardado neste navegador</span>'+
+ '<div class="m3-controls"><span id="m3Notice" role="status" aria-live="polite">'+esc(draftNotice(ctx.session,validity(d).filter(Boolean).length))+'</span>'+ 
  '<button type="button" class="m3-primary" data-m3-action="review">CONFERIR MEU PRIMEIRO PROJETO ›</button></div></div>'+
  '<aside class="m3-status">'+
  '<div class="m3-status-art"><span>SEU PRIMEIRO PREVIEW</span></div>'+
@@ -177,7 +191,8 @@ function review(ctx){
  '<div class="m3-review-grid">'+[['PROJETO',d.project],['CENA',d.scene],['OBJETO',d.object],['RECURSO / ORIGEM',d.source],['TIPO',d.objectType],['PREVIEW',d.preview],['SALVAMENTO',d.saved],['DIAGNÓSTICO',d.fix||'Nenhum problema relatado']].map(([label,v])=>
  '<div><span>'+label+'</span><p>'+esc(v||'Não informado')+'</p></div>').join('')+'</div>'+
  '<label for="evidenceInput">Evidência enviada para avaliação</label><textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx.idea))+'</textarea>'+
- '<small>O professor receberá somente os dados declarados aqui. O site não consegue verificar automaticamente seu Preview.</small></div>'+
+ '<small>O professor receberá somente os dados declarados aqui. O site não consegue verificar automaticamente seu Preview.</small>'+ 
+ (writeStatus.get(key(ctx.session))===false?'<p class="m3-notice" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+ 
  (!submitted&&!v.ok?'<div class="m3-notice">Antes de enviar: '+esc(v.label)+'</div>':'')+
  '<div class="m3-actions"><button type="button" data-m3-action="back" class="m3-back" '+(submitted?'disabled':'')+'>‹ REVISAR PROJETO</button>'+
  '<button type="button" id="submitWork" class="m3-primary" '+(!v.ok||submitted||!ctx.canSubmit?'disabled':'')+'>'+
@@ -207,7 +222,7 @@ function mount(ctx){
    const input=root.querySelector('#m3-'+fieldKey);
    if(input)input.placeholder=exampleFor(fieldKey,idea,d.objectType);
   }
-  const note=root.querySelector('#m3Notice');if(note)note.textContent=filled+'/7 registros e verificações · rascunho salvo neste navegador';
+  const note=root.querySelector('#m3Notice');if(note)note.textContent=draftNotice(ctx.session,filled);
  }
  root.querySelectorAll('[data-m3-field]').forEach(el=>el.addEventListener('input',()=>{
   d[el.dataset.m3Field]=el.value;save(ctx.session,d);update();
