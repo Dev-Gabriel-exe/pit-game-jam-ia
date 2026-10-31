@@ -19,10 +19,12 @@
   student:[
    {key:'hero',label:'✦ MEU HERÓI',src:'./v5/hero-lab-h1c.html',live:'./v5/hero-lab-h1d.html'},
    {key:'duel',label:'⚔ DUELOS',src:'./v5/duel-lab-d1a.html',live:'./v5/duel-lobby-d1c.html'},
+   {key:'duel3d',label:'⚔ DUELO 3D',src:'./v5/duel-window-lab.html'},
    {key:'arena',label:'🎥 ARENA 3D',src:'./v5/duel-replay-d1b.html?demo=1'}
   ],
   teacher:[
    {key:'teacher',label:'♛ CONTROLE',src:'./v5/duel-teacher-d1c.html?demo=1',live:'./v5/duel-teacher-d1c.html'},
+   {key:'collective',label:'🏟 TORNEIO M5/M10',src:'./v5/teacher-arena-lab.html'},
    {key:'arena',label:'🎥 ARENA 3D',src:'./v5/duel-replay-d1b.html?demo=1'}
   ]
  };
@@ -78,7 +80,7 @@
  function chooseTab(key){
   const t=tabs().find(x=>x.key===key);
   if(!t)return;
-  if(t.key==='duel'&&!allowedToDuel()&&!previewRequested){
+  if(['duel','duel3d'].includes(t.key)&&!allowedToDuel()&&!previewRequested){
    statusNode.textContent='Você ainda está fazendo a missão. Entregue seu trabalho para liberar desafios.';
    return;
   }
@@ -112,7 +114,7 @@
    const b=document.createElement('button');
    b.type='button';b.dataset.tab=tab.key;b.textContent=tab.label;
    b.setAttribute('role','tab');b.setAttribute('aria-selected','false');
-   b.disabled=tab.key==='duel'&&!allowedToDuel()&&!previewRequested;
+   b.disabled=['duel','duel3d'].includes(tab.key)&&!allowedToDuel()&&!previewRequested;
    b.addEventListener('click',()=>chooseTab(tab.key));
    nav.appendChild(b);
   }
@@ -163,9 +165,9 @@
   }
   updateSafety();
   if(!hub.hidden){
-   nav.querySelector('[data-tab="duel"]')?.toggleAttribute('disabled',
+   for(const key of ['duel','duel3d'])nav.querySelector('[data-tab="'+key+'"]')?.toggleAttribute('disabled',
     !allowedToDuel()&&!previewRequested);
-   if(currentTab==='duel'&&!allowedToDuel()&&!previewRequested)chooseTab('hero');
+   if(['duel','duel3d'].includes(currentTab)&&!allowedToDuel()&&!previewRequested)chooseTab('hero');
    else statusNode.textContent=statusText();
   }
  }
