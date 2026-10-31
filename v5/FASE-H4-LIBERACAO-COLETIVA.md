@@ -42,3 +42,11 @@ Na árvore da branch experimental, servir o repositório via HTTP e abrir:
 Esta página simula o painel em um único navegador e gera a turma localmente. **Não** comunica estudantes em dispositivos distintos; **não** autentica um professor, bloqueia aluno em servidor, registra lock atomizado, transmite combate/câmera, verifica participação de turma real ou autoriza a entrega de 100 XP. Não substitui G.2: hardware do laboratório e 30 modelos simultâneos precisam de teste físico, FPS, memória, espectadores e replay.
 
 **Próximos gates:** G.2 nos PCs reais; depois H.1b (schema V5 e locks/versionamento no backend), H.2 (uma partida autoritativa/stream com reconexão), integração V3 + homologação I **somente com aprovação explícita do usuário**. Não realizar merge na `main`.
+
+## Revalidação ampliada: 30 heróis inteiros no motor (31/10/2026)
+
+O teste foi ampliado para **liberar e executar trinta entradas reais do motor** — separadamente em M5 e M10 — com build canonizada, H0 verificado, sem exceções de elegibilidade. Em paralelo, continua verificando 4 exclusões e 26 elegíveis com replay idêntico.
+
+**CI verde:** https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41203797984 — `teacher-contract` e `teacher-chromium` concluídos em `success`. Logs Node: `M5 / 30 eligible released + full engine` e `M10 / 30 eligible released + full engine`; Chromium: `30-person preflight, 3 eligible M5 / 1 excluded, explicit teacher start, 4 KayKit M10 GLBs, abort cleanup and reset`.
+
+**Limite da evidência:** o cenário de 30 foi executado no motor sem interface 3D nesta suíte; a UI WebGL desta suíte foi verificada com 3–4 personagens KayKit. Os demais testes da arena cobrem cenários 3D com 30, mas isso **não** substitui G.2 no PC da escola. Não declarar que um professor real ou 30 alunos já estão sincronizados.
