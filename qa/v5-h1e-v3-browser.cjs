@@ -123,9 +123,9 @@ const BASE='http://127.0.0.1:8899';
    role:'student',stage:3,status:'working',approved:2,
    authenticated:true,visualPreview:false
   }));
-  if(await N.locator('#missionGallery').evaluate(el=>el.classList.contains('open')))
-   await N.locator('#missionGalleryClose').click();
-  await N.locator('#pitV5HubButton').click();
+  // Unauthenticated V3 correctly keeps its auth overlay active. This is a
+  // state-contract test with an injected fictional context, not a user login.
+  await N.locator('#pitV5HubButton').dispatchEvent('click');
   assert.equal(await N.locator('[data-tab=duel]').isDisabled(),true);
   assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),true);
   await N.evaluate(()=>window.PIT_V5_H1E.update({
