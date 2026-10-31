@@ -37,7 +37,7 @@ for(const [klass,items] of Object.entries(manifest)){
    assert(middle.z>-4&&middle.z<6);
    assert(Math.abs(late.x-22)<1e-6);
    assert(Math.abs(late.z-6)<1e-6);
-   assert(middle.y>1.4&&middle.scale>0);
+   assert(middle.y>.7&&middle.scale>0,'dashes follow low ground arcs, spells fly higher');
   }
   const phases=new Set();
   for(let i=0;i<=30;i++){
