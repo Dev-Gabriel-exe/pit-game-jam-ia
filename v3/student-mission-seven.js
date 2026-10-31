@@ -13,11 +13,11 @@ const fields=[
 {id:'repeat',label:'O que ocorreu ao repetir a interação ou reiniciar?',min:12,max:75},
 {id:'saved',label:'Onde está o projeto editável com início e final?',min:6,max:65}
 ];
-const blank=()=>({route:'2d',checks:[],...Object.fromEntries(fields.map(f=>[f.id,'']))});
+const blank=()=>({route:'2d',routeChosen:false,checks:[],...Object.fromEntries(fields.map(f=>[f.id,'']))});
 const key=id=>'pit_v3_m07_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
 const volatileDrafts=new Map(),writeStatus=new Map(); // In-tab only; not permanent storage.
-function load(session){let d=blank();try{const k=key(session),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');if(['2d','3d'].includes(x.route))d.route=x.route;for(const f of fields)if(typeof x[f.id]==='string')d[f.id]=x[f.id].slice(0,f.max);if(Array.isArray(x.checks))d.checks=[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]}catch{}return d}
-function save(session,d){const x=blank();x.route=d.route==='3d'?'3d':'2d';for(const f of fields)x[f.id]=clean(d[f.id]).slice(0,f.max);x.checks=[...new Set((d.checks||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<3))];const k=key(session);volatileDrafts.set(k,x);try{localStorage.setItem(k,JSON.stringify(x));writeStatus.set(k,true);return true}catch{writeStatus.set(k,false);return false}}
+function load(session){let d=blank();try{const k=key(session),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');if(['2d','3d'].includes(x.route))d.route=x.route;d.routeChosen=x.routeChosen===true;for(const f of fields)if(typeof x[f.id]==='string')d[f.id]=x[f.id].slice(0,f.max);if(Array.isArray(x.checks))d.checks=[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]}catch{}return d}
+function save(session,d){const x=blank();x.route=d.route==='3d'?'3d':'2d';x.routeChosen=d.routeChosen===true;for(const f of fields)x[f.id]=clean(d[f.id]).slice(0,f.max);x.checks=[...new Set((d.checks||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<3))];const k=key(session);volatileDrafts.set(k,x);try{localStorage.setItem(k,JSON.stringify(x));writeStatus.set(k,true);return true}catch{writeStatus.set(k,false);return false}}
 function draftNotice(session){const k=key(session);if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. O rascunho permanece apenas nesta aba: copie sua ficha antes de sair.';if(writeStatus.get(k)===true)return 'Rascunho salvo neste navegador. Não enviado.';try{if(localStorage.getItem(k)!==null)return 'Rascunho salvo neste navegador. Não enviado.'}catch{}return 'Rascunho local. Não enviado.'}
 function validate(session){const d=load(session);for(const f of fields){const n=clean(d[f.id]).length;if(n<f.min)return {ok:false,field:f.id,label:'Descreva "'+f.label+'" com pelo menos '+f.min+' caracteres.'};if(n>f.max)return {ok:false,field:f.id,label:'Reduza "'+f.label+'".'}}if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview antes de enviar.'};return {ok:true,label:'Registro completo, aguardando verificação do professor.'}}
 function evidence(session){const d=load(session),names={start:'Início',challenge:'Desafio',condition:'SE',result:'ENTÃO',negative:'Negativo',repeat:'Repetição',saved:'Projeto salvo'};return ['M07 | '+d.route,...fields.map(f=>names[f.id]+': '+clean(d[f.id]))].join('\n').slice(0,750)}
@@ -28,7 +28,7 @@ function parseEvidence(text){
  const lines=text.replace(/\r\n?/g,'\n').split('\n');
  const labels=['Início','Desafio','SE','ENTÃO','Negativo','Repetição','Projeto salvo'];
  if(lines.length!==fields.length+1||!/^M07 \\| (2d|3d)$/.test(lines[0]))return null;
- const d=blank();d.route=lines[0].slice(6);
+ const d=blank();d.route=lines[0].slice(6);d.routeChosen=true;
  for(let i=0;i<fields.length;i++){
   const f=fields[i],prefix=labels[i]+': ',line=lines[i+1];
   if(!line.startsWith(prefix))return null;
@@ -43,11 +43,19 @@ function hydrate(session,text,status){
  const d=parseEvidence(text);if(!d)return;
  const existing=load(session);
  // Preserva também um rascunho que contenha somente testes marcados.
- if(volatileDrafts.has(key(session))||fields.some(f=>existing[f.id].trim())||existing.checks.length||existing.route!=='2d')return;
+ if(volatileDrafts.has(key(session))||fields.some(f=>existing[f.id].trim())||existing.checks.length||existing.route!=='2d'||existing.routeChosen)return;
  d.checks=[];save(session,d);
 }
 function profile(ctx){const idea=ctx.idea||{},mvp=ctx.mvp||{};return {title:clean(idea.title)||'seu jogo',genre:clean(idea.genre)||'gênero livre',goal:clean(idea.objective||mvp.objective)||'o objetivo definido na Missão 02',victory:clean(idea.victory)||'a conclusão definida pelo criador'}}
-function routeFor(ctx,d){if(d.route==='3d')return 1;if(ctx.rule&&ctx.rule.route===2)return 1;if(ctx.playable&&ctx.playable.route===3)return 1;return 0}
+function routeFor(ctx,d){
+ // The inherited 3D project is only a suggestion. An explicit 2D choice wins
+ // even when previous M04/M05 evidence points to 3D.
+ if(d.routeChosen===true)return d.route==='3d'?1:0;
+ if(d.route==='3d')return 1; // Legacy drafts without routeChosen.
+ if(ctx.rule&&ctx.rule.route===2)return 1;
+ if(ctx.playable&&ctx.playable.route===3)return 1;
+ return 0;
+}
 function brief(ctx){const p=profile(ctx);return '<section class="m7s-brief"><h3>Um jogo começa, desafia e termina.</h3><p>O objetivo original de <b>'+esc(p.title)+'</b> era: '+esc(p.goal)+'. Agora transforme essa intenção em uma condição testável de vitória ou derrota, sem criar várias fases.</p><ol><li>Preserve movimento, regra e asset das missões anteriores.</li><li>Implemente uma condição de conclusão no GDevelop.</li><li>Mostre o resultado final e teste a tentativa prematura.</li></ol><button type="button" data-m7s-nav="practice">CRIAR CONCLUSÃO ›</button></section>'}
 function practice(ctx){const d=load(ctx.session),p=profile(ctx),locked=['submitted','approved'].includes(ctx.status),r=routeFor(ctx,d);
 const guide=window.PIT_GDEVELOP_M07_GUIDE?window.PIT_GDEVELOP_M07_GUIDE.render(r):'<p>Guia indisponível. Consulte a documentação oficial do GDevelop.</p>';
@@ -70,7 +78,7 @@ function review(ctx){const d=load(ctx.session),locked=['submitted','approved'].i
 '<small>O envio não concede aprovação automática. A conclusão deve ser observada no Preview.</small>'+(writeStatus.get(key(ctx.session))===false?'<p class="m7s-warning" role="status">⚠ Não foi possível salvar permanentemente. Copie a evidência acima antes de sair desta aba.</p>':'')+'</section>'}
 function render(ctx){const p=profile(ctx);return '<section class="m7s-root" id="m7sRoot"><header><small>MISSÃO 07 / 10 · DAR VIDA AO UNIVERSO</small><h2>O final precisa acontecer no jogo.</h2><p>'+esc(p.title)+' · '+esc(p.genre)+' · 50 minutos</p></header>'+(ctx.phase==='practice'?practice(ctx):ctx.phase==='review'?review(ctx):brief(ctx))+'</section>'}
 function mount(ctx){const root=document.querySelector('#m7sRoot');if(!root)return;const d=load(ctx.session),locked=['submitted','approved'].includes(ctx.status);
-if(ctx.phase==='practice'&&window.PIT_GDEVELOP_M07_GUIDE){const r=routeFor(ctx,d);if(!locked&&!fields.some(f=>d[f.id].trim())&&d.checks.length===0){d.route=r===1?'3d':'2d';save(ctx.session,d)}const guide=root.querySelector('#g7Guide');window.PIT_GDEVELOP_M07_GUIDE.mount(guide,{initialRoute:r,onRouteChange:(_,index)=>{if(locked)return;d.route=index===1?'3d':'2d';save(ctx.session,d);const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}});if(locked)guide?.querySelectorAll('button').forEach(b=>b.disabled=true)}
+if(ctx.phase==='practice'&&window.PIT_GDEVELOP_M07_GUIDE){const r=routeFor(ctx,d);if(!locked&&!fields.some(f=>d[f.id].trim())&&d.checks.length===0){d.route=r===1?'3d':'2d';save(ctx.session,d)}const guide=root.querySelector('#g7Guide');window.PIT_GDEVELOP_M07_GUIDE.mount(guide,{initialRoute:r,onRouteChange:(_,index)=>{if(locked)return;d.route=index===1?'3d':'2d';d.routeChosen=true;save(ctx.session,d);const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}});if(locked)guide?.querySelectorAll('button').forEach(b=>b.disabled=true)}
 root.querySelectorAll('[data-m7s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m7sField]=el.value;const ok=save(ctx.session,d),status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m7s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m7sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(ctx.session,d);const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m7s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m7sNav==='practice'){ctx.onPhase('practice');return}const v=validate(ctx.session);if(!v.ok){ctx.onMessage(v.label);root.querySelector(v.field==='checks'?'[data-m7s-check]':'#m7s-'+v.field)?.focus();return}ctx.onPhase('review')}));
