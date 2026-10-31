@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T06:12:32.000Z",
+  "last_completed_at": "2026-10-31T08:20:00.000Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M03: fallback volátil por sessão e aviso acessível de falha de armazenamento implementados; 18 verificações V8 diretas PASS, static QA GitHub 41179996604 SUCCESS. Confirmar Browser QA 41179996596 e seguir auditoria pedagógica professor/aluno (M04 em diante); sem estética.",
+  "priority": "M04: fallback volátil por sessão, aviso de falha de localStorage na prática/revisão e 17 regressões adicionais implementados; QA estática nativa 41184094461 SUCCESS. Confirmar Browser QA 41184094448; seguir auditoria pedagógica M05 professor/aluno antes da estética.",
   "current_phase": "MISSOES",
-  "last_task": "V4-M03-DRAFT-STORAGE-FAILSAFE",
+  "last_task": "V4-M04-DRAFT-STORAGE-FAILSAFE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2794,12 +2794,24 @@
       ],
       "tests": "18 direct V8 assertions PASS; native static QA 41179996604 SUCCESS; Browser QA 41179996596 IN_PROGRESS; no human or physical tests.",
       "notes": "M03 now retains technical report in-tab on localStorage denial, warns in practice and review, preserves 2D/3D choice and manual checks, isolates sessions, and never claims persistence falsely. M02 static/browser QA confirmed SUCCESS. Master roadmap 54/59; main untouched."
+    },
+    {
+      "id": "V4-M04-DRAFT-STORAGE-FAILSAFE",
+      "completed_at": "2026-10-31T08:20:00.000Z",
+      "commit": "3e8bc3df86e438136006912bf27fe3ed90113355",
+      "files": [
+        "v3/student-mission-four.js",
+        "qa/v3-m04-regression.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "GitHub Actions native static QA 41184094461 SUCCESS including 17 new denied-storage regressions; Browser QA 41184094448 IN_PROGRESS; M03 Browser QA 41179996596 SUCCESS. Physical/human NOT_RUN.",
+      "notes": "M04 retains route, text and manual checks in-tab when localStorage is blocked; honest practice/review warning and copy guidance. No main, production or real student data changes. Master roadmap 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-M03-DRAFT-STORAGE-FAILSAFE",
+    "task": "V4-M04-DRAFT-STORAGE-FAILSAFE",
     "status": "in_progress",
-    "updated_at": "2026-10-31T07:16:20.000Z",
+    "updated_at": "2026-10-31T08:20:00.000Z",
     "code_commits": [
       "f22d97d179f63e82eba51a6212f7c93b9edd9802",
       "5a074143cbf9833ebad64543e85da2e9465fa094",
@@ -2937,9 +2949,11 @@
       "dfff575ae16ddb5671c3ec2bcb976c53deb4281c",
       "033ac9ba2e8e7979ede507f499fc27c99d74c3e5",
       "5b1a336da192767cd82f80c7e78b0e158e004aa4",
-      "7add3ee5b6a0a59d7150902ae303eb1a0d9b69c8"
+      "7add3ee5b6a0a59d7150902ae303eb1a0d9b69c8",
+      "0f153e3b3f9764f3278b05e290be0685e0cd6e4d",
+      "3e8bc3df86e438136006912bf27fe3ed90113355"
     ],
-    "documentation_commit": "901c7f71a56429014869e4140f187713e6209ab0",
+    "documentation_commit": "6b42f00eb9544e7a59cb306f41116a1f78166f9d",
     "tests": [
       {
         "name": "Previous M08 Browser QA",
@@ -4005,13 +4019,31 @@
         "run_id": 41179996596,
         "sha": "7add3ee5b6a0a59d7150902ae303eb1a0d9b69c8",
         "result": "IN_PROGRESS at last check; no pass claimed"
+      },
+      {
+        "name": "M03 Browser QA confirmed",
+        "run_id": 41179996596,
+        "sha": "7add3ee5b6a0a59d7150902ae303eb1a0d9b69c8",
+        "result": "SUCCESS verified 2026-10-31"
+      },
+      {
+        "name": "M04 storage-denial + legacy evidence native static QA",
+        "run_id": 41184094461,
+        "sha": "3e8bc3df86e438136006912bf27fe3ed90113355",
+        "result": "SUCCESS: GitHub Actions static-qa including v3-m04-regression.cjs and syntax checks; 17 new storage denial assertions, no physical tests"
+      },
+      {
+        "name": "M04 final code Browser QA",
+        "run_id": 41184094448,
+        "sha": "3e8bc3df86e438136006912bf27fe3ed90113355",
+        "result": "IN_PROGRESS at last check; not claimed passed"
       }
     ],
     "human_gdevelop_gui": "NOT_RUN",
     "physical_mobile": "NOT_RUN",
     "peer_playtest": "NOT_RUN",
     "hdmi_projection": "NOT_RUN",
-    "next_task": "Confirmar Browser QA da M03 (run 41179996596), auditar a persistência dos rascunhos da M04 e comparar as faces professor/aluno antes da estética.",
-    "blocker": "Browser QA final M03 pendente; HDMI físico, GDevelop GUI, celular físico e playtest humano NOT_RUN. Cinco release gates continuam bloqueados."
+    "next_task": "Confirmar Browser QA M04 (41184094448), comparar professor/aluno M05 e verificar falha silenciosa de armazenamento na M05 antes de qualquer estética.",
+    "blocker": "Browser QA M04 pendente; GDevelop GUI, HDMI físico, aparelho físico e playtest humano NOT_RUN. Cinco release gates seguem bloqueados."
   }
 }
