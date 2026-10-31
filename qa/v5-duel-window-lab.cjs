@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const html=fs.readFileSync(require('node:path').join(__dirname,'../v5/duel-window-lab.html'),'utf8');
+for(const id of ['teacher','invite','sender','recipient','accept','decline','open','reset','arena','close'])assert.match(html,new RegExp('id="'+id+'"'));
+for(const method of ['D.invite','D.respond','D.notificationsFor','D.arenaWindowFor','D.createState'])assert(html.includes(method),method);
+assert(html.includes('aria-modal="true"'));
+assert(html.includes('role="status" aria-live="polite"'));
+assert(html.includes('fictional-duel-window'));
+assert(html.includes("event.key==='Escape'"));
+assert(html.includes('document.body.style.overflow'));
+assert(html.includes('Sem dano, talentos, XP'));
+console.log('PASS: duel modal lab static UI contract, consent paths, a11y hooks and no gameplay claims');
