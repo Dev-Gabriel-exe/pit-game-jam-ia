@@ -1,0 +1,71 @@
+'use strict';
+// M09 blocked-storage regression with fictional sessions; no real peer test or GDevelop execution.
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const source=fs.readFileSync('v3/student-mission-nine.js','utf8');
+const ctx={window:{},document:{},localStorage:{
+ getItem(){throw Error('SecurityError: storage disabled')},
+ setItem(){throw Error('QuotaExceededError: storage disabled')}
+}};
+vm.runInNewContext(source,ctx,{filename:'v3/student-mission-nine.js'});
+const m=ctx.window.PIT_STUDENT_MISSION_NINE;
+assert(m&&typeof m.draftNotice==='function','draft warning must be exported');
+const id='fictional-a';
+const draft=m.load(id);
+draft.outcome='issue';draft.resolution='backlog';draft.checks=[0,1,2];
+for(const f of m.fields)draft[f.id]='Observação real simulada apenas para teste '+f.id;
+assert.equal(m.save(id,draft),false,'blocked storage must report failure');
+const recovered=m.load(id);
+assert.equal(recovered.outcome,'issue','outcome stays in current tab');
+assert.equal(recovered.resolution,'backlog','decision stays in current tab');
+assert.equal(recovered.checks.length,3,'manual checks stay in current tab');
+for(const f of m.fields)assert.equal(recovered[f.id],draft[f.id],'field survives navigation '+f.id);
+assert.equal(m.validate(id).ok,true,'valid fictional report survives storage failure');
+assert(m.evidence(id).includes('Observado: '),'report remains available to copy');
+assert(m.draftNotice(id).includes('apenas nesta aba'),'must not claim permanent saving');
+const practice=m.render({session:id,phase:'practice',status:'',idea:{}});
+assert(practice.includes('apenas nesta aba'),'practice shows storage warning');
+assert(practice.includes('data-m9s-field="observed"'),'practice retains form');
+assert(!practice.includes('pit-private-teacher-notes'),'student must not show private teacher notes');
+const review=m.render({session:id,phase:'review',status:'',idea:{},canSubmit:true});
+assert(review.includes('Copie o relatório acima'),'review must warn before leaving');
+assert(review.includes('id="submitWork"'),'review still exposes normal submission action');
+assert.equal(m.load('fictional-b').outcome,'','other session isolated');
+assert.equal(m.validate('fictional-b').ok,false,'other session cannot inherit peer-test claims');
+const partial=m.load('fictional-partial');
+partial.checks=[0,2];partial.outcome='passed';
+assert.equal(m.save('fictional-partial',partial),false,'partial save also reports failure');
+m.hydrate('fictional-partial',m.evidence(id),'approved');
+assert.equal(m.load('fictional-partial').outcome,'passed','remote hydration cannot overwrite partial choice');
+assert.equal(m.load('fictional-partial').checks.length,2,'remote hydration cannot overwrite partial checks');
+m.hydrate('fictional-hydrated',m.evidence(id),'submitted');
+assert.equal(m.load('fictional-hydrated').outcome,'issue','structured historical report may hydrate');
+assert.equal(m.load('fictional-hydrated').checks.length,0,'historical report never fabricates manual checks');
+const report=m.evidence('fictional-hydrated');
+assert.equal(m.parseEvidence(report).resolution,'backlog','structured report roundtrip');
+assert.equal(m.parseEvidence(report.replace('M09 | issue | backlog','M09 | passed | backlog')),null,'contradictory report rejected');
+const status={textContent:''};
+const listeners={};
+const input={dataset:{m9sField:'observed'},value:'Observação fictícia após evento',addEventListener:(type,fn)=>{listeners.input=fn}};
+const outcome={checked:true,value:'passed',addEventListener:(type,fn)=>{listeners.outcome=fn}};
+const resolution={checked:true,value:'nochange',addEventListener:(type,fn)=>{listeners.resolution=fn}};
+const check={checked:true,dataset:{m9sCheck:'1'},addEventListener:(type,fn)=>{listeners.check=fn}};
+const root={
+ querySelectorAll(sel){if(sel==='[data-m9s-field]')return [input];if(sel==='input[name="m9Outcome"]')return [outcome];if(sel==='input[name="m9Resolution"]')return [resolution];if(sel==='[data-m9s-check]')return [check];return []},
+ querySelector(sel){return sel==='#m9sStatus'?status:null}
+};
+ctx.document.querySelector=sel=>sel==='#m9sRoot'?root:null;
+m.mount({session:'fictional-ui',status:'',phase:'practice',onPhase(){},onMessage(){}});
+listeners.input();
+assert(status.textContent.includes('apenas nesta aba'),'typing shows blocked-storage warning');
+listeners.outcome();
+assert(status.textContent.includes('apenas nesta aba'),'outcome radio shows blocked-storage warning');
+listeners.resolution();
+assert(status.textContent.includes('apenas nesta aba'),'decision radio shows blocked-storage warning');
+listeners.check();
+assert(status.textContent.includes('apenas nesta aba'),'checkbox shows blocked-storage warning');
+assert.equal(m.load('fictional-ui').outcome,'passed','radio persisted in volatile tab');
+assert.equal(m.load('fictional-ui').resolution,'nochange','decision persisted in volatile tab');
+assert.equal(m.load('fictional-ui').checks.length,1,'checkbox persisted in volatile tab');
+console.log('PASS M09 blocked-storage: nine fields, radio/checkbox, session isolation, warnings, hydration and fictional UI events. Human playtest NOT_RUN.');
