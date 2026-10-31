@@ -68,7 +68,7 @@ el('simulate').addEventListener('click',()=>{
  try{
   if(el('arena').hidden||!acceptedDescriptor)throw Error('Aceite obrigatório');
   const mission=Number(el('battleMission').value);
-  const trial=window.PIT_V5_DUEL_BATTLE_LAB.createTrial(acceptedDescriptor,window.PIT_V5_PHASE2_COMBAT,{mission,seed:4252});
+  const trial=window.PIT_V5_DUEL_BATTLE_LAB.createTrial(acceptedDescriptor,window.PIT_V5_PHASE2,{mission,seed:4252});
   const result=trial.run();
   if(!result.finished||!result.winner)throw Error('Combate não terminou');
   el('battleResult').textContent='M'+mission+' · Vencedor: '+result.winner.name+' · '+result.time+'s · 2 participantes fictícios';
