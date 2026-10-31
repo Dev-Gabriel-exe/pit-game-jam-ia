@@ -1,0 +1,36 @@
+name: V5 H3 — M10 Passive and Reactive Event Audit
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-passive-reactive-events.cjs'
+      - '.github/workflows/v5-m10-passive-reactive-qa.yml'
+      - 'v5/phase2-combat.js'
+      - 'v5/talent-vfx.js'
+      - 'v5/talent-sprites.js'
+      - 'v5/talent-choreography.js'
+      - 'v5/progression-contract-h0.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  event-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Check syntax and canonical talent contracts
+        run: |
+          node --check qa/v5-m10-passive-reactive-events.cjs
+          node qa/v5-talent-vfx.cjs
+          node qa/v5-talent-sprites.cjs
+          node qa/v5-talent-choreography.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - name: Run synthetic M10 event coverage and M5 regression
+        run: node qa/v5-m10-passive-reactive-events.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-passive-reactive-events
+          path: qa/v5-m10-passive-reactive-report.json
+          if-no-files-found: ignore
