@@ -46,3 +46,10 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 - `.github/workflows/v5-duel-invitations-lab-qa.yml`: gatilho atualizado para os novos arquivos e execução do QA estático.
 - HEAD da implementação: `9b28751d`; CI do novo commit pendente de verificação no momento do checkpoint. Link de acompanhamento: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-duel-invitations-lab-qa.yml
 - Próximo passo: Playwright real para aceitar/recusar, abrir/fechar modal e bloquear com professor; em seguida conectar somente um combate fictício 1×1 WebGL e testar liberações M5/M10 em laboratório. G.2 e H operacional seguem bloqueadas.
+
+## Rodada seguinte — automação Chromium de notificações e janela
+
+- Novo teste `qa/v5-duel-window-browser.cjs`: recusa não abre janela, aceite abre, bloqueio do professor, Esc e foco restaurado, reset e ausência de erros JS.
+- Workflow `.github/workflows/v5-duel-invitations-lab-qa.yml` atualizado com job Playwright Chromium.
+- SHA do código: `b099d81d`. **CI ainda em fila na consulta; não afirmar que o navegador passou.**
+- Escopo: somente maquete fictícia. Ainda falta arena 1×1 WebGL real, autorização professor M5/M10 e teste ponta a ponta V3; H.1/H.2 reais bloqueadas por G.2.
