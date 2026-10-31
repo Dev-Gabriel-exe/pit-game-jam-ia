@@ -83,8 +83,16 @@ const R=require('../v5/m10-visual-roster.js');
   assert.notEqual(await stage.getAttribute('data-v5-follow-target'),watched);
   assert.match(await page.locator('#studentViewStatus').textContent(),/eliminado.*MESMO diretor/);
   assert(Number(await stage.getAttribute('data-v5-spectators'))>=1);
-  const screenshot=await page.screenshot({timeout:25000});
-  fs.writeFileSync('qa/v5-m10-spectator-30.png',screenshot);
+  // Playwright screenshot waits for an animated WebGL surface to settle and
+  // can time out despite the real KO/camera assertions already succeeding.
+  // Capture the current compositor frame directly, as in M10 legibility QA.
+  const cdp=await page.context().newCDPSession(page);
+  try{
+   const frame=await cdp.send('Page.captureScreenshot',{
+    format:'png',fromSurface:true,captureBeyondViewport:false
+   });
+   fs.writeFileSync('qa/v5-m10-spectator-30.png',Buffer.from(frame.data,'base64'));
+  }finally{await cdp.detach();}
   await page.locator('#teacherViewButton').click();
   const teacher=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer);
   assert.equal(teacher.viewer.mode,'teacher');
