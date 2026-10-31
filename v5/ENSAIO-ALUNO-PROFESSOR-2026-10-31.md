@@ -99,3 +99,10 @@ Escopo: auditoria de contrato fictício, **não homologação operacional**. Bra
 **Commits:** `1d2d7b02` adapter, `bfabf163` renderer, `5f70fce0` modal, `8225aefe` gate de GLBs, `509c90f1` HUD, `78e82c0c` CI 3D, `cccbc988` bloqueio professor, `a749f215` smoke M10, `b0c46a88` fallback coerente.
 
 **Gates:** CI da rodada final com M10/fallback ainda não confirmado na consulta; não homologar até verde. G.2 nos PCs reais e H com estudantes reais continuam bloqueados. Não houve merge na main, deploy, integração nem alteração de XP/nota/conta.
+
+### Fechamento da rodada: CI WebGL real verde
+
+- Workflow `V5 Duel Invitations Fictional Contract QA` no commit `b0c46a88`: **success**; run `41201158624`.
+- Job Node de contratos aprovado; job Chromium WebGL aprovado com mensagem explícita: `PASS: two authentic KayKit GLBs render for accepted 1v1 M5 and M10; cleanup on both exits`.
+- Revalidados no navegador: convite, consentimento, recusa, bloqueio pelo professor, fechamento da janela, restaurar foco, renderização 3D **M5 e M10** com dois GLBs KayKit, câmera e descarte do canvas.
+- O gate G.2 no PC real e a autorização para integrar com contas/alunos continuam pendentes; a aprovação do GitHub Actions não substitui essa validação.
