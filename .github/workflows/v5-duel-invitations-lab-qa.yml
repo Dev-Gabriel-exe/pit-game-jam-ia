@@ -5,6 +5,8 @@ on:
     paths:
       - 'v5/duel-invitations-lab.js'
       - 'qa/v5-duel-invitations-lab.cjs'
+      - 'qa/v5-duel-window-lab.cjs'
+      - 'v5/duel-window-lab.html'
       - '.github/workflows/v5-duel-invitations-lab-qa.yml'
   workflow_dispatch:
 jobs:
@@ -19,3 +21,4 @@ jobs:
       - run: node --check v5/duel-invitations-lab.js
       - run: node --check qa/v5-duel-invitations-lab.cjs
       - run: node qa/v5-duel-invitations-lab.cjs
+      - run: node qa/v5-duel-window-lab.cjs
