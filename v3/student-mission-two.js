@@ -11,7 +11,8 @@ const blank=()=>({scene:'',mechanic:'',elements:'',test:'',later:''});
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
 const parts=s=>String(s??'').split(/[,;·•\n]/).map(clean).filter(Boolean);
-const essential=d=>[clean(d.scene).length>=5,clean(d.mechanic).length>=5,clean(d.elements).length>=9&&parts(d.elements).length===3,clean(d.test).length>=12];
+const validLength=(d,f)=>clean(d[f.id]).length>=f.min&&String(d[f.id]??'').length<=f.max;
+const essential=d=>[validLength(d,FIELDS[0]),validLength(d,FIELDS[1]),validLength(d,FIELDS[2])&&parts(d.elements).length===3,validLength(d,FIELDS[3])];
 const key=id=>'pit_v3_missao02_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
 // Preserve in-tab edits if storage is denied; never describe volatile data as saved.
 const volatileDrafts=new Map(),writeStatus=new Map();
@@ -19,7 +20,9 @@ function load(session){
  const id=key(session);
  try{
   const obj=volatileDrafts.get(id)||JSON.parse(localStorage.getItem(id)||'{}'),out=blank();
-  for(const f of FIELDS)if(typeof obj[f.id]==='string')out[f.id]=obj[f.id].slice(0,f.max);
+  // Keep imported/legacy text intact: silent slicing destroys the student's original plan.
+  // HTML maxlength restricts new typing, not pre-existing saved values.
+  for(const f of FIELDS)if(typeof obj[f.id]==='string')out[f.id]=obj[f.id];
   return out;
  }catch{return blank()}
 }
@@ -66,6 +69,7 @@ function validate(session){
  const d=load(session);
  for(const f of FIELDS){
   if(clean(d[f.id]).length<f.min)return {ok:false,field:f.id,label:'Complete o campo "'+f.label+'" para definir seu MVP.'};
+  if(d[f.id].length>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" aceita no máximo '+f.max+' caracteres. Revise seu rascunho sem perder o texto original.'};
  }
  const count=parts(d.elements).length;
  if(count!==3)return {ok:false,field:'elements',label:'Liste exatamente três elementos indispensáveis, separados por vírgula.'};
