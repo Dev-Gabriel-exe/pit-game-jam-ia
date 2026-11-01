@@ -25,3 +25,11 @@
 Conferir os três runs; se o CI falhar, corrigir a falha observada. Examinar o artefato JSON de VFX por talento, especialmente `guardian:J08`, `hunter:P09`, `mage:A07`, e identificar quais foram efetivamente desenhados ou descartados em vez de inferir pelo evento do motor. Avaliar visibilidade humana na tela e nos PCs físicos G.2 posteriormente. Manter o motor M5 (5 talentos/10 pontos), M10 (10/20), as quatro classes e 120 talentos canônicos, câmera, arquibancadas e roteiros inalterados.
 
 **Limites:** SwiftShader não é teste G.2 nos PCs reais; não há integração H.1/H.2, alteração em alunos, notas, aprovações, XP, banco, `main` ou deploy. Sem homologação visual humana.
+
+## Fechamento da rodada — CI confirmado
+
+- **SUCCESS**: [M10 Mixed Talent VFX Timeline — run 41337962462](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41337962462), SHA `94fb811217afaefbf2134ca214037de4b3906efc`. O job executou sintaxe, contratos, Chromium WebGL com 30 GLBs, três capturas de tela, auditoria de IDs canônicos renderizados/descartados, procs ativos/passivos/reativos, 29 espectadores e retorno à M5. Log: `PASS M10 mixed-build VFX timeline: 30 GLBs, 3 snapshots, genuine active/passive/reactive sprite cues, 29 spectators and M5 rollback.`
+- **SUCCESS**: [QA geral — run 41337962475](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41337962475).
+- **SUCCESS**: [Browser QA geral — run 41337962532](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41337962532).
+- Artefato específico: [m10-mixed-vfx-timeline (3 PNG + JSON)](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41337962462/artifacts/13095549811). A validação automatizada comprova **instanciação de cues no palco** e limites do layout, não prova que todo efeito esteja no enquadramento da câmera nem que um aluno consiga percebê-lo no projetor.
+- Próxima rodada: inspecionar os IDs de `rendered`/`dropped` do artefato e comparar com `J08`, `P09`, `A07`; depois auditar legibilidade e descarte por orçamento em condições de câmera diferentes. A Missão 10 continua aberta até revisão humana e G.2.
