@@ -17,3 +17,15 @@ HEAD lido: `7d0b77e41aa81bd4d38dce4d89d7da88cd4b4e`. Consultados `ROADMAP-D-A-I.
 CI específico: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-m10-rare-equipped-qa.yml — **aguardar conclusão e corrigir se falhar**. Não marcar aprovado antes do resultado.
 
 Próximo passo na mesma Missão 10: conferir o resultado e os artefatos de qualidade reduzida; caso algum proc seja descartado, investigar limite visual sem mexer em dano, escolhas, XP ou M5. Inspeção humana de legibilidade e teste físico **G.2** ainda não realizados; H.1/H.2 reais e integração continuam bloqueados.
+
+## Rodada seguinte — legibilidade do projetor em qualidade reduzida (01/11/2026)
+
+**Estado anterior verificado:** o gate de três execuções WebGL (duas seeds normais e uma emulação de 2 GB/`low`) concluiu **SUCCESS** no [run 41358337429](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41358337429), SHA `05258583f554d9e43b56f5facf5d8e4c27f15b44`. Isso fecha apenas o gate anterior de eventos raros em modo reduzido; não valida leitura no telão.
+
+**Nova missão técnica isolada:** reaproveitar a auditoria já existente de HUD, contraste e navegação em modo imersivo para avaliar o mesmo Coliseu de 30 personagens também com `navigator.deviceMemory=2` e `sprites=1`, nas resoluções **1920×1080** e **1366×768**. O teste exige o preset `low`, atlas de 3 quadros e texturas de talentos, além das verificações existentes de largura/altura, sobreposição de nomes, controles, amostras de contraste, foco e acessibilidade. A comparação preserva o teste original em `auto` e cria relatórios/capturas separados para `low`. Capturas e amostras CSS não são prova de legibilidade humana ou de FPS real.
+
+**Arquivos alterados exclusivamente na branch:** `qa/v5-m10-legibility-browser.cjs` no commit [`744a743`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/744a743ad3dbd84132032d34064d3996f1e612a0) e `.github/workflows/v5-m10-visual-qa.yml` no commit [`6a08933`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/6a08933fd9d8c5658c317f59d48005e58d316355), com novo job independente `projector-legibility-low-webgl`. Nenhum arquivo do motor, XP, aulas, classe, catálogo, regras ou banco foi modificado.
+
+**CI novo:** [run 41363113278](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41363113278), SHA `6a08933fd9d8c5658c317f59d48005e58d316355`, **em andamento na consulta**. QA geral do commit de teste `744a743` passou no run `41363101520`; não extrapolar esse resultado para o novo job WebGL. Caso o job `projector-legibility-low-webgl` falhe, examinar logs, corrigir e retestar na mesma Missão 10.
+
+**Próximo passo:** conferir todos os jobs e os dois screenshots de modo reduzido; corrigir sobreposições ou perda de legibilidade apenas se houver evidência. **G.2 nos PCs físicos não executado**; leitura humana no projetor, balanceamento definitivo, H.1/H.2, Fase I e `main` continuam bloqueados.
