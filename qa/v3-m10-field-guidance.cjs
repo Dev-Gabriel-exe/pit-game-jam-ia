@@ -110,8 +110,8 @@ assert.equal(student.validate(legacyId).ok,true,'corrected record is eligible fo
 assert(student.evidence(legacyId).length<=750,'corrected evidence fits API payload');
 // Manual launch attestations must track substantive edits, not formatting noise.
 const attestationMatrix=[
- ['project',[0,1,2]],['access',[1,2]],['mechanic',[1]],['rule',[1]],['demo',[1]],
- ['pitch',[]],['test',[]],['next',[]]
+ ['project',[0,1,2]],['access',[1,2]],['mechanic',[1,2]],['rule',[1,2]],['demo',[1,2]],
+ ['pitch',[2]],['test',[2]],['next',[2]]
 ];
 for(const [id,affected] of attestationMatrix){
  const record=student.load('attestation-'+id);
@@ -135,7 +135,7 @@ for(const f of student.fields)launchEdit[f.id]='Registro real verificável do jo
 launchEdit.checks=[0,1,2];
 assert(student.save('launch-edit-guard',launchEdit));
 assert.equal(student.validate('launch-edit-guard').ok,true,'complete launch initially eligible');
-assert.deepEqual(Array.from(student.updateField(launchEdit,'demo','Demonstração alterada após os testes no Preview')),[1]);
+assert.deepEqual(Array.from(student.updateField(launchEdit,'demo','Demonstração alterada após os testes no Preview')),[1,2]);
 assert(student.save('launch-edit-guard',launchEdit));
 assert.equal(student.validate('launch-edit-guard').ok,false,'stale Preview attestation blocks launch submission');
 assert.equal(student.validate('launch-edit-guard').field,'checks','explicit retest required');
