@@ -84,8 +84,8 @@ const prefix='qa/v5-m10-rare-equipped';
   // telemetry is a diagnostic failure, not a fabricated success.
   for(const key of targets){
    if(fixture.procs[key]>0)
-    assert(report.rare[key].rendered||report.rare[key].dropped,
-     'Real rare proc has neither rendered nor dropped cue: '+key);
+    assert(report.rare[key].rendered,
+     'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
   }
   await page.screenshot({path:prefix+'-final.png',timeout:45000});
   await page.keyboard.press('Escape');
