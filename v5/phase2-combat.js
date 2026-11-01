@@ -117,7 +117,7 @@ function battle(entries,{seed=4252,limit=95,arenaScale=1,damageScale=1,mageDamag
   throw Error('Ablação experimental do Guardião exige M10 e grupo conhecido');
  // H.3 isolated single-talent diagnostic: whole effect suppressed, not a nerf.
  // Strict whitelist prevents arbitrary ability removal and any M5 changes.
- const individualGuardianTargets=['G01','G10','G05','J09'];
+ const individualGuardianTargets=['G01','G10','G05','J09','J08'];
  if(experimentalGuardianTalentAblation!==null&&
     (arenaMission!==10||typeof experimentalGuardianTalentAblation!=='string'||
      !individualGuardianTargets.includes(experimentalGuardianTalentAblation)))
