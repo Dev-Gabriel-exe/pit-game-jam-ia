@@ -4,6 +4,9 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {chromium}=require('playwright');
+const P=require('../v5/phase2-combat.js');
+const typeByKey=new Map(Object.entries(P.TALENTS).flatMap(([klass,talents])=>
+ talents.map(t=>[klass+':'+t.id,t.type])));
 const PREFIX='qa/v5-m10-mixed-vfx';
 const SEED=4175863657;
 function overlap(a,b,gap=1){
@@ -33,6 +36,8 @@ function within(a,b,gap=3){
   assert.equal(await page.locator('[data-fighter]').count(),30);
   const builds=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents);
   const byClass={};
+  const equipped=new Set(builds.flatMap(b=>b.ids.map(id=>b.klass+':'+id)));
+  let previousRendered=new Set(),previousDropped=new Set();
   for(const b of builds){
    assert.equal(b.ids.length,10);
    assert.equal(new Set(b.ids).size,10);
@@ -66,6 +71,9 @@ function within(a,b,gap=3){
     return {
      events:window.PIT_V5_ARENA_LAB.talentEvents,
      talentFx:+stage.dataset.v5TalentFxEvents,
+     talentFxDropped:+stage.dataset.v5TalentFxDropped,
+     renderedKeys:JSON.parse(stage.dataset.v5TalentFxRenderedKeys||'[]'),
+     droppedKeys:JSON.parse(stage.dataset.v5TalentFxDroppedKeys||'[]'),
      spriteFx:+stage.dataset.v5SpriteVisualEvents,
      spriteDropped:+stage.dataset.v5SpriteVisualDropped,
      cueTypes:Object.fromEntries(['ativo','passivo','reativo'].map(kind=>{
@@ -83,6 +91,19 @@ function within(a,b,gap=3){
    });
    assert(data.events>=threshold);
    assert(data.talentFx>0&&data.spriteFx>0,'Real M10 talent effects and sprites must execute');
+   for(const [kind,keys,previous,total] of [
+    ['rendered',data.renderedKeys,previousRendered,data.talentFx],
+    ['dropped',data.droppedKeys,previousDropped,data.talentFxDropped]]){
+    assert.deepEqual(keys,[...new Set(keys)].sort(),kind+' keys must be canonical and sorted');
+    assert(keys.length<=total,kind+' unique cues cannot exceed event count');
+    for(const key of keys){
+     assert(equipped.has(key),'Visual cue not selected in any fictional M10 build: '+key);
+     assert(typeByKey.has(key),'Visual cue absent from 120-talent catalog: '+key);
+    }
+    for(const key of previous)assert(keys.includes(key),kind+' cue provenance lost between samples: '+key);
+   }
+   previousRendered=new Set(data.renderedKeys);
+   previousDropped=new Set(data.droppedKeys);
    assert.match(data.cue,/^(warrior|mage|hunter|guardian):[A-Z][0-9]{2}$/);
    assert(data.style,'M10 talent must select a visual motif');
    assert(Number.isFinite(data.spriteDropped)&&data.spriteDropped>=0);
@@ -127,6 +148,17 @@ function within(a,b,gap=3){
    }));
   });
   report.finalCueTypes=finalTypes;
+  const finalKeys=await page.evaluate(()=>({
+   rendered:JSON.parse(document.querySelector('#arenaStage').dataset.v5TalentFxRenderedKeys||'[]'),
+   dropped:JSON.parse(document.querySelector('#arenaStage').dataset.v5TalentFxDroppedKeys||'[]')
+  }));
+  for(const key of previousRendered)assert(finalKeys.rendered.includes(key),'Rendered key disappeared');
+  for(const kind of ['ativo','passivo','reativo'])
+   assert(finalKeys.rendered.some(key=>typeByKey.get(key)===kind),
+    'No actual WebGL cue rendered for talent type '+kind);
+  report.finalVisualKeys={rendered:finalKeys.rendered,dropped:finalKeys.dropped,
+   byType:Object.fromEntries(['ativo','passivo','reativo'].map(kind=>
+    [kind,finalKeys.rendered.filter(key=>typeByKey.get(key)===kind).length]))};
   assert(finalTypes.ativo.rendered>0,'No active talent visual was rendered');
   assert(finalTypes.passivo.rendered>0,'No passive proc visual was rendered');
   assert(finalTypes.reativo.rendered>0,'No reactive proc visual was rendered');
@@ -138,6 +170,10 @@ function within(a,b,gap=3){
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:160000});
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),5);
+  assert.equal(await stage.getAttribute('data-v5-talent-fx-rendered-keys'),'[]',
+   'M10 rendered cue provenance must reset before M5');
+  assert.equal(await stage.getAttribute('data-v5-talent-fx-dropped-keys'),'[]',
+   'M10 dropped cue provenance must reset before M5');
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).every(b=>b.ids.length===5));
   report.m5Regression='5 talents, legacy M5 engine restored';
   assert.deepEqual(errors,[],'Uncaught browser errors: '+errors.join(' | '));
