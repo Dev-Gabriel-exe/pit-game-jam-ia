@@ -29,7 +29,9 @@ function updateField(d,id,value){
  const before=clean(d[id]),after=clean(value);
  d[id]=value;
  if(before===after)return [];
- const affected=id==='project'?[0,1,2]:id==='access'?[1,2]:['mechanic','rule','demo'].includes(id)?[1]:[];
+ // Toda alteração substantiva exige reconferir privacidade/licenças da ficha;
+ // mecânica/regra/demo também exigem nova confirmação da execução.
+ const affected=id==='project'?[0,1,2]:id==='access'?[1,2]:['mechanic','rule','demo'].includes(id)?[1,2]:[2];
  const old=Array.isArray(d.checks)?d.checks:[];
  d.checks=old.filter(n=>!affected.includes(n));
  return affected.filter(n=>old.includes(n));
