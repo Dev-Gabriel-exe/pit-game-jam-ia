@@ -3,22 +3,23 @@
 (function(){
 'use strict';
 const FIELDS=[
- {key:'project',max:70,min:3,label:'Nome real do projeto no GDevelop',hint:'Nome que aparece na lista de projetos; deve permitir reencontrar o arquivo.'},
- {key:'scene',max:65,min:3,label:'Nome da cena inicial',hint:'Confira o nome da cena aberta no gerenciador.'},
- {key:'object',max:65,min:2,label:'Nome do primeiro objeto',hint:'Confira o nome na lista Objects. Use letras, números ou _ sem espaços; ex.: Personagem, Caixa3D.'},
- {key:'source',max:75,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Asset Store do GDevelop, 3D Box nativo ou desenho próprio. Registre a origem real.'},
- {key:'preview',max:180,min:15,label:'O que apareceu quando abriu o Preview?',hint:'Descreva o que você viu na execução, inclusive se precisou corrigir algo.'},
- {key:'saved',max:105,min:6,label:'Onde o projeto foi salvo?',hint:'Informe se foi em arquivo/pasta local ou na nuvem, com nome ou caminho que consiga localizar.'},
- {key:'fix',max:105,min:0,label:'Qual problema apareceu e como resolveu? (opcional)',hint:'Se não houve falha, deixe em branco ou explique uma escolha que fez.'}
+ {key:'project',max:60,min:3,label:'Nome real do projeto no GDevelop',hint:'Nome que aparece na lista de projetos; deve permitir reencontrar o arquivo.'},
+ {key:'scene',max:53,min:3,label:'Nome da cena inicial',hint:'Confira o nome da cena aberta no gerenciador.'},
+ {key:'object',max:53,min:2,label:'Nome do primeiro objeto',hint:'Confira o nome na lista Objects. Use letras, números ou _ sem espaços; ex.: Personagem, Caixa3D.'},
+ {key:'source',max:69,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Asset Store do GDevelop, 3D Box nativo ou desenho próprio. Registre a origem real.'},
+ {key:'preview',max:140,min:15,label:'O que apareceu quando abriu o Preview?',hint:'Descreva o que você viu na execução, inclusive se precisou corrigir algo.'},
+ {key:'saved',max:85,min:6,label:'Onde o projeto foi salvo?',hint:'Informe se foi em arquivo/pasta local ou na nuvem, com nome ou caminho que consiga localizar.'},
+ {key:'fix',max:75,min:0,label:'Qual problema apareceu e como resolveu? (opcional)',hint:'Se não houve falha, deixe em branco ou explique uma escolha que fez.'}
 ];
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clean=s=>String(s??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
 const blank=()=>({project:'',scene:'',object:'',source:'',preview:'',saved:'',fix:'',objectType:'2D Sprite',checks:[]});
 const key=id=>'pit_v3_missao03_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
 // Keep in-tab changes when storage is denied, without pretending they are persistent.
+// Preserve legacy draft values intact even when they exceed current evidence budgets.
 const volatileDrafts=new Map(),writeStatus=new Map();
 function load(id){
- try{const storageKey=key(id),o=volatileDrafts.get(storageKey)||JSON.parse(localStorage.getItem(storageKey)||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key].slice(0,f.max);
+ try{const storageKey=key(id),o=volatileDrafts.get(storageKey)||JSON.parse(localStorage.getItem(storageKey)||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key];
  if(['2D Sprite','3D Box/Modelo'].includes(o.objectType))d.objectType=o.objectType;
  d.checks=Array.isArray(o.checks)?o.checks.filter(x=>[0,1,2].includes(x)):[];
  return d;
@@ -54,8 +55,7 @@ function parseEvidence(raw){
  if(title.length>55||genre.length>25||!['2D Sprite','3D Box/Modelo'].includes(type))return null;
  const d={...blank(),project,scene,object,objectType:type,source,preview,saved,
   fix:fix==='Nenhum problema relatado'?'':fix};
- const budgets={project:60,scene:53,object:53,source:69,preview:140,saved:85,fix:75};
- if(FIELDS.some(f=>clean(d[f.key]).length<f.min||d[f.key].length>budgets[f.key]))return null;
+ if(FIELDS.some(f=>clean(d[f.key]).length<f.min||d[f.key].length>f.max))return null;
  // Evidence text never attests to manual Preview checks; they remain unchecked.
  return d;
 }
@@ -67,13 +67,16 @@ function hydrate(id,raw,status){
  save(id,d);
 }
 function validity(d){
- const vals=FIELDS.filter(f=>f.min).map(f=>clean(d[f.key]).length>=f.min);
+ const vals=FIELDS.filter(f=>f.min).map(f=>clean(d[f.key]).length>=f.min&&String(d[f.key]??'').length<=f.max);
  const checks=[0,1,2].every(x=>d.checks.includes(x));
  return [...vals,checks];
 }
 function validate(id){
  const d=load(id);
- for(const f of FIELDS)if(clean(d[f.key]).length<f.min)return {ok:false,field:f.key,label:'Descreva com precisão: '+f.label};
+ for(const f of FIELDS){
+  if(clean(d[f.key]).length<f.min)return {ok:false,field:f.key,label:'Descreva com precisão: '+f.label};
+  if(String(d[f.key]??'').length>f.max)return {ok:false,field:f.key,label:'O campo "'+f.label+'" aceita no máximo '+f.max+' caracteres. Revise seu rascunho sem perder o texto original.'};
+ }
  if(![0,1,2].every(n=>d.checks.includes(n)))return {ok:false,field:'checks',label:'Confirme os três testes realizados no GDevelop (cena, Preview e salvamento).'};
  return {ok:true,field:null,label:'Registro técnico pronto para enviar.'};
 }
