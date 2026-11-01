@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "M03: preservar rascunhos legados sem truncamento e alinhar campos ao limite de evidência 750. V8 direto 24/24 PASS; regressões Node adicionadas. CI do novo SHA pendente; M02 Browser QA 41251903525 SUCCESS. Próximo: confirmar CI M03 e auditar M04 professor/aluno. GDevelop GUI/HDMI/mobile físico/humano NOT_RUN.",
+  "priority": "M03: preservar rascunhos legados sem truncamento e alinhar campos ao limite de evidência 750. V8 direto 24/24 PASS; regressões Node adicionadas. QA estática 41255728600 SUCCESS; Browser QA do novo SHA pendente; M02 Browser QA 41251903525 SUCCESS. Próximo: confirmar CI M03 e auditar M04 professor/aluno. GDevelop GUI/HDMI/mobile físico/humano NOT_RUN.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-M03-OVERSIZED-EVIDENCE",
   "completed_count": 54,
@@ -2998,13 +2998,13 @@
         "qa/v3-m03-legacy-evidence.cjs",
         "v3/FASE3-MISSAO3.md"
       ],
-      "tests": "24/24 direct V8 assertions on actual fetched M03 module PASS; added Node regression assertions for 7 overlong fields, legacy localStorage, 750-char evidence. GitHub static CI 41255728600 and Browser QA 41255728677 IN_PROGRESS at check; previous M02 Browser QA 41251903525 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+      "tests": "24/24 direct V8 assertions on actual fetched M03 module PASS; added Node regression assertions for 7 overlong fields, legacy localStorage, 750-char evidence. GitHub static CI 41255728600 SUCCESS on b0f88420; Browser QA 41255728677 IN_PROGRESS at check; previous M02 Browser QA 41251903525 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
       "notes": "M03 silently sliced legacy drafts and had input maxlength greater than serialized evidence budgets. Now preserves original values, blocks oversized submissions, synchronizes 7 field max lengths and 7/7 progress. Teacher projected rubric unchanged; no private teacher notes exposed. Master 54/59 unchanged; no main/production/real-student writes."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-AUD-M03-OVERSIZED-EVIDENCE",
-    "status": "DIRECT_V8_PASS_CI_PENDING",
+    "status": "STATIC_CI_SUCCESS_BROWSER_PENDING",
     "updated_at": "2026-11-01T00:13:12.269Z",
     "code_commit": "f288ad7aeddb1d70cfcfaaac5a2a25bff9abbb2e",
     "regression_commits": [
@@ -3019,8 +3019,8 @@
       },
       {
         "name": "M03 static regression CI",
-        "result": "PENDING",
-        "details": "GitHub Actions 41255728600 at last check"
+        "result": "PASS",
+        "details": "GitHub Actions 41255728600 completed success on b0f88420"
       },
       {
         "name": "M03 Browser QA",
