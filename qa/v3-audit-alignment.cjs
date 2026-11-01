@@ -200,6 +200,11 @@ assert(m10Student.includes('correção retestada, backlog ou ausência de falha'
 assert(m10Teacher.includes('nenhuma alteração após teste sem falha'),'M10 projected teacher rubric recognizes a successful peer test');
 assert(!m10Teacher.includes('correção testada ou backlog justificado.'),'M10 old two-outcome rubric must not reappear');
 
+// The last 3 minutes of M09 permit a verified no-defect result; M10's final
+// 5 minutes are triage, not an impossible promise to grade 30 games.
+assert(m09Student.includes('A revisão final da missão dura 3 min: decidir entre correção retestada de fato, backlog justificado ou nenhuma alteração após teste sem falha.'),'M09 closing must explicitly allow no-defect playtest');
+assert(read('v3/teacher-mission-ten-foundations.js').includes("['FUNDAMENTOS','EXEMPLO','APRESENTAÇÕES','TRIAGEM']"),'M10 projected timeline must label the five minutes as triage');
+assert(m10Teacher.includes("'TRIAGEM · 5 MIN'"),'M10 review header must not promise grading 30 games in five minutes');
 // M10 scalability: 30 individual games cannot fit 18 minutes as 30 serial pitches.
 // Preserve the 30-minute mission: 4+3+18+5, peer demos for everyone and only
 // selected public highlights; teacher review is real and may finish later.
