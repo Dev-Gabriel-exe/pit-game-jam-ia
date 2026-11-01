@@ -16,6 +16,8 @@ for(const klass of classes){
  for(const t of P.TALENTS[klass])canonical.set(klass+':'+t.id,t);
 }
 assert.equal(canonical.size,120);
+const activeCatalog=new Set([...canonical].filter(([,t])=>t.type==='ativo').map(([key])=>key));
+assert.equal(activeCatalog.size,60,'Expected 15 active talents per KayKit class');
 const selected=new Set(),observed=new Map(),byClass={};
 for(const klass of classes)byClass[klass]={selected:new Set(),observed:new Set(),events:0};
 const config={arenaMission:10,limit:145,arenaScale:5,damageScale:.5,
@@ -65,12 +67,16 @@ for(let variant=0;variant<=10;variant++){
  }
 }
 assert.equal(selected.size,120,'All canonical talents must be selectable');
+for(const key of activeCatalog)assert(observed.has(key),
+ 'Active talent equipped but never emitted in 22 M10 trials: '+key);
 assert.equal(battles,22);
 const report={
  schema:'pit-v5-m10-activation-telemetry-v1',scope:'fictional-laboratory',
  hardwareG2Validated:false,realStudentIntegration:false,
  variants:11,seedsPerVariant:2,battles,heroesPerBattle:30,
- selectableTalents:selected.size,observedTalentEventKinds:observed.size,
+ selectableTalents:selected.size,activeTalentKinds:activeCatalog.size,
+ activeTalentKindsObserved:[...activeCatalog].filter(key=>observed.has(key)).length,
+ observedTalentEventKinds:observed.size,
  totalTalentEvents,deterministicReplays,
  classes:Object.fromEntries(classes.map(klass=>{
   const s=byClass[klass];
@@ -90,7 +96,8 @@ const report={
 };
 fs.writeFileSync('qa/v5-m10-talent-activation-report.json',JSON.stringify(report,null,2)+'\n');
 console.log('PASS M10 event provenance: '+battles+' fictional 30-KayKit battles, 120 selectable talents, '+
- observed.size+' class-qualified talent IDs observed in emitted talent events, '+
+ observed.size+' class-qualified talent IDs observed in emitted talent events (all '+
+ activeCatalog.size+' active catalog talents covered), '+
  totalTalentEvents+' events, '+deterministicReplays+' exact replays; G.2 NOT tested.');
 console.log(JSON.stringify({classes:Object.fromEntries(classes.map(k=>[k,{
  selected:report.classes[k].selectable,observed:report.classes[k].observedEventKinds,
