@@ -22,6 +22,31 @@ assert(e.includes('Antes:')&&e.includes('Depois:')&&e.includes('Negativo:'),'str
 assert.equal(student.parseEvidence(e).before,d.before,'roundtrip before');
 assert.equal(student.parseEvidence(e).after,d.after,'roundtrip after');
 
+// Historical drafts must never lose text when a field exceeds today's limits.
+for(const f of student.fields){
+ const session='legacy-over-'+f.id,legacy={...d,[f.id]:'X'.repeat(f.max+9),checks:[0,1,2]};
+ store.set('pit_v3_m08_'+session,JSON.stringify(legacy));
+ assert.equal(student.load(session)[f.id],legacy[f.id],'legacy load preserves overlong '+f.id);
+ const invalid=student.validate(session);
+ assert.equal(invalid.ok,false,'legacy overlong invalid '+f.id);
+ assert.equal(invalid.field,f.id,'exact invalid field '+f.id);
+ assert.match(invalid.label,new RegExp(String(f.max)),'specific max in warning '+f.id);
+ assert.equal(student.save(session,student.load(session)),true,'save legacy '+f.id);
+ assert.equal(student.load(session)[f.id],legacy[f.id],'save preserves legacy '+f.id);
+ assert.equal(JSON.parse(store.get('pit_v3_m08_'+session))[f.id],legacy[f.id],'disk preserves legacy '+f.id);
+ const practice=student.render({session,phase:'practice',status:'draft',idea:{}});
+ assert.match(practice,/Resposta antiga preservada/,'student sees over-limit warning '+f.id);
+ assert.match(practice,new RegExp('limite de '+f.max),'student sees field limit '+f.id);
+ const review=student.render({session,phase:'review',status:'draft',idea:{},canSubmit:true});
+ assert.match(review,/Revise o texto preservado antes de enviar/,'review explains correction '+f.id);
+ assert.match(review,/id="submitWork" disabled/,'submission blocked '+f.id);
+ const corrected=student.load(session);corrected[f.id]=d[f.id];
+ student.save(session,corrected);
+ assert.equal(student.validate(session).ok,true,'corrected draft validates '+f.id);
+ assert.doesNotMatch(student.render({session,phase:'practice',status:'draft',idea:{}}),/Resposta antiga preservada/,'warning disappears after correction '+f.id);
+}
+
+
 assert.equal(student.parseEvidence(e).route,'hud','valid route is preserved');
 const invalidLegacy=[
  ['achatado',e.replace(/\n/g,' ')],
@@ -117,6 +142,10 @@ assert.equal(denied.load('m08-ficticio').checks.length,3,'volatile checks preser
 assert.equal(denied.load('m08-ficticio').after,deniedDraft.after,'volatile before/after preserved');
 assert.equal(denied.validate('m08-ficticio').ok,true,'volatile complete draft validates');
 assert.equal(denied.load('m08-outro').issue,'','volatile draft isolated per session');
+const volatileLong=denied.load('m08-legacy-long');volatileLong.issue='X'.repeat(95);
+assert.equal(denied.save('m08-legacy-long',volatileLong),false,'overlong volatile save reports storage denial');
+assert.equal(denied.load('m08-legacy-long').issue.length,95,'overlong volatile draft is preserved');
+assert.equal(denied.validate('m08-legacy-long').field,'issue','overlong volatile draft cannot submit');
 assert.match(denied.draftNotice('m08-ficticio'),/apenas nesta aba/,'warning describes actual storage failure');
 assert.doesNotMatch(denied.draftNotice('m08-ficticio'),/Rascunho salvo neste navegador/);
 const deniedPractice=denied.render({session:'m08-ficticio',phase:'practice',status:'draft',idea:{}});
