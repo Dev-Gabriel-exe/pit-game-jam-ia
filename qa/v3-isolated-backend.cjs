@@ -21,7 +21,7 @@ class MockPool{
    const row=students.find(s=>s.token_hash===hash&&s.room_code===ROOM);
    return result(row?[{id:row.id,display_name:row.display_name}]:[]);
   }
-  if(q.startsWith('select current_stage,phase,updated_at from pit_classroom_state'))return result([state]);
+  if(q.startsWith('select current_stage,phase,updated_at from pit_classroom_state'))return result(state.missing?[]:[state]);
   if(q.startsWith('select stage,route,status,evidence,feedback,updated_at,reviewed_at from pit_student_stages')){
    return result(stages.filter(s=>s.student_id===params[0]).map(({student_id,...rest})=>rest));
   }
@@ -69,6 +69,7 @@ class MockPool{
   }
   if(q.startsWith('update pit_classroom_state set current_stage=')){
    assert(q.includes('greatest(current_stage,$1)')&&q.includes('$1<=current_stage+1'),'atomic sequential release SQL');
+   if(state.missing)return result([]);
    if(params[0]>state.current_stage+1)return result([]);
    state.current_stage=Math.max(state.current_stage,params[0]);state.phase='practice';return result([state]);
   }
@@ -124,6 +125,20 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(first.body.student.id,a.body.studentId);
  assert.equal(second.body.student.id,b.body.studentId);
  assert.equal(first.body.progress.length,0);assert.equal(second.body.progress.length,0);
+ // A fresh or incompletely migrated classroom must not masquerade as a student error.
+ // Simulate an absent classroom row; no real database or student data are touched.
+ state.missing=true;
+ try{
+  const unavailable=await call(classroom,'GET','state',{},a.body.token);
+  assert.equal(unavailable.statusCode,503,'state reports an uninitialized classroom');
+  const unavailableProgress=await call(classroom,'POST','progress',{stage:1,route:'2d',status:'working',evidence:'Rascunho fictício'},a.body.token);
+  assert.equal(unavailableProgress.statusCode,503,'progress reports an uninitialized classroom, not 500');
+  const unavailableHeartbeat=await call(classroom,'POST','heartbeat',{stage:1},a.body.token);
+  assert.equal(unavailableHeartbeat.statusCode,503,'heartbeat reports an uninitialized classroom');
+  const unavailableRelease=await call(classroom,'POST','stage',{stage:2},'','https://dev-gabriel-exe.github.io','0123456789abcdef');
+  assert.equal(unavailableRelease.statusCode,503,'teacher release reports an uninitialized classroom, not a skipped stage');
+  assert.equal(stages.length,0,'uninitialized classroom never writes student progress');
+ }finally{state.missing=false;}
  const draft=await call(classroom,'POST','progress',{stage:1,route:'2d',status:'working',evidence:''},a.body.token);
  assert.equal(draft.statusCode,200,'real classroom handler accepts draft');
  const submit=await call(classroom,'POST','progress',{stage:1,route:'2d',status:'submitted',evidence:'Preview ficticio: personagem se move e encontra obstaculo.'},a.body.token);
