@@ -16,3 +16,13 @@ HEAD anterior `3def089d6b87f0e4c755c4d50752a461f5a9c196`. Lidos os cinco documen
 ## Limitações e próximo passo
 
 Verificar [CI específico](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-m10-rare-equipped-qa.yml), corrigir qualquer falha, inspecionar contagem real de cues renderizados/descartados para cada talento e as capturas de câmera. Se algum proc do motor não gerar cue, investigar atribuição/limite visual sem alterar combate. Não afirmar visibilidade humana, equilíbrio definitivo ou G.2. Hardware G.2 em PCs reais e integração H.1/H.2 com alunos continuam bloqueados.
+
+## Resultado da primeira execução e correção visual delimitada
+
+- [CI 41347887721](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41347887721): **SUCCESS** com 30 GLBs, câmera automática, arquibancada 29/30 e regressão M5. Seed reproduzível `20261101`: `guardian:J08` teve 1 proc, `hunter:P09` 1 proc e `mage:A07` 4 procs. Os três estavam realmente equipados.
+- **Falha de legibilidade descoberta (não erro de motor):** todos os três cues foram descartados pelo orçamento visual do WebGL, nenhum renderizado; a câmera observada foi `duel` e `victory`. Screenshots e relatório anexados ao run. O CI passou porque a auditoria inicial exigia apenas classificação honesta, não pixels.
+- `v5/arena-three.js` commit `4d270359f893081d93feeaf95f147a5e8d072642`: ajuste **somente M10**, com uma única vaga rotativa para proc passivo/reativo além do orçamento de casts ativos. Ao chegar outro proc, a vaga é reutilizada. Mantém o teto de efeitos, prioriza casts ativos e preserva modo de movimento reduzido; não modifica dano, resultados, talentos ou M5.
+- `qa/v5-m10-rare-equipped-browser.cjs` commit `509d9a6d41d444b65f3ba832ca7dadcf8d005f48`: novo gate exige cue **renderizado** para cada talento raro que tenha proc genuíno; somente o descarte não basta.
+- Workflow atualizado em `5b87351251ab647c1a918d4fc5545c114235d31b` para reagir também a alterações no renderizador. **CI novo pendente nesta anotação**; não declarar correção validada antes do verde.
+
+Próximo passo: verificar o CI estrito, conferir se J08/P09/A07 passaram de descartados para renderizados, e analisar as capturas sem confundir cue instanciado com visibilidade humana. G.2 em PCs físicos permanece pendente.
