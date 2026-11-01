@@ -281,7 +281,7 @@ const m09RestoreStore=new Map(),m09RestoreSandbox={window:{},localStorage:{
 vm.runInNewContext(m09Student,m09RestoreSandbox,{timeout:3000,filename:'student-mission-nine.js'});
 const m09Restore=m09RestoreSandbox.window.PIT_STUDENT_MISSION_NINE;
 const m09Fixture={outcome:'passed',resolution:'nochange',checks:[0,1,2]};
-for(const f of m09Restore.fields)m09Fixture[f.id]='Observação fictícia de QA sem participante real';
+for(const f of m09Restore.fields)m09Fixture[f.id]=f.id==='peer'?'Colega A fictício':'Observação fictícia de QA sem participante real';
 m09Restore.save('m09-original',m09Fixture);
 assert.equal(m09Restore.validate('m09-original').ok,true,'M09 QA fixture valid before evidence roundtrip');
 const m09Evidence=m09Restore.evidence('m09-original');
