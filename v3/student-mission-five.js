@@ -122,6 +122,21 @@ function selectRoute(d,index){
  d.checks=[];
  return true;
 }
+// Confirmações manuais pertencem à versão atual da regra e dos resultados.
+// Mudanças somente de espaços não invalidam testes; o rascunho é preservado.
+const retestByField={
+ condition:[0,1,2],action:[0,1,2],variable:[0,1,2],
+ positive:[0],negative:[1,2],feedback:[0],saved:[0,1,2],issue:[2]
+};
+function updateField(d,id,value){
+ if(!fields.some(f=>f.key===id))return [];
+ const next=String(value??''),changed=clean(d[id])!==clean(next);
+ d[id]=next;
+ if(!changed)return [];
+ const affected=retestByField[id]||[];
+ d.checks=(d.checks||[]).filter(n=>!affected.includes(n));
+ return affected;
+}
 function evidence(session,ctx={}){
  const d=load(session),p=profile(ctx),r=activeRoute(ctx,d);
  return [
@@ -324,7 +339,16 @@ function mount(ctx){
  }
  root.querySelectorAll('[data-m5s-input]').forEach(input=>input.addEventListener('input',()=>{
   if(locked)return;
-  d[input.dataset.m5sInput]=input.value;save(ctx.session,d);redraw();
+  const affected=updateField(d,input.dataset.m5sInput,input.value);
+  save(ctx.session,d);
+  if(affected.length)root.querySelectorAll('[data-m5s-check]').forEach(box=>{
+   if(affected.includes(Number(box.dataset.m5sCheck)))box.checked=false;
+  });
+  redraw();
+  if(affected.length){
+   const notice=root.querySelector('#m5sStatus');
+   if(notice)notice.textContent='Regra ou relato alterado: repita os testes afetados no Preview antes de enviar. '+draftNotice(ctx.session,validity(d).filter(Boolean).length);
+  }
  }));
  root.querySelectorAll('[data-m5s-check]').forEach(box=>box.addEventListener('change',()=>{
   if(locked)return;
@@ -344,5 +368,5 @@ function mount(ctx){
  }));
  redraw();
 }
-window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,draftNotice,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,selectRoute,evidence,parseEvidence,hydrate,render,mount};
+window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,draftNotice,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,selectRoute,updateField,evidence,parseEvidence,hydrate,render,mount};
 })();
