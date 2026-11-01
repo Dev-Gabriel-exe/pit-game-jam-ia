@@ -761,3 +761,14 @@
 - **Commits:** [correção 31bdbf6](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/31bdbf639cb87bf65d30cb938ef5b81d0e513332), [regressão 8e4b654](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/8e4b654657df2c6ef9ab2f9ec451b68d605c8c84). Sem `main`, produção, Neon ou dados reais.
 - **Professor/aluno:** rubrica projetável M06 continua exigindo asset real importado, licença e demonstração. O roteiro privado continua recolhido em `<details class="pit-private-teacher-notes">` e não aparece no caderno do aluno. **NOT_RUN:** GDevelop GUI/Preview real, HDMI físico, teste humano, celular físico, integração V5 e sala real.
 - **Próximo:** verificar QA nativa/Chrome no SHA de regressão e continuar auditoria cruzada M01–M10.
+
+
+## 01/11/2026 — M05 · declarações de Preview ficam obsoletas após editar a regra
+
+- **Falha pedagógica real:** o aluno podia marcar os três testes (positivo, negativo e repetição), modificar depois condição SE, ação ENTÃO, variável, resultado, feedback ou referência ao projeto e ainda enviar as antigas confirmações. A rubrica do professor receberia testes não vinculados à versão atual do evento.
+- **Correção em `v3/student-mission-five.js`:** `updateField()` compara o texto normalizado e invalida seletivamente as confirmações afetadas. Condição/ação/variável/projeto invalidam as três; resultado positivo ou feedback invalidam o teste positivo; negativo invalida negativo e repetição; diagnóstico de erro invalida repetição. Alterações somente de espaços não exigem reteste. O rascunho textual continua salvo, o DOM desmarca os testes obsoletos, e o envio fica bloqueado até reconfirmação manual.
+- **Regressão permanente:** `qa/v3-m05-student.cjs` agora cobre oito campos, persistência, reconfirmação, edição somente de espaços, campo desconhecido, vínculo do DOM e mensagem instrutiva ao aluno.
+- **Execução efetiva nesta rodada:** 11 verificações em V8 sobre o módulo JavaScript real com `localStorage` fictício: **PASS** (8 campos + espaços + campo inválido + vínculo DOM estático). A suíte Node completa e o Chrome não foram executados localmente.
+- **CI observada no GitHub Actions:** QA estática **SUCCESS** no commit `2bf956b` (regressão incluída); Browser QA desse commit estava **IN_PROGRESS** na última consulta. Não extrapolar o sucesso da QA estática para a navegação real.
+- **Privacidade e projeção:** sem alterações no material do professor; notas `<details class="pit-private-teacher-notes">` continuam recolhidas. **NOT_RUN:** GDevelop GUI/Preview físico, HDMI, playtest humano, celular físico, turma real e integração V5.
+- **Commits:** [código `2c19cb2`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/2c19cb2f308dbfea54c8b94477ed00973b43d2a2) e [regressão `2bf956b`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/2bf956b89722503c537ec0f81445fef0abf41b05). Somente branch V3; sem merge na `main`.
