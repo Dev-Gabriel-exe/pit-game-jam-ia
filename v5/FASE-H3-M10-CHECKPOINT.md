@@ -1039,3 +1039,23 @@ Os Guardiões absorveram **~90,2%** do escudo total do baseline nos primeiros 35
 No perfil misto com +5 VIT/+5 DEF, **14/16** Guardiões estavam vivos aos 35s e a classe venceu **5/8** partidas. No arquétipo ofensivo com essa mesma extensão, **2/16** estavam vivos aos 35s e a classe venceu **0/8**. Ao todo, o Guardião venceu **20/72**, contra 4,8 vitórias proporcionais à participação de dois em trinta, **mas essa expectativa não controla builds, IA ou interações**. A ausência de escudo no arquétipo ofensivo está confundida com a troca de todos os talentos; não é ablação isolada de G01/G10. Há partidas que terminaram antes de 35s, portanto denominadores de sobrevivência são somente observados. Não aplicar nerf nem declarar equilíbrio.
 
 **Próximo incremento da MESMA Missão 10:** comparar builds pareadas mantendo os cinco talentos da M5, atributos e composição constantes, variando somente escolhas adicionais M10 ou ablações de escudo já opt-in; depois testar prévia visual M10 3D, câmera e arquibancadas no Chromium. **G.2 em PCs físicos NÃO EXECUTADO. H.1/H.2 com alunos reais, homologação humana, Fase I, `main`, merge e produção permanecem bloqueados.**
+
+
+## H.3/M10 — comparação pareada com M5 congelada e somente talentos adicionais M10 variáveis (01/11/2026)
+
+**Escopo de uma missão técnica:** testar a influência das cinco escolhas adicionais da M10 mantendo, em cada bloco, exatamente os mesmos cinco talentos M5, atributos finais (20 pontos), quatro classes, composição, posições iniciais, seed e fluxo de críticos por identidade. Roadmaps D–I, E/F/G, contrato H.0, checkpoint H.3, branch e Actions consultados antes da mudança. Não foram modificados motor, regras canônicas, XP, dez missões, câmera, arquibancadas, dados reais ou `main`.
+
+**Arquivos/SHAs da branch exclusiva:** `qa/v5-m10-guardian-m5-fixed-extras-paired.cjs` — commit `a01753ce8cb12813f93c97e71bf9a7f059fb56b2`; `.github/workflows/v5-m10-guardian-m5-fixed-extras-qa.yml` — commit `ab4695c1c28796bd77392c7817cc4bae02a5008c`. Teste de 2 composições (4 equilibrados; 30 com 2 Guardiões), 2 extensões legais de atributos (equilibrada ou +5 VIT/+5 DEF), 4 seeds, 2 rotações e 3 braços. Cada braço conserva G01–G05 congelados na M5 e troca **somente as cinco escolhas adicionais M10**: bastion=G06–G10; support=L01–L05; verdict=J01–J05. Todas as outras classes e seus talentos permanecem idênticos dentro do bloco.
+
+**CI específico SUCCESS:** [run 41302904651](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41302904651), job `guardian-fixed-m5-extras` finalizado com conclusão `success`, todas as etapas verdes. Logs comprovaram **96 partidas fictícias**, **32 blocos**, **64 comparações pareadas**, **6 replays exatos**, invariância de HP/stats/spawn inicial, 10 talentos/20 pontos, regressão M5, motor M10, contrato H.0 e replay E.7 aprovados. Hash sintético `28c1f0a4b0cd9602017d`. Relatório JSON anônimo anexado por 14 dias. QA geral do commit `ab4695c` apareceu concluído com sucesso no painel Actions; QA navegador ainda estava em execução na primeira consulta e deve ser verificado separadamente.
+
+| Composição / 16 partidas por braço | Bastion G06–G10 | Support L01–L05 | Verdict J01–J05 |
+| --- | ---: | ---: | ---: |
+| 4 equilibrados — vitórias do Guardião | 9 | 9 | 6 |
+| 30, dois Guardiões — vitórias do Guardião | 4 | 3 | 1 |
+| 30, dois Guardiões — vivos aos 35s (32 exposições) | 25 | 23 | 16 |
+| 30, dois Guardiões — escudo absorvido | 5.567,69 | 3.983,82 | 2.829,83 |
+
+**Interpretação limitada:** as cinco escolhas adicionais alteraram sobrevivência e resultados em partidas pareadas, sem trocar atributos ou escolhas M5. Entretanto, a intervenção troca **cinco talentos simultaneamente**; não é estimativa causal de G10 isolado, nem justificativa suficiente para nerf. No cenário de 30, 9/16 vencedores individuais mudaram no braço support e 12/16 no verdict em relação ao bastion. Os agregados de escudo vêm de eventos e não são perda efetiva de HP capada. Não há extrapolação estatística para turmas reais.
+
+**Próximo incremento da mesma Missão 10:** executar comparação focal de **um único talento M10 adicional** (por exemplo, substituir apenas G10 por J08, preservando os outros quatro adicionais, atributos e M5) e medir cooldown/escudo/vitórias com as mesmas seeds; depois ampliar QA 3D de câmera/arquibancadas. **G.2 nos PCs físicos NÃO EXECUTADO; H.1/H.2 reais, homologação humana, Fase I, merge e produção permanecem bloqueados.**
