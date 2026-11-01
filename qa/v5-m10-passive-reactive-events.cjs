@@ -44,6 +44,10 @@ const entries=Array.from({length:30},(_,i)=>{
 });
 assert.equal(entries.length,30);
 const byHero=new Map(entries.map(e=>[e.id,e]));
+// Canonical per-talent counters distinguish visible triggers from readiness charges.
+const perTalent=new Map(Object.entries(P.TALENTS).flatMap(([klass,items])=>
+ items.map(t=>[klass+':'+t.id,{klass,id:t.id,type:t.type,selected:report.selected[t.type].has(klass+':'+t.id),talent:0,proc:0,charge:0}])));
+assert.equal(perTalent.size,120,'Canonical audit must cover 120 distinct class-qualified IDs');
 const options={arenaMission:10,arenaScale:5,damageScale:.5,stormDelay:35,
  stormRateFactor:.65,engagementMode:'spaced',navigationMode:'steer',
  rangedCommitment:'recovery',balancePreset:'e-hp2'};
@@ -81,6 +85,7 @@ for(const seed of seeds){
   const choreography=C.plan(cue);
   assert(sprite&&sprite.frames>0&&choreography.duration>0,
    'Missing sprite/choreography for real engine event');
+  perTalent.get(owner.build.klass+':'+talent.id)[event.type]++;
   counts[event.type]++;report.events[event.type]++;
   types[talent.type]++;
   if(event.type==='proc'||event.type==='talent')
@@ -108,11 +113,39 @@ assert.deepEqual(P.battle(m5Entries,m5Opts).run(),
  'M5 regression must be identical');
 const serialize=sets=>Object.fromEntries(Object.entries(sets).map(([k,v])=>[k,
  {count:v.size,keys:[...v].sort()}]));
+// Diagnostic only: absence in four synthetic seeds is not proof of a broken talent.
+// A charge is readiness telemetry, not evidence of a rendered proc/sprite.
+const talentRows=[...perTalent.values()].sort((a,b)=>(a.klass+':'+a.id).localeCompare(b.klass+':'+b.id));
+const byType=Object.fromEntries(['ativo','passivo','reativo'].map(type=>{
+ const rows=talentRows.filter(t=>t.type===type);
+ return [type,{catalog:rows.length,selected:rows.filter(t=>t.selected).length,
+  triggered:rows.filter(t=>t.talent+t.proc>0).length,
+  selectedNotTriggered:rows.filter(t=>t.selected&&t.talent+t.proc===0).length}];
+}));
+const untriggered=talentRows.filter(t=>t.selected&&t.talent+t.proc===0).map(t=>t.klass+':'+t.id);
+const rareTriggered=talentRows.filter(t=>t.selected&&t.talent+t.proc>0&&t.talent+t.proc<=2)
+ .map(t=>({key:t.klass+':'+t.id,triggers:t.talent+t.proc}));
+const chargedOnly=talentRows.filter(t=>t.selected&&t.charge>0&&t.talent+t.proc===0)
+ .map(t=>({key:t.klass+':'+t.id,charges:t.charge}));
+assert.equal(talentRows.reduce((n,t)=>n+t.talent,0),report.events.talent);
+assert.equal(talentRows.reduce((n,t)=>n+t.proc,0),report.events.proc);
+assert.equal(talentRows.reduce((n,t)=>n+t.charge,0),report.events.charge);
+for(const type of ['ativo','passivo','reativo']){
+ assert.equal(byType[type].triggered,report.observed[type].size,
+  'Canonical observed count mismatch for '+type);
+ assert.equal(byType[type].selected,report.selected[type].size,
+  'Canonical selected count mismatch for '+type);
+}
+const coverage={schema:'canonical-talent-coverage-v1',totalCatalog:talentRows.length,
+ note:'Synthetic engine-event coverage only; no visual readability or physical-PC validation',
+ byType,untriggered,rareTriggered,chargedOnly,talents:talentRows};
 const output={...report,selected:serialize(report.selected),observed:serialize(report.observed),
- m5Regression:'identical default and explicit M5 result'};
+ coverage,m5Regression:'identical default and explicit M5 result'};
 fs.writeFileSync('qa/v5-m10-passive-reactive-report.json',JSON.stringify(output,null,2)+'\n');
 console.log('PASS M10 passive/reactive event audit: '+JSON.stringify({
  seeds:seeds.length,selected:Object.fromEntries(Object.entries(output.selected).map(([k,v])=>[k,v.count])),
  observed:Object.fromEntries(Object.entries(output.observed).map(([k,v])=>[k,v.count])),
  events:report.events,d07Consumptions:report.consumptions.length,
- anomalies:report.anomalies.length,m5:'identical'}));
+ anomalies:report.anomalies.length,coverage:byType,
+ untriggered:untriggered.length,rareTriggered:rareTriggered.length,
+ chargedOnly:chargedOnly.length,m5:'identical'}));
