@@ -68,7 +68,9 @@ class MockPool{
    const row=students.find(s=>s.id===params[0]);if(row){row.active_stage=params[1];row.last_seen_at='2026-10-28T00:10:00Z'}return result([]);
   }
   if(q.startsWith('update pit_classroom_state set current_stage=')){
-   state.current_stage=params[0];state.phase=params[1];return result([state]);
+   assert(q.includes('greatest(current_stage,$1)')&&q.includes('$1<=current_stage+1'),'atomic sequential release SQL');
+   if(params[0]>state.current_stage+1)return result([]);
+   state.current_stage=Math.max(state.current_stage,params[0]);state.phase='practice';return result([state]);
   }
   if(q.startsWith('update pit_student_stages set status=')){
    const [status,feedback,id,stage]=params;
@@ -180,10 +182,10 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  console.log('PASS FUN-03: real PIN checks, teacher-only roster/stage/review/chat and student isolation');
  const lockedStage=await call(classroom,'POST','progress',{stage:3,route:'2d',status:'working',evidence:''},b.body.token);
  assert.equal(lockedStage.statusCode,403,'future mission locked by server');
- const briefingBlocked=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'working',evidence:''},b.body.token);
- assert.equal(briefingBlocked.statusCode,403,'current mission briefing does not permit submission');
- const invalidPhase=await call(classroom,'POST','stage',{stage:2,phase:'invalid'},'',origin,pin);
- assert.equal(invalidPhase.statusCode,400,'invalid phase rejected');
+ const briefingAllowed=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'working',evidence:''},b.body.token);
+ assert.equal(briefingAllowed.statusCode,200,'released mission allows practice regardless of projected phase');
+ const skipStage=await call(classroom,'POST','stage',{stage:5},'',origin,pin);
+ assert.equal(skipStage.statusCode,409,'teacher cannot skip missions');
  const releasePractice=await call(classroom,'POST','stage',{stage:2,phase:'practice'},'',origin,pin);
  assert.equal(releasePractice.statusCode,200);
  const draftB=await call(classroom,'POST','progress',{stage:2,route:'2d',status:'working',evidence:'Rascunho ficticio'},b.body.token);
@@ -197,7 +199,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const preserved=await call(classroom,'GET','state',{},b.body.token);
  assert.equal(preserved.body.progress.find(x=>x.stage===2)?.status,'submitted','previous mission evidence survives release');
  const blockedNew=await call(classroom,'POST','progress',{stage:3,route:'3d',status:'working',evidence:''},b.body.token);
- assert.equal(blockedNew.statusCode,403,'new mission locked during briefing');
+ assert.equal(blockedNew.statusCode,200,'newly released mission accepts practice during briefing');
  const allowNew=await call(classroom,'POST','stage',{stage:3,phase:'practice'},'',origin,pin);
  assert.equal(allowNew.statusCode,200);
  const newDraft=await call(classroom,'POST','progress',{stage:3,route:'3d',status:'working',evidence:'Rascunho da proxima etapa'},b.body.token);
@@ -207,7 +209,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const allA=await call(classroom,'GET','state',{},a.body.token);
  assert.equal(allA.body.progress.length,1,'other student never sees B stages');
 
- console.log('PASS FUN-04: actual handler blocks future/briefing phases, teacher releases practice and old evidence persists');
+ console.log('PASS FUN-04: future stages blocked, mission-only release ignores projector phase and preserves evidence');
 
  // FUN-05 — ten real handler submission/review cycles, with isolated SQL and
  // a third fictional student. No production credentials, API or student data.
@@ -327,8 +329,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const restoreM10=await call(classroom,'POST','stage',{stage:10,phase:'review'},'',origin,pin);
  assert.equal(restoreM10.statusCode,200,'restore M10 review before existing FUN-05 size test');
  const oversized=await call(classroom,'POST','progress',{stage:10,route:'3d',status:'submitted',evidence:'X'.repeat(900)},b.body.token);
- assert.equal(oversized.statusCode,200,'long evidence is accepted after server-side sanitization');
- assert.equal(oversized.body.progress.evidence.length,750,'evidence truncated at 750 characters');
+ assert.equal(oversized.statusCode,400,'long evidence is rejected before write, not truncated');
  console.log('PASS FUN-05: ten real handler stage cycles, drafts, 2D/3D, invalid inputs, revision/resubmission, approval, lock, 750-char limit, 3 fictional students isolated');
 
  // FUN-06 — roster/heartbeat based on the real handler and its actual SQL contract.
@@ -337,9 +338,10 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const forgedActivity=await call(classroom,'POST','heartbeat',{stage:10},a.body.token);
  assert.equal(forgedActivity.statusCode,200,'M10 is released at end of FUN-05');
  const earlyStage=await call(classroom,'POST','stage',{stage:4,phase:'practice'},'',origin,pin);
- assert.equal(earlyStage.statusCode,200);
+ assert.equal(earlyStage.statusCode,200,'revisiting an earlier mission is allowed');
+ assert.equal(earlyStage.body.state.current_stage,10,'teacher cannot revoke already released M10');
  const spoofed=await call(classroom,'POST','heartbeat',{stage:10},b.body.token);
- assert.equal(spoofed.statusCode,403,'student cannot forge activity in a locked future stage');
+ assert.equal(spoofed.statusCode,200,'M10 remains released after revisiting M04');
  const heartbeatC=await call(classroom,'POST','heartbeat',{stage:4},cToken);
  assert.equal(heartbeatC.statusCode,200,'student activity updates on released mission');
  const heartbeatB=await call(classroom,'POST','heartbeat',{stage:2},b.body.token);
