@@ -21,3 +21,13 @@ HEAD anterior: `8f12a3403650604e4948314a8a059da99631bb69`. Foram lidos os cinco 
 ## Próximo passo
 
 Acompanhar os jobs; se falharem, corrigir e repetir. Comparar os dois relatórios de câmera/cues e imagens. A M10 continua aberta até revisão humana e G.2 nos PCs reais. H.1/H.2, V3, produção e main seguem bloqueadas.
+
+## Fechamento desta rodada — CI específico aprovado
+
+- **SUCCESS** no [run 41353182444](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41353182444), SHA de código `0ca42b67a1ff1e3edd17644dc26866893828c353`: etapa Node, contrato H.0, regressão M5, duas partidas completas no Chromium/SwiftShader com **30 GLBs KayKit cada**, câmera automática, 29 espectadores e retorno a 5 talentos M5.
+- Seed primária `20261101`: procs reais J08/P09/A07 = **1/1/4**; os três cues **renderizados**, nenhum descartado. Planos de câmera observados: `duel`, `climax`, `victory`.
+- Seed independente `4175863657`: procs reais J08/P09/A07 = **1/3/1**; os três cues **renderizados**, nenhum descartado. Planos observados: `highlight`, `victory`. Replay de eventos determinístico no Node.
+- **SUCCESS**: [QA geral 41353182653](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41353182653) e [Browser QA 41353182429](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41353182429) no mesmo SHA.
+- Artefatos do CI: dois relatórios WebGL JSON, duas fixtures, screenshots dos três talentos por seed. **Ressalva:** cue renderizado na GPU não comprova percepção do efeito por um aluno no projetor; capturas ocorrem após observação cumulativa. Não há medição G.2 em PC físico.
+
+**Próximo passo H.3/M10:** revisar as imagens/legibilidade de cada cue com a câmera em movimento e repetir em modo de qualidade reduzida, sem alterar combate ou M5. **G.2 físico, homologação humana, H.1/H.2 reais e merge em main continuam bloqueados.**
