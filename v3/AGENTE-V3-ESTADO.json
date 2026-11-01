@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T04:22:39.433Z",
+  "last_completed_at": "2026-11-01T05:18:30Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M06 professor/aluno: eight historical fields preserved; route switch resets three Preview declarations and visible checks; 31 direct V8 assertions PASS. Static QA 41272806527 SUCCESS on CI wiring commit 6ad58589; Browser QA 41272806641 IN_PROGRESS at check. Next: confirm Browser QA, audit M07 student evidence and teacher alignment. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+  "priority": "M07 legacy student evidence corrected; native static QA 41276399578 SUCCESS. Browser QA 41276399588 still running. Next: confirm Browser QA, audit M07 checks after editing gameplay criteria and then M08 teacher/student evidence. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M06-LEGACY-AND-ROUTE-RETEST",
+  "last_task": "V4-AUD-M07-LEGACY-DRAFT-PRESERVATION",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3050,40 +3050,52 @@
       ],
       "tests": "31 direct V8 assertions PASS; regression JS syntax PASS. Native GitHub static QA 41272806527 SUCCESS on 6ad58589, including M06 regression. Browser QA 41272806641 IN_PROGRESS. Previous M05 static 41268787686 and Browser 41268787617 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
       "notes": "M06 preserves all eight legacy texts, blocks over-max submissions with exact field limits, and requires three fresh Preview declarations after changing asset modality; same route is idempotent. Teacher projected private notes remain closed and absent from student. No main, production or real student writes. Master 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M07-LEGACY-DRAFT-PRESERVATION",
+      "completed_at": "2026-11-01T05:18:30Z",
+      "commit": "e5f43fd34c7290b9f67c9e6795718118b2572bfc",
+      "files": [
+        "v3/student-mission-seven.js",
+        "qa/v3-m07-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "GitHub native Node static QA 41276399578 SUCCESS on corrected regression commit 38ca3a3; Browser QA 41276399588 IN_PROGRESS. Earlier first regression run 41276386020 failed due test selecting the unchanged route; corrected in 38ca3a3. M06 Browser QA 41272806641 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+      "notes": "M07 now preserves seven overlong historical draft answers on load/save and route change; explicit per-field limits and practice warnings; submission blocked until correction. Teacher private notes remain collapsed, absent from student. No main, production or real student writes. Roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M06-LEGACY-AND-ROUTE-RETEST",
+    "task": "V4-AUD-M07-LEGACY-DRAFT-PRESERVATION",
     "status": "CODE_AND_REGRESSION_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T04:22:39.433Z",
-    "code_commit": "e61bcdbc55c7290839c165e5903d129f76b3a58b",
+    "updated_at": "2026-11-01T05:18:30Z",
+    "code_commit": "dfba35ccb26aea0d323d4da4506ae9633db63fb6",
     "regression_commits": [
-      "f7551c29187fdd3f48b09e1fc0eb155d66109836",
-      "6ad5858964032eadd5f81f7c7f4c75c06a85b720"
+      "0e521d7124ee558d3a86d64576b021d37c996913",
+      "38ca3a3e2703b8c1b7bca7376c9fea2fa23008d5"
     ],
-    "documentation_commit": "21e6c27700e3bc742d6b56eb8690f4ce4606cd7e",
+    "documentation_commit": "e5f43fd34c7290b9f67c9e6795718118b2572bfc",
     "tests": [
       {
-        "name": "Direct V8 M06 integrity checks",
+        "name": "Native Node M07 student/teacher static QA",
         "result": "PASS",
-        "details": "31 checks on all eight field limits, legacy persistence, route changes, visible checkboxes, storage denial and submission gate"
+        "details": "Run 41276399578 completed/success on 38ca3a3; seven overlong fields, historical storage, route switch, disabled submission, teacher privacy"
       },
       {
-        "name": "GitHub static CI on M06 wiring commit",
-        "result": "PASS",
-        "details": "Run 41272806527 completed/success; includes native Node M06 regression"
-      },
-      {
-        "name": "GitHub Browser QA on M06 wiring commit",
+        "name": "Browser QA M07",
         "result": "IN_PROGRESS",
-        "details": "Run 41272806641 in progress at 2026-11-01T04:22Z; not yet verified"
+        "details": "Run 41276399588 on 38ca3a3 not yet complete at checkpoint"
+      },
+      {
+        "name": "Previous M06 static and browser",
+        "result": "PASS",
+        "details": "Runs 41272806527 and 41272806641 completed/success"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm M06 Browser QA and audit M07 professor/aluno for old drafts, route changes, Preview evidence, links and fallback",
+    "next": "Confirm M07 Browser QA, then inspect whether gameplay criteria edits invalidate previous Preview checks; continue M08 pedagogy before visual polish",
     "master_progress": "54/59 unchanged"
   }
 }
