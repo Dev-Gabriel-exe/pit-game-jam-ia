@@ -8,6 +8,7 @@ const H=require('../v5/progression-contract-h0.js');
 const V=require('../v5/talent-vfx.js');
 const S=require('../v5/talent-sprites.js');
 const C=require('../v5/talent-choreography.js');
+const R=require('../v5/m10-visual-roster.js');
 const policy=H.createPolicy(P.TALENTS);
 const classes=Object.keys(P.CLASSES);
 const catalog=V.manifest(P.TALENTS);
@@ -111,6 +112,67 @@ const m5Opts={seed:20261031,arenaScale:5};
 assert.deepEqual(P.battle(m5Entries,m5Opts).run(),
  P.battle(m5Entries,{...m5Opts,arenaMission:5}).run(),
  'M5 regression must be identical');
+// Expanded M10-only matrix: selection coverage is separate from actual procs.
+// It never mutates the original four-seed diagnostic or M5 baseline.
+const matrix={schema:'m10-passive-reactive-variant-matrix-v1',synthetic:true,
+ variants:11,seedsPerVariant:2,battles:0,events:{proc:0,charge:0},
+ selected:{passivo:new Set(),reativo:new Set()},
+ procObserved:{passivo:new Set(),reativo:new Set()},
+ chargeOnly:{passivo:new Set(),reativo:new Set()},
+ note:'Selection of 60 passive/reactive talents is not proof that all 60 proc in combat.'};
+for(let variant=0;variant<11;variant++){
+ const roster=R.createRoster(P,policy,{count:30,variant});
+ const owners=new Map(roster.map(hero=>[hero.id,hero]));
+ for(const hero of roster){
+  assert.equal(hero.build.talents.length,10);
+  assert.equal(Object.values(hero.build.attributes).reduce((sum,n)=>sum+n,0),20);
+  for(const id of hero.build.talents){
+   const t=P.TALENTS[hero.build.klass].find(x=>x.id===id);
+   assert(t,'M10 variant selected an unknown talent');
+   if(t.type!=='ativo')matrix.selected[t.type].add(hero.build.klass+':'+id);
+  }
+ }
+ for(const seed of [4175863657,20261101]){
+  const outcome=P.battle(roster,{...options,seed:seed+variant}).run(3000);
+  assert(outcome.finished&&outcome.winner?.id&&outcome.standings.length===30,
+   'M10 synthetic variant did not finish');
+  matrix.battles++;
+  for(const event of outcome.events){
+   if(!['proc','charge'].includes(event.type)||!event.talent)continue;
+   const hero=owners.get(event.hero);
+   assert(hero,'Proc/charge attributed to unknown hero');
+   assert(hero.build.talents.includes(event.talent),
+    'Proc/charge attributed to an unequipped talent: '+JSON.stringify(event));
+   const t=P.TALENTS[hero.build.klass].find(x=>x.id===event.talent);
+   assert(t,'Proc/charge references unknown or off-class talent');
+   if(event.talent==='D07'&&event.type==='proc'&&event.kind==='weakened')
+    assert.fail('Foreign D07 victim attribution returned in M10 variant');
+   const cue=catalog[hero.build.klass].find(x=>x.id===event.talent);
+   assert(cue&&cue.type===t.type,'Proc/charge lacks canonical visual metadata');
+   assert(S.spec(cue.style,{subtle:true})?.frames>0&&C.plan(cue)?.duration>0,
+    'Proc/charge has no valid visual specification');
+   matrix.events[event.type]++;
+   if(t.type==='ativo')continue;
+   const key=hero.build.klass+':'+t.id;
+   if(event.type==='proc')matrix.procObserved[t.type].add(key);
+   else matrix.chargeOnly[t.type].add(key);
+  }
+ }
+}
+assert.equal(matrix.battles,22);
+assert.equal(matrix.selected.passivo.size,36,'Expected 36 selectable canonical passives');
+assert.equal(matrix.selected.reativo.size,24,'Expected 24 selectable canonical reactives');
+assert(matrix.procObserved.passivo.size>0&&matrix.procObserved.reativo.size>0,
+ 'No passive/reactive proc was observed across 22 M10 variants');
+report.variantMatrix={schema:matrix.schema,synthetic:true,
+ variants:matrix.variants,seedsPerVariant:matrix.seedsPerVariant,battles:matrix.battles,
+ events:matrix.events,
+ selected:Object.fromEntries(Object.entries(matrix.selected).map(([k,v])=>[k,{count:v.size,ids:[...v].sort()}])),
+ procObserved:Object.fromEntries(Object.entries(matrix.procObserved).map(([k,v])=>[k,{count:v.size,ids:[...v].sort()}])),
+ charged:Object.fromEntries(Object.entries(matrix.chargeOnly).map(([k,v])=>[k,{count:v.size,ids:[...v].sort()}])),
+ notObserved:Object.fromEntries(Object.entries(matrix.selected).map(([k,v])=>
+  [k,[...v].filter(id=>!matrix.procObserved[k].has(id)).sort()])),
+ note:matrix.note};
 const serialize=sets=>Object.fromEntries(Object.entries(sets).map(([k,v])=>[k,
  {count:v.size,keys:[...v].sort()}]));
 // Diagnostic only: absence in four synthetic seeds is not proof of a broken talent.
@@ -149,4 +211,4 @@ console.log('PASS M10 passive/reactive event audit: '+JSON.stringify({
  anomalies:report.anomalies.length,coverage:byType,
  untriggered:untriggered.length,untriggeredIds:untriggered,
  rareTriggered:rareTriggered.length,chargedOnly:chargedOnly.length,
- chargedOnlyIds:chargedOnly,m5:'identical'}));
+ chargedOnlyIds:chargedOnly,m5:'identical',variantMatrix:{battles:matrix.battles,selectedPassives:matrix.selected.passivo.size,selectedReactives:matrix.selected.reativo.size,proccedPassives:matrix.procObserved.passivo.size,proccedReactives:matrix.procObserved.reativo.size}}));
