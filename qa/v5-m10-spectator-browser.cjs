@@ -150,6 +150,8 @@ const R=require('../v5/m10-visual-roster.js');
   assert.equal(await stage.getAttribute('data-v5-student-camera'),'off');
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner),null);
   assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.talentEvents),0);
+  await page.waitForFunction(()=>document.querySelector('#startBattle')?.disabled===false,
+   null,{timeout:30000});
   assert.equal(await page.locator('#startBattle').isDisabled(),false,
    'M10 must be ready to start again with 30 real KayKit GLBs');
   assert.deepEqual(errors,[],'Uncaught Chromium errors: '+errors.join(' | '));
