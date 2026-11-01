@@ -65,6 +65,8 @@ assert(status.textContent.includes('apenas nesta aba'),'outcome radio shows bloc
 resolution.checked=true;
 listeners.resolution();
 assert(status.textContent.includes('apenas nesta aba'),'decision radio shows blocked-storage warning');
+// Editing the observation reset check 1; simulate the user explicitly rechecking it.
+check.checked=true;
 listeners.check();
 assert(status.textContent.includes('apenas nesta aba'),'checkbox shows blocked-storage warning');
 assert.equal(m.load('fictional-ui').outcome,'passed','radio persisted in volatile tab');
