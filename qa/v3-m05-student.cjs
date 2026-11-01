@@ -131,4 +131,34 @@ ok(denied.load('offline').route===2&&denied.load('offline').checks.length===3,
 ok(m.save('writable',data)===true,'M05 writable storage returns success');
 ok(m.render({...ctx,session:'writable'}).includes('rascunho salvo neste navegador'),
  'M05 writable storage correctly reports persisted draft');
+// Editing the implemented rule or a reported result must invalidate only the
+// affected manual GDevelop Preview confirmations. Never erase the text draft.
+const retestCases={
+ condition:[],action:[],variable:[],
+ positive:[1,2],negative:[0],feedback:[1,2],
+ saved:[],issue:[0,1]
+};
+for(const [field,remaining] of Object.entries(retestCases)){
+ const session='m05-retest-'+field;
+ m.save(session,{...data,checks:[0,1,2]});
+ const d=m.load(session),original=d[field];
+ const affected=m.updateField(d,field,original+'!');
+ ok(affected.length>0,'M05 '+field+' material edit invalidates confirmations');
+ ok(d[field]===original+'!','M05 '+field+' preserves edited text');
+ m.save(session,d);
+ ok(JSON.stringify(m.load(session).checks)===JSON.stringify(remaining),
+  'M05 '+field+' affected confirmations persist');
+ ok(m.validate(session).ok===false,'M05 '+field+' blocks stale submission');
+ d.checks=[0,1,2];m.save(session,d);
+ ok(m.validate(session).ok===true,'M05 '+field+' allows genuine reconfirmation');
+}
+const spaces=m.load('m05-retest-condition');
+ok(m.updateField(spaces,'condition','  '+spaces.condition+'  ').length===0,
+ 'M05 whitespace-only changes do not invalidate manual tests');
+ok(spaces.checks.length===3,'M05 whitespace preserves prior confirmations');
+ok(m.updateField(spaces,'not-a-field','x').length===0,'M05 unknown field ignored');
+ok(studentCode.includes('affected.includes(Number(box.dataset.m5sCheck))'),
+ 'M05 checkbox DOM is cleared when confirmations become stale');
+ok(studentCode.includes('repita os testes afetados no Preview'),
+ 'M05 student receives actionable retest instructions');
 console.log('PASS '+count+' M05 student module regressions. Browser/GDevelop/API E2E not run.');
