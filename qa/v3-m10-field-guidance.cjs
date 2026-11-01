@@ -86,4 +86,26 @@ assert(!/<details class="pit-private-teacher-notes"[^>]*\bopen\b/.test(review),'
 assert(review.includes('<summary')&&review.includes('▤'),'discreet keyboard-accessible control');
 const app=fs.readFileSync('v3/app.js','utf8');
 assert(app.includes('PIT_STUDENT_MISSION_TEN')&&app.includes('PIT_TEACHER_MISSION_TEN_VALIDATION'),'both profiles wired');
+// Legacy drafts from older releases must never lose evidence through a silent slice.
+const legacyId='legacy-over-limit-m10',legacy=student.load(legacyId);
+legacy.route='local';legacy.checks=[0,1,2];
+for(const f of student.fields)legacy[f.id]='Z'.repeat(f.max+9);
+store.set('pit_v3_m10_'+legacyId,JSON.stringify(legacy));
+const restored=student.load(legacyId);
+for(const f of student.fields)assert.equal(restored[f.id],legacy[f.id],'legacy field preserved '+f.id);
+assert.equal(student.validate(legacyId).ok,false,'over-limit draft must not pass validation');
+assert.equal(student.validate(legacyId).field,'pitch','first over-limit field identified');
+const legacyHtml=student.render({session:legacyId,phase:'practice',status:'',idea:{}});
+assert(legacyHtml.includes('data-m10s-limit="pitch"'),'over-limit message is rendered beside field');
+assert(legacyHtml.includes('excede 85 caracteres'),'actual limit shown to student');
+assert(student.save(legacyId,restored),'legacy record can be saved without truncation');
+for(const f of student.fields)assert.equal(student.load(legacyId)[f.id],legacy[f.id],'saved legacy field remains intact '+f.id);
+const legacyReview=student.render({session:legacyId,phase:'review',status:'',idea:{},canSubmit:true});
+assert(/id="submitWork" disabled/.test(legacyReview),'over-limit report cannot be submitted');
+student.hydrate(legacyId,evidence,'submitted');
+assert.equal(student.load(legacyId).pitch,legacy.pitch,'remote hydration cannot overwrite legacy draft');
+for(const f of student.fields)restored[f.id]='Registro revisado e verificado no jogo '+f.id;
+assert(student.save(legacyId,restored),'corrected record can be saved');
+assert.equal(student.validate(legacyId).ok,true,'corrected record is eligible for human review');
+assert(student.evidence(legacyId).length<=750,'corrected evidence fits API payload');
 console.log('PASS M10 accessible student guidance, privacy, persistence, isolated draft, teacher private notes; human/GDevelop/HDMI NOT_RUN');
