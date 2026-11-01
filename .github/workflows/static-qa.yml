@@ -111,6 +111,11 @@ jobs:
           node --check v3/student-mission-five.js
           node --check qa/v3-m05-student.cjs
           node qa/v3-m05-student.cjs
+      - name: Verify M06 legacy drafts, asset route retest and projected teacher notes
+        run: |
+          node --check v3/student-mission-six.js
+          node --check qa/v3-m06-regression.cjs
+          node qa/v3-m06-regression.cjs
       - name: Verify legacy M01–M10 evidence remains readable without guessing fields
         run: |
           node --check v3/app.js
