@@ -4,6 +4,7 @@ on:
     branches: [feature/v5-arena-dos-criadores]
     paths:
       - 'qa/v5-m10-mixed-vfx-browser.cjs'
+      - 'qa/v5-m10-rare-procs.cjs'
       - '.github/workflows/v5-m10-mixed-vfx-qa.yml'
       - 'v5/arena-three.js'
       - 'v5/arena-lab.js'
@@ -22,6 +23,8 @@ jobs:
       - name: Validate isolated M10 contract and script
         run: |
           node --check qa/v5-m10-mixed-vfx-browser.cjs
+          node --check qa/v5-m10-rare-procs.cjs
+          node qa/v5-m10-rare-procs.cjs
           node qa/v5-m10-visual-roster.cjs
           node qa/v5-progression-contract-h0.cjs
       - name: Install browser
@@ -42,4 +45,5 @@ jobs:
           path: |
             qa/v5-m10-mixed-vfx-*.png
             qa/v5-m10-mixed-vfx.json
+            qa/v5-m10-rare-procs-report.json
           if-no-files-found: ignore
