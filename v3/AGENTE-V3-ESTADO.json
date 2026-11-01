@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T10:18:15.690Z",
+  "last_completed_at": "2026-11-01T11:19:00.775Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09 edit of hypothesis/task/observation/reproduction/decision now invalidates only relevant manual peer-test attestations, with visible checkbox sync and actionable retest notice. Native static QA SUCCESS 41296841398 on 166e7b9; Browser QA 41296841390 pending at checkpoint. Next audit M10; GDevelop GUI/HDMI/physical mobile/human peer test NOT_RUN.",
+  "priority": "M10 eight legacy launch fields now preserve over-limit content and block invalid delivery with per-field accessible warning. Native static QA SUCCESS 41301301036 on regression SHA 6ddd07e; Browser QA 41301301028 in progress at checkpoint. Next confirm Browser QA and inspect M10 edit attestations; GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-EDIT-ATTESTATION-RETEST",
+  "last_task": "V4-AUD-M10-LEGACY-LAUNCH-DRAFTS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3124,37 +3124,46 @@
       ],
       "tests": "Native Node static QA 41296841398 SUCCESS on code/test SHA 166e7b9; earlier failed runs exposed oversized QA fixtures and simulated checkbox not rechecked, repaired without weakening production constraints. Browser QA 41296841390 IN_PROGRESS at check. No physical GDevelop/HDMI/mobile/human peer test.",
       "notes": "M09 substantive field edits invalidate affected manual attestations; metadata and whitespace edits exempt; DOM/status sync and persistence. Master 54/59 unchanged; main/production/real student data untouched."
+    },
+    {
+      "id": "V4-AUD-M10-LEGACY-LAUNCH-DRAFTS",
+      "completed_at": "2026-11-01T11:19:00.775Z",
+      "commit": "0da870e7c4bd1eddd8d55031822d76c0cb8f0f0b",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-m10-field-guidance.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Native GitHub static QA 41301289100 SUCCESS on code SHA 0b111d8; native GitHub static QA 41301301036 SUCCESS on regression SHA 6ddd07e. Browser QA 41301301028 IN_PROGRESS at checkpoint. No GDevelop GUI, HDMI, physical mobile, human test.",
+      "notes": "All eight legacy launch fields preserved without truncation, max validation and per-field warning, invalid submission disabled, regression covers oversized legacy data, correction and hydration. Teacher rubric and private collapsed notes unchanged. Master 54/59 unchanged; main/production/student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-EDIT-ATTESTATION-RETEST",
+    "task": "V4-AUD-M10-LEGACY-LAUNCH-DRAFTS",
     "status": "CODE_REGRESSION_DOCS_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T10:18:15.690Z",
-    "code_commit": "3e1cd3d751d22d633076353a3cd951828105f83c",
+    "updated_at": "2026-11-01T11:19:00.775Z",
+    "code_commit": "0b111d89317384f7526b327cb824f216f5386ab3",
     "regression_commits": [
-      "91b8412523b03958de7fdeb760699353dfe7a552",
-      "ea9ec0b72714d0cb87f12bd6dca2ad97f3ceb91c",
-      "998962ed0ba0288391d3ab4976e8544c37b57c4d",
-      "166e7b9d6b3b908a5a8bde4afbf9874e91ed28db"
+      "6ddd07e5e63ee4478d124f150175f0bc55891943"
     ],
-    "documentation_commit": "2cd3cfdf1ca294c173de6530e6d5a7a7375b2535",
+    "documentation_commit": "0da870e7c4bd1eddd8d55031822d76c0cb8f0f0b",
     "tests": [
       {
         "name": "Native GitHub static QA",
         "result": "PASS",
-        "details": "Run 41296841398 on 166e7b9 includes M09 field guidance, storage regression and cross-mission alignment"
+        "details": "Run 41301301036 on 6ddd07e covers M10 legacy launch draft regression"
       },
       {
         "name": "Browser QA",
         "result": "IN_PROGRESS",
-        "details": "Run 41296841390 on 166e7b9, no final result at checkpoint"
+        "details": "Run 41301301028 on 6ddd07e"
       },
       {
-        "name": "GDevelop GUI/HDMI/physical mobile/human peer test",
+        "name": "GDevelop GUI/HDMI/physical mobile/human test",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA then audit M10 professor/aluno for launch evidence and preservation",
+    "next": "Confirm Browser QA on 6ddd07e; inspect M10 substantive field edits and manual attestations; continue professor/student audit before visual work",
     "master_progress": "54/59 unchanged"
   }
 }
