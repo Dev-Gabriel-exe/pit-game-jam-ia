@@ -260,7 +260,7 @@ function studentBrief(m){
  '<p class="story-wait">'+(isReleased?'Prepare seu projeto. Siga para CONSTRUIR quando chegar a hora da prática.':'🔒 Aguarde a liberação desta missão pelo professor.')+'</p></div>';
 }
 function studentBuild(m){
- const canWork=m.n<=state.current_stage&& (m.n!==state.current_stage||['practice','review'].includes(state.phase));
+ const canWork=m.n<=state.current_stage;
  return '<div class="quest-kicker">MISSÃO '+String(m.n).padStart(2,'0')+' · OFICINA</div>'+
  '<h2 class="quest-title">Agora é sua vez de criar.</h2><p class="lesson-lead">'+esc(m.goal)+'</p>'+studentGenreFocus(m)+
  (!canWork?'<div class="notice gold">⏳ A prática ainda não foi liberada. Os passos estão disponíveis para você conhecer o objetivo; o envio só abre quando o professor autorizar.</div>':'')+
@@ -739,7 +739,7 @@ async function poll(){
   if(!TEACHER){progress=data.progress||[];
     if(state.current_stage!==oldStage){
      const typing=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
-     if(!typing){activeStage=state.current_stage;activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();setToast('O professor iniciou a missão '+state.current_stage+'.')}
+     if(!typing){activeStage=state.current_stage;activePhase='briefing';renderAll();setToast('O professor liberou a missão '+state.current_stage+'.')}
      else {$('roomState').textContent='NOVA ETAPA LIBERADA · '+state.current_stage;setToast('Nova etapa disponível. Termine seu registro antes de avançar.');}
     } else {renderRight();renderJourney();}
   }else{if(state.current_stage!==oldStage||state.phase!==oldPhase){renderRight();renderJourney();}}
