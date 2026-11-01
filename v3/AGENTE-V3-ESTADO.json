@@ -3198,10 +3198,11 @@
         "chat-api/api/classroom.js",
         "qa/v3-isolated-backend.cjs",
         "qa/v3-postgres-integration.cjs",
-        ".github/workflows/v3-postgres-integration.yml"
+        ".github/workflows/v3-postgres-integration.yml",
+        "v3/INTEGRACAO-V3-V5-2026-11-01.md"
       ],
       "tests": "8 actual classroom handler cases in V8 with SQL mocks PASS (missing classroom state/progress/heartbeat/release, sequential release, valid evidence and overflow). Syntax of three JS files compiled in V8 PASS. GitHub Actions/PostgreSQL 16 workflow created but completion NOT_CONFIRMED; physical browser/HDMI/GDevelop/human NOT_RUN.",
-      "notes": "Missing classroom row now produces actionable 503, not 500/409. Real Postgres QA script reconciled to monotonic sequential mission release; new CI uses ephemeral Postgres 16, synthetic students and fake PIN. No changes to main, deployment or real student records. Master roadmap 54/59 unchanged."
+      "notes": "Missing classroom row now produces actionable 503, not 500/409. Real Postgres QA script reconciled to monotonic sequential mission release; new CI uses ephemeral Postgres 16, synthetic students and fake PIN. No changes to main, deployment or real student records. Master roadmap 54/59 unchanged. V5 integration handoff documented in commit 496e67f8104d7aea54f36f65cd12246572664175."
     }
   ],
   "v4_checkpoint": {
@@ -3238,6 +3239,7 @@
       }
     ],
     "next": "Confirm branch-scoped PostgreSQL CI and Browser QA, correct failures; audit teacher/student alignment and V5 duel/arena bridge in synthetic environment.",
-    "master_progress": "54/59 unchanged"
+    "master_progress": "54/59 unchanged",
+    "documentation_commit": "496e67f8104d7aea54f36f65cd12246572664175"
   }
 }
