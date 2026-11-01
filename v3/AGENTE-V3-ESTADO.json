@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T19:12:20Z",
+  "last_completed_at": "2026-11-01T20:12:41Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09 no-defect playtest now explicitly included in student 3-minute review; M10 final five minutes correctly labeled TRIAGEM in projected clock and review header, avoiding false promise of grading 30 projects. Eight direct V8 source-derived checks PASS, static QA SUCCESS on f7c72bf (run 41340743667), Browser QA IN_PROGRESS (run 41340743973) at inspection, earlier f8ecbad static/Chrome SUCCESS. Physical HDMI/GDevelop/30 students NOT_RUN. Next verify GitHub Actions on exact latest SHA and audit M01–M10 student/teacher consistency. Master 54/59 unchanged; main untouched.",
+  "priority": "M06 now invalidates stale manual GDevelop/asset confirmations after substantive changes to the eight fields; evidence is never silently truncated. Eight V8 source-derived cases PASS; module and regression JS syntax PASS; previous Chrome run 41340743973 SUCCESS on prior SHA only. New Node static QA and Chrome after 8e4b654 NOT_CONFIRMED; GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN. Next verify CI on exact SHA and audit M01–M10 teacher/student alignment. Master 54/59 unchanged; main untouched.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-M10-TRIAGE-PARITY",
+  "last_task": "V4-AUD-M06-STALE-ATTESTATIONS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3246,44 +3246,59 @@
       ],
       "tests": "8 actual V8 source-derived checks PASS on changed M09/M10 renderers; source regression added. Static GitHub Actions run 41340743667 SUCCESS on f7c72bf; Browser run 41340743973 IN_PROGRESS. Previous f8ecbad static/Browser SUCCESS. HDMI/GDevelop GUI/30 students/human/V5 NOT_RUN.",
       "notes": "M09 3min decision includes no-defect case, preventing invented bugs. M10 five-minute slot now labeled TRIAGEM in projected timeline and review, not 30 individual approvals. All changes V3 branch; no main, production or student data. Master 54/59."
+    },
+    {
+      "task": "V4-AUD-M06-STALE-ATTESTATIONS",
+      "completed_at": "2026-11-01T20:12:41Z",
+      "commit": "0cdf47831e83be6830dd93aaad758fe088c4794e",
+      "files": [
+        "v3/student-mission-six.js",
+        "qa/v3-m06-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Eight V8 source-derived functional cases for edit-invalidation, persisted checks, validation and 732-char max evidence PASS. Module and regression JS syntax PASS. Browser run 41340743973 SUCCESS on previous SHA. Native Node full QA and Chrome on new commit NOT_CONFIRMED. HDMI/GDevelop GUI/human/mobile/V5 NOT_RUN.",
+      "notes": "M06 stale attestations are selectively invalidated; changes in need/file/source reset all three, license/negative reset third, before/after reset first two, saved project path resets first; whitespace-only edits preserve checks. Full evidence is no longer sliced. No main, production, Neon or real students modified. Master progress 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-M10-TRIAGE-PARITY",
-    "status": "SOURCE_V8_PASS_STATIC_CI_SUCCESS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T19:12:20Z",
+    "task": "V4-AUD-M06-STALE-ATTESTATIONS",
+    "status": "SOURCE_V8_PASS_NEW_CI_NOT_CONFIRMED",
+    "updated_at": "2026-11-01T20:12:41Z",
     "code_commits": [
-      "e83e3a374c503f857661e4e7e4c3b20a3099ffe2",
-      "500aca69117488086823e40532fefbc6fe664560",
-      "52d3ac402dcc4a37c3bc21d070de336e96654a1f"
+      "31bdbf639cb87bf65d30cb938ef5b81d0e513332"
     ],
     "regression_commits": [
-      "299e7b5035f0a42f635a70c4eb1ef78822585167"
+      "8e4b654657df2c6ef9ab2f9ec451b68d605c8c84"
     ],
-    "documentation_commit": "ed174001c52d52be5d184d77e8d6878e264a08af",
+    "documentation_commit": "0cdf47831e83be6830dd93aaad758fe088c4794e",
     "tests": [
       {
-        "name": "Eight source-derived V8 assertions: M09 student render no-defect, M10 projected triage clock, M10 review triage, private notes closed and student no private notes",
+        "name": "V8 syntax of actual M06 module and QA regression",
         "result": "PASS"
       },
       {
-        "name": "Native static QA on f7c72bf, run 41340743667",
-        "result": "SUCCESS"
+        "name": "8 V8 functional field-change scenarios, persistence and validation",
+        "result": "PASS"
       },
       {
-        "name": "Chrome Browser QA on f7c72bf, run 41340743973",
-        "result": "IN_PROGRESS at last inspection"
+        "name": "Maximal structured evidence 732 characters, no truncation, parse roundtrip",
+        "result": "PASS"
       },
       {
-        "name": "Previous static QA and Chrome on f8ecbad",
+        "name": "Browser QA run 41340743973 on previous SHA",
         "result": "SUCCESS (prior SHA only)"
       },
       {
-        "name": "Physical 30-student, HDMI, GDevelop GUI, human peer test and live V5",
+        "name": "Node static QA and Chrome on new commit",
+        "result": "NOT_CONFIRMED"
+      },
+      {
+        "name": "Physical HDMI, GDevelop GUI, human peer test, real mobile and V5 integration",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify native static/Browser QA on latest SHA, then continue M01–M10 cross-face pedagogical audit; keep V5 bridge isolated, no main merge.",
+    "next": "Verify native static QA/Chrome on exact latest SHA, continue cross-face M01–M10 pedagogical audit; no main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
