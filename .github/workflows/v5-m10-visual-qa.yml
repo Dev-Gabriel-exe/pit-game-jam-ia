@@ -33,6 +33,8 @@ jobs:
           node --check qa/v5-m10-visual-roster.cjs
           node --check qa/v5-m10-visual-browser.cjs
           node qa/v5-m10-visual-roster.cjs
+          node --check qa/v5-m10-visual-variant-matrix.cjs
+          node qa/v5-m10-visual-variant-matrix.cjs
           node qa/v5-endgame-replay.cjs
           node qa/v5-progression-contract-h0.cjs
   final-webgl:
