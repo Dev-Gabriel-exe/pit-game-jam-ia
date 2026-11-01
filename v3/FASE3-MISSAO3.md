@@ -78,3 +78,13 @@ O responsável aprovou a estrutura da Missão 03. A revisão de qualidade mantev
 33/33 verificações de regressão aprovadas, envolvendo sintaxe dos módulos, as quatro fases da apresentação docente, três fragmentos de prática, duração 5+5+18+2, tutorial de seis etapas, ateliê de duas alternativas, conteúdo dos novos exemplos, salvamento local, validação das evidências, recuperação após envio, isolamento por aluno e limite de 750 caracteres. Com campos máximos, a evidência gerada tem 742 caracteres e todas as linhas permanecem completas.
 
 **Pendente:** teste visual com navegador executando o front-end e ensaio de autenticação/envio/validação com uma turma real ou fictícia. O teste automatizado não comprova que a engine abre no laboratório, nem substitui a verificação das permissões, da conexão ou das condições das ferramentas gratuitas. Não exigir instalação ou downloads adicionais além dos que estiverem disponíveis no dia.
+
+## Auditoria transversal M03 — 31/10/2026 (rascunhos legados e evidência)
+
+**Falha real:** `student-mission-three.js` recortava silenciosamente os sete campos de rascunhos legados no carregamento (`slice(0,f.max)`). Além disso, os limites visíveis no formulário eram superiores aos orçamentos usados na geração da evidência (ex.: Preview permitia 180 caracteres mas enviava 140), e a validação só verificava mínimos. Isso podia apresentar 7/7 e enviar texto incompleto.
+
+**Correção na branch V3:** os textos históricos são mantidos integralmente; os limites do formulário foram sincronizados com a evidência de no máximo 750 caracteres (projeto 60, cena 53, objeto 53, origem 69, Preview 140, salvamento 85, diagnóstico opcional 75). A validação rejeita valores antigos acima dos limites, com aviso por campo; o progresso não conta campos obrigatórios excedidos. O estudante revisa a resposta sem perder o texto original. Professor continua com os critérios de cena, objeto/instância, Preview real e salvamento, sem notas privadas projetadas.
+
+**Provas desta rodada:** 24 asserções V8 executadas diretamente sobre o módulo atualizado, PASS (sete campos acima do limite, preservação, rejeição e campo correto; formulário vazio e válido; limite da evidência). Adicionadas regressões Node em `qa/v3-m03-legacy-evidence.cjs` para rascunhos legados, máximo do formulário, progresso e tamanho do envio. **CI estática e Browser QA do novo commit:** pendentes de confirmação no momento do registro. Browser QA anterior M02 em `41251903525`: SUCCESS. **Não executados:** uso humano, GUI real do editor GDevelop, HDMI físico e celular físico.
+
+**Próxima verificação:** confirmar CI do commit da M03 e auditar M04 na dupla professor/aluno. Nenhuma mudança em `main`, produção ou dados reais.
