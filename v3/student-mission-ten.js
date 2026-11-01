@@ -21,11 +21,14 @@ function save(s,d){const x=blank();x.route=routes.includes(d.route)?d.route:'loc
 function draftNotice(session){const k=key(session);if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. O rascunho permanece apenas nesta aba: copie a ficha de lançamento antes de sair.';if(writeStatus.get(k)===true)return 'Rascunho salvo neste navegador. Não enviado.';try{if(localStorage.getItem(k)!==null)return 'Rascunho salvo neste navegador. Não enviado.'}catch{}return 'Rascunho local. Não enviado.'}
 // Switching delivery methods changes what was actually verified. Preserve only the editable-project check.
 function switchRoute(d,route){if(!routes.includes(route)||d.route===route)return false;d.route=route;d.access='';d.checks=(Array.isArray(d.checks)?d.checks:[]).filter(n=>n===0);return true}
-// A declaração manual só vale para a versão do projeto, acesso e demonstração realmente conferidos.
+// As confirmações manuais pertencem ao projeto e à demonstração efetivamente conferidos.
+// Formatação equivalente (espaços/quebras de linha) não muda a evidência nem exige reteste.
 function updateField(d,id,value){
  const f=fields.find(x=>x.id===id);
- if(!f||typeof value!=='string'||d[id]===value)return [];
+ if(!f||typeof value!=='string')return [];
+ const before=clean(d[id]),after=clean(value);
  d[id]=value;
+ if(before===after)return [];
  const affected=id==='project'?[0,1,2]:id==='access'?[1,2]:['mechanic','rule','demo'].includes(id)?[1]:[];
  const old=Array.isArray(d.checks)?d.checks:[];
  d.checks=old.filter(n=>!affected.includes(n));
