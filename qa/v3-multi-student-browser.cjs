@@ -28,7 +28,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    else data={ok:true,state,roster:users.map(x=>({id:x.id,display_name:x.name,joined_at:x.lastSeen,last_seen_at:x.lastSeen,active_stage:4,highest_stage:Math.max(0,...x.progress.map(p=>p.stage)),approved:x.progress.filter(p=>p.status==='approved').length,unread_chat:0,stages:x.progress}))};
   }else if(action==='stage'){
    if(!teacher){status=403;data={ok:false,error:'Professor apenas'}}
-   else{room.stage=body.stage;room.phase=body.phase;data={ok:true,state:{current_stage:room.stage,phase:room.phase,updated_at:new Date().toISOString()}}}
+   else if(!Number.isInteger(body.stage)||body.stage<1||body.stage>room.stage+1){status=409;data={ok:false,error:'Libere uma missão por vez'}}
+   else{room.stage=Math.max(room.stage,body.stage);room.phase='practice';data={ok:true,state:{current_stage:room.stage,phase:room.phase,updated_at:new Date().toISOString()}}}
   }else if(action==='progress'){
    if(!me){status=401;data={ok:false,error:'Sessão inválida'}}
    else if(body.stage>room.stage){status=403;data={ok:false,error:'Etapa bloqueada'}}
