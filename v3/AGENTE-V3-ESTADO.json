@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T07:15:21.366Z",
+  "last_completed_at": "2026-11-01T08:15:36.684Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08 legacy draft preservation and explicit seven-field max validation committed; 55 direct V8 checks and 184 V8-emulated regression assertions PASS. Native Node/CI/Browser QA NOT_CONFIRMED. Next: confirm CI, then M08 edits vs stale Preview confirmations, before M09. GDevelop GUI/HDMI/mobile/human NOT_RUN.",
+  "priority": "M08 comparison/edit retest correction committed; 9 direct V8 checks and 213 V8-emulated QA assertions PASS. Native Node/CI/Browser QA NOT_CONFIRMED. Next: M09 teacher/student playtest audit and legacy draft integrity; GDevelop GUI/HDMI/mobile/human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M08-LEGACY-COMPARISON-LIMITS",
+  "last_task": "V4-AUD-M08-COMPARISON-EDIT-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3086,39 +3086,51 @@
       ],
       "tests": "55 direct V8 assertions PASS on current M08 student module. Full qa/v3-m08-acceptance.cjs executed in V8 with node:fs/vm/assert emulation and current fetched sources: 184 assertions PASS. Native Node, GitHub CI and Browser QA NOT_CONFIRMED; GDevelop GUI, HDMI, physical mobile, human NOT_RUN.",
       "notes": "Preserves seven overlong legacy answers, rejects over-max with per-field warning, prevents invalid submission, preserves remote parse strictness. Teacher rubric and collapsed private notes unchanged. main/production/student data untouched. Master 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M08-COMPARISON-EDIT-RETEST",
+      "completed_at": "2026-11-01T08:15:36.684Z",
+      "commit": "eff2cc11d504f7d7edca63418eb3c07265507bbe",
+      "files": [
+        "v3/student-mission-eight.js",
+        "qa/v3-m08-acceptance.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "9 direct V8 functional checks PASS; complete qa/v3-m08-acceptance.cjs executed against current fetched code under V8 with emulated node:fs/vm/assert: 213 assertions PASS. Native Node/CI/Browser QA NOT_CONFIRMED (GitHub commit workflow/status queries empty); GDevelop GUI, HDMI, physical mobile, human NOT_RUN.",
+      "notes": "Six substantive comparison/observation fields now invalidate three stale manual Preview checks on semantic change; saved path, whitespace-only edits and unknown fields exempt. DOM checkbox reset, persisted invalidation, aria-live retest warning. Teacher private notes unchanged; main/production/student data untouched. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M08-LEGACY-COMPARISON-LIMITS",
+    "task": "V4-AUD-M08-COMPARISON-EDIT-RETEST",
     "status": "CODE_REGRESSION_DOCS_COMMITTED_V8_PASS_NATIVE_CI_PENDING",
-    "updated_at": "2026-11-01T07:15:21.366Z",
-    "code_commit": "ae582b540923dde28f388bc4c65546032a325ffa",
+    "updated_at": "2026-11-01T08:15:36.684Z",
+    "code_commit": "95e45e006ed5e7fce6e9a92cdb39bfe1873690e8",
     "regression_commits": [
-      "05a25e79ecf844013043b60c5dc1b49c761bc420"
+      "47eb01b4969d1c53779b01926a51fcc3ce1e67c3"
     ],
-    "documentation_commit": "c28d383496b345811928fe50647e37ae99e7da35",
+    "documentation_commit": "eff2cc11d504f7d7edca63418eb3c07265507bbe",
     "tests": [
       {
         "name": "M08 direct functional V8 checks",
         "result": "PASS",
-        "details": "55 assertions including seven overlong fields, alerts, submit guard and storage denial"
+        "details": "9 checks including six substantive fields, saved metadata and normalized whitespace"
       },
       {
         "name": "M08 regression via V8 Node API emulation",
         "result": "PASS",
-        "details": "184 assertions against current repository JS, CSS and app wiring; not native Node"
+        "details": "213 assertions against current fetched module, teacher rubric, CSS and app; not native Node"
       },
       {
         "name": "Native Node/CI/Browser QA on new commits",
         "result": "NOT_CONFIRMED",
-        "details": "Workflow lookup only covers PR-triggered runs and returned no runs"
+        "details": "Commit workflow/status queries returned empty lists, not evidence of success"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm static and Browser QA for latest M08 commit, then audit stale Preview check invalidation after editing M08 comparison fields; proceed to M09 only after pedagogical correctness",
+    "next": "Confirm native CI on M08 changes; audit M09 teacher/student playtest and draft integrity",
     "master_progress": "54/59 unchanged"
   }
 }
