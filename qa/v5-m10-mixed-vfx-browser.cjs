@@ -156,6 +156,22 @@ function within(a,b,gap=3){
   for(const kind of ['ativo','passivo','reativo'])
    assert(finalKeys.rendered.some(key=>typeByKey.get(key)===kind),
     'No actual WebGL cue rendered for talent type '+kind);
+  // Rare effects: distinguish selected, actually rendered, budget-dropped,
+  // and never selected. A drawn cue can still be outside the camera frame.
+  const rareTargets=['guardian:J08','hunter:P09','mage:A07'];
+  report.rareVisual=Object.fromEntries(rareTargets.map(key=>{
+   const selected=equipped.has(key);
+   const rendered=finalKeys.rendered.includes(key);
+   const dropped=finalKeys.dropped.includes(key);
+   const snapshotLabels=report.samples.filter(sample=>
+    sample.renderedKeys.includes(key)).map(sample=>sample.label);
+   assert(!rendered||selected,'Unselected rare cue rendered: '+key);
+   assert(!dropped||selected,'Unselected rare cue dropped: '+key);
+   return [key,{selected,rendered,dropped,snapshotLabels,
+    interpretation:!selected?'not-equipped-in-this-roster':
+     rendered?'rendered-cue-not-camera-visibility-proof':
+     dropped?'dropped-by-visual-budget':'selected-but-no-rendered-cue-observed'}];
+  }));
   report.finalVisualKeys={rendered:finalKeys.rendered,dropped:finalKeys.dropped,
    byType:Object.fromEntries(['ativo','passivo','reativo'].map(kind=>
     [kind,finalKeys.rendered.filter(key=>typeByKey.get(key)===kind).length]))};
