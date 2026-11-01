@@ -62,6 +62,15 @@ function selectRoute(d,index){
  d.route=next;d.routeChosen=true;
  return d;
 }
+function updateField(d,id,value){
+ if(!fields.some(f=>f.id===id))return false;
+ const next=String(value??''),changed=clean(d[id])!==clean(next);
+ d[id]=next;
+ // Gameplay/observations changed: old Preview declarations are no longer reliable.
+ // A project file location alone does not change the gameplay that was tested.
+ if(changed&&id!=='saved'){d.checks=[];return true}
+ return false;
+}
 function brief(ctx){const p=profile(ctx);return '<section class="m7s-brief"><h3>Um jogo começa, desafia e termina.</h3><p>O objetivo original de <b>'+esc(p.title)+'</b> era: '+esc(p.goal)+'. Agora transforme essa intenção em uma condição testável de vitória ou derrota, sem criar várias fases.</p><ol><li>Preserve movimento, regra e asset das missões anteriores.</li><li>Implemente uma condição de conclusão no GDevelop.</li><li>Mostre o resultado final e teste a tentativa prematura.</li></ol><button type="button" data-m7s-nav="practice">CRIAR CONCLUSÃO ›</button></section>'}
 function practice(ctx){const d=load(ctx.session),p=profile(ctx),locked=['submitted','approved'].includes(ctx.status),r=routeFor(ctx,d);
 const guide=window.PIT_GDEVELOP_M07_GUIDE?window.PIT_GDEVELOP_M07_GUIDE.render(r):'<p>Guia indisponível. Consulte a documentação oficial do GDevelop.</p>';
@@ -69,7 +78,7 @@ return '<section class="m7s-practice"><div class="m7s-plan"><small>OFICINA · 36
 '<div class="m7s-editor-handoff" role="note"><strong>ONDE CONSTRUIR</strong><p>Abra <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">o editor gratuito do GDevelop</a> em outra aba e carregue manualmente o projeto salvo na Missão 06. O link não abre nem importa seu projeto automaticamente. Se estiver sem internet, use o aplicativo GDevelop já instalado e abra o arquivo local.</p></div>'+
 '<div class="m7s-plan" role="note"><strong>COMO FAZER O JOGO TER UM FINAL</strong><p><b>1.</b> Reabra no GDevelop o projeto das Missões 03–06. <b>2.</b> Na aba Events, crie ou adapte a condição SE que representa a vitória ou derrota definida na Missão 01 (ex.: coletar todos os itens, alcançar a saída ou resolver o desafio). <b>3.</b> Adicione a ação ENTÃO: mostrar texto de conclusão ou mudar para uma cena Final. <b>4.</b> Garanta que o resultado não apareça antes de cumprir a condição; use estado/Trigger once quando necessário. <b>5.</b> No Preview, teste início normal, tentativa de terminar antes da hora e conclusão válida; reinicie e repita. <b>6.</b> Salve o projeto e preencha o relatório abaixo com o que realmente aconteceu. <b>7.</b> Clique “Conferir resultado” e envie quando liberado.</p><p><b>Se o final aparecer cedo:</b> confira a condição e o valor inicial da variável. Se repetir sem parar, verifique Trigger once ou estado de conclusão. Se não der tempo de criar outra cena, use um objeto Text de vitória na própria cena.</p></div>'+ 
  (locked?'<p class="m7s-warning">Registro enviado ou aprovado; edição bloqueada.</p>':'')+guide+
-'<div class="m7s-log"><h3>Relatório de conclusão do seu jogo</h3><p>Descreva ações e resultados reais. Não copie o resultado esperado do tutorial.</p>'+
+'<div class="m7s-log"><h3>Relatório de conclusão do seu jogo</h3><p>Descreva ações e resultados reais. Não copie o resultado esperado do tutorial. Se alterar início, desafio, condição, resultado ou observações, refaça os três testes no Preview; apenas corrigir o local do arquivo não exige reteste.</p>'+
 fields.filter(f=>clean(d[f.id]).length>f.max).map(f=>'<p class="m7s-warning" role="status">O campo '+esc(f.label)+' ultrapassa '+f.max+' caracteres. Seu texto foi preservado; revise antes de enviar.</p>').join('')+
 fields.map(f=>'<label for="m7s-'+f.id+'"><b>'+esc(f.label)+'</b><textarea id="m7s-'+f.id+'" data-m7s-field="'+f.id+'" maxlength="'+f.max+'" rows="2" '+(locked?'disabled':'')+'>'+esc(d[f.id])+'</textarea></label>').join('')+
 '<div class="m7s-checks"><b>TESTES REALIZADOS NO PREVIEW · DECLARAÇÃO MANUAL</b>'+[
@@ -86,10 +95,10 @@ function review(ctx){const d=load(ctx.session),locked=['submitted','approved'].i
 function render(ctx){const p=profile(ctx);return '<section class="m7s-root" id="m7sRoot"><header><small>MISSÃO 07 / 10 · DAR VIDA AO UNIVERSO</small><h2>O final precisa acontecer no jogo.</h2><p>'+esc(p.title)+' · '+esc(p.genre)+' · 50 minutos</p></header>'+(ctx.phase==='practice'?practice(ctx):ctx.phase==='review'?review(ctx):brief(ctx))+'</section>'}
 function mount(ctx){const root=document.querySelector('#m7sRoot');if(!root)return;const d=load(ctx.session),locked=['submitted','approved'].includes(ctx.status);
 if(ctx.phase==='practice'&&window.PIT_GDEVELOP_M07_GUIDE){const r=routeFor(ctx,d);if(!locked&&!fields.some(f=>d[f.id].trim())&&d.checks.length===0){d.route=r===1?'3d':'2d';save(ctx.session,d)}const guide=root.querySelector('#g7Guide');window.PIT_GDEVELOP_M07_GUIDE.mount(guide,{initialRoute:r,onRouteChange:(_,index)=>{if(locked)return;const changed=d.route!==(index===1?'3d':'2d');selectRoute(d,index);save(ctx.session,d);root.querySelectorAll('[data-m7s-check]').forEach(el=>{el.checked=d.checks.includes(Number(el.dataset.m7sCheck))});const status=root.querySelector('#m7sStatus');if(status)status.textContent=(changed?'Rota alterada: refaça os três testes no Preview. ':'')+draftNotice(ctx.session)}});if(locked)guide?.querySelectorAll('button').forEach(b=>b.disabled=true)}
-root.querySelectorAll('[data-m7s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m7sField]=el.value;const ok=save(ctx.session,d),status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
+root.querySelectorAll('[data-m7s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const retest=updateField(d,el.dataset.m7sField,el.value);save(ctx.session,d);if(retest)root.querySelectorAll('[data-m7s-check]').forEach(check=>{check.checked=false});const status=root.querySelector('#m7sStatus');if(status)status.textContent=(retest?'Resposta alterada: refaça os três testes no Preview antes de enviar. ':'')+draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m7s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m7sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(ctx.session,d);const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m7s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m7sNav==='practice'){ctx.onPhase('practice');return}const v=validate(ctx.session);if(!v.ok){ctx.onMessage(v.label);root.querySelector(v.field==='checks'?'[data-m7s-check]':'#m7s-'+v.field)?.focus();return}ctx.onPhase('review')}));
 const status=root.querySelector('#m7sStatus');if(status)status.textContent=draftNotice(ctx.session);
 }
-window.PIT_STUDENT_MISSION_SEVEN={fields,load,save,draftNotice,validate,evidence,parseEvidence,hydrate,profile,routeFor,selectRoute,render,mount};
+window.PIT_STUDENT_MISSION_SEVEN={fields,load,save,draftNotice,validate,evidence,parseEvidence,hydrate,profile,routeFor,selectRoute,updateField,render,mount};
 })();
