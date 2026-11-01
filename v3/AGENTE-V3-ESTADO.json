@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T03:18:30Z",
+  "last_completed_at": "2026-11-01T04:22:39.433Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M05 legacy drafts and Preview route retest corrected; direct V8 43 checks and emulated Node regression 56 assertions PASS. New GitHub CI/Browser QA not confirmed. Next: verify CI and audit M06 professor/student evidence, route switching and legacy drafts. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+  "priority": "M06 professor/aluno: eight historical fields preserved; route switch resets three Preview declarations and visible checks; 31 direct V8 assertions PASS. Static QA 41272806527 SUCCESS on CI wiring commit 6ad58589; Browser QA 41272806641 IN_PROGRESS at check. Next: confirm Browser QA, audit M07 student evidence and teacher alignment. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M05-LEGACY-AND-ROUTE-RETEST",
+  "last_task": "V4-AUD-M06-LEGACY-AND-ROUTE-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3037,40 +3037,53 @@
       ],
       "tests": "43 direct V8 checks PASS on fetched actual M05 code; 56 assertions PASS executing new QA source with V8 emulation of fs/vm/assert; QA syntax PASS. Native Node, GitHub static CI, Browser QA of latest commits NOT_CONFIRMED. GDevelop GUI, HDMI, physical mobile, human NOT_RUN.",
       "notes": "Preserved 8 legacy draft fields, explicit max validation, prevents false 8/8 and submission, route change clears three manual Preview checks without deleting text. Teacher private details remain closed. No main, production, real student writes. Master 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M06-LEGACY-AND-ROUTE-RETEST",
+      "completed_at": "2026-11-01T04:22:39.433Z",
+      "commit": "6ad5858964032eadd5f81f7c7f4c75c06a85b720",
+      "files": [
+        "v3/student-mission-six.js",
+        "qa/v3-m06-regression.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "31 direct V8 assertions PASS; regression JS syntax PASS. Native GitHub static QA 41272806527 SUCCESS on 6ad58589, including M06 regression. Browser QA 41272806641 IN_PROGRESS. Previous M05 static 41268787686 and Browser 41268787617 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+      "notes": "M06 preserves all eight legacy texts, blocks over-max submissions with exact field limits, and requires three fresh Preview declarations after changing asset modality; same route is idempotent. Teacher projected private notes remain closed and absent from student. No main, production or real student writes. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M05-LEGACY-AND-ROUTE-RETEST",
-    "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-01T03:18:30Z",
-    "code_commit": "3cd9f878d15ad743ecde37dbe324b3acd22be71a",
+    "task": "V4-AUD-M06-LEGACY-AND-ROUTE-RETEST",
+    "status": "CODE_AND_REGRESSION_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-01T04:22:39.433Z",
+    "code_commit": "e61bcdbc55c7290839c165e5903d129f76b3a58b",
     "regression_commits": [
-      "972de785b1ecfac205101f5c9a6b89ea17e2a760",
-      "4f0b98eb0e1013dedf77e95868fdd2263904759a"
+      "f7551c29187fdd3f48b09e1fc0eb155d66109836",
+      "6ad5858964032eadd5f81f7c7f4c75c06a85b720"
     ],
-    "documentation_commit": "37ed22cefce1cd9d01ad80a22334a2c27928d996",
+    "documentation_commit": "21e6c27700e3bc742d6b56eb8690f4ce4606cd7e",
     "tests": [
       {
-        "name": "Direct V8 M05 integrity tests",
+        "name": "Direct V8 M06 integrity checks",
         "result": "PASS",
-        "details": "43 checks across 8 overlong fields, legacy draft, route retest, storage denial and evidence"
+        "details": "31 checks on all eight field limits, legacy persistence, route changes, visible checkboxes, storage denial and submission gate"
       },
       {
-        "name": "M05 regression source executed in isolated V8 Node-module emulation",
+        "name": "GitHub static CI on M06 wiring commit",
         "result": "PASS",
-        "details": "56 assertions; native Node/CI not claimed"
+        "details": "Run 41272806527 completed/success; includes native Node M06 regression"
       },
       {
-        "name": "Native Node + GitHub static CI and Browser QA",
-        "result": "NOT_CONFIRMED",
-        "details": "Commit checks not available through accessible status endpoints"
+        "name": "GitHub Browser QA on M06 wiring commit",
+        "result": "IN_PROGRESS",
+        "details": "Run 41272806641 in progress at 2026-11-01T04:22Z; not yet verified"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm latest CI and audit M06 professor/aluno (route switching, asset import evidence, old drafts, links and free licensing)",
+    "next": "Confirm M06 Browser QA and audit M07 professor/aluno for old drafts, route changes, Preview evidence, links and fallback",
     "master_progress": "54/59 unchanged"
   }
 }
