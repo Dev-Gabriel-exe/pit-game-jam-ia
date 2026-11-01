@@ -46,7 +46,7 @@ module.exports=async function handler(req,res){
   if(req.method==='POST'&&action==='progress'){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
-   const state=await classroom();if(n>state.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
+   const state=await classroom();if(!state)return err(res,503,'Sala não inicializada.');if(n>state.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
    const status=clean(req.body?.status,20),route=clean(req.body?.route,10);
    if(!['working','submitted'].includes(status)||!['2d','3d'].includes(route))return err(res,400,'Progresso inválido.');
    const evidence=cleanEvidence(req.body?.evidence);
@@ -84,7 +84,7 @@ module.exports=async function handler(req,res){
    if(!stage)return err(res,400,'Missão inválida.');
    // Liberação por missão, não por fase do projetor; avanço sequencial e sem retrocesso.
    const r=await pool.query("UPDATE pit_classroom_state SET current_stage=GREATEST(current_stage,$1),phase='practice',updated_at=NOW() WHERE room_code=$2 AND $1<=current_stage+1 RETURNING current_stage,phase,updated_at",[stage,ROOM]);
-   if(!r.rowCount)return err(res,409,'Libere uma missão por vez, sem pular etapas.');
+   if(!r.rowCount){const current=await classroom();if(!current)return err(res,503,'Sala não inicializada.');return err(res,409,'Libere uma missão por vez, sem pular etapas.');}
    return res.json({ok:true,state:r.rows[0]});
   }
   if(req.method==='POST'&&action==='review'){
