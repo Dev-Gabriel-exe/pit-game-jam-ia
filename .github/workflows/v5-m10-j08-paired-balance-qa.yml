@@ -1,0 +1,39 @@
+name: V5 H3 — M10 J08 Paired Balance
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/phase2-combat.js'
+      - 'qa/v5-m10-j08-paired-balance.cjs'
+      - '.github/workflows/v5-m10-j08-paired-balance-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  j08-paired-balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax
+        run: |
+          node --check v5/phase2-combat.js
+          node --check qa/v5-m10-j08-paired-balance.cjs
+      - name: Synthetic M10 J08 paired experiments and M5/H0 regressions
+        env:
+          M10_J08_BALANCE_REPORT_FILE: /tmp/v5-m10-j08-paired-balance.json
+        run: |
+          node qa/v5-m10-j08-paired-balance.cjs
+          node qa/v5-m10-j08-focused.cjs
+          node qa/v5-m10-guardian-individual.cjs
+          node qa/v5-m10-engine.cjs
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-endgame-replay.cjs
+      - name: Attach anonymous diagnostic report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: v5-m10-j08-paired-balance-report
+          path: /tmp/v5-m10-j08-paired-balance.json
+          if-no-files-found: ignore
+          retention-days: 14
