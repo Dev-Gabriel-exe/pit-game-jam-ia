@@ -227,9 +227,9 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.match(oversizedEvidence.body.error,/750 caracteres/,'student sees a clear length warning');
  const afterOversized=await call(classroom,'GET','state',{},cToken);
  assert.equal(afterOversized.body.progress.find(x=>x.stage===1).evidence,'A'.repeat(750),'rejected evidence does not overwrite existing draft');
- const lineEvidence=await call(classroom,'POST','progress',{stage:1,route:'2d',status:'working',evidence:'Cena: teste\\r\\nRegra: movimento'},cToken);
+ const lineEvidence=await call(classroom,'POST','progress',{stage:1,route:'2d',status:'working',evidence:'Cena: teste\r\nRegra: movimento'},cToken);
  assert.equal(lineEvidence.statusCode,200,'line-separated structured evidence accepted');
- assert.equal(lineEvidence.body.progress.evidence,'Cena: teste\\nRegra: movimento','CRLF normalized without flattening field boundaries');
+ assert.equal(lineEvidence.body.progress.evidence,'Cena: teste\nRegra: movimento','CRLF normalized without flattening field boundaries');
 
  const badRoute=await call(classroom,'POST','progress',{stage:1,route:'vr',status:'working',evidence:'rascunho'},cToken);
  assert.equal(badRoute.statusCode,400,'invalid 2D/3D route rejected');
