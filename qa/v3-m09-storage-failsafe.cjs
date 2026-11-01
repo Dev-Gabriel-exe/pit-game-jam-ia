@@ -144,4 +144,43 @@ assert(legacyModule.evidence(legacySession).length<=750,'corrected evidence fits
 assert(legacyModule.parseEvidence(legacyModule.evidence(legacySession)),'corrected report roundtrips');
 assert(!legacyModule.render({session:legacySession,phase:'practice',status:'',idea:{}}).includes('Rascunho antigo preservado'),'warning clears after correction');
 
+// Editing a playtest after manual attestation must invalidate only affected claims.
+const editId='fictional-report-edits',editDraft=m.load(editId);
+editDraft.outcome='issue';editDraft.resolution='backlog';editDraft.checks=[0,1,2];
+for(const f of m.fields)editDraft[f.id]=f.id==='peer'?'Colega A':'Registro fictício '+f.id;
+m.save(editId,editDraft);
+assert.equal(m.changeField(editId,editDraft,'observed','Novo resultado observado').join(','),'1,2','new observation invalidates observation/reproduction');
+assert.equal(m.load(editId).checks.join(','),'0','test participation remains attested');
+editDraft.checks=[0,1,2];m.save(editId,editDraft);
+assert.equal(m.changeField(editId,editDraft,'decision','Nova justificativa de backlog').join(','),'2','decision edit invalidates only decision attestation');
+assert.equal(m.load(editId).checks.join(','),'0,1','participation and observation remain');
+editDraft.checks=[0,1,2];m.save(editId,editDraft);
+assert.equal(m.changeField(editId,editDraft,'task','Nova tarefa testada').join(','),'0,1,2','changed task requires new complete playtest');
+assert.equal(m.load(editId).checks.length,0,'no stale manual check survives a changed task');
+editDraft.checks=[0,1,2];m.save(editId,editDraft);
+assert.equal(m.changeField(editId,editDraft,'saved','Novo caminho do mesmo projeto').length,0,'saved path is metadata only');
+assert.equal(m.load(editId).checks.length,3,'metadata does not invalidate real test');
+assert.equal(m.changeField(editId,editDraft,'saved',' Novo caminho do mesmo projeto ').length,0,'whitespace-only metadata edit is idempotent');
+assert.equal(m.changeField(editId,editDraft,'unknown','arbitrary').length,0,'unknown field cannot mutate report');
+const editUI='fictional-report-ui',editUIDraft=m.load(editUI);
+editUIDraft.checks=[0,1,2];editUIDraft.observed='Resultado observado inicialmente';
+m.save(editUI,editUIDraft);
+let onFieldInput;
+const observedInput={dataset:{m9sField:'observed'},value:'Resultado observado atualizado',addEventListener:(type,fn)=>{onFieldInput=fn}};
+const checkBoxes=[0,1,2].map(n=>({dataset:{m9sCheck:String(n)},checked:true,addEventListener(){}}));
+const editStatus={textContent:''};
+const editRoot={querySelectorAll(sel){
+ if(sel==='[data-m9s-field]')return [observedInput];
+ if(sel==='[data-m9s-check]')return checkBoxes;
+ return [];
+},querySelector(sel){return sel==='#m9sStatus'?editStatus:null}};
+ctx.document.querySelector=sel=>sel==='#m9sRoot'?editRoot:null;
+m.mount({session:editUI,status:'',phase:'practice',onPhase(){},onMessage(){}});
+onFieldInput();
+assert.equal(checkBoxes[0].checked,true,'first checkbox remains visually checked');
+assert.equal(checkBoxes[1].checked,false,'second checkbox visibly reset');
+assert.equal(checkBoxes[2].checked,false,'third checkbox visibly reset');
+assert.equal(m.load(editUI).checks.join(','),'0','visual and stored manual checks match');
+assert(editStatus.textContent.includes('confirme novamente'),'student sees actionable retest guidance');
+
 console.log('PASS M09 blocked-storage and legacy drafts: nine fields, over-limit preservation, rejection/recovery, session isolation, warnings, hydration and fictional UI events. Human playtest NOT_RUN.');
