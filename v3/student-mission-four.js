@@ -66,6 +66,14 @@
  function activeRoute(ctx,d){
   return Number.isInteger(d.route)&&d.route>=0&&d.route<4?d.route:suggestedRoute(ctx);
  }
+ function selectRoute(d,index){
+  if(!Number.isInteger(index)||index<0||index>=names.length)return false;
+  if(d.route===index)return false;
+  d.route=index;
+  // A Preview check for another control/obstacle route cannot certify this route.
+  d.checks=[];
+  return true;
+ }
  function routeServerType(index){return index===3?'3d':'2d'}
  function profile(ctx){
   const data=ctx.idea||{},mvp=ctx.mvp||{},previous=ctx.previous||{};
@@ -299,17 +307,26 @@
   const d=load(ctx.session),r=activeRoute(ctx,d);
   const guide=root.querySelector('#g4Tutorial');
   const locked=['approved','submitted'].includes(ctx.status);
-  // A route switch changes only the selected tutorial. Existing answers remain intact.
+  // Route changes keep the student's text but require new Preview confirmations.
   window.PIT_GDEVELOP_M04_GUIDE?.mount(guide,{
    initialRoute:r,
    onRouteChange:(routeName,index)=>{
     if(locked)return;
-    d.route=index;save(ctx.session,d);
+    const changed=selectRoute(d,index);
+    if(changed){
+     save(ctx.session,d);
+     root.querySelectorAll('[data-m4s-check]').forEach(input=>{input.checked=false});
+    }
     const label=root.querySelector('#m4sRouteLabel');if(label)label.textContent=names[index];
     const hint3D=root.querySelector('#m4s3DHint');if(hint3D)hint3D.hidden=index!==3;
     for(const key of ['command','response','boundary','retest']){
      const el=root.querySelector('#m4s-'+key);
      if(el)el.placeholder='Ex.: '+routeHints(ctx,index)[key];
+    }
+    if(changed){
+     redraw();
+     const notice=root.querySelector('#m4sNotice');
+     if(notice)notice.textContent='⚠ Rota alterada: repita os três testes no Preview e confira se os relatos ainda correspondem à rota escolhida. '+draftNotice(ctx.session,validity(d,ctx).filter(Boolean).length);
     }
    }
   });
@@ -351,6 +368,6 @@
  }
  window.PIT_STUDENT_MISSION_FOUR={
   render,mount,load,save,hydrate,validate,evidence,validity,
-  suggestedRoute,activeRoute,routeServerType,routeHints,parseEvidence
+  suggestedRoute,activeRoute,selectRoute,routeServerType,routeHints,parseEvidence
  };
 })();
