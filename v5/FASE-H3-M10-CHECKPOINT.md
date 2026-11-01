@@ -997,3 +997,26 @@ O primeiro [run 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 Por **participação**, Guardião absorveu aproximadamente **158** unidades de escudo, contra **17,3** do Guerreiro, **13,8** do Arcanista e **1,1** do Caçador. O Guardião causou cerca de **164** unidades de dano de acerto em HP e obteve **1,46 knockouts** por participação, comparado a ~**159** e **1,20** do Guerreiro. Isso sugere vantagem defensiva relevante **sem indicar incapacidade ofensiva**, mas não identifica uma causa exclusiva. As somas de eventos arredondados de acerto não são dano líquido capado no golpe letal, kills creditam o golpe final (não assistências), e as builds/posições/seeds são correlacionadas e sintéticas. Nenhum nerf autorizado ou aplicado.
 
 **Próximo incremento da mesma Missão 10:** comparar distribuições de sobrevivência/tempo de KO e dano por janela temporal para distinguir acúmulo de escudo de vantagem em final de partida, e ampliar diversidade de builds antes de qualquer recomendação de balanceamento. **G.2 nos PCs físicos NÃO EXECUTADO**; homologação humana, H.1/H.2 reais, XP, alunos, notas, turmas, `main`, merge e produção permanecem bloqueados.
+
+## H.3/M10 — janelas temporais, sobrevivência e eliminação (01/11/2026)
+
+**Missão técnica desta rodada:** separar os efeitos de escudo/ataque/KO por fase da batalha (0–35s, 35–65s, 65s em diante) e comparar sobrevivência por classe no mesmo experimento sintético de **2 Guardiões entre 30**, sem alterar motor, regras, balanceamento, câmera, personagens, progressão, XP ou as dez missões. Revisados roadmaps D–I, checkpoints E/F/G, contrato H.0, branch e Actions anteriores. O QA navegador do checkpoint anterior `e129b404` foi confirmado **SUCCESS** ([41289685800](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41289685800)).
+
+**Arquivos novos exclusivamente na branch:** `qa/v5-m10-guardian-temporal-survival.cjs` (commit `9290ff2215e32fc8b6b5c5c2b5e61df8fa1cdd17`) e `.github/workflows/v5-m10-guardian-temporal-survival-qa.yml` (commit `3e8c3229cfff00d32bc885688fd5310d337523c4`). A auditoria acompanha eventos reais `hit`, `heal`, `knockout` e `storm`, agrupa por janelas lógicas, calcula distribuições de sobrevivência, sobreviventes observáveis aos 35s/65s, quantis, e valida conservação de eventos/KO por classe. Reutiliza 24 pares, 48 partidas, 8 replays e regressão M5. Não houve alteração de código de produção ou do motor.
+
+**CI específico SUCCESS:** [41293881948](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41293881948), no SHA `3e8c3229`. **QA geral SUCCESS:** [41293881988](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41293881988). **QA navegador:** [41293881868](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41293881868) ainda em execução na consulta; não afirmar aprovação. Artefato JSON anônimo disponível no run específico por 14 dias. Hash resumido das simulações: `335b69c0f00300aa930d`.
+
+**Resultados apenas do braço baseline (24 partidas; participações: Guardião 48, Guerreiro 240, Arcanista 240, Caçador 192):**
+
+| Classe | Sobreviveram aos 35s | Sobrevivência média | Escudo absorvido 0–35s | Escudo absorvido 35–65s |
+|---|---:|---:|---:|---:|
+| Guerreiro | 26/240 (10,8%) | 20,46s | 3.992,96 | 157,42 |
+| Arcanista | 20/240 (8,3%) | 14,25s | 3.205,18 | 106,61 |
+| Caçador | 16/192 (8,3%) | 13,85s | 202,16 | 13,65 |
+| **Guardião** | **32/48 (66,7%)** | **43,07s** | **6.837,57** | **660,00** |
+
+Os Guardiões absorveram **~90,2%** do escudo total do baseline nos primeiros 35s (6.837,57 de 7.583,10). Portanto, o mecanismo defensivo já apresenta forte contribuição **no início da luta**, antes do final, enquanto a classe mantém ofensiva relevante conforme o diagnóstico anterior. Não se conclui que G01/G10 sejam a única causa; a taxa de sobrevivência resulta de composições, builds, RNG e IA sintéticos. Vitórias do Guardião permaneceram 8/24 nos dois braços; 20/24 vencedores individuais mudaram com o swap de posições.
+
+**Limitações:** as janelas medem tempo lógico, não FPS; somas de eventos de acerto não são dano efetivo capado; saídas por limite de tempo são censuradas; `storm` é telemetria de evento e não dano líquido; sementes/arquétipos são correlacionados. A M10 ainda não está homologada estatisticamente nem em PCs reais.
+
+**Próximo incremento da MESMA Missão 10:** ampliar arquétipos e distribuições de atributos para testar se a sobrevivência precoce se mantém fora das builds repetidas; então avaliar intervenções de escudo apenas em laboratório e prévia visual M10. **G.2 nos PCs físicos NÃO EXECUTADO**; H.1/H.2 com alunos reais, Fase I, `main`, merge e produção continuam bloqueados.
