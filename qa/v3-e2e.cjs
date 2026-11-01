@@ -31,7 +31,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   }else{
    const state={current_stage:store.stage,phase:store.phase,updated_at:new Date().toISOString()};
    if(action==='state')body=teacher?{ok:true,state,role:'teacher'}:{ok:true,state,role:'student',progress:store.progress,student:{id,name:'Aluno QA'}};
-   if(action==='stage'){store.stage=posted.stage;store.phase=posted.phase;body={ok:true,state:{current_stage:store.stage,phase:store.phase,updated_at:new Date().toISOString()}}}
+   if(action==='stage'){
+    // Match classroom API: one mission at a time; projector phases never change server state.
+    if(!Number.isInteger(posted.stage)||posted.stage>store.stage+1||posted.stage<1){status=409;body={ok:false,error:'Libere uma missão por vez.'};}
+    else{store.stage=Math.max(store.stage,posted.stage);store.phase='practice';body={ok:true,state:{current_stage:store.stage,phase:store.phase,updated_at:new Date().toISOString()}};}
+   }
    if(action==='progress'){const p={stage:posted.stage,status:posted.status,evidence:posted.evidence,route:posted.route,feedback:'',updated_at:new Date().toISOString()};store.progress=store.progress.filter(x=>x.stage!==p.stage).concat([p]);body={ok:true,progress:p}}
    if(action==='heartbeat'){store.lastSeen=new Date().toISOString();body={ok:true,stage:posted.stage}}
    if(action==='roster')body={ok:true,state,roster:[{id,display_name:'Aluno QA',joined_at:store.lastSeen,last_seen_at:store.lastSeen,unread_chat:0,approved:store.progress.filter(p=>p.status==='approved').length,stages:store.progress}]};
@@ -140,12 +144,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.locator('#missionGallery.open').waitFor({state:'hidden'});
  assert.equal(await sp.locator('.stage-btn[data-stage="2"]').isDisabled(),true,'next stage locked by teacher');
  await sp.locator('[data-q-tab="review"]').click();
- assert.equal(await sp.locator('#submitWork').isDisabled(),true,'submission blocked until professor releases practice');
+ assert.equal(await sp.locator('#submitWork').isDisabled(),true,'empty M01 form cannot be submitted');
  await tp.locator('[data-phase="practice"]').click();
- const stageReply=tp.waitForResponse(response=>response.url().includes('action=stage')&&response.status()===200,{timeout:10000});
  await tp.locator('#navPrimary').click();
- await stageReply;
- assert.equal(store.phase,'practice','professor releases practice for the whole class');
+ assert.equal(store.stage,1,'projector phase change does not release another mission');
+ assert.equal(store.phase,'briefing','projector phase is local, not a classroom API mutation');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
  await closeArcade(sp);
@@ -196,9 +199,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('PASS UI-03: approved progress, aria value and gallery state reflect fake backend');
 
  await tp.locator('#rosterClose').click();
+ const releaseM02=tp.waitForResponse(response=>response.url().includes('action=stage')&&response.status()===200,{timeout:10000});
  await tp.locator('#navSecondary').click();
- assert.equal(store.stage,2,'teacher opens stage 2 for the group');
- assert.equal(store.phase,'briefing');
+ await releaseM02;
+ assert.equal(store.stage,2,'teacher releases M02 sequentially');
+ assert.equal(store.phase,'practice','classroom API stores practice; projector briefing stays local');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
  await closeArcade(sp);
