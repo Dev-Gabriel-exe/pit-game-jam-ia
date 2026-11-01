@@ -35,3 +35,11 @@ Próximo passo: verificar o CI estrito, conferir se J08/P09/A07 passaram de desc
 - **QA geral de regras:** [41348463250](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463250) aprovado. **G.1 navegador:** [41348463227](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463227) falhou em contagem de texturas após reinício (211→385→559), sem ligação causal demonstrada com a mudança M10; foi solicitada repetição do job antes de classificar como regressão. Outros jobs de navegador estavam em execução na última consulta. Não declarar suite inteira verde.
 
 **Próxima rodada da mesma Missão 10:** verificar os demais workflows e o reteste G.1, avaliar capturas de J08/P09/A07 em tela/projetor e confirmar que a vaga rotativa mantém legibilidade em seeds/qualidades variadas. G.2 nos PCs físicos e H.1/H.2 reais seguem bloqueados.
+
+## Reteste de regressão G.1 e QA cruzado
+
+- [G.1 run 41348463227](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463227): **SUCCESS na segunda tentativa**, ambos os jobs verdes. A primeira tentativa acusou contagem de texturas 211→385→559 em reinícios de GPU no SwiftShader; o reteste passou sem alteração adicional de código. Isso indica intermitência de medição/aquecimento, **não prova** ausência de vazamento em hardware físico.
+- [QA geral 41348463250](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463250), [Browser QA 41348463216](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463216), [M10 WebGL 41348463256](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463256), [VFX mistos 41348463170](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463170) e [F3 câmera 41348463283](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463283): **SUCCESS** no SHA `d370742c`.
+- O job `V5 Arena Lab — GLBs reais e teste M5/M10` ainda estava em execução na última consulta; não declarar a matriz inteira finalizada.
+
+**Status da missão:** incremento de renderização de J08/P09/A07 concluído e verificado em WebGL fictício. A Missão 10 como um todo permanece aberta para inspeção humana, diversidade de seeds, legibilidade no projetor e G.2 físico.
