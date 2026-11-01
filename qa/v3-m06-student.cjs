@@ -83,4 +83,34 @@ assert.equal(denied.load('ficticio-marcacoes').checks.length,1);
 assert.equal(denied.load('ficticio-marcacoes').need,'');
 console.log('M06: denied-storage, volatile draft, session isolation and warnings passed.');
 
+// Auditoria pedagógica: uma declaração manual não pode sobreviver a um relato alterado.
+const retestMatrix=[
+ ['need',[]],['file',[]],['source',[]],['license',[0,1]],
+ ['before',[2]],['after',[2]],['negative',[0,1]],['saved',[1,2]]
+];
+for(const [field,remaining] of retestMatrix){
+ const session='ficticio-reteste-'+field,d=m.load(session);
+ for(const f of m.fields)d[f.id]='Resultado observado e descrito '+f.id;
+ d.checks=[0,1,2];m.save(session,d);
+ const affected=m.updateField(d,field,d[field]+' atualizado');
+ assert.ok(affected.length>0,'M06 '+field+' must invalidate a declaration');
+ assert.deepEqual([...d.checks],remaining,'M06 '+field+' remaining checks');
+ m.save(session,d);
+ assert.deepEqual([...m.load(session).checks],remaining,'M06 '+field+' persistence');
+ assert.equal(m.validate(session).ok,false,'M06 '+field+' must block submission pending retest');
+ d.checks=[0,1,2];m.save(session,d);
+ assert.equal(m.validate(session).ok,true,'M06 '+field+' recertified draft');
+}
+const spacing=m.load('ficticio-reteste-spacing');
+for(const f of m.fields)spacing[f.id]='Resultado observado e descrito '+f.id;
+spacing.checks=[0,1,2];
+assert.equal(m.updateField(spacing,'need','  '+spacing.need+'   ').length,0,'whitespace alone is not a retest');
+assert.deepEqual([...spacing.checks],[0,1,2]);
+assert.equal(m.updateField(spacing,'campo-inexistente','x').length,0,'unknown field ignored');
+assert.ok(m.evidence('max').endsWith('Projeto salvo: '+'X'.repeat(65)),'full evidence cannot be silently sliced');
+assert.equal(m.parseEvidence(good+' '.repeat(751-good.length)),null,'reject evidence above 750 chars');
+assert.equal(m.parseEvidence(good.replace('Asset: ','Asset:  ')),null,'reject noncanonical remote evidence');
+assert.match(read('v3/student-mission-six.js'),/affected\.includes\(Number\(box\.dataset\.m6sCheck\)\)/,'checkbox DOM mirrors invalidated confirmations');
+console.log('M06: eight edit-invalidation cases, whitespace, persistence and full-evidence safeguards PASS.');
+
 console.log('M06-04: asserções de isolamento, evidência, validação e integração aprovadas; navegador/API/GDevelop pendentes.');
