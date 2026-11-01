@@ -1,0 +1,37 @@
+name: V5 H3 — M10 Guardian Temporal Survival
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/phase2-combat.js'
+      - 'qa/v5-m10-guardian-temporal-survival.cjs'
+      - '.github/workflows/v5-m10-guardian-temporal-survival-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guardian-temporal-survival:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax
+        run: |
+          node --check v5/phase2-combat.js
+          node --check qa/v5-m10-guardian-temporal-survival.cjs
+      - name: Temporal windows, KO and survival with M5/M10 regressions
+        env:
+          M10_GUARDIAN_TEMPORAL_REPORT_FILE: /tmp/v5-m10-guardian-temporal-survival.json
+        run: |
+          node qa/v5-m10-guardian-temporal-survival.cjs
+          node qa/v5-m10-engine.cjs
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-endgame-replay.cjs
+      - name: Attach anonymous temporal survival report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: v5-m10-guardian-temporal-survival
+          path: /tmp/v5-m10-guardian-temporal-survival.json
+          if-no-files-found: ignore
+          retention-days: 14
