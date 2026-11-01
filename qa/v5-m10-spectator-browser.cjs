@@ -54,6 +54,10 @@ const R=require('../v5/m10-visual-roster.js');
    'Announcements must not obstruct the 3D scene');
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents))
    .every(x=>x.ids.length===10),'Every M10 hero must have 10 talents');
+  // Baseline for M10 -> M5 -> M10: a reset must not lose the final builds.
+  const originalM10Talents=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents);
+  const originalM10Seed=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed);
+  assert.equal(originalM10Talents.length,30);
   await page.locator('#studentViewHero').selectOption(watched);
   await page.locator('#studentViewButton').click();
   const begin=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.cameraViewer);
@@ -119,8 +123,37 @@ const R=require('../v5/m10-visual-roster.js');
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),5);
   assert.match(await announcement.textContent(),/Missão 5.*preparada|Missão 5.*reiniciada/);
+  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,
+   null,{timeout:175000});
+  const m5Talents=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents);
+  assert.equal(m5Talents.length,30);
+  assert(m5Talents.every(x=>x.ids.length===5),'M5 must restore exactly five slots');
+  assert.equal(Number(await stage.getAttribute('data-v5-spectators')),0,
+   'M10 grandstand occupants must not leak into M5');
+  assert.equal(await stage.getAttribute('data-v5-camera-audience'),'teacher',
+   'M10 student/spectator view must not leak into M5');
+  assert.equal(await stage.getAttribute('data-v5-student-camera'),'off');
+  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner),null);
+  // Reenter final preview on the same tab: all thirty M10 choices must be
+  // reconstructed, not truncated to M5 or inherited from the previous fight.
+  await page.locator('[data-mission="10"]').click();
+  await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,
+   null,{timeout:175000});
+  assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m10');
+  assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),10);
+  assert.deepEqual(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents),
+   originalM10Talents,'M10 talent choices must survive M10/M5/M10 round trip');
+  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.seed),originalM10Seed,
+   'Explicit laboratory seed must remain stable across missions');
+  assert.equal(Number(await stage.getAttribute('data-v5-spectators')),0);
+  assert.equal(await stage.getAttribute('data-v5-camera-audience'),'teacher');
+  assert.equal(await stage.getAttribute('data-v5-student-camera'),'off');
+  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.winner),null);
+  assert.equal(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.talentEvents),0);
+  assert.equal(await page.locator('#startBattle').isDisabled(),false,
+   'M10 must be ready to start again with 30 real KayKit GLBs');
   assert.deepEqual(errors,[],'Uncaught Chromium errors: '+errors.join(' | '));
-  console.log('PASS M10 spectator 30 KayKit: living -> shared camera on KO, teacher same feed, pause/resume, deterministic winner, reset and M5 regression. '+JSON.stringify({
+  console.log('PASS M10 spectator 30 KayKit: living -> shared camera on KO, teacher same feed, deterministic winner, M10/M5/M10 30-GLB round trip with no stale camera, seats or talents. '+JSON.stringify({
    watched,expectedWinner:expected.winner.id,firstKO:!!firstKO,
    softwareRenderer:true,physicalPCsValidated:false
   }));
