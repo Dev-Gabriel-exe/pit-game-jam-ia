@@ -36,7 +36,7 @@ function missionOneContext(){
   session:visualPreview?'preview':studentSession?.studentId||'student-unverified',
   phase:activePhase,preview:visualPreview,status:entry(1)?.status||'',
   feedback:entry(1)?.feedback||'',
-  canSubmit:state.current_stage>1||(state.current_stage===1&&['practice','review'].includes(state.phase))
+  canSubmit:state.current_stage>=1
  };
 }
 function missionTwoContext(){
@@ -46,7 +46,7 @@ function missionTwoContext(){
  }
  return {session,idea:!TEACHER&&window.PIT_MISSION_ONE?window.PIT_MISSION_ONE.load(session):{},
   phase:activePhase,status:entry(2)?.status||'',feedback:entry(2)?.feedback||'',preview:visualPreview,
-  canSubmit:state.current_stage>2||(state.current_stage===2&&['practice','review'].includes(state.phase))};
+  canSubmit:state.current_stage>=2};
 }
 function missionThreeContext(){
  const session=visualPreview?'preview':studentSession?.studentId||'student-unverified';
@@ -56,7 +56,7 @@ function missionThreeContext(){
  return {session,idea:!TEACHER&&window.PIT_MISSION_ONE?window.PIT_MISSION_ONE.load(session):{},
   mvp:!TEACHER&&window.PIT_STUDENT_MISSION_TWO?window.PIT_STUDENT_MISSION_TWO.load(session):{},
   phase:activePhase,status:entry(3)?.status||'',feedback:entry(3)?.feedback||'',preview:visualPreview,
-  canSubmit:state.current_stage>3||(state.current_stage===3&&['practice','review'].includes(state.phase))};
+  canSubmit:state.current_stage>=3};
 }
 function missionFourContext(){
  const session=visualPreview?'preview':studentSession?.studentId||'student-unverified';
@@ -70,7 +70,7 @@ function missionFourContext(){
   mvp:!TEACHER&&window.PIT_STUDENT_MISSION_TWO?window.PIT_STUDENT_MISSION_TWO.load(session):{},
   previous:!TEACHER&&window.PIT_STUDENT_MISSION_THREE?window.PIT_STUDENT_MISSION_THREE.load(session):{},
   phase:activePhase,status:entry(4)?.status||'',feedback:entry(4)?.feedback||'',preview:visualPreview,
-  canSubmit:state.current_stage>4||(state.current_stage===4&&['practice','review'].includes(state.phase))
+  canSubmit:state.current_stage>=4
  };
 }
 function missionFiveContext(){
@@ -80,7 +80,7 @@ function missionFiveContext(){
  return {...previous,
   playable:!TEACHER&&window.PIT_STUDENT_MISSION_FOUR?window.PIT_STUDENT_MISSION_FOUR.load(session):{},
   phase:activePhase,status:entry(5)?.status||'',feedback:entry(5)?.feedback||'',
-  canSubmit:state.current_stage>5||(state.current_stage===5&&['practice','review'].includes(state.phase))
+  canSubmit:state.current_stage>=5
  };
 }
 function missionSixContext(){
@@ -90,7 +90,7 @@ function missionSixContext(){
  return {...previous,rule:!TEACHER&&window.PIT_STUDENT_MISSION_FIVE?window.PIT_STUDENT_MISSION_FIVE.load(session):{},
   phase:activePhase,status:entry(6)?.status||'',feedback:entry(6)?.feedback||'',
   preview:visualPreview,
-  canSubmit:state.current_stage>6||(state.current_stage===6&&['practice','review'].includes(state.phase))};
+  canSubmit:state.current_stage>=6};
 }
 function missionSevenContext(){
  const previous=missionSixContext(),session=previous.session,e=entry(6);
@@ -99,21 +99,21 @@ function missionSevenContext(){
  return {...previous,forge:!TEACHER&&window.PIT_STUDENT_MISSION_SIX?window.PIT_STUDENT_MISSION_SIX.load(session):{},
   phase:activePhase,status:entry(7)?.status||'',feedback:entry(7)?.feedback||'',
   preview:visualPreview,
-  canSubmit:state.current_stage>7||(state.current_stage===7&&['practice','review'].includes(state.phase))};
+  canSubmit:state.current_stage>=7};
 }
 function missionEightContext(){
  const previous=missionSevenContext(),session=previous.session,e=entry(7);
  if(!TEACHER&&e?.evidence&&window.PIT_STUDENT_MISSION_SEVEN)window.PIT_STUDENT_MISSION_SEVEN.hydrate(session,e.evidence,e.status);
  return {...previous,conclusion:!TEACHER&&window.PIT_STUDENT_MISSION_SEVEN?window.PIT_STUDENT_MISSION_SEVEN.load(session):{},
   phase:activePhase,status:entry(8)?.status||'',feedback:entry(8)?.feedback||'',preview:visualPreview,
-  canSubmit:state.current_stage>8||(state.current_stage===8&&['practice','review'].includes(state.phase))};
+  canSubmit:state.current_stage>=8};
 }
 function missionNineContext(){
  const previous=missionEightContext(),session=previous.session,e=entry(8);
  if(!TEACHER&&e?.evidence&&window.PIT_STUDENT_MISSION_EIGHT)window.PIT_STUDENT_MISSION_EIGHT.hydrate(session,e.evidence,e.status);
  return {...previous,polish:!TEACHER&&window.PIT_STUDENT_MISSION_EIGHT?window.PIT_STUDENT_MISSION_EIGHT.load(session):{},
   phase:activePhase,status:entry(9)?.status||'',feedback:entry(9)?.feedback||'',preview:visualPreview,
-  canSubmit:state.current_stage>9||(state.current_stage===9&&['practice','review'].includes(state.phase))};
+  canSubmit:state.current_stage>=9};
 }
 function missionTenContext(){
  const previous=missionNineContext(),session=previous.session,e=entry(9);
@@ -121,7 +121,7 @@ function missionTenContext(){
  return {...previous,playtest:!TEACHER&&window.PIT_STUDENT_MISSION_NINE?window.PIT_STUDENT_MISSION_NINE.load(session):{},
   phase:activePhase,status:entry(10)?.status||'',feedback:entry(10)?.feedback||'',preview:visualPreview,
   approvedStages:progress.filter(p=>p.status==='approved').map(p=>Number(p.stage)),
-  canSubmit:state.current_stage>=10&&['practice','review'].includes(state.phase)};
+  canSubmit:state.current_stage>=10};
 }
 function statusLabel(n){return stageStatuses[entry(n)?.status]||'Não iniciada'}
 function renderJourney(){
@@ -284,7 +284,7 @@ function phaseBody(m){
 function studentWorkForm(m){
  const e=entry(m.n)||{};
  const draft=localStorage.getItem(studentStorageKey('draft',m.n)),evidence=draft!==null?draft:(e.evidence||'');
- const locked=m.n>state.current_stage||(m.n===state.current_stage&&!['practice','review'].includes(state.phase));
+ const locked=m.n>state.current_stage;
  const approved=e.status==='approved',genre=genreContext(m.n);
  const done=savedChecks(m.n).length,ready=done>=m.steps.length;
  return '<section class="mission-submission"><div class="submission-head"><span>◈ REGISTRO DE MISSÃO</span><span class="state-pill '+esc(e.status||'')+'">'+esc(statusLabel(m.n))+'</span></div>'+
@@ -414,7 +414,7 @@ function renderMain(){
   // Pré-visualizar é diferente de liberar: o botão azul compartilha a etapa/fase com a turma.
   $('missionStatus').textContent=m.n===state.current_stage?'ETAPA ATIVA · '+phaseNames[state.phase]: 'ETAPA '+String(m.n).padStart(2,'0')+' · PRÉVIA';
   $('missionStatus').className='state-pill';
-  $('navPrimary').textContent=visualPreview?'SIMULAR LIBERAÇÃO (SEM TURMA)':m.n===state.current_stage?'Atualizar fase da turma':'Iniciar etapa '+String(m.n).padStart(2,'0')+' para turma';
+  $('navPrimary').textContent=visualPreview?'SIMULAR LIBERAÇÃO (SEM TURMA)':m.n<=state.current_stage?'Exibir fase local':'Liberar missão '+String(m.n).padStart(2,'0')+' para turma';
   $('navPrimary').disabled=false;
   $('navSecondary').textContent='Próxima etapa →';
   $('navSecondary').disabled=m.n>=10;
@@ -539,7 +539,7 @@ function renderMain(){
   $('simCount').textContent=String(current+1).padStart(2,'0')+' / 03';
   sim.textContent=current===2?'↺ Reiniciar exemplo':'▶ Próxima transformação';
  }}
- const status=$('missionStatus');if(status)status.title=TEACHER?'Ao escolher outra fase, clique no botão azul para enviar a atualização à turma.':'';
+ const status=$('missionStatus');if(status)status.title=TEACHER?'A fase da apresentação é local; só liberar uma nova missão altera o acesso dos alunos.':'';
 }
 function renderAll(){renderJourney();renderRight();renderMain();}
 function selectStage(n,fromServer=false){
@@ -673,10 +673,16 @@ async function teacherAdvance(stage,phase){
   return;
  }
  try{
-  const result=await call('classroom','stage','POST',{stage,phase});
+  // A fase da apresentação é local; nunca rebaixe o desbloqueio de uma missão.
+  if(stage<=state.current_stage){
+   activeStage=stage;activePhase=phase;renderAll();
+   setToast('Apresentação local atualizada. Nenhuma missão foi revogada.');
+   return;
+  }
+  const result=await call('classroom','stage','POST',{stage});
   state=result.state;lastServerStage=state.current_stage;
   activeStage=stage;activePhase=phase;renderAll();
-  setToast('Turma atualizada: etapa '+stage+' · '+phaseNames[phase]+'.');
+  setToast('Missão '+stage+' liberada. A fase projetada não bloqueia entregas.');
  }catch(e){setToast(e.message,true)}
 }
 
@@ -735,8 +741,7 @@ async function poll(){
      const typing=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
      if(!typing){activeStage=state.current_stage;activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();setToast('O professor iniciou a missão '+state.current_stage+'.')}
      else {$('roomState').textContent='NOVA ETAPA LIBERADA · '+state.current_stage;setToast('Nova etapa disponível. Termine seu registro antes de avançar.');}
-    } else if(state.phase!==oldPhase&&activeStage===state.current_stage&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){activePhase=state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase;renderAll();}
-    else {renderRight();renderJourney();}
+    } else {renderRight();renderJourney();}
   }else{if(state.current_stage!==oldStage||state.phase!==oldPhase){renderRight();renderJourney();}}
   if(!TEACHER&&window.PIT_ARCADE?.isOpen())window.PIT_ARCADE.refresh({activeStage,currentStage:state.current_stage,progress,studentName:studentSession?.name||'AVENTUREIRO'});
    if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
@@ -776,7 +781,7 @@ async function startApp(){
  try{
   const data=await call('classroom','state');
   state=data.state;progress=data.progress||[];
-  activeStage=state.current_stage;activePhase=TEACHER?state.phase:(state.phase==='demo'?'briefing':state.phase==='review'?'practice':state.phase);lastServerStage=state.current_stage;
+  activeStage=state.current_stage;activePhase=TEACHER?state.phase:'briefing';lastServerStage=state.current_stage;
   $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name;
   renderAll();$('loading').hidden=true;$('workspace').hidden=false;
   if(!TEACHER)showMissionGallery();
