@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T13:14:25Z",
+  "last_completed_at": "2026-11-01T14:19:09Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V3 projector privacy: DOMContentLoaded/pageshow now close browser-restored teacher private notes; Node deterministic smoke PASS, native static QA SUCCESS on a4ad781; browser QA on 65acace IN_PROGRESS. PR #23 still draft/nonmergeable. Cross-branch integration contract recorded; next confirm Chrome QA, reconcile V3/V5 entrypoints and chat/classroom without overwriting V5 arena. Human/GDevelop GUI/HDMI/mobile physical NOT_RUN.",
+  "priority": "V3 evidence backend now rejects >750 instead of truncating; direct Node normalization boundary smoke PASS (7), isolated handler regression committed, native CI/Chrome not yet confirmed. V3 phase-gated classroom differs from main mission-only release; do not merge PR #23 blindly. Next verify CI and reconcile mission-only release in V3 student/professor flow, preserve V5 XP/arena. Human/GDevelop/HDMI NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-PRIVATE-NOTES-RESTORE-V5-INTEGRATION",
+  "last_task": "V4-AUD-EVIDENCE-750-V5-CLASSROOM-CONTRACT",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3163,48 +3163,53 @@
       ],
       "tests": "Node --check guard/regression and deterministic Node guard smoke PASS in isolated local copy; GitHub Actions native PIT Game Jam QA SUCCESS on a4ad781; latest 65acace static QA and Browser QA IN_PROGRESS on last query. Real HDMI/GDevelop GUI/human/physical mobile NOT_RUN.",
       "notes": "Browser-restored expanded private notes now collapse on DOMContentLoaded/pageshow. Regression verifies stage navigation, Escape, pagehide, pageshow, tab visibility, and one-open-note rule. PR #23 remains draft, nonmergeable; V5 bridge and pedagogical files require careful reconciliation. 54/59 unchanged; main/production/student data untouched."
+    },
+    {
+      "id": "V4-AUD-EVIDENCE-750-V5-CLASSROOM-CONTRACT",
+      "completed_at": "2026-11-01T14:19:09Z",
+      "commit": "b40e0ca63f6bf7088d08240d3f5ef84fa1fe1558",
+      "files": [
+        "chat-api/api/classroom.js",
+        "qa/v3-isolated-backend.cjs",
+        "v3/INTEGRACAO-V3-V5-2026-11-01.md"
+      ],
+      "tests": "7 local Node boundary/CRLF checks of normalization logic PASS; actual classroom handler regression added to qa/v3-isolated-backend.cjs but native GitHub Actions status NOT_CONFIRMED; no live API, PostgreSQL, Chrome, HDMI, GDevelop GUI or human tests.",
+      "notes": "Backend rejects oversized evidence before SQL write, preserving existing student draft and line boundaries. 750 accepted, 751 rejected in isolated handler regression. Discovered V3 phase gating versus main mission-only release incompatibility; PR #23 remains draft. No main or production writes. Master roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-PRIVATE-NOTES-RESTORE-V5-INTEGRATION",
-    "status": "CODE_TEST_DOCS_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T13:14:25Z",
+    "task": "V4-AUD-EVIDENCE-750-V5-CLASSROOM-CONTRACT",
+    "status": "CODE_REGRESSION_DOCS_COMMITTED_CI_PENDING",
+    "updated_at": "2026-11-01T14:19:09Z",
     "code_commits": [
-      "74ad9407c9f0579e1d3f65185cb92817ef4ee37c"
+      "a9bbe8b1a3b0b684b06ca5678e2bf40c3adc065b"
     ],
     "regression_commits": [
-      "6ef4153116d6f6d6911fa1e69c5ff5e4a9b7bc65",
-      "7577726332dbb271b50953a522854e183aeea761",
-      "a4ad781e437da493773e5b1692110a6da169f5a2"
+      "bccd96a086e915fd55898740b2d507b0ba87cbf7",
+      "ef413d824a5f975454199265506c238145ae51c4"
     ],
-    "documentation_commit": "65acace08efebb58b19de87c4c8e469b93dcc5c7",
+    "documentation_commit": "b40e0ca63f6bf7088d08240d3f5ef84fa1fe1558",
     "tests": [
       {
-        "name": "Local Node syntax and deterministic guard regression",
+        "name": "Local Node evidence normalization and validation boundary",
         "result": "PASS",
-        "details": "Smoke against exact revised guard logic in isolated local file; actual GitHub code also checked by native CI"
+        "details": "7 direct checks; targeted logic copied from V3 backend, not full handler"
       },
       {
-        "name": "Native static QA on a4ad781",
-        "result": "PASS",
-        "details": "GitHub Actions PIT Game Jam QA #2841 on SHA a4ad781"
+        "name": "Isolated full classroom handler with mocked SQL",
+        "result": "COMMITTED_NOT_RUN_LOCALLY",
+        "details": "QA tests added to qa/v3-isolated-backend.cjs; native CI pending"
       },
       {
-        "name": "Browser QA on latest 65acace",
-        "result": "IN_PROGRESS",
-        "details": "GitHub Actions PIT Game Jam — Browser QA #2839 on SHA 65acace at last query"
-      },
-      {
-        "name": "Native static QA on latest 65acace",
-        "result": "IN_PROGRESS",
-        "details": "GitHub Actions PIT Game Jam QA #2842 on SHA 65acace at last query"
+        "name": "Native static QA and Browser QA on latest branch",
+        "result": "NOT_CONFIRMED"
       },
       {
         "name": "GDevelop GUI/HDMI/physical mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA and static QA on latest V3 branch; reconcile V3/V5 entrypoints, chat and classroom under PR #23 with fictional data",
+    "next": "Verify native static QA on ef413d8/b40e0c; reconcile V3 phase-gated classroom with main mission-only release without changing production",
     "master_progress": "54/59 unchanged"
   }
 }
