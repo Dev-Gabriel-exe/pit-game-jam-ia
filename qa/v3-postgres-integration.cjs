@@ -38,6 +38,8 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
   id bigserial PRIMARY KEY,room_code text NOT NULL,student_id uuid NOT NULL REFERENCES pit_students(id),
   author text NOT NULL,mission integer,body text NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),read_at timestamptz
  )`);
+ const missingClassroom=await call(classroom,'POST','stage',{stage:2},'',pin);
+ assert.equal(missingClassroom.statusCode,503,'missing classroom row is a configuration error, not a skipped stage');
  await pool.query("INSERT INTO pit_classroom_state(room_code,current_stage,phase) VALUES('PITGAME26',1,'practice')");
  const names=['QA Postgres A','QA Postgres B','QA Postgres C'],users=[];
  for(const name of names){
@@ -46,8 +48,20 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  }
  const forged=await call(classroom,'GET','state',{},'f'.repeat(64));
  assert.equal(forged.statusCode,401,'invalid token denied by real Postgres lookup');
- const release=await call(classroom,'POST','stage',{stage:4,phase:'practice'},'',pin);
- assert.equal(release.statusCode,200);
+ const skipped=await call(classroom,'POST','stage',{stage:4,phase:'briefing'},'',pin);
+ assert.equal(skipped.statusCode,409,'teacher cannot skip from M01 directly to M04');
+ for(const stage of [2,3,4]){
+  const release=await call(classroom,'POST','stage',{stage,phase:'briefing'},'',pin);
+  assert.equal(release.statusCode,200,'sequential release M'+stage+' independent of projected phase');
+  assert.equal(release.body.state.current_stage,stage);
+ }
+ const back=await call(classroom,'POST','stage',{stage:2,phase:'review'},'',pin);
+ assert.equal(back.statusCode,200,'revisiting an older slide does not revoke access');
+ assert.equal(back.body.state.current_stage,4,'mission release stays monotonic');
+ const oversized=await call(classroom,'POST','progress',{stage:4,route:'2d',status:'submitted',evidence:'X'.repeat(751)},users[0].token);
+ assert.equal(oversized.statusCode,400,'751-character evidence is rejected, not silently truncated');
+ const intact=await pool.query('SELECT count(*)::int AS n FROM pit_student_stages');
+ assert.equal(intact.rows[0].n,0,'oversized evidence does not write a partial record');
  for(const [i,route,status] of [[0,'2d','submitted'],[1,'3d','submitted'],[2,'2d','working']]){
   const r=await call(classroom,'POST','progress',{stage:4,route,status,evidence:'Evidencia ficticia '+names[i]+' com caso positivo e negativo.'},users[i].token);
   assert.equal(r.statusCode,200,'stage progress persisted in Postgres');
