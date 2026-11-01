@@ -29,7 +29,7 @@ function load(id){
  try{
   const k=key(id),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');
   if(Number.isInteger(x.route)&&x.route>=0&&x.route<3)d.route=x.route;
-  for(const f of fields)if(typeof x[f.key]==='string')d[f.key]=x[f.key].slice(0,f.max);
+  for(const f of fields)if(typeof x[f.key]==='string')d[f.key]=x[f.key];
   d.checks=Array.isArray(x.checks)?[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
  }catch{}
  return d;
@@ -37,7 +37,7 @@ function load(id){
 function save(id,raw){
  const d=fresh();
  d.route=Number.isInteger(raw.route)&&raw.route>=0&&raw.route<3?raw.route:null;
- for(const f of fields)d[f.key]=String(raw[f.key]??'').slice(0,f.max);
+ for(const f of fields)d[f.key]=String(raw[f.key]??'');
  d.checks=Array.isArray(raw.checks)?[...new Set(raw.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
  const k=key(id);volatileDrafts.set(k,d);
  try{localStorage.setItem(k,JSON.stringify(d));writeStatus.set(k,true);return true;}
@@ -99,16 +99,28 @@ function suggestion(ctx,route){
  };
 }
 function validity(d){
- return fields.filter(f=>f.min>0).map(f=>clean(d[f.key]).length>=f.min)
-  .concat([0,1,2].every(n=>d.checks.includes(n)));
+ return fields.filter(f=>f.min>0).map(f=>clean(d[f.key]).length>=f.min&&String(d[f.key]??'').length<=f.max)
+  // An oversized optional diagnosis must not appear as a complete 8/8 report.
+  .concat([0,1,2].every(n=>d.checks.includes(n))&&fields.filter(f=>f.min===0).every(f=>String(d[f.key]??'').length<=f.max));
 }
 function validate(session){
  const d=load(session);
- for(const f of fields.filter(f=>f.min>0))if(clean(d[f.key]).length<f.min)
-  return {ok:false,field:f.key,label:'Preencha com observações reais: '+f.label};
+ for(const f of fields){
+  if(String(d[f.key]??'').length>f.max)
+   return {ok:false,field:f.key,label:'Revise '+f.label+' Limite: '+f.max+' caracteres. O texto foi preservado.'};
+  if(f.min>0&&clean(d[f.key]).length<f.min)
+   return {ok:false,field:f.key,label:'Preencha com observações reais: '+f.label};
+ }
  if(![0,1,2].every(n=>d.checks.includes(n)))
   return {ok:false,field:'checks',label:'Execute e confirme os três testes no Preview: positivo, negativo e repetição.'};
  return {ok:true,label:'Evidência pronta para análise do professor.'};
+}
+function selectRoute(d,index){
+ if(!Number.isInteger(index)||index<0||index>=routes.length||d.route===index)return false;
+ d.route=index;
+ // A different tutorial route requires new positive, negative and repeat tests.
+ d.checks=[];
+ return true;
 }
 function evidence(session,ctx={}){
  const d=load(session),p=profile(ctx),r=activeRoute(ctx,d);
@@ -284,7 +296,12 @@ function mount(ctx){
  window.PIT_GDEVELOP_M05_GUIDE?.mount(root.querySelector('#m5Guide'),{
   initialRoute:activeRoute(ctx,d),onRouteChange:(id,index)=>{
    if(locked)return;
-   d.route=index;save(ctx.session,d);
+   if(!selectRoute(d,index))return;
+   save(ctx.session,d);
+   root.querySelectorAll('[data-m5s-check]').forEach(box=>{box.checked=false;});
+   redraw();
+   const notice=root.querySelector('#m5sStatus');
+   if(notice)notice.textContent='Trilha alterada: refaça os três testes no Preview e revise seus relatos antes de enviar.';
    const name=root.querySelector('#m5sRouteName');if(name)name.textContent=routes[index].label;
    const box=root.querySelector('#m5s3DNote');if(box)box.hidden=index!==2;
    for(const f of fields){
@@ -327,5 +344,5 @@ function mount(ctx){
  }));
  redraw();
 }
-window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,draftNotice,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,evidence,parseEvidence,hydrate,render,mount};
+window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,draftNotice,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,selectRoute,evidence,parseEvidence,hydrate,render,mount};
 })();
