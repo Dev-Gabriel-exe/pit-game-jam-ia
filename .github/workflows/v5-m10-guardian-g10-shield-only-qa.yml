@@ -1,0 +1,38 @@
+name: V5 H3 — M10 Guardian G10 shield only
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+      - 'qa/v5-m10-guardian-g10-shield-only-paired.cjs'
+      - '.github/workflows/v5-m10-guardian-g10-shield-only-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guardian-g10-shield-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax and G10 shield-only M10 paired trials
+        env:
+          M10_G10_SHIELD_ONLY_REPORT_FILE: /tmp/v5-m10-guardian-g10-shield-only.json
+        run: |
+          node --check qa/v5-m10-guardian-g10-shield-only-paired.cjs
+          node --check v5/phase2-combat.js
+          node qa/v5-m10-guardian-g10-shield-only-paired.cjs
+      - name: M10 engine, H0 contract and M5 regression
+        run: |
+          node qa/v5-m10-engine.cjs
+          node qa/v5-progression-contract-h0.cjs
+          node qa/v5-endgame-replay.cjs
+      - name: Attach anonymous G10 shield-only paired report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: v5-m10-guardian-g10-shield-only
+          path: /tmp/v5-m10-guardian-g10-shield-only.json
+          if-no-files-found: ignore
+          retention-days: 14
