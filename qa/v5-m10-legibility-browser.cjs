@@ -4,7 +4,8 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {chromium}=require('playwright');
-const OUT='qa/v5-m10-legibility';
+const LOW=process.env.M10_LEGIBILITY_LOW==='1';
+const OUT=LOW?'qa/v5-m10-legibility-low':'qa/v5-m10-legibility';
 const SCREENS=[
  {width:1920,height:1080,label:'projector-1920'},
  {width:1366,height:768,label:'desktop-1366'}
@@ -22,16 +23,31 @@ function within(inner,outer,tolerance=3){
   '--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'
  ]});
  const report={schema:'m10-legibility-v1',synthetic:true,softwareRenderer:true,
-  physicalPCsValidated:false,seed:4175863657,screens:[]};
+  physicalPCsValidated:false,humanVisualApproval:false,
+  qualityMode:LOW?'low':'auto',emulatedDeviceMemoryGb:LOW?2:null,
+  limitation:'Layout/contrast samples under SwiftShader are not projector pixel visibility or real-PC FPS.',
+  seed:4175863657,screens:[]};
  try{
-  const page=await browser.newPage({viewport:{width:1920,height:1080},reducedMotion:'reduce'});
+  const page=await browser.newPage({viewport:{width:1920,height:1080},
+   reducedMotion:LOW?'no-preference':'reduce'});
+  if(LOW)await page.addInitScript(()=>{
+   Object.defineProperty(navigator,'deviceMemory',{configurable:true,value:2});
+  });
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&seed=4175863657',
+  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&seed=4175863657'+(LOW?'&sprites=1':''),
    {waitUntil:'domcontentloaded',timeout:55000});
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:175000});
   const stage=page.locator('#arenaStage');
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m10');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),10);
+  if(LOW){
+   assert.equal(await stage.getAttribute('data-v5-quality-mode'),'low',
+    'Emulated constrained projector must use low-quality renderer');
+   assert.equal(Number(await stage.getAttribute('data-v5-sprite-frames')),3,
+    'Low-quality talent sprite atlas must use three frames');
+   assert(Number(await stage.getAttribute('data-v5-sprite-textures'))>0,
+    'Low-quality projector must retain genuine talent sprite textures');
+  }
   assert.equal(await page.locator('[data-fighter]').count(),30);
   await page.locator('#actionCamera').click();
   for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
@@ -88,6 +104,8 @@ function within(inner,outer,tolerance=3){
     return stage&&stage.dataset.v5NickLayoutWidth===String(stage.clientWidth)&&
      Number(stage.dataset.v5VisibleNicks)>0;
    },null,{timeout:45000});
+   if(LOW)assert.equal(await stage.getAttribute('data-v5-quality-mode'),'low',
+    'Low-quality renderer must persist after projector resize');
    const metric=await page.evaluate(()=>{
     const box=(selector)=>{
      const el=document.querySelector(selector);
@@ -340,7 +358,7 @@ function within(inner,outer,tolerance=3){
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
   assert.deepEqual(errors,[],'Chromium errors: '+errors.join(' | '));
   fs.writeFileSync(OUT+'.json',JSON.stringify(report,null,2)+'\n');
-  console.log('PASS M10 projector/desktop readability gates: '+JSON.stringify(
+  console.log('PASS M10 '+(LOW?'low-quality ':'')+'projector/desktop readability gates: '+JSON.stringify(
    report.screens.map(x=>({screen:x.label,stage:[Math.round(x.stage.width),Math.round(x.stage.height)],
     spotlightPx:x.spotlightText.fontPx,talentPx:x.talentText.fontPx,
     visibleNicknames:x.nicknamesVisible,talentTruncated:x.talentTruncated}))));
