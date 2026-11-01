@@ -90,4 +90,30 @@ check(blocked.load('local-only').project==='Projeto local','Approved remote evid
 check(m.save('persistent',initial)===true,'Writable storage reports success');
 check(m.render({...offlineContext,session:'persistent'}).includes('rascunho salvo neste navegador'),
  'Persisted project still displays saved state');
+// Evidence has a hard 750-character API limit. A legacy draft must never be
+// silently sliced into a seemingly valid, but incomplete, submission.
+const budgets={project:60,scene:53,object:53,source:69,preview:140,saved:85,fix:75};
+const baseline={...initial,objectType:'2D Sprite',checks:[0,1,2]};
+for(const [field,max] of Object.entries(budgets)){
+ const over={...baseline,[field]:'X'.repeat(max+1)};
+ const id='oversized-'+field;
+ m.save(id,over);
+ check(m.load(id)[field]===over[field],'M03 preserves oversized legacy '+field+' verbatim');
+ const validation=m.validate(id);
+ check(validation.ok===false&&validation.field===field,'M03 blocks oversized '+field+' before submission');
+ check(validation.label.includes(String(max)),'M03 gives actionable max for '+field);
+ const page=m.render({session:id,phase:'practice',status:'draft',preview:true,idea:{title:'Jogo',genre:'Puzzle'},canSubmit:true});
+ check(page.includes('maxlength="'+max+'"'),'M03 form max agrees with evidence budget for '+field);
+ if(field!=='fix')check(m.validity(m.load(id)).filter(Boolean).length===6,'M03 progress excludes oversized '+field);
+}
+const bounded={...baseline};
+for(const [field,max] of Object.entries(budgets))bounded[field]='A'.repeat(max);
+m.save('boundary',bounded);
+check(m.validate('boundary').ok===true,'M03 accepts every field at its exact evidence budget');
+check(m.evidence('boundary',{title:'T'.repeat(55),genre:'G'.repeat(25)}).length<=750,
+ 'M03 fully populated evidence stays within API limit');
+const legacyStoreId='pit_v3_missao03_rascunho_legacy-preexisting';
+store.set(legacyStoreId,JSON.stringify({...baseline,project:'L'.repeat(92)}));
+check(m.load('legacy-preexisting').project.length===92,'M03 loads oversized historical localStorage without truncation');
+check(m.validate('legacy-preexisting').ok===false,'M03 historical localStorage cannot bypass validation');
 console.log('PASS: '+count+' M03 legacy recovery assertions; no real student data, editor or browser used.');
