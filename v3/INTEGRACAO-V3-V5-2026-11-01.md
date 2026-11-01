@@ -62,3 +62,17 @@ Endurecido `v3/teacher-private-notes-guard.js`: notas privadas que o navegador r
 - Novo workflow **`.github/workflows/v3-postgres-integration.yml`**: PostgreSQL 16 descartável, três alunos fictícios, PIN de teste, regressão de handlers e fluxo de chat/evidência; escopo de push restrito à branch V3. **CI configurada, mas resultado ainda NÃO CONFIRMADO**. O workflow não se conecta ao Neon ou a alunos reais.
 - Verificação local de código via V8: 8 casos executados com o handler real e SQL simulado, todos PASS; compilação sintática de três arquivos JS PASS. Isso **não equivale** à execução PostgreSQL 16, Chrome ou teste físico.
 - **Para o agente V5:** não substituir a liberação sequencial da `main` por lógica antiga de fases; incorporar apenas a proteção 503 e o contrato de evidência após testes de regressão. PR #23 permanece rascunho, sem merge automático.
+
+## Fechamento de regressões V3 — CI verificada em 01/11/2026 (17h21 UTC)
+
+A inspeção dos **logs reais do GitHub Actions** encontrou regressões nos *testes* após a mudança de contrato, não evidência de falha funcional da API: (1) o teste isolado ainda esperava uma terceira evidência/M10 do aluno B apesar da rejeição correta de 900 caracteres; (2) a auditoria de segurança esperava a antiga assinatura `cleanEvidence(value,max)`, que truncava silenciosamente; (3) dois fixtures Chrome ainda propagavam a fase do projetor para a API, embora a liberação atual seja apenas por missão.
+
+**Correções na branch V3:** `qa/v3-isolated-backend.cjs` passou a exigir ausência de registro M10 rejeitado (M02/M03 preservados); `qa/v3-security-audit.cjs` passou a exigir rejeição explícita acima de 750 caracteres; `qa/v3-e2e.cjs` e `qa/v3-multi-student-browser.cjs` agora simulam liberação sequencial, monotônica e `phase='practice'` no servidor, mantendo a fase projetada local. Commits: `add7a3a6`, `ee94d188`, `523f2073`, `c51798e2`, `79cc8726`.
+
+**Evidência de execução, não apenas configuração:**
+
+- [PostgreSQL 16 descartável — SUCCESS](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41330772018) no SHA `523f2073df532c532b850138d8fc4242ea7d85a5`: 3 estudantes fictícios, autenticação, liberação M02→M04, evidências 2D/3D, rejeição 751 caracteres, revisão, reenvio, aprovação, chat e isolamento. Não usou Neon nem alunos reais.
+- [QA estática nativa — SUCCESS](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41330960641) no SHA `79cc8726a0866f1d737d96402fd446f3b06274ed`: verificações de segurança, módulos pedagógicos e backend.
+- [Browser QA Chrome — SUCCESS](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41330960619) no mesmo SHA `79cc8726`: fluxo professor/aluno, três estudantes fictícios, evidências, chat, estados, biblioteca e downloads; proteção das notas privadas M01–M10, foco/teclado e telas 320/390/768/1280/1440px conforme os jobs. Screenshots automatizados são artefatos de CI, não homologação humana.
+
+**Limites:** o teste PostgreSQL foi executado no SHA `523f2073` e os commits seguintes alteraram apenas testes/fixtures e auditoria estática, não os handlers; não alegar execução do PostgreSQL no SHA final. Nenhum teste físico HDMI, GDevelop GUI, aparelho dos alunos, arena V5 com 30 jogadores ou migração em produção foi realizado. PR #23 continua em rascunho; **não mesclar na main**.
