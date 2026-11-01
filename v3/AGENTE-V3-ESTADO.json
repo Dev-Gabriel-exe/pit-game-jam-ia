@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T12:14:37Z",
+  "last_completed_at": "2026-11-01T13:14:25Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 launch edit checks fixed and static QA SUCCESS 41305709046 on final regression SHA 22cc921; Browser QA 41305709003 still in progress. Previous static QA failed due stale expectation in v3-m10-storage-failsafe, repaired. Next confirm Browser QA and audit M01–M10 teacher/student evidence and projection. Human/GDevelop GUI/HDMI/mobile physical NOT_RUN.",
+  "priority": "V3 projector privacy: DOMContentLoaded/pageshow now close browser-restored teacher private notes; Node deterministic smoke PASS, native static QA SUCCESS on a4ad781; browser QA on 65acace IN_PROGRESS. PR #23 still draft/nonmergeable. Cross-branch integration contract recorded; next confirm Chrome QA, reconcile V3/V5 entrypoints and chat/classroom without overwriting V5 arena. Human/GDevelop GUI/HDMI/mobile physical NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
+  "last_task": "V4-AUD-PRIVATE-NOTES-RESTORE-V5-INTEGRATION",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3149,45 +3149,62 @@
       ],
       "tests": "Native static QA 41305709046 SUCCESS on regression SHA 22cc921. Earlier static run 41305635791 failed due old test expecting only check 1 reset, repaired. Browser QA 41305709003 IN_PROGRESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
       "notes": "M10 edit invalidation by field: project 0/1/2, access 1/2, mechanic/rule/demo 1/2, pitch/test/next 2; whitespace normalization avoids false invalidation. Teacher private notes remain collapsed. Master 54/59 unchanged, main/production/student data untouched. Regression aligned with privacy rule; documentation updated. No human or GUI testing."
+    },
+    {
+      "id": "V4-AUD-PRIVATE-NOTES-RESTORE-V5-INTEGRATION",
+      "completed_at": "2026-11-01T13:14:25Z",
+      "commit": "65acace08efebb58b19de87c4c8e469b93dcc5c7",
+      "files": [
+        "v3/teacher-private-notes-guard.js",
+        "qa/v3-private-teacher-notes-browser.cjs",
+        "qa/v3-private-notes-guard-regression.cjs",
+        ".github/workflows/static-qa.yml",
+        "v3/INTEGRACAO-V3-V5-2026-11-01.md"
+      ],
+      "tests": "Node --check guard/regression and deterministic Node guard smoke PASS in isolated local copy; GitHub Actions native PIT Game Jam QA SUCCESS on a4ad781; latest 65acace static QA and Browser QA IN_PROGRESS on last query. Real HDMI/GDevelop GUI/human/physical mobile NOT_RUN.",
+      "notes": "Browser-restored expanded private notes now collapse on DOMContentLoaded/pageshow. Regression verifies stage navigation, Escape, pagehide, pageshow, tab visibility, and one-open-note rule. PR #23 remains draft, nonmergeable; V5 bridge and pedagogical files require careful reconciliation. 54/59 unchanged; main/production/student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
+    "task": "V4-AUD-PRIVATE-NOTES-RESTORE-V5-INTEGRATION",
     "status": "CODE_TEST_DOCS_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T12:14:37Z",
+    "updated_at": "2026-11-01T13:14:25Z",
     "code_commits": [
-      "91fb4cf80e7235b2c9bea03c312141028aa3c970",
-      "d60daf279fb1179440d45c22907d5b04fb1a37e5"
+      "74ad9407c9f0579e1d3f65185cb92817ef4ee37c"
     ],
     "regression_commits": [
-      "9dc53d1b8c5085751df835e8ceaf1670991c9bce",
-      "1f95fd3837992598be6717a3112ce8297b8ed1f7",
-      "2f596ce98429b363242430d91c3bb43dfa0b8ee9",
-      "22cc921a188190513a8391e8d5d5f26d102b172c"
+      "6ef4153116d6f6d6911fa1e69c5ff5e4a9b7bc65",
+      "7577726332dbb271b50953a522854e183aeea761",
+      "a4ad781e437da493773e5b1692110a6da169f5a2"
     ],
-    "documentation_commit": "850cad132c9c04e5f719480f3fb7626b7c57f08b",
+    "documentation_commit": "65acace08efebb58b19de87c4c8e469b93dcc5c7",
     "tests": [
       {
-        "name": "Native static QA on final regression",
+        "name": "Local Node syntax and deterministic guard regression",
         "result": "PASS",
-        "details": "GitHub Actions run 41305709046 on SHA 22cc921"
+        "details": "Smoke against exact revised guard logic in isolated local file; actual GitHub code also checked by native CI"
       },
       {
-        "name": "Browser QA on final regression",
+        "name": "Native static QA on a4ad781",
+        "result": "PASS",
+        "details": "GitHub Actions PIT Game Jam QA #2841 on SHA a4ad781"
+      },
+      {
+        "name": "Browser QA on latest 65acace",
         "result": "IN_PROGRESS",
-        "details": "GitHub Actions run 41305709003 on SHA 22cc921 at last query"
+        "details": "GitHub Actions PIT Game Jam — Browser QA #2839 on SHA 65acace at last query"
       },
       {
-        "name": "Previous static QA failure diagnosed",
-        "result": "REPAIRED",
-        "details": "Run 41305635791 failed in old M10 blocked-storage expectation; updated test to privacy-retest semantics"
+        "name": "Native static QA on latest 65acace",
+        "result": "IN_PROGRESS",
+        "details": "GitHub Actions PIT Game Jam QA #2842 on SHA 65acace at last query"
       },
       {
-        "name": "GDevelop GUI/HDMI/physical mobile/human test",
+        "name": "GDevelop GUI/HDMI/physical mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA 41305709003; cross-mission professor/student audit and physical sign-off still pending",
+    "next": "Confirm Browser QA and static QA on latest V3 branch; reconcile V3/V5 entrypoints, chat and classroom under PR #23 with fictional data",
     "master_progress": "54/59 unchanged"
   }
 }
