@@ -110,4 +110,38 @@ assert.equal(resolutionOld.checked,false,'old decision radio unselected in visib
 assert.equal(thirdCheck.checked,false,'old third confirmation unchecked in visible form');
 assert(resetStatus.textContent.includes('Selecione novamente a decisão'),'student gets actionable explanation');
 assert.equal(m.load(uiReset).resolution,'','visible form and saved draft remain aligned');
-console.log('PASS M09 blocked-storage: nine fields, radio/checkbox, session isolation, warnings, hydration and fictional UI events. Human playtest NOT_RUN.');
+
+// Legacy localStorage can contain pre-existing values longer than current textarea limits.
+// Do not silently cut a peer's observed result or mark an invalid report complete.
+const legacyStore=new Map();
+const legacySession='fictional-legacy';
+const legacyKey='pit_v3_m09_'+legacySession;
+const legacyData={outcome:'issue',resolution:'backlog',checks:[0,1,2]};
+for(const f of m.fields)legacyData[f.id]='X'.repeat(f.max+11);
+legacyStore.set(legacyKey,JSON.stringify(legacyData));
+const legacyWindow={};
+const legacyContext={window:legacyWindow,document:{},localStorage:{
+ getItem(k){return legacyStore.get(k)||null},
+ setItem(k,v){legacyStore.set(k,v)}
+}};
+vm.runInNewContext(source,legacyContext,{filename:'v3/student-mission-nine.js'});
+const legacyModule=legacyWindow.PIT_STUDENT_MISSION_NINE;
+const legacyLoaded=legacyModule.load(legacySession);
+for(const f of legacyModule.fields)assert.equal(legacyLoaded[f.id].length,f.max+11,'legacy load must preserve '+f.id);
+assert.equal(legacyModule.validate(legacySession).ok,false,'oversized legacy report must not pass');
+assert.equal(legacyModule.validate(legacySession).field,'peer','first overlong field identified');
+assert(legacyModule.validate(legacySession).label.includes('25 caracteres'),'student receives precise limit');
+const legacyPractice=legacyModule.render({session:legacySession,phase:'practice',status:'',idea:{}});
+assert(legacyPractice.includes('Rascunho antigo preservado'),'student sees preservation warning');
+assert(legacyPractice.includes('role="alert"'),'warning is announced accessibly');
+assert.equal(legacyModule.save(legacySession,legacyLoaded),true,'valid browser storage still works');
+for(const f of legacyModule.fields)assert.equal(legacyModule.load(legacySession)[f.id].length,f.max+11,'legacy save must preserve '+f.id);
+assert.equal(legacyModule.parseEvidence(legacyModule.evidence(legacySession)),null,'invalid oversized evidence cannot roundtrip as valid');
+for(const f of legacyModule.fields)legacyLoaded[f.id]='X'.repeat(f.min+2);
+assert.equal(legacyModule.save(legacySession,legacyLoaded),true,'student may correct draft');
+assert.equal(legacyModule.validate(legacySession).ok,true,'corrected report can be submitted');
+assert(legacyModule.evidence(legacySession).length<=750,'corrected evidence fits transport budget');
+assert(legacyModule.parseEvidence(legacyModule.evidence(legacySession)),'corrected report roundtrips');
+assert(!legacyModule.render({session:legacySession,phase:'practice',status:'',idea:{}}).includes('Rascunho antigo preservado'),'warning clears after correction');
+
+console.log('PASS M09 blocked-storage and legacy drafts: nine fields, over-limit preservation, rejection/recovery, session isolation, warnings, hydration and fictional UI events. Human playtest NOT_RUN.');
