@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T11:19:00.775Z",
+  "last_completed_at": "2026-11-01T12:14:37Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 eight legacy launch fields now preserve over-limit content and block invalid delivery with per-field accessible warning. Native static QA SUCCESS 41301301036 on regression SHA 6ddd07e; Browser QA 41301301028 in progress at checkpoint. Next confirm Browser QA and inspect M10 edit attestations; GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
+  "priority": "M10 substantive field edits now invalidate only affected manual checks (privacy for all eight fields); formatting-only edits preserve checks. Earlier Browser QA 41301301028 SUCCESS and first code static QA 41305593957 SUCCESS. Final regression SHA 1f95fd3 CI not yet confirmed. Next verify final SHA CI and continue cross-mission teacher/student QA; GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M10-LEGACY-LAUNCH-DRAFTS",
+  "last_task": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3136,34 +3136,55 @@
       ],
       "tests": "Native GitHub static QA 41301289100 SUCCESS on code SHA 0b111d8; native GitHub static QA 41301301036 SUCCESS on regression SHA 6ddd07e. Browser QA 41301301028 IN_PROGRESS at checkpoint. No GDevelop GUI, HDMI, physical mobile, human test.",
       "notes": "All eight legacy launch fields preserved without truncation, max validation and per-field warning, invalid submission disabled, regression covers oversized legacy data, correction and hydration. Teacher rubric and private collapsed notes unchanged. Master 54/59 unchanged; main/production/student data untouched."
+    },
+    {
+      "id": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
+      "completed_at": "2026-11-01T12:14:37Z",
+      "commit": "4372c6960c3486a4a4a6404985cb0057e4685864",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-m10-field-guidance.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Regression source committed and GitHub Actions triggered; native static QA and Browser QA on final regression SHA 1f95fd3 not yet confirmed. Prior M10 Browser QA 41301301028 SUCCESS; static QA 41305593957 SUCCESS on earlier formatting-only code SHA 91fb4cf. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+      "notes": "M10 edit invalidation by field: project 0/1/2, access 1/2, mechanic/rule/demo 1/2, pitch/test/next 2; whitespace normalization avoids false invalidation. Teacher private notes remain collapsed. Master 54/59 unchanged, main/production/student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M10-LEGACY-LAUNCH-DRAFTS",
-    "status": "CODE_REGRESSION_DOCS_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T11:19:00.775Z",
-    "code_commit": "0b111d89317384f7526b327cb824f216f5386ab3",
-    "regression_commits": [
-      "6ddd07e5e63ee4478d124f150175f0bc55891943"
+    "task": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
+    "status": "CODE_TEST_DOCS_COMMITTED_FINAL_CI_PENDING",
+    "updated_at": "2026-11-01T12:14:37Z",
+    "code_commits": [
+      "91fb4cf80e7235b2c9bea03c312141028aa3c970",
+      "d60daf279fb1179440d45c22907d5b04fb1a37e5"
     ],
-    "documentation_commit": "0da870e7c4bd1eddd8d55031822d76c0cb8f0f0b",
+    "regression_commits": [
+      "9dc53d1b8c5085751df835e8ceaf1670991c9bce",
+      "1f95fd3837992598be6717a3112ce8297b8ed1f7"
+    ],
+    "documentation_commit": "4372c6960c3486a4a4a6404985cb0057e4685864",
     "tests": [
       {
-        "name": "Native GitHub static QA",
+        "name": "Prior M10 Browser QA",
         "result": "PASS",
-        "details": "Run 41301301036 on 6ddd07e covers M10 legacy launch draft regression"
+        "details": "Run 41301301028 on 6ddd07e (previous commit)"
       },
       {
-        "name": "Browser QA",
-        "result": "IN_PROGRESS",
-        "details": "Run 41301301028 on 6ddd07e"
+        "name": "First formatting fix static QA",
+        "result": "PASS",
+        "details": "Run 41305593957 on 91fb4cf (before final regression)"
+      },
+      {
+        "name": "Final regression native static QA / Browser QA",
+        "result": "NOT_CONFIRMED",
+        "details": "Verify SHA 1f95fd3; no claim of pass yet"
       },
       {
         "name": "GDevelop GUI/HDMI/physical mobile/human test",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA on 6ddd07e; inspect M10 substantive field edits and manual attestations; continue professor/student audit before visual work",
+    "next": "Confirm CI on final regression and continue cross-mission professor/student audit; keep main untouched",
     "master_progress": "54/59 unchanged"
   }
 }
