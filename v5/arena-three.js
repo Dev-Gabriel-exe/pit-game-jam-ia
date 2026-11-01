@@ -323,11 +323,21 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  let animationEvents=0,specialFxEvents=0,talentFxEvents=0,talentFxDropped=0;
   // Successful on-screen cues, not merely combat events. Diagnostics only.
   const visualByType={ativo:0,passivo:0,reativo:0},droppedByType={ativo:0,passivo:0,reativo:0};
+  // Laboratory-only visual provenance: distinct canonical cues actually drawn
+  // versus rejected by the visual budget. Never count charge/readiness here.
+  // Update DOM only for a newly seen key to avoid JSON churn per combat event.
+  const visualKeys={rendered:new Set(),dropped:new Set()};
   function recordVisualType(cue,dropped=false){
    const kind=cue?.type;if(!Object.hasOwn(visualByType,kind))return;
    const counter=dropped?droppedByType:visualByType;
    counter[kind]++;
    container.dataset['v5TalentFx'+(dropped?'Dropped':'Rendered')+kind[0].toUpperCase()+kind.slice(1)]=String(counter[kind]);
+   if(!cue.key)return;
+   const state=dropped?'dropped':'rendered',keys=visualKeys[state];
+   if(!keys.has(cue.key)){
+    keys.add(cue.key);
+    container.dataset['v5TalentFx'+(dropped?'Dropped':'Rendered')+'Keys']=JSON.stringify([...keys].sort());
+   }
   }
  let choreographyEvents=0,availableClips=0,unmatchedClipEvents=0,hitReactions=0;
  const visualBudget=quality==='low'||reduce?9:18;
@@ -654,6 +664,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   stormRing.scale.setScalar(18*worldScale);
   animationEvents=0;specialFxEvents=0;
   talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;hitReactions=0;
+  visualKeys.rendered.clear();visualKeys.dropped.clear();
+  container.dataset.v5TalentFxRenderedKeys='[]';
+  container.dataset.v5TalentFxDroppedKeys='[]';
    for(const kind of Object.keys(visualByType)){
     visualByType[kind]=0;droppedByType[kind]=0;
     container.dataset['v5TalentFxRendered'+kind[0].toUpperCase()+kind.slice(1)]='0';
