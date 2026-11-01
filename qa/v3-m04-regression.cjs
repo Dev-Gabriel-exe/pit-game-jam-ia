@@ -160,7 +160,7 @@ const state={studentId:'11111111-1111-4111-8111-111111111111',room:'PITGAME26',r
 const pool={async query(sql,args=[]){
  if(sql.startsWith('SELECT id,display_name'))return{rows:[{id:state.studentId,display_name:'Aluno QA'}],rowCount:1};
  if(sql.startsWith('SELECT current_stage'))return{rows:[{current_stage:state.current,phase:state.phase}],rowCount:1};
- if(sql.startsWith('UPDATE pit_classroom_state')){state.current=args[0];state.phase=args[1];return{rows:[{current_stage:state.current,phase:state.phase}],rowCount:1}}
+ if(sql.startsWith('UPDATE pit_classroom_state')){ok(sql.includes('GREATEST(current_stage,$1)')&&sql.includes('$1<=current_stage+1'),'Mission release is monotonic and sequential');if(args[0]>state.current+1)return{rows:[],rowCount:0};state.current=Math.max(state.current,args[0]);state.phase='practice';return{rows:[{current_stage:state.current,phase:state.phase}],rowCount:1}}
  if(sql.startsWith('SELECT stage,route,status,evidence')){const rows=[...state.records.values()];return{rows,rowCount:rows.length}}
  if(sql.startsWith('INSERT INTO pit_student_stages')){
   ok(sql.includes("status NOT IN ('submitted','approved')"),'Atomic SQL status guard');
@@ -190,12 +190,14 @@ async function request(role,action,body={},method='POST'){
 (async()=>{
  let r=await request('student','progress',{stage:4,route:'2d',status:'submitted',evidence});
  ok(r.statusCode===403,'Stage locked until teacher');
- await request('teacher','stage',{stage:4,phase:'briefing'});
+ r=await request('teacher','stage',{stage:6,phase:'briefing'});
+ ok(r.statusCode===409,'Teacher cannot skip missions');
+ r=await request('teacher','stage',{stage:4,phase:'briefing'});
+ ok(r.statusCode===200,'Teacher releases mission even when presentation is briefing');
  r=await request('student','progress',{stage:4,route:'2d',status:'submitted',evidence});
- ok(r.statusCode===403,'Briefing still locked');
- await request('teacher','stage',{stage:4,phase:'practice'});
- r=await request('student','progress',{stage:4,route:'2d',status:'submitted',evidence});
- ok(r.statusCode===200,'Released stage can be submitted');
+ ok(r.statusCode===200,'Released mission can be submitted regardless of projected phase');
+ r=await request('teacher','stage',{stage:3,phase:'review'});
+ ok(r.statusCode===200&&state.current===4,'Teacher cannot roll back released mission');
  r=await request('student','progress',{stage:4,route:'3d',status:'working',evidence:'overwrite'});
  ok(r.statusCode===409,'Submitted evidence cannot be overwritten');
  r=await request('teacher','review',{studentId:state.studentId,stage:4,status:'revision',feedback:''});
