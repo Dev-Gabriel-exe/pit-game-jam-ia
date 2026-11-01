@@ -31,7 +31,7 @@
    const key=storageKey(id);
    const source=volatileDrafts.get(key)||JSON.parse(localStorage.getItem(key)||'{}');
    if(Number.isInteger(source.route)&&source.route>=0&&source.route<4)d.route=source.route;
-   for(const field of keys)if(typeof source[field]==='string')d[field]=source[field].slice(0,config[field].max);
+   for(const field of keys)if(typeof source[field]==='string')d[field]=source[field];
    d.checks=Array.isArray(source.checks)?[...new Set(source.checks.filter(x=>Number.isInteger(x)&&x>=0&&x<3))]:[];
   }catch{}
   return d;
@@ -39,7 +39,7 @@
  function save(id,d){
   const safeData=blank(),key=storageKey(id);
   safeData.route=Number.isInteger(d.route)&&d.route>=0&&d.route<=3?d.route:null;
-  for(const name of keys)safeData[name]=String(d[name]??'').slice(0,config[name].max);
+  for(const name of keys)safeData[name]=String(d[name]??'');
   safeData.checks=Array.isArray(d.checks)?[...new Set(d.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
   volatileDrafts.set(key,safeData);
   try{
@@ -119,14 +119,16 @@
   return [rpg,platform,puzzle,three][r]||rpg;
  }
  function validity(d,ctx){
-  const result=keys.filter(k=>config[k].min>0).map(k=>clean(d[k]).length>=config[k].min);
-  result.push([0,1,2].every(n=>d.checks.includes(n)));
+  const result=keys.filter(k=>config[k].min>0).map(k=>clean(d[k]).length>=config[k].min&&String(d[k]??'').length<=config[k].max);
+  // An oversized optional diagnosis also prevents a misleading 6/6 ready state.
+  result.push([0,1,2].every(n=>d.checks.includes(n))&&String(d.issue??'').length<=config.issue.max);
   return result;
  }
  function validate(session,ctx={}){
   const d=load(session);
-  for(const k of keys)if(config[k].min>0&&clean(d[k]).length<config[k].min){
-   return {ok:false,field:k,label:'Descreva o resultado real: '+config[k].label};
+  for(const k of keys){
+   if(String(d[k]??'').length>config[k].max)return {ok:false,field:k,label:'Revise '+config[k].label+' Limite: '+config[k].max+' caracteres. O texto foi preservado.'};
+   if(config[k].min>0&&clean(d[k]).length<config[k].min)return {ok:false,field:k,label:'Descreva o resultado real: '+config[k].label};
   }
   if(![0,1,2].every(x=>d.checks.includes(x)))return {
    ok:false,field:'checks',label:'Confirme os três testes realizados no Preview: entrada, limite e repetição.'
