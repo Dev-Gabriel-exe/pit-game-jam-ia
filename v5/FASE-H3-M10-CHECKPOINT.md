@@ -976,3 +976,24 @@ O primeiro [run 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 **Leitura limitada:** a identidade do vencedor mudou em **20/24 pares** quando as posições iniciais foram trocadas, porém o total de vitórias do Guardião permaneceu **8/24 em cada braço**. Assim, o posicionamento importa para os confrontos individuais, mas nesta amostra não explica sozinho a taxa agregada de vitórias da classe. Os Guardiões começaram com o **mesmo HP inicial em ambos os braços** (5.112 HP somados por arquétipo/12 partidas). Houve quatro mortes por tempestade nos 48 confrontos, distribuídas entre braços; tempo amostrado fora do anel **não** mede dano exato da tempestade. Impactos de HP são eventos arredondados, não perdas capadas no golpe letal. Alterar posições pode alterar alvos, ordem de dano e consumo posterior de RNG; não há prova causal exclusiva nem justificativa para nerf.
 
 **Próximo passo dentro da Missão 10:** separar vantagem defensiva de **dano recebido, curas e eliminação de rivais**, com análise por personagem/tempo e builds independentes, mantendo a instrumentação somente nos testes; confirmar QA navegador do SHA atual. **G.2 nos PCs físicos NÃO EXECUTADO**; H.1/H.2 com alunos reais, autorização, homologação humana, `main`, merge e produção continuam bloqueados.
+
+## H.3/M10 — atribuição de dano, cura e eliminações com 2 Guardiões em 30 (01/11/2026)
+
+**Missão técnica desta rodada:** continuar o diagnóstico da mesma Missão 10, sem alterar regras de combate, classes, 120 talentos, builds M5/M10, câmera, arquibancadas, XP ou conteúdo pedagógico. Base `a77829d8ea8e430626450f4b75ba70137842754b`, roadmaps D–I, E/F/G, contrato H.0, commits e Actions consultados; QA navegador da base anterior confirmado **SUCCESS** ([41285524870](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41285524870)).
+
+**Arquivos reais na branch exclusiva:** `qa/v5-m10-guardian-scarce-offense-defense.cjs` (commit `f2c256eecd81e042f35795c196f9388cfc0a477c`, correção `893accf097518e0820fa5d517465fd92f029f63a`) e `.github/workflows/v5-m10-guardian-scarce-offense-defense-qa.yml` (commit `e11bf9f884d387c57401de900a446803a5b9a144`). A instrumentação agrega por classe eventos reais de acerto em HP, escudo absorvido/pressionado, curas e knockouts, com verificação de que o número de knockouts corresponde ao contador de kills do motor. Preserva os **24 pares/48 partidas fictícias**, seis seeds, dois arquétipos, 2 Guardiões entre 30, swaps de posição Guardião/Caçador, 8 replays determinísticos e contrato de 10 talentos/20 pontos. **Nenhum arquivo do motor foi alterado.**
+
+**CI específico:** [41289625654](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41289625654) **SUCCESS** no SHA `893accf`; [QA geral 41289625653](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41289625653) **SUCCESS**; [QA navegador 41289625648](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41289625648) ainda **em execução na última consulta**. O primeiro CI específico [41289602619](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41289602619) falhou por variável de ambiente de saída inconsistente; corrigido e retestado no run verde. [Artefato JSON anônimo 13076338786](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41289625654/artifacts/13076338786).
+
+**Resultados observados, somente braço baseline (24 partidas; 48 participações de Guardião, 240 Guerreiro, 240 Arcanista, 192 Caçador):**
+
+| Classe | Acertos em HP (soma de eventos) | Absorção de escudo | Curas | Knockouts |
+| --- | ---: | ---: | ---: | ---: |
+| Guerreiro | 38.225,64 | 4.150,38 | 1.363,95 | 287 |
+| Arcanista | 30.369,93 | 3.311,79 | 41,64 | 204 |
+| Caçador | 20.491,31 | 215,81 | 18,34 | 129 |
+| **Guardião** | **7.875,51** | **7.583,10** | **804,27** | **70** |
+
+Por **participação**, Guardião absorveu aproximadamente **158** unidades de escudo, contra **17,3** do Guerreiro, **13,8** do Arcanista e **1,1** do Caçador. O Guardião causou cerca de **164** unidades de dano de acerto em HP e obteve **1,46 knockouts** por participação, comparado a ~**159** e **1,20** do Guerreiro. Isso sugere vantagem defensiva relevante **sem indicar incapacidade ofensiva**, mas não identifica uma causa exclusiva. As somas de eventos arredondados de acerto não são dano líquido capado no golpe letal, kills creditam o golpe final (não assistências), e as builds/posições/seeds são correlacionadas e sintéticas. Nenhum nerf autorizado ou aplicado.
+
+**Próximo incremento da mesma Missão 10:** comparar distribuições de sobrevivência/tempo de KO e dano por janela temporal para distinguir acúmulo de escudo de vantagem em final de partida, e ampliar diversidade de builds antes de qualquer recomendação de balanceamento. **G.2 nos PCs físicos NÃO EXECUTADO**; homologação humana, H.1/H.2 reais, XP, alunos, notas, turmas, `main`, merge e produção permanecem bloqueados.
