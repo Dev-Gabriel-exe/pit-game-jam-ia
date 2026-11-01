@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "M09 no-defect playtest now explicitly included in student 3-minute review; M10 final five minutes correctly labeled TRIAGEM in projected clock and review header, avoiding false promise of grading 30 projects. Seven direct V8 source-derived checks PASS, static and Browser QA on new SHA IN_PROGRESS/QUEUED at inspection, earlier f8ecbad static/Chrome SUCCESS. Physical HDMI/GDevelop/30 students NOT_RUN. Next verify GitHub Actions on exact latest SHA and audit M01–M10 student/teacher consistency. Master 54/59 unchanged; main untouched.",
+  "priority": "M09 no-defect playtest now explicitly included in student 3-minute review; M10 final five minutes correctly labeled TRIAGEM in projected clock and review header, avoiding false promise of grading 30 projects. Eight direct V8 source-derived checks PASS, static QA SUCCESS on f7c72bf (run 41340743667), Browser QA IN_PROGRESS (run 41340743973) at inspection, earlier f8ecbad static/Chrome SUCCESS. Physical HDMI/GDevelop/30 students NOT_RUN. Next verify GitHub Actions on exact latest SHA and audit M01–M10 student/teacher consistency. Master 54/59 unchanged; main untouched.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-M09-M10-TRIAGE-PARITY",
   "completed_count": 54,
@@ -3241,15 +3241,16 @@
         "v3/teacher-mission-ten-foundations.js",
         "v3/teacher-mission-ten-validation.js",
         "qa/v3-audit-alignment.cjs",
-        "v3/AUDITORIA-V4-MISSOES.md"
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
       ],
-      "tests": "7 actual V8 source-derived checks PASS on changed M09/M10 renderers; source regression added. GitHub Actions static/Browser latest SHA not confirmed (running/queued). Previous f8ecbad static/Browser SUCCESS. HDMI/GDevelop GUI/30 students/human/V5 NOT_RUN.",
+      "tests": "8 actual V8 source-derived checks PASS on changed M09/M10 renderers; source regression added. Static GitHub Actions run 41340743667 SUCCESS on f7c72bf; Browser run 41340743973 IN_PROGRESS. Previous f8ecbad static/Browser SUCCESS. HDMI/GDevelop GUI/30 students/human/V5 NOT_RUN.",
       "notes": "M09 3min decision includes no-defect case, preventing invented bugs. M10 five-minute slot now labeled TRIAGEM in projected timeline and review, not 30 individual approvals. All changes V3 branch; no main, production or student data. Master 54/59."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-AUD-M09-M10-TRIAGE-PARITY",
-    "status": "SOURCE_V8_PASS_CI_PENDING",
+    "status": "SOURCE_V8_PASS_STATIC_CI_SUCCESS_BROWSER_PENDING",
     "updated_at": "2026-11-01T19:12:20Z",
     "code_commits": [
       "e83e3a374c503f857661e4e7e4c3b20a3099ffe2",
@@ -3259,15 +3260,19 @@
     "regression_commits": [
       "299e7b5035f0a42f635a70c4eb1ef78822585167"
     ],
-    "documentation_commit": "a3c776480594d6946637714a0a6a946fb80014f9",
+    "documentation_commit": "ed174001c52d52be5d184d77e8d6878e264a08af",
     "tests": [
       {
-        "name": "Seven source-derived V8 assertions: M09 student render no-defect, M10 projected triage clock, M10 review triage, private notes closed and student no private notes",
+        "name": "Eight source-derived V8 assertions: M09 student render no-defect, M10 projected triage clock, M10 review triage, private notes closed and student no private notes",
         "result": "PASS"
       },
       {
-        "name": "Native GitHub Actions static QA and Chrome on new SHA",
-        "result": "IN_PROGRESS_OR_QUEUED at inspection; NOT_CONFIRMED"
+        "name": "Native static QA on f7c72bf, run 41340743667",
+        "result": "SUCCESS"
+      },
+      {
+        "name": "Chrome Browser QA on f7c72bf, run 41340743973",
+        "result": "IN_PROGRESS at last inspection"
       },
       {
         "name": "Previous static QA and Chrome on f8ecbad",
