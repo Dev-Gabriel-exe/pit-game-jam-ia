@@ -22,7 +22,7 @@ const blank=student.validate('student-a');
 assert.equal(blank.ok,false,'blank student evidence not accepted');
 const draft=student.load('student-a');
 draft.outcome='issue';draft.resolution='backlog';draft.checks=[0,1,2];
-for(const f of student.fields)draft[f.id]='Registro observado e justificativa verificável '+f.id;
+for(const f of student.fields)draft[f.id]=f.id==='peer'?'Colega A fictício':'Registro observado '+f.id+' na rodada';
 assert(student.save('student-a',draft),'draft saved');
 assert.equal(student.validate('student-a').ok,true,'valid structured draft passes client-side validation');
 assert.equal(student.validate('student-b').ok,false,'student data isolated');
