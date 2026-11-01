@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T05:18:30Z",
+  "last_completed_at": "2026-11-01T06:12:52.002Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M07 legacy student evidence corrected; native static QA 41276399578 SUCCESS. Browser QA 41276399588 still running. Next: confirm Browser QA, audit M07 checks after editing gameplay criteria and then M08 teacher/student evidence. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+  "priority": "M07 gameplay evidence edits now invalidate three manual Preview checks; 25 direct V8 assertions PASS. New native CI not yet verified. Next: confirm static/Browser CI and correct M08 silent legacy truncation and field limits before visual work. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M07-LEGACY-DRAFT-PRESERVATION",
+  "last_task": "V4-AUD-M07-GAMEPLAY-EDIT-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3062,40 +3062,55 @@
       ],
       "tests": "GitHub native Node static QA 41276399578 SUCCESS on corrected regression commit 38ca3a3; Browser QA 41276399588 IN_PROGRESS. Earlier first regression run 41276386020 failed due test selecting the unchanged route; corrected in 38ca3a3. M06 Browser QA 41272806641 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
       "notes": "M07 now preserves seven overlong historical draft answers on load/save and route change; explicit per-field limits and practice warnings; submission blocked until correction. Teacher private notes remain collapsed, absent from student. No main, production or real student writes. Roadmap 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M07-GAMEPLAY-EDIT-RETEST",
+      "completed_at": "2026-11-01T06:12:52.002Z",
+      "commit": "8c6933048dd17400548cfb626ddc1542bf2b21d4",
+      "files": [
+        "v3/student-mission-seven.js",
+        "qa/v3-m07-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "25 direct V8 checks PASS on actual M07 JS (six gameplay edits, metadata exemption, whitespace idempotence, simulated DOM checkbox reset/status/persistence). Earlier M07 static run 41276399578 and Browser run 41276399588 jobs completed/success. New GitHub native CI NOT_CONFIRMED. GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
+      "notes": "Editing six gameplay/observation answers invalidates three Preview declarations; saved project path alone does not. Student text preserved, explicit retest notice. No teacher private notes exposed, no main/production/real-student changes. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M07-LEGACY-DRAFT-PRESERVATION",
-    "status": "CODE_AND_REGRESSION_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-01T05:18:30Z",
-    "code_commit": "dfba35ccb26aea0d323d4da4506ae9633db63fb6",
+    "task": "V4-AUD-M07-GAMEPLAY-EDIT-RETEST",
+    "status": "CODE_REGRESSION_DOCS_COMMITTED_DIRECT_V8_PASS_NATIVE_CI_PENDING",
+    "updated_at": "2026-11-01T06:12:52.002Z",
+    "code_commit": "4e05377e2575cbc530c5f965c7ee969bd5991a82",
     "regression_commits": [
-      "0e521d7124ee558d3a86d64576b021d37c996913",
-      "38ca3a3e2703b8c1b7bca7376c9fea2fa23008d5"
+      "bb121db1af14badf30481d2bed4660503be2c108"
     ],
-    "documentation_commit": "e5f43fd34c7290b9f67c9e6795718118b2572bfc",
+    "documentation_commit": "8c6933048dd17400548cfb626ddc1542bf2b21d4",
     "tests": [
       {
-        "name": "Native Node M07 student/teacher static QA",
+        "name": "Direct V8 M07 gameplay edit and simulated DOM QA",
         "result": "PASS",
-        "details": "Run 41276399578 completed/success on 38ca3a3; seven overlong fields, historical storage, route switch, disabled submission, teacher privacy"
+        "details": "25 assertions on actual fetched module; no real browser/GDevelop"
       },
       {
-        "name": "Browser QA M07",
-        "result": "IN_PROGRESS",
-        "details": "Run 41276399588 on 38ca3a3 not yet complete at checkpoint"
+        "name": "Previous M07 native static QA",
+        "result": "PASS",
+        "details": "GitHub run 41276399578 job completed/success"
       },
       {
-        "name": "Previous M06 static and browser",
+        "name": "Previous M07 Browser QA",
         "result": "PASS",
-        "details": "Runs 41272806527 and 41272806641 completed/success"
+        "details": "GitHub run 41276399588 job completed/success"
+      },
+      {
+        "name": "New M07 CI after code/test changes",
+        "result": "NOT_CONFIRMED"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm M07 Browser QA, then inspect whether gameplay criteria edits invalidate previous Preview checks; continue M08 pedagogy before visual polish",
+    "next": "Confirm new native CI, then M08 legacy draft preservation, per-field max validation and professor/aluno synchronization",
     "master_progress": "54/59 unchanged"
   }
 }
