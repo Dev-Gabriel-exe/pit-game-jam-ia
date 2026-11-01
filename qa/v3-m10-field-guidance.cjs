@@ -108,4 +108,41 @@ for(const f of student.fields)restored[f.id]='Registro revisado e verificado no 
 assert(student.save(legacyId,restored),'corrected record can be saved');
 assert.equal(student.validate(legacyId).ok,true,'corrected record is eligible for human review');
 assert(student.evidence(legacyId).length<=750,'corrected evidence fits API payload');
+// Manual launch attestations must track substantive edits, not formatting noise.
+const attestationMatrix=[
+ ['project',[0,1,2]],['access',[1,2]],['mechanic',[1]],['rule',[1]],['demo',[1]],
+ ['pitch',[]],['test',[]],['next',[]]
+];
+for(const [id,affected] of attestationMatrix){
+ const record=student.load('attestation-'+id);
+ record[id]='Primeiro registro observável do protótipo';
+ record.checks=[0,1,2];
+ const invalidated=student.updateField(record,id,'Segundo registro observável do protótipo');
+ assert.deepEqual(Array.from(invalidated),affected,'affected manual checks for '+id);
+ assert.deepEqual(Array.from(record.checks),[0,1,2].filter(n=>!affected.includes(n)),'stale confirmations removed for '+id);
+ assert(student.save('attestation-'+id,record),'persist changed attestation '+id);
+ assert.deepEqual(Array.from(student.load('attestation-'+id).checks),[0,1,2].filter(n=>!affected.includes(n)),'no stale checks restored after reload '+id);
+}
+for(const id of ['project','access','mechanic','rule','demo']){
+ const record=student.load('format-only-'+id);
+ record[id]='Projeto salvo e testado no Preview';
+ record.checks=[0,1,2];
+ assert.deepEqual(Array.from(student.updateField(record,id,'  Projeto   salvo e testado no Preview  ')),[],'formatting-only change should not invalidate '+id);
+ assert.deepEqual(Array.from(record.checks),[0,1,2],'keep real checks for formatting-only edit '+id);
+}
+const launchEdit=student.load('launch-edit-guard');
+for(const f of student.fields)launchEdit[f.id]='Registro real verificável do jogo e do teste '+f.id;
+launchEdit.checks=[0,1,2];
+assert(student.save('launch-edit-guard',launchEdit));
+assert.equal(student.validate('launch-edit-guard').ok,true,'complete launch initially eligible');
+assert.deepEqual(Array.from(student.updateField(launchEdit,'demo','Demonstração alterada após os testes no Preview')),[1]);
+assert(student.save('launch-edit-guard',launchEdit));
+assert.equal(student.validate('launch-edit-guard').ok,false,'stale Preview attestation blocks launch submission');
+assert.equal(student.validate('launch-edit-guard').field,'checks','explicit retest required');
+assert(/id="submitWork" disabled/.test(student.render({session:'launch-edit-guard',phase:'review',status:'',idea:{},canSubmit:true})),'review submission disabled until retest');
+launchEdit.checks=[0,1,2];
+assert(student.save('launch-edit-guard',launchEdit));
+assert.equal(student.validate('launch-edit-guard').ok,true,'rechecked launch can be reviewed');
+assert(student.mount.toString().includes('updateField(d,el.dataset.m10sField,el.value)'),'input handler wired to retest invalidation');
+assert(student.mount.toString().includes('box.checked=d.checks.includes'),'checkbox DOM reflects invalidation');
 console.log('PASS M10 accessible student guidance, privacy, persistence, isolated draft, teacher private notes; human/GDevelop/HDMI NOT_RUN');
