@@ -6,6 +6,7 @@ on:
       - 'qa/v5-m10-rare-equipped-seed.cjs'
       - 'qa/v5-m10-rare-equipped-browser.cjs'
       - 'v5/arena-lab.js'
+      - 'v5/arena-three.js'
       - 'v5/m10-visual-roster.js'
       - '.github/workflows/v5-m10-rare-equipped-qa.yml'
   workflow_dispatch:
