@@ -842,3 +842,14 @@ O primeiro [run 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 **QA do checkpoint `44c9f6d9ce9fa257793f2da622b02fb08811a777`:** [geral 41253587440](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253587440) **SUCCESS**; [navegador 41253587466](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253587466) **SUCCESS**. A branch continua isolada; nenhum merge, deploy, dados reais, XP ou progressão alterados.
 
 **Próxima tarefa da mesma M10:** examinar distribuição de cues descartados e focalizar talentos passivos/reativos raros que não surgem nas quatro seeds anteriores; depois retomar balanceamento e G.2 presencial. **G.2 não executado; H.1/H.2 reais e homologação humana bloqueadas.**
+
+
+## H.3/M10 — cobertura focal de talentos raros (31/10/2026)
+
+**Missão em andamento:** investigar quais talentos passivos/reativos foram selecionados mas não emitiram eventos reais nas quatro seeds sintéticas, sem confundir `charge` (prontidão) com `talent/proc` (ativação). A auditoria continua isolada e não altera estatísticas, câmera, XP, progressão, alunos ou M5.
+
+**Incremento:** `qa/v5-m10-passive-reactive-events.cjs` (commit `9b61137cab74c93917593bdbb4c8a1cd53274d9e`) registra uma linha por cada um dos **120 IDs canônicos qualificados por classe**, contagens separadas de `talent`, `proc` e `charge`, totais por tipo, talentos selecionados sem disparo, ativações raras (até duas) e prontidões sem ativação. As somas são conferidas contra os eventos do motor; o relatório JSON anônimo já existente ganha `coverage`. A regressão M5 e a verificação D07 continuam obrigatórias.
+
+**CI:** aguardando execução e confirmação do workflow [V5 H3 — M10 Passive and Reactive Event Audit](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/workflows/v5-m10-passive-reactive-qa.yml) no SHA funcional. **Não marcar aprovado antes do resultado**. Os últimos CI anteriores no SHA `40d9dcd9754cd3676363937fbf646d086a00daf2` (QA geral [41253773117](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253773117) e navegador [41253773074](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41253773074)) estavam verdes; não substituem o novo teste.
+
+**Próximo passo:** verificar o CI e inspecionar a lista de passivos/reativos sem disparo; criar casos focais pareados para os menos cobertos antes de ajustar qualquer regra de combate. A cobertura de eventos não equivale à legibilidade WebGL. **G.2 nos PCs físicos não realizado; H.1/H.2 reais, merge, deploy e homologação humana permanecem bloqueados.**
