@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 substantive field edits now invalidate only affected manual checks (privacy for all eight fields); formatting-only edits preserve checks. Earlier Browser QA 41301301028 SUCCESS and first code static QA 41305593957 SUCCESS. Final regression SHA 1f95fd3 CI not yet confirmed. Next verify final SHA CI and continue cross-mission teacher/student QA; GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
+  "priority": "M10 launch edit checks fixed and static QA SUCCESS 41305709046 on final regression SHA 22cc921; Browser QA 41305709003 still in progress. Previous static QA failed due stale expectation in v3-m10-storage-failsafe, repaired. Next confirm Browser QA and audit M01–M10 teacher/student evidence and projection. Human/GDevelop GUI/HDMI/mobile physical NOT_RUN.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
   "completed_count": 54,
@@ -3140,19 +3140,20 @@
     {
       "id": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
       "completed_at": "2026-11-01T12:14:37Z",
-      "commit": "4372c6960c3486a4a4a6404985cb0057e4685864",
+      "commit": "850cad132c9c04e5f719480f3fb7626b7c57f08b",
       "files": [
         "v3/student-mission-ten.js",
         "qa/v3-m10-field-guidance.cjs",
-        "v3/AUDITORIA-V4-MISSOES.md"
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "qa/v3-m10-storage-failsafe.cjs"
       ],
-      "tests": "Regression source committed and GitHub Actions triggered; native static QA and Browser QA on final regression SHA 1f95fd3 not yet confirmed. Prior M10 Browser QA 41301301028 SUCCESS; static QA 41305593957 SUCCESS on earlier formatting-only code SHA 91fb4cf. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
-      "notes": "M10 edit invalidation by field: project 0/1/2, access 1/2, mechanic/rule/demo 1/2, pitch/test/next 2; whitespace normalization avoids false invalidation. Teacher private notes remain collapsed. Master 54/59 unchanged, main/production/student data untouched."
+      "tests": "Native static QA 41305709046 SUCCESS on regression SHA 22cc921. Earlier static run 41305635791 failed due old test expecting only check 1 reset, repaired. Browser QA 41305709003 IN_PROGRESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+      "notes": "M10 edit invalidation by field: project 0/1/2, access 1/2, mechanic/rule/demo 1/2, pitch/test/next 2; whitespace normalization avoids false invalidation. Teacher private notes remain collapsed. Master 54/59 unchanged, main/production/student data untouched. Regression aligned with privacy rule; documentation updated. No human or GUI testing."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-AUD-M10-EDIT-ATTESTATION-RETEST",
-    "status": "CODE_TEST_DOCS_COMMITTED_FINAL_CI_PENDING",
+    "status": "CODE_TEST_DOCS_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
     "updated_at": "2026-11-01T12:14:37Z",
     "code_commits": [
       "91fb4cf80e7235b2c9bea03c312141028aa3c970",
@@ -3160,31 +3161,33 @@
     ],
     "regression_commits": [
       "9dc53d1b8c5085751df835e8ceaf1670991c9bce",
-      "1f95fd3837992598be6717a3112ce8297b8ed1f7"
+      "1f95fd3837992598be6717a3112ce8297b8ed1f7",
+      "2f596ce98429b363242430d91c3bb43dfa0b8ee9",
+      "22cc921a188190513a8391e8d5d5f26d102b172c"
     ],
-    "documentation_commit": "4372c6960c3486a4a4a6404985cb0057e4685864",
+    "documentation_commit": "850cad132c9c04e5f719480f3fb7626b7c57f08b",
     "tests": [
       {
-        "name": "Prior M10 Browser QA",
+        "name": "Native static QA on final regression",
         "result": "PASS",
-        "details": "Run 41301301028 on 6ddd07e (previous commit)"
+        "details": "GitHub Actions run 41305709046 on SHA 22cc921"
       },
       {
-        "name": "First formatting fix static QA",
-        "result": "PASS",
-        "details": "Run 41305593957 on 91fb4cf (before final regression)"
+        "name": "Browser QA on final regression",
+        "result": "IN_PROGRESS",
+        "details": "GitHub Actions run 41305709003 on SHA 22cc921 at last query"
       },
       {
-        "name": "Final regression native static QA / Browser QA",
-        "result": "NOT_CONFIRMED",
-        "details": "Verify SHA 1f95fd3; no claim of pass yet"
+        "name": "Previous static QA failure diagnosed",
+        "result": "REPAIRED",
+        "details": "Run 41305635791 failed in old M10 blocked-storage expectation; updated test to privacy-retest semantics"
       },
       {
         "name": "GDevelop GUI/HDMI/physical mobile/human test",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm CI on final regression and continue cross-mission professor/student audit; keep main untouched",
+    "next": "Confirm Browser QA 41305709003; cross-mission professor/student audit and physical sign-off still pending",
     "master_progress": "54/59 unchanged"
   }
 }
