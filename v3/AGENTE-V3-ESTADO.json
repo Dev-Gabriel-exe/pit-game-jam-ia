@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T09:14:41.815Z",
+  "last_completed_at": "2026-11-01T10:18:15.690Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09 nine legacy playtest fields now preserve over-limit text and reject invalid submissions; 24 direct V8 checks and 83 V8-emulated QA assertions PASS. Native Node/CI/Browser QA NOT_CONFIRMED. Next: M09 edits must invalidate obsolete manual playtest attestations. Physical GDevelop/HDMI/mobile/human NOT_RUN.",
+  "priority": "M09 edit of hypothesis/task/observation/reproduction/decision now invalidates only relevant manual peer-test attestations, with visible checkbox sync and actionable retest notice. Native static QA SUCCESS 41296841398 on 166e7b9; Browser QA 41296841390 pending at checkpoint. Next audit M10; GDevelop GUI/HDMI/physical mobile/human peer test NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-LEGACY-PLAYTEST-DRAFTS",
+  "last_task": "V4-AUD-M09-EDIT-ATTESTATION-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3110,39 +3110,51 @@
       ],
       "tests": "24 direct V8 checks PASS on actual M09 module; full QA file 83 assertions PASS under V8 with emulated Node fs/vm/assert. Native Node, GitHub CI and Browser QA NOT_CONFIRMED (connector commit status/workflow queries returned empty lists). GDevelop GUI, HDMI, mobile physical, human peer tests NOT_RUN.",
       "notes": "Preserves all nine legacy playtest fields, warns over max, blocks invalid submissions, allows correction; teacher rubric and collapsed private notes unchanged. Master 54/59 unchanged; main/production/student data untouched."
+    },
+    {
+      "id": "V4-AUD-M09-EDIT-ATTESTATION-RETEST",
+      "completed_at": "2026-11-01T10:18:15.690Z",
+      "commit": "2cd3cfdf1ca294c173de6530e6d5a7a7375b2535",
+      "files": [
+        "v3/student-mission-nine.js",
+        "qa/v3-m09-storage-failsafe.cjs",
+        "qa/v3-m09-field-guidance.cjs",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Native Node static QA 41296841398 SUCCESS on code/test SHA 166e7b9; earlier failed runs exposed oversized QA fixtures and simulated checkbox not rechecked, repaired without weakening production constraints. Browser QA 41296841390 IN_PROGRESS at check. No physical GDevelop/HDMI/mobile/human peer test.",
+      "notes": "M09 substantive field edits invalidate affected manual attestations; metadata and whitespace edits exempt; DOM/status sync and persistence. Master 54/59 unchanged; main/production/real student data untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-LEGACY-PLAYTEST-DRAFTS",
-    "status": "CODE_REGRESSION_DOCS_COMMITTED_V8_PASS_NATIVE_CI_PENDING",
-    "updated_at": "2026-11-01T09:14:41.815Z",
-    "code_commit": "c50a60b201bfb7d9e154bc63b0ca4e95d423607e",
+    "task": "V4-AUD-M09-EDIT-ATTESTATION-RETEST",
+    "status": "CODE_REGRESSION_DOCS_COMMITTED_STATIC_CI_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-01T10:18:15.690Z",
+    "code_commit": "3e1cd3d751d22d633076353a3cd951828105f83c",
     "regression_commits": [
-      "f59c17f5e4214cba99dd612cf51d3eb2eac6266a"
+      "91b8412523b03958de7fdeb760699353dfe7a552",
+      "ea9ec0b72714d0cb87f12bd6dca2ad97f3ceb91c",
+      "998962ed0ba0288391d3ab4976e8544c37b57c4d",
+      "166e7b9d6b3b908a5a8bde4afbf9874e91ed28db"
     ],
-    "documentation_commit": "97c2da0c65a99516a861a28429fe8049bf2a09e3",
+    "documentation_commit": "2cd3cfdf1ca294c173de6530e6d5a7a7375b2535",
     "tests": [
       {
-        "name": "M09 direct functional V8 checks",
+        "name": "Native GitHub static QA",
         "result": "PASS",
-        "details": "24 checks, nine overlong legacy fields, load/save, validation, warning, correction, evidence roundtrip"
+        "details": "Run 41296841398 on 166e7b9 includes M09 field guidance, storage regression and cross-mission alignment"
       },
       {
-        "name": "M09 QA regression via V8 Node API emulation",
-        "result": "PASS",
-        "details": "83 assertions on fetched QA and current source; not native Node"
+        "name": "Browser QA",
+        "result": "IN_PROGRESS",
+        "details": "Run 41296841390 on 166e7b9, no final result at checkpoint"
       },
       {
-        "name": "Native Node/CI/Browser QA on new commits",
-        "result": "NOT_CONFIRMED",
-        "details": "GitHub commit workflow/status queries returned empty lists, not evidence of success"
-      },
-      {
-        "name": "Physical GDevelop GUI/HDMI/mobile/human peer test",
+        "name": "GDevelop GUI/HDMI/physical mobile/human peer test",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm native CI; M09 edit invalidation of peer-test confirmations",
+    "next": "Confirm Browser QA then audit M10 professor/aluno for launch evidence and preservation",
     "master_progress": "54/59 unchanged"
   }
 }
