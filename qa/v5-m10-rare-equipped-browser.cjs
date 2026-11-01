@@ -7,23 +7,38 @@ const {chromium}=require('playwright');
 const fixture=JSON.parse(fs.readFileSync(process.env.M10_RARE_FIXTURE||'qa/v5-m10-rare-equipped-seed.json','utf8'));
 const targets=['guardian:J08','hunter:P09','mage:A07'];
 const prefix=process.env.M10_RARE_PREFIX||'qa/v5-m10-rare-equipped';
+// Diagnostic only: emulate a constrained device without modifying classroom hardware.
+const lowQuality=process.env.M10_RARE_LOW==='1';
 (async()=>{
  const browser=await chromium.launch({headless:true,args:[
   '--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'
  ]});
  const report={schema:'m10-rare-equipped-webgl-v1',synthetic:true,variant:9,
   seed:fixture.seed,engineProcCounts:fixture.procs,
-  renderer:'SwiftShader',physicalPCsValidated:false,humanVisualApproval:false,
+  renderer:'SwiftShader',qualityMode:lowQuality?'low':'auto',
+  emulatedDeviceMemoryGb:lowQuality?2:null,physicalPCsValidated:false,humanVisualApproval:false,
   limitation:'Screenshots are sampled after cumulative cue detection; they do not prove the short-lived effect is within camera view.',
   cameraShots:[],rare:{}};
  try{
-  const page=await browser.newPage({viewport:{width:1366,height:768},reducedMotion:'reduce'});
+  const page=await browser.newPage({viewport:{width:1366,height:768},
+   reducedMotion:lowQuality?'no-preference':'reduce'});
+  if(lowQuality)await page.addInitScript(()=>{
+   Object.defineProperty(navigator,'deviceMemory',{configurable:true,value:2});
+  });
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&m10variant=9&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&sprites=1&seed='+fixture.seed,
    {waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:180000});
   const stage=page.locator('#arenaStage');
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m10');
+  assert.equal(await stage.getAttribute('data-v5-quality-mode'),lowQuality?'low':'auto',
+   'Renderer must honor the expected quality preset');
+  if(lowQuality){
+   assert.equal(Number(await stage.getAttribute('data-v5-sprite-frames')),3,
+    'Low-quality sprite atlas must use three frames, not the normal six');
+   assert(Number(await stage.getAttribute('data-v5-sprite-textures'))>0,
+    'Low-quality mode must still draw genuine talent sprites');
+  }
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),10);
   assert.match(await page.locator('#phase2Builds').innerText(),/Caminhos V/);
   const builds=await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents);
@@ -98,6 +113,9 @@ const prefix=process.env.M10_RARE_PREFIX||'qa/v5-m10-rare-equipped';
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).every(b=>b.ids.length===5));
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
   report.m5Regression='5 talent slots restored, visual provenance reset';
+  report.qualityGate=lowQuality?
+   'Synthetic 2GB deviceMemory, low quality, three sprite frames, 30 GLBs, genuine cues and M5 rollback':
+   'Default quality path preserved';
   fs.writeFileSync(prefix+'.json',JSON.stringify(report,null,2)+'\n');
   console.log('PASS M10 equipped rare WebGL audit: '+JSON.stringify({
    seed:report.seed,engineProcCounts:report.engineProcCounts,
