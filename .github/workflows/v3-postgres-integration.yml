@@ -1,0 +1,53 @@
+name: V3 Disposable PostgreSQL Classroom QA
+on:
+  push:
+    branches:
+      - feature/pit-gamejam-v3-arcade
+    paths:
+      - 'chat-api/api/chat.js'
+      - 'chat-api/api/classroom.js'
+      - 'chat-api/package.json'
+      - 'qa/v3-postgres-integration.cjs'
+      - 'qa/v3-isolated-backend.cjs'
+      - '.github/workflows/v3-postgres-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  classroom-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      DATABASE_URL: postgres://postgres:ci_only_password@127.0.0.1:5432/pit_test
+      PIT_TEACHER_PIN: 0123456789abcdef
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: pit_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci_only_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d pit_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check chat-api/api/chat.js
+          node --check chat-api/api/classroom.js
+          node --check qa/v3-postgres-integration.cjs
+          node --check qa/v3-isolated-backend.cjs
+      - name: Install isolated database driver
+        run: npm install --prefix chat-api --no-save --no-package-lock --ignore-scripts
+      - name: Run in-memory API regression
+        run: node qa/v3-isolated-backend.cjs
+      - name: Run real PostgreSQL 16 API integration with fictional students
+        run: node qa/v3-postgres-integration.cjs
