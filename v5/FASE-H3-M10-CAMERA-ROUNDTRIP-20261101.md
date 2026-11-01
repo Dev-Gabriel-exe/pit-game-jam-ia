@@ -11,7 +11,7 @@ Verificar no navegador Chromium/WebGL que uma partida fictícia com **30 persona
 
 **Arquivos alterados:** `qa/v5-m10-spectator-browser.cjs`; workflow existente `.github/workflows/v5-m10-visual-qa.yml` executa esse teste no job `spectator-camera-webgl`.
 
-**Commits do incremento:** `4e2a1c3f6c17bdc4e12dd9b4ef955863b36f05a1` (regressão) e `0ad3eeb2c07eaafbae044845fe9e5579a1418e5c` (espera de carregamento). **CI aguardando verificação**; não declarar o teste aprovado antes do resultado do job do segundo SHA.
+**Commits do incremento:** `4e2a1c3f6c17bdc4e12dd9b4ef955863b36f05a1` (regressão) e `0ad3eeb2c07eaafbae044845fe9e5579a1418e5c` (espera de carregamento). **CI do segundo SHA verificado e aprovado**: os quatro jobs do workflow M10, inclusive `spectator-camera-webgl`, concluíram `success` no run [41317571869](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41317571869). Os workflows gerais [QA 41317571811](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41317571811) e [Browser QA 41317571820](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41317571820) também concluíram `success`.
 
 ## Evidências e limites
 
@@ -20,4 +20,4 @@ Verificar no navegador Chromium/WebGL que uma partida fictícia com **30 persona
 - O teste de hardware **G.2 nos PCs físicos não foi realizado**; FPS de CI não valida hardware.
 - H.1/H.2 com alunos reais permanecem bloqueadas até G.2 e autorização explícita.
 - Ainda pendem homologação visual humana, balanceamento definitivo e teste físico de 30 personagens.
-- **Próximo passo:** confirmar o CI do segundo SHA; corrigir qualquer falha real e só então considerar este incremento concluído. Continuar na Missão 10.
+- **Incremento concluído no laboratório automatizado**, não homologação final. **Próximo passo:** ampliar ensaios com variações de builds/atributos e observar legibilidade da arquibancada/câmera em PC real quando G.2 for autorizado e executado. Continuar na Missão 10.
