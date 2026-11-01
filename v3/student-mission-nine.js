@@ -73,11 +73,25 @@ function render(ctx){const p=profile(ctx);return '<section class="m9s-root" id="
 // A changed observation/decision must not inherit a prior manual confirmation.
 function changeOutcome(session,d,next){if(!outcomes.includes(next)||d.outcome===next)return false;d.outcome=next;d.resolution='';d.checks=d.checks.filter(n=>n!==2);save(session,d);return true}
 function changeResolution(session,d,next){if(!resolutions.includes(next)||d.resolution===next)return false;d.resolution=next;d.checks=d.checks.filter(n=>n!==2);save(session,d);return true}
+// A manual peer-test declaration belongs to the exact task and observation it attests.
+const retestByField={
+ peer:[0,1,2],hypothesis:[0,1,2],task:[0,1,2],expected:[0,1,2],
+ observed:[1,2],steps:[1,2],impact:[1,2],decision:[2],saved:[]
+};
+function changeField(session,d,id,value){
+ if(!Object.prototype.hasOwnProperty.call(retestByField,id))return [];
+ const before=clean(d[id]),after=clean(value);
+ d[id]=String(value??'');
+ const invalidated=before===after?[]:retestByField[id];
+ if(invalidated.length)d.checks=d.checks.filter(n=>!invalidated.includes(n));
+ save(session,d);
+ return invalidated;
+}
 function mount(ctx){const root=document.querySelector('#m9sRoot');if(!root)return;const d=load(ctx.session),locked=['submitted','approved'].includes(ctx.status);
-root.querySelectorAll('[data-m9s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m9sField]=el.value;const ok=save(ctx.session,d),status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
+root.querySelectorAll('[data-m9s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const invalidated=changeField(ctx.session,d,el.dataset.m9sField,el.value);if(invalidated.length)root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(invalidated.includes(Number(c.dataset.m9sCheck)))c.checked=false});const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(invalidated.length?' O relatório mudou: confirme novamente as declarações desmarcadas após verificar o teste real.':'')}));
 root.querySelectorAll('input[name="m9Resolution"]').forEach(el=>el.addEventListener('change',()=>{if(locked||!el.checked)return;const changed=changeResolution(ctx.session,d,el.value);if(changed){root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(c.dataset.m9sCheck==='2')c.checked=false})}const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(changed?' Confira novamente a reprodução e marque a terceira declaração somente após justificar a nova decisão.':'')}));
 root.querySelectorAll('input[name="m9Outcome"]').forEach(el=>el.addEventListener('change',()=>{if(locked||!el.checked)return;const changed=changeOutcome(ctx.session,d,el.value);if(changed){root.querySelectorAll('input[name="m9Resolution"]').forEach(r=>{r.checked=false});root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(c.dataset.m9sCheck==='2')c.checked=false})}const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(changed?' Selecione novamente a decisão e confirme a terceira declaração após revisar o novo resultado.':'')}));
 root.querySelectorAll('[data-m9s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m9sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(ctx.session,d);const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m9s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m9sNav==='practice'){ctx.onPhase('practice');return}const v=validate(ctx.session);if(!v.ok){ctx.onMessage(v.label);const focusTarget=v.field==='checks'?'[data-m9s-check]':v.field==='outcome'?'input[name="m9Outcome"]':v.field==='resolution'?'input[name="m9Resolution"]':'#m9s-'+v.field;root.querySelector(focusTarget)?.focus();return}ctx.onPhase('review')}))}
-window.PIT_STUDENT_MISSION_NINE={fields,outcomes,resolutions,load,save,draftNotice,validate,evidence,parseEvidence,hydrate,profile,render,mount,changeOutcome,changeResolution};
+window.PIT_STUDENT_MISSION_NINE={fields,outcomes,resolutions,load,save,draftNotice,validate,evidence,parseEvidence,hydrate,profile,render,mount,changeOutcome,changeResolution,changeField};
 })();
