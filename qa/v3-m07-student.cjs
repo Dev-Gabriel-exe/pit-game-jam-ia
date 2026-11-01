@@ -153,4 +153,33 @@ assert.equal(denied.validate('m07-historical-denied').field,'condition','M07 sto
 assert.doesNotMatch(m.render({session:'ficticioA',phase:'practice',status:'draft',idea:{}}),/pit-private-teacher-notes/,'Student view must not include teacher-only notes');
 console.log('M07 legacy text and limit regression: seven fields, route switch and storage denial passed.');
 
+// Regression: editing the game's reported behavior invalidates earlier Preview declarations.
+for(const field of ['start','challenge','condition','result','negative','repeat']){
+ const d=m.load('m07-retest-'+field);
+ for(const f of m.fields)d[f.id]='Resultado observado no Preview para '+f.id;
+ d.checks=[0,1,2];
+ const old=d[field];
+ assert.equal(m.updateField(d,field,old+' alterado'),true,'M07 '+field+' edit requires retest');
+ assert.equal(d.checks.length,0,'M07 '+field+' edit clears all three Preview checks');
+ assert.equal(d[field],old+' alterado','M07 must preserve edited text');
+ m.save('m07-retest-'+field,d);
+ assert.equal(m.validate('m07-retest-'+field).field,'checks','M07 cannot submit with stale Preview checks');
+}
+const stable=m.load('m07-stable');
+for(const f of m.fields)stable[f.id]='Resultado observado no Preview para '+f.id;
+stable.checks=[0,1,2];
+assert.equal(m.updateField(stable,'condition',stable.condition),false,'same condition is not a change');
+assert.equal(stable.checks.length,3,'unchanged text keeps checks');
+assert.equal(m.updateField(stable,'saved','Novo local do projeto editável'),false,'file location alone does not alter gameplay');
+assert.equal(stable.checks.length,3,'file location edit keeps gameplay checks');
+assert.equal(m.updateField(stable,'unknown','ignored'),false,'unknown field must be ignored');
+assert.equal(stable.checks.length,3);
+assert.equal(m.updateField(stable,'condition',stable.condition+' '),false,'whitespace-only edit is not a gameplay change');
+assert.equal(stable.checks.length,3);
+assert.match(read('v3/student-mission-seven.js'),/if\(retest\)root\.querySelectorAll\('\[data-m7s-check\]'\)/,
+ 'M07 UI must visibly clear checked boxes when a gameplay field changes');
+assert.doesNotMatch(m.render({session:'ficticioA',phase:'practice',status:'draft',idea:{}}),
+ /pit-private-teacher-notes/,'M07 student must not show teacher private notes');
+console.log('M07 field-edit retest: six gameplay fields, metadata exemption and UI wiring passed.');
+
 console.log('M07-03: evidence, isolation, route and integration checks passed; no real Preview/API test.');
