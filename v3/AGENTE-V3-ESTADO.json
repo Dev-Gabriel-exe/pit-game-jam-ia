@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T15:20:00Z",
+  "last_completed_at": "2026-11-01T16:16:14.716Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "V3 classroom and app M01-M10 reconciled with main mission-only sequential monotonic release. V8 actual handler with mocked SQL/crypto 17 assertions PASS; static syntax PASS for backend, client and QA; qa/v3-m04-regression.cjs and qa/v3-isolated-backend.cjs updated to new contract. Native CI/Browser QA on final SHA not confirmed; do not merge PR #23 blindly. Next run disposable PostgreSQL/Chrome integration and audit V5 bridge with main without altering production. HDMI/GDevelop/human NOT_RUN.",
+  "priority": "Classroom missing-row handling fixed: explicit 503 for student progress and teacher release, plus mocked regression. Real PostgreSQL integration QA previously attempted illegal M01->M04 jump; fixed to sequential M02/M03/M04 and no rollback, added 751-character no-write check. New branch-scoped disposable PostgreSQL 16 CI workflow committed. V8 actual handler 8 checks PASS; three changed JS files V8 syntax PASS. GitHub Actions run result NOT_CONFIRMED; no local Postgres, Chrome, HDMI, GDevelop GUI or human tests. Next inspect workflow result, fix any failure, audit M01–M10 and V5 bridge without merging PR #23.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-V3-V5-MISSION-ONLY-RELEASE",
+  "last_task": "V4-AUD-CLASSROOM-503-POSTGRES-CI",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3189,46 +3189,55 @@
       ],
       "tests": "V8 actual classroom handler with SQL/crypto mocks: 17 checks PASS; client M01-M10 static release checks PASS; syntax compilation of backend, app, two QA scripts PASS; native CI/Chrome/PostgreSQL/HDMI/GDevelop GUI NOT_CONFIRMED or NOT_RUN.",
       "notes": "Teacher release is sequential and monotonic, student evidence submission independent of projected phase, no rollback; all ten student contexts updated. PR #23 still draft, main unchanged. Master roadmap remains 54/59."
+    },
+    {
+      "task": "V4-AUD-CLASSROOM-503-POSTGRES-CI",
+      "completed_at": "2026-11-01T16:16:14.716Z",
+      "commit": "2c661ed8def0d25c7d8bb4ee706d403329e9a9e2",
+      "files": [
+        "chat-api/api/classroom.js",
+        "qa/v3-isolated-backend.cjs",
+        "qa/v3-postgres-integration.cjs",
+        ".github/workflows/v3-postgres-integration.yml"
+      ],
+      "tests": "8 actual classroom handler cases in V8 with SQL mocks PASS (missing classroom state/progress/heartbeat/release, sequential release, valid evidence and overflow). Syntax of three JS files compiled in V8 PASS. GitHub Actions/PostgreSQL 16 workflow created but completion NOT_CONFIRMED; physical browser/HDMI/GDevelop/human NOT_RUN.",
+      "notes": "Missing classroom row now produces actionable 503, not 500/409. Real Postgres QA script reconciled to monotonic sequential mission release; new CI uses ephemeral Postgres 16, synthetic students and fake PIN. No changes to main, deployment or real student records. Master roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-V3-V5-MISSION-ONLY-RELEASE",
-    "status": "CODE_REGRESSION_DOCS_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-01T15:20:00Z",
+    "task": "V4-AUD-CLASSROOM-503-POSTGRES-CI",
+    "status": "CODE_AND_CI_WORKFLOW_COMMITTED_CI_PENDING",
+    "updated_at": "2026-11-01T16:16:14.716Z",
     "code_commits": [
-      "2ce0578b951fbc25493aa5481ddaab36787768be",
-      "945cd8e90aa448f1f22934a1cb4375e270782b6a",
-      "6f6019b4b7ea00836e5b0039df75d6947de1b2a0"
+      "29ef02fbd413a92729285afde6bd6506f8f49837"
     ],
     "regression_commits": [
-      "27e87b1d34ec59d24c378c4dc4361d0b6f85c94c",
-      "da60fec508a1f34c456e28ce9bebf42b23586b89"
+      "fa7527ecfdbce0a66fa131018107f3bc79ac7bf2",
+      "b18c19ac1c192a124a1172a5ae83200cd577b9f5"
     ],
-    "documentation_commit": "8e4790b32804a4a6a23e85c002501d3a352f3118",
+    "ci_commit": "2c661ed8def0d25c7d8bb4ee706d403329e9a9e2",
     "tests": [
       {
-        "name": "Actual V3 classroom handler in V8 with SQL/crypto mocks",
+        "name": "Actual V3 classroom handler in V8 with mocked SQL",
         "result": "PASS",
-        "details": "17 checks including future lock, no skip, monotonic release, evidence length/line breaks, 10 client contexts"
+        "details": "8 cases, including missing classroom 503, stage skip, valid progress, evidence overflow"
       },
       {
-        "name": "JS syntax of backend, client and two QA scripts",
-        "result": "PASS"
+        "name": "JS syntax in V8",
+        "result": "PASS",
+        "details": "classroom.js, v3-isolated-backend.cjs, v3-postgres-integration.cjs"
       },
       {
-        "name": "Native CI and Browser QA",
-        "result": "NOT_CONFIRMED"
+        "name": "GitHub Actions disposable PostgreSQL 16",
+        "result": "NOT_CONFIRMED",
+        "details": "Workflow created and push triggered; no verified run result yet"
       },
       {
-        "name": "Disposable PostgreSQL and Chrome integration",
-        "result": "NOT_RUN"
-      },
-      {
-        "name": "GDevelop GUI/HDMI/physical mobile/human",
+        "name": "Chrome, GDevelop GUI, HDMI, mobile and human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Check CI at latest SHA; disposable PostgreSQL/Chrome E2E, teacher/student mission-only bridge and V5 progression, duel and arena M5/M10 without changing main",
+    "next": "Confirm branch-scoped PostgreSQL CI and Browser QA, correct failures; audit teacher/student alignment and V5 duel/arena bridge in synthetic environment.",
     "master_progress": "54/59 unchanged"
   }
 }
