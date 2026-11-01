@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "V3 evidence backend now rejects >750 instead of truncating; direct Node normalization boundary smoke PASS (7), isolated handler regression committed, native CI/Chrome not yet confirmed. V3 phase-gated classroom differs from main mission-only release; do not merge PR #23 blindly. Next verify CI and reconcile mission-only release in V3 student/professor flow, preserve V5 XP/arena. Human/GDevelop/HDMI NOT_RUN.",
+  "priority": "V3 evidence backend now rejects >750 instead of truncating; direct Node normalization boundary smoke PASS (7), actual V3 classroom handler executed with mocked SQL in V8: 6 checks PASS; native CI/Chrome not yet confirmed. V3 phase-gated classroom differs from main mission-only release; do not merge PR #23 blindly. Next verify CI and reconcile mission-only release in V3 student/professor flow, preserve V5 XP/arena. Human/GDevelop/HDMI NOT_RUN.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-EVIDENCE-750-V5-CLASSROOM-CONTRACT",
   "completed_count": 54,
@@ -3173,7 +3173,7 @@
         "qa/v3-isolated-backend.cjs",
         "v3/INTEGRACAO-V3-V5-2026-11-01.md"
       ],
-      "tests": "7 local Node boundary/CRLF checks of normalization logic PASS; actual classroom handler regression added to qa/v3-isolated-backend.cjs but native GitHub Actions status NOT_CONFIRMED; no live API, PostgreSQL, Chrome, HDMI, GDevelop GUI or human tests.",
+      "tests": "7 local Node boundary/CRLF checks PASS; actual GitHub V3 classroom.js handler executed in V8 with mocked SQL, 6 checks PASS (750 accepted, 751 rejected with no write, CRLF preserved); qa/v3-isolated-backend.cjs regression committed but native GitHub Actions NOT_CONFIRMED; no live API, PostgreSQL, Chrome, HDMI, GDevelop GUI or human tests.",
       "notes": "Backend rejects oversized evidence before SQL write, preserving existing student draft and line boundaries. 750 accepted, 751 rejected in isolated handler regression. Discovered V3 phase gating versus main mission-only release incompatibility; PR #23 remains draft. No main or production writes. Master roadmap 54/59 unchanged."
     }
   ],
@@ -3196,9 +3196,14 @@
         "details": "7 direct checks; targeted logic copied from V3 backend, not full handler"
       },
       {
-        "name": "Isolated full classroom handler with mocked SQL",
-        "result": "COMMITTED_NOT_RUN_LOCALLY",
-        "details": "QA tests added to qa/v3-isolated-backend.cjs; native CI pending"
+        "name": "Actual V3 classroom handler in V8 with mocked SQL",
+        "result": "PASS",
+        "details": "6 assertions, 750 accepted, 751 rejected before DB write, CRLF preserved; not native Node/PostgreSQL"
+      },
+      {
+        "name": "Full native isolated classroom regression in CI",
+        "result": "NOT_CONFIRMED",
+        "details": "qa/v3-isolated-backend.cjs updated; GitHub Actions run result not available via current status API"
       },
       {
         "name": "Native static QA and Browser QA on latest branch",
