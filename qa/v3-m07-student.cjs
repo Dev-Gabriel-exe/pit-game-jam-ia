@@ -117,4 +117,39 @@ assert.equal(denied.load('ficticio-rota').start,'');
 assert.equal(denied.load('ficticio-rota').route,'3d');
 console.log('M07: denied-storage, volatile draft, route/check isolation and honest warnings passed.');
 
+// Pedagogical regression: never silently truncate historical student answers.
+const completeM07=m.load('ficticioA');
+for(const f of m.fields)completeM07[f.id]='Resultado observado no Preview para '+f.id;
+completeM07.checks=[0,1,2];
+for(const f of m.fields){
+ const session='m07-overlimit-'+f.id,raw='X'.repeat(f.max+1);
+ m.save(session,{...completeM07,[f.id]:raw});
+ assert.equal(m.load(session)[f.id],raw,'M07 save/load must preserve oversized '+f.id);
+ const v=m.validate(session);
+ assert.equal(v.ok,false,'M07 oversized '+f.id+' must be invalid');
+ assert.equal(v.field,f.id,'M07 must identify offending '+f.id);
+ assert.match(v.label,new RegExp(String(f.max)),'M07 must explain max for '+f.id);
+ const practice=m.render({session,phase:'practice',status:'draft',idea:{}});
+ assert.match(practice,/Seu texto foi preservado/,'M07 warns on legacy '+f.id);
+ const review=m.render({session,phase:'review',status:'draft',canSubmit:true,preview:true,idea:{}});
+ assert.match(review,/id="submitWork" disabled/,'M07 cannot submit oversized '+f.id);
+}
+const legacyM07='X'.repeat(170);
+memory.set('pit_v3_m07_m07-historical',JSON.stringify({...completeM07,condition:legacyM07}));
+const historic=m.load('m07-historical');
+assert.equal(historic.condition,legacyM07,'M07 legacy localStorage is preserved on load');
+m.selectRoute(historic,1);
+assert.equal(historic.checks.length,0,'M07 route switch invalidates old Preview checks');
+m.save('m07-historical',historic);
+assert.equal(m.load('m07-historical').condition,legacyM07,'M07 route switch does not cut historical text');
+assert.equal(m.validate('m07-historical').ok,false,'M07 invalid legacy text cannot be submitted');
+const deniedLegacy=denied.load('m07-historical-denied');
+deniedLegacy.condition=legacyM07;
+deniedLegacy.checks=[0,1,2];
+assert.equal(denied.save('m07-historical-denied',deniedLegacy),false);
+assert.equal(denied.load('m07-historical-denied').condition,legacyM07,'M07 in-tab storage failure preserves legacy answer');
+assert.equal(denied.validate('m07-historical-denied').ok,false,'M07 storage failure cannot bypass field validation');
+assert.doesNotMatch(m.render({session:'ficticioA',phase:'practice',status:'draft',idea:{}}),/pit-private-teacher-notes/,'Student view must not include teacher-only notes');
+console.log('M07 legacy text and limit regression: seven fields, route switch and storage denial passed.');
+
 console.log('M07-03: evidence, isolation, route and integration checks passed; no real Preview/API test.');
