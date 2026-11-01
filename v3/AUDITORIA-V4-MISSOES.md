@@ -739,3 +739,11 @@
 **Arquivos corrigidos:** `v3/teacher-mission-ten-foundations.js` (explicação pública), `v3/teacher-mission-ten-validation.js` (roteiro logístico exclusivamente no `<details class="pit-private-teacher-notes">` fechado por padrão), `v3/student-mission-ten.js` (briefing e instrução operacional do aluno). `qa/v3-audit-alignment.cjs` protege a sincronia, a privacidade e a distinção entre triagem e aprovação.
 
 **Testes desta alteração:** inspeção das substituições de texto no código e asserções de regressão adicionadas. Execução nativa Node/Chrome e resultado de GitHub Actions **ainda não confirmados** neste registro; teste de apresentação real com 30 pessoas, HDMI e GDevelop GUI **NOT_RUN**. A `main` permanece intocada.
+
+
+## Auditoria cruzada M09 → M10 — 01/11/2026, revisão de fechamento
+
+- **Falha pedagógica M09:** o resumo dos 3 minutos finais no caderno do aluno listava apenas correção retestada ou backlog, embora o formulário e a rubrica do professor já aceitassem corretamente um playtest sem defeito. Corrigido `v3/student-mission-nine.js` para incluir explicitamente a terceira decisão legítima: **nenhuma alteração após teste sem falha**, sempre com observação real. Não induzir alunos a inventar defeitos.
+- **Falha de expectativa M10:** o relógio projetado e o cabeçalho de revisão ainda chamavam os últimos 5 minutos de **AVALIAÇÃO**, apesar de a dinâmica com 30 estudantes exigir somente **TRIAGEM** das entregas nesse intervalo. Corrigidos `v3/teacher-mission-ten-foundations.js` e `v3/teacher-mission-ten-validation.js`. A aprovação individual continua após verificação real, inclusive fora da oficina.
+- **Regressão:** `qa/v3-audit-alignment.cjs` passou a exigir essas três mensagens sincronizadas. Sete verificações diretas em V8 sobre o código transformado passaram, incluindo HTML efetivamente renderizado, ausência de notas privadas no aluno e `<details>` fechado no professor. **Não são testes Node/Chrome nativos.**
+- **CI:** a QA estática do checkpoint anterior `f8ecbad` foi observada como **SUCCESS** no GitHub Actions; a execução do commit de regressão `299e7b5` estava **IN_PROGRESS** na consulta. Não extrapolar resultado antigo ao novo SHA. **NOT_RUN:** HDMI físico, GDevelop GUI, playtest humano, turma real e homologação integrada V5. Nenhum merge em `main`.
