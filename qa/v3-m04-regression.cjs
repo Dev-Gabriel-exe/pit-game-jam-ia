@@ -4,6 +4,8 @@
    This suite does not replace a real browser or GDevelop test. */
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const read=p=>fs.readFileSync(path.resolve(__dirname,'..',p),'utf8');
+// Keep M05 evidence regressions in the existing static QA entrypoint.
+require('./v3-m05-regression.cjs');
 let count=0;
 function ok(x,msg){assert.ok(x,msg);count++}
 const window={};
