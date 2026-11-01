@@ -1,0 +1,32 @@
+name: V5 H3 — M10 Focused A07
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-a07-focused.cjs'
+      - '.github/workflows/v5-m10-a07-focused-qa.yml'
+      - 'v5/phase2-combat.js'
+      - 'v5/progression-contract-h0.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  a07-focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax and focused causal M10 trial
+        run: |
+          node --check qa/v5-m10-a07-focused.cjs
+          node qa/v5-m10-a07-focused.cjs
+      - name: Preserve M10 and H0 contracts
+        run: |
+          node qa/v5-m10-engine.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-a07-focused-report
+          path: qa/v5-m10-a07-focused-report.json
+          if-no-files-found: ignore
