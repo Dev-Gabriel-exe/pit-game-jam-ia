@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T20:12:41Z",
+  "last_completed_at": "2026-11-01T21:18:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M06 now invalidates stale manual GDevelop/asset confirmations after substantive changes to the eight fields; evidence is never silently truncated. Eight V8 source-derived cases PASS; module and regression JS syntax PASS; previous Chrome run 41340743973 SUCCESS on prior SHA only. New Node static QA and Chrome after 8e4b654 NOT_CONFIRMED; GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN. Next verify CI on exact SHA and audit M01–M10 teacher/student alignment. Master 54/59 unchanged; main untouched.",
+  "priority": "M05 student rule/Preview attestations now invalidate on eight substantive field edits; eleven source-derived V8 checks PASS. GitHub Actions static QA SUCCESS on 2bf956b; Chrome on 2bf956b IN_PROGRESS at last check. No native Node execution locally. Continue cross-face M01–M10 audit and confirm browser QA on exact SHA; GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN. Master 54/59 unchanged; main untouched.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M06-STALE-ATTESTATIONS",
+  "last_task": "V4-AUD-M05-STALE-PREVIEW",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3259,46 +3259,63 @@
       ],
       "tests": "Eight V8 source-derived functional cases for edit-invalidation, persisted checks, validation and 732-char max evidence PASS. Module and regression JS syntax PASS. Browser run 41340743973 SUCCESS on previous SHA. Native Node full QA and Chrome on new commit NOT_CONFIRMED. HDMI/GDevelop GUI/human/mobile/V5 NOT_RUN.",
       "notes": "M06 stale attestations are selectively invalidated; changes in need/file/source reset all three, license/negative reset third, before/after reset first two, saved project path resets first; whitespace-only edits preserve checks. Full evidence is no longer sliced. No main, production, Neon or real students modified. Master progress 54/59."
+    },
+    {
+      "task": "V4-AUD-M05-STALE-PREVIEW",
+      "completed_at": "2026-11-01T21:18:00Z",
+      "commit": "4ba1a4332c2f44bd39d416afd02846d0daa6fe53",
+      "files": [
+        "v3/student-mission-five.js",
+        "qa/v3-m05-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "11 V8 source-derived checks PASS on actual M05 module (8 field edits, persistence and retest, whitespace, unknown field, static DOM wiring). GitHub Actions static QA SUCCESS on 2bf956b. Chrome on 2bf956b IN_PROGRESS at last check. Native Node locally, GDevelop GUI, physical HDMI, human/mobile and V5 integration NOT_RUN.",
+      "notes": "Fixed stale manual Preview attestations after M05 SE/ENTAO, variable, positive/negative, feedback, project path or diagnosis edits; preserve text, selectively reset checkbox and block submit until retest. Master 54/59; no main or real student data."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M06-STALE-ATTESTATIONS",
-    "status": "SOURCE_V8_PASS_NEW_CI_NOT_CONFIRMED",
-    "updated_at": "2026-11-01T20:12:41Z",
+    "task": "V4-AUD-M05-STALE-PREVIEW",
+    "status": "SOURCE_V8_PASS_STATIC_CI_SUCCESS_CHROME_PENDING",
+    "updated_at": "2026-11-01T21:18:00Z",
     "code_commits": [
-      "31bdbf639cb87bf65d30cb938ef5b81d0e513332"
+      "2c19cb2f308dbfea54c8b94477ed00973b43d2a2"
     ],
     "regression_commits": [
-      "8e4b654657df2c6ef9ab2f9ec451b68d605c8c84"
+      "2bf956b89722503c537ec0f81445fef0abf41b05"
     ],
-    "documentation_commit": "0cdf47831e83be6830dd93aaad758fe088c4794e",
+    "documentation_commit": "4ba1a4332c2f44bd39d416afd02846d0daa6fe53",
     "tests": [
       {
-        "name": "V8 syntax of actual M06 module and QA regression",
-        "result": "PASS"
+        "name": "M05 eight material field changes with draft persistence and retest",
+        "result": "PASS (V8, source-derived)"
       },
       {
-        "name": "8 V8 functional field-change scenarios, persistence and validation",
-        "result": "PASS"
+        "name": "Whitespace-only and unknown field",
+        "result": "PASS (V8)"
       },
       {
-        "name": "Maximal structured evidence 732 characters, no truncation, parse roundtrip",
-        "result": "PASS"
+        "name": "DOM checkbox wiring",
+        "result": "PASS (static source check)"
       },
       {
-        "name": "Browser QA run 41340743973 on previous SHA",
-        "result": "SUCCESS (prior SHA only)"
+        "name": "GitHub Actions static QA on regression SHA 2bf956b",
+        "result": "SUCCESS"
       },
       {
-        "name": "Node static QA and Chrome on new commit",
-        "result": "NOT_CONFIRMED"
+        "name": "GitHub Actions Browser QA on regression SHA 2bf956b",
+        "result": "IN_PROGRESS at last check"
       },
       {
-        "name": "Physical HDMI, GDevelop GUI, human peer test, real mobile and V5 integration",
+        "name": "Local native Node full QA",
+        "result": "NOT_RUN"
+      },
+      {
+        "name": "GDevelop GUI, physical HDMI, human peer test, real mobile, V5 integration",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify native static QA/Chrome on exact latest SHA, continue cross-face M01–M10 pedagogical audit; no main merge.",
+    "next": "Confirm Chrome QA on 2bf956b or later SHA; audit M01–M10 student/teacher content and notes, without main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
