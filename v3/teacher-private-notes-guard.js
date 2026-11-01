@@ -23,6 +23,9 @@
  document.addEventListener('visibilitychange',()=>{
   if(document.hidden)closeAll();
  });
+ // Browsers can restore an open <details> from history/session state; never project it on return.
+ document.addEventListener('DOMContentLoaded',()=>closeAll());
+ window.addEventListener('pageshow',()=>closeAll());
  window.addEventListener('pagehide',()=>closeAll());
  window.PIT_PRIVATE_NOTES_GUARD={closeAll};
 })();
