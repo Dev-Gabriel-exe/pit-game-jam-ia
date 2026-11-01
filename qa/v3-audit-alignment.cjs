@@ -455,4 +455,44 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  mod.hydrate('m02-optional-restored',optionalRemote,'approved');
  assert.equal(mod.load('m02-optional-restored').later,'','M02 empty optional backlog remains empty after restore');
 }
+// M08 regression: editing a specific observation must invalidate only the manual
+// Preview declarations that depend on it; changing the saved project must
+// require reopening the reported file and reconfirming its final test.
+{
+ const storage=new Map(),env={window:{},localStorage:{
+  getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-eight.js'),env,{timeout:3000,filename:'student-mission-eight.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_EIGHT;
+ const fixture=()=>{const d=mod.load('m08-qa');
+  for(const f of mod.fields)d[f.id]='Observacao realizada no Preview para '+f.id;
+  d.before='Antes nao havia instrucao visivel';
+  d.after='Depois havia instrucao visivel';
+  d.checks=[0,1,2];return d;
+ };
+ const expected={issue:'',control:'',change:'',before:'2',after:'0',negative:'0,1',saved:'0,1'};
+ for(const [id,remaining] of Object.entries(expected)){
+  const d=fixture(),original=d[id];
+  assert.equal(mod.updateField(d,id,original+' revisado'),true,'M08 '+id+' changed');
+  assert.equal(d.checks.join(','),remaining,'M08 '+id+' must selectively invalidate checks');
+  assert.equal(d[id],original+' revisado','M08 must retain student text');
+  mod.save('m08-qa',d);
+  assert.equal(mod.validate('m08-qa').field,'checks','M08 '+id+' cannot submit stale checks');
+  d.checks=[0,1,2];mod.save('m08-qa',d);
+  assert.equal(mod.validate('m08-qa').ok,true,'M08 '+id+' can be manually reconfirmed');
+ }
+ const stable=fixture();
+ assert.equal(mod.updateField(stable,'saved','  '+stable.saved+'  '),false,'M08 whitespace-only saved location');
+ assert.equal(stable.checks.length,3,'M08 equivalent whitespace retains checks');
+ assert.equal(mod.updateField(stable,'unknown','irrelevant'),false,'M08 unknown field ignored');
+ assert.equal(stable.checks.length,3,'M08 unknown field does not erase checks');
+ mod.selectRoute(stable,'3d');
+ assert.equal(stable.checks.length,0,'M08 route change invalidates all checks');
+ const src=read('v3/student-mission-eight.js');
+ assert(src.includes('check.checked=d.checks.includes(Number(check.dataset.m8sCheck))'),'M08 DOM mirrors selective invalidation');
+ assert(src.includes('reabra o arquivo indicado e reconfirme o teste final'),'M08 informs student about saved project');
+ assert(src.includes('Reabri o projeto editável indicado'),'M08 checkbox requires reopened project');
+ const studentHtml=mod.render({session:'m08-qa',status:'draft',phase:'practice',idea:{}});
+ assert(!studentHtml.includes('pit-private-teacher-notes'),'M08 student must never include private teacher notes');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
