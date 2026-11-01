@@ -117,6 +117,48 @@ assert.equal(unchanged.checks.length,3,'same route does not erase valid confirma
 assert.equal(student.selectRoute(unchanged,'puzzle'),true,'new route triggers retest');
 assert.equal(unchanged.checks.length,0,'direct route change invalidates confirmations');
 
+// A changed improvement/comparison invalidates manual Preview confirmations.
+// Only a change to the saved-project location is exempt.
+for(const f of student.fields.filter(f=>f.id!=='saved')){
+ const draft=student.load('m08-retest-'+f.id);
+ draft[f.id]='Versão anterior do registro';draft.checks=[0,1,2];
+ assert.equal(student.updateField(draft,f.id,'Nova observação real no Preview'),true,'changed '+f.id+' requires retest');
+ assert.equal(draft.checks.length,0,'old Preview checks removed for '+f.id);
+ student.save('m08-retest-'+f.id,draft);
+ assert.equal(student.load('m08-retest-'+f.id).checks.length,0,'retest persisted for '+f.id);
+}
+const unchangedDraft=student.load('m08-same-text');
+unchangedDraft.issue='A mesma observação';unchangedDraft.checks=[0,1,2];
+assert.equal(student.updateField(unchangedDraft,'issue','  A mesma   observação  '),false,'whitespace-only edit does not invalidate checks');
+assert.equal(unchangedDraft.checks.length,3,'same observation keeps tests');
+assert.equal(student.updateField(unchangedDraft,'saved','projeto-local.json'),false,'saved path is metadata');
+assert.equal(unchangedDraft.checks.length,3,'metadata edit keeps tests');
+assert.equal(student.updateField(unchangedDraft,'unknown','anything'),false,'unknown field ignored');
+assert.equal(unchangedDraft.checks.length,3,'unknown field keeps checks');
+// Simulate a real input callback with a fake DOM; this is NOT a browser/HDMI test.
+const editSession='m08-input-event';
+const editDraft=student.load(editSession);
+editDraft.after='A mensagem aparecia de forma confusa.';editDraft.checks=[0,1,2];
+student.save(editSession,editDraft);
+const editChecks=Array.from({length:3},()=>({checked:true,addEventListener:()=>{}}));
+const editStatus={textContent:''};
+let onInput;
+const editField={dataset:{m8sField:'after'},value:'Agora a mensagem é clara e verificável.',addEventListener:(name,callback)=>{if(name==='input')onInput=callback}};
+const editRoot={
+ querySelector:sel=>sel==='#m8sStatus'?editStatus:null,
+ querySelectorAll:sel=>sel==='[data-m8s-field]'?[editField]:sel==='[data-m8s-check]'?editChecks:[]
+};
+ctx.window.PIT_GDEVELOP_M08_GUIDE=null;
+ctx.document.querySelector=sel=>sel==='#m8sRoot'?editRoot:null;
+student.mount({phase:'practice',session:editSession,status:'draft'});
+assert.equal(typeof onInput,'function','M08 input event bound');
+onInput();
+assert.equal(student.load(editSession).checks.length,0,'DOM edit clears persisted tests');
+assert(editChecks.every(c=>!c.checked),'DOM edit unchecks all visible tests');
+assert.match(editStatus.textContent,/refaça os três testes no Preview/,'DOM edit announces retest');
+assert.match(student.render({session:editSession,phase:'practice',status:'draft',idea:{}}),/aria-live="polite"/,'status is live for keyboard/screen-reader users');
+console.log('PASS M08 edit-retest: six gameplay/comparison fields, metadata exemption, normalized edits, DOM input and persistence');
+
 const studentCss=fs.readFileSync('v3/student-mission-eight.css','utf8');
 assert(studentCss.includes('.m8s-field-hint'),'M08 guidance is styled for legibility');
 const rubric=ctx.window.PIT_TEACHER_MISSION_EIGHT_VALIDATION;
