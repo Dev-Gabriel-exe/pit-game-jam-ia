@@ -1080,3 +1080,24 @@ No perfil misto com +5 VIT/+5 DEF, **14/16** Guardiões estavam vivos aos 35s e 
 **Interpretação:** com G10 o Guardião sobreviveu e absorveu mais escudo neste conjunto controlado; em 30 personagens, trocar apenas G10 por J08 mudou a identidade do vencedor em 7/16 pares, mas a classe vencedora Guardião caiu somente de 4 para 2. **Não concluir causalidade de um coeficiente isolado nem aplicar nerf**: um ativo e um passivo alteram também decisões, cooldown e consumo posterior de RNG. Valores de eventos de escudo não equivalem a HP efetivamente perdido; seeds e builds são sintéticas e limitadas.
 
 **Próxima etapa da mesma Missão 10:** ampliar seeds e trocar G10 por outros talentos ativos da mesma família, ou executar ablação do efeito de escudo de G10 com o talento ainda equipado, mantendo comportamento comparável. Depois confirmar a prévia 3D M10 com câmera e arquibancadas. **G.2 nos PCs físicos NÃO EXECUTADO. H.1/H.2 reais, homologação humana, Fase I, merge, `main` e produção permanecem bloqueados.**
+
+## H.3/M10 — coeficiente de escudo G10 isolado com talento equipado (01/11/2026)
+
+**Missão técnica desta rodada:** dar continuidade à Missão 10 após o experimento G10 vs J08, separando a contribuição da **quantidade de escudo G10** da substituição do talento inteiro. Revisados branch, roadmaps D–I, checkpoints E/F/G, H.0, commits e Actions. Base `9c96f4b38d41f569ae24ee9380f53a96c12ac70a`. Sem mudança em motor, catálogo de 120 talentos, quatro classes KayKit, M5, XP, roteiro pedagógico, câmera, arquibancadas ou dados reais.
+
+**Arquivos e commits na branch exclusiva:** `qa/v5-m10-guardian-g10-shield-only-paired.cjs` no SHA `1673807f48a5190f88c762e8fa5b4a47a8567aed`; `.github/workflows/v5-m10-guardian-g10-shield-only-qa.yml` no SHA `c08c59c65c9f7e2ab9b425c51393e20f78b85591`. São 144 partidas fictícias, 48 blocos de três braços (96 comparações baseline vs meio/zero), 6 replays exatos, 6 seeds, duas composições (4 equilibrados; 30 com 2 Guardiões), duas distribuições de atributos e duas rotações. **Os dez talentos do Guardião permanecem equipados e idênticos** (G01–G10), M5 congelada, 20 pontos, IDs/posições/stats iniciais idênticos. Única intervenção: opção opt-in `experimentalGuardianShieldScale:{G10:0.5}` ou `{G10:0}`, sem alterar cast, cooldown nem bônus solar de G10. `{G10:1}` reproduziu o baseline. O motor M5 rejeita a opção de diagnóstico e a regressão M5 passou.
+
+**CI específico SUCCESS:** [41312675658](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41312675658), SHA `c08c59c6`, teste, contrato H.0, motor M10 e replay E.7 aprovados. [QA geral SUCCESS 41312675627](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41312675627). [QA navegador 41312675610](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41312675610) ainda **em execução** na consulta; não marcar aprovado. Artefato JSON anônimo no CI específico, hash do relatório `ed60a76f68c63e165809`.
+
+| Composição / 24 partidas por braço | G10 100% | G10 50% | G10 0% |
+|---|---:|---:|---:|
+| 4 equilibrados: vitórias Guardião | 14 | 14 | 7 |
+| 4 equilibrados: absorção escudo Guardião | 3.852,80 | 3.382,11 | 2.250,49 |
+| 30 com 2 Guardiões: vitórias Guardião | 6 | 5 | 2 |
+| 30 com 2 Guardiões: vivos aos 35s (48 exposições) | 38 | 37 | 28 |
+| 30 com 2 Guardiões: absorção escudo | 8.347,25 | 7.498,20 | 4.750,75 |
+| 30 com 2 Guardiões: ativações G10 | 101 | 96 | 86 |
+
+**Interpretação limitada:** reduzir somente o valor de escudo G10, mantendo o talento equipado, reduziu sobrevivência e vitórias em parte da amostra; 50% não mudou o número de vitórias no cenário de 4, mas 0% reduziu. O número de ativações também variou devido ao feedback da própria simulação (escudo muda decisões futuras), portanto **não é um experimento com trajetória idêntica** nem prova de que G10 seja a causa exclusiva. Zero escudo é contrafactual de laboratório, não sugestão de nerf. Builds e seeds sintéticas/correlacionadas; não inferir justiça estatística ou experiência real.
+
+**Próximo incremento da MESMA Missão 10:** revisar QA navegador do SHA, ampliar o diagnóstico para builds não centradas em G01–G10 e validar prévia visual WebGL M10 com câmera e arquibancadas sem alterar as regras. **G.2 nos PCs físicos NÃO EXECUTADO; H.1/H.2 reais, homologação humana, Fase I, merge, `main` e produção permanecem bloqueados.**
