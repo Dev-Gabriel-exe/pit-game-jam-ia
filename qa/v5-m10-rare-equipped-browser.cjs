@@ -4,9 +4,9 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {chromium}=require('playwright');
-const fixture=JSON.parse(fs.readFileSync('qa/v5-m10-rare-equipped-seed.json','utf8'));
+const fixture=JSON.parse(fs.readFileSync(process.env.M10_RARE_FIXTURE||'qa/v5-m10-rare-equipped-seed.json','utf8'));
 const targets=['guardian:J08','hunter:P09','mage:A07'];
-const prefix='qa/v5-m10-rare-equipped';
+const prefix=process.env.M10_RARE_PREFIX||'qa/v5-m10-rare-equipped';
 (async()=>{
  const browser=await chromium.launch({headless:true,args:[
   '--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'
