@@ -770,13 +770,21 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   if(!item||item.spectator||!isPhase2()||!event?.talent)return false;
   const cue=cueFor(item.build.klass,event.talent);
   if(!cue)return false;
-  // Under 30-player load, prioritize actual active casts above subdued
-  // passive/proc decals, without changing battle events or talent outcomes.
+  // M10-only: reserve at most ONE rotating subtle proc cue beyond the
+  // active-cast budget. This prevents 30-player fights from starving every
+  // passive/reactive visual while preserving active priority and reduced motion.
+  // The engine, talents, damage, M5 and battle results are untouched.
+  const rareProcLane=subtle&&container.dataset.v5CombatEngine==='phase2-m10';
+  if(rareProcLane){
+   const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
+   if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+  }
   if(!subtle&&effects.filter(e=>e.isAbility).length>=visualBudget){
    const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
    if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
   }
-  if(effects.filter(e=>e.isAbility).length>=visualBudget){
+  const cueLimit=rareProcLane?visualBudget+1:visualBudget;
+  if(effects.filter(e=>e.isAbility).length>=cueLimit){
    talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);
    recordVisualType(cue,true);
    if(spriteKit){spriteVisualDropped++;container.dataset.v5SpriteVisualDropped=String(spriteVisualDropped)}
