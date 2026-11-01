@@ -17,7 +17,7 @@ for(const [name,src] of [['classroom',classroom],['chat',chat]]){
 assert(classroom.includes("if(n>state.current_stage)")&&classroom.includes("if(n>released.current_stage)"),'server rejects locked submissions and forged heartbeat');
 assert(classroom.includes("AND status='submitted'"),'approval only after submitted evidence');
 assert(classroom.includes("NOT IN ('submitted','approved')"),'pending/approved evidence cannot be overwritten');
-assert(classroom.includes("cleanEvidence(req.body?.evidence,750)")&&classroom.includes("function cleanEvidence(value,max)"),'structured evidence sanitization and 750-character bound');
+assert(classroom.includes("cleanEvidence(req.body?.evidence)")&&classroom.includes("function cleanEvidence(value)")&&classroom.includes("if(evidence.length>750)return err(res,400"),'structured evidence sanitization and explicit 750-character rejection without truncation');
 assert(chat.includes("const MAX_BODY = 1200"),'chat body bound');
 assert(chat.includes("if(count.rows[0].n>=12)"),'chat rate limit');
 assert(chat.includes("if(recently.rows[0].n>=15)"),'join rate limit');
