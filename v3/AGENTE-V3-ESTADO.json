@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T01:14:18Z",
+  "last_completed_at": "2026-11-01T02:12:38.813Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M04: troca de rota invalida três declarações manuais de Preview; código + regressões adicionadas. M03 Browser QA SUCCESS. Confirmar CI M04 e auditar limites/rascunhos legados. GDevelop GUI/HDMI/celular físico/testes humanos NOT_RUN.",
+  "priority": "M04 legacy draft preservation and max-length rejection committed; prior M04 static/browser CI SUCCESS. Confirm new CI on regression SHA, then audit M05 student/professor legacy drafts. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M04-ROUTE-RETEST",
+  "last_task": "V4-AUD-M04-LEGACY-DRAFT-PRESERVATION",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3012,44 +3012,56 @@
       ],
       "tests": "Direct V8 parse and selectRoute behavior PASS. Nine regression assertions added to Node QA, execution pending CI. M04 QA static 41260293053 and Browser QA 41260293036 IN_PROGRESS at first check. Prior M03 Browser QA 41255728677 completed SUCCESS. Physical GDevelop GUI/HDMI/mobile/human NOT_RUN.",
       "notes": "M04 changing GDevelop route clears three manual Preview checks and visible checkboxes, preserves student text, announces retest. Teacher criteria aligned and private notes closed by default. Master 54/59 unchanged; main/production/real students untouched."
+    },
+    {
+      "id": "V4-AUD-M04-LEGACY-DRAFT-PRESERVATION",
+      "completed_at": "2026-11-01T02:12:38.813Z",
+      "commit": "4e6cbf350a9acd2db3796dcd705ac1ed9eae6231",
+      "files": [
+        "v3/student-mission-four.js",
+        "qa/v3-m04-regression.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "Direct V8 7/7 checks PASS. Previous M04 static QA 41260293053 SUCCESS and Browser QA 41260293036 SUCCESS. New regression Node/CI not yet confirmed; GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
+      "notes": "Preserve six overlong legacy texts across load/save/route changes; reject over-max with field-specific limit and block submission; prevent misleading 6/6. No main, production or real student data writes. Roadmap 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M04-ROUTE-RETEST",
+    "task": "V4-AUD-M04-LEGACY-DRAFT-PRESERVATION",
     "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-01T01:14:18Z",
-    "code_commit": "63863e19e6295d133113321eebc4a83d31af67e6",
+    "updated_at": "2026-11-01T02:12:38.813Z",
+    "code_commit": "3a869307be8f4f06e25f55a04d98551f3994e3d3",
     "regression_commits": [
-      "cac1406b78c7d900daaf6f238085678a87c48e9b"
+      "4e6cbf350a9acd2db3796dcd705ac1ed9eae6231"
     ],
-    "documentation_commit": "1350f0c531272edb6eb7001bbb248ebeab26e89b",
+    "documentation_commit": "7148e7d3586dc68dc76ce2a8d7538f922e00421b",
     "tests": [
       {
-        "name": "Direct V8 M04 selectRoute smoke",
+        "name": "Direct V8 M04 legacy max-length cases",
         "result": "PASS",
-        "details": "Syntax + route 2D→3D clears checks, preserves text, idempotent/invalid route"
+        "details": "Six overlong fields preserved, rejected and not counted as 6/6; valid draft accepted (7 checks)"
       },
       {
-        "name": "M04 Node regression CI",
-        "result": "PENDING",
-        "details": "Run 41260293053 in_progress at first check"
-      },
-      {
-        "name": "M04 Browser QA",
-        "result": "PENDING",
-        "details": "Run 41260293036 in_progress at first check"
-      },
-      {
-        "name": "M03 Browser QA",
+        "name": "Previous M04 static QA",
         "result": "PASS",
-        "details": "Run 41255728677 completed success"
+        "details": "Run 41260293053 completed success"
+      },
+      {
+        "name": "Previous M04 Browser QA",
+        "result": "PASS",
+        "details": "Run 41260293036 completed success"
+      },
+      {
+        "name": "New M04 Node regression and Browser QA",
+        "result": "PENDING",
+        "details": "New regression commit 4e6cbf3; CI not yet confirmed"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm M04 CI and audit M04 legacy oversized draft behavior",
+    "next": "Confirm CI for new M04 commits; audit M05 legacy draft and max-length validation",
     "master_progress": "54/59 unchanged"
   }
 }
