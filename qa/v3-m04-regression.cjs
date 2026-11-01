@@ -25,6 +25,34 @@ ok(!M.validate('qa',ctx).ok,'Blank evidence blocked');
 const good={route:0,command:'Usei as setas',response:'O herói se moveu no Preview.',boundary:'A parede bloqueou a passagem.',retest:'Repeti e a barreira funcionou.',saved:'GDevelop Cloud',issue:'',checks:[0,1,2]};
 M.save('qa',good);
 ok(M.validate('qa',ctx).ok,'Complete evidence accepted');
+
+ // Legacy drafts may exceed today's maxlength; never silently erase observations.
+const m04Limits={command:56,response:94,boundary:93,retest:84,saved:58,issue:52};
+for(const [field,max] of Object.entries(m04Limits)){
+ const id='legacy-over-'+field,original='X'.repeat(max+1);
+ const draft={...good,[field]:original};
+ M.save(id,draft);
+ ok(M.load(id)[field]===original,'M04 preserves oversized '+field+' when saving/reloading');
+ const validation=M.validate(id,ctx);
+ ok(!validation.ok&&validation.field===field&&validation.label.includes(String(max)),
+   'M04 rejects oversized '+field+' with explicit field limit');
+ ok(M.validity(M.load(id),ctx).filter(Boolean).length<6,
+   'M04 oversized '+field+' never appears as 6/6');
+ const review=M.render({...ctx,session:id,phase:'review'});
+ ok(review.includes('id="submitWork" disabled'),
+   'M04 oversized '+field+' blocks submission');
+}
+const legacyId='legacy-m04-imported',legacyText='Z'.repeat(120);
+cache.set('pit_v3_missao04_rascunho_'+legacyId,JSON.stringify({...good,response:legacyText}));
+ok(M.load(legacyId).response===legacyText,'M04 loads historical overlong response without truncation');
+const routeDraft=M.load(legacyId);
+M.selectRoute(routeDraft,3);
+M.save(legacyId,routeDraft);
+ok(M.load(legacyId).response===legacyText,'M04 changing route never erases overlong legacy response');
+ok(!M.validate(legacyId,ctx).ok,'M04 historical oversized response remains blocked after route change');
+M.save(legacyId,{...good,response:good.response});
+ok(M.validate(legacyId,ctx).ok,'M04 valid correction restores submission eligibility');
+
 // Switching the GDevelop tutorial invalidates only Preview declarations, never authored text.
 const changedRoute={...good,checks:[0,1,2]};
 ok(M.selectRoute(changedRoute,3)===true,'M04 switching to 3D is a real route change');
