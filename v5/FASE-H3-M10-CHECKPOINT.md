@@ -922,3 +922,18 @@ O primeiro [run 41239727134](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 **CI desta rodada:** [run 41277888175](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41277888175), iniciado no SHA `4c4ae1e7c9bb035d19659f66a074c1b10ceb68cd`; **em execução na primeira consulta**. Não declarar que as 144 partidas passaram até verificar conclusão e logs. O QA navegador do checkpoint anterior foi consultado e está **SUCCESS** em [41273752090](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41273752090); o QA geral anterior também está **SUCCESS** em [41273752079](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41273752079).
 
 **Limites e próximo passo:** ler relatório sintético do CI, corrigir eventuais falhas e comparar efeitos individuais G01/G10 e interação conjunta. O braço a 80% é diagnóstico, não proposta de nerf; não extrapolar para equilíbrio universal. **G.2 nos PCs físicos NÃO EXECUTADO. H.1/H.2 com alunos reais, XP, notas, turmas, merge, `main`, produção e homologação humana seguem bloqueados.**
+
+### Resultado comprovado da sensibilidade G01/G10 (01/11/2026)
+
+**CI específico SUCCESS:** [run 41277888175](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41277888175), SHA funcional `4c4ae1e7c9bb035d19659f66a074c1b10ceb68cd`, job `g01-g10-paired-shields` verde. **144 partidas em 36 blocos**, **24 replays determinísticos**, escala neutra byte a byte igual ao baseline, **1.331 casts reais G01 e 695 G10** nos baselines. Regressões M5, motor M10, H.0, teste de escala/validação de entrada e J08 focal passaram. [Relatório JSON sintético, artefato 13071648301](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41277888175/artifacts/13071648301).
+
+| Braço | Vitórias Guardião (36) | Vencedor individual mudou vs baseline | Absorção do Guardião mudou |
+|---|---:|---:|---:|
+| Baseline | 29 | — | — |
+| Apenas G01 a 80% | 24 | 14/36 | 36/36 |
+| Apenas G10 a 80% | 26 | 11/36 | 34/36 |
+| G01 e G10 a 80% | 25 | 16/36 | 36/36 |
+
+**Interpretação limitada:** nesta matriz sintética G01 apresentou maior sensibilidade agregada de vitórias do que G10, mas o braço combinado não é aditivo e, em composições com 15 Guardiões, a classe continuou vencendo quase sempre. Mudanças de escudo também alteram alvos e sorteios posteriores; não concluir que 80% seja um ajuste correto nem aplicar nerf. A amostra usa seeds e arquétipos repetidos, sem inferência estatística universal. **QA estático do checkpoint `225ccdd51b55017a5071812c412a87137e8a86ba` consultado e SUCCESS; QA navegador do mesmo SHA ainda estava em execução** na última consulta. A CI específica já está verde.
+
+**Próximo incremento na MESMA Missão 10:** ampliar composições e seeds independentes, testar uma grade de escala mais fina e analisar o equilíbrio por participação, não só contagem absoluta de vencedores. Nenhum balanceamento padrão foi modificado. **G.2 PCs físicos não executado; H.1/H.2 reais, homologação humana, XP, `main`, merge e produção bloqueados.**
