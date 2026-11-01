@@ -1020,3 +1020,22 @@ Os Guardiões absorveram **~90,2%** do escudo total do baseline nos primeiros 35
 **Limitações:** as janelas medem tempo lógico, não FPS; somas de eventos de acerto não são dano efetivo capado; saídas por limite de tempo são censuradas; `storm` é telemetria de evento e não dano líquido; sementes/arquétipos são correlacionados. A M10 ainda não está homologada estatisticamente nem em PCs reais.
 
 **Próximo incremento da MESMA Missão 10:** ampliar arquétipos e distribuições de atributos para testar se a sobrevivência precoce se mantém fora das builds repetidas; então avaliar intervenções de escudo apenas em laboratório e prévia visual M10. **G.2 nos PCs físicos NÃO EXECUTADO**; H.1/H.2 com alunos reais, Fase I, `main`, merge e produção continuam bloqueados.
+
+
+## H.3/M10 — diversidade de talentos e atributos do Guardião (01/11/2026)
+
+**Missão técnica:** verificar se a sobrevivência precoce do Guardião observada no diagnóstico temporal anterior persiste com escolhas distintas de talentos e distribuição dos dez pontos adicionais da M10. Foram consultados roadmaps D–I, E/F/G, contrato H.0, checkpoint H.3, commits e Actions recentes. Não foram alterados o motor, o balanceamento padrão, os 120 talentos, as dez missões pedagógicas, a M5, a câmera, XP ou dados reais.
+
+**Entregas na branch exclusiva:** `qa/v5-m10-guardian-build-diversity.cjs` (SHA `291d59b824e99a4394f89097660a4c6751093d72`) e `.github/workflows/v5-m10-guardian-build-diversity-qa.yml` (SHA `7789609635710e02fe260ed3413fda67a4619ef0`). Matriz sintética de **72 partidas com 30 personagens, sendo dois Guardiões**, em 3 arquétipos de talentos (defensivo, misto e ofensivo), 3 extensões legais de atributos M5→M10 (equilibrada, VIT/DEF e ofensiva), 4 seeds e 2 rotações. Foram verificadas **108 builds distintas**, todas com 10 talentos, 20 pontos e snapshot M5 preservado; 9 replays determinísticos. O arquétipo ofensivo não possui G01/G10 por construção; as outras escolhas variam, não representam alunos reais.
+
+**CI específico SUCCESS:** [run 41298544579](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41298544579), job `guardian-build-diversity` concluído com sucesso, inclusive sintaxe, 72 batalhas, replays, motor M10, contrato H.0 e regressão M5. Hash sintético `fc4744ff66e9681a1657`. Relatório JSON anônimo anexado ao workflow (14 dias). A execução **não equivale à homologação visual/PC real**. QA geral e QA navegador deste SHA não foram confirmados nesta consulta.
+
+| Arquétipo | Vitórias Guardião (24 partidas) | Guardiões vivos aos 35s / observados | Absorção de escudo dos Guardiões |
+| --- | ---: | ---: | ---: |
+| Defensivo | 9/24 | 28/48 (58,3%) | 6.748,92 |
+| Misto | 9/24 | 28/46 (60,9%) | 6.635,65 |
+| Ofensivo, sem G01/G10 | 2/24 | 9/44 (20,5%) | 0 |
+
+No perfil misto com +5 VIT/+5 DEF, **14/16** Guardiões estavam vivos aos 35s e a classe venceu **5/8** partidas. No arquétipo ofensivo com essa mesma extensão, **2/16** estavam vivos aos 35s e a classe venceu **0/8**. Ao todo, o Guardião venceu **20/72**, contra 4,8 vitórias proporcionais à participação de dois em trinta, **mas essa expectativa não controla builds, IA ou interações**. A ausência de escudo no arquétipo ofensivo está confundida com a troca de todos os talentos; não é ablação isolada de G01/G10. Há partidas que terminaram antes de 35s, portanto denominadores de sobrevivência são somente observados. Não aplicar nerf nem declarar equilíbrio.
+
+**Próximo incremento da MESMA Missão 10:** comparar builds pareadas mantendo os cinco talentos da M5, atributos e composição constantes, variando somente escolhas adicionais M10 ou ablações de escudo já opt-in; depois testar prévia visual M10 3D, câmera e arquibancadas no Chromium. **G.2 em PCs físicos NÃO EXECUTADO. H.1/H.2 com alunos reais, homologação humana, Fase I, `main`, merge e produção permanecem bloqueados.**
