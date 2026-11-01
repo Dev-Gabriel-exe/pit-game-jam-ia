@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-10-31T23:18:04.495Z",
+  "last_completed_at": "2026-11-01T00:13:12.269Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M02: rascunhos legados preservados sem truncamento, validação de maxlength e progresso 4/4 consistente. QA estática 41251903539 SUCCESS no SHA b21d4f1a; Browser QA 41251903525 ainda em execução. Próximo: confirmar Browser QA do checkpoint e auditar M03 professor/aluno. GDevelop GUI/HDMI/mobile/humano NOT_RUN.",
+  "priority": "M03: preservar rascunhos legados sem truncamento e alinhar campos ao limite de evidência 750. V8 direto 24/24 PASS; regressões Node adicionadas. CI do novo SHA pendente; M02 Browser QA 41251903525 SUCCESS. Próximo: confirmar CI M03 e auditar M04 professor/aluno. GDevelop GUI/HDMI/mobile físico/humano NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M02-OVERSIZED-DRAFT",
+  "last_task": "V4-AUD-M03-OVERSIZED-EVIDENCE",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -2988,39 +2988,56 @@
       ],
       "tests": "M02 static QA 41251903539 SUCCESS on regression SHA; Browser QA 41251903525 IN_PROGRESS. Prior M01 static 41247284884 and Browser 41247284889 SUCCESS. GDevelop GUI, HDMI, physical mobile, human tests NOT_RUN.",
       "notes": "M02 old load silently truncated oversized saved text; now preserves it, rejects above max with field-specific message, prevents false 4/4 and disables submit. Teacher M02 projected rubric matches four student decisions; private notes closed by default. Main, production and real student data untouched; master 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M03-OVERSIZED-EVIDENCE",
+      "completed_at": "2026-11-01T00:13:12.269Z",
+      "commit": "b0f88420f434989bbbef3b061f0790ff589ebb41",
+      "files": [
+        "v3/student-mission-three.js",
+        "qa/v3-m03-legacy-evidence.cjs",
+        "v3/FASE3-MISSAO3.md"
+      ],
+      "tests": "24/24 direct V8 assertions on actual fetched M03 module PASS; added Node regression assertions for 7 overlong fields, legacy localStorage, 750-char evidence. GitHub static CI 41255728600 and Browser QA 41255728677 IN_PROGRESS at check; previous M02 Browser QA 41251903525 SUCCESS. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+      "notes": "M03 silently sliced legacy drafts and had input maxlength greater than serialized evidence budgets. Now preserves original values, blocks oversized submissions, synchronizes 7 field max lengths and 7/7 progress. Teacher projected rubric unchanged; no private teacher notes exposed. Master 54/59 unchanged; no main/production/real-student writes."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M02-OVERSIZED-DRAFT",
-    "status": "STATIC_CI_SUCCESS_BROWSER_PENDING",
-    "updated_at": "2026-10-31T23:18:04.495Z",
-    "code_commit": "eda5805b3395effd98067a65f1006f0455994480",
+    "task": "V4-AUD-M03-OVERSIZED-EVIDENCE",
+    "status": "DIRECT_V8_PASS_CI_PENDING",
+    "updated_at": "2026-11-01T00:13:12.269Z",
+    "code_commit": "f288ad7aeddb1d70cfcfaaac5a2a25bff9abbb2e",
     "regression_commits": [
-      "b21d4f1adda8dc9a14117ab339309ff50d60b853"
+      "b0f88420f434989bbbef3b061f0790ff589ebb41"
     ],
-    "documentation_commit": "3db782ef202572de678c36cccc7d4a7c0ed31322",
+    "documentation_commit": "fbc10a45884ff09f5b25f94318e58d4e6a673640",
     "tests": [
       {
-        "name": "M02 static regression CI",
+        "name": "Direct V8 M03 functional checks",
         "result": "PASS",
-        "details": "GitHub Actions 41251903539 completed/success on b21d4f1a; includes new oversized-field tests for all 5 fields"
+        "details": "24 assertions on actual module fetched from feature branch"
+      },
+      {
+        "name": "M03 static regression CI",
+        "result": "PENDING",
+        "details": "GitHub Actions 41255728600 at last check"
+      },
+      {
+        "name": "M03 Browser QA",
+        "result": "PENDING",
+        "details": "GitHub Actions 41255728677 at last check"
       },
       {
         "name": "M02 Browser QA",
-        "result": "PENDING",
-        "details": "GitHub Actions 41251903525 in_progress on b21d4f1a at last check"
-      },
-      {
-        "name": "Prior M01 static/browser QA",
         "result": "PASS",
-        "details": "GitHub Actions 41247284884 and 41247284889 completed/success on 42bbfac2"
+        "details": "GitHub Actions 41251903525 completed success"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA and continue M03 pedagogical teacher/student audit",
+    "next": "Confirm M03 CI on checkpoint and audit M04 teacher/student",
     "master_progress": "54/59 unchanged"
   }
 }
