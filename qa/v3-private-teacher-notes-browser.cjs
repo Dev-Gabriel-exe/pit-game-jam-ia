@@ -64,6 +64,13 @@ const assert=require('node:assert/strict');
   await guarded.locator('summary').click();
   await page.evaluate(()=>window.dispatchEvent(new Event('pagehide')));
   assert.equal(await guarded.evaluate(el=>el.open),false,'pagehide closes exposed note');
+  // Simulate browser back/forward cache restoring a previously expanded private note.
+  await guarded.evaluate(el=>{el.open=true});
+  await page.evaluate(()=>window.dispatchEvent(new Event('pageshow')));
+  assert.equal(await guarded.evaluate(el=>el.open),false,'pageshow closes restored private note before projection');
+  await guarded.evaluate(el=>{el.open=true});
+  await page.evaluate(()=>document.dispatchEvent(new Event('DOMContentLoaded')));
+  assert.equal(await guarded.evaluate(el=>el.open),false,'DOMContentLoaded closes restored private note');
   await page.locator('#qaStageNav').evaluate(el=>el.remove());
   // Student M09 must not pretend a defect or correction before a peer playtest.
   await page.addScriptTag({url:'http://127.0.0.1:8899/v3/student-mission-nine.js'});
