@@ -21,3 +21,13 @@ Workflow específico: https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions
 ## Próximo passo na MESMA Missão 10
 
 Inspecionar o JSON/PNG produzido, comparar os três IDs raros com as variantes selecionadas e verificar se são renderizados ou descartados por orçamento. Se não estiverem equipados na variante padrão do navegador, preparar variante de laboratório explícita e isolada para exercitá-los em câmera, sem mudar as regras de combate. Avaliar legibilidade humana e G.2 em PCs físicos separadamente. H.1/H.2 reais seguem bloqueadas.
+
+## Fechamento da rodada — CI verde e lacuna visual identificada
+
+- **SUCCESS**: [CI específico 41343079296](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41343079296), SHA `dce39ea59ab27b55057a8baa3c0e27eecb49ff56`; contrato, 22 batalhas fictícias, WebGL com 30 GLBs, três capturas e regressão M5 aprovados.
+- **SUCCESS**: [QA geral 41343079287](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41343079287) e [Browser QA geral 41343079303](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41343079303), no mesmo SHA.
+- **Procs reais no motor, 22 partidas:** `guardian:J08` selecionado em 14 batalhas, 17 procs em 11 batalhas; `hunter:P09` selecionado em 18, 10 procs em 6; `mage:A07` selecionado em 16, 11 procs em 5. Todos os três possuem sprite e coreografia canônicos. Isso é evidência de evento do motor, **não de pixels visíveis**.
+- **Auditoria WebGL da variante padrão:** `guardian:J08` **não equipado**, `mage:A07` **não equipado**; `hunter:P09` **equipado, porém sem cue renderizado nem descartado detectado nesta partida**. Isso não prova defeito: o proc pode não ter ocorrido nessa seed. O navegador não verificou a linha de visão humana para nenhum desses três.
+- Artefatos: 3 PNGs, JSON de WebGL e JSON de procs, no [run específico](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41343079296). Commit adicional `dce39ea5` imprime o resumo raro no log do CI para auditoria sem download do ZIP.
+
+**Próximo incremento na mesma Missão 10:** criar variante sintética explicitamente selecionável no laboratório WebGL (sem tocar em alunos) para equipar os três raros; encontrar seed com proc real de cada um e verificar, no palco, renderização ou descarte por limite, além de registrar câmera no instante do evento. Não declarar legibilidade humana nem G.2 até validação física.
