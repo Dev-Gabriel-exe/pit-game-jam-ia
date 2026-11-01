@@ -1059,3 +1059,24 @@ No perfil misto com +5 VIT/+5 DEF, **14/16** Guardiões estavam vivos aos 35s e 
 **Interpretação limitada:** as cinco escolhas adicionais alteraram sobrevivência e resultados em partidas pareadas, sem trocar atributos ou escolhas M5. Entretanto, a intervenção troca **cinco talentos simultaneamente**; não é estimativa causal de G10 isolado, nem justificativa suficiente para nerf. No cenário de 30, 9/16 vencedores individuais mudaram no braço support e 12/16 no verdict em relação ao bastion. Os agregados de escudo vêm de eventos e não são perda efetiva de HP capada. Não há extrapolação estatística para turmas reais.
 
 **Próximo incremento da mesma Missão 10:** executar comparação focal de **um único talento M10 adicional** (por exemplo, substituir apenas G10 por J08, preservando os outros quatro adicionais, atributos e M5) e medir cooldown/escudo/vitórias com as mesmas seeds; depois ampliar QA 3D de câmera/arquibancadas. **G.2 nos PCs físicos NÃO EXECUTADO; H.1/H.2 reais, homologação humana, Fase I, merge e produção permanecem bloqueados.**
+
+## H.3/M10 — ablação pareada de uma escolha G10 vs J08 (01/11/2026)
+
+**Missão técnica executada na branch experimental:** comparar **somente a décima escolha do Guardião**, mantendo M5 congelada (G01–G05), quatro talentos adicionais M10 (G06–G09), 20 pontos de atributos, IDs fictícios, composição, posições, seeds e RNG crítico por identidade iguais entre braços. G10 é ativo (Bastião Solar); J08 é passivo (Inspiração da Lâmina). Nenhuma regra de combate, talentos canônicos, progressão real, XP, câmera, arquibancada, V3, `main` ou produção foi alterada.
+
+**Arquivos e commits:** `qa/v5-m10-guardian-g10-vs-j08-paired.cjs` em `8b0667e3a1b28bfcab5ea0510bf9b78855ba01fa`; `.github/workflows/v5-m10-guardian-g10-vs-j08-qa.yml` em `e1d1b777353e07c4cdbc1384376a236e94583f8f`.
+
+**CI específico SUCCESS:** [41307864574](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41307864574), job `guardian-single-talent` aprovado: 64 partidas fictícias, 32 blocos/pares, 4 replays exatos, preservação M5, contratos H.0, motor M10 e regressão E.7. Hash determinístico do relatório: `cab78be9c8d1498e8b4c`. **QA geral SUCCESS:** [41307864641](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41307864641). **QA navegador:** [41307864672](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41307864672) ainda `in_progress` na última consulta; não declarar aprovado antes da conclusão.
+
+| Cenário (16 pares por cenário) | G10 ativo | J08 passivo |
+| --- | ---: | ---: |
+| 4 participantes, vitórias Guardião | 9/16 | 4/16 |
+| 4 participantes, escudo absorvido Guardião | 2.807,51 | 1.578,34 |
+| 30 participantes (2 Guardiões), vitórias Guardião | 4/16 | 2/16 |
+| 30 participantes, Guardiões vivos aos 35s | 25/32 | 17/32 |
+| 30 participantes, escudo absorvido Guardião | 5.567,69 | 3.224,13 |
+| 30 participantes, eliminações por Guardiões | 34 | 23 |
+
+**Interpretação:** com G10 o Guardião sobreviveu e absorveu mais escudo neste conjunto controlado; em 30 personagens, trocar apenas G10 por J08 mudou a identidade do vencedor em 7/16 pares, mas a classe vencedora Guardião caiu somente de 4 para 2. **Não concluir causalidade de um coeficiente isolado nem aplicar nerf**: um ativo e um passivo alteram também decisões, cooldown e consumo posterior de RNG. Valores de eventos de escudo não equivalem a HP efetivamente perdido; seeds e builds são sintéticas e limitadas.
+
+**Próxima etapa da mesma Missão 10:** ampliar seeds e trocar G10 por outros talentos ativos da mesma família, ou executar ablação do efeito de escudo de G10 com o talento ainda equipado, mantendo comportamento comparável. Depois confirmar a prévia 3D M10 com câmera e arquibancadas. **G.2 nos PCs físicos NÃO EXECUTADO. H.1/H.2 reais, homologação humana, Fase I, merge, `main` e produção permanecem bloqueados.**
