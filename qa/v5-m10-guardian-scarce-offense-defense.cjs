@@ -254,7 +254,7 @@ report.totals={pairs,games,replays,changedWinnerIds:changed,
 report.hash=crypto.createHash('sha256').update(JSON.stringify(report.scenarios))
  .digest('hex').slice(0,20);
 if(process.env.M10_GUARDIAN_OFFENSE_REPORT_FILE){
- const file=path.resolve(process.env.M10_GUARDIAN_SURVIVAL_REPORT_FILE);
+ const file=path.resolve(process.env.M10_GUARDIAN_OFFENSE_REPORT_FILE);
  fs.mkdirSync(path.dirname(file),{recursive:true});
  fs.writeFileSync(file,JSON.stringify(report,null,2)+'\n');
 }
