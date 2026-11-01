@@ -36,3 +36,12 @@ Endurecido `v3/teacher-private-notes-guard.js`: notas privadas que o navegador r
 **Testes executados:** sintaxe Node e regressão determinística em ambiente local com o mesmo código do guard: PASS. **CI nativa e Chrome após este commit:** ainda precisam ser confirmadas. **HDMI físico, GDevelop GUI, teste humano e banco de produção:** NOT_RUN.
 
 **Regra de coordenação:** o agente de arena deve preservar suas alterações na `main`/V5; o agente pedagógico continua exclusivamente na branch V3. Revisar este contrato e o PR #23 antes de integrar. Não mesclar nem publicar automaticamente.
+
+
+## Achado de compatibilidade da sala e integridade das evidências (01/11, revisão seguinte)
+
+**Falha de integridade corrigida somente na branch V3:** o backend V3 usava `cleanEvidence(...,750)` com `.slice(0,max)`. Uma resposta estruturada acima de 750 caracteres podia ser aceita com o último campo cortado, mesmo que a interface tivesse preservado o rascunho. A API V3 agora **rejeita com HTTP 400**, não grava e informa o limite; mantém as quebras de linha CRLF normalizadas para recuperar os campos. A regressão em `qa/v3-isolated-backend.cjs` usa turma fictícia e cobre 750/751 caracteres, não sobrescrita e CRLF. A CI nativa após estes commits deve ser verificada antes de homologar.
+
+**Conflito funcional real a resolver no PR #23:** o endpoint `POST /api/classroom?action=stage` da V3 aceita `{stage,phase}` e atualiza `current_stage` e `phase`; o endpoint na `main` aceita apenas `stage`, avança sequencialmente e mantém `phase='practice'`. O app V3 chama o endpoint com `{stage,phase}` e calcula `canSubmit` a partir da fase atual; o backend da `main` usa liberação **por missão**, independente da fase projetada. Não substituir o backend da `main` pelo da V3: isso pode reintroduzir bloqueios e retrocesso de missão, com impacto em XP, heróis e arena. A integração deve preservar a regra de liberação por missão da `main`, adaptar o cliente pedagógico V3 e criar testes de aceitação com dados fictícios antes de qualquer merge.
+
+**Conflito de evidência:** o backend da `main` ainda normaliza `evidence` com `clean(...,750)`, que remove quebras de linha e trunca. Antes de transportar o ajuste V3, conferir o formato dos campos e o contrato das migrações V5; não aplicar merge automático em `chat-api/api/classroom.js`.
