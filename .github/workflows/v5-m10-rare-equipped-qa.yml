@@ -4,6 +4,7 @@ on:
     branches: [feature/v5-arena-dos-criadores]
     paths:
       - 'qa/v5-m10-rare-equipped-seed.cjs'
+      - 'qa/v5-m10-rare-multiseed.cjs'
       - 'qa/v5-m10-rare-equipped-browser.cjs'
       - 'v5/arena-lab.js'
       - 'v5/arena-three.js'
@@ -21,9 +22,11 @@ jobs:
       - name: Verify isolated M10 seed and M5 regression
         run: |
           node --check qa/v5-m10-rare-equipped-seed.cjs
+          node --check qa/v5-m10-rare-multiseed.cjs
           node --check qa/v5-m10-rare-equipped-browser.cjs
           node --check v5/arena-lab.js
           node qa/v5-m10-rare-equipped-seed.cjs
+          node qa/v5-m10-rare-multiseed.cjs
           node qa/v5-progression-contract-h0.cjs
       - name: Install Playwright Chromium
         run: |
@@ -36,12 +39,15 @@ jobs:
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           sleep 2
           node qa/v5-m10-rare-equipped-browser.cjs
+          M10_RARE_FIXTURE=qa/v5-m10-rare-alt-seed.json M10_RARE_PREFIX=qa/v5-m10-rare-equipped-alt node qa/v5-m10-rare-equipped-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: m10-rare-equipped-camera
           path: |
             qa/v5-m10-rare-equipped-seed.json
+            qa/v5-m10-rare-alt-seed.json
+            qa/v5-m10-rare-equipped-alt.json
             qa/v5-m10-rare-equipped.json
             qa/v5-m10-rare-equipped-*.png
           if-no-files-found: ignore
