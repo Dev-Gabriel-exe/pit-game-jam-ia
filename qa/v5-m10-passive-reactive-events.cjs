@@ -147,5 +147,6 @@ console.log('PASS M10 passive/reactive event audit: '+JSON.stringify({
  observed:Object.fromEntries(Object.entries(output.observed).map(([k,v])=>[k,v.count])),
  events:report.events,d07Consumptions:report.consumptions.length,
  anomalies:report.anomalies.length,coverage:byType,
- untriggered:untriggered.length,rareTriggered:rareTriggered.length,
- chargedOnly:chargedOnly.length,m5:'identical'}));
+ untriggered:untriggered.length,untriggeredIds:untriggered,
+ rareTriggered:rareTriggered.length,chargedOnly:chargedOnly.length,
+ chargedOnlyIds:chargedOnly,m5:'identical'}));
