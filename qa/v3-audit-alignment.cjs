@@ -200,6 +200,19 @@ assert(m10Student.includes('correção retestada, backlog ou ausência de falha'
 assert(m10Teacher.includes('nenhuma alteração após teste sem falha'),'M10 projected teacher rubric recognizes a successful peer test');
 assert(!m10Teacher.includes('correção testada ou backlog justificado.'),'M10 old two-outcome rubric must not reappear');
 
+// M10 scalability: 30 individual games cannot fit 18 minutes as 30 serial pitches.
+// Preserve the 30-minute mission: 4+3+18+5, peer demos for everyone and only
+// selected public highlights; teacher review is real and may finish later.
+assert(m10Student.includes('15 duplas demonstram em paralelo'),'M10 student must explain parallel demonstrations for 30');
+assert(m10Student.includes('4 minutos para ambos'),'M10 student must allocate two minutes per student in each pair');
+assert(m10Student.includes('12 minutos'),'M10 student must reserve 12 minutes for up to six highlights');
+assert(m10Student.includes('Mesmo sem ir ao telão'),'M10 every student must know how to demonstrate and submit');
+assert(m10Teacher.includes('15 duplas apresentam simultaneamente'),'M10 private teacher logistics match student');
+assert(m10Teacher.includes('sem fingir que 30 projetos foram avaliados'),'M10 five-minute assessment cannot promise 30 real approvals');
+assert(m10Teacher.includes('Depois, sem HDMI:'),'M10 teacher follow-up stays private');
+assert(m10Teacher.indexOf('15 duplas apresentam simultaneamente')<m10Teacher.indexOf('</details>'),'M10 logistics must be inside collapsed private notes');
+assert(m10Teacher.indexOf('Depois, sem HDMI:')<m10Teacher.indexOf('</details>'),'M10 private follow-up must be concealed');
+
 // M10 projected foundations and timed pitch must agree with M09's three honest
 // outcomes. A peer test without a defect must not force a fictional correction.
 const m10TeacherFoundations=read('v3/teacher-mission-ten-foundations.js');
