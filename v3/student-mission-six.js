@@ -22,12 +22,24 @@ const volatileDrafts=new Map(),writeStatus=new Map(); // In-tab only; not a perm
 function load(session){let d=blank();try{const k=key(session),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');if(routes.includes(x.route))d.route=x.route;for(const f of fields)if(typeof x[f.id]==='string')d[f.id]=x[f.id];if(Array.isArray(x.checks))d.checks=[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]}catch{}return d}
 function save(session,d){const x=blank();x.route=routes.includes(d.route)?d.route:'image';for(const f of fields)x[f.id]=clean(d[f.id]);x.checks=[...new Set((d.checks||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<3))];const k=key(session);volatileDrafts.set(k,x);try{localStorage.setItem(k,JSON.stringify(x));writeStatus.set(k,true);return true}catch{writeStatus.set(k,false);return false}}
 function selectRoute(d,route){if(!routes.includes(route)||d.route===route)return false;d.route=route;d.checks=[];return true}
+// As declarações manuais devem corresponder ao asset e ao relato atualmente exibidos.
+// Alterações só de espaçamento não apagam uma verificação já realizada.
+const retestByField={need:[0,1,2],file:[0,1,2],source:[0,1,2],license:[2],before:[0,1],after:[0,1],negative:[2],saved:[0]};
+function updateField(d,id,value){
+ if(!fields.some(f=>f.id===id))return [];
+ const next=String(value??''),changed=clean(d[id])!==clean(next);
+ d[id]=next;
+ if(!changed)return [];
+ const affected=retestByField[id]||[];
+ d.checks=(d.checks||[]).filter(n=>!affected.includes(n));
+ return affected;
+}
 function draftNotice(session){const k=key(session);if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. O rascunho permanece apenas nesta aba: copie sua ficha antes de sair.';if(writeStatus.get(k)===true)return 'Rascunho salvo neste navegador. Não enviado.';try{if(localStorage.getItem(k)!==null)return 'Rascunho salvo neste navegador. Não enviado.'}catch{}return 'Rascunho local. Não enviado.'}
-function validate(session){const d=load(session);for(const f of fields){const n=clean(d[f.id]).length;if(n<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};if(n>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" ultrapassa o limite de '+f.max+' caracteres. Revise sem perder seu texto.'}}if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme manualmente os três testes do asset no Preview.'};return {ok:true,label:'Registro completo. O professor ainda deve verificar a execução.'}}
-function evidence(session){const d=load(session);const map={need:'Necessidade',file:'Asset',source:'Origem',license:'Licença',before:'Antes',after:'Depois',negative:'Teste negativo',saved:'Projeto salvo'};return ['M06 | '+d.route,...fields.map(f=>map[f.id]+': '+clean(d[f.id]))].join('\n').slice(0,750)}
+function validate(session){const d=load(session);for(const f of fields){const n=clean(d[f.id]).length;if(n<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};if(n>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" ultrapassa o limite de '+f.max+' caracteres. Revise sem perder seu texto.'}}if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme manualmente os três testes do asset no Preview.'};if(evidence(session).length>750)return {ok:false,field:'checks',label:'O registro excede 750 caracteres. Resuma os relatos sem apagar o rascunho.'};return {ok:true,label:'Registro completo. O professor ainda deve verificar a execução.'}}
+function evidence(session){const d=load(session);const map={need:'Necessidade',file:'Asset',source:'Origem',license:'Licença',before:'Antes',after:'Depois',negative:'Teste negativo',saved:'Projeto salvo'};return ['M06 | '+d.route,...fields.map(f=>map[f.id]+': '+clean(d[f.id]))].join('\n')}
 function parseEvidence(s){
  // Evidências antigas achatadas ou parciais não podem virar rascunho aparentemente válido.
- if(typeof s!=='string'||!s.startsWith('M06 | '))return null;
+ if(typeof s!=='string'||s.length>750||!s.startsWith('M06 | '))return null;
  const lines=s.split(/\r?\n/),route=lines[0].slice(6).trim();
  if(!routes.includes(route)||lines.length!==fields.length+1)return null;
  const map={Necessidade:'need',Asset:'file',Origem:'source','Licença':'license',Antes:'before',Depois:'after','Teste negativo':'negative','Projeto salvo':'saved'};
@@ -37,7 +49,7 @@ function parseEvidence(s){
   const id=map[line.slice(0,i)],f=fields.find(z=>z.id===id);
   if(!f||seen.has(id))return null;
   const value=line.slice(i+2);
-  if(clean(value).length<f.min||value.length>f.max)return null;
+  if(value!==clean(value)||value.length<f.min||value.length>f.max)return null;
   seen.add(id);x[id]=value;
  }
  return seen.size===fields.length?x:null;
@@ -68,9 +80,9 @@ function review(ctx){const d=load(ctx.session),locked=['approved','submitted'].i
 function render(ctx){return '<section id="m6sRoot" class="m6s-root">'+heading(ctx)+(ctx.phase==='practice'?practice(ctx):ctx.phase==='review'?review(ctx):briefing(ctx))+'</section>'}
 function mount(ctx){const root=document.querySelector('#m6sRoot');if(!root)return;const locked=['approved','submitted'].includes(ctx.status);const d=load(ctx.session);
 if(ctx.phase==='practice'&&window.PIT_ASSET_FORGE_TUTORIAL){const guide=root.querySelector('#f6Tutorial');window.PIT_ASSET_FORGE_TUTORIAL.mount(guide);const select=guide?.querySelector('#f6tRoute');if(select){select.disabled=locked;select.addEventListener('change',()=>{if(locked||!selectRoute(d,select.value))return;save(ctx.session,d);root.querySelectorAll('[data-m6s-check]').forEach(el=>{el.checked=false});const status=root.querySelector('#m6sSaveStatus');if(status)status.textContent='Trilha alterada: repita os três testes no Preview e confira os relatos antes/depois. '+draftNotice(ctx.session)})}if(locked)guide?.querySelectorAll('input,textarea,button').forEach(x=>x.disabled=true)}
-root.querySelectorAll('[data-m6s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m6sField]=el.value;const ok=save(ctx.session,d);const status=root.querySelector('#m6sSaveStatus');if(status)status.textContent=draftNotice(ctx.session)}));
+root.querySelectorAll('[data-m6s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const affected=updateField(d,el.dataset.m6sField,el.value);save(ctx.session,d);if(affected.length)root.querySelectorAll('[data-m6s-check]').forEach(box=>{if(affected.includes(Number(box.dataset.m6sCheck)))box.checked=false});const status=root.querySelector('#m6sSaveStatus');if(status)status.textContent=(affected.length?'Relato alterado: reconfirme os testes afetados no Preview antes de enviar. ':'')+draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m6s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m6sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(ctx.session,d);const status=root.querySelector('#m6sSaveStatus');if(status)status.textContent=draftNotice(ctx.session)}));
 root.querySelectorAll('[data-m6s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m6sNav==='practice'){ctx.onPhase('practice');return}const v=validate(ctx.session);if(!v.ok){ctx.onMessage(v.label);root.querySelector(v.field==='checks'?'[data-m6s-check]':'#m6s-'+v.field)?.focus();return}ctx.onPhase('review')}));
 }
-window.PIT_STUDENT_MISSION_SIX={fields,routes,load,save,selectRoute,draftNotice,validate,evidence,parseEvidence,hydrate,profile,render,mount};
+window.PIT_STUDENT_MISSION_SIX={fields,routes,load,save,selectRoute,updateField,draftNotice,validate,evidence,parseEvidence,hydrate,profile,render,mount};
 })();
