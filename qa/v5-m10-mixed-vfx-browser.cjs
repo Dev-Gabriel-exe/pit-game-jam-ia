@@ -195,6 +195,7 @@ function within(a,b,gap=3){
   assert.deepEqual(errors,[],'Uncaught browser errors: '+errors.join(' | '));
   fs.writeFileSync(PREFIX+'.json',JSON.stringify(report,null,2)+'\n');
   await cdp.detach();
+  console.log('M10 rare visual cue provenance: '+JSON.stringify(report.rareVisual));
   console.log('PASS M10 mixed-build VFX timeline: 30 GLBs, 3 snapshots, genuine active/passive/reactive sprite cues, 29 spectators and M5 rollback.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
