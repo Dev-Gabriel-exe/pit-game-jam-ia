@@ -54,3 +54,11 @@ Endurecido `v3/teacher-private-notes-guard.js`: notas privadas que o navegador r
 - Teste executado: **17 verificações em V8**, incluindo handler real com PostgreSQL e crypto simulados, além de verificações estáticas dos dez contextos do cliente; **PASS**. Sintaxe JS avaliada em V8. Não equivale a PostgreSQL nativo, Browser QA ou GDevelop GUI.
 - Commits: `2ce0578b951fbc25493aa5481ddaab36787768be`, `945cd8e90aa448f1f22934a1cb4375e270782b6a`, `27e87b1d34ec59d24c378c4dc4361d0b6f85c94c`, `6f6019b4b7ea00836e5b0039df75d6947de1b2a0`.
 - **Pendente:** CI nativa e Browser QA no SHA final, simulação PostgreSQL descartável com 30 alunos, compatibilidade de API com a ponte V5 e homologação humana. Não mesclar PR #23 automaticamente; não alterar `main`.
+
+## Verificação de estado da sala e CI descartável — 01/11/2026, rodada seguinte
+
+- O backend V3 agora retorna **HTTP 503** quando a linha `pit_classroom_state` ainda não existe, tanto no envio do aluno quanto na liberação do professor. Antes, estes caminhos devolviam 500 ou 409 e confundiam falha de inicialização com erro pedagógico. O contrato de liberação sequencial e monotônica continua inalterado.
+- A suíte `qa/v3-postgres-integration.cjs` ainda tentava liberar a M04 diretamente da M01, incompatível com a regra vigente. Agora exige M02 → M03 → M04, rejeita saltos, preserva desbloqueios ao revisitar telas e confere que uma evidência com 751 caracteres não é gravada parcialmente.
+- Novo workflow **`.github/workflows/v3-postgres-integration.yml`**: PostgreSQL 16 descartável, três alunos fictícios, PIN de teste, regressão de handlers e fluxo de chat/evidência; escopo de push restrito à branch V3. **CI configurada, mas resultado ainda NÃO CONFIRMADO**. O workflow não se conecta ao Neon ou a alunos reais.
+- Verificação local de código via V8: 8 casos executados com o handler real e SQL simulado, todos PASS; compilação sintática de três arquivos JS PASS. Isso **não equivale** à execução PostgreSQL 16, Chrome ou teste físico.
+- **Para o agente V5:** não substituir a liberação sequencial da `main` por lógica antiga de fases; incorporar apenas a proteção 503 e o contrato de evidência após testes de regressão. PR #23 permanece rascunho, sem merge automático.
