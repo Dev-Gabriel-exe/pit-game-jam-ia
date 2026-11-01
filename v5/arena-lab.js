@@ -19,6 +19,8 @@ if(!CORE||expected.some(x=>!allowed.includes(x)))throw Error('A arena exige as q
 const params=new URLSearchParams(location.search);
 // H.3: M10 strictly opt-in, fictional roster, no writes to XP or user progress.
 const m10Preview=params.get('m10preview')==='1';
+// H.3 diagnostic: opt-in roster variant for fictional M10 only; never reads student state.
+const requestedM10Variant=m10Preview&&/^(?:[0-9]|10)$/.test(params.get('m10variant')||'')?Number(params.get('m10variant')):0;
 if(m10Preview&&(!PHASE2||!M10_VISUAL||!PROGRESSION))
  throw Error('Prévia M10 exige motor e contrato H0; legado bloqueado');
 const m10Policy=m10Preview?PROGRESSION.createPolicy(PHASE2.TALENTS):null;
@@ -48,7 +50,7 @@ const PACES=[
  {scale:.60,mageBonus:1.10,label:'Dano 60% · épico'},
  {scale:.50,mageBonus:1.10,label:'Dano 50% · lendário'}
 ];
-const state={damageIndex:3,mission:m10Preview?10:5,count:importedBuild||params.get('count')==='4'?4:30,customBuild:importedBuild,phase2:m10Preview||params.get('phase2')==='1'||!!importedBuild,phase2Variant:0,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
+const state={damageIndex:3,mission:m10Preview?10:5,count:importedBuild||params.get('count')==='4'?4:30,customBuild:importedBuild,phase2:m10Preview||params.get('phase2')==='1'||!!importedBuild,phase2Variant:requestedM10Variant,stage:null,busy:true,fought:false,interval:null,result:null,speed:1,roster:[],round:0,seed:0,spotId:null,spotPriority:0,spotTime:-999,lastHitLog:-999,director:false,lastCameraTime:-999,abilityCount:0};
 const $status=$('arenaStatus'),$models=$('modelReport');
 function message(text,kind='ready'){$status.textContent=text;$status.dataset.status=kind;}
 // Announce only lifecycle changes; the fast combat log and HUD remain readable
