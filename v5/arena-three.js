@@ -770,20 +770,25 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   if(!item||item.spectator||!isPhase2()||!event?.talent)return false;
   const cue=cueFor(item.build.klass,event.talent);
   if(!cue)return false;
-  // M10-only: reserve at most ONE rotating subtle proc cue beyond the
-  // active-cast budget. This prevents 30-player fights from starving every
-  // passive/reactive visual while preserving active priority and reduced motion.
-  // The engine, talents, damage, M5 and battle results are untouched.
+  // M10-only: one rotating subtle proc cue. Telegraph/warning rings can
+  // independently occupy 18 ability slots, even when reduced motion limits
+  // talent casts to nine. Reclaim ONE oldest warning before dropping a genuine
+  // passive/reactive proc; never grow beyond the pre-existing 18-effect ceiling.
+  // The battle engine, active cast policy, M5 and reduced-motion sprites stay unchanged.
   const rareProcLane=subtle&&container.dataset.v5CombatEngine==='phase2-m10';
   if(rareProcLane){
-   const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
+   let idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
    if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+   if(effects.filter(e=>e.isAbility).length>=18){
+    idx=effects.findIndex(e=>e.isAbility&&!e.talentCue);
+    if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+   }
   }
   if(!subtle&&effects.filter(e=>e.isAbility).length>=visualBudget){
    const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
    if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
   }
-  const cueLimit=rareProcLane?visualBudget+1:visualBudget;
+  const cueLimit=rareProcLane?18:visualBudget;
   if(effects.filter(e=>e.isAbility).length>=cueLimit){
    talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);
    recordVisualType(cue,true);
