@@ -26,3 +26,12 @@ Verificar [CI específico](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/ac
 - Workflow atualizado em `5b87351251ab647c1a918d4fc5545c114235d31b` para reagir também a alterações no renderizador. **CI novo pendente nesta anotação**; não declarar correção validada antes do verde.
 
 Próximo passo: verificar o CI estrito, conferir se J08/P09/A07 passaram de descartados para renderizados, e analisar as capturas sem confundir cue instanciado com visibilidade humana. G.2 em PCs físicos permanece pendente.
+
+## Fechamento do incremento — CI estrito aprovado, com ressalvas
+
+- **SUCCESS:** [V5 H3 — M10 Rare Equipped WebGL, run 41348463224](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463224), commit `d370742c334074873664fdc7277fe1085b7c1c67`. Node H.0 e regressão M5, Chromium/SwiftShader com 30 GLBs, câmera `duel → climax → victory`, 29 espectadores e três capturas individuais passaram.
+- Seed determinística `20261101`: `guardian:J08` 1 proc, `hunter:P09` 1 proc, `mage:A07` 4 procs. **Todos os três cues passaram a constar como renderizados e não descartados**, preservando a seleção de 10 talentos/20 pontos e retorno M5 de 5 talentos. O screenshot é amostra após detecção cumulativa, não prova enquadramento ou legibilidade humana.
+- Diagnóstico da primeira correção: [runs 41348178662](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348178662) e [41348182230](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348182230) **FAIL**, porque a vaga adicional de proc ainda competia com até 18 anéis de aviso. A correção final `d370742c` reutiliza um aviso antigo antes de inserir um único proc, respeitando o teto existente de 18 efeitos simultâneos; não altera física nem o motor.
+- **QA geral de regras:** [41348463250](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463250) aprovado. **G.1 navegador:** [41348463227](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41348463227) falhou em contagem de texturas após reinício (211→385→559), sem ligação causal demonstrada com a mudança M10; foi solicitada repetição do job antes de classificar como regressão. Outros jobs de navegador estavam em execução na última consulta. Não declarar suite inteira verde.
+
+**Próxima rodada da mesma Missão 10:** verificar os demais workflows e o reteste G.1, avaliar capturas de J08/P09/A07 em tela/projetor e confirmar que a vaga rotativa mantém legibilidade em seeds/qualidades variadas. G.2 nos PCs físicos e H.1/H.2 reais seguem bloqueados.
