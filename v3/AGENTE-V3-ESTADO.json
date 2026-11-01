@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T21:18:00Z",
+  "last_completed_at": "2026-11-01T22:14:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M05 student rule/Preview attestations now invalidate on eight substantive field edits; eleven source-derived V8 checks PASS. GitHub Actions static QA SUCCESS on 2bf956b; Chrome on 2bf956b IN_PROGRESS at last check. No native Node execution locally. Continue cross-face M01–M10 audit and confirm browser QA on exact SHA; GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN. Master 54/59 unchanged; main untouched.",
+  "priority": "M07 project-path changes now require re-opening the indicated editable project: first Preview check invalidated, gameplay checks preserved, no silent evidence truncation. V8 functional/source syntax PASS, native Node/Chrome on new SHA NOT_CONFIRMED. Previous Chrome 41351449965 SUCCESS on 2bf956b. Continue cross-face M01–M10 pedagogy and confirm CI on 9c7e67d or later; GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN. Master 54/59; main untouched.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M05-STALE-PREVIEW",
+  "last_task": "V4-AUD-M07-SAVED-PROJECT-CHECK",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3272,42 +3272,63 @@
       ],
       "tests": "11 V8 source-derived checks PASS on actual M05 module (8 field edits, persistence and retest, whitespace, unknown field, static DOM wiring). GitHub Actions static QA SUCCESS on 2bf956b. Chrome on 2bf956b IN_PROGRESS at last check. Native Node locally, GDevelop GUI, physical HDMI, human/mobile and V5 integration NOT_RUN.",
       "notes": "Fixed stale manual Preview attestations after M05 SE/ENTAO, variable, positive/negative, feedback, project path or diagnosis edits; preserve text, selectively reset checkbox and block submit until retest. Master 54/59; no main or real student data."
+    },
+    {
+      "task": "V4-AUD-M07-SAVED-PROJECT-CHECK",
+      "completed_at": "2026-11-01T22:14:00Z",
+      "commit": "fe93c66c965e31f933c0196388a72e1e6fb8b7d8",
+      "files": [
+        "v3/student-mission-seven.js",
+        "qa/v3-m07-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Source-derived V8 functional checks PASS (project path change invalidates only check 0, gameplay checks preserved, revalidation, whitespace-only, max evidence, syntax). Node QA JS syntax PASS; full Node suite NOT_RUN. Previous Chrome run 41351449965 SUCCESS and static run 41351449957 SUCCESS on 2bf956b; new CI NOT_CONFIRMED. GDevelop GUI, physical HDMI, real student, mobile and V5 NOT_RUN.",
+      "notes": "M07 saved project location now requires a fresh same-project verification; preserves prior gameplay observations, synchronizes UI and no longer truncates evidence silently. Master 54/59; no main, production or real student data."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M05-STALE-PREVIEW",
-    "status": "SOURCE_V8_PASS_STATIC_CI_SUCCESS_CHROME_PENDING",
-    "updated_at": "2026-11-01T21:18:00Z",
+    "task": "V4-AUD-M07-SAVED-PROJECT-CHECK",
+    "status": "SOURCE_V8_PASS_PREVIOUS_CI_SUCCESS_NEW_CI_UNCONFIRMED",
+    "updated_at": "2026-11-01T22:14:00Z",
     "code_commits": [
-      "2c19cb2f308dbfea54c8b94477ed00973b43d2a2"
+      "578292a1f5896dfd766fda07e20d5fddf2bea35d"
     ],
     "regression_commits": [
-      "2bf956b89722503c537ec0f81445fef0abf41b05"
+      "9c7e67d9fc4e757150260f56f62b2cea1f9eb1fc"
     ],
-    "documentation_commit": "4ba1a4332c2f44bd39d416afd02846d0daa6fe53",
+    "documentation_commit": "fe93c66c965e31f933c0196388a72e1e6fb8b7d8",
     "tests": [
       {
-        "name": "M05 eight material field changes with draft persistence and retest",
+        "name": "M07 project-path change and first-checkbox invalidation",
         "result": "PASS (V8, source-derived)"
       },
       {
-        "name": "Whitespace-only and unknown field",
+        "name": "Gameplay checks preserved, reconfirmation and whitespace",
         "result": "PASS (V8)"
       },
       {
-        "name": "DOM checkbox wiring",
-        "result": "PASS (static source check)"
+        "name": "Max-length evidence roundtrip and no silent truncation",
+        "result": "PASS (V8)"
       },
       {
-        "name": "GitHub Actions static QA on regression SHA 2bf956b",
+        "name": "M07 module and Node QA syntax",
+        "result": "PASS (V8 compilation)"
+      },
+      {
+        "name": "Previous GitHub Actions Browser QA on 2bf956b, run 41351449965",
         "result": "SUCCESS"
       },
       {
-        "name": "GitHub Actions Browser QA on regression SHA 2bf956b",
-        "result": "IN_PROGRESS at last check"
+        "name": "Previous static QA on 2bf956b, run 41351449957",
+        "result": "SUCCESS"
       },
       {
-        "name": "Local native Node full QA",
+        "name": "CI on new regression SHA 9c7e67d",
+        "result": "NOT_CONFIRMED"
+      },
+      {
+        "name": "Native Node full QA locally",
         "result": "NOT_RUN"
       },
       {
@@ -3315,7 +3336,7 @@
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Chrome QA on 2bf956b or later SHA; audit M01–M10 student/teacher content and notes, without main merge.",
+    "next": "Confirm CI on 9c7e67d or later; audit remaining professor/student evidence and presentation synchronization. No main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
