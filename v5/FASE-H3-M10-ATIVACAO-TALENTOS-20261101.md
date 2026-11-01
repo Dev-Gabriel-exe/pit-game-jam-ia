@@ -19,3 +19,10 @@ O job `final-roster` da execução [41327070100](https://github.com/Dev-Gabriel-
 Reforço de regressão no commit `16e6ea8e58c8fb5506faa21d443186d58b64b5cc`: o teste agora exige explicitamente que **todos os 60 talentos marcados `ativo`** tenham pelo menos uma emissão válida entre as 22 partidas, em vez de inferir cobertura apenas pela contagem. **O CI deste reforço ainda precisa ser confirmado**; o resultado anterior não valida automaticamente o novo commit.
 
 **Próximo passo:** verificar o CI do reforço, examinar o relatório por talento e criar diagnóstico específico para passivos/reativos sem confundir sua mecânica com eventos ativos. Manter a Missão 10 em andamento, sem alterar o jogo real.
+
+## CI do reforço (01/11/2026)
+
+- **PASS:** job `final-roster` do [run 41327129910](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41327129910), SHA de teste `16e6ea8e58c8fb5506faa21d443186d58b64b5cc`. Log confirma os **60/60 talentos ativos** emitindo pelo menos um evento `talent` válido nas 22 partidas e preservação das 120 seleções, 3 replays e 6.942 eventos.
+- **PASS:** [QA geral 41327129890](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41327129890).
+- **AINDA EM EXECUÇÃO na consulta:** três jobs WebGL do run 41327129910 e [Browser QA 41327129883](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41327129883). **Não declarar workflow completo aprovado** até confirmação.
+- O código de produção do motor não mudou. Não confundir 60 ativos cobertos com validação de 24 reativos, 36 passivos ou 120 animações exclusivas.
