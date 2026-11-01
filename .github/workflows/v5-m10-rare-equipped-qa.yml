@@ -1,0 +1,46 @@
+name: V5 H3 — M10 Rare Equipped WebGL
+on:
+  push:
+    branches: [feature/v5-arena-dos-criadores]
+    paths:
+      - 'qa/v5-m10-rare-equipped-seed.cjs'
+      - 'qa/v5-m10-rare-equipped-browser.cjs'
+      - 'v5/arena-lab.js'
+      - 'v5/m10-visual-roster.js'
+      - '.github/workflows/v5-m10-rare-equipped-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rare-equipped-webgl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Verify isolated M10 seed and M5 regression
+        run: |
+          node --check qa/v5-m10-rare-equipped-seed.cjs
+          node --check qa/v5-m10-rare-equipped-browser.cjs
+          node --check v5/arena-lab.js
+          node qa/v5-m10-rare-equipped-seed.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Exercise genuine 30-KayKit WebGL and cinematic camera
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-v5-m10-rare-equipped.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v5-m10-rare-equipped-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-rare-equipped-camera
+          path: |
+            qa/v5-m10-rare-equipped-seed.json
+            qa/v5-m10-rare-equipped.json
+            qa/v5-m10-rare-equipped-*.png
+          if-no-files-found: ignore
