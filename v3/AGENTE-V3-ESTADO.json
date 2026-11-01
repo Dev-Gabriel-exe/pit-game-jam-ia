@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T02:12:38.813Z",
+  "last_completed_at": "2026-11-01T03:18:30Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M04 legacy draft preservation and max-length rejection committed; prior M04 static/browser CI SUCCESS. Confirm new CI on regression SHA, then audit M05 student/professor legacy drafts. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
+  "priority": "M05 legacy drafts and Preview route retest corrected; direct V8 43 checks and emulated Node regression 56 assertions PASS. New GitHub CI/Browser QA not confirmed. Next: verify CI and audit M06 professor/student evidence, route switching and legacy drafts. GDevelop GUI/HDMI/physical mobile/human NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M04-LEGACY-DRAFT-PRESERVATION",
+  "last_task": "V4-AUD-M05-LEGACY-AND-ROUTE-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3024,44 +3024,53 @@
       ],
       "tests": "Direct V8 7/7 checks PASS. Previous M04 static QA 41260293053 SUCCESS and Browser QA 41260293036 SUCCESS. New regression Node/CI not yet confirmed; GDevelop GUI, HDMI, physical mobile and human NOT_RUN.",
       "notes": "Preserve six overlong legacy texts across load/save/route changes; reject over-max with field-specific limit and block submission; prevent misleading 6/6. No main, production or real student data writes. Roadmap 54/59 unchanged."
+    },
+    {
+      "id": "V4-AUD-M05-LEGACY-AND-ROUTE-RETEST",
+      "completed_at": "2026-11-01T03:18:30Z",
+      "commit": "4f0b98eb0e1013dedf77e95868fdd2263904759a",
+      "files": [
+        "v3/student-mission-five.js",
+        "qa/v3-m05-regression.cjs",
+        "qa/v3-m04-regression.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "43 direct V8 checks PASS on fetched actual M05 code; 56 assertions PASS executing new QA source with V8 emulation of fs/vm/assert; QA syntax PASS. Native Node, GitHub static CI, Browser QA of latest commits NOT_CONFIRMED. GDevelop GUI, HDMI, physical mobile, human NOT_RUN.",
+      "notes": "Preserved 8 legacy draft fields, explicit max validation, prevents false 8/8 and submission, route change clears three manual Preview checks without deleting text. Teacher private details remain closed. No main, production, real student writes. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M04-LEGACY-DRAFT-PRESERVATION",
+    "task": "V4-AUD-M05-LEGACY-AND-ROUTE-RETEST",
     "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-01T02:12:38.813Z",
-    "code_commit": "3a869307be8f4f06e25f55a04d98551f3994e3d3",
+    "updated_at": "2026-11-01T03:18:30Z",
+    "code_commit": "3cd9f878d15ad743ecde37dbe324b3acd22be71a",
     "regression_commits": [
-      "4e6cbf350a9acd2db3796dcd705ac1ed9eae6231"
+      "972de785b1ecfac205101f5c9a6b89ea17e2a760",
+      "4f0b98eb0e1013dedf77e95868fdd2263904759a"
     ],
-    "documentation_commit": "7148e7d3586dc68dc76ce2a8d7538f922e00421b",
+    "documentation_commit": "37ed22cefce1cd9d01ad80a22334a2c27928d996",
     "tests": [
       {
-        "name": "Direct V8 M04 legacy max-length cases",
+        "name": "Direct V8 M05 integrity tests",
         "result": "PASS",
-        "details": "Six overlong fields preserved, rejected and not counted as 6/6; valid draft accepted (7 checks)"
+        "details": "43 checks across 8 overlong fields, legacy draft, route retest, storage denial and evidence"
       },
       {
-        "name": "Previous M04 static QA",
+        "name": "M05 regression source executed in isolated V8 Node-module emulation",
         "result": "PASS",
-        "details": "Run 41260293053 completed success"
+        "details": "56 assertions; native Node/CI not claimed"
       },
       {
-        "name": "Previous M04 Browser QA",
-        "result": "PASS",
-        "details": "Run 41260293036 completed success"
-      },
-      {
-        "name": "New M04 Node regression and Browser QA",
-        "result": "PENDING",
-        "details": "New regression commit 4e6cbf3; CI not yet confirmed"
+        "name": "Native Node + GitHub static CI and Browser QA",
+        "result": "NOT_CONFIRMED",
+        "details": "Commit checks not available through accessible status endpoints"
       },
       {
         "name": "Physical GDevelop GUI/HDMI/mobile/human",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm CI for new M04 commits; audit M05 legacy draft and max-length validation",
+    "next": "Confirm latest CI and audit M06 professor/aluno (route switching, asset import evidence, old drafts, links and free licensing)",
     "master_progress": "54/59 unchanged"
   }
 }
