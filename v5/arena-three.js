@@ -820,7 +820,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    let idx=effects.findIndex(recyclableSubtle);
    if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
    if(effects.filter(e=>e.isAbility).length>=18){
+    // Prefer a warning, then a non-subtle cast. Do not discard a pending
+    // subtle proc before its first frame just to admit another proc.
     idx=effects.findIndex(e=>e.isAbility&&!e.talentCue);
+    if(idx<0)idx=effects.findIndex(e=>e.isAbility&&!e.subtle&&e.fxDrawnFrames>0);
+    if(idx<0)idx=effects.findIndex(e=>e.isAbility&&!e.subtle);
     if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
    }
   }
