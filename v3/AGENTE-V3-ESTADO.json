@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T10:17:14.785Z",
+  "last_completed_at": "2026-11-02T11:11:33Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08 saved-project change now invalidates before/after/negative Preview confirmations 0/1/2; source/markup static checks 7/7 PASS; regression committed but Node/CI/Chrome on new SHA NOT_CONFIRMED. Verify CI, continue M01–M10 cross-role evidence audit (M09 next). No main merge.",
+  "priority": "M09 project path change now invalidates all 3 peer-test declarations; actual module V8 mock-storage scenarios PASS; regression committed, native Node/CI/Chrome NOT_CONFIRMED. Verify CI, then audit M10 evidence/project/publish flow before aesthetics. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M08-SAVED-PROJECT-RETEST",
+  "last_task": "V4-AUD-M09-SAVED-PROJECT-PEER-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3442,41 +3442,51 @@
       ],
       "tests": "7/7 static source/markup assertions PASS; new VM regression committed, Node/CI/Chrome NOT_CONFIRMED; GDevelop GUI/HDMI/real students/physical mobile NOT_RUN.",
       "notes": "M08 changed saved-project path invalidates all 3 Preview confirmations, preserves student text, blocks submission until manual retest. Teacher projected rubric aligned; private notes remain collapsed. Branch V3 only; no main merge or real student data. Master 54/59."
+    },
+    {
+      "task": "V4-AUD-M09-SAVED-PROJECT-PEER-RETEST",
+      "completed_at": "2026-11-02T11:11:33Z",
+      "commit": "e414994ff2cc925327dba23de8305b24f12468fd",
+      "files": [
+        "v3/student-mission-nine.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "V8 executed actual M09 module with fake localStorage: valid baseline, changed saved path invalidates 0/1/2, submission blocked, persisted invalidation, whitespace no-op, student retest guidance PASS. Native QA regression added but Node/CI/Chrome execution NOT_CONFIRMED. Prior commit workflow lookup empty (PR-triggered runs only). GDevelop GUI/HDMI/human peer/mobile NOT_RUN.",
+      "notes": "M09 changed saved-project path no longer preserves stale observation/decision confirmations; student text preserved. Teacher rubric already requires same project. Master 54/59 unchanged, no main/production/real student data."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M08-SAVED-PROJECT-RETEST",
+    "task": "V4-AUD-M09-SAVED-PROJECT-PEER-RETEST",
     "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-02T10:17:14.785Z",
+    "updated_at": "2026-11-02T11:11:33Z",
     "code_commits": [
-      "c8f4786f447538c77510258f919f3a580d7ddfe1",
-      "06e740dca5616ed921860b180bdd028ac6f24b1c"
+      "2f65796f12d36f3dd22f239e88c7cc16c6d8d01b"
     ],
     "regression_commits": [
-      "aaeea273abfa5c49941064d1b1eeaa4b3c7aa042",
-      "49f94b1f380fa3f1a70a57ff86b2f4e548ee4b8b",
-      "6723d3c8137634e819562f9121942fd5a13ac730"
+      "96413e08648cafa11cf4e2782b8c52c9d42c4787"
     ],
-    "documentation_commit": "c0bac8b6bbbb075e840f12cbfceea3e1d1461a15",
+    "documentation_commit": "e414994ff2cc925327dba23de8305b24f12468fd",
     "tests": [
       {
-        "name": "M08 code/markup consistency source checks",
-        "result": "PASS 7/7 static assertions on actual GitHub files; NOT execution of runtime JS"
+        "name": "M09 actual JS module with fake localStorage (V8)",
+        "result": "PASS: baseline, project change invalidates 0/1/2, blocks submit, persistence, whitespace-only no-op, visible guidance"
       },
       {
-        "name": "M08 Node VM regression",
-        "result": "COMMITTED, NOT_EXECUTED in this run; awaits GitHub Actions"
+        "name": "M09 native Node regression",
+        "result": "COMMITTED in qa/v3-audit-alignment.cjs; execution NOT_CONFIRMED"
       },
       {
-        "name": "GitHub Actions static QA and Browser QA",
-        "result": "NOT_CONFIRMED — commit-workflow lookup returned no PR-triggered runs"
+        "name": "GitHub Actions static and Chrome",
+        "result": "NOT_CONFIRMED on new SHA; connector commit-workflow lookup does not expose non-PR runs"
       },
       {
-        "name": "GDevelop GUI, HDMI, human students, physical mobile",
+        "name": "GDevelop GUI, HDMI, human peer playtest, physical mobile",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify native Node/Chrome CI for current branch SHA; audit M09 evidence and teacher rubric, then M10, before aesthetics.",
+    "next": "Verify native Node/Chrome CI for current branch SHA; audit M10 saved project, final demonstration, URL and evidence consistency.",
     "master_progress": "54/59 unchanged"
   }
 }
