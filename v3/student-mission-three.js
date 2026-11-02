@@ -66,6 +66,25 @@ function hydrate(id,raw,status){
  if(FIELDS.some(f=>clean(old[f.key]))||old.checks.length||old.objectType!==blank().objectType)return;
  save(id,d);
 }
+// A previous manual confirmation must not certify a changed project or Preview result.
+const affectedChecks={
+ project:[0,1,2],scene:[0,1],object:[0,1],source:[0,1],
+ preview:[1],saved:[2],fix:[1]
+};
+function updateField(d,name,value){
+ if(!Object.prototype.hasOwnProperty.call(affectedChecks,name))return false;
+ const previous=clean(d[name]),next=clean(value);
+ d[name]=String(value??'');
+ if(previous===next)return false;
+ d.checks=(d.checks||[]).filter(n=>!affectedChecks[name].includes(n));
+ return true;
+}
+function selectObjectType(d,type){
+ if(!['2D Sprite','3D Box/Modelo'].includes(type)||d.objectType===type)return false;
+ d.objectType=type;
+ d.checks=(d.checks||[]).filter(n=>![0,1].includes(n));
+ return true;
+}
 function validity(d){
  const vals=FIELDS.filter(f=>f.min).map(f=>clean(d[f.key]).length>=f.min&&String(d[f.key]??'').length<=f.max);
  const checks=[0,1,2].every(x=>d.checks.includes(x));
@@ -210,7 +229,7 @@ function mount(ctx){
  const root=document.querySelector('#m3Root');if(!root)return;
  window.PIT_GDEVELOP_FIRST_RUN?.mount(root.querySelector('.gd3-root'));
  window.PIT_ASSET_STUDIO?.mount(root.querySelector('.ast3-root'),{...ctx.idea,scene:ideaOf(ctx).scene});
- let d=load(ctx.session);
+ let d=load(ctx.session),retestMessage='';
  function update(){
   const result=validity(d),filled=result.filter(Boolean).length;
   const n=root.querySelector('#m3Progress'),rail=root.querySelector('#m3ProgressRail');
@@ -225,17 +244,23 @@ function mount(ctx){
    const input=root.querySelector('#m3-'+fieldKey);
    if(input)input.placeholder=exampleFor(fieldKey,idea,d.objectType);
   }
-  const note=root.querySelector('#m3Notice');if(note)note.textContent=draftNotice(ctx.session,filled);
+  root.querySelectorAll('[data-m3-check]').forEach(el=>{el.checked=d.checks.includes(Number(el.dataset.m3Check));});
+  const note=root.querySelector('#m3Notice');if(note)note.textContent=(retestMessage?retestMessage+' · ':'')+draftNotice(ctx.session,filled);
  }
  root.querySelectorAll('[data-m3-field]').forEach(el=>el.addEventListener('input',()=>{
-  d[el.dataset.m3Field]=el.value;save(ctx.session,d);update();
+  const changed=updateField(d,el.dataset.m3Field,el.value);
+  if(changed)retestMessage='Reconfirme os testes desmarcados após alterar o projeto ou o registro.';
+  save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-type]').forEach(el=>el.addEventListener('change',()=>{
-  if(!el.checked)return;d.objectType=el.value;save(ctx.session,d);update();
+  if(!el.checked)return;
+  if(selectObjectType(d,el.value))retestMessage='Tipo de objeto alterado: confira novamente a cena e o Preview.';
+  save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-check]').forEach(el=>el.addEventListener('change',()=>{
   const v=Number(el.dataset.m3Check);
   d.checks=el.checked?[...new Set([...d.checks,v])].sort() :d.checks.filter(x=>x!==v);
+  if([0,1,2].every(n=>d.checks.includes(n)))retestMessage='';
   save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-action]').forEach(el=>el.addEventListener('click',()=>{
@@ -251,5 +276,5 @@ function mount(ctx){
  }));
  update();
 }
-window.PIT_STUDENT_MISSION_THREE={render,mount,load,save,parseEvidence,hydrate,validate,evidence,validity};
+window.PIT_STUDENT_MISSION_THREE={render,mount,load,save,parseEvidence,hydrate,validate,evidence,validity,updateField,selectObjectType};
 })();
