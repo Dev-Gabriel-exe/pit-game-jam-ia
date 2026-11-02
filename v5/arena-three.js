@@ -783,7 +783,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   const fx=spriteKit.spawn({style:cue.style,color:cue.color,scale:cue.scale,subtle,x,z});
   if(!fx)return false;
   fx.talentCue=cue;fx.subtle=subtle;
-  root.add(fx.mesh);effects.push(fx);trackFxCreate(fx);
+  root.add(fx.mesh);effects.push(fx);fx.fxDrawnFrames=0;trackFxCreate(fx);
   spriteVisualEvents++;container.dataset.v5SpriteVisualEvents=String(spriteVisualEvents);
   container.dataset.v5SpriteStyleLast=cue.style;
   container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
@@ -811,8 +811,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // passive/reactive proc; never grow beyond the pre-existing 18-effect ceiling.
   // The battle engine, active cast policy, M5 and reduced-motion sprites stay unchanged.
   const rareProcLane=subtle&&container.dataset.v5CombatEngine==='phase2-m10';
+  // M10-only: never evict a genuine cue before its first WebGL render.
+  // The existing 18-ability cap still applies; excess new cues are dropped.
+  // M5 retains its original replacement policy and all combat rules are untouched.
+  const recyclableSubtle=e=>e.isAbility&&e.subtle&&e.talentCue&&
+   (container.dataset.v5CombatEngine!=='phase2-m10'||e.fxDrawnFrames>0);
   if(rareProcLane){
-   let idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
+   let idx=effects.findIndex(recyclableSubtle);
    if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
    if(effects.filter(e=>e.isAbility).length>=18){
     idx=effects.findIndex(e=>e.isAbility&&!e.talentCue);
@@ -820,7 +825,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    }
   }
   if(!subtle&&effects.filter(e=>e.isAbility).length>=visualBudget){
-   const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
+   const idx=effects.findIndex(recyclableSubtle);
    if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
   }
   const cueLimit=rareProcLane?18:visualBudget;
@@ -932,7 +937,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   }
   const duration=reduce?.48:(subtle?Math.max(.78,cue.duration*1.45):Math.max(1.45,cue.duration*1.9));
   const talentEffect={mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors,subtle};
-  effects.push(talentEffect);trackFxCreate(talentEffect);
+  talentEffect.fxDrawnFrames=0;effects.push(talentEffect);trackFxCreate(talentEffect);
   talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
   recordVisualType(cue);
   container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
@@ -1493,6 +1498,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    fl.node.style.transform='translate(-50%,-50%) translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
   }
   if(!contextLost)renderer.render(scene,camera);
+  // Render acknowledgement is visual-only. A physics tick may emit several
+  // proc events before a single display frame; preserve those still unseen.
+  if(!contextLost&&container.dataset.v5CombatEngine==='phase2-m10'){
+   for(const effect of effects)
+    if(effect.talentCue&&effect.mesh?.visible)
+     effect.fxDrawnFrames=(effect.fxDrawnFrames||0)+1;
+  }
   if(fxProbeEnabled&&!contextLost&&container.dataset.v5ArenaMission==='10'&&isPhase2()){
    fxProbe.frames++;
    const active=[];
