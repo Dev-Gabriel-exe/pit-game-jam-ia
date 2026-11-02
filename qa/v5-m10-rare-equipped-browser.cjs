@@ -66,7 +66,7 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
      shot:d.v5CameraShot||'unknown',talentEvents:window.PIT_V5_ARENA_LAB.talentEvents,
      rendered:JSON.parse(d.v5TalentFxRenderedKeys||'[]'),
      dropped:JSON.parse(d.v5TalentFxDroppedKeys||'[]'),
-     liveInFrame:frameProbe?JSON.parse(d.v5FxProbeActiveKeys||'[]'):[],
+     liveInFrame:JSON.parse(d.v5FxProbeActiveKeys||'[]'),
      sprites:Number(d.v5SpriteVisualEvents||0),
      fx:Number(d.v5TalentFxEvents||0),
      spectators:Number(d.v5Spectators||0)};
