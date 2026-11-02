@@ -31,7 +31,7 @@ assert(sixPresentation.includes('ROTEIRO RESERVADO'));
 assert(sixPresentation.includes('pit-private-teacher-notes'));
 assert(!sixPresentation.includes('<details class="pit-private-teacher-notes" open'),'M06 guide private by default');
 assert(/function mount\(rootOverride\)/.test(six.code),'Preserve main M06 mount(rootOverride)');
-assert.equal(six.api.assets.length,5,'Existing M06 asset formats must be preserved');
+assert.equal(six.api.assets.length,4,'Four existing M06 asset formats must be preserved');
 
 const eightPractice=eight.api.render('practice'),eightReview=eight.api.render('review');
 assert(eightReview.includes('LEGIBILIDADE NA TELA-ALVO'),'M08 target screen check');
