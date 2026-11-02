@@ -98,3 +98,20 @@ Na seed `20261101`, 30 KayKits, 10 talentos por personagem, 29 espectadores e re
 **Próximo passo na mesma Missão 10:** conferir o resultado e o JSON do CI específico; comparar rejeições/substituições com o baseline 158/171, verificar se J08/P09/A07 continuam chegando ao primeiro frame e testar projeção em múltiplas seeds e enquadramentos. Se a nova regra impedir um talento raro de aparecer, corrigir e retestar. Um frame renderizado fora da câmera **não** é legibilidade homologada.
 
 **G.2 em PCs físicos NÃO executado.** H.1/H.2 com alunos reais, homologação no projetor, merge/main, deploy e alterações de dados/XP/turmas permanecem proibidos.
+
+
+### Reteste e correção após falha do WebGL (mesma Missão 10, 02/11/2026)
+
+O experimento de **proibir toda evicção de singleton pendente** foi rejeitado: o [run 41408739751](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408739751) concluiu `isolated-queue=PASS`, mas `queue-first-frame-webgl=FAIL`: `guardian:J08` não foi admitido no orçamento de 18. Portanto a proteção rígida NÃO foi mantida, e a conclusão do checkpoint anterior foi superada por este resultado.
+
+**Incremento seguro efetivamente mantido:** restaurar a política de admissão que havia passado no [run 41401591801](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591801), mas **instrumentar quantos cues únicos pendentes ela substitui**. O objetivo agora é medir a perda antes de redesenhar a prioridade: `evictedSingleton` e `evictedSingletonByKey` ficam restritos à telemetria sintética do laboratório opt-in. O JSON do navegador passa a reconciliar `accepted = dispatched + remaining + evicted` e registrar evicções de singleton também em falhas.
+
+**Commits após a falha:**
+- `b1e994e8541330181461ae72ca33b00c92d52a2a` — `v5/m10-visual-queue.js`: restauração do algoritmo aprovado + contadores diagnósticos.
+- `67b933d629ed39e971d3b5f62777472d84e7aa85` — `qa/v5-m10-visual-queue.cjs`: teste sintético reproduzível da evicção de singleton e reset.
+- `9cfcaf5bc38d0cb7064128decd919eb53ede4f62` — `v5/arena-three.js`: expõe somente contadores por chave canônica no opt-in.
+- `d64c54c4251ac16eb5ba95e41eeca65f9b79f6ac` — `qa/v5-m10-rare-equipped-browser.cjs`: grava métricas e reconciliação em JSON.
+
+**Verificação:** [QA geral no SHA 67b933d6](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408971387) PASS; `isolated-queue` no [run 41408971430](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408971430) PASS. **CI completo do SHA d64c54c4**: [fila e WebGL 41409030122](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41409030122), [rare equipped 41409030199](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41409030199), [QA geral 41409030117](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41409030117) — **ainda em fila** na consulta. Não declarar aprovação final sem resultado desses jobs. Falha de um SHA intermediário não pode ser ignorada como sucesso.
+
+**Próximo passo:** obter JSON da execução d64c54c4 e quantificar `evictedSingleton` / `evictedSingletonByKey` com os procs J08/P09/A07; só então propor política de prioridade que não prejudique a entrada dos raros. Verificar enquadramento, múltiplas seeds, M5 e qualidade baixa. G.2 físico e homologação humana continuam pendentes. H.1/H.2 e `main` permanecem bloqueadas.
