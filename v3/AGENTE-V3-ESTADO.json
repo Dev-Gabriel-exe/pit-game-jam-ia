@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T02:13:10.381Z",
+  "last_completed_at": "2026-11-02T03:14:00Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 gd.games route now accepts only game-specific HTTPS links on gd.games, with Web export/local Preview alternatives. Static CI SUCCESS run 41376451267 on 938b589; Chrome on changed SHA still pending. Next: confirm Chrome, then audit M01–M10 professor/aluno content and manual GDevelop evidence. No main merge.",
+  "priority": "M01→M02 55-character title integrity fixed and regression added. Static CI SUCCESS on e5a0bac (run 41381894693); Chrome QA on e5a0bac still pending (41381894705). Previous M10 Chrome QA SUCCESS 41376451399. Next confirm new Chrome, then continue professor/student M01–M10 alignment. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M10-GD-GAMES-URL-INTEGRITY",
+  "last_task": "V4-AUD-M01-M02-TITLE-ROUNDTRIP",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3335,46 +3335,55 @@
       ],
       "tests": "Local Node URL expression 12/12 PASS; GitHub static QA 41376451267 SUCCESS on 938b589. Intermediate static QA 41376442778 failed on incorrect percent-encoded URL test, repaired. Browser QA 41376451399 IN_PROGRESS; no human/GDevelop GUI/HDMI/mobile/V5 testing.",
       "notes": "M10 gd.games route no longer accepts arbitrary HTTPS sites, spoofed hosts, homepage, HTTP or tokenized URL as game evidence. Allows specific gd.games game path. Student directed to Web export or local Preview fallback, no paid publication. Teacher private notes unchanged. Branch V3 only, main/production/student data untouched. Master 54/59 unchanged."
+    },
+    {
+      "task": "V4-AUD-M01-M02-TITLE-ROUNDTRIP",
+      "completed_at": "2026-11-02T03:14:00Z",
+      "commit": "e5a0bac46c16d292e98bfcb0556708560a7a9c81",
+      "files": [
+        "v3/student-mission-two.js",
+        "qa/v3-m02-legacy-evidence.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Static GitHub QA 41381894693 SUCCESS on e5a0bac. Prior Chrome QA 41376451399 SUCCESS on 938b589. Updated Chrome 41381894705 IN_PROGRESS. Intermediate QA 41381871954 FAIL because outdated title 50-char regression; repaired. GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN.",
+      "notes": "M01 allows 55-character title, M02 previously truncated to 50 in evidence. M02 now preserves 55, accepts it in parseEvidence, reserves max 23 for genre to remain within 750 total; added 55/56 and full-budget tests. No private notes changed; main/production/real student data untouched. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M10-GD-GAMES-URL-INTEGRITY",
+    "task": "V4-AUD-M01-M02-TITLE-ROUNDTRIP",
     "status": "STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-02T02:13:10.381Z",
+    "updated_at": "2026-11-02T03:14:00Z",
     "code_commits": [
-      "2d0a994ab7ebb09fa4f9902d0cdb7c0286f57c76"
+      "7f524c1b2a2f4f6240058590600e47fe948c9858",
+      "e5a0bac46c16d292e98bfcb0556708560a7a9c81"
     ],
     "regression_commits": [
-      "60a8d190ba29a5cfcdc214faa76b2ba36f2c17fe",
-      "938b58935dadb610ad67c501eac0810eee6d5890"
+      "3e1ee1dc22f0ac88d8fa664ce4e43ebd2e36e6b2"
     ],
     "tests": [
       {
-        "name": "M09 prior static and Chrome QA",
-        "result": "PASS runs 41372130004 and 41372130001 on 870a28f; previous checkpoint Chrome pending now confirmed"
+        "name": "M10 previous Chrome QA",
+        "result": "SUCCESS run 41376451399 on 938b589; previous pending result now confirmed"
       },
       {
-        "name": "M10 URL regex local Node samples",
-        "result": "PASS 12/12 (3 valid, 9 invalid) using matching expression"
+        "name": "M02 intermediate static QA",
+        "result": "FAIL run 41381871954 on 7f524c1: old regression rejected 51-char title, now obsolete; repaired test"
       },
       {
-        "name": "M10 static QA on final code+regression",
-        "result": "PASS run 41376451267 on 938b589"
+        "name": "M02 static QA updated",
+        "result": "SUCCESS run 41381894693 on e5a0bac, including M02 title and 750-char evidence regression"
       },
       {
-        "name": "Intermediate M10 static QA regression",
-        "result": "FAIL run 41376442778 on 60a8d19: test mistakenly rejected percent-encoded space; corrected in 938b589"
+        "name": "M02 Chrome QA updated",
+        "result": "IN_PROGRESS run 41381894705 on e5a0bac; not yet confirmed"
       },
       {
-        "name": "M10 Browser QA",
-        "result": "IN_PROGRESS run 41376451399 on 938b589 at last check; NOT_CONFIRMED"
-      },
-      {
-        "name": "GDevelop GUI, physical HDMI, human peer test, real mobile, V5 end-to-end",
+        "name": "GDevelop GUI, HDMI, real students, physical mobile, V5 integration",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Chrome Browser QA for 938b589 and newer doc checkpoint, repair regressions, then resume cross-audit of professor/student M01–M10. No main merge.",
+    "next": "Confirm Chrome QA on e5a0bac or newer commit, audit remaining M01–M10 professor/student evidence integrity and pedagogy; no main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
