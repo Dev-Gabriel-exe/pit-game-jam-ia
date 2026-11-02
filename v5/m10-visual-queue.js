@@ -31,14 +31,7 @@
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
-      // Prefer duplicates and already-dispatched keys. Under extreme
-      // saturation, a high-frequency singleton (>=6 real proc attempts)
-      // may yield to a new canonical key; low-frequency first-display
-      // cues are protected. Attempts are NOT proof of WebGL rendering.
-      const shown=(dispatchedByKey.get(key)||0)>0;
-      const attempts=seenByKey.get(key)||0;
-      const redundancy=(lane.length-1)*1000+
-       (shown?500:0)+(attempts>=6?attempts:0);
+      const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
       if(redundancy>score){score=redundancy;victim=i}
      }
     }
