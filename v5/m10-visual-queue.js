@@ -15,13 +15,35 @@
    throw new RangeError('Visual queue capacity must be an integer from 1 to 18');
   const lanes=new Map();
   const order=[];
-  let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0;
+  let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0,evicted=0;
   const acceptedByKey=new Map(),rejectedByKey=new Map(),dispatchedByKey=new Map();
+  const seenByKey=new Map(),evictedByKey=new Map();
   function count(map,key){map.set(key,(map.get(key)||0)+1)}
   function enqueue(entry){
    if(!entry||!KEY.test(entry.key)||!Number.isFinite(entry.x)||!Number.isFinite(entry.z))
     throw new TypeError('A confirmed talent cue requires canonical key and finite x/z');
-   if(size===capacity){rejected++;count(rejectedByKey,entry.key);return false}
+   count(seenByKey,entry.key);
+   if(size===capacity){
+    // Admit a first-display canonical talent only by reclaiming a redundant
+    // pending cue from an overrepresented key. Never evict a one-off key.
+    // This is visual scheduling only: engine events remain untouched.
+    let victim=-1,score=0;
+    if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
+     for(let i=0;i<order.length;i++){
+      const key=order[i],lane=lanes.get(key);
+      const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
+      if(redundancy>score){score=redundancy;victim=i}
+     }
+    }
+    if(victim<0){rejected++;count(rejectedByKey,entry.key);return false}
+    const victimKey=order[victim],lane=lanes.get(victimKey);
+    lane.shift();size--;evicted++;count(evictedByKey,victimKey);
+    if(!lane.length){
+     lanes.delete(victimKey);order.splice(victim,1);
+     if(victim<cursor)cursor--;
+     if(cursor>=order.length)cursor=0;
+    }
+   }
    if(!lanes.has(entry.key)){lanes.set(entry.key,[]);order.push(entry.key)}
    // Never retain mutable combat objects, player IDs, names, or user data.
    lanes.get(entry.key).push(Object.freeze({key:entry.key,x:entry.x,z:entry.z}));
@@ -47,15 +69,17 @@
   }
   function clear(){
    lanes.clear();order.length=0;
-   size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;
+   size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;evicted=0;
    acceptedByKey.clear();rejectedByKey.clear();dispatchedByKey.clear();
+   seenByKey.clear();evictedByKey.clear();
   }
   function snapshot(){
    return Object.freeze({capacity,size,queuedKeys:Object.freeze(order.slice()),
-    accepted,rejected,dispatched,lastFrame,
+    accepted,rejected,dispatched,evicted,lastFrame,
     acceptedByKey:Object.freeze(Object.fromEntries(acceptedByKey)),
     rejectedByKey:Object.freeze(Object.fromEntries(rejectedByKey)),
-    dispatchedByKey:Object.freeze(Object.fromEntries(dispatchedByKey))});
+    dispatchedByKey:Object.freeze(Object.fromEntries(dispatchedByKey)),
+    evictedByKey:Object.freeze(Object.fromEntries(evictedByKey))});
   }
   return Object.freeze({enqueue,nextForFrame,clear,snapshot});
  }
