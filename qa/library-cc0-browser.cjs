@@ -23,9 +23,9 @@ const {chromium}=require('playwright');
    assert.match(mainTitle,/Heróis, mapas e sons/,'Outdated library introduction');
    const tally=await page.locator('#pitOpenCount').textContent();
    assert.match(tally,/20 modelos GLB individuais/);
-   assert.match(tally,/21 pacotes gratuitos/);
+   assert.match(tally,/23 pacotes gratuitos/);
    assert.equal(await page.locator('#pitGlbGrid .pit-real-model').count(),20,'17 real GLBs');
-   assert.equal(await page.locator('#pitPackGrid .pit-real-pack').count(),21,'21 source packs');
+   assert.equal(await page.locator('#pitPackGrid .pit-real-pack').count(),23,'23 source packs');
    assert.equal(await page.locator('#pitPackGrid a.pit-real-download[href$=".zip"]').count(),13,'13 ZIP direct');
    const modelUrl=await page.evaluate(()=>window.PIT_OPEN_ASSETS.models[0].url);
    assert(modelUrl.includes('raw.githubusercontent.com'),'Model must point to upstream binary');
@@ -37,6 +37,14 @@ const {chromium}=require('playwright');
    await page.locator('[data-pit-tab="personagens"]').click();
    assert(await page.locator('#pitGlbGrid .pit-real-model').count()>3,'Character filter must include real GLBs');
    assert(await page.locator('#pitPackGrid .pit-real-pack').count()>0,'Character filter must include official packs');
+   for(const id of ['kaykit-animations-11','adobe-mixamo']){
+    const entry=page.locator('#pitPackGrid [data-id="'+id+'"]');
+    assert.equal(await entry.count(),1,'Animation resource missing: '+id);
+    await entry.locator('summary').click();
+    assert((await entry.locator('ol li').count())>=4,'GDevelop animation guide missing: '+id);
+   }
+   assert.match(await page.locator('#pitPackGrid [data-id="adobe-mixamo"]').innerText(),/não CC0/);
+   assert.match(await page.locator('#pitPackGrid [data-id="adobe-mixamo"] ol').innerText(),/não coloque arquivos brutos/i);
    await page.locator('[data-pit-tab="mapas"]').click();
    assert(await page.locator('#pitPackGrid .pit-real-pack').count()>3,'Map filter must include world kits');
    await page.locator('[data-pit-tab="sons"]').click();
@@ -98,7 +106,7 @@ const {chromium}=require('playwright');
    assert(!await page.locator('#assetGrid').isVisible(),'Backup generator must close cleanly');
    assert.deepEqual(errors,[],'Browser uncaught errors: '+errors.join('; '));
    await page.screenshot({path:'qa/biblioteca-cc0-'+vp.width+'.png',fullPage:true});
-   outputs.push({viewport:vp.width,realGLBs:20,sourcePacks:21,directZIP:13,download:download.suggestedFilename(),overflow:dim.width-dim.screen});
+   outputs.push({viewport:vp.width,realGLBs:20,sourcePacks:23,directZIP:13,download:download.suggestedFilename(),overflow:dim.width-dim.screen});
    await page.close();
   }
   console.log('PASS: verified CC0 individual downloads, 3D preview opening, 2D/audio/3D filters and unchanged local asset library');

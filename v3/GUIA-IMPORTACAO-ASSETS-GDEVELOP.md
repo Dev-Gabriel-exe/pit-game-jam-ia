@@ -92,3 +92,24 @@ Três pacotes de efeitos CC0 estão na aba **Magias e talentos** do portal:
 **Licenças e cuidados:** Kenney, Foozle e PVFX Foundry indicam CC0 nos pacotes listados. A página de 2024 do Stylized Nature MegaKit indica CC0, enquanto a Quaternius também publica termos mais recentes para outras distribuições; consulte a licença do arquivo baixado antes de redistribuir. Não republique pacotes de terceiros como se fossem próprios. Os VFX 2D apresentados são inspirações para os alunos e possíveis candidatos a adaptação futura em sprites/billboards na arena Three.js, **não são efeitos 3D implementados nem teste de compatibilidade com os 120 talentos da V5**.
 
 **Evidência recomendada na oficina:** escreva nome do recurso, criador, formato e licença; execute o Preview e registre uma captura real do asset no seu jogo. A presença de uma miniatura no portal, sozinha, não prova importação no editor.
+
+
+## KayKit Character Animations e Adobe Mixamo — 02/11/2026
+
+**Para iniciar:** Biblioteca Arcana → Personagens 3D → KayKit · Animações de Personagens 1.1 ou Adobe Mixamo. Os links levam aos autores.
+
+### KayKit (principal — CC0)
+1. Abra https://kaylousberg.itch.io/kaykit-character-animations e obtenha a versão FREE 1.1. Separe Rig_Medium para KayKit Adventurer padrão; Rig_Large é para personagens maiores.
+2. Arquivos Rig_Medium_*.glb contêm apenas animações de esqueleto. Sozinhos, não apresentam personagem visível. No Blender, reúna o personagem e a animação no mesmo rig, exportando um GLB com malha, ossos e animações. O GDevelop não une dois GLBs separadamente por retarget automático.
+3. GDevelop → Objetos → + → 3D Model → importe o GLB completo. Em Animations, registre Idle/Running/Attack/Block conforme as animações do arquivo.
+4. Na aba Eventos, troque a animação conforme a jogabilidade. Idle/Running repetem; Attack/Hit terminam sem loop. Teste Preview, posicionamento e colisão. Movimentos não mudam dano nem hitbox automaticamente.
+5. Nossa arena Three.js usa os GLBs CC0 do KayKit 1.1 com compatibilidade de ossos e fallback dos clipes originais.
+
+### Adobe Mixamo (opcional — licença Adobe, não CC0)
+1. Acesse https://www.mixamo.com/ com Adobe ID gratuita. Escolha um personagem ou envie humanoide em pose neutra. O auto-rig atende bípedes.
+2. Selecione a animação, ajuste a velocidade e baixe FBX.
+3. Para usar com KayKit, faça retarget do esqueleto no Blender, pois o rig Mixamo difere do Rig_Medium. Exporte um GLB completo com malha e animação.
+4. Importe GLB no objeto 3D Model do GDevelop, controle a animação nos eventos e valide Preview.
+5. **Licença:** a Adobe permite uso em jogos comerciais e pessoais, mas impede redistribuir arquivos de personagens/animações brutos como pacotes públicos. Não coloque FBX/GLB bruto do Mixamo em bibliotecas públicas, ZIPs ou no GitHub. Aqui disponibilizamos somente link e instruções.
+
+Fontes: https://wiki.gdevelop.io/gdevelop5/objects/3d-model/ ; https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html ; https://community.adobe.com/questions-696/mixamo-faq-licensing-royalties-ownership-eula-and-tos-589400
