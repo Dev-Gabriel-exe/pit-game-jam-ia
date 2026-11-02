@@ -327,7 +327,7 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const bRow=teacherRoster.body.roster.find(s=>s.id===b.body.studentId);
  assert.equal(bRow.active_stage,2,'B activity is independent');
  assert.equal(bRow.approved,0,'B has no approved work');
- assert.equal(bRow.highest_stage,2,'B has no M10 evidence after rejection');
+ assert.equal(bRow.highest_stage,3,'B retains only M02 submitted and M03 draft; M10 rejected');
  assert.equal(bRow.stages.length,2,'B has two valid stage records');
  assert(!JSON.stringify(teacherRoster.body).includes(cToken),'roster never leaks raw student tokens');
  console.log('PASS FUN-06: actual roster and heartbeat handlers, three fictional students, per-stage status, approved totals, activity, teacher-only access, already-released stages cannot be relocked');
