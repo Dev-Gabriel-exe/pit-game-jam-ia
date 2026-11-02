@@ -29,6 +29,8 @@ assert.equal(q.enqueue({key:keys[0],x:99,z:99}),false,'Queue must not exceed 18'
 assert.deepEqual(q.snapshot().queuedKeys,keys);
 assert.equal(q.snapshot().size,18);
 assert.equal(q.snapshot().rejected,1);
+assert.deepEqual(q.snapshot().acceptedByKey,Object.fromEntries(keys.map(k=>[k,6])));
+assert.deepEqual(q.snapshot().rejectedByKey,{[keys[0]]:1});
 const observed=[];
 for(let frame=0;frame<18;frame++){
  const cue=q.nextForFrame(frame);
@@ -40,11 +42,13 @@ for(let frame=0;frame<18;frame++){
 assert.deepEqual(observed,expected,'Round-robin must preserve each key lane FIFO');
 assert.equal(q.snapshot().size,0);
 assert.equal(q.snapshot().dispatched,18);
+assert.deepEqual(q.snapshot().dispatchedByKey,Object.fromEntries(keys.map(k=>[k,6])));
 assert.equal(q.nextForFrame(18),null);
 assert.throws(()=>q.nextForFrame(17),RangeError);
 q.clear();
 assert.deepEqual(q.snapshot(),{capacity:18,size:0,queuedKeys:[],
- accepted:0,rejected:0,dispatched:0,lastFrame:-1});
+ accepted:0,rejected:0,dispatched:0,lastFrame:-1,
+ acceptedByKey:{},rejectedByKey:{},dispatchedByKey:{}});
 assert.equal(q.enqueue({key:keys[2],x:0,z:0}),true);
 assert.deepEqual(q.nextForFrame(0),{key:keys[2],x:0,z:0});
 // Single-key bursts cannot starve later arriving canonical keys.
@@ -65,6 +69,8 @@ function replay(){
 assert.deepEqual(replay(),replay());
 assert.equal(replay().snapshot.accepted,18);
 assert.equal(replay().snapshot.rejected,982);
+assert.equal(Object.values(replay().snapshot.rejectedByKey).reduce((a,b)=>a+b,0),982);
+assert.equal(Object.values(replay().snapshot.dispatchedByKey).reduce((a,b)=>a+b,0),18);
 // Regression: the visual scheduler does not mutate M5 builds or Phase2 options.
 const m5=PHASE2.exampleBuild('guardian','Synthetic M5',5,0);
 assert.equal(m5.talents.length,5);
@@ -72,4 +78,4 @@ assert.equal(Object.values(m5.attributes).reduce((a,b)=>a+b,0),10);
 const m10=PHASE2.exampleBuild('guardian','Synthetic M10',10,0,{experimentalFinal:true});
 assert.equal(m10.talents.length,10);
 assert.equal(Object.values(m10.attributes).reduce((a,b)=>a+b,0),20);
-console.log('PASS M10 visual scheduler: 18-slot cap, 3-key fairness, first-frame gating contract, deterministic replay, M5/M10 budgets. Browser integration NOT enabled; G2 NOT tested.');
+console.log('PASS M10 visual scheduler: 18-slot cap, 3-key fairness, first-frame gating contract, deterministic replay, M5/M10 budgets. WebGL coverage not inferred from counters; G2 NOT tested.');
