@@ -141,12 +141,42 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
     const d=document.querySelector('#arenaStage').dataset;
     return {projected:JSON.parse(d.v5FxProbeVisibleFrames||'{}'),
      offscreen:JSON.parse(d.v5FxProbeOffscreenFrames||'{}'),
-     lifecycle:JSON.parse(d.v5FxProbeLifecycle||'{}')};
+     lifecycle:JSON.parse(d.v5FxProbeLifecycle||'{}'),
+     byShot:JSON.parse(d.v5FxProbeByShot||'{}'),
+     firstVisible:JSON.parse(d.v5FxProbeFirstVisible||'{}')};
    });
    const total=Object.values(projection.projected).reduce((a,b)=>a+b,0);
    const offscreen=Object.values(projection.offscreen).reduce((a,b)=>a+b,0);
    assert(total+offscreen>0,'Projection probe did not sample any live cue mesh');
    assert(total>0,'No cue mesh centre entered the camera frustum in this battle');
+   // Reconcile every sampled cue against its cinematic shot, so a passing
+   // cumulative counter cannot masquerade as a usable camera composition.
+   const shotVisible={},shotOffscreen={};
+   for(const [shot,rows] of Object.entries(projection.byShot)){
+    assert(['manual','overview','duel','highlight','climax','victory'].includes(shot),
+     'Unexpected cinematic camera shot: '+shot);
+    for(const [kind,bucket,totals] of [
+     ['visible',rows.visible,shotVisible],['offscreen',rows.offscreen,shotOffscreen]]){
+     for(const [key,n] of Object.entries(bucket)){
+      assert(equipped.has(key),'Camera '+shot+' '+kind+' has unequipped talent '+key);
+      assert(Number.isInteger(n)&&n>0,'Invalid per-shot projection count');
+      totals[key]=(totals[key]||0)+n;
+     }
+    }
+   }
+   assert.deepEqual(shotVisible,projection.projected,
+    'Per-shot visible samples must reconcile with cumulative projection');
+   assert.deepEqual(shotOffscreen,projection.offscreen,
+    'Per-shot offscreen samples must reconcile with cumulative projection');
+   for(const [key,first] of Object.entries(projection.firstVisible)){
+    assert(equipped.has(key),'First visible frame belongs to unequipped talent');
+    assert(Number.isSafeInteger(first.frame)&&first.frame>0,'Invalid first projected frame');
+    assert((projection.byShot[first.shot]?.visible?.[key]||0)>0,
+     'First projected frame must belong to a shot that observed the cue');
+    assert(Array.isArray(first.ndc)&&first.ndc.length===3&&
+     first.ndc.every(v=>Number.isFinite(v)&&Math.abs(v)<=1),
+     'First projected frame must have finite on-screen NDC coordinates');
+   }
    for(const [key,n] of Object.entries({...projection.projected,...projection.offscreen})){
     assert(equipped.has(key),'Projected cue must belong to an equipped talent: '+key);
     assert(Number.isInteger(n)&&n>0,'Projection counts must be positive frame samples');
@@ -169,6 +199,9 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
     const projected=projection.projected[key]||0,offscreen=projection.offscreen[key]||0;
     if(projected>0||offscreen>0)
      assert(life.renderedOnce>0,'Projected cue lacks a first rendered frame: '+key);
+    report.rare[key].firstProjectedFrame=projection.firstVisible[key]||null;
+    report.rare[key].byCameraShot=Object.fromEntries(Object.entries(projection.byShot).map(([shot,row])=>
+     [shot,{projected:row.visible[key]||0,offscreen:row.offscreen[key]||0}]));
     report.rare[key].projection={projectedFrameSamples:projected,offscreenFrameSamples:offscreen,
      liveScreenshotCaptured:!!report.rare[key].liveInFrameCapture};
     // Distinguish a real in-frustum screenshot from historical event counters.
@@ -196,6 +229,8 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
    assert.equal(await stage.getAttribute('data-v5-fx-probe-visible-frames'),'{}');
    assert.equal(await stage.getAttribute('data-v5-fx-probe-offscreen-frames'),'{}');
    assert.equal(await stage.getAttribute('data-v5-fx-probe-lifecycle'),'{}');
+   assert.equal(await stage.getAttribute('data-v5-fx-probe-by-shot'),'{}');
+   assert.equal(await stage.getAttribute('data-v5-fx-probe-first-visible'),'{}');
   }
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).every(b=>b.ids.length===5));
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
