@@ -566,4 +566,32 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert(source.includes('Reconfirme os testes desmarcados'),'M03 student receives retest notice');
  assert(!mod.render({phase:'practice',session:'m03-project',idea:{},status:'draft'}).includes('pit-private-teacher-notes'),'M03 student has no private notes');
 }
+// M01 -> M05: the game title accepted in M01 (55 chars) must survive the
+// M05 rule report without silent truncation. The compact header leaves the
+// 750-character API budget intact, while old M05 evidence remains readable.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-five.js'),env,{timeout:3000,filename:'student-mission-five.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_FIVE;
+ const session='m05-full-title',d=mod.load(session);
+ d.route=0;d.checks=[0,1,2];
+ for(const f of mod.fields)d[f.key]='X'.repeat(f.max);
+ mod.save(session,d);
+ const title='T'.repeat(55),ctx={idea:{title,genre:'G'.repeat(19)},previous:{project:'P'.repeat(34),scene:'S'.repeat(29)}};
+ const report=mod.evidence(session,ctx);
+ assert(report.includes('Jogo: '+title+'\\n'),'M05 retains full 55-character M01 title');
+ assert(report.startsWith('M05 — A PRIMEIRA REGRA\\n'),'M05 compact evidence header');
+ assert(report.length<=750,'M05 maximum-length report must fit 750-character API field');
+ assert.equal(mod.validate(session).ok,true,'M05 complete max-length draft remains valid');
+ const parsed=mod.parseEvidence(report);
+ assert(parsed,'M05 full-title report parses without losing fields');
+ assert.equal(parsed.condition,d.condition,'M05 condition survives roundtrip');
+ const legacy=report.replace('M05 — A PRIMEIRA REGRA','MISSÃO 05 — A PRIMEIRA REGRA').replace('Jogo: '+title,'Jogo: '+title.slice(0,32));
+ assert(mod.parseEvidence(legacy),'M05 legacy header and 32-char title remain readable');
+ mod.hydrate('m05-full-title-restored',report,'submitted');
+ assert.equal(mod.load('m05-full-title-restored').condition,d.condition,'M05 structured evidence restores draft');
+ assert.equal(mod.load('m05-full-title-restored').checks.length,0,'M05 remote evidence does not fabricate Preview tests');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
