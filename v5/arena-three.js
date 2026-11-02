@@ -473,7 +473,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    if(item.id!=='preview'){
     const clipKey=[...item.actions].find(([,action])=>action===chosen)?.[0]||'unknown';
     container.dataset.v5LastGlbClip=clipKey;
-    if(clipKey.startsWith('kaykit:')){
+    if(clipKey.startsWith('kaykit:')&&playing){
      kaykitMotionPlays++;container.dataset.v5KaykitMotionPlays=String(kaykitMotionPlays);
     }
    }
