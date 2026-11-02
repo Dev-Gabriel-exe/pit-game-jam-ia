@@ -495,4 +495,39 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  const studentHtml=mod.render({session:'m08-qa',status:'draft',phase:'practice',idea:{}});
  assert(!studentHtml.includes('pit-private-teacher-notes'),'M08 student must never include private teacher notes');
 }
+// M03: changed project/scene/object/asset/Preview/save must invalidate only the
+// manual checks they attest. The browser cannot independently inspect GDevelop.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-three.js'),env,{timeout:3000,filename:'student-mission-three.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_THREE;
+ const base=()=>({project:'Jogo QA',scene:'CenaInicio',object:'Heroi',
+  source:'Sprite desenhado no GDevelop',preview:'Objeto apareceu na cena durante o Preview.',
+  saved:'Pasta local Jogos/jogo-qa.json',fix:'',objectType:'2D Sprite',checks:[0,1,2]});
+ const expected={project:'',scene:'2',object:'2',source:'2',preview:'0,2',saved:'0,1',fix:'0,2'};
+ for(const [field,remaining] of Object.entries(expected)){
+  const d=base(),old=d[field],next=old+' alterado';
+  assert.equal(mod.updateField(d,field,next),true,'M03 '+field+' changed');
+  assert.equal(d[field],next,'M03 preserves changed '+field);
+  assert.equal(d.checks.join(','),remaining,'M03 selective retest '+field);
+  mod.save('m03-'+field,d);
+  assert.equal(mod.validate('m03-'+field).field,'checks','M03 stale confirmation blocks '+field);
+  d.checks=[0,1,2];mod.save('m03-'+field,d);
+  assert.equal(mod.validate('m03-'+field).ok,true,'M03 '+field+' reconfirmed');
+ }
+ const stable=base();
+ assert.equal(mod.updateField(stable,'saved','  Pasta  local   Jogos/jogo-qa.json  '),false,'M03 whitespace-only save');
+ assert.equal(stable.checks.join(','),'0,1,2','M03 equivalent text retains checks');
+ assert.equal(mod.updateField(stable,'unknown','x'),false,'M03 unknown field ignored');
+ assert.equal(mod.selectObjectType(stable,'3D Box/Modelo'),true,'M03 route change');
+ assert.equal(stable.checks.join(','),'2','M03 type switch invalidates scene and Preview');
+ assert.equal(mod.selectObjectType(stable,'3D Box/Modelo'),false,'M03 same route preserves checks');
+ assert.equal(mod.selectObjectType(stable,'invalid'),false,'M03 unknown route ignored');
+ const source=read('v3/student-mission-three.js');
+ assert(source.includes("el.checked=d.checks.includes(Number(el.dataset.m3Check))"),'M03 DOM checkbox sync after field edits');
+ assert(source.includes('Reconfirme os testes desmarcados'),'M03 student receives retest notice');
+ assert(!mod.render({phase:'practice',session:'m03-project',idea:{},status:'draft'}).includes('pit-private-teacher-notes'),'M03 student has no private notes');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
