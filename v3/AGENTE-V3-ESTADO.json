@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T04:15:00Z",
+  "last_completed_at": "2026-11-02T05:13:16.277Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M03 manual confirmations selectively invalidated after relevant changes; 36 V8 checks PASS and QA regression committed. CI/Chrome on new commit NOT_CONFIRMED; previous M02 Chrome 41381894705 SUCCESS. Next confirm new CI and continue M01–M10 pedagogical audit. No main merge.",
+  "priority": "M04 manual Preview confirmations now selectively invalidated after changes to command, response, boundary, retest or saved project; static QA 41392685216 SUCCESS on regression commit 70e086f; Browser QA 41392685204 IN_PROGRESS at check. Next confirm Chrome and audit M01–M10, especially M04 evidence integrity. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M03-SELECTIVE-RETEST",
+  "last_task": "V4-AUD-M04-SELECTIVE-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3361,38 +3361,51 @@
       ],
       "tests": "36 source-derived V8 logic/markup checks PASS. Regression added to native qa/v3-audit-alignment.cjs; native CI and Chrome on new commit NOT_CONFIRMED. Previous M02 Browser QA 41381894705 SUCCESS. GDevelop GUI/HDMI/human/physical mobile/V5 NOT_RUN.",
       "notes": "M03 editing project/scene/object/source/Preview/save/diagnosis or 2D/3D now selectively clears affected manual confirmations, synchronizes DOM and blocks stale submission. Whitespace-only edits preserve checks. No teacher projection or private notes changed; no main, production or real student data. Master 54/59."
+    },
+    {
+      "task": "V4-AUD-M04-SELECTIVE-RETEST",
+      "completed_at": "2026-11-02T05:13:16.277Z",
+      "commit": "163d02be7a5fab768ad310866b153b94d7808f25",
+      "files": [
+        "v3/student-mission-four.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Native GitHub QA 41392685216 SUCCESS on regression commit 70e086f; Browser QA 41392685204 IN_PROGRESS. Previous M03 static/browser 41387578075/41387578124 SUCCESS. No local Node or human GDevelop/HDMI/mobile test claimed.",
+      "notes": "M04 field changes selectively invalidate Preview declarations, preserve text, sync checkboxes and block stale submission. Saved-project changes require reopening and all three tests; whitespace-only changes preserve checks. Teacher material and private notes unchanged. Master 54/59; main/production/real students untouched."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M03-SELECTIVE-RETEST",
-    "status": "V8_PASS_CI_UNCONFIRMED",
-    "updated_at": "2026-11-02T04:15:00Z",
+    "task": "V4-AUD-M04-SELECTIVE-RETEST",
+    "status": "STATIC_CI_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-02T05:13:16.277Z",
     "code_commits": [
-      "e4c26555333a1fddd11780264cee53f4a67fa845"
+      "7dbf4ad75265878249c9f6f067a1cc40655df471"
     ],
     "regression_commits": [
-      "b0a79c1cac43b11c578010e53ec810bf0212990c"
+      "70e086f5ebb29005c6d48105626b29c1c7a9e200"
     ],
-    "documentation_commit": "2f4eb3dbb820ee19b4718886b3748cd52801e23a",
+    "documentation_commit": "163d02be7a5fab768ad310866b153b94d7808f25",
     "tests": [
       {
-        "name": "M02 previous Chrome QA",
-        "result": "SUCCESS run 41381894705 (previous M02 commit)"
+        "name": "M03 previous static QA and Chrome",
+        "result": "SUCCESS runs 41387578075 and 41387578124 on f60d9cc"
       },
       {
-        "name": "M03 direct V8 logic and markup",
-        "result": "PASS 36 assertions on e4c2655"
+        "name": "M04 native static QA including regression",
+        "result": "SUCCESS run 41392685216 on 70e086f"
       },
       {
-        "name": "M03 native QA and Chrome",
-        "result": "NOT_CONFIRMED on current commit"
+        "name": "M04 Chrome Browser QA",
+        "result": "IN_PROGRESS run 41392685204 on 70e086f at last check"
       },
       {
         "name": "GDevelop GUI, HDMI, real students, physical mobile, V5 integration",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm static CI and Chrome on updated SHA; continue professor/student M01–M10 audit, no main merge.",
+    "next": "Confirm Chrome QA for M04 regression; continue cross-role pedagogy and M04 evidence integrity. No main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
