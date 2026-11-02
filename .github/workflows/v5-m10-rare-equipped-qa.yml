@@ -89,3 +89,40 @@ jobs:
             qa/v5-m10-fx-projection-low.json
             qa/v5-m10-fx-projection-*.png
           if-no-files-found: ignore
+
+  queued-fx-projection-webgl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate queue contracts, fixture and frozen M5
+        run: |
+          node --check v5/m10-visual-queue.js
+          node --check qa/v5-m10-rare-equipped-browser.cjs
+          node qa/v5-m10-visual-queue.cjs
+          node qa/v5-m10-rare-equipped-seed.cjs
+          node qa/v5-m10-rare-multiseed.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - name: Install isolated Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Audit live M10 cues with queue and frustum probe together
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-v5-m10-queued-projection.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          M10_VISUAL_QUEUE=1 M10_FX_PROBE=1 M10_RARE_PREFIX=qa/v5-m10-queued-projection node qa/v5-m10-rare-equipped-browser.cjs
+          M10_VISUAL_QUEUE=1 M10_FX_PROBE=1 M10_RARE_FIXTURE=qa/v5-m10-rare-alt-seed.json M10_RARE_PREFIX=qa/v5-m10-queued-projection-alt node qa/v5-m10-rare-equipped-browser.cjs
+          M10_VISUAL_QUEUE=1 M10_FX_PROBE=1 M10_RARE_LOW=1 M10_RARE_PREFIX=qa/v5-m10-queued-projection-low node qa/v5-m10-rare-equipped-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-fx-queued-projection
+          path: |
+            qa/v5-m10-queued-projection.json
+            qa/v5-m10-queued-projection-alt.json
+            qa/v5-m10-queued-projection-low.json
+            qa/v5-m10-queued-projection-*.png
+          if-no-files-found: ignore
