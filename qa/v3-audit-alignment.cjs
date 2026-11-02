@@ -290,6 +290,26 @@ assert.equal(m10.validate('m10-qa').ok,true,'M10 gd route accepts a properly for
 launchFixture.access='https://gd.games/jogo-teste?token=segredo';
 m10.save('m10-qa',launchFixture);
 assert.equal(m10.validate('m10-qa').ok,false,'M10 must reject token-bearing URLs');
+
+for(const unsafe of [
+ 'https://gd.games/jogo-teste#token=segredo',
+ 'https://gd.games/jogo-teste#pass%77ord=segredo',
+ 'https://gd.games/jogo-teste?t%6Fken=segredo',
+ 'https://gd.games/jogo-teste?session%3Dsegredo',
+ 'https://gd.games/jogo-teste#auth=segredo',
+ 'https://gd.games/jogo-teste?key%3Dsegredo',
+ 'https://gd.games/jogo-teste?token=%ZZ'
+]){
+ assert.equal(m10.validLink(unsafe),false,'M10 rejects credential-like URL '+unsafe);
+ launchFixture.access=unsafe;
+ m10.save('m10-qa',launchFixture);
+ assert.equal(m10.validate('m10-qa').ok,false,'M10 blocks submitting unsafe gd.games URL '+unsafe);
+}
+assert.equal(m10.validLink('https://gd.games/jogo-teste?utm_source=oficina#demo'),true,'M10 keeps harmless sharing URL parameters');
+launchFixture.access='https://gd.games/jogo-teste?utm_source=oficina#demo';
+m10.save('m10-qa',launchFixture);
+assert.equal(m10.validate('m10-qa').ok,true,'M10 accepts harmless sharing URL after privacy checks');
+
 // M09 regression: a submitted/approved evidence record does not prove three real
 // peer-test checkbox events. Hydration must restore text without fabricating them.
 const m09RestoreStore=new Map(),m09RestoreSandbox={window:{},localStorage:{
