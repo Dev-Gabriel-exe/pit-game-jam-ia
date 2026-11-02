@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T07:45:00Z",
+  "last_completed_at": "2026-11-02T08:49:25Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M05 55-character M01 title preserved and 750-char budget verified; static QA SUCCESS run 41407290445 on checkpoint 82aa9bf. Browser QA 41407290512 IN_PROGRESS at check. Continue cross-role M01–M10 audit; no main merge.",
+  "priority": "M06 saved-project change now invalidates import and Preview checks while preserving license; regression committed; new static/browser CI NOT_CONFIRMED. Previous Browser QA 41407290512 SUCCESS. Continue professor/aluno evidence integrity audit M01–M10; no main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M01-M05-TITLE-ROUNDTRIP",
+  "last_task": "V4-AUD-M06-PROJECT-PREVIEW-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3402,48 +3402,55 @@
       ],
       "tests": "Source inspection confirmed M01 55 vs M05 32 truncation; static max-budget calculation 749 chars; regression added to native QA; intermediate static run 41407107039 FAILED on obsolete header mutation assertion; fixed in 13dc451; latest CI NOT_CONFIRMED. Previous M03 Chrome run 41399294639 SUCCESS. No real GDevelop/HDMI/human/mobile tests. Static QA 41407290445 SUCCESS on checkpoint 82aa9bf; Chrome 41407290512 IN_PROGRESS at check.",
       "notes": "M05 preserves full M01 title; compact evidence header supports 750 budget and legacy header. Teacher notes unchanged; branch V3 only, no main or real student data. Master 54/59 unchanged."
+    },
+    {
+      "task": "V4-AUD-M06-PROJECT-PREVIEW-RETEST",
+      "completed_at": "2026-11-02T08:49:25Z",
+      "commit": "533b8e4e004c8d9b1d3235a3d902e0aaaefef6a8",
+      "files": [
+        "v3/student-mission-six.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Source consistency checks 6/6; prior Chrome 41407290512 SUCCESS; new M06 regression committed but not yet executed/confirmed in CI; GDevelop/HDMI/human/mobile NOT_RUN.",
+      "notes": "M06 saved project path change invalidates import and Preview declarations 0/1, preserves provenance/license 2 and student text; whitespace-only path changes preserve checks. Master 54/59; no main/production/student data changes."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M01-M05-TITLE-ROUNDTRIP",
-    "status": "STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-02T07:52:00Z",
+    "task": "V4-AUD-M06-PROJECT-PREVIEW-RETEST",
+    "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
+    "updated_at": "2026-11-02T08:49:25Z",
     "code_commits": [
-      "bf7678b12eabe13dbc113bcced555a7071137557"
+      "04e791f61c1b06a124d812a745841114349cc2f1"
     ],
     "regression_commits": [
-      "ce09f04dfa0c4d0acd4710dc00abe82901becd3a",
-      "8e501fdd599bce8a4de990a07d081f501bdf47b1",
-      "13dc4513ca2d807dc7eac174856fbf2a8949d866"
+      "d3c70b48dc36d8a863b48d913089d89da8869997"
     ],
-    "documentation_commit": "4fa657bc84a13859877f49b772083b0b16adf699",
+    "documentation_commit": "533b8e4e004c8d9b1d3235a3d902e0aaaefef6a8",
     "tests": [
       {
-        "name": "M03 previous Chrome Browser QA",
-        "result": "SUCCESS run 41399294639"
+        "name": "M06 code/regression source consistency",
+        "result": "6/6 source inspections passed (not Node execution)"
       },
       {
-        "name": "M05 source and budget analysis",
-        "result": "Confirmed 55 vs 32 silent truncation; 749-char maximum after compact header"
+        "name": "Previous checkpoint Chrome Browser QA",
+        "result": "SUCCESS run 41407290512"
       },
       {
-        "name": "M05 native static QA intermediate",
-        "result": "FAIL run 41407107039 on obsolete malformed-header test; test updated"
+        "name": "New M06 Node regression and static QA",
+        "result": "NOT_CONFIRMED — committed, awaiting GitHub Actions"
       },
       {
-        "name": "M05 current static QA",
-        "result": "SUCCESS run 41407290445 on 82aa9bf"
+        "name": "New M06 Chrome Browser QA",
+        "result": "NOT_CONFIRMED — awaiting GitHub Actions"
       },
       {
-        "name": "GDevelop GUI, HDMI, real students, physical mobile, V5 integration",
+        "name": "GDevelop GUI, HDMI, human students, physical mobile",
         "result": "NOT_RUN"
-      },
-      {
-        "name": "M05 current Chrome Browser QA",
-        "result": "IN_PROGRESS run 41407290512 on 82aa9bf at last check"
       }
     ],
-    "next": "Verify static/browser QA on latest SHA; continue M01–M10 cross-role evidence consistency. No main merge.",
+    "next": "Verify static and Browser QA on current feature SHA; continue cross-role evidence audit without changing private teacher notes.",
     "master_progress": "54/59 unchanged"
   }
 }
