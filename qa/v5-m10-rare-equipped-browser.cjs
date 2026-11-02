@@ -66,6 +66,7 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
      shot:d.v5CameraShot||'unknown',talentEvents:window.PIT_V5_ARENA_LAB.talentEvents,
      rendered:JSON.parse(d.v5TalentFxRenderedKeys||'[]'),
      dropped:JSON.parse(d.v5TalentFxDroppedKeys||'[]'),
+     liveInFrame:frameProbe?JSON.parse(d.v5FxProbeActiveKeys||'[]'):[],
      sprites:Number(d.v5SpriteVisualEvents||0),
      fx:Number(d.v5TalentFxEvents||0),
      spectators:Number(d.v5Spectators||0)};
@@ -77,6 +78,12 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
     const row=report.rare[key];
     row.rendered ||=sample.rendered.includes(key);
     row.dropped ||=sample.dropped.includes(key);
+    if(frameProbe&&sample.liveInFrame.includes(key)&&!row.liveInFrameCapture){
+     const filename=prefix+'-live-'+key.replace(':','-')+'.png';
+     row.liveInFrameCapture={elapsedWallMs:Date.now()-started,cameraShot:sample.shot,
+      screenshot:filename,proof:'mesh centre was inside camera frustum at sampling time; pixels/occlusion unverified'};
+     await page.screenshot({path:filename,timeout:45000});
+    }
     if(!row.firstObservation&&(row.rendered||row.dropped)){
      const filename=prefix+'-'+key.replace(':','-')+'.png';
      row.firstObservation={elapsedWallMs:Date.now()-started,cameraShot:sample.shot,
@@ -123,6 +130,17 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
     rareTargets:Object.fromEntries(targets.map(k=>[k,{
      projected:projection.projected[k]||0,offscreen:projection.offscreen[k]||0}])),
     limitation:'Frustum centre samples after WebGL render, not pixel contrast, occlusion, or human projector legibility.'};
+   for(const key of targets){
+    const projected=projection.projected[key]||0,offscreen=projection.offscreen[key]||0;
+    report.rare[key].projection={projectedFrameSamples:projected,offscreenFrameSamples:offscreen,
+     liveScreenshotCaptured:!!report.rare[key].liveInFrameCapture};
+    // Distinguish a real in-frustum screenshot from historical event counters.
+    if(report.rare[key].liveInFrameCapture)
+     assert(projected>0,'Live in-frustum capture has no corresponding projected frames: '+key);
+   }
+   console.log('M10 LIVE frustum distribution '+JSON.stringify({
+    targets:report.projection.rareTargets,liveCaptures:targets.filter(k=>!!report.rare[k].liveInFrameCapture),
+    projectedFrameSamples:total,offscreenFrameSamples:offscreen}));
   }
   await page.screenshot({path:prefix+'-final.png',timeout:45000});
   await page.keyboard.press('Escape');
