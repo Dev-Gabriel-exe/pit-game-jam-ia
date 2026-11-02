@@ -15,3 +15,8 @@ CI de biblioteca preparado para executar na branch V5. **Não marcar aprovado at
 
 ## Próxima etapa técnica
 Confirmar CI e links/downloads dos três GLBs, revisar experiência em desktop/mobile. Posteriormente testar efeitos CC0 selecionados como sprites/billboards 3D para J08/P09/A07, sem inventar eventos de talento nem ultrapassar o orçamento de 18 VFX. G.2 e H.1/H.2 reais continuam bloqueados.
+
+## Ajuste após primeira execução do CI
+- O teste `Biblioteca CC0 real QA` detectou um elemento vazio no array de modelos que interrompia `models.find()` ao tentar baixar os novos GLBs. Removido o separador duplicado, assim como um elemento vazio preexistente no catálogo de pacotes.
+- Ajustado `qa/v3-library-preview-browser.cjs` para o número atual de pacotes (21) e acrescentada regressão contra elementos vazios nos catálogos.
+- **Novo CI deve ser verificado separadamente**; a primeira execução falhou e não representa aprovação.

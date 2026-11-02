@@ -69,6 +69,7 @@ const {chromium}=require('playwright');
    await page.locator('#pitOpenSearch').fill('morcego');
    assert.equal(await page.locator('#pitGlbGrid .pit-real-card').count(),1);
    await page.locator('#pitOpenSearch').fill('');
+   assert(await page.evaluate(()=>Array.from(window.PIT_OPEN_ASSETS.models).every(Boolean) && Array.from(window.PIT_OPEN_ASSETS.packs).every(Boolean)),'Catalog must not contain empty entries');
    // All Quaternius GLBs are served by our project, with real downloadable bytes.
    for(const id of ['q-tree1','q-tree3','q-bush']){
     const entry=await page.evaluate(id=>window.PIT_OPEN_ASSETS.models.find(m=>m.id===id),id);
