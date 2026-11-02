@@ -94,6 +94,17 @@ for(const key of canonical.slice(0,18))assert(unique.enqueue({key,x:0,z:0}));
 assert.equal(unique.enqueue({key:canonical[18],x:0,z:0}),false);
 assert.equal(unique.snapshot().evicted,0);
 assert.equal(unique.snapshot().rejected,1);
+// Regression: many attempts to enqueue a key do NOT imply its pending
+// singleton ever reached WebGL. Preserve every first-display pending cue.
+const unrendered=createQueue(3);
+for(const key of keys)assert(unrendered.enqueue({key,x:0,z:0}));
+for(let i=0;i<5;i++)assert.equal(unrendered.enqueue({key:keys[0],x:i,z:0}),false);
+assert.equal(unrendered.enqueue({key:'warrior:B06',x:0,z:0}),false,
+ 'Repeatedly seen but never dispatched singleton must not be evicted');
+assert.equal(unrendered.snapshot().evicted,0);
+assert.equal(unrendered.snapshot().evictedSingleton,0);
+assert.deepEqual(unrendered.snapshot().queuedKeys,keys);
+assert.deepEqual([0,1,2].map(i=>unrendered.nextForFrame(i).key),keys);
 // Deterministic replay, bounded under 1,000 synthetic incoming proc cues.
 function replay(){
  const a=createQueue(18),out=[];
