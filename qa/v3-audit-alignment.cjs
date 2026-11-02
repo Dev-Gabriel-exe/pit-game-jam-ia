@@ -581,8 +581,8 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  mod.save(session,d);
  const title='T'.repeat(55),ctx={idea:{title,genre:'G'.repeat(19)},previous:{project:'P'.repeat(34),scene:'S'.repeat(29)}};
  const report=mod.evidence(session,ctx);
- assert(report.includes('Jogo: '+title+'\\n'),'M05 retains full 55-character M01 title');
- assert(report.startsWith('M05 — A PRIMEIRA REGRA\\n'),'M05 compact evidence header');
+ assert(report.includes('Jogo: '+title+'\n'),'M05 retains full 55-character M01 title');
+ assert(report.startsWith('M05 — A PRIMEIRA REGRA\n'),'M05 compact evidence header');
  assert(report.length<=750,'M05 maximum-length report must fit 750-character API field');
  assert.equal(mod.validate(session).ok,true,'M05 complete max-length draft remains valid');
  const parsed=mod.parseEvidence(report);
