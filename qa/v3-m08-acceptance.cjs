@@ -147,7 +147,7 @@ const editSession='m08-input-event';
 const editDraft=student.load(editSession);
 editDraft.after='A mensagem aparecia de forma confusa.';editDraft.checks=[0,1,2];
 student.save(editSession,editDraft);
-const editChecks=Array.from({length:3},()=>({checked:true,addEventListener:()=>{}}));
+const editChecks=Array.from({length:3},(_,i)=>({dataset:{m8sCheck:String(i)},checked:true,addEventListener:()=>{}}));
 const editStatus={textContent:''};
 let onInput;
 const editField={dataset:{m8sField:'after'},value:'Agora a mensagem é clara e verificável.',addEventListener:(name,callback)=>{if(name==='input')onInput=callback}};
