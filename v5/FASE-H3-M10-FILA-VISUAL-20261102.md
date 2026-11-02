@@ -81,3 +81,20 @@ Na seed `20261101`, 30 KayKits, 10 talentos por personagem, 29 espectadores e re
 - Fila: 224 aceites, 158 rejeições, 53 despachos, 0 pendentes ao fim. A diferença **171** entre aceites e despachos indica substituições de cues pendentes e deve ser monitorada; não declarar perda visual resolvida em toda a carga.
 
 **Conclusão precisa:** foi resolvido neste cenário o bloqueio absoluto dos três talentos antes do primeiro quadro; **não** foi demonstrada legibilidade real de J08/P09 no enquadramento, nem contraste/oclusão de A07 no telão. A Missão 10 permanece aberta. Próxima rodada: reduzir churn da fila e medir se os três procs aparecem em planos úteis com captura no quadro exato; repetir outras seeds e qualidade baixa. G.2 físico, homologação humana, H.1/H.2 e Fase I continuam pendentes.
+
+
+## Rodada — proteção de cues únicos após saturação (02/11/2026)
+
+**Missão em andamento:** H.3 / Missão 10, redução de churn visual **sem alterar o combate**. HEAD anterior `861081a02a2ddcb527a53694b9a88cb165221c86`. A evidência anterior ([CI 41401591801](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591801)) comprovou J08/P09/A07 renderizados uma vez, mas J08/P09 fora da câmera, com 158 rejeições e 171 substituições de fila. Isso não é homologação visual.
+
+**Defeito concreto corrigido:** a seleção de vítima usava o histórico `seenByKey` para considerar redundante uma chave que já teve vários eventos, **mesmo quando restava somente um cue pendente dessa chave**. Uma nova chave inédita podia substituir esse único cue. A política agora só permite substituir cues quando a chave da vítima tem **mais de um evento efetivamente pendente**, priorizando a fila mais redundante. O limite de 18, despacho máximo de um por frame, justiça por chave, telemetria canônica e isolamento M5/M10 continuam intactos. Não há prioridade artificial para as três classes raras, nem novos efeitos, danos ou RNG.
+
+**Commits desta rodada (somente branch experimental):**
+- `45904c3d7631d3f275bedf5b87b17ffdd1d01f32` — `v5/m10-visual-queue.js`: proteção de singleton pendente e retirada da heurística de histórico.
+- `d8b2a6b831316d0b2d000587db5ba1cbc665b581` — `qa/v5-m10-visual-queue.cjs`: regressão reproduzível de 3 slots (chave já despachada antes não pode perder o último cue) e ordem de despacho.
+
+**Verificação:** [QA geral do SHA d8b2a6b8](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408739821) **PASS**. [CI específico da fila](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408739751), [CI M10 WebGL](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408739755) e [Browser QA](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41408739754) estavam **em execução** na última consulta. Não declarar a política ou a projeção aprovada até concluir esses jobs.
+
+**Próximo passo na mesma Missão 10:** conferir o resultado e o JSON do CI específico; comparar rejeições/substituições com o baseline 158/171, verificar se J08/P09/A07 continuam chegando ao primeiro frame e testar projeção em múltiplas seeds e enquadramentos. Se a nova regra impedir um talento raro de aparecer, corrigir e retestar. Um frame renderizado fora da câmera **não** é legibilidade homologada.
+
+**G.2 em PCs físicos NÃO executado.** H.1/H.2 com alunos reais, homologação no projetor, merge/main, deploy e alterações de dados/XP/turmas permanecem proibidos.
