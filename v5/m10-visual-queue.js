@@ -17,21 +17,23 @@
   const order=[];
   let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0,evicted=0;
   const acceptedByKey=new Map(),rejectedByKey=new Map(),dispatchedByKey=new Map();
-  const seenByKey=new Map(),evictedByKey=new Map();
+  const evictedByKey=new Map();
   function count(map,key){map.set(key,(map.get(key)||0)+1)}
   function enqueue(entry){
    if(!entry||!KEY.test(entry.key)||!Number.isFinite(entry.x)||!Number.isFinite(entry.z))
     throw new TypeError('A confirmed talent cue requires canonical key and finite x/z');
-   count(seenByKey,entry.key);
    if(size===capacity){
     // Admit a first-display canonical talent only by reclaiming a redundant
-    // pending cue from an overrepresented key. Never evict a one-off key.
+    // pending cue from an overrepresented key. Never evict a one-off key,
+    // even if that key produced other cues earlier in the match.
     // This is visual scheduling only: engine events remain untouched.
     let victim=-1,score=0;
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
-      const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
+      // Only currently queued duplicates are replaceable. Historical
+      // submissions (including rejections) must not unprotect a singleton.
+      const redundancy=lane.length-1;
       if(redundancy>score){score=redundancy;victim=i}
      }
     }
@@ -71,7 +73,7 @@
    lanes.clear();order.length=0;
    size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;evicted=0;
    acceptedByKey.clear();rejectedByKey.clear();dispatchedByKey.clear();
-   seenByKey.clear();evictedByKey.clear();
+   evictedByKey.clear();
   }
   function snapshot(){
    return Object.freeze({capacity,size,queuedKeys:Object.freeze(order.slice()),
