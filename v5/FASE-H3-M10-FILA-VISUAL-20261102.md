@@ -24,3 +24,19 @@
 ## Resultado confirmado do CI nesta rodada
 
 **PASS** — [GitHub Actions run 41384060519](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41384060519), SHA `647486e546f79a846fbdddfd6c050cfefee0fe6d`. Job `isolated-queue` concluído com sucesso: `Syntax and bounded queue contract` e `Preserve M5 and M10 pedagogical contract` ambos aprovados. Esta aprovação cobre **somente o contrato isolado da fila** e regressões Node, não a integração ao WebGL nem a visibilidade dos três talentos raros. Browser QA geral de commits recentes ainda deve ser consultado separadamente.
+
+## Rodada seguinte — integração opt-in no renderizador (02/11/2026)
+
+**Tarefa em andamento:** observar o primeiro quadro WebGL de cues reais da Missão 10 sem alterar combate nem habilitar a integração com alunos.
+
+**HEAD de implementação:** `5d5bff0e8f979db4f33c468ea8d5ad55dfc86b1b`. Commits exclusivos da branch:
+- `1948139555ce3c57ca0290f1f69d2ed62313ecf2` — `v5/arena-three.js`: `?m10visualqueue=1` ativa uma fila de até 18 cues confirmados. Procs sutis são enfileirados com chave canônica e posição, sem dados de alunos. No loop, após atualização/expiração dos efeitos, apenas um cue é despachado antes do WebGL; no modo padrão, o comportamento anterior permanece. A fila é zerada no reset e não despacha na M5.
+- `c85841c93cf3b5d2f6664b05571e8fef43dc39a8` — `v5/arena-lab.html`: carrega o escalonador isolado, desativado por padrão.
+- `00abed4c9b587ce67cd4541df638ce9730eab41f` — `qa/v5-m10-rare-equipped-browser.cjs`: valida contadores da fila, 30 modelos, procs raros, primeiro quadro e reset M5 com flag explícita.
+- `5d5bff0e8f979db4f33c468ea8d5ad55dfc86b1b` — `.github/workflows/v5-m10-visual-queue-qa.yml`: job `queue-first-frame-webgl` com Chromium/SwiftShader e artefatos.
+
+**CI novo:** [run 41389498122](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41389498122) — **em fila na primeira consulta**, portanto **não aprovado**. [QA geral 41389498116](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41389498116) e [Browser QA 41389498097](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41389498097) também estavam em fila.
+
+**Critérios de saída desta tarefa:** CI específico WebGL sem erros, eventos genuínos J08/P09/A07 efetivamente apresentados por pelo menos um frame quando aceitos, sem estouro da fila ou regressão M5. Mesmo passando, não confundir projeção no frustum com pixels visíveis nem homologação em projetor.
+
+**Próximo passo:** conferir logs/artefatos do CI; corrigir se falhar e retestar **a mesma Missão 10**. Medir descartes por saturação da fila, comparar duas seeds e preservar a política de 18 efeitos simultâneos. G.2 nos PCs físicos e homologação humana não realizados. H.1/H.2, Fase I, `main`, XP, notas, alunos e produção continuam fora do escopo.
