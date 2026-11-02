@@ -76,6 +76,33 @@ student.save('gd-legacy',gdDraft);
 const gdEvidence=student.evidence('gd-legacy');
 assert.equal(student.parseEvidence(gdEvidence).route,'gd','valid gd.games URL');
 assert.equal(student.parseEvidence(gdEvidence.replace('https://gd.games/jogo-ficticio','link-invalido')),null,'invalid gd.games access rejected');
+
+// A gd.games delivery must not accept an arbitrary HTTPS site, a spoofed hostname,
+// the gd.games homepage, insecure HTTP, embedded credentials or sensitive tokens.
+// Other hosts belong to the Web-export route, not the gd.games route.
+for(const url of [
+ 'https://gd.games/jogo-ficticio',
+ 'https://www.gd.games/jogo-ficticio',
+ 'https://gd.games/games/jogo-ficticio'
+])assert.equal(student.validLink(url),true,'valid gd.games game path '+url);
+for(const url of [
+ 'https://gd.games','https://gd.games/','http://gd.games/jogo-ficticio',
+ 'https://example.org/jogo-ficticio','https://gd.games.evil.example/jogo',
+ 'https://gd.games@evil.example/jogo','https://gd.games/jogo?token=secret',
+ 'https://gd.games/jogo?auth=secret','https://gd.games/jogo%20ficticio'
+])assert.equal(student.validLink(url),false,'reject non-playable or unsafe gd.games URL '+url);
+const wrongHost=gdEvidence.replace('https://gd.games/jogo-ficticio','https://example.org/jogo-ficticio');
+assert.equal(student.parseEvidence(wrongHost),null,'historical gd route cannot hydrate an unrelated host');
+const wrongDraft=student.load('gd-invalid-host');
+for(const f of student.fields)wrongDraft[f.id]='Registro real verificável do jogo e do teste '+f.id;
+wrongDraft.route='gd';wrongDraft.access='https://example.org/jogo-ficticio';wrongDraft.checks=[0,1,2];
+student.save('gd-invalid-host',wrongDraft);
+assert.equal(student.validate('gd-invalid-host').ok,false,'gd route blocks unrelated website even with checked declarations');
+assert.equal(student.validate('gd-invalid-host').field,'access','focus the actionable access field');
+assert(/id="submitWork" disabled/.test(student.render({session:'gd-invalid-host',phase:'review',status:'',idea:{},canSubmit:true})),'invalid link cannot be submitted');
+assert(student.accessHelp('gd').includes('HTTPS específica'),'student is told to paste game-specific URL');
+assert(student.accessHelp('gd').includes('Exportação Web'),'other hosting has a documented route');
+
 const maxDraft=student.load('max-legacy');
 for(const f of student.fields)maxDraft[f.id]='X'.repeat(f.max);
 student.save('max-legacy',maxDraft);
