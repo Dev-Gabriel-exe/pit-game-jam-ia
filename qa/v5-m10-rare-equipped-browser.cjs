@@ -10,6 +10,7 @@ const prefix=process.env.M10_RARE_PREFIX||'qa/v5-m10-rare-equipped';
 // Diagnostic only: emulate a constrained device without modifying classroom hardware.
 const lowQuality=process.env.M10_RARE_LOW==='1';
 const frameProbe=process.env.M10_FX_PROBE==='1';
+const queueMode=process.env.M10_VISUAL_QUEUE==='1';
 (async()=>{
  const browser=await chromium.launch({headless:true,args:[
   '--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'
@@ -19,6 +20,7 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
   renderer:'SwiftShader',qualityMode:lowQuality?'low':'auto',
   emulatedDeviceMemoryGb:lowQuality?2:null,physicalPCsValidated:false,humanVisualApproval:false,
   projectionAudit:frameProbe?'frustum-centre-per-rendered-frame':'disabled',
+  queuedVisualCues:queueMode,
   limitation:'Screenshots are sampled after cumulative cue detection; they do not prove the short-lived effect is within camera view.',
   cameraShots:[],rare:{}};
  try{
@@ -28,7 +30,7 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
    Object.defineProperty(navigator,'deviceMemory',{configurable:true,value:2});
   });
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&m10variant=9&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&sprites=1&seed='+fixture.seed+(frameProbe?'&m10fxprobe=1':''),
+  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&m10variant=9&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&sprites=1&seed='+fixture.seed+(frameProbe?'&m10fxprobe=1':'')+(queueMode?'&m10visualqueue=1':''),
    {waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:180000});
   const stage=page.locator('#arenaStage');
@@ -36,6 +38,7 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
   assert.equal(await stage.getAttribute('data-v5-quality-mode'),lowQuality?'low':'auto',
    'Renderer must honor the expected quality preset');
   if(frameProbe)assert.equal(await stage.getAttribute('data-v5-fx-probe-enabled'),'true');
+  if(queueMode)assert.equal(await stage.getAttribute('data-v5-m10-visual-queue-enabled'),'true');
   if(lowQuality){
    assert.equal(Number(await stage.getAttribute('data-v5-sprite-frames')),3,
     'Low-quality sprite atlas must use three frames, not the normal six');
@@ -112,6 +115,19 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
     assert(report.rare[key].rendered,
      'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
   }
+  if(queueMode){
+   const stats=await page.evaluate(()=>{
+    const d=document.querySelector('#arenaStage').dataset;
+    return {accepted:Number(d.v5M10VisualQueueAccepted||0),
+     rejected:Number(d.v5M10VisualQueueRejected||0),
+     dispatched:Number(d.v5M10VisualQueueDispatched||0),
+     remaining:Number(d.v5M10VisualQueueSize||0)};
+   });
+   assert(stats.accepted>0&&stats.dispatched>0,'Opt-in queue did not dispatch real M10 proc cues');
+   assert(stats.dispatched<=stats.accepted,'Visual queue dispatched more cues than accepted');
+   assert(stats.remaining<=18,'Visual queue exceeded its bounded capacity');
+   report.visualQueue=stats;
+  }
   if(frameProbe){
    const projection=await page.evaluate(()=>{
     const d=document.querySelector('#arenaStage').dataset;
@@ -138,6 +154,8 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
     const removed=life.evictedBeforeFrame+life.evictedAfterFrame+
      life.expiredBeforeFrame+life.expiredAfterFrame;
     assert(removed<=life.created,'More removals than created cues: '+key);
+    if(queueMode)assert.equal(life.evictedBeforeFrame+life.expiredBeforeFrame,0,
+     'Queued rare proc was removed before its first WebGL frame: '+key);
     report.rare[key].lifecycle={...life,removed,pendingOrLive:life.created-removed,
      neverReachedFirstFrame:life.evictedBeforeFrame+life.expiredBeforeFrame};
     const projected=projection.projected[key]||0,offscreen=projection.offscreen[key]||0;
@@ -162,6 +180,10 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),5);
   assert.equal(await stage.getAttribute('data-v5-talent-fx-rendered-keys'),'[]');
+  if(queueMode){
+   assert.equal(await stage.getAttribute('data-v5-m10-visual-queue-size'),'0');
+   assert.equal(await stage.getAttribute('data-v5-m10-visual-queue-dispatched'),'0');
+  }
   if(frameProbe){
    assert.equal(await stage.getAttribute('data-v5-fx-probe-visible-frames'),'{}');
    assert.equal(await stage.getAttribute('data-v5-fx-probe-offscreen-frames'),'{}');
