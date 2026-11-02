@@ -86,6 +86,33 @@ assert.equal(singleton.snapshot().evicted,1);
 assert.equal(singleton.snapshot().evictedSingleton,1);
 assert.deepEqual(singleton.snapshot().evictedSingletonByKey,{[keys[0]]:1});
 assert.deepEqual(singleton.snapshot().queuedKeys,[keys[1],keys[2],'warrior:B06']);
+// Reproduce the alternate-seed failure mode: P09 was admitted twice and
+// evicted twice before its first WebGL frame. A retried first-display cue
+// must survive a later competing admission when another victim is available.
+// Generic queue behavior, not special handling of P09 or its class.
+const retried=createQueue(3,{traceLimit:64});
+assert(retried.enqueue({key:keys[1],x:0,z:0}));
+assert(retried.enqueue({key:'warrior:B06',x:0,z:0}));
+assert(retried.enqueue({key:'mage:E05',x:0,z:0}));
+assert.equal(retried.enqueue({key:keys[1],x:1,z:0}),false);
+assert(retried.enqueue({key:keys[0],x:0,z:0}));
+assert.equal(retried.snapshot().evictedByKey[keys[1]],1);
+assert.equal(retried.snapshot().dispatchedByKey[keys[1]]||0,0);
+assert.equal(retried.enqueue({key:'warrior:B06',x:1,z:0}),false);
+assert(retried.enqueue({key:keys[1],x:2,z:0}));
+assert.equal(retried.enqueue({key:keys[0],x:1,z:0}),false);
+assert(retried.enqueue({key:keys[2],x:0,z:0}),
+ 'A competing first-display cue may reclaim another eligible lane');
+assert.equal(retried.snapshot().evictedByKey[keys[1]],1,
+ 'Retried P09 must not be evicted a second time before its first frame');
+assert.equal(retried.snapshot().evictedByKey[keys[0]],1);
+assert.deepEqual([0,1,2].map(i=>retried.nextForFrame(i).key),
+ ['mage:E05',keys[1],keys[2]]);
+assert.equal(retried.snapshot().dispatchedByKey[keys[1]],1);
+assert.equal(retried.snapshot().evictedSingletonByKey[keys[1]],1);
+assert(retried.snapshot().rareTrace.some(e=>e.op==='evict'&&e.victimKey===keys[1]));
+// A retried singleton cannot force the queue above its 18-slot ceiling.
+assert.equal(retried.snapshot().size,0);
 // Do not sacrifice a unique pending proc when all 18 keys are one-offs.
 const unique=createQueue(18);
 const canonical=Object.entries(PHASE2.TALENTS)
