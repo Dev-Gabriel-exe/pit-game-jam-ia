@@ -917,3 +917,20 @@
 - **P1 ainda pendente na `main`:** o módulo **compartilhado** `v3/gdevelop-mission-ten-guide.js` é carregado por `aluno-v3.html` e `professor-v3.html`, mas seu blob da `main` era `a181e506...` contra `0bbc4d91...` da V3 antes desta correção. Na `main`, o cabeçalho ainda diz **“MISSÃO 10 · PROFESSOR · DEMONSTRAÇÃO · 3 MIN”** mesmo na tela do aluno, e o passo do playtest menciona só “correção ou backlog”, omitindo o resultado legítimo sem falha. Na V3, o título é neutro e os três resultados são contemplados. A nova reabertura do projeto também **não** entrou na `main`. Este é um **patch pontual candidato a revisão pelo integrador autorizado**, não autorização para sobrescrever HTML ou fazer merge V3→main.
 - **Main observada:** commit `6d2e75e30b87abdca6c41bc26ae7c80f141af013`; [QA estática 41467264544](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41467264544) e [Browser QA 41467265107](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41467265107) em **SUCCESS**. Os checks não detectaram a divergência semântica acima e não equivalem a homologação real. Nenhum arquivo da `main`, branch de integração, deploy ou banco foi alterado por esta rodada.
 - **Próximo:** confirmar CI do commit `eb5ba72`; conferir se o integrador corrigiu o módulo compartilhado na `main` sem tocar nas páginas/bridge V5. Continuar auditoria professor/aluno, sem iniciar estética ou alegar homologação humana.
+
+
+### Complemento da comparação PR #24 — professor M01–M08 na main
+
+A conferência por blob SHA detectou divergência entre `main` e V3 em **todos os oito módulos de professor M01–M08**; isso **não autoriza** copiar arquivos inteiros, pois a `main` contém integrações e assinaturas de montagem próprias. Foram inspecionados os trechos divergentes e confirmados os seguintes itens:
+
+| Missão | Diferença confirmada na main | Avaliação/ação segura |
+|---|---|---|
+| M01 | Plano do professor `[7,5,16,2]` contra `[5,5,18,2]` na V3; ambos somam 30 min. | Revisar coerência com a atividade do aluno, sem presumir erro só pelo tempo. |
+| M02–M03 | `mount(rootOverride)` na main versus `mount()` na V3. | **Preservar assinatura da main**; não transportar arquivo completo. As notas `▤` seguem fechadas nas duas. |
+| M04 | Painel privado de avaliação existe nas duas, com markup/estilo interno diferente. | Comparar CSS/acessibilidade pontualmente, sem substituição de tela. |
+| **M05** | Título de capítulo mostra **IV** em vez de **V**; na avaliação projetada há frase sobre registrar aprovação/devolutiva no Acompanhamento, enquanto a V3 recolhe o fluxo reservado em `<details>`. | **P1**: corrigir numeral e mover somente fluxo reservado para nota fechada, mantendo critérios públicos. |
+| **M06** | A avaliação projetada inclui instrução **“Em Acompanhamento → aluno → Missão 06”** fora de `<details>`; na V3, essa navegação está dentro do painel privado. | **P1**: recolher navegação operacional docente, não ocultar rubrica didática. |
+| **M07** | A avaliação projetada exibe card **“ACOMPANHAMENTO · MISSÃO 07”** com orientação operacional; a V3 usa `<details>` fechado. Cronograma da base é `[5,6,36,3]` vs V3 `[7,4,36,3]`, ambos 50 min. | **P1**: recolher operação docente; sincronizar duração da explicação/tutorial sem reescrever o plano inteiro. |
+| **M08** | A main exige **“MOBILE / TELA PEQUENA”** mesmo para jogo feito apenas para desktop, e a avaliação apresenta instruções de registro do professor; a V3 usa **“LEGIBILIDADE NA TELA-ALVO”**, teste em janela estreita somente quando aplicável, e roteiro reservado fechado. | **P1**: alinhar critério ao público/dispositivo real e recolher orientação operacional. |
+
+`professor-v3.html` da main carrega os módulos M04–M08 e os estilos/guard de notas privadas. A simples presença de `<details>` **não** garante que toda orientação reservada esteja dentro dele. As divergências foram encontradas por inspeção estática de código, **não** por observação do projetor real. Esta rodada **não** alterou `main`, `integration/pit-20261102-pre-aula`, HTML de entrada, V5 ou banco. A correção em produção precisa de autorização e patch mínimo por quem conduz a integração.
