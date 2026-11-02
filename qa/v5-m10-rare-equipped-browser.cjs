@@ -57,10 +57,21 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
    report.rare[key]={equipped:true,engineProcs:fixture.procs[key],
     firstObservation:null,rendered:false,dropped:false};
   }
-  await page.locator('#actionCamera').click();
-  for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
-  await page.locator('#startBattle').click();
-  await page.locator('#expandStage').click();
+  // This is a WebGL/cue audit, not a pointer hit-target test. Animated
+  // panels can move continuously in SwiftShader and make Playwright's
+  // stable-position click wait 30s before the combat even starts.
+  // Invoke the actual enabled button handlers without a viewport dependency.
+  async function activate(id){
+   await page.locator('#'+id).evaluate(button=>{
+    if(!(button instanceof HTMLButtonElement)||button.disabled)
+     throw new Error('Lab control unavailable: '+button?.id);
+    button.click();
+   });
+  }
+  await activate('actionCamera');
+  for(let i=0;i<4;i++)await activate('speedBattle');
+  await activate('startBattle');
+  await activate('expandStage');
   const cameraShots=new Set();
   const started=Date.now();
   while(Date.now()-started<300000){
