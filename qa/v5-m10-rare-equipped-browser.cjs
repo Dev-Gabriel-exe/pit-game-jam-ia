@@ -280,6 +280,7 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
       evictedSingleton:Number(d.v5M10VisualQueueEvictedSingleton||0),
       remaining:Number(d.v5M10VisualQueueSize||0),
       byKey:JSON.parse(d.v5M10VisualQueueByKey||'{"accepted":{},"rejected":{},"dispatched":{}}'),
+      admissionTrace:JSON.parse(d.v5M10VisualQueueTrace||'{"tail":[],"rare":[],"limit":0}'),
       renderedKeys:JSON.parse(d.v5TalentFxRenderedKeys||'[]'),
       droppedKeys:JSON.parse(d.v5TalentFxDroppedKeys||'[]')};
     });
@@ -298,6 +299,10 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
    }catch(err){report.projectionCaptureError=err.message}
   }
   if(report.failedAssertion){
+   const trace=report.queueAtExit?.admissionTrace;
+   if(queueMode&&frameProbe)report.traceIntegrity={
+    bounded:trace?.tail?.length<=256&&trace?.rare?.length<=96,
+    anonymous:trace?.tail?.every(e=>!('x' in e)&&!('z' in e)&&!('name' in e))};
    const byKey=report.queueAtExit?.byKey||{};
    const projection=report.projectionAtExit||report.projection||{};
    report.failedRareDiagnostics=Object.fromEntries(targets.map(key=>[key,{

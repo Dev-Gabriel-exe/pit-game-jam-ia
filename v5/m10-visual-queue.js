@@ -10,15 +10,27 @@
 })(typeof globalThis==='object'?globalThis:this,function(){
  'use strict';
  const KEY=/^(warrior|mage|hunter|guardian):[A-Z][0-9]{2}$/;
- function createQueue(capacity=18){
+ function createQueue(capacity=18,{traceLimit=0}={}){
   if(!Number.isInteger(capacity)||capacity<1||capacity>18)
    throw new RangeError('Visual queue capacity must be an integer from 1 to 18');
+  if(!Number.isInteger(traceLimit)||traceLimit<0||traceLimit>256)throw new RangeError('traceLimit must be 0..256');
   const lanes=new Map();
   const order=[];
   let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0,evicted=0,evictedSingleton=0;
   const acceptedByKey=new Map(),rejectedByKey=new Map(),dispatchedByKey=new Map();
   const seenByKey=new Map(),evictedByKey=new Map(),evictedSingletonByKey=new Map();
   function count(map,key){map.set(key,(map.get(key)||0)+1)}
+  // Opt-in bounded trace: canonical talent keys only, no actors, builds or coordinates.
+  const trace=[],rareTrace=[];let sequence=0;
+  const rareKeys=new Set(['guardian:J08','hunter:P09','mage:A07']);
+  function record(op,fields){
+   if(!traceLimit)return;
+   const event=Object.freeze({seq:++sequence,op,...fields});
+   trace.push(event);if(trace.length>traceLimit)trace.shift();
+   if(rareKeys.has(event.key)||rareKeys.has(event.victimKey)){
+    rareTrace.push(event);if(rareTrace.length>96)rareTrace.shift();
+   }
+  }
   function enqueue(entry){
    if(!entry||!KEY.test(entry.key)||!Number.isFinite(entry.x)||!Number.isFinite(entry.z))
     throw new TypeError('A confirmed talent cue requires canonical key and finite x/z');
@@ -35,8 +47,14 @@
       if(redundancy>score){score=redundancy;victim=i}
      }
     }
-    if(victim<0){rejected++;count(rejectedByKey,entry.key);return false}
+    if(victim<0){
+     rejected++;count(rejectedByKey,entry.key);
+     record('reject',{key:entry.key,size,reason:'capacity-no-redundant',firstDisplay:!dispatchedByKey.has(entry.key),queuedKeys:order.length});
+     return false;
+    }
     const victimKey=order[victim],lane=lanes.get(victimKey);
+    record('evict',{key:entry.key,victimKey,size,victimLaneSize:lane.length,
+     victimSeen:seenByKey.get(victimKey)||0,firstDisplay:!dispatchedByKey.has(entry.key),reason:'first-display-reclaim'});
     // Diagnostic only: track when the last pending visual of a key is
     // displaced by admission pressure. Do not change the proven WebGL policy.
     if(lane.length===1){evictedSingleton++;count(evictedSingletonByKey,victimKey)}
@@ -50,7 +68,10 @@
    if(!lanes.has(entry.key)){lanes.set(entry.key,[]);order.push(entry.key)}
    // Never retain mutable combat objects, player IDs, names, or user data.
    lanes.get(entry.key).push(Object.freeze({key:entry.key,x:entry.x,z:entry.z}));
-   size++;accepted++;count(acceptedByKey,entry.key);return true;
+   size++;accepted++;count(acceptedByKey,entry.key);
+   record('accept',{key:entry.key,size,laneSize:lanes.get(entry.key).length,
+    firstDisplay:!dispatchedByKey.has(entry.key)});
+   return true;
   }
   function nextForFrame(frame){
    if(!Number.isSafeInteger(frame)||frame<0||frame<=lastFrame)
@@ -61,6 +82,7 @@
    const lane=lanes.get(key);
    const cue=lane.shift();
    size--;dispatched++;count(dispatchedByKey,key);
+   record('dispatch',{key,frame,size,laneRemaining:lane.length});
    if(lane.length){cursor=(cursor+1)%order.length}
    else{
     lanes.delete(key);
@@ -75,6 +97,7 @@
    size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;evicted=0;evictedSingleton=0;
    acceptedByKey.clear();rejectedByKey.clear();dispatchedByKey.clear();
    seenByKey.clear();evictedByKey.clear();evictedSingletonByKey.clear();
+   trace.length=0;rareTrace.length=0;sequence=0;
   }
   function snapshot(){
    return Object.freeze({capacity,size,queuedKeys:Object.freeze(order.slice()),
@@ -83,7 +106,8 @@
     rejectedByKey:Object.freeze(Object.fromEntries(rejectedByKey)),
     dispatchedByKey:Object.freeze(Object.fromEntries(dispatchedByKey)),
     evictedByKey:Object.freeze(Object.fromEntries(evictedByKey)),
-    evictedSingletonByKey:Object.freeze(Object.fromEntries(evictedSingletonByKey))});
+    evictedSingletonByKey:Object.freeze(Object.fromEntries(evictedSingletonByKey)),
+    ...(traceLimit?{trace:Object.freeze(trace.slice()),rareTrace:Object.freeze(rareTrace.slice()),traceLimit}:{})});
   }
   return Object.freeze({enqueue,nextForFrame,clear,snapshot});
  }

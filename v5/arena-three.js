@@ -348,7 +348,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // H.3 opt-in M10 visual scheduler. Genuine proc cues are dispatched once
   // per rendered frame, after physics and effect expiry, before WebGL draw.
   const visualQueue=new URLSearchParams(window.location.search).get('m10visualqueue')==='1'
-   &&M10_VISUAL_QUEUE?.createQueue(18)||null;
+   &&M10_VISUAL_QUEUE?.createQueue(18,{traceLimit:fxProbeEnabled?256:0})||null;
   container.dataset.v5M10VisualQueueEnabled=String(!!visualQueue);
   function reportVisualQueue(){
    if(!visualQueue)return;
@@ -363,6 +363,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    container.dataset.v5M10VisualQueueByKey=JSON.stringify({
     accepted:q.acceptedByKey,rejected:q.rejectedByKey,dispatched:q.dispatchedByKey,
     evicted:q.evictedByKey,evictedSingleton:q.evictedSingletonByKey});
+   if(q.trace)container.dataset.v5M10VisualQueueTrace=JSON.stringify({
+    tail:q.trace,rare:q.rareTrace,limit:q.traceLimit});
   }
   reportVisualQueue();
   // H.3 opt-in diagnosis: a real cue created does not imply a rendered frame.

@@ -106,6 +106,32 @@ assert.equal(replay().snapshot.accepted,18);
 assert.equal(replay().snapshot.rejected,982);
 assert.equal(Object.values(replay().snapshot.rejectedByKey).reduce((a,b)=>a+b,0),982);
 assert.equal(Object.values(replay().snapshot.dispatchedByKey).reduce((a,b)=>a+b,0),18);
+// Opt-in diagnostic trace: bounded, deterministic, no identities or coordinates.
+for(const bad of [-1,257,1.5,NaN])assert.throws(()=>createQueue(18,{traceLimit:bad}),RangeError);
+function diagnosticReplay(){
+ const d=createQueue(3,{traceLimit:6});
+ for(let i=0;i<2;i++)d.enqueue({key:keys[0],x:i,z:10,studentName:'PRIVATE'});
+ d.enqueue({key:keys[1],x:0,z:20});
+ d.nextForFrame(0);
+ d.enqueue({key:keys[2],x:0,z:30});
+ d.enqueue({key:'warrior:B06',x:0,z:40});
+ d.enqueue({key:keys[0],x:0,z:50});
+ const result=d.snapshot();
+ assert(result.trace.length<=6&&result.rareTrace.length<=96);
+ assert(result.trace.some(e=>e.op==='evict'&&e.victimKey===keys[0]&&e.victimLaneSize===1));
+ assert(result.rareTrace.some(e=>e.op==='evict'&&e.victimKey===keys[0]));
+ assert(result.trace.some(e=>e.op==='reject'));
+ assert(!JSON.stringify(result).includes('PRIVATE'));
+ assert(result.trace.every(e=>!('x' in e)&&!('z' in e)&&!('studentName' in e)));
+ assert(result.trace.every(e=>Object.isFrozen(e)));
+ return result;
+}
+assert.deepEqual(diagnosticReplay(),diagnosticReplay(),'Trace must replay deterministically');
+const resetTrace=createQueue(2,{traceLimit:2});
+resetTrace.enqueue({key:keys[0],x:1,z:2});resetTrace.clear();
+assert.deepEqual(resetTrace.snapshot().trace,[]);
+assert.deepEqual(resetTrace.snapshot().rareTrace,[]);
+assert(!Object.hasOwn(q.snapshot(),'trace'),'Default path must not expose trace');
 // Regression: the visual scheduler does not mutate M5 builds or Phase2 options.
 const m5=PHASE2.exampleBuild('guardian','Synthetic M5',5,0);
 assert.equal(m5.talents.length,5);

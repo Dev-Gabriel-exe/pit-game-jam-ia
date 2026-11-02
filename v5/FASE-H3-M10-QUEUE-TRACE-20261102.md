@@ -1,0 +1,9 @@
+# M10 H.3 — trilha de admissões da fila visual (02/11/2026)
+
+**Missão em andamento:** diagnosticar seed alternativa `4175863657` em que J08 é rejeitado e P09 perde duas entradas antes do primeiro quadro. Base `606bd48305778ab30122d7fad0c2414fcf581ba0`; branch exclusiva `feature/v5-arena-dos-criadores`. Roadmap D–I, checkpoints E/F/G, contrato H.0, H.3, commits e CI revisados.
+
+**Incremento:** `v5/m10-visual-queue.js` registra opcionalmente decisões `accept/reject/evict/dispatch`, motivo, vítima, tamanho da lane, sequência e frame. Somente chaves canônicas de talentos, sem nomes, IDs, builds ou coordenadas. Janela de 256 decisões recentes e 96 decisões envolvendo J08/P09/A07; desligado por padrão e ativado apenas com `m10visualqueue=1&m10fxprobe=1`. `v5/arena-three.js` expõe trilha para o QA; `qa/v5-m10-rare-equipped-browser.cjs` preserva em FAIL; `qa/v5-m10-visual-queue.cjs` cobre limites, determinismo, privacidade, rejeição e substituição singleton.
+
+**Evidência pendente:** verificar novo commit e CI. Política da fila, teto 18, M5 (5/10), M10 (10/20), 120 talentos, quatro KayKits, combate, câmera e arquibancadas **não mudaram**. O gate WebGL combinado pode continuar FAILURE na seed alternativa; isso não é homologação. Ver `queueAtExit.admissionTrace` no artefato JSON do workflow `V5 H3 — M10 Rare Equipped WebGL`.
+
+**Próximo passo da MESMA Missão 10:** ler trilha da seed alternativa, reproduzir a sequência em teste determinístico e só então corrigir admissão preservando teto 18, seed principal, alternativa e modo low. **G.2 em PCs físicos NÃO executado; H.1/H.2 reais, Fase I, merge, main e produção bloqueados.**
