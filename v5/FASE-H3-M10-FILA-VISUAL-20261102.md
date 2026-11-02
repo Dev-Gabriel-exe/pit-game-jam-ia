@@ -40,3 +40,18 @@
 **Critérios de saída desta tarefa:** CI específico WebGL sem erros, eventos genuínos J08/P09/A07 efetivamente apresentados por pelo menos um frame quando aceitos, sem estouro da fila ou regressão M5. Mesmo passando, não confundir projeção no frustum com pixels visíveis nem homologação em projetor.
 
 **Próximo passo:** conferir logs/artefatos do CI; corrigir se falhar e retestar **a mesma Missão 10**. Medir descartes por saturação da fila, comparar duas seeds e preservar a política de 18 efeitos simultâneos. G.2 nos PCs físicos e homologação humana não realizados. H.1/H.2, Fase I, `main`, XP, notas, alunos e produção continuam fora do escopo.
+
+
+## Rodada — diagnóstico de saturação por chave canônica (02/11/2026)
+
+**Missão 10 ainda aberta; nenhum efeito raro homologado.** Antes de alterar a política de prioridade, foi verificado o resultado do [CI 41389498122](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41389498122): `isolated-queue` PASS, mas `queue-first-frame-webgl` **FAIL** com `Real rare proc did not obtain the bounded M10 subtle visual lane: guardian:J08`. O job publicou três screenshots, mas não o JSON porque a asserção interrompia o teste antes da gravação. Capturas de câmera não provam pixels do talento visíveis.
+
+**Incremento técnico desta rodada (sem mexer em combate, talentos, progressão, câmera ou orçamento de 18):**
+- `837c428b83364ac4c85ab5b76f203d98ed0294f3`: `v5/m10-visual-queue.js` passa a contar aceites, rejeições e despachos **por chave canônica**, sem guardar dados pessoais, preservando o round-robin, o limite 18 e o despacho de um cue por quadro.
+- `c7bbbc871081af9379a075feecdf6dba28d60f15`: `qa/v5-m10-visual-queue.cjs` testa os contadores por chave, reset e saturação de 1.000 eventos. O job `isolated-queue` foi confirmado **SUCCESS** no [run 41395297149](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41395297149), sem extrapolar para WebGL.
+- `c840fb7dcb4e8e9b98ca05a79f2f5f4f314e9eb4`: `v5/arena-three.js` expõe `data-v5-m10-visual-queue-by-key` **somente no laboratório opt-in**.
+- `e1271be293661b87361080e8af97cdab40c9b78c`: `qa/v5-m10-rare-equipped-browser.cjs` persiste `qa/v5-m10-queue-webgl.json` também no caso de falha, incluindo asserção, aceites/rejeições/despachos por talento e as chaves com cue registrado.
+
+**CI da versão completa:** [run 41395317928](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41395317928) — jobs em fila na consulta; **não aprovado**. Runs intermediários podem falhar ou ser cancelados por concorrência e não substituem o gate do último SHA. Este incremento é observabilidade, **não correção da perda visual**.
+
+**Próximo passo na mesma missão:** obter o JSON do run final, diferenciar rejeição da fila de descarte no orçamento WebGL, e somente então ajustar a política visual com teste de regressão para M5. Repetir WebGL com 30 KayKits, 10 talentos/20 pontos, câmera, 29 espectadores e três procs raros. G.2 nos PCs físicos, avaliação humana no projetor, H.1/H.2, Fase I e main seguem bloqueados.
