@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T08:49:25Z",
+  "last_completed_at": "2026-11-02T09:26:46.270Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M06 saved-project change now invalidates import and Preview checks while preserving license; regression committed; new static/browser CI NOT_CONFIRMED. Previous Browser QA 41407290512 SUCCESS. Continue professor/aluno evidence integrity audit M01–M10; no main merge.",
+  "priority": "M07 saved-project path now invalidates all three Preview checks; actual-source V8 regression PASS; Node/CI/Chrome on new commit NOT_CONFIRMED. Verify GitHub Actions, continue M01–M10 cross-role evidence audit; no main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M06-PROJECT-PREVIEW-RETEST",
+  "last_task": "V4-AUD-M07-PROJECT-FINAL-RETEST",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3415,42 +3415,51 @@
       ],
       "tests": "Source consistency checks 6/6; prior Chrome 41407290512 SUCCESS; new M06 regression committed but not yet executed/confirmed in CI; GDevelop/HDMI/human/mobile NOT_RUN.",
       "notes": "M06 saved project path change invalidates import and Preview declarations 0/1, preserves provenance/license 2 and student text; whitespace-only path changes preserve checks. Master 54/59; no main/production/student data changes."
+    },
+    {
+      "task": "V4-AUD-M07-PROJECT-FINAL-RETEST",
+      "completed_at": "2026-11-02T09:26:46.270Z",
+      "commit": "1f18c81d1665537c19fcb9624ea0c78e73becc74",
+      "files": [
+        "v3/student-mission-seven.js",
+        "qa/v3-m07-integration.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "V8 actual-source functional checks PASS: baseline, changed saved path invalidates 3/3, blocks submission, manual reconfirmation, whitespace no-op, changed negative case, guidance. V8 parse of student module and Node QA script PASS. New native Node/CI/Chrome NOT_CONFIRMED; GitHub connector returned no PR-triggered workflow runs for new commit. GDevelop GUI/HDMI/human/physical mobile NOT_RUN.",
+      "notes": "M07 project path change no longer retains stale negative and conclusion Preview declarations. Teacher rubric already aligned; private notes unchanged. Roadmap 54/59; V3 branch only, no main or real students."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M06-PROJECT-PREVIEW-RETEST",
+    "task": "V4-AUD-M07-PROJECT-FINAL-RETEST",
     "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-02T08:49:25Z",
+    "updated_at": "2026-11-02T09:26:46.270Z",
     "code_commits": [
-      "04e791f61c1b06a124d812a745841114349cc2f1"
+      "a3e3cabc09dee18a6d8b0bd370038dbace6612f5"
     ],
     "regression_commits": [
-      "d3c70b48dc36d8a863b48d913089d89da8869997"
+      "2cb731060442224fbb1e9c62931619b8cbcc653f"
     ],
-    "documentation_commit": "533b8e4e004c8d9b1d3235a3d902e0aaaefef6a8",
+    "documentation_commit": "1f18c81d1665537c19fcb9624ea0c78e73becc74",
     "tests": [
       {
-        "name": "M06 code/regression source consistency",
-        "result": "6/6 source inspections passed (not Node execution)"
+        "name": "M07 V8 actual-source functional regression",
+        "result": "PASS: baseline, saved path 3/3 invalidation, submission blocked, reconfirmation, whitespace no-op, negative case, rendered guidance"
       },
       {
-        "name": "Previous checkpoint Chrome Browser QA",
-        "result": "SUCCESS run 41407290512"
+        "name": "V8 JS syntax of M07 student module and QA integration script",
+        "result": "PASS"
       },
       {
-        "name": "New M06 Node regression and static QA",
-        "result": "NOT_CONFIRMED — committed, awaiting GitHub Actions"
-      },
-      {
-        "name": "New M06 Chrome Browser QA",
-        "result": "NOT_CONFIRMED — awaiting GitHub Actions"
+        "name": "GitHub Actions static QA and Browser QA on new commit",
+        "result": "NOT_CONFIRMED — no PR-triggered runs returned by connector"
       },
       {
         "name": "GDevelop GUI, HDMI, human students, physical mobile",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify static and Browser QA on current feature SHA; continue cross-role evidence audit without changing private teacher notes.",
+    "next": "Verify static and Chrome QA on current feature SHA; continue cross-role M01–M10 evidence audit before aesthetics.",
     "master_progress": "54/59 unchanged"
   }
 }
