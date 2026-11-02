@@ -68,3 +68,16 @@
 **CI no SHA de testes:** [run 41401591801](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591801). `isolated-queue` PASS na primeira consulta; `queue-first-frame-webgl` ainda em execução, portanto sem aprovação visual. [QA geral 41401591837](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591837) PASS. Outros jobs WebGL/Browser QA em andamento.
 
 **Próximo passo obrigatório:** consultar o novo artefato WebGL e confirmar que J08/P09/A07 foram **aceitos e despachados**. Se algum continuar rejeitado, ajustar a admissão sem extrapolar o teto de 18 e retestar. Mesmo com aceitação, conferir `renderedOnce`, projeção, screenshots e regressão M5; não confundir contadores com pixels legíveis. G.2 em PCs físicos não realizado; H.1/H.2 e homologação humana seguem bloqueados. Sem `main`, merge ou produção.
+
+
+### Resultado verificado após CI (mesma rodada)
+
+**PASS técnico limitado** — [run 41401591801](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591801), SHA `2f333a2d1181b04f9632bda9b25fbafe7f2d4753`: `isolated-queue` e `queue-first-frame-webgl` concluídos com sucesso. [Artefato 13121806027](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591801/artifacts/13121806027) contém JSON e screenshots. Também passaram [QA geral 41401591837](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591837), [Browser QA 41401591857](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591857) e os cinco jobs de [M10 WebGL 41401591762](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591762).
+
+Na seed `20261101`, 30 KayKits, 10 talentos por personagem, 29 espectadores e regressão M5 para 5 talentos:
+- `guardian:J08`: 1 proc genuíno, 1 cue criado, **1 quadro renderizado**, 0 descartes antes do primeiro quadro; centro da malha **fora do frustum** na amostra.
+- `hunter:P09`: 1 proc, 1 cue criado, **1 quadro renderizado**, 0 descartes antes do primeiro quadro; centro **fora do frustum**.
+- `mage:A07`: 4 procs, 1 cue criado, **1 quadro renderizado**, 0 descartes antes do primeiro quadro; 1 amostra **dentro do frustum**, sem captura sincronizada de pixels.
+- Fila: 224 aceites, 158 rejeições, 53 despachos, 0 pendentes ao fim. A diferença **171** entre aceites e despachos indica substituições de cues pendentes e deve ser monitorada; não declarar perda visual resolvida em toda a carga.
+
+**Conclusão precisa:** foi resolvido neste cenário o bloqueio absoluto dos três talentos antes do primeiro quadro; **não** foi demonstrada legibilidade real de J08/P09 no enquadramento, nem contraste/oclusão de A07 no telão. A Missão 10 permanece aberta. Próxima rodada: reduzir churn da fila e medir se os três procs aparecem em planos úteis com captura no quadro exato; repetir outras seeds e qualidade baixa. G.2 físico, homologação humana, H.1/H.2 e Fase I continuam pendentes.
