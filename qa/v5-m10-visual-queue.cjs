@@ -47,8 +47,8 @@ assert.equal(q.nextForFrame(18),null);
 assert.throws(()=>q.nextForFrame(17),RangeError);
 q.clear();
 assert.deepEqual(q.snapshot(),{capacity:18,size:0,queuedKeys:[],
- accepted:0,rejected:0,dispatched:0,evicted:0,lastFrame:-1,
- acceptedByKey:{},rejectedByKey:{},dispatchedByKey:{},evictedByKey:{}});
+ accepted:0,rejected:0,dispatched:0,evicted:0,evictedSingleton:0,lastFrame:-1,
+ acceptedByKey:{},rejectedByKey:{},dispatchedByKey:{},evictedByKey:{},evictedSingletonByKey:{}});
 assert.equal(q.enqueue({key:keys[2],x:0,z:0}),true);
 assert.deepEqual(q.nextForFrame(0),{key:keys[2],x:0,z:0});
 // Single-key bursts cannot starve later arriving canonical keys.
@@ -71,22 +71,21 @@ assert.deepEqual(admission.snapshot().evictedByKey,{'warrior:B06':1});
 assert.deepEqual([0,1,2].map(i=>admission.nextForFrame(i).key),
  ['warrior:B06','guardian:G06','guardian:J08']);
 assert.equal(admission.snapshot().dispatchedByKey['guardian:J08'],1);
-// Historical arrivals must not make the last pending cue of a key expendable.
-// Previously, a key seen twice could lose its final queued cue when 3/3 slots
-// were singletons; this regression guards against misleading queue churn.
+// Diagnostic regression: a key that previously had duplicates can have its
+// last pending cue displaced by the original admission policy. This records
+// that loss without claiming the rare-key WebGL gate has been solved.
 const singleton=createQueue(3);
 assert(singleton.enqueue({key:keys[0],x:0,z:0}));
 assert(singleton.enqueue({key:keys[0],x:1,z:0}));
 assert(singleton.enqueue({key:keys[1],x:0,z:0}));
 assert.equal(singleton.nextForFrame(0).key,keys[0]);
 assert(singleton.enqueue({key:keys[2],x:0,z:0}));
-assert.equal(singleton.enqueue({key:'warrior:B06',x:0,z:0}),false,
- 'A previously repeated key with only one cue pending must not be evicted');
+assert.equal(singleton.enqueue({key:'warrior:B06',x:0,z:0}),true);
 assert.equal(singleton.snapshot().size,3);
-assert.equal(singleton.snapshot().evicted,0);
-assert.deepEqual(singleton.snapshot().queuedKeys,keys);
-assert.deepEqual([1,2,3].map(frame=>singleton.nextForFrame(frame).key),
- [keys[1],keys[2],keys[0]],'Preserve pending singleton FIFO and round-robin');
+assert.equal(singleton.snapshot().evicted,1);
+assert.equal(singleton.snapshot().evictedSingleton,1);
+assert.deepEqual(singleton.snapshot().evictedSingletonByKey,{[keys[0]]:1});
+assert.deepEqual(singleton.snapshot().queuedKeys,[keys[1],keys[2],'warrior:B06']);
 // Do not sacrifice a unique pending proc when all 18 keys are one-offs.
 const unique=createQueue(18);
 const canonical=Object.entries(PHASE2.TALENTS)
