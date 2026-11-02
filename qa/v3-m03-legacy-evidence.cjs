@@ -116,4 +116,18 @@ const legacyStoreId='pit_v3_missao03_rascunho_legacy-preexisting';
 store.set(legacyStoreId,JSON.stringify({...baseline,project:'L'.repeat(92)}));
 check(m.load('legacy-preexisting').project.length===92,'M03 loads oversized historical localStorage without truncation');
 check(m.validate('legacy-preexisting').ok===false,'M03 historical localStorage cannot bypass validation');
+// A 2D/3D object-type switch changes the project being certified. The saved
+// project must be reconfirmed alongside the scene and Preview, not silently reused.
+const typeChanged={...initial,checks:[0,1,2]};
+check(m.selectObjectType(typeChanged,'2D Sprite')===true,'M03 object type switch is recognized');
+check(typeChanged.checks.length===0,'M03 type switch invalidates scene, Preview and saved project confirmations');
+check(typeChanged.project===initial.project&&typeChanged.saved===initial.saved,
+ 'M03 type switch preserves the student project and save-location text');
+m.save('type-changed',typeChanged);
+check(m.validate('type-changed').field==='checks','M03 submission blocked until three manual confirmations are repeated');
+typeChanged.checks=[0,1,2];
+check(m.selectObjectType(typeChanged,'2D Sprite')===false&&typeChanged.checks.length===3,
+ 'M03 unchanged object type does not invalidate legitimate confirmations');
+check(m.selectObjectType(typeChanged,'3D Box/Modelo')===true&&typeChanged.checks.length===0,
+ 'M03 reverse type switch also requires all confirmations');
 console.log('PASS: '+count+' M03 legacy recovery assertions; no real student data, editor or browser used.');
