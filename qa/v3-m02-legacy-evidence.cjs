@@ -19,6 +19,11 @@ function check(condition,message){assert(condition,message);count++}
 check(valid.split('\n').length===8,'Eight ordered structured lines');
 check(valid.length<=750,'Evidence within API limit');
 check(m.parseEvidence(valid)?.elements===initial.elements,'Valid elements recovered');
+const fullTitle='T'.repeat(55);
+const fullTitleEvidence=m.evidence('source',{title:fullTitle,genre:'Narrativa interativa'});
+check(fullTitleEvidence.includes('Jogo: '+fullTitle+'\n'),'M01 title of 55 characters survives M02 evidence without truncation');
+check(m.parseEvidence(fullTitleEvidence)!==null,'M02 accepts complete M01 title');
+check(m.parseEvidence(fullTitleEvidence.replace('Jogo: '+fullTitle,'Jogo: '+fullTitle+'X'))===null,'M02 rejects title over M01 limit');
 check(m.parseEvidence(valid.replace(/\n/g,'\r\n'))?.scene===initial.scene,'CRLF normalized');
 m.hydrate('fresh',valid,'approved');
 check(m.load('fresh').mechanic===initial.mechanic,'Structured remote fields recovered');
@@ -31,7 +36,7 @@ const bad=[
  valid.replace('Elementos: Jogador, Chave, Porta','Elementos: Jogador, Chave, Porta, Saída'),
  valid.replace('Teste: Dado que existe chave, quando tocar na porta, então ela abre.','Teste: curto'),
  valid.replace('Mecânica: Coletar a chave','Mecânica: '+('x'.repeat(106))),
- valid.replace('Jogo: Meu jogo','Jogo: '+('x'.repeat(51))),
+ valid.replace('Jogo: Meu jogo','Jogo: '+('x'.repeat(56))),
  valid.replace('Gênero: Puzzle','Gênero: '+('x'.repeat(26))),
  valid.replace('Cena: Sala inicial','Cena:  Sala inicial'),
  valid.replace('Cena: Sala inicial','Projeto: Sala inicial'),
@@ -54,7 +59,9 @@ check(m.load('later-only').scene===''&&m.load('later-only').later==='Ideia pende
 m.save('max',{scene:'a'.repeat(86),mechanic:'b'.repeat(105),elements:'c'.repeat(38)+', '+ 'd'.repeat(38)+', '+ 'e'.repeat(40),
  test:'f'.repeat(155),later:'g'.repeat(120)});
 const maximum=m.evidence('max',{title:'T'.repeat(100),genre:'G'.repeat(100)});
-check(maximum.length<=750,'Maximum legal fields do not truncate the final line');
+check(maximum.length===750,'Maximum legal fields fit exactly 750 characters without truncation');
+check(maximum.includes('Jogo: '+('T'.repeat(55))+'\n'),'Maximum title preserved');
+check(maximum.includes('Gênero: '+('G'.repeat(23))+'\n'),'Maximum genre fits budget');
 check(maximum.split('\n').length===8,'Maximum evidence retains all labels');
 check(m.parseEvidence(maximum)?.later==='g'.repeat(120),'Maximum record round trips');
 check(m.load('fresh').scene===initial.scene,'Session isolation');
