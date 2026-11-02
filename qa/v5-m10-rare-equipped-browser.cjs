@@ -127,13 +127,6 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
   assert(report.lastSample.sprites>0&&report.lastSample.fx>0,
    'M10 WebGL produced no real talent sprite cues');
   assert(report.cuesObserved>0,'None of the three equipped rare talents produced a recorded visual cue');
-  // A real proc is expected to render or be counted as dropped; missing
-  // telemetry is a diagnostic failure, not a fabricated success.
-  for(const key of targets){
-   if(fixture.procs[key]>0)
-    assert(report.rare[key].rendered,
-     'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
-  }
   if(queueMode){
    const stats=await page.evaluate(()=>{
     const d=document.querySelector('#arenaStage').dataset;
@@ -231,6 +224,15 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
     targets:report.projection.rareTargets,liveCaptures:targets.filter(k=>!!report.rare[k].liveInFrameCapture),
     projectedFrameSamples:total,offscreenFrameSamples:offscreen}));
   }
+  // Preserve full queue + per-shot lifecycle evidence before the strict
+  // rare-talent gate. An expected red CI must still explain *why* it failed.
+  // A real proc is expected to render or be counted as dropped; missing
+  // telemetry is a diagnostic failure, not a fabricated success.
+  for(const key of targets){
+   if(fixture.procs[key]>0)
+    assert(report.rare[key].rendered,
+     'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
+  }
   await page.screenshot({path:prefix+'-final.png',timeout:45000});
   await page.keyboard.press('Escape');
   await page.waitForFunction(()=>!document.body.classList.contains('arena-immersive'));
@@ -282,6 +284,34 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
       droppedKeys:JSON.parse(d.v5TalentFxDroppedKeys||'[]')};
     });
    }catch(err){report.queueCaptureError=err.message}
+  }
+  if(frameProbe&&page&&!page.isClosed()){
+   try{
+    report.projectionAtExit=await page.evaluate(()=>{
+     const d=document.querySelector('#arenaStage')?.dataset||{};
+     return {projected:JSON.parse(d.v5FxProbeVisibleFrames||'{}'),
+      offscreen:JSON.parse(d.v5FxProbeOffscreenFrames||'{}'),
+      lifecycle:JSON.parse(d.v5FxProbeLifecycle||'{}'),
+      byShot:JSON.parse(d.v5FxProbeByShot||'{}'),
+      firstVisible:JSON.parse(d.v5FxProbeFirstVisible||'{}')};
+    });
+   }catch(err){report.projectionCaptureError=err.message}
+  }
+  if(report.failedAssertion){
+   const byKey=report.queueAtExit?.byKey||{};
+   const projection=report.projectionAtExit||report.projection||{};
+   report.failedRareDiagnostics=Object.fromEntries(targets.map(key=>[key,{
+    engineProcs:fixture.procs[key]||0,
+    recordedRendered:!!report.rare[key]?.rendered,
+    recordedDropped:!!report.rare[key]?.dropped,
+    queue:Object.fromEntries(['accepted','rejected','dispatched','evicted','evictedSingleton']
+     .map(kind=>[kind,byKey[kind]?.[key]||0])),
+    lifecycle:projection.lifecycle?.[key]||null,
+    projectedFrames:projection.projected?.[key]||0,
+    offscreenFrames:projection.offscreen?.[key]||0
+   }]));
+   console.error('M10 FAILURE RARE DIAGNOSTIC '+JSON.stringify({
+    seed:fixture.seed,assertion:report.failedAssertion,rare:report.failedRareDiagnostics}));
   }
   fs.writeFileSync(prefix+'.json',JSON.stringify(report,null,2)+'\n');
   await browser.close();
