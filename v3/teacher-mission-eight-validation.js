@@ -6,7 +6,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const rubric=[
 {title:'PROBLEMA ANTES',question:'Qual dúvida do jogador foi observada antes da mudança?',accept:'Há uma interação reproduzível e uma dificuldade específica, não apenas gosto estético.'},
 {title:'MELHORIA REAL',question:'O que mudou no GDevelop?',accept:'Texto, HUD, contraste, resposta ou mensagem de erro foi implementado na cena original, sem recomeçar o projeto.'},
-{title:'COMPARAÇÃO',question:'O mesmo percurso foi testado antes e depois?',accept:'O aluno demonstra o mesmo comando, com resultados diferentes e compreensíveis.'},
+{title:'COMPARAÇÃO',question:'O mesmo percurso foi testado antes e depois?',accept:'O aluno demonstra o mesmo comando ANTES e DEPOIS no projeto editável reaberto e identificado, com resultados diferentes e compreensíveis.'},
 {title:'ACESSIBILIDADE',question:'O feedback é legível sem depender apenas de cor?',accept:'Texto contrastante, informação por palavra/ícone, foco/controle reconhecível e nenhuma instrução oculta.'},
 {title:'LEGIBILIDADE NA TELA-ALVO',question:'Texto, HUD e controles funcionam na resolução prevista para o jogo?',accept:'Conferir a resolução-alvo no Preview. Se o jogo também é para celular, redimensionar a janela e verificar cortes e sobreposição. Teste em celular físico não é requisito desta oficina.'},
 {title:'DESEMPENHO E REGRESSÃO',question:'A melhoria preserva jogabilidade e estabilidade?',accept:'Nenhuma ação pesada repetida por frame; a cena mantém controle, regra, conclusão e teste negativo da Missão 07.'}
