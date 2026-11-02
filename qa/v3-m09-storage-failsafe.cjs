@@ -195,9 +195,9 @@ observedInput.dataset.m9sField='saved';observedInput.value='Novo caminho do proj
 m.mount({session:editUI,status:'',phase:'practice',onPhase(){},onMessage(){}});
 onFieldInput();
 assert.equal(checkBoxes[0].checked,false,'saved-path edit visibly unchecks same-project declaration');
-assert.equal(checkBoxes[1].checked,true,'saved-path edit keeps observed-result declaration');
-assert.equal(checkBoxes[2].checked,true,'saved-path edit keeps decision declaration');
-assert.equal(m.load(editUI).checks.join(','),'1,2','saved-path edit persisted selective reset');
+assert.equal(checkBoxes[1].checked,false,'saved-path edit visibly unchecks observation declaration');
+assert.equal(checkBoxes[2].checked,false,'saved-path edit visibly unchecks decision declaration');
+assert.equal(m.load(editUI).checks.join(','),'','saved-path edit persisted all-three reset');
 assert(editStatus.textContent.includes('Reabra o projeto editável'),'saved-path change gives a concrete reopen instruction');
 const html=m.render({session:editUI,phase:'practice',status:'',idea:{}});
 assert(html.includes('mesmo projeto editável indicado, que reabri e conferi'),'student attestation explicitly binds peer test to saved project');
