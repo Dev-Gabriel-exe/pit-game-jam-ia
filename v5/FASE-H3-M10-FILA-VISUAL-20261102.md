@@ -55,3 +55,16 @@
 **CI da versão completa:** [run 41395317928](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41395317928) — jobs em fila na consulta; **não aprovado**. Runs intermediários podem falhar ou ser cancelados por concorrência e não substituem o gate do último SHA. Este incremento é observabilidade, **não correção da perda visual**.
 
 **Próximo passo na mesma missão:** obter o JSON do run final, diferenciar rejeição da fila de descarte no orçamento WebGL, e somente então ajustar a política visual com teste de regressão para M5. Repetir WebGL com 30 KayKits, 10 talentos/20 pontos, câmera, 29 espectadores e três procs raros. G.2 nos PCs físicos, avaliação humana no projetor, H.1/H.2, Fase I e main seguem bloqueados.
+
+
+## Rodada — admissão justa sob saturação (02/11/2026, após CI 41395317928)
+
+**Missão 10 em andamento; correção visual ainda NÃO homologada.** O run [41395317928](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41395317928) terminou com `isolated-queue` PASS e `queue-first-frame-webgl` **FAIL**. O JSON publicado no [artefato 13119307229](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41395317928/artifacts/13119307229) comprovou a causa: **47** cues aceitos, **335** rejeitados e **47** despachados. As rejeições incluem `guardian:J08=1`, `hunter:P09=1` e `mage:A07=4`; nenhum dos três foi aceito/despachado. O motor registrou 1/1/4 procs genuínos e a arena terminou com 29 espectadores. Logo, o problema observado é **saturação da fila na admissão**, antes de qualquer análise de frustum/pixels.
+
+**Incremento realizado somente no laboratório opt-in:**
+- `bbe28090c92c1b175b0641a65133b6f0f2bf3592` — `v5/m10-visual-queue.js`: em fila cheia, um talento canônico ainda não despachado pode ocupar o lugar de **um cue redundante** de uma chave super-representada. Preserva 18 entradas, alternância por chave, limite de um despacho por quadro e proteção de chaves únicas; registra `evicted` e `evictedByKey` no snapshot. Não altera combate, câmera, stats, dano, RNG, talentos, XP ou dados reais.
+- `2f333a2d1181b04f9632bda9b25fbafe7f2d4753` — `qa/v5-m10-visual-queue.cjs`: adicionados cenários de admissão de J08 com 18 slots ocupados, preservação de 18 cues únicos e contadores de evicção. A reprodução isolada local do algoritmo passou, mas **não substitui** os testes integrais do repositório.
+
+**CI no SHA de testes:** [run 41401591801](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591801). `isolated-queue` PASS na primeira consulta; `queue-first-frame-webgl` ainda em execução, portanto sem aprovação visual. [QA geral 41401591837](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41401591837) PASS. Outros jobs WebGL/Browser QA em andamento.
+
+**Próximo passo obrigatório:** consultar o novo artefato WebGL e confirmar que J08/P09/A07 foram **aceitos e despachados**. Se algum continuar rejeitado, ajustar a admissão sem extrapolar o teto de 18 e retestar. Mesmo com aceitação, conferir `renderedOnce`, projeção, screenshots e regressão M5; não confundir contadores com pixels legíveis. G.2 em PCs físicos não realizado; H.1/H.2 e homologação humana seguem bloqueados. Sem `main`, merge ou produção.
