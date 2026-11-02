@@ -6,6 +6,19 @@
 'use strict';
 const STYLES=Object.freeze(['arc','barrier','bolt','dash','fire','frost','heal','orbit','arrow','radiance','rune','trap','impact']);
 const FLOOR=new Set(['heal','orbit','radiance','rune','trap']);
+// 10 genuine PNG alpha masks from Kenney Particle Pack 1.1 (CC0).
+// These augment, rather than replace, the 13 unique procedural talent shapes.
+const ART_STYLES=Object.freeze({
+ arc:'slash_02.png',barrier:'circle_05.png',bolt:'magic_03.png',
+ dash:'trace_04.png',fire:'flame_04.png',frost:'twirl_02.png',
+ heal:'light_03.png',orbit:'twirl_02.png',arrow:'trace_04.png',
+ radiance:'star_07.png',rune:'magic_03.png',trap:'scorch_01.png',
+ impact:'spark_04.png'
+});
+const ART_FILES=Object.freeze([...new Set(Object.values(ART_STYLES))]);
+const ART_BASE=typeof document!=='undefined'&&document.currentScript?.src?
+ new URL('./assets/talents/kenney-particles/',document.currentScript.src).href:null;
+
 const STYLE_FAMILY=Object.freeze({arc:'blade',barrier:'shield',bolt:'spark',dash:'trail',fire:'flame',frost:'crystal',heal:'mend',orbit:'orbit',arrow:'arrow',radiance:'sun',rune:'sigil',trap:'snare',impact:'impact'});
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function spec(style,{subtle=false,reducedMotion=false,quality='auto'}={}){
@@ -17,11 +30,14 @@ function spec(style,{subtle=false,reducedMotion=false,quality='auto'}={}){
   size:impact?1.25:subtle?1.7:ground?3.6:style==='arc'?2.85:2.55,
   opacity:subtle?.52:.91,priority:impact?0:subtle?1:2});
 }
-function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
+function makeAtlas(THREE,{quality='auto',reducedMotion=false,artPack='kenney'}={}){
  if(!THREE?.CanvasTexture||!THREE?.Sprite)throw Error('E.6 requer Three.js');
  if(typeof document==='undefined')throw Error('E.6 requer Canvas 2D');
  const dim=quality==='low'?80:160,frames=reducedMotion?2:quality==='low'?3:8;
  const textures=new Map(),cache=new Map();
+ let disposed=false,artStatus=artPack==='off'||!ART_BASE?'off':'loading';
+ let artFilesLoaded=0,artStylesPainted=0;
+ const artMissing=[];
  function trace(ctx,pts,closed=false){
   ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
   for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
@@ -136,6 +152,48 @@ function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
   }
   textures.set(style,set);
  }
+ // Painting into the existing per-style CanvasTextures (13 x 2/3/8),
+ // instead of allocating any additional GPU texture or animated particle object.
+ // Only real battle events spawn the already budgeted Sprite objects.
+ function paintArt(style,img){
+  if(disposed)return;
+  const set=textures.get(style);if(!set)return;
+  for(let i=0;i<set.length;i++){
+   const texture=set[i],ctx=texture.image.getContext('2d',{alpha:true});
+   if(!ctx)continue;
+   const progress=i/Math.max(1,set.length-1);
+   const swell=reducedMotion?.85:.80+.13*Math.sin(Math.PI*progress);
+   const span=dim*swell;
+   ctx.save();
+   ctx.translate(dim/2,dim/2);
+   if(!reducedMotion)ctx.rotate((progress-.5)*(style==='arc'?.25:style==='dash'?.36:.13));
+   ctx.globalCompositeOperation='screen';
+   ctx.globalAlpha=(style==='trap'||style==='heal'?.68:.84)*(1-progress*.18);
+   ctx.drawImage(img,-span/2,-span/2,span,span);
+   ctx.restore();
+   texture.needsUpdate=true;
+  }
+  artStylesPainted++;
+ }
+ const artReady=artStatus==='off'?Promise.resolve('off'):
+  Promise.all(ART_FILES.map(file=>new Promise(resolve=>{
+   const picture=new Image();picture.decoding='async';
+   picture.onload=()=>{
+    if(!disposed){
+     try{
+      for(const style of STYLES)if(ART_STYLES[style]===file)paintArt(style,picture);
+      artFilesLoaded++;
+     }catch(error){artMissing.push(file);/* procedural drawing remains visible */ }
+    }
+    resolve();
+   };
+   picture.onerror=()=>{if(!disposed)artMissing.push(file);resolve()};
+   picture.src=ART_BASE+file;
+  }))).then(()=>{
+   if(!disposed)artStatus=artFilesLoaded===ART_FILES.length?'loaded':artFilesLoaded?'partial':'failed';
+   return artStatus;
+  });
+
  function spawn({style,color=0xffffff,scale=1,subtle=false,x=0,z=0}){
   const cfg=spec(style,{subtle,reducedMotion,quality});
   if(!cfg)return null;
@@ -151,10 +209,14 @@ function makeAtlas(THREE,{quality='auto',reducedMotion=false}={}){
    spriteVisual:true,frames:frameset,frameIndex:0,subtle,style,config:cfg,isAbility:style!=='impact'};
  }
  function dispose(){
+  disposed=true;
   for(const set of textures.values())for(const tex of set)tex.dispose();
   textures.clear();cache.clear();
  }
- return Object.freeze({spawn,dispose,frameCount:frames,textureCount:STYLES.length*frames});
+ return Object.freeze({spawn,dispose,artReady,
+  get artStatus(){return artStatus},get artFilesLoaded(){return artFilesLoaded},
+  get artStylesPainted(){return artStylesPainted},get artMissing(){return [...artMissing]},
+  frameCount:frames,textureCount:STYLES.length*frames});
 }
-return Object.freeze({STYLES,STYLE_FAMILY,FLOOR: [...FLOOR],spec,makeAtlas});
+return Object.freeze({STYLES,STYLE_FAMILY,ART_STYLES,ART_FILES,FLOOR:[...FLOOR],spec,makeAtlas});
 });
