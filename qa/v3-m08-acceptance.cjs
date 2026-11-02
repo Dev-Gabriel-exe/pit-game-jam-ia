@@ -141,7 +141,7 @@ assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'project path only inva
 assert.equal(student.updateField(unchangedDraft,'saved','  projeto-local.json  '),false,'whitespace-only project edit preserves checks');
 assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'equivalent project path keeps prior confirmations');
 assert.equal(student.updateField(unchangedDraft,'unknown','anything'),false,'unknown field ignored');
-assert.equal(unchangedDraft.checks.length,3,'unknown field keeps checks');
+assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'unknown field keeps currently valid checks');
 // Simulate a real input callback with a fake DOM; this is NOT a browser/HDMI test.
 const editSession='m08-input-event';
 const editDraft=student.load(editSession);
