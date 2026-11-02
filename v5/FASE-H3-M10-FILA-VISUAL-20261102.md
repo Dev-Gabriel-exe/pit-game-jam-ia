@@ -161,3 +161,12 @@ O [run 41422487837](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/r
 - [CI raro com matriz por plano 41422994400](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41422994400): job `fx-projection-webgl` **PASS**, mas `rare-equipped-webgl` (duas seeds) ainda **em execução** nesta consulta; **não declarar o workflow inteiro aprovado**.
 
 **Checkpoint atual:** código do diagnóstico e limpeza no SHA `9789574cd5fa386d794f8f7cd841898c04c6d039`; documentação no próximo commit. Próxima ação: conferir job restante, comparar matriz de câmeras nas duas seeds e decidir se vale testar captura de pixels sincronizada. M10 ainda não homologada; G.2 físico e H.1/H.2 permanecem bloqueados.
+
+
+### Fechamento técnico da rodada — todos os gates específicos concluídos (02/11/2026)
+
+**PASS** [M10 raros 41422994400](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41422994400), SHA de código `9789574cd5fa386d794f8f7cd841898c04c6d039`: os dois jobs `fx-projection-webgl` e `rare-equipped-webgl` concluíram com sucesso. O segundo verificou WebGL com 30 KayKits e os três talentos equipados nas seeds fictícias **20261101** (procs J08/P09/A07 = 1/1/4) e **4175863657** (1/3/1), além do preset low/2GB sintético e retorno M5; 29 espectadores e orçamento M5 5/10 preservados. A matriz por plano passou na seed primária. O [gate da fila 41422994442](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41422994442) também passou após a correção de reset. Os screenshots são amostras posteriores à observação de eventos; **não provam pixels do efeito no instante do proc**.
+
+**Ressalva de legibilidade:** na execução da fila, J08/P09/A07 tiveram um quadro WebGL cada, mas os três centros ficaram fora do frustum (planos `duel`, `highlight`, `duel`, respectivamente). Na execução sem fila, os efeitos raros ainda podem ser descartados antes do primeiro frame. Portanto o objetivo visual final **permanece aberto**, mesmo com o diagnóstico aprovado. Não habilitar a fila por padrão, não declarar a arena final homologada.
+
+**Próximo passo da mesma M10:** investigar posicionamento e duração dos cues em relação aos planos de câmera e validar pixels/contraste em captura sincronizada, sem alterar seleção de alvo, combate ou pedagogia. **G.2 físico não executado**, aprovação humana no projetor e H.1/H.2 reais bloqueadas. Sem merge/main, deploy, usuários, XP, aprovações, notas ou turmas.
