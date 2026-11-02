@@ -635,4 +635,42 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(mod.load('m05-full-title-restored').condition,d.condition,'M05 structured evidence restores draft');
  assert.equal(mod.load('m05-full-title-restored').checks.length,0,'M05 remote evidence does not fabricate Preview tests');
 }
+// M08: a changed saved-project path may reference another game. The old
+// before/after/negative observations cannot certify a different file.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-eight.js'),env,{timeout:3000,filename:'student-mission-eight.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_EIGHT;
+ const session='m08-saved-project-retest',d=mod.load(session);
+ const values={
+  issue:'Jogador nao entendeu o comando na primeira tentativa',
+  control:'Interacao do botao inicial no Preview',
+  change:'Adicionei feedback textual apos o clique no botao',
+  before:'Antes o clique nao mostrava nenhuma mensagem',
+  after:'Depois apareceu uma mensagem clara ao clicar',
+  negative:'Clique sem a condicao exigida manteve o jogo em andamento',
+  saved:'Projetos/jogo-ux-original.json'
+ };
+ for(const f of mod.fields)d[f.id]=values[f.id];
+ d.checks=[0,1,2];mod.save(session,d);
+ assert.equal(mod.validate(session).ok,true,'M08 complete fictitious baseline valid');
+ assert.equal(mod.updateField(d,'saved','Projetos/outro-jogo-ux.json'),true,'M08 saved path changed');
+ assert.equal(d.checks.join(','),'','M08 different project invalidates all three checks');
+ mod.save(session,d);
+ assert.equal(mod.validate(session).field,'checks','M08 submission blocked until all tests repeated');
+ assert.match(mod.render({session,phase:'practice',status:'draft',idea:{}}),/repita os tr\u00eas testes ANTES, DEPOIS e negativo/,'M08 retest guidance visible to student');
+ assert.equal(mod.updateField(d,'saved','  Projetos/outro-jogo-ux.json  '),false,'M08 whitespace-only path edit');
+ assert.equal(d.checks.length,0,'M08 whitespace cannot restore stale confirmations');
+ d.checks=[0,1,2];mod.save(session,d);
+ assert.equal(mod.validate(session).ok,true,'M08 manual reconfirmation permits submission');
+ assert.equal(mod.updateField(d,'after','Depois o aviso apareceu em outra posicao'),true,'M08 after edited');
+ assert.equal(d.checks.join(','),'0','M08 after edit invalidates only later checks');
+ d.checks=[0,1,2];
+ assert.equal(mod.updateField(d,'negative','Teste negativo repetido com outro comando'),true,'M08 negative edited');
+ assert.equal(d.checks.join(','),'0,1','M08 negative edit invalidates only negative check');
+ assert.equal(mod.updateField(d,'unknown','nada'),false,'M08 unknown field ignored');
+ assert(!mod.render({session,phase:'practice',status:'draft',idea:{}}).includes('pit-private-teacher-notes'),'M08 student has no private teacher notes');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
