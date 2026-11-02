@@ -95,3 +95,18 @@ O job `fx-projection-webgl` do [run 41373193453](https://github.com/Dev-Gabriel-
 **Próximo passo na MESMA Missão 10:** consultar o workflow `v5-m10-rare-equipped-qa.yml` no SHA `50c369f`, inspecionar o log `M10 FX lifecycle diagnostic` e os artefatos JSON. Se J08/P09/A07 forem expulsos antes do primeiro frame, testar uma política limitada de retenção por ao menos um render; se forem renderizados fora do enquadramento, investigar enquadramento/oclusão. Em qualquer caso, repetir M5 e CI completo antes de homologar.
 
 **Bloqueios preservados:** G.2 em PCs físicos não executado; avaliação humana no projetor não realizada; H.1/H.2 com estudantes reais, aprovação I, `main`, merge, produção, XP e turmas não autorizados.
+
+
+### Diagnóstico comprovado e correção experimental (02/11/2026)
+
+**Evidência real do CI no commit `50c369f`:** job `fx-projection-webgl` **SUCCESS** em [run 41379388325](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41379388325). O log `M10 FX lifecycle diagnostic` registrou:
+- J08: 1 criado, **0** primeiro frame, **1** expulso antes de renderizar.
+- P09: 1 criado, **0** primeiro frame, **1** expulso antes de renderizar.
+- A07: 4 criados, **0** primeiro frame, **4** expulsos antes de renderizar.
+- Expiração antes de frame: **0** nos três. Portanto a causa observada foi **substituição prematura no orçamento visual**, não duração nem câmera (ainda não se avaliou a posição desses efeitos depois de renderizados).
+
+**Correção limitada e reversível:** commit [`3c043815`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/3c043815b07eb4a5a4d8ae363bf4cad70509ec32), arquivos `v5/arena-three.js` e `qa/v5-m10-rare-equipped-browser.cjs`. Na M10, um efeito sutil só é elegível para substituição após sobreviver a pelo menos um `renderer.render`; o limite de 18 efeitos permanece. Se todos estiverem pendentes, novos efeitos podem ser descartados, sem inventar eventos. O teste agora exige `renderedOnce > 0` e amostra de projeção para J08/P09/A07. A M5 conserva sua política visual e seus cinco talentos.
+
+**Estado:** sintaxe JavaScript verificada antes do commit; **CI da correção `3c043815` pendente**, sem afirmar que a correção passou em WebGL. QA geral do commit anterior `50c369f` foi aprovado no [run 41379388305](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41379388305). Conferir o CI WebGL da correção, as contagens de projeção dentro/fora da câmera e a regressão M5 antes de encerrar o gate.
+
+**Próximo passo:** se a retenção por um frame não bastar, ajustar exclusivamente a política visual com evidência, nunca o motor de combate; depois revisar enquadramento, contraste e capturas. G.2 físico, avaliação humana no projetor e H.1/H.2 reais continuam bloqueados.
