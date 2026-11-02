@@ -498,7 +498,7 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
 }
 // M08 regression: editing a specific observation must invalidate only the manual
 // Preview declarations that depend on it; changing the saved project must
-// require reopening the reported file and reconfirming its final test.
+// require reopening the reported file and repeating all three Preview tests.
 {
  const storage=new Map(),env={window:{},localStorage:{
   getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,String(v))
@@ -511,7 +511,7 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
   d.after='Depois havia instrucao visivel';
   d.checks=[0,1,2];return d;
  };
- const expected={issue:'',control:'',change:'',before:'2',after:'0',negative:'0,1',saved:'0,1'};
+ const expected={issue:'',control:'',change:'',before:'2',after:'0',negative:'0,1',saved:''};
  for(const [id,remaining] of Object.entries(expected)){
   const d=fixture(),original=d[id];
   assert.equal(mod.updateField(d,id,original+' revisado'),true,'M08 '+id+' changed');
@@ -531,7 +531,7 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(stable.checks.length,0,'M08 route change invalidates all checks');
  const src=read('v3/student-mission-eight.js');
  assert(src.includes('check.checked=d.checks.includes(Number(check.dataset.m8sCheck))'),'M08 DOM mirrors selective invalidation');
- assert(src.includes('reabra o arquivo indicado e reconfirme o teste final'),'M08 informs student about saved project');
+ assert(src.includes('reabra o arquivo indicado e repita os três testes ANTES, DEPOIS e negativo no Preview'),'M08 informs student about saved project');
  assert(src.includes('Reabri o projeto editável indicado'),'M08 checkbox requires reopened project');
  const studentHtml=mod.render({session:'m08-qa',status:'draft',phase:'practice',idea:{}});
  assert(!studentHtml.includes('pit-private-teacher-notes'),'M08 student must never include private teacher notes');
