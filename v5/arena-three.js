@@ -167,7 +167,8 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
  const stadiumScale=worldScale/2.6;
  const sources={
   tactical:'https://raw.githubusercontent.com/sion-rgb/tactical-slash/8bf8d835cb7afa7cb3f4d893b0966c6b4e9b7727/assets/environment/',
-  kaykit:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/'
+  kaykit:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/',
+   nature:new URL('./assets/quaternius-nature/',import.meta.url).href
  };
  // The old dungeon scenery was arranged as a ring inside the old small arena.
  // Push it behind the full-size combat boundary rather than clutter the duels.
@@ -179,11 +180,17 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
   {source:'kaykit',file:'wall_arched.gltf.glb',count:low?4:7,pattern:'sides',depth:58.4,xStep:12.5,size:13.3*stadiumScale},
   {source:'kaykit',file:'pillar_decorated.gltf.glb',count:low?3:5,pattern:'sides',depth:54.8,xStep:18,size:8.5*stadiumScale},
   {source:'kaykit',file:'torch_mounted.gltf.glb',count:low?3:7,pattern:'sides',depth:53.0,xStep:13,size:2.2*stadiumScale},
-  {source:'kaykit',file:'rubble_half.gltf.glb',count:low?2:4,pattern:'sides',depth:51.3,xStep:26,size:2.6*stadiumScale}
+  {source:'kaykit',file:'rubble_half.gltf.glb',count:low?2:4,pattern:'sides',depth:51.3,xStep:26,size:2.6*stadiumScale},
+   // Real Quaternius CC0 nature, BEHIND the four grandstands and the
+   // 18*worldScale combat boundary. Static visual meshes; no collisions.
+   {source:'nature',file:'tree1.glb',count:low?5:12,pattern:'ring',radius:67*stadiumScale,size:18*stadiumScale},
+   {source:'nature',file:'tree3.glb',count:low?4:10,pattern:'ring',radius:74*stadiumScale,size:20*stadiumScale},
+   {source:'nature',file:'bush.glb',count:low?10:24,pattern:'ring',radius:63*stadiumScale,size:3.4*stadiumScale}
  ];
  const distinct=planned.map(cfg=>cfg.file);
  container.dataset.v5Environment='loading';
- container.dataset.v5EnvironmentSources='Tactical Slash CC0; KayKit Dungeon CC0';
+ container.dataset.v5EnvironmentSources='Tactical Slash CC0; KayKit Dungeon CC0; Quaternius Stylized Nature CC0';
+ container.dataset.v5Nature='loading';container.dataset.v5NatureParts='0';
  container.dataset.v5EnvironmentParts='0';
  // Each GLB is downloaded ONCE and its geometries/materials are reused.
  // External files are optional: the fully procedural citadel remains intact.
@@ -259,6 +266,10 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
   container.dataset.v5EnvironmentAssets=loaded.map(x=>x.file).join(',');
   container.dataset.v5EnvironmentParts=String(loaded.reduce((sum,x)=>sum+x.pieces,0));
   container.dataset.v5EnvironmentInstancedBatches=String(loaded.reduce((sum,x)=>sum+x.batches,0));
+   const natural=loaded.filter(x=>['tree1.glb','tree3.glb','bush.glb'].includes(x.file));
+   container.dataset.v5Nature=natural.length===3?'loaded':natural.length?'partial':'failed';
+   container.dataset.v5NatureParts=String(natural.reduce((sum,x)=>sum+x.pieces,0));
+   container.dataset.v5NatureMeshes=natural.map(x=>x.file).join(',');
  });
 }
 export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',onEvent=()=>{}}={}){
