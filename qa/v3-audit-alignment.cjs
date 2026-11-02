@@ -304,6 +304,7 @@ for(const unsafe of [
  launchFixture.access=unsafe;
  m10.save('m10-qa',launchFixture);
  assert.equal(m10.validate('m10-qa').ok,false,'M10 blocks submitting unsafe gd.games URL '+unsafe);
+ assert.equal(m10.parseEvidence(m10.evidence('m10-qa')),null,'M10 refuses to hydrate unsafe published URL evidence');
 }
 assert.equal(m10.validLink('https://gd.games/jogo-teste?utm_source=oficina#demo'),true,'M10 keeps harmless sharing URL parameters');
 launchFixture.access='https://gd.games/jogo-teste?utm_source=oficina#demo';
