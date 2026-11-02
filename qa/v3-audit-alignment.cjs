@@ -558,7 +558,7 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(stable.checks.join(','),'0,1,2','M03 equivalent text retains checks');
  assert.equal(mod.updateField(stable,'unknown','x'),false,'M03 unknown field ignored');
  assert.equal(mod.selectObjectType(stable,'3D Box/Modelo'),true,'M03 route change');
- assert.equal(stable.checks.join(','),'2','M03 type switch invalidates scene and Preview');
+ assert.equal(stable.checks.join(','),'','M03 type switch invalidates scene, Preview and saved project');
  assert.equal(mod.selectObjectType(stable,'3D Box/Modelo'),false,'M03 same route preserves checks');
  assert.equal(mod.selectObjectType(stable,'invalid'),false,'M03 unknown route ignored');
  const source=read('v3/student-mission-three.js');
