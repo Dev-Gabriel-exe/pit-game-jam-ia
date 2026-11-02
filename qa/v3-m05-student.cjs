@@ -76,7 +76,7 @@ const invalid=[
  evid.replace(/Condição: [^\n]*/,'Condição: curto'),
  evid.replace('Jogo: Minha Torre','Jogo: '),
  evid.replace(/Salvo em: [^\n]*/,'Salvo em: x'),
- evid.replace('MISSÃO 05 — A PRIMEIRA REGRA','MISSÃO 06 — FORJA')
+ evid.replace('M05 — A PRIMEIRA REGRA','MISSÃO 06 — FORJA')
 ];
 for(const [i,raw] of invalid.entries()){
  ok(m.parseEvidence(raw)===null,'Reject incomplete/ambiguous M05 evidence '+i);
