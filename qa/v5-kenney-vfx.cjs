@@ -1,0 +1,34 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const S=require('../v5/talent-sprites.js');
+const V=require('../v5/talent-vfx.js');
+const E=require('../v5/phase2-combat.js');
+const all=V.manifest(E.TALENTS);
+const styles=new Set(),files=new Set();
+let count=0;
+for(const items of Object.values(all))for(const cue of items){
+ assert.equal(typeof S.ART_STYLES[cue.style],'string','unmapped '+cue.key);
+ const file=S.ART_STYLES[cue.style];styles.add(cue.style);files.add(file);
+ const png=fs.readFileSync(path.join(__dirname,'../v5/assets/talents/kenney-particles',file));
+ assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a','PNG header: '+file);
+ assert(png.length>10000,'real PNG not present: '+file);
+ assert.equal(png.readUInt32BE(12),0x49484452,'IHDR chunk');
+ assert(png.readUInt32BE(16)>=128,'PNG width');
+ assert(png.readUInt32BE(20)>=128,'PNG height');
+ assert(S.spec(cue.style).frames===8,'keep original animation length');
+ count++;
+}
+assert.equal(count,120);
+assert.equal(styles.size,12,'12 canonical styles, impact added separately');
+assert.equal(S.STYLES.length,13);
+assert.equal(Object.keys(S.ART_STYLES).length,13);
+assert.deepEqual([...files].sort(),S.ART_FILES.filter(f=>f!=='spark_04.png').sort(),'all canonical visual families');
+assert.equal(new Set(S.ART_FILES).size,10);
+assert.equal(S.ART_STYLES.impact,'spark_04.png');
+assert.match(fs.readFileSync(path.join(__dirname,'../v5/assets/talents/kenney-particles/LICENSE.txt'),'utf8'),/CC0/);
+const arena=fs.readFileSync(path.join(__dirname,'../v5/arena-three.js'),'utf8');
+assert(arena.includes('v5TalentArtStyles'));
+assert(arena.includes("get('kenneyfx')==='0'"));
+assert(arena.includes("const visualBudget=quality==='low'||reduce?9:18"));
+console.log('PASS Kenney real particles: 10 valid CC0 PNGs, 13 mapped visual families, 120 canonical talents, original 8-frame timeline and visual cap');

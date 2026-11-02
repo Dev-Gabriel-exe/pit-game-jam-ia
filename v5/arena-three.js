@@ -325,7 +325,20 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  stormRing.scale.setScalar(18*worldScale);root.add(stormRing);
  const individuals=new Map(),effects=[],labels=new Map();
  // E.6: shared local texture frames, opt-in for M5 and disposed with this stage.
- const spriteKit=spriteEffects==='on'&&SPRITE_FX?SPRITE_FX.makeAtlas(THREE,{quality,reducedMotion:reduce}):null;
+ const spriteKit=spriteEffects==='on'&&SPRITE_FX?SPRITE_FX.makeAtlas(THREE,{
+  quality,reducedMotion:reduce,
+  artPack:new URLSearchParams(window.location.search).get('kenneyfx')==='0'?'off':'kenney'
+ }):null;
+ // Synthetic stage-only telemetry: real Kenney asset loading, no combat/XP writes.
+ container.dataset.v5TalentArt=spriteKit?.artStatus||'off';
+ container.dataset.v5TalentArtSources='0';
+ container.dataset.v5TalentArtStyles='0';
+ spriteKit?.artReady?.then(()=>{
+  if(!live)return;
+  container.dataset.v5TalentArt=spriteKit.artStatus;
+  container.dataset.v5TalentArtSources=String(spriteKit.artFilesLoaded);
+  container.dataset.v5TalentArtStyles=String(spriteKit.artStylesPainted);
+ });
  let spriteVisualEvents=0,spriteVisualDropped=0,talentMotionEvents=0,projectileMotionEvents=0;
  container.dataset.v5SpriteMode=spriteKit?'on':'off';
  container.dataset.v5SpriteTextures=String(spriteKit?.textureCount||0);
