@@ -89,7 +89,7 @@ for(const url of [
  'https://gd.games','https://gd.games/','http://gd.games/jogo-ficticio',
  'https://example.org/jogo-ficticio','https://gd.games.evil.example/jogo',
  'https://gd.games@evil.example/jogo','https://gd.games/jogo?token=secret',
- 'https://gd.games/jogo?auth=secret','https://gd.games/jogo%20ficticio'
+ 'https://gd.games/jogo?auth=secret','https://gd.games/jogo com espaco'
 ])assert.equal(student.validLink(url),false,'reject non-playable or unsafe gd.games URL '+url);
 const wrongHost=gdEvidence.replace('https://gd.games/jogo-ficticio','https://example.org/jogo-ficticio');
 assert.equal(student.parseEvidence(wrongHost),null,'historical gd route cannot hydrate an unrelated host');
