@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T12:19:08.364Z",
+  "last_completed_at": "2026-11-02T13:18:32Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "Static QA SUCCESS on 7325dcd (run 41443587873): corrected stale M07/M08/M09 saved-project test expectations; Browser QA 41443587707 pending at checkpoint. Audit M10 project/demo/URL/evidence next. Manual GDevelop GUI, HDMI, peer and physical mobile NOT_RUN. No main merge.",
+  "priority": "M10 gd.games credential-bearing query/fragment guard committed with regression; new Node/CI/Chrome not yet confirmed. Prior Browser QA 41443587707 SUCCESS on 7325dcd. Continue M10 saved project/demo/evidence and verify CI at new SHA. Manual GDevelop GUI, HDMI, peer, physical mobile NOT_RUN. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-CI-M07-M09-RETEST-REGRESSIONS",
+  "last_task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3470,36 +3470,52 @@
       ],
       "tests": "GitHub static QA 41443587873 SUCCESS at 7325dcd. Browser QA 41443587707 IN_PROGRESS at checkpoint. Human GDevelop GUI/HDMI/peer/mobile NOT_RUN.",
       "notes": "Restored CI after previous M07/M08/M09 project-path retest code changed semantics but legacy assertions still expected stale confirmations. No production logic changes, no main merge, 54/59."
+    },
+    {
+      "task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
+      "completed_at": "2026-11-02T13:18:32Z",
+      "commit": "4bde5e3a76b7ffcf70a4a8d2a48a6f1f3eb2f599",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Source inspected; new regression committed for fragment/encoded credential URL, blocked submission and hydration, harmless UTM link. New Node/CI/Chrome NOT_CONFIRMED. Prior Browser QA 41443587707 SUCCESS at earlier SHA. GDevelop GUI/HDMI/peer/physical mobile NOT_RUN.",
+      "notes": "M10 optional gd.games URLs now reject secret-bearing fragment and percent-encoded parameter keys. Teacher projected rubric already aligns; private notes untouched. Master 54/59 unchanged; branch V3 only, no main or real student data."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CI-M07-M09-RETEST-REGRESSIONS",
-    "status": "STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-02T12:19:08.364Z",
-    "code_commits": [],
-    "regression_commits": [
-      "8dedf07f3bd17872cd977ee3090112822a4869d4",
-      "01541a6be90ce170cf454c5d5d4225ceb6967f0d",
-      "cbb189b4b848db214599563332c63ed1ac013b8c",
-      "de3a1d3f754a63ac9b303092166627aa2709da33",
-      "7325dcdc8c48033ae629baae877e50b1baf32ffc"
+    "task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
+    "status": "CODE_COMMITTED_CI_PENDING",
+    "updated_at": "2026-11-02T13:18:32Z",
+    "code_commits": [
+      "ffe310abd7920dac97a6539bd5cf3a81dac5a93a"
     ],
-    "documentation_commit": "771513eb551bdd6f82bd50681f2566261cf3bfc9",
+    "regression_commits": [
+      "af429cc8d238274f0e63fdc7aada554d760d5e4b",
+      "2a16dc0661ece8ccaaecb8beb8fe9ac1cb9e33b3"
+    ],
+    "documentation_commit": "4bde5e3a76b7ffcf70a4a8d2a48a6f1f3eb2f599",
     "tests": [
       {
-        "name": "GitHub Actions PIT Game Jam QA",
-        "result": "SUCCESS run 41443587873 on 7325dcd; M07/M08/M09/M10 and cross-mission regression executed"
+        "name": "Previous GitHub Actions static QA",
+        "result": "SUCCESS run 41443587873 on 7325dcd; predates M10 URL fix"
       },
       {
-        "name": "GitHub Actions Browser QA",
-        "result": "IN_PROGRESS run 41443587707 on 7325dcd; not claimed as passed"
+        "name": "Previous GitHub Actions Browser QA",
+        "result": "SUCCESS run 41443587707 on 7325dcd; predates M10 URL fix"
       },
       {
-        "name": "GDevelop GUI, HDMI, peer playtest, physical mobile",
+        "name": "New M10 Node/CI/Chrome",
+        "result": "NOT_CONFIRMED at checkpoint; tests committed but not claimed executed"
+      },
+      {
+        "name": "GDevelop GUI, HDMI, human peer, physical mobile",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA on 7325dcd and audit M10 project, final demonstration, route URL and evidence consistency; do not modify main.",
+    "next": "Verify new M10 regression in GitHub Actions on latest SHA; continue auditing M10 project, demonstration, URL and evidence, before visual polish.",
     "master_progress": "54/59 unchanged"
   }
 }
