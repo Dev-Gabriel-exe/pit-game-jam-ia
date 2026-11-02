@@ -182,6 +182,18 @@ assert(m10Css.includes('.m10s-editor-handoff a:focus-visible'),'M10 editor link 
 assert(!m10Student.includes('pit-private-teacher-notes'),'M10 student must not receive teacher-only notes');
 assert(m10Guide.includes('MISSÃO 10 · TUTORIAL DE ENTREGA · 3 MIN'),'M10 shared guide neutral heading');
 assert(!m10Guide.includes('PROFESSOR · DEMONSTRAÇÃO'),'M10 shared guide cannot label student as teacher');
+const m10GuideSandbox={window:{}};
+require('node:vm').runInNewContext(m10Guide,m10GuideSandbox,{timeout:3000,filename:'gdevelop-mission-ten-guide.js'});
+const m10GuideRoutes=m10GuideSandbox.window.PIT_GDEVELOP_M10_GUIDE.routes;
+assert.equal(m10GuideRoutes.length,3,'M10 retains local, web and gd.games routes');
+for(const route of m10GuideRoutes){
+ const step=route.steps[1];
+ assert(step.where.includes('Reabra a cópia editável salva'),'M10 '+route.id+' requires reopening the saved project, not only its scene');
+ assert(step.do.includes('cenas, eventos e assets'),'M10 '+route.id+' checks project completeness after reopen');
+ assert(step.do.includes('só então execute Preview novamente'),'M10 '+route.id+' Preview must run after reopening the saved copy');
+ assert(step.result.includes('projeto editável foi reaberto'),'M10 '+route.id+' explicitly states the expected result');
+}
+assert(!m10Guide.includes('reabra a cena salva'),'M10 cannot substitute scene reopen for saved-project recovery');
 assert.equal((m10Teacher.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M10 teacher practice and review notes concealed');
 assert.equal((m10Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length,2,'M10 notes use shared CSS');
 assert(m10Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 10"'),'M10 review icon accessible');
