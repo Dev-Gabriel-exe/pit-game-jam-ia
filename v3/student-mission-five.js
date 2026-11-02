@@ -140,8 +140,8 @@ function updateField(d,id,value){
 function evidence(session,ctx={}){
  const d=load(session),p=profile(ctx),r=activeRoute(ctx,d);
  return [
-  'MISSÃO 05 — A PRIMEIRA REGRA',
-  'Jogo: '+clean(p.title).slice(0,32),
+  'M05 — A PRIMEIRA REGRA',
+  'Jogo: '+clean(p.title).slice(0,55),
   'Gênero: '+clean(p.genre).slice(0,19),
   'Projeto: '+clean(p.project).slice(0,34),
   'Cena: '+clean(p.scene).slice(0,29),
@@ -161,8 +161,8 @@ function parseEvidence(raw){
  // rule, Preview results or selected route from flattened/partial evidence.
  if(typeof raw!=='string'||raw.length>750)return null;
  const lines=raw.split('\n');
- if(lines.length!==14||lines[0]!=='MISSÃO 05 — A PRIMEIRA REGRA')return null;
- const metadata=[['Jogo: ',32],['Gênero: ',19],['Projeto: ',34],['Cena: ',29]];
+ if(lines.length!==14||!['M05 — A PRIMEIRA REGRA','MISSÃO 05 — A PRIMEIRA REGRA'].includes(lines[0]))return null;
+ const metadata=[['Jogo: ',55],['Gênero: ',19],['Projeto: ',34],['Cena: ',29]];
  for(let i=0;i<metadata.length;i++){
   const [label,max]=metadata[i],line=lines[i+1];
   if(!line.startsWith(label))return null;
