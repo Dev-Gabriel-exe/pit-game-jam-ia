@@ -78,3 +78,20 @@ O job `fx-projection-webgl` do [run 41373193453](https://github.com/Dev-Gabriel-
 **Conclusão limitada, mas relevante:** a auditoria anterior de `rendered-cue-recorded` conta criação de efeito, não sua presença num frame WebGL. O teste atual **não comprovou um único quadro com J08/P09/A07 ainda vivos no array de efeitos**. Isso não prova que o efeito seja invisível em toda execução, nem que o frustum seja o culpado. Hipóteses a investigar: expulsão precoce da única faixa `rareProcLane` por outros procs entre ticks de física e frames, duração dos efeitos, ausência de correspondência temporal entre evento e render. A câmera não deve ser alterada sem isolar a causa.
 
 **Status de homologação:** diagnóstico CI aprovado, **gate de visibilidade dos três talentos NÃO aprovado**. O job restante `rare-equipped-webgl` estava em andamento quando este registro foi escrito. Próximo incremento da MESMA missão: instrumentar descarte/tempo de vida de efeitos antes de render, reproduzir J08/P09/A07 com seed fixa e somente depois corrigir a política visual sem alterar o motor de combate, M5 ou qualidade padrão. G.2 e avaliação humana seguem pendentes.
+
+
+## Rodada de 02/11/2026 — diagnóstico do ciclo de vida dos VFX (incremento H.3)
+
+**Missão única:** M10, sem mudança de combate, progressão, câmera ou conteúdo pedagógico.
+
+- **SHA inicial:** `b0f1e32e11f9e866352db599d98aee7de1741423`.
+- **Commit técnico:** [`50c369f`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/50c369f225a7952e70abf02f5230a27b3e45e093).
+- **Arquivos:** `v5/arena-three.js` e `qa/v5-m10-rare-equipped-browser.cjs`.
+- **Teste local comprovado:** parser JavaScript aceitou os dois arquivos modificados (imports/exports de módulo retirados apenas da cópia temporária usada para verificação sintática). **O CI WebGL deste SHA ainda não foi confirmado neste checkpoint.**
+- **Telemetria opcional `?m10fxprobe=1`:** por chave canônica de talento, contabiliza efeitos criados, que chegaram a pelo menos um frame renderizado, expulsos antes/depois do primeiro frame e expirados antes/depois do primeiro frame. Não coleta nomes/identidades; sem a flag, não há coleta.
+- **Teste automatizado:** exige que os três talentos raros J08/P09/A07 tenham efeitos rastreáveis quando seus procs ocorrerem, que contagens de remoção sejam coerentes e que a telemetria seja limpa no retorno à M5. Não aprova legibilidade só por ter registrado criação ou primeiro frame.
+- **Hipótese a verificar no CI:** a faixa `rareProcLane` pode substituir um proc sutil por outro antes de `renderer.render`. Diferenciar `evictedBeforeFrame`, `expiredBeforeFrame` e `renderedOnce` por talento; só corrigir a política visual após dados observados.
+
+**Próximo passo na MESMA Missão 10:** consultar o workflow `v5-m10-rare-equipped-qa.yml` no SHA `50c369f`, inspecionar o log `M10 FX lifecycle diagnostic` e os artefatos JSON. Se J08/P09/A07 forem expulsos antes do primeiro frame, testar uma política limitada de retenção por ao menos um render; se forem renderizados fora do enquadramento, investigar enquadramento/oclusão. Em qualquer caso, repetir M5 e CI completo antes de homologar.
+
+**Bloqueios preservados:** G.2 em PCs físicos não executado; avaliação humana no projetor não realizada; H.1/H.2 com estudantes reais, aprovação I, `main`, merge, produção, XP e turmas não autorizados.
