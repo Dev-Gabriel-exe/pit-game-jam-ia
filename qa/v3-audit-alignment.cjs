@@ -675,4 +675,43 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert(m08Validation.includes('no projeto editável reaberto e identificado'),'M08 projected teacher rubric matches student project retest');
  assert(!mod.render({session,phase:'practice',status:'draft',idea:{}}).includes('pit-private-teacher-notes'),'M08 student has no private teacher notes');
 }
+// M09: switching the saved project can mean switching the game itself.
+// Do not carry peer observation, reproduction or decision declarations forward.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-nine.js'),env,{timeout:3000,filename:'student-mission-nine.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_NINE;
+ const session='m09-saved-project-retest',d=mod.load(session);
+ const values={
+  peer:'Colega A',
+  hypothesis:'O jogador identifica o botao de inicio sem ajuda',
+  task:'Iniciar o jogo e chegar ate a primeira porta',
+  expected:'A porta deveria abrir depois da chave ser coletada',
+  observed:'O colega encontrou a chave e abriu a porta sem ajuda',
+  steps:'Abrir a cena inicial, coletar a chave e aproximar da porta',
+  impact:'Nenhuma barreira observada na tarefa executada',
+  decision:'Nao foi necessario alterar o jogo depois do teste',
+  saved:'Projetos/jogo-original.json'
+ };
+ for(const f of mod.fields)d[f.id]=values[f.id];
+ d.outcome='passed';d.resolution='nochange';d.checks=[0,1,2];
+ mod.save(session,d);
+ assert.equal(mod.validate(session).ok,true,'M09 fictitious completed draft validates');
+ assert.equal(mod.changeField(session,d,'saved','Projetos/outro-jogo.json').join(','),'0,1,2','M09 changed project invalidates all peer-test declarations');
+ assert.equal(d.checks.length,0,'M09 project change cannot preserve old declarations');
+ assert.equal(mod.load(session).checks.length,0,'M09 invalidation persists in local draft');
+ assert.equal(mod.validate(session).field,'checks','M09 submission blocked until real retest confirmations');
+ assert.equal(mod.changeField(session,d,'saved','  Projetos/outro-jogo.json  ').length,0,'M09 whitespace-only change is not a new project');
+ assert.equal(d.checks.length,0,'M09 whitespace cannot restore declarations');
+ assert(mod.render({session,phase:'practice',status:'draft',idea:{}}).includes('repita as três verificações'),'M09 student sees all-three-retest instruction');
+ d.checks=[0,1,2];mod.save(session,d);
+ assert.equal(mod.validate(session).ok,true,'M09 manually reconfirmed draft can submit');
+ assert.equal(mod.changeField(session,d,'decision','Nao alterei o jogo porque o colega completou a tarefa').join(','),'2','M09 decision edit invalidates only decision attestation');
+ d.checks=[0,1,2];mod.save(session,d);
+ assert.equal(mod.changeField(session,d,'observed','O colega chegou ate a porta e pediu ajuda para abrir').join(','),'1,2','M09 observation edit invalidates observation and decision');
+ assert(m09Validation.includes('Reabrir o projeto editável indicado e conferir que é o mesmo jogo usado no playtest'),'M09 teacher rubric requires same re-opened project');
+ assert(!mod.render({session,phase:'practice',status:'draft',idea:{}}).includes('pit-private-teacher-notes'),'M09 student does not receive private teacher notes');
+}
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
