@@ -57,21 +57,10 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
    report.rare[key]={equipped:true,engineProcs:fixture.procs[key],
     firstObservation:null,rendered:false,dropped:false};
   }
-  // This is a WebGL/cue audit, not a pointer hit-target test. Animated
-  // panels can move continuously in SwiftShader and make Playwright's
-  // stable-position click wait 30s before the combat even starts.
-  // Invoke the actual enabled button handlers without a viewport dependency.
-  async function activate(id){
-   await page.locator('#'+id).evaluate(button=>{
-    if(!(button instanceof HTMLButtonElement)||button.disabled)
-     throw new Error('Lab control unavailable: '+button?.id);
-    button.click();
-   });
-  }
-  await activate('actionCamera');
-  for(let i=0;i<4;i++)await activate('speedBattle');
-  await activate('startBattle');
-  await activate('expandStage');
+  await page.locator('#actionCamera').click();
+  for(let i=0;i<4;i++)await page.locator('#speedBattle').click();
+  await page.locator('#startBattle').click();
+  await page.locator('#expandStage').click();
   const cameraShots=new Set();
   const started=Date.now();
   while(Date.now()-started<300000){
@@ -97,14 +86,14 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
      const filename=prefix+'-live-'+key.replace(':','-')+'.png';
      row.liveInFrameCapture={elapsedWallMs:Date.now()-started,cameraShot:sample.shot,
       screenshot:filename,proof:'mesh centre was inside camera frustum at sampling time; pixels/occlusion unverified'};
-     await page.screenshot({path:filename,timeout:90000,animations:'disabled'});
+     await page.screenshot({path:filename,timeout:45000});
     }
     if(!row.firstObservation&&(row.rendered||row.dropped)){
      const filename=prefix+'-'+key.replace(':','-')+'.png';
      row.firstObservation={elapsedWallMs:Date.now()-started,cameraShot:sample.shot,
       classification:row.rendered?'rendered-cue-recorded':'visual-budget-dropped',
       screenshot:filename};
-     await page.screenshot({path:filename,timeout:90000,animations:'disabled'});
+     await page.screenshot({path:filename,timeout:45000});
     }
    }
    if(sample.finished)break;
@@ -244,7 +233,7 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
     assert(report.rare[key].rendered,
      'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
   }
-  await page.screenshot({path:prefix+'-final.png',timeout:90000,animations:'disabled'});
+  await page.screenshot({path:prefix+'-final.png',timeout:45000});
   await page.keyboard.press('Escape');
   await page.waitForFunction(()=>!document.body.classList.contains('arena-immersive'));
   await page.locator('[data-mission="5"]').click();
