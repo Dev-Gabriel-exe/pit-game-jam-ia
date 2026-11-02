@@ -171,12 +171,12 @@ stable.checks=[0,1,2];
 assert.equal(m.updateField(stable,'condition',stable.condition),false,'same condition is not a change');
 assert.equal(stable.checks.length,3,'unchanged text keeps checks');
 assert.equal(m.updateField(stable,'saved','Novo local do projeto editável'),true,'new project path invalidates the same-project verification');
-assert.equal(stable.checks.join(','),'1,2','new project path preserves only the observed gameplay checks');
+assert.equal(stable.checks.join(','),'','new project path invalidates all gameplay checks');
 m.save('m07-stable',stable);
-assert.equal(m.validate('m07-stable').field,'checks','a different saved project cannot be submitted with the old first check');
-stable.checks.unshift(0);
+assert.equal(m.validate('m07-stable').field,'checks','a different saved project cannot be submitted with old Preview checks');
+stable.checks=[0,1,2];
 m.save('m07-stable',stable);
-assert.equal(m.validate('m07-stable').ok,true,'reopening the indicated project permits reconfirmation');
+assert.equal(m.validate('m07-stable').ok,true,'reopening and repeating all three tests permits reconfirmation');
 assert.equal(m.updateField(stable,'saved','  Novo local   do projeto editável  '),false,'whitespace-only project path edits preserve confirmations');
 assert.equal(stable.checks.length,3,'whitespace-only edit does not reset any check');
 assert.equal(m.updateField(stable,'unknown','ignored'),false,'unknown field must be ignored');
@@ -187,7 +187,7 @@ assert.match(read('v3/student-mission-seven.js'),/if\(retest\)root\.querySelecto
  'M07 UI must visibly clear checked boxes when a gameplay field changes');
 assert.doesNotMatch(m.render({session:'ficticioA',phase:'practice',status:'draft',idea:{}}),
  /pit-private-teacher-notes/,'M07 student must not show teacher private notes');
-assert.match(read('v3/student-mission-seven.js'),/check\.checked=d\.checks\.includes\(Number\(check\.dataset\.m7sCheck\)\)/,'UI preserves the two gameplay checks after project location change');
+assert.match(read('v3/student-mission-seven.js'),/check\.checked=d\.checks\.includes\(Number\(check\.dataset\.m7sCheck\)\)/,'UI syncs manual checks after project location change');
 assert.doesNotMatch(read('v3/student-mission-seven.js'),/\.join\('\\n'\)\.slice\(0,750\)/,'evidence must never be silently truncated');
 assert.match(read('v3/student-mission-seven.js'),/evidence\(session\)\.length>750/,'oversize evidence must be explicitly rejected');
 console.log('M07 field-edit retest: six gameplay fields, saved-project reconfirmation and UI wiring passed.');
