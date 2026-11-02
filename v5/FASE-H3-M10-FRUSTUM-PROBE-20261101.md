@@ -49,3 +49,18 @@ SwiftShader não valida FPS dos PCs da escola. A avaliação humana do projetor,
 G.2 físico, H.1/H.2 com alunos reais, fase I, `main`, merge e produção
 permanecem bloqueados. M5 (5 talentos/10 pontos), M10 (10/20),
 4 classes KayKit, 120 talentos, XP e dez roteiros pedagógicos não foram alterados.
+
+## Rodada seguinte — captura no instante do efeito (02/11/2026)
+
+**Missão única mantida:** H.3 / arena final M10, sem alterar a mecânica.
+HEAD de partida: `64e88a750e6efdbfc5355418c25254a575bd291b`.
+Conferidos os cinco roadmaps/checkpoints obrigatórios, os commits e o CI.
+O run anterior [41368295427](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41368295427) terminou com os jobs `rare-equipped-webgl` e `fx-projection-webgl` aprovados; o relatório foi anexado como artefato `m10-fx-frustum-projection`. Isso só valida projeção global, não legibilidade por talento.
+
+**Incremento verificável:** `qa/v5-m10-rare-equipped-browser.cjs` passou a observar as chaves dos meshes *ativos dentro do frustum no frame*, capturar uma imagem adicional no primeiro registro de cada J08/P09/A07 e relatar, separadamente por talento, quadros projetados, fora da câmera e se houve captura ao vivo. A captura ainda pode sofrer atraso entre leitura do frame e screenshot: não confundir com prova de contraste/oclusão/pixels. Nenhum teste presume que os três foram capturados; ausências são explicitadas no JSON. Corrigida a avaliação Playwright para não depender de variável Node dentro de `page.evaluate`.
+
+**Commits desta rodada:** `c1c8e86fcfdeadd9b810e3e4769b8176c67b5927` e `886250943e56ea2aef16d9989f50b99c604f8e19`.
+**CI do SHA corrigido:** [WebGL 41373193453](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41373193453), [QA geral 41373193440](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41373193440), [Browser QA 41373193553](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41373193553).
+**Estado ao escrever:** aguardando conclusão dos jobs do SHA corrigido; não declarar aprovado antecipadamente.
+
+**Próxima ação:** verificar a distribuição por J08/P09/A07 e capturas no artefato do run corrigido; investigar qualquer talento sem quadro projetado antes de alterar câmera/efeitos. G.2 em PCs reais e avaliação humana no projetor permanecem pendentes; H.1/H.2 e produção bloqueadas. M5, quatro KayKit, 120 talentos, dez roteiros, XP, aprovações e `main` intactos.
