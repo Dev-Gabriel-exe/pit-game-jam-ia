@@ -116,7 +116,8 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
    const projection=await page.evaluate(()=>{
     const d=document.querySelector('#arenaStage').dataset;
     return {projected:JSON.parse(d.v5FxProbeVisibleFrames||'{}'),
-     offscreen:JSON.parse(d.v5FxProbeOffscreenFrames||'{}')};
+     offscreen:JSON.parse(d.v5FxProbeOffscreenFrames||'{}'),
+     lifecycle:JSON.parse(d.v5FxProbeLifecycle||'{}')};
    });
    const total=Object.values(projection.projected).reduce((a,b)=>a+b,0);
    const offscreen=Object.values(projection.offscreen).reduce((a,b)=>a+b,0);
@@ -131,13 +132,24 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
      projected:projection.projected[k]||0,offscreen:projection.offscreen[k]||0}])),
     limitation:'Frustum centre samples after WebGL render, not pixel contrast, occlusion, or human projector legibility.'};
    for(const key of targets){
+    const life=projection.lifecycle[key];
+    assert(life&&life.created>0,'Rare proc did not create a tracked cue: '+key);
+    assert(life.renderedOnce<=life.created,'Rendered count exceeds created: '+key);
+    const removed=life.evictedBeforeFrame+life.evictedAfterFrame+
+     life.expiredBeforeFrame+life.expiredAfterFrame;
+    assert(removed<=life.created,'More removals than created cues: '+key);
+    report.rare[key].lifecycle={...life,removed,pendingOrLive:life.created-removed,
+     neverReachedFirstFrame:life.evictedBeforeFrame+life.expiredBeforeFrame};
     const projected=projection.projected[key]||0,offscreen=projection.offscreen[key]||0;
+    if(projected>0||offscreen>0)
+     assert(life.renderedOnce>0,'Projected cue lacks a first rendered frame: '+key);
     report.rare[key].projection={projectedFrameSamples:projected,offscreenFrameSamples:offscreen,
      liveScreenshotCaptured:!!report.rare[key].liveInFrameCapture};
     // Distinguish a real in-frustum screenshot from historical event counters.
     if(report.rare[key].liveInFrameCapture)
      assert(projected>0,'Live in-frustum capture has no corresponding projected frames: '+key);
    }
+   console.log('M10 FX lifecycle diagnostic '+JSON.stringify(Object.fromEntries(targets.map(k=>[k,report.rare[k].lifecycle]))));
    console.log('M10 LIVE frustum distribution '+JSON.stringify({
     targets:report.projection.rareTargets,liveCaptures:targets.filter(k=>!!report.rare[k].liveInFrameCapture),
     projectedFrameSamples:total,offscreenFrameSamples:offscreen}));
@@ -153,6 +165,7 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
   if(frameProbe){
    assert.equal(await stage.getAttribute('data-v5-fx-probe-visible-frames'),'{}');
    assert.equal(await stage.getAttribute('data-v5-fx-probe-offscreen-frames'),'{}');
+   assert.equal(await stage.getAttribute('data-v5-fx-probe-lifecycle'),'{}');
   }
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).every(b=>b.ids.length===5));
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));

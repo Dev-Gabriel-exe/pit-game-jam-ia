@@ -331,12 +331,28 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // the actual WebGL frame. NDC visibility does NOT prove unobstructed pixels.
   // Disabled by default; never feeds combat, camera selection or quality.
   const fxProbeEnabled=new URLSearchParams(window.location.search).get('m10fxprobe')==='1';
-  const fxProbe={frames:0,visible:new Map(),offscreen:new Map()};
+  const fxProbe={frames:0,visible:new Map(),offscreen:new Map(),lifecycle:new Map()};
+  // H.3 opt-in diagnosis: a real cue created does not imply a rendered frame.
+  function trackFxCreate(e){
+   if(!fxProbeEnabled||container.dataset.v5ArenaMission!=='10'||!e.talentCue?.key)return;
+   const key=e.talentCue.key;
+   const row=fxProbe.lifecycle.get(key)||{created:0,renderedOnce:0,
+    evictedBeforeFrame:0,evictedAfterFrame:0,expiredBeforeFrame:0,expiredAfterFrame:0};
+   row.created++;fxProbe.lifecycle.set(key,row);e.fxProbeTracked=true;e.fxProbeFrames=0;
+  }
+  function trackFxRemoval(e,reason){
+   if(!e.fxProbeTracked||reason==='reset')return;
+   const row=fxProbe.lifecycle.get(e.talentCue.key);if(!row)return;
+   const field=(reason==='expired'?'expired':'evicted')+
+    (e.fxProbeFrames>0?'AfterFrame':'BeforeFrame');
+   row[field]++;
+  }
   if(fxProbeEnabled){
    container.dataset.v5FxProbeEnabled='true';
    container.dataset.v5FxProbeVisibleFrames='{}';
    container.dataset.v5FxProbeOffscreenFrames='{}';
    container.dataset.v5FxProbeActiveKeys='[]';
+   container.dataset.v5FxProbeLifecycle='{}';
   }
   function recordVisualType(cue,dropped=false){
    const kind=cue?.type;if(!Object.hasOwn(visualByType,kind))return;
@@ -390,7 +406,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  container.dataset.v5FrameRate='measuring';
  container.dataset.v5DrawCalls='0';
  container.dataset.v5Triangles='0';
- function discardEffect(e){
+ function discardEffect(e,reason='reset'){
+  trackFxRemoval(e,reason);
   for(const d of e.decors||[]){root.remove(d);d.geometry.dispose();d.material.dispose()}
   root.remove(e.mesh);
   // THREE.Sprite reuses a shared quad geometry; disposing it per VFX is unsafe.
@@ -677,7 +694,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;hitReactions=0;
   visualKeys.rendered.clear();visualKeys.dropped.clear();
   if(fxProbeEnabled){
-   fxProbe.frames=0;fxProbe.visible.clear();fxProbe.offscreen.clear();
+   fxProbe.frames=0;fxProbe.visible.clear();fxProbe.offscreen.clear();fxProbe.lifecycle.clear();
+   container.dataset.v5FxProbeLifecycle='{}';
    container.dataset.v5FxProbeVisibleFrames='{}';
    container.dataset.v5FxProbeOffscreenFrames='{}';
    container.dataset.v5FxProbeActiveKeys='[]';
@@ -765,7 +783,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   const fx=spriteKit.spawn({style:cue.style,color:cue.color,scale:cue.scale,subtle,x,z});
   if(!fx)return false;
   fx.talentCue=cue;fx.subtle=subtle;
-  root.add(fx.mesh);effects.push(fx);
+  root.add(fx.mesh);effects.push(fx);trackFxCreate(fx);
   spriteVisualEvents++;container.dataset.v5SpriteVisualEvents=String(spriteVisualEvents);
   container.dataset.v5SpriteStyleLast=cue.style;
   container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
@@ -795,15 +813,15 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   const rareProcLane=subtle&&container.dataset.v5CombatEngine==='phase2-m10';
   if(rareProcLane){
    let idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
-   if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+   if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
    if(effects.filter(e=>e.isAbility).length>=18){
     idx=effects.findIndex(e=>e.isAbility&&!e.talentCue);
-    if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+    if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
    }
   }
   if(!subtle&&effects.filter(e=>e.isAbility).length>=visualBudget){
    const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
-   if(idx>=0){discardEffect(effects[idx]);effects.splice(idx,1)}
+   if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
   }
   const cueLimit=rareProcLane?18:visualBudget;
   if(effects.filter(e=>e.isAbility).length>=cueLimit){
@@ -913,7 +931,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    }
   }
   const duration=reduce?.48:(subtle?Math.max(.78,cue.duration*1.45):Math.max(1.45,cue.duration*1.9));
-  effects.push({mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors,subtle});
+  const talentEffect={mesh,life:duration,maxLife:duration,isAbility:true,talentCue:cue,baseScale,decors,subtle};
+  effects.push(talentEffect);trackFxCreate(talentEffect);
   talentFxEvents++;container.dataset.v5TalentFxEvents=String(talentFxEvents);
   recordVisualType(cue);
   container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
@@ -1365,7 +1384,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     e.mesh.userData.velocity.y-=dt*7;
     e.mesh.scale.setScalar(Math.max(.01,e.life));
    }
-   if(e.life<=0){discardEffect(e);effects.splice(i,1)}
+   if(e.life<=0){discardEffect(e,'expired');effects.splice(i,1)}
   }
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   container.dataset.v5SpriteVisualActive=String(effects.filter(e=>e.spriteVisual).length);
@@ -1480,6 +1499,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    for(const effect of effects){
     if(!effect.talentCue?.key||!effect.mesh?.visible)continue;
     const key=effect.talentCue.key;
+    if(effect.fxProbeTracked){
+     const row=fxProbe.lifecycle.get(key);
+     if(effect.fxProbeFrames++===0&&row)row.renderedOnce++;
+    }
     const p=effect.mesh.getWorldPosition(new THREE.Vector3()).project(camera);
     const inFrustum=Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z)&&
      Math.abs(p.x)<=1&&Math.abs(p.y)<=1&&p.z>=-1&&p.z<=1;
@@ -1492,6 +1515,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    if(fxProbe.frames%5===0||active.length){
     container.dataset.v5FxProbeVisibleFrames=JSON.stringify(Object.fromEntries(fxProbe.visible));
     container.dataset.v5FxProbeOffscreenFrames=JSON.stringify(Object.fromEntries(fxProbe.offscreen));
+    container.dataset.v5FxProbeLifecycle=JSON.stringify(Object.fromEntries(fxProbe.lifecycle));
    }
   }
   monitorFrames++;
