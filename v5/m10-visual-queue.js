@@ -31,11 +31,14 @@
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
-      // A proc being SEEN repeatedly is not evidence it was ever DRAWN.
-      // Never displace the last pending first-display cue for another key.
-      // Reclaim a duplicate, or a singleton whose key already dispatched.
+      // Prefer duplicates and already-dispatched keys. Under extreme
+      // saturation, a high-frequency singleton (>=6 real proc attempts)
+      // may yield to a new canonical key; low-frequency first-display
+      // cues are protected. Attempts are NOT proof of WebGL rendering.
+      const shown=(dispatchedByKey.get(key)||0)>0;
+      const attempts=seenByKey.get(key)||0;
       const redundancy=(lane.length-1)*1000+
-       ((dispatchedByKey.get(key)||0)>0?1:0);
+       (shown?500:0)+(attempts>=6?attempts:0);
       if(redundancy>score){score=redundancy;victim=i}
      }
     }
