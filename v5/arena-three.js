@@ -845,6 +845,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     idx=effects.findIndex(e=>e.isAbility&&!e.talentCue);
     if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
    }
+   // Laboratory queue only: a confirmed proc may reclaim one older cast
+   // AFTER that cast reached WebGL at least once. Never evict an unseen cast.
+   // Keep the same 18-effect ceiling; damage and event ordering are untouched.
+   if(visualQueue&&effects.filter(e=>e.isAbility).length>=18){
+    idx=effects.findIndex(e=>e.isAbility&&e.talentCue&&!e.subtle&&e.v5RenderedOnce);
+    if(idx>=0){discardEffect(effects[idx],'evicted');effects.splice(idx,1)}
+   }
   }
   if(!subtle&&effects.filter(e=>e.isAbility).length>=visualBudget){
    const idx=effects.findIndex(e=>e.isAbility&&e.subtle&&e.talentCue);
@@ -1550,6 +1557,14 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // cannot be evicted by another physics tick before its first frame.
   dispatchM10Visual();
   if(!contextLost)renderer.render(scene,camera);
+  // Mark genuinely submitted cast visuals for bounded M10 queue reclamation.
+  // This is never used by M5, default M10 or live student progress.
+  if(visualQueue&&!contextLost&&container.dataset.v5CombatEngine==='phase2-m10'){
+   for(const effect of effects){
+    if(effect.isAbility&&effect.talentCue&&effect.mesh?.visible)
+     effect.v5RenderedOnce=true;
+   }
+  }
   if(fxProbeEnabled&&!contextLost&&container.dataset.v5ArenaMission==='10'&&isPhase2()){
    fxProbe.frames++;
    const active=[];
