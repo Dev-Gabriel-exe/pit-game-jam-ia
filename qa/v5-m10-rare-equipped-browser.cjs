@@ -23,8 +23,9 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
   queuedVisualCues:queueMode,
   limitation:'Screenshots are sampled after cumulative cue detection; they do not prove the short-lived effect is within camera view.',
   cameraShots:[],rare:{}};
+ let page=null;
  try{
-  const page=await browser.newPage({viewport:{width:1366,height:768},
+  page=await browser.newPage({viewport:{width:1366,height:768},
    reducedMotion:lowQuality?'no-preference':'reduce'});
   if(lowQuality)await page.addInitScript(()=>{
    Object.defineProperty(navigator,'deviceMemory',{configurable:true,value:2});
@@ -200,5 +201,27 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
    seed:report.seed,engineProcCounts:report.engineProcCounts,
    rare:report.rare,cameraShots:report.cameraShots,
    spectators:29,m5:'restored',G2:'not tested'}));
- }finally{await browser.close();}
+ }catch(err){
+  report.failedAssertion=err.message;
+  throw err;
+ }finally{
+  // Preserve diagnostic evidence even when a genuine rare cue is rejected.
+  // Previously the JSON artifact was only written on PASS, hiding queue saturation.
+  if(queueMode&&page&&!page.isClosed()){
+   try{
+    report.queueAtExit=await page.evaluate(()=>{
+     const d=document.querySelector('#arenaStage')?.dataset||{};
+     return {accepted:Number(d.v5M10VisualQueueAccepted||0),
+      rejected:Number(d.v5M10VisualQueueRejected||0),
+      dispatched:Number(d.v5M10VisualQueueDispatched||0),
+      remaining:Number(d.v5M10VisualQueueSize||0),
+      byKey:JSON.parse(d.v5M10VisualQueueByKey||'{"accepted":{},"rejected":{},"dispatched":{}}'),
+      renderedKeys:JSON.parse(d.v5TalentFxRenderedKeys||'[]'),
+      droppedKeys:JSON.parse(d.v5TalentFxDroppedKeys||'[]')};
+    });
+   }catch(err){report.queueCaptureError=err.message}
+  }
+  fs.writeFileSync(prefix+'.json',JSON.stringify(report,null,2)+'\n');
+  await browser.close();
+ }
 })().catch(e=>{console.error(e);process.exitCode=1});
