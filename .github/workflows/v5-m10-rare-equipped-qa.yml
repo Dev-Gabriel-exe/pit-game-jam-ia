@@ -9,6 +9,8 @@ on:
       - 'v5/arena-lab.js'
       - 'v5/arena-three.js'
       - 'v5/m10-visual-roster.js'
+      - 'v5/m10-visual-queue.js'
+      - 'qa/v5-m10-visual-queue.cjs'
       - '.github/workflows/v5-m10-rare-equipped-qa.yml'
   workflow_dispatch:
 permissions:
