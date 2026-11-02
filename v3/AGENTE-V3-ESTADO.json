@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "M05 evidence now retains 55-char M01 title; compact header keeps <=750 and legacy parser accepts old header. Static QA intermediate 41407107039 failed on obsolete malformed-header assertion; fixed in 13dc451, new CI pending. Previous Chrome QA 41399294639 SUCCESS. Next confirm current CI and audit cross-role evidence. No main merge.",
+  "priority": "M05 55-character M01 title preserved and 750-char budget verified; static QA SUCCESS run 41407290445 on checkpoint 82aa9bf. Browser QA 41407290512 IN_PROGRESS at check. Continue cross-role M01–M10 audit; no main merge.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-M01-M05-TITLE-ROUNDTRIP",
   "completed_count": 54,
@@ -3400,14 +3400,14 @@
         "v3/AUDITORIA-V4-MISSOES.md",
         "v3/AGENTE-V3-ESTADO.json"
       ],
-      "tests": "Source inspection confirmed M01 55 vs M05 32 truncation; static max-budget calculation 749 chars; regression added to native QA; intermediate static run 41407107039 FAILED on obsolete header mutation assertion; fixed in 13dc451; latest CI NOT_CONFIRMED. Previous M03 Chrome run 41399294639 SUCCESS. No real GDevelop/HDMI/human/mobile tests.",
+      "tests": "Source inspection confirmed M01 55 vs M05 32 truncation; static max-budget calculation 749 chars; regression added to native QA; intermediate static run 41407107039 FAILED on obsolete header mutation assertion; fixed in 13dc451; latest CI NOT_CONFIRMED. Previous M03 Chrome run 41399294639 SUCCESS. No real GDevelop/HDMI/human/mobile tests. Static QA 41407290445 SUCCESS on checkpoint 82aa9bf; Chrome 41407290512 IN_PROGRESS at check.",
       "notes": "M05 preserves full M01 title; compact evidence header supports 750 budget and legacy header. Teacher notes unchanged; branch V3 only, no main or real student data. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
     "task": "V4-AUD-M01-M05-TITLE-ROUNDTRIP",
-    "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-02T07:45:00Z",
+    "status": "STATIC_CI_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-02T07:52:00Z",
     "code_commits": [
       "bf7678b12eabe13dbc113bcced555a7071137557"
     ],
@@ -3431,12 +3431,16 @@
         "result": "FAIL run 41407107039 on obsolete malformed-header test; test updated"
       },
       {
-        "name": "M05 current static/browser QA",
-        "result": "PENDING on latest branch commits"
+        "name": "M05 current static QA",
+        "result": "SUCCESS run 41407290445 on 82aa9bf"
       },
       {
         "name": "GDevelop GUI, HDMI, real students, physical mobile, V5 integration",
         "result": "NOT_RUN"
+      },
+      {
+        "name": "M05 current Chrome Browser QA",
+        "result": "IN_PROGRESS run 41407290512 on 82aa9bf at last check"
       }
     ],
     "next": "Verify static/browser QA on latest SHA; continue M01–M10 cross-role evidence consistency. No main merge.",
