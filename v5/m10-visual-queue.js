@@ -43,6 +43,10 @@
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
+      // An already-evicted first-display key gets one protected retry.
+      // Otherwise a repeated rare proc can be evicted twice before WebGL.
+      // This is generic for all 120 canonical talents, not a rare-key whitelist.
+      if((evictedByKey.get(key)||0)>0&&!(dispatchedByKey.get(key)||0))continue;
       const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
       if(redundancy>score){score=redundancy;victim=i}
      }
