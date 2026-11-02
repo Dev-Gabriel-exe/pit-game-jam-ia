@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T14:19:44Z",
+  "last_completed_at": "2026-11-02T15:19:42Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 nested-encoded access_token/api_key/authorization/client_secret/signature URL guard committed; 15 V8 checks PASS and QA syntax PASS; new Node/CI/Chrome NOT_CONFIRMED. Next: verify latest Actions and continue M10 project/demo/access/evidence audit. Human GDevelop GUI, HDMI, peer and physical mobile NOT_RUN. No main merge.",
+  "priority": "M10 saved-project recovery tutorial corrected in V3 for all 3 routes; GitHub Node static QA SUCCESS at eb5ba72, Browser QA pending. PR #24 already merged by another agent; 10 student module blobs match main, but shared M10 guide in main still shows PROFESSOR heading to students and omits no-defect playtest. Do NOT touch main; hand off isolated guide patch to authorized integrator. GDevelop GUI/HDMI/peer/physical mobile NOT_RUN.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M10-NESTED-CREDENTIAL-GUARD",
+  "last_task": "V4-AUD-M10-SAVED-PROJECT-REOPEN",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3496,38 +3496,51 @@
       ],
       "tests": "15 V8 functional checks on actual M10 module with fake localStorage PASS; 7 regression URL cases added; V8 parse of QA script PASS. Native Node/CI/Chrome on latest commit NOT_CONFIRMED. Manual GDevelop GUI/HDMI/human peer/physical mobile NOT_RUN.",
       "notes": "M10 refuses credential-bearing gd.games links with compound key names or nested percent encoding; safe game links remain valid. No teacher notes changed; master 54/59, V3 branch only, no main/production/student data."
+    },
+    {
+      "task": "V4-AUD-M10-SAVED-PROJECT-REOPEN",
+      "completed_at": "2026-11-02T15:19:42Z",
+      "commit": "a91cfc4df4d2e5c6c274a38406592c112f0e15a5",
+      "files": [
+        "v3/gdevelop-mission-ten-guide.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "V3 M10 tutorial now requires saved project reopen in local/web/gd routes. GitHub static QA run 41470403304 SUCCESS at eb5ba72; Browser QA 41470403440 IN_PROGRESS when checked. Main static/browser at 6d2e75e SUCCESS but missed shared-guide semantic regression. Manual GDevelop GUI, HDMI, peer and physical mobile NOT_RUN.",
+      "notes": "PR #24 merged by other agent at 14:47Z; V3 student M01-M10 and teacher M09/M10+private notes guard match main blob SHA, but main shared M10 guide differs: student sees PROFESSOR heading, M09 no-defect outcome omitted, and saved-project reopen not included. No changes to main, integration branch, deploy, production data. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M10-NESTED-CREDENTIAL-GUARD",
-    "status": "CODE_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-02T14:19:44Z",
+    "task": "V4-AUD-M10-SAVED-PROJECT-REOPEN",
+    "status": "CODE_STATIC_QA_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-02T15:19:42Z",
     "code_commits": [
-      "365d81b6805ddc19f8d9c4030bd957a740ccadab"
+      "9a11f842a38d3114cc319c83b65af5f0456d9529"
     ],
     "regression_commits": [
-      "104e777e1eb98dc33578b9f0e06a5e3b92f9d8ab"
+      "eb5ba7242a76c8b20609e38af527718dbaecc478"
     ],
-    "documentation_commit": "73f698d99798cddeaa3a38848196ceb8790d7517",
+    "documentation_commit": "a91cfc4df4d2e5c6c274a38406592c112f0e15a5",
     "tests": [
       {
-        "name": "M10 actual module V8 + fictitious localStorage",
-        "result": "15/15 PASS: safe/unsafe URL, blocked submission, blocked evidence hydration"
+        "name": "M10 guide 3 routes saved project reopen and no-fictitious-playtest regression",
+        "result": "GitHub static QA 41470403304 SUCCESS at eb5ba72"
       },
       {
-        "name": "QA script syntax",
-        "result": "PASS via V8 parse; execution not claimed"
+        "name": "GitHub Browser QA at eb5ba72",
+        "result": "IN_PROGRESS at checkpoint"
       },
       {
-        "name": "GitHub Actions static QA and Browser QA at latest SHA",
-        "result": "NOT_CONFIRMED"
+        "name": "Main 6d2e75e static and browser QA",
+        "result": "SUCCESS; semantic guide mismatch remains"
       },
       {
         "name": "GDevelop GUI, HDMI, human peer, physical mobile",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Check Actions on checkpoint SHA; continue pedagogical alignment of M10 project reopen, demo, access and evidence before aesthetics.",
+    "next": "Confirm Browser QA on eb5ba72 or checkpoint SHA; keep M10 shared-guide regression on main as P1 handoff only, no direct integration. Continue professor/student pedagogical audit, not aesthetics.",
     "master_progress": "54/59 unchanged"
   }
 }
