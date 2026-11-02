@@ -48,3 +48,47 @@ Preencha: **recurso**, **formato**, **origem**, **objeto/cena**, **resultado do 
 - [ ] Conferir interface mobile/dispositivo físico e registrar limitações.
 
 **Limites:** 39 PNG, 5 WAV, 5 GLB; os testes automatizados cobrem geração, decodificação e estrutura, não a execução dentro do GDevelop. Nenhum serviço pago é necessário para este roteiro. A interface pode mudar conforme a versão do editor.
+
+
+## Biblioteca Arcana — natureza Quaternius e efeitos para talentos (02/11/2026)
+
+**No portal:** abra \`index.html#recursos\`. O botão “🗂️ Recursos” do Caderno do Aluno encaminha para essa biblioteca. Os modelos e kits abaixo são **opcionais**, e não modificam as dez missões, a aprovação, os talentos da arena V5 ou o XP. Não é necessário baixar todos.
+
+### Caminho A — natureza estilizada em 3D
+
+1. Na Biblioteca Arcana, abra a categoria **Mapas e cenários** e localize **Natureza Estilizada · Quaternius**. A página oficial exibe o catálogo completo e uma seleção gratuita (a licença da edição escolhida deve ser conferida).
+2. Para começar sem converter arquivos, procure os três cards individuais **Árvore estilizada · modelo 1**, **Árvore estilizada · modelo 2** e **Arbusto estilizado 3D** e clique em **Baixar GLB**. São cópias otimizadas e reais, já usadas na arena experimental.
+3. No GDevelop, abra a cena → **Objetos** → **+** → **3D Model** → selecione o GLB baixado. Coloque o objeto na cena e ajuste escala, posição e orientação.
+4. Clique em **Preview**. Os objetos são apenas visuais: vegetação não bloqueia o jogador até você adicionar a colisão ou o comportamento adequado.
+5. Para usar outros itens da edição gratuita original com formato glTF/OBJ/FBX, converta no Blender para formato **glTF Binary (.glb)** antes da importação.
+
+### Caminho B — magia, defesa, fogo e impactos 2D
+
+Três pacotes de efeitos CC0 estão na aba **Magias e talentos** do portal:
+
+| Pacote | Conteúdo | Site oficial |
+|---|---|---|
+| Kenney Particle Pack | 80 imagens para fogo, fumaça, partículas e impactos | https://kenney.nl/assets/particle-pack |
+| Foozle Pixel Magic Effects | 10 animações 32×32 de fogo, terra, vento, água, explosão e portal | https://foozlecc.itch.io/pixel-magic-sprite-effects |
+| PVFX Foundry | Efeitos animados de combate, proteção, status e suporte, 96×96 | https://nerijs.itch.io/pvfx-foundry |
+
+1. Escolha um pacote na aba **Magias e talentos**, abra o site do autor e faça o download gratuito. Extraia o ZIP.
+2. Para uma sequência de PNGs, GDevelop → **Objetos** → **+** → **Sprite** → **Adicionar animação** → **Adicionar Sprite**. Selecione os quadros na ordem.
+3. Para uma imagem com vários quadros (spritesheet), no editor de Sprite escolha **Editar com Piskel → Importar → Importar como sprite sheet** e informe as dimensões dos quadros. Salve os quadros na animação.
+4. Marque **sem loop** para explosões, golpes e impactos únicos; use loop apenas em auras ou efeitos contínuos. Ajuste o tempo entre quadros.
+5. Em **Eventos**, crie o Sprite do impacto no momento da colisão/ação. Remova a instância após a animação terminar, evitando acumular dezenas de objetos.
+6. Teste no **Preview**. Uma animação visual não aumenta dano, cura ou protege automaticamente; essas regras são programadas separadamente.
+
+### Caminho C — partículas 2D ou 3D
+
+1. Abra o **Kenney Particle Pack** e selecione uma textura adequada (faísca, explosão, fumaça).
+2. No GDevelop, adicione um objeto **2D Particle Emitter** ou, para um projeto tridimensional, **3D Particle Emitter**.
+3. Configure emissão por **Imagem**, escolha a textura, ajuste duração, fluxo, velocidade, escala e cores.
+4. Crie o emissor em um evento real (por exemplo, quando o jogador coleta um item). Limite a quantidade para evitar travamentos.
+5. No Preview, verifique se o efeito acontece no lugar e momento corretos.
+
+**Tutoriais oficiais:** [Objeto 3D](https://wiki.gdevelop.io/gdevelop5/objects/3d-model/), [Sprites animados](https://wiki.gdevelop.io/gdevelop5/objects/sprite/), [Importar spritesheet](https://wiki.gdevelop.io/gdevelop5/tutorials/piskel-sprite-sheets/) e [Partículas](https://wiki.gdevelop.io/gdevelop5/objects/particles_emitter/).
+
+**Licenças e cuidados:** Kenney, Foozle e PVFX Foundry indicam CC0 nos pacotes listados. A página de 2024 do Stylized Nature MegaKit indica CC0, enquanto a Quaternius também publica termos mais recentes para outras distribuições; consulte a licença do arquivo baixado antes de redistribuir. Não republique pacotes de terceiros como se fossem próprios. Os VFX 2D apresentados são inspirações para os alunos e possíveis candidatos a adaptação futura em sprites/billboards na arena Three.js, **não são efeitos 3D implementados nem teste de compatibilidade com os 120 talentos da V5**.
+
+**Evidência recomendada na oficina:** escreva nome do recurso, criador, formato e licença; execute o Preview e registre uma captura real do asset no seu jogo. A presença de uma miniatura no portal, sozinha, não prova importação no editor.
