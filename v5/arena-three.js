@@ -728,6 +728,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    container.dataset.v5FxProbeVisibleFrames='{}';
    container.dataset.v5FxProbeOffscreenFrames='{}';
    container.dataset.v5FxProbeActiveKeys='[]';
+   container.dataset.v5FxProbeByShot='{}';
+   container.dataset.v5FxProbeFirstVisible='{}';
   }
   container.dataset.v5TalentFxRenderedKeys='[]';
   container.dataset.v5TalentFxDroppedKeys='[]';
