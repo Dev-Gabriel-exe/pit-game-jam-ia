@@ -660,7 +660,8 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(d.checks.join(','),'','M08 different project invalidates all three checks');
  mod.save(session,d);
  assert.equal(mod.validate(session).field,'checks','M08 submission blocked until all tests repeated');
- assert.match(mod.render({session,phase:'practice',status:'draft',idea:{}}),/repita os tr\u00eas testes ANTES, DEPOIS e negativo/,'M08 retest guidance visible to student');
+ assert.match(mod.render({session,phase:'practice',status:'draft',idea:{}}),/Se mudar o caminho depois, repita os tr\u00eas testes/,'M08 retest guidance visible to student');
+ assert(m08Student.includes('repita os três testes ANTES, DEPOIS e negativo no Preview'),'M08 field-change status identifies all three retests');
  assert.equal(mod.updateField(d,'saved','  Projetos/outro-jogo-ux.json  '),false,'M08 whitespace-only path edit');
  assert.equal(d.checks.length,0,'M08 whitespace cannot restore stale confirmations');
  d.checks=[0,1,2];mod.save(session,d);
