@@ -1,0 +1,3 @@
+PIT Game Jam IA V5 — KayKit 1.1 / Mixamo — 02-11-2026
+
+Five true CC0 Rig_Medium GLBs from KayKit Character Animations Free 1.1, pinned mirrored provenance and license. Runtime matches bones and binds attack, defense, dodge, spellcasting, run, hit, and death to the four existing Adventurers. On failure preserves native GLB animations. No changes to combat, balance, XP, students or approvals. ?kaykitmotion=0 disables the new animation mapping. Mixamo is an external educational reference only, no restricted raw files distributed. Check GitHub Actions after commit; manual performance G.2 and real-classroom H gates are not complete.
