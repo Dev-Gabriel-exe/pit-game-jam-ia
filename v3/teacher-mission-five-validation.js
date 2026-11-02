@@ -23,7 +23,7 @@ function shell(phase,content){
  const index=phase==='practice'?2:3;
  return '<section class="t5v-root" data-t5v-phase="'+phase+'">'+
  '<header class="t5v-head"><span>✦ PIT GAME JAM IA · MISSÃO V · '+(phase==='practice'?'OFICINA':'VALIDAÇÃO')+'</span>'+
- '<div class="t5v-top"><strong>IV</strong><div><small>A PRIMEIRA REGRA · 40 MINUTOS</small>'+
+ '<div class="t5v-top"><strong>V</strong><div><small>A PRIMEIRA REGRA · 40 MINUTOS</small>'+
  '<h2>'+(phase==='practice'?'Uma condição, uma variável, três testes.':'A regra só conta quando há antes e depois.')+'</h2>'+
  '<p>'+(phase==='practice'?'Continue a mesma cena e implemente uma regra jogável, sem criar outra fase.':'Confronte o SE/ENTÃO registrado com o Preview e seu caso negativo.')+'</p></div></div>'+
  '<div class="t5v-cadence">'+[8,5,24,3].map((time,i)=>'<span class="'+(i===index?'active':'')+'"><b>'+time+' min</b> '+['CONCEITOS','DEMONSTRAÇÃO','OFICINA','RESULTADOS'][i]+'</span>').join('')+'</div></header>'+
@@ -61,7 +61,8 @@ function results(){
  '<div class="t5v-decisions"><div><strong>✓ APROVAR</strong><p>SE/ENTÃO existe, a variável muda com feedback real, os três testes passam e o projeto pode ser reaberto.</p></div>'+
  '<div><strong>↺ SOLICITAR REVISÃO</strong><p>Condição dispara indevidamente, ação duplica por quadro, variável não muda, feedback ausente ou projeto não é recuperável. A devolutiva identifica o teste a refazer.</p></div></div>'+
  '<div class="t5v-verification"><strong>VERIFICAÇÃO NO PAINEL</strong>'+
- '<p>Em <b>Acompanhamento</b> → aluno → <b>Missão 05</b>, compare Condição, Ação, Variável, Positivo, Negativo, Feedback e Salvo em. A análise e o resultado são gravados pelo servidor, não pelo preenchimento da ficha.</p>'+
+ '<p>O painel de acompanhamento registra a decisão do professor no servidor. O preenchimento do caderno não valida automaticamente a regra no GDevelop.</p>'+ 
+ '<details class="pit-private-teacher-notes"><summary title="Orientação reservada: abrir somente sem espelhamento" aria-label="Abrir roteiro privado da avaliação da Missão 05">▤</summary><div class="pit-private-teacher-notes-body"><small>ROTEIRO PRIVADO · NÃO PROJETAR</small><h4>Conferência da entrega</h4><p>Somente após retirar o espelhamento HDMI: em <b>Acompanhamento</b> → aluno → <b>Missão 05</b>, compare Condição, Ação, Variável, Positivo, Negativo, Feedback e Salvo em. Quando necessário, solicite Preview do caso verdadeiro, falso e repetido. Registre Aprovar ou Solicitar revisão conforme a demonstração. Feche este painel antes de retomar a projeção.</p></div></details>'+
  '<p class="t5v-caution">Se o professor não puder observar o Preview, a evidência permanece autodeclaratória. Não afirmar que houve teste de execução automático.</p></div>'
  );
 }
