@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-01T23:15:00Z",
+  "last_completed_at": "2026-11-02T00:20:34.151Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08 before/after/negative/saved-project edits now invalidate only affected Preview attestations; project path requires reopening and final check. 7 V8 functional cases + syntax PASS; QA regression added; native Node/Chrome CI on new SHA NOT_CONFIRMED. Continue M01–M10 pedagogy and verify CI; GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN. Master 54/59, main untouched.",
+  "priority": "M08 native QA regression fixed after three source/test fixture mismatches. Static QA run 41366524028 SUCCESS on 7c47d8a; Chrome run 41366524045 still in progress at checkpoint. Next: confirm Chrome on current SHA and audit M09 saved-project evidence/reconfirmation. GDevelop GUI, physical HDMI, human tests and V5 integration NOT_RUN. Master 54/59, main untouched.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M08-SELECTIVE-RETEST",
+  "last_task": "V4-CI-M08-REGRESSION-REPAIR",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3298,50 +3298,48 @@
       ],
       "tests": "7 source-derived V8 field-specific checks, syntax, submission block, whitespace and DOM wiring PASS. Native Node full QA NOT_RUN; CI/Chrome on new SHA NOT_CONFIRMED. GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN.",
       "notes": "M08 selective retest integrity; saved-project path now requires re-opening and confirming final/negative case. No teacher projected content changed. Branch V3 only; main and real students untouched. Master 54/59."
+    },
+    {
+      "task": "V4-CI-M08-REGRESSION-REPAIR",
+      "completed_at": "2026-11-02T00:20:34.151Z",
+      "commit": "7c47d8a638f5e000189319d648b678862bd27454",
+      "files": [
+        "qa/v3-m08-acceptance.cjs",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "GitHub static QA 41366524028 SUCCESS on 7c47d8a, including updated M08 selective retest regression; previous failures reproduced via workflow logs. Chrome 41366524045 IN_PROGRESS. GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN.",
+      "notes": "Fixed stale all-or-nothing M08 test expectations, saved-project path assertion, unknown-field fixture state, and fake checkbox dataset. Production student/teacher code unchanged. Master 54/59; no main merge."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M08-SELECTIVE-RETEST",
-    "status": "SOURCE_V8_PASS_NEW_CI_UNCONFIRMED",
-    "updated_at": "2026-11-01T23:15:00Z",
-    "code_commits": [
-      "4633928a83f7dd13989e99d11f44b2658a793d0c"
-    ],
+    "task": "V4-CI-M08-REGRESSION-REPAIR",
+    "status": "STATIC_CI_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-02T00:20:34.151Z",
+    "code_commits": [],
     "regression_commits": [
-      "2a1ac8efb2e48ece02d84bd02a32370f39852929"
+      "f8d39c68897ed9b0e85226541eed1ed817a3406e",
+      "9c51959586ba07a0280b90793b273e09676422a6",
+      "7c47d8a638f5e000189319d648b678862bd27454"
     ],
-    "documentation_commit": "1c9f5951b6291eb9bb66313738065f5cbcd84601",
     "tests": [
       {
-        "name": "M08 seven field-specific edit/invalidation cases with simulated localStorage",
-        "result": "PASS (V8 source-derived)"
+        "name": "M08 native Node acceptance in static GitHub Actions run 41366524028",
+        "result": "PASS on 7c47d8a (all static workflow steps passed)"
       },
       {
-        "name": "M08 submit blocked pending manual reconfirmation",
-        "result": "PASS (V8)"
+        "name": "Previous CI runs 41361406293, 41366464693, 41366489737",
+        "result": "FAILED before regression fixture repairs; investigated logs, fixed assertions and mock DOM dataset"
       },
       {
-        "name": "M08 whitespace equivalence and unchanged field handling",
-        "result": "PASS (V8)"
+        "name": "Browser QA run 41366524045",
+        "result": "IN_PROGRESS at checkpoint; do not claim pass"
       },
       {
-        "name": "M08 source and audit QA syntax compilation",
-        "result": "PASS (V8)"
-      },
-      {
-        "name": "Native Node full regression on new commit",
-        "result": "NOT_RUN"
-      },
-      {
-        "name": "Chrome QA/CI on new commit",
-        "result": "NOT_CONFIRMED; workflow-by-commit lookup returned no runs"
-      },
-      {
-        "name": "GDevelop GUI, physical HDMI, human playtest, mobile, V5 integration",
+        "name": "GDevelop GUI, HDMI physical projection, real student playtest, mobile physical device, V5 end-to-end",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify static/Chrome CI for 2a1ac8e or later; continue M01–M10 cross-face audit, prioritizing test/evidence integrity. No main merge.",
+    "next": "Verify Chrome QA run 41366524045, then audit M09 professor/student saved-project path and manual peer-test check integrity. No main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
