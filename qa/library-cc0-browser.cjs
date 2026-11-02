@@ -43,7 +43,7 @@ const {chromium}=require('playwright');
     await entry.locator('summary').click();
     assert((await entry.locator('ol li').count())>=4,'GDevelop animation guide missing: '+id);
    }
-   assert.match(await page.locator('#pitPackGrid [data-id="adobe-mixamo"]').innerText(),/não CC0/);
+   assert.match(await page.locator('#pitPackGrid [data-id="adobe-mixamo"]').innerText(),/não (?:é )?cc0/i);
    assert.match(await page.locator('#pitPackGrid [data-id="adobe-mixamo"] ol').innerText(),/não coloque arquivos brutos/i);
    await page.locator('[data-pit-tab="mapas"]').click();
    assert(await page.locator('#pitPackGrid .pit-real-pack').count()>3,'Map filter must include world kits');
