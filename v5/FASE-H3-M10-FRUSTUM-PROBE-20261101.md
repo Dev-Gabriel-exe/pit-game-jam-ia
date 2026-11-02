@@ -64,3 +64,17 @@ O run anterior [41368295427](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/
 **Estado ao escrever:** aguardando conclusão dos jobs do SHA corrigido; não declarar aprovado antecipadamente.
 
 **Próxima ação:** verificar a distribuição por J08/P09/A07 e capturas no artefato do run corrigido; investigar qualquer talento sem quadro projetado antes de alterar câmera/efeitos. G.2 em PCs reais e avaliação humana no projetor permanecem pendentes; H.1/H.2 e produção bloqueadas. M5, quatro KayKit, 120 talentos, dez roteiros, XP, aprovações e `main` intactos.
+
+### Resultado do diagnóstico por talento (02/11/2026)
+
+O job `fx-projection-webgl` do [run 41373193453](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41373193453) concluiu com **success**; a instrumentação e a regressão M5 passaram. No log do teste, **64 amostras de frame de efeitos gerais estavam dentro do frustum e 63 fora**. Porém os três talentos-alvo registraram:
+
+| Talento | Frames dentro | Frames fora | Captura ao vivo |
+|---|---:|---:|---|
+| Guardião J08 | 0 | 0 | não |
+| Caçador P09 | 0 | 0 | não |
+| Arcanista A07 | 0 | 0 | não |
+
+**Conclusão limitada, mas relevante:** a auditoria anterior de `rendered-cue-recorded` conta criação de efeito, não sua presença num frame WebGL. O teste atual **não comprovou um único quadro com J08/P09/A07 ainda vivos no array de efeitos**. Isso não prova que o efeito seja invisível em toda execução, nem que o frustum seja o culpado. Hipóteses a investigar: expulsão precoce da única faixa `rareProcLane` por outros procs entre ticks de física e frames, duração dos efeitos, ausência de correspondência temporal entre evento e render. A câmera não deve ser alterada sem isolar a causa.
+
+**Status de homologação:** diagnóstico CI aprovado, **gate de visibilidade dos três talentos NÃO aprovado**. O job restante `rare-equipped-webgl` estava em andamento quando este registro foi escrito. Próximo incremento da MESMA missão: instrumentar descarte/tempo de vida de efeitos antes de render, reproduzir J08/P09/A07 com seed fixa e somente depois corrigir a política visual sem alterar o motor de combate, M5 ou qualidade padrão. G.2 e avaliação humana seguem pendentes.
