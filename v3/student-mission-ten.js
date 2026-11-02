@@ -39,9 +39,14 @@ function updateField(d,id,value){
 function validLink(s){
  // The gd.games route is not a generic website field: prevent unrelated or spoofed hosts.
  // A game-specific path is required; the gd.games homepage is not a playable evidence link.
- return /^https:\/\/(?:[a-z0-9-]+\.)*gd\.games\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(s)
-  && !/[?&](token|key|secret|password|auth|session)=/i.test(s)
-  && !s.includes('@');
+ // A URL pode conter nomes de parâmetros codificados ou no fragmento.
+ // Nunca incluir credenciais no registro de entrega, mesmo com %XX.
+ try {
+  const decoded=decodeURIComponent(s);
+  return /^https:\/\/(?:[a-z0-9-]+\.)*gd\.games\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(s)
+   && !/[?&#;](token|key|secret|password|auth|session)=/i.test(decoded)
+   && !decoded.includes('@');
+ } catch { return false; }
 }
 function validate(s){const d=load(s);for(const f of fields){const size=clean(d[f.id]).length;if(size>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" excede '+f.max+' caracteres ('+size+'). Revise sem perder seu rascunho.'};if(size<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};}if(d.route==='gd'&&!validLink(d.access))return {ok:false,field:'access',label:'Informe a URL HTTPS de seu jogo em gd.games (não a página inicial nem outro site), sem credenciais; se não tiver, escolha Preview local.'};if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview.'};return {ok:true,label:'Ficha pronta para revisão humana.'}}
 const names={pitch:'Experiência',mechanic:'Mecânica',rule:'Regra',demo:'Demo',test:'Playtest',next:'Próximo',project:'Projeto',access:'Acesso'};
