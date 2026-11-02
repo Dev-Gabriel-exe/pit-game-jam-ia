@@ -36,13 +36,19 @@ function updateField(d,id,value){
  d.checks=old.filter(n=>!affected.includes(n));
  return affected.filter(n=>old.includes(n));
 }
-function validLink(s){return /^https?:\/\/[^\s/@:?#]+\.[^\s/@:?#]+(?:[/:?#][^\s]*)?$/i.test(s)&&!/[?&](token|key|secret|password|auth|session)=/i.test(s)&&!s.includes('@')}
-function validate(s){const d=load(s);for(const f of fields){const size=clean(d[f.id]).length;if(size>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" excede '+f.max+' caracteres ('+size+'). Revise sem perder seu rascunho.'};if(size<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};}if(d.route==='gd'&&!validLink(d.access))return {ok:false,field:'access',label:'Informe link HTTP(S) sem credenciais, ou escolha Preview local.'};if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview.'};return {ok:true,label:'Ficha pronta para revisão humana.'}}
+function validLink(s){
+ // The gd.games route is not a generic website field: prevent unrelated or spoofed hosts.
+ // A game-specific path is required; the gd.games homepage is not a playable evidence link.
+ return /^https:\/\/(?:[a-z0-9-]+\.)*gd\.games\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(s)
+  && !/[?&](token|key|secret|password|auth|session)=/i.test(s)
+  && !s.includes('@');
+}
+function validate(s){const d=load(s);for(const f of fields){const size=clean(d[f.id]).length;if(size>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" excede '+f.max+' caracteres ('+size+'). Revise sem perder seu rascunho.'};if(size<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};}if(d.route==='gd'&&!validLink(d.access))return {ok:false,field:'access',label:'Informe a URL HTTPS de seu jogo em gd.games (não a página inicial nem outro site), sem credenciais; se não tiver, escolha Preview local.'};if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview.'};return {ok:true,label:'Ficha pronta para revisão humana.'}}
 const names={pitch:'Experiência',mechanic:'Mecânica',rule:'Regra',demo:'Demo',test:'Playtest',next:'Próximo',project:'Projeto',access:'Acesso'};
 const accessHelp=route=>({
  local:'Preview local: informe onde está o projeto editável e como o professor poderá assistir à execução no GDevelop. Não invente URL pública.',
  web:'Exportação Web: informe a pasta da build, como executá-la localmente (servidor estático, se necessário) e onde está o projeto editável.',
- gd:'gd.games: cole somente a URL HTTP(S) pública que você testou sem login. Não inclua senhas, tokens ou texto antes/depois do link. Se falhar, use Preview local.'
+ gd:'gd.games: cole a URL HTTPS específica do seu jogo, que você abriu e testou sem login. Não cole a página inicial, links de outros sites ou credenciais. Para uma exportação Web em outra hospedagem, escolha a rota Exportação Web; se falhar, use Preview local.'
 }[route]||'Descreva como o professor terá acesso ao jogo.');
 const accessPlaceholder=route=>({
  local:'Ex.: laboratório, projeto salvo na pasta Jogos; abrir no GDevelop e iniciar Preview',
