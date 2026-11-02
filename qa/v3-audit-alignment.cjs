@@ -495,6 +495,42 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  const studentHtml=mod.render({session:'m08-qa',status:'draft',phase:'practice',idea:{}});
  assert(!studentHtml.includes('pit-private-teacher-notes'),'M08 student must never include private teacher notes');
 }
+// M04: editing a Preview observation must not retain stale declarations.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))
+ }};
+ vm.runInNewContext(read('v3/student-mission-four.js'),env,{timeout:3000,filename:'student-mission-four.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_FOUR;
+ const base=()=>({route:0,command:'Usei setas no jogo',
+  response:'No Preview o objeto mudou de posicao',
+  boundary:'A parede impediu a passagem',
+  retest:'Com a tecla solta nao houve movimento',
+  saved:'Jogos/projeto-qa.json',issue:'',checks:[0,1,2]});
+ const expected={command:'1',response:'1',boundary:'0',retest:'0,1',saved:'',issue:'0,1,2'};
+ for(const [field,remaining] of Object.entries(expected)){
+  const d=base(),next=(d[field]||'Nenhum erro')+' revisado';
+  assert.equal(mod.updateField(d,field,next),true,'M04 '+field+' changed');
+  assert.equal(d[field],next,'M04 preserves student '+field);
+  assert.equal(d.checks.join(','),remaining,'M04 selective retest '+field);
+  mod.save('m04-'+field,d);
+  assert.equal(mod.validate('m04-'+field).ok,field==='issue','M04 submit gate '+field);
+  if(field!=='issue'){
+   d.checks=[0,1,2];mod.save('m04-'+field,d);
+   assert.equal(mod.validate('m04-'+field).ok,true,'M04 '+field+' reconfirmed');
+  }
+ }
+ const stable=base();
+ assert.equal(mod.updateField(stable,'saved','  Jogos/projeto-qa.json  '),false,'M04 equivalent saved path');
+ assert.equal(stable.checks.join(','),'0,1,2','M04 whitespace retains checks');
+ assert.equal(mod.updateField(stable,'unknown','ignored'),false,'M04 unknown field ignored');
+ assert.equal(mod.selectRoute(stable,3),true,'M04 changed route');
+ assert.equal(stable.checks.length,0,'M04 route change clears all checks');
+ const source=read('v3/student-mission-four.js');
+ assert(source.includes('check.checked=d.checks.includes(Number(check.dataset.m4sCheck))'),'M04 DOM checkbox sync');
+ assert(source.includes('reabra o arquivo indicado e repita os três testes'),'M04 saved-project handoff');
+ assert(!mod.render({phase:'practice',session:'m04-command',idea:{},status:'draft'}).includes('pit-private-teacher-notes'),'M04 student no private notes');
+}
 // M03: changed project/scene/object/asset/Preview/save must invalidate only the
 // manual checks they attest. The browser cannot independently inspect GDevelop.
 {
