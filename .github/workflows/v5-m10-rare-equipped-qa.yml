@@ -53,3 +53,34 @@ jobs:
             qa/v5-m10-rare-equipped.json
             qa/v5-m10-rare-equipped-*.png
           if-no-files-found: ignore
+
+  fx-projection-webgl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate opt-in frustum diagnostic and M5 safety
+        run: |
+          node --check v5/arena-three.js
+          node --check qa/v5-m10-rare-equipped-browser.cjs
+          node qa/v5-m10-rare-equipped-seed.cjs
+          node qa/v5-progression-contract-h0.cjs
+      - name: Install isolated Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Observe projected LIVE cue meshes in M10 only
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-v5-m10-fx-probe.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          M10_FX_PROBE=1 M10_RARE_PREFIX=qa/v5-m10-fx-projection node qa/v5-m10-rare-equipped-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-fx-frustum-projection
+          path: |
+            qa/v5-m10-fx-projection.json
+            qa/v5-m10-fx-projection-*.png
+          if-no-files-found: ignore
