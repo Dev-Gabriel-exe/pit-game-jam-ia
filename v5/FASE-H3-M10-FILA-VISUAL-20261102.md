@@ -20,3 +20,7 @@
 3. Executar novamente o teste WebGL de `qa/v5-m10-rare-equipped-browser.cjs` com `M10_FX_PROBE=1`, verificar `evictedBeforeFrame`, amostras no frustum, 30 KayKits, 29 espectadores e regressão M5. Se falhar, manter a missão aberta.
 
 **G.2 não executado nos PCs físicos.** H.1/H.2 com alunos reais, autenticação, persistência e Fase I bloqueadas até validação e autorização explícita. Sem `main`, merge, deploy ou dados reais.
+
+## Resultado confirmado do CI nesta rodada
+
+**PASS** — [GitHub Actions run 41384060519](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41384060519), SHA `647486e546f79a846fbdddfd6c050cfefee0fe6d`. Job `isolated-queue` concluído com sucesso: `Syntax and bounded queue contract` e `Preserve M5 and M10 pedagogical contract` ambos aprovados. Esta aprovação cobre **somente o contrato isolado da fila** e regressões Node, não a integração ao WebGL nem a visibilidade dos três talentos raros. Browser QA geral de commits recentes ainda deve ser consultado separadamente.
