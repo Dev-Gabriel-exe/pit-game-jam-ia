@@ -345,6 +345,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    container.dataset.v5M10VisualQueueAccepted=String(q.accepted);
    container.dataset.v5M10VisualQueueRejected=String(q.rejected);
    container.dataset.v5M10VisualQueueDispatched=String(q.dispatched);
+    // Canonical cue IDs only; diagnostic telemetry excludes actors, users and combat state.
+    container.dataset.v5M10VisualQueueByKey=JSON.stringify({
+     accepted:q.acceptedByKey,rejected:q.rejectedByKey,dispatched:q.dispatchedByKey});
   }
   reportVisualQueue();
   // H.3 opt-in diagnosis: a real cue created does not imply a rendered frame.
