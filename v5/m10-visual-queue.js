@@ -1,7 +1,7 @@
 /* H.3/M10 experimental visual-only scheduler.
  * A queue entry describes an already confirmed engine proc; this module never
  * creates combat events, changes stats, or renders anything itself.
- * Integration with arena-three.js is intentionally NOT enabled yet.
+ * Opt-in laboratory integration is available only with ?m10visualqueue=1.
  */
 (function(root,factory){
  const api=factory();
@@ -16,14 +16,16 @@
   const lanes=new Map();
   const order=[];
   let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0;
+  const acceptedByKey=new Map(),rejectedByKey=new Map(),dispatchedByKey=new Map();
+  function count(map,key){map.set(key,(map.get(key)||0)+1)}
   function enqueue(entry){
    if(!entry||!KEY.test(entry.key)||!Number.isFinite(entry.x)||!Number.isFinite(entry.z))
     throw new TypeError('A confirmed talent cue requires canonical key and finite x/z');
-   if(size===capacity){rejected++;return false}
+   if(size===capacity){rejected++;count(rejectedByKey,entry.key);return false}
    if(!lanes.has(entry.key)){lanes.set(entry.key,[]);order.push(entry.key)}
    // Never retain mutable combat objects, player IDs, names, or user data.
    lanes.get(entry.key).push(Object.freeze({key:entry.key,x:entry.x,z:entry.z}));
-   size++;accepted++;return true;
+   size++;accepted++;count(acceptedByKey,entry.key);return true;
   }
   function nextForFrame(frame){
    if(!Number.isSafeInteger(frame)||frame<0||frame<=lastFrame)
@@ -33,7 +35,7 @@
    const key=order[cursor];
    const lane=lanes.get(key);
    const cue=lane.shift();
-   size--;dispatched++;
+   size--;dispatched++;count(dispatchedByKey,key);
    if(lane.length){cursor=(cursor+1)%order.length}
    else{
     lanes.delete(key);
@@ -46,10 +48,14 @@
   function clear(){
    lanes.clear();order.length=0;
    size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;
+   acceptedByKey.clear();rejectedByKey.clear();dispatchedByKey.clear();
   }
   function snapshot(){
    return Object.freeze({capacity,size,queuedKeys:Object.freeze(order.slice()),
-    accepted,rejected,dispatched,lastFrame});
+    accepted,rejected,dispatched,lastFrame,
+    acceptedByKey:Object.freeze(Object.fromEntries(acceptedByKey)),
+    rejectedByKey:Object.freeze(Object.fromEntries(rejectedByKey)),
+    dispatchedByKey:Object.freeze(Object.fromEntries(dispatchedByKey))});
   }
   return Object.freeze({enqueue,nextForFrame,clear,snapshot});
  }
