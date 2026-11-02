@@ -117,22 +117,29 @@ assert.equal(unchanged.checks.length,3,'same route does not erase valid confirma
 assert.equal(student.selectRoute(unchanged,'puzzle'),true,'new route triggers retest');
 assert.equal(unchanged.checks.length,0,'direct route change invalidates confirmations');
 
-// A changed improvement/comparison invalidates manual Preview confirmations.
-// Only a change to the saved-project location is exempt.
-for(const f of student.fields.filter(f=>f.id!=='saved')){
+// Each changed field invalidates only the manual Preview checks it attests.
+// A changed saved-project path must be reopened and reconfirmed (check 2).
+const affectedChecks={
+ issue:[0,1,2],control:[0,1,2],change:[0,1,2],
+ before:[0,1],after:[1,2],negative:[2],saved:[2]
+};
+for(const f of student.fields){
  const draft=student.load('m08-retest-'+f.id);
  draft[f.id]='Versão anterior do registro';draft.checks=[0,1,2];
- assert.equal(student.updateField(draft,f.id,'Nova observação real no Preview'),true,'changed '+f.id+' requires retest');
- assert.equal(draft.checks.length,0,'old Preview checks removed for '+f.id);
+ assert.equal(student.updateField(draft,f.id,'Nova observação real no Preview'),true,'changed '+f.id+' requires selective retest');
+ const retained=[0,1,2].filter(n=>!affectedChecks[f.id].includes(n));
+ assert.deepEqual(Array.from(draft.checks),retained,'only affected Preview checks removed for '+f.id);
  student.save('m08-retest-'+f.id,draft);
- assert.equal(student.load('m08-retest-'+f.id).checks.length,0,'retest persisted for '+f.id);
+ assert.deepEqual(Array.from(student.load('m08-retest-'+f.id).checks),retained,'selective retest persisted for '+f.id);
 }
 const unchangedDraft=student.load('m08-same-text');
 unchangedDraft.issue='A mesma observação';unchangedDraft.checks=[0,1,2];
 assert.equal(student.updateField(unchangedDraft,'issue','  A mesma   observação  '),false,'whitespace-only edit does not invalidate checks');
 assert.equal(unchangedDraft.checks.length,3,'same observation keeps tests');
-assert.equal(student.updateField(unchangedDraft,'saved','projeto-local.json'),false,'saved path is metadata');
-assert.equal(unchangedDraft.checks.length,3,'metadata edit keeps tests');
+assert.equal(student.updateField(unchangedDraft,'saved','projeto-local.json'),true,'changed project requires reopen');
+assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'project path only invalidates final/reopen check');
+assert.equal(student.updateField(unchangedDraft,'saved','  projeto-local.json  '),false,'whitespace-only project edit preserves checks');
+assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'equivalent project path keeps prior confirmations');
 assert.equal(student.updateField(unchangedDraft,'unknown','anything'),false,'unknown field ignored');
 assert.equal(unchangedDraft.checks.length,3,'unknown field keeps checks');
 // Simulate a real input callback with a fake DOM; this is NOT a browser/HDMI test.
@@ -153,11 +160,11 @@ ctx.document.querySelector=sel=>sel==='#m8sRoot'?editRoot:null;
 student.mount({phase:'practice',session:editSession,status:'draft'});
 assert.equal(typeof onInput,'function','M08 input event bound');
 onInput();
-assert.equal(student.load(editSession).checks.length,0,'DOM edit clears persisted tests');
-assert(editChecks.every(c=>!c.checked),'DOM edit unchecks all visible tests');
-assert.match(editStatus.textContent,/refaça os três testes no Preview/,'DOM edit announces retest');
+assert.deepEqual(Array.from(student.load(editSession).checks),[0],'DOM after edit preserves only independent before test');
+assert.deepEqual(editChecks.map(c=>c.checked),[true,false,false],'DOM edit unchecks only affected visible tests');
+assert.match(editStatus.textContent,/reconfirme os testes afetados no Preview/,'DOM edit announces selective retest');
 assert.match(student.render({session:editSession,phase:'practice',status:'draft',idea:{}}),/aria-live="polite"/,'status is live for keyboard/screen-reader users');
-console.log('PASS M08 edit-retest: six gameplay/comparison fields, metadata exemption, normalized edits, DOM input and persistence');
+console.log('PASS M08 edit-retest: seven fields, selective check invalidation, saved-project reopen, normalized edits, DOM input and persistence');
 
 const studentCss=fs.readFileSync('v3/student-mission-eight.css','utf8');
 assert(studentCss.includes('.m8s-field-hint'),'M08 guidance is styled for legibility');
