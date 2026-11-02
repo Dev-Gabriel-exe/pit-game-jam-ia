@@ -332,7 +332,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // the actual WebGL frame. NDC visibility does NOT prove unobstructed pixels.
   // Disabled by default; never feeds combat, camera selection or quality.
   const fxProbeEnabled=new URLSearchParams(window.location.search).get('m10fxprobe')==='1';
-  const fxProbe={frames:0,visible:new Map(),offscreen:new Map(),lifecycle:new Map()};
+  const fxProbe={frames:0,visible:new Map(),offscreen:new Map(),lifecycle:new Map(),
+   byShot:new Map(),firstVisible:new Map()};
   // H.3 opt-in M10 visual scheduler. Genuine proc cues are dispatched once
   // per rendered frame, after physics and effect expiry, before WebGL draw.
   const visualQueue=new URLSearchParams(window.location.search).get('m10visualqueue')==='1'
@@ -373,6 +374,8 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    container.dataset.v5FxProbeVisibleFrames='{}';
    container.dataset.v5FxProbeOffscreenFrames='{}';
    container.dataset.v5FxProbeActiveKeys='[]';
+   container.dataset.v5FxProbeByShot='{}';
+   container.dataset.v5FxProbeFirstVisible='{}';
    container.dataset.v5FxProbeLifecycle='{}';
   }
   function recordVisualType(cue,dropped=false){
@@ -720,6 +723,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   visualKeys.rendered.clear();visualKeys.dropped.clear();
   if(fxProbeEnabled){
    fxProbe.frames=0;fxProbe.visible.clear();fxProbe.offscreen.clear();fxProbe.lifecycle.clear();
+   fxProbe.byShot.clear();fxProbe.firstVisible.clear();
    container.dataset.v5FxProbeLifecycle='{}';
    container.dataset.v5FxProbeVisibleFrames='{}';
    container.dataset.v5FxProbeOffscreenFrames='{}';
@@ -1580,7 +1584,19 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
      Math.abs(p.x)<=1&&Math.abs(p.y)<=1&&p.z>=-1&&p.z<=1;
     const bucket=inFrustum?fxProbe.visible:fxProbe.offscreen;
     bucket.set(key,(bucket.get(key)||0)+1);
-    if(inFrustum)active.push(key);
+    // Camera-shot matrix is diagnostic only: sample after the WebGL draw,
+    // never steer the director or modify any battle/cue event.
+    const shot=container.dataset.v5CameraShot||'unknown';
+    if(!fxProbe.byShot.has(shot))fxProbe.byShot.set(shot,{visible:new Map(),offscreen:new Map()});
+    const shotBucket=inFrustum?fxProbe.byShot.get(shot).visible:fxProbe.byShot.get(shot).offscreen;
+    shotBucket.set(key,(shotBucket.get(key)||0)+1);
+    if(inFrustum){
+     active.push(key);
+     if(!fxProbe.firstVisible.has(key))fxProbe.firstVisible.set(key,{
+      frame:fxProbe.frames,shot,
+      ndc:[p.x,p.y,p.z].map(v=>Math.round(v*1000)/1000)
+     });
+    }
    }
    // Bounded, synthetic DOM telemetry; no player IDs, XP or server writes.
    container.dataset.v5FxProbeActiveKeys=JSON.stringify([...new Set(active)].sort());
@@ -1588,6 +1604,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     container.dataset.v5FxProbeVisibleFrames=JSON.stringify(Object.fromEntries(fxProbe.visible));
     container.dataset.v5FxProbeOffscreenFrames=JSON.stringify(Object.fromEntries(fxProbe.offscreen));
     container.dataset.v5FxProbeLifecycle=JSON.stringify(Object.fromEntries(fxProbe.lifecycle));
+    container.dataset.v5FxProbeByShot=JSON.stringify(Object.fromEntries(
+     [...fxProbe.byShot].map(([shot,row])=>[shot,{
+      visible:Object.fromEntries(row.visible),offscreen:Object.fromEntries(row.offscreen)
+     }])));
+    container.dataset.v5FxProbeFirstVisible=JSON.stringify(Object.fromEntries(fxProbe.firstVisible));
    }
   }
   monitorFrames++;
