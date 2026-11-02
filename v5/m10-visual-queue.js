@@ -39,21 +39,13 @@
     // Admit a first-display canonical talent only by reclaiming a redundant
     // pending cue from an overrepresented key. Never evict a one-off key.
     // This is visual scheduling only: engine events remain untouched.
-    let victim=-1,score=0,fallback=-1,fallbackScore=0;
+    let victim=-1,score=0;
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
       const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
-      // Prefer reclaiming other redundant cues over a key that was
-      // evicted once and is still waiting for its first rendered frame.
-      // Soft priority: if no other victim exists, preserve original
-      // admission behavior rather than rejecting J08/P09 under pressure.
-      const protectedRetry=(evictedByKey.get(key)||0)>0&&!(dispatchedByKey.get(key)||0);
-      if(protectedRetry){
-       if(redundancy>fallbackScore){fallbackScore=redundancy;fallback=i}
-      }else if(redundancy>score){score=redundancy;victim=i}
+      if(redundancy>score){score=redundancy;victim=i}
      }
-     if(victim<0)victim=fallback;
     }
     if(victim<0){
      rejected++;count(rejectedByKey,entry.key);
