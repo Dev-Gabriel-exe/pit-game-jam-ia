@@ -1,6 +1,16 @@
 # V5 H.3 — Missão 10, motor experimental (checkpoint 30/10/2026)
 
 
+## Rodada 02/11/2026 — resultado dos retestes e rollback seguro (estado mais recente)
+
+**Resultado verificável:** o CI [41447094320](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41447094320) e o CI [41447556320](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41447556320) expuseram **regressão WebGL no job `queued-fx-projection-webgl`** com duas políticas experimentais de proteção de singleton. Os testes Node do escalonador passaram, mas J08/P09 não obtiveram cue no cenário principal: na última tentativa 117 eventos aceitos, 265 rejeitados, 56 despachados, 61 substituídos, e **J08/P09 rejeitados 1/1 antes do primeiro frame**. O arquivo de diagnóstico do job foi inspecionado, sem confundir PASS de testes Node com aprovação WebGL.
+
+**Decisão:** revertidas integralmente as duas alterações de política da fila, restaurando o conteúdo exato do blob aprovado `db530e38fffd4aaef63552b46b6b8d7240d87d7f` em `v5/m10-visual-queue.js` ([1074e10](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/1074e10d449899a2ae422ed2bbc37e6771f19045)) e o QA original `qa/v5-m10-visual-queue.cjs` ([ed70ab4](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/ed70ab4b6425b37e7de5e24283736573e32ec65c)). O teste de navegador **permanece melhorado** no commit `4a9a89e`: reconcilia o histórico cumulativo após a luta, eliminando o falso negativo de polling do J08 sem fingir screenshot ao vivo. O workflow também monitora mudanças de fila.
+
+**Pendente / não homologado:** a política restaurada ainda pode substituir o último cue de P09 na seed alternativa, como comprovado no [CI anterior 41438629687](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41438629687). **Não declarar a correção visual aprovada**. Próximo passo: criar teste reproduzível da sequência de admissão/evicção real da seed alternativa e projetar escalonamento com justiça temporal sem regredir a seed principal. Validar todos os cenários WebGL e M5 antes de avançar. G.2 PCs físicos não realizado; homologação humana, H.1/H.2, `main`, merge e produção bloqueados.
+
+
+
 ## Rodada 02/11/2026 — corrigir falso negativo de polling e preservar cues únicos na fila
 
 **Missão única H.3/M10:** analisar o CI [41438629687](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41438629687), que terminou com `rare-equipped-webgl` e `fx-projection-webgl` SUCCESS, mas `queued-fx-projection-webgl` FAILURE no cenário de seed alternativa. A falha NÃO foi ocultada. O artefato [m10-fx-queued-projection (13137232808)](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41438629687/artifacts/13137232808) confirma:
