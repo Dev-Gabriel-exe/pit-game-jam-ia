@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T11:11:33Z",
+  "last_completed_at": "2026-11-02T12:19:08.364Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09 project path change now invalidates all 3 peer-test declarations; actual module V8 mock-storage scenarios PASS; regression committed, native Node/CI/Chrome NOT_CONFIRMED. Verify CI, then audit M10 evidence/project/publish flow before aesthetics. No main merge.",
+  "priority": "Static QA SUCCESS on 7325dcd (run 41443587873): corrected stale M07/M08/M09 saved-project test expectations; Browser QA 41443587707 pending at checkpoint. Audit M10 project/demo/URL/evidence next. Manual GDevelop GUI, HDMI, peer and physical mobile NOT_RUN. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-SAVED-PROJECT-PEER-RETEST",
+  "last_task": "V4-CI-M07-M09-RETEST-REGRESSIONS",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3455,38 +3455,51 @@
       ],
       "tests": "V8 executed actual M09 module with fake localStorage: valid baseline, changed saved path invalidates 0/1/2, submission blocked, persisted invalidation, whitespace no-op, student retest guidance PASS. Native QA regression added but Node/CI/Chrome execution NOT_CONFIRMED. Prior commit workflow lookup empty (PR-triggered runs only). GDevelop GUI/HDMI/human peer/mobile NOT_RUN.",
       "notes": "M09 changed saved-project path no longer preserves stale observation/decision confirmations; student text preserved. Teacher rubric already requires same project. Master 54/59 unchanged, no main/production/real student data."
+    },
+    {
+      "task": "V4-CI-M07-M09-RETEST-REGRESSIONS",
+      "completed_at": "2026-11-02T12:19:08.364Z",
+      "commit": "771513eb551bdd6f82bd50681f2566261cf3bfc9",
+      "files": [
+        "qa/v3-m08-acceptance.cjs",
+        "qa/v3-m09-storage-failsafe.cjs",
+        "qa/v3-audit-alignment.cjs",
+        "qa/v3-m07-student.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "GitHub static QA 41443587873 SUCCESS at 7325dcd. Browser QA 41443587707 IN_PROGRESS at checkpoint. Human GDevelop GUI/HDMI/peer/mobile NOT_RUN.",
+      "notes": "Restored CI after previous M07/M08/M09 project-path retest code changed semantics but legacy assertions still expected stale confirmations. No production logic changes, no main merge, 54/59."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-SAVED-PROJECT-PEER-RETEST",
-    "status": "CODE_AND_REGRESSION_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-02T11:11:33Z",
-    "code_commits": [
-      "2f65796f12d36f3dd22f239e88c7cc16c6d8d01b"
-    ],
+    "task": "V4-CI-M07-M09-RETEST-REGRESSIONS",
+    "status": "STATIC_CI_PASS_BROWSER_PENDING",
+    "updated_at": "2026-11-02T12:19:08.364Z",
+    "code_commits": [],
     "regression_commits": [
-      "96413e08648cafa11cf4e2782b8c52c9d42c4787"
+      "8dedf07f3bd17872cd977ee3090112822a4869d4",
+      "01541a6be90ce170cf454c5d5d4225ceb6967f0d",
+      "cbb189b4b848db214599563332c63ed1ac013b8c",
+      "de3a1d3f754a63ac9b303092166627aa2709da33",
+      "7325dcdc8c48033ae629baae877e50b1baf32ffc"
     ],
-    "documentation_commit": "e414994ff2cc925327dba23de8305b24f12468fd",
+    "documentation_commit": "771513eb551bdd6f82bd50681f2566261cf3bfc9",
     "tests": [
       {
-        "name": "M09 actual JS module with fake localStorage (V8)",
-        "result": "PASS: baseline, project change invalidates 0/1/2, blocks submit, persistence, whitespace-only no-op, visible guidance"
+        "name": "GitHub Actions PIT Game Jam QA",
+        "result": "SUCCESS run 41443587873 on 7325dcd; M07/M08/M09/M10 and cross-mission regression executed"
       },
       {
-        "name": "M09 native Node regression",
-        "result": "COMMITTED in qa/v3-audit-alignment.cjs; execution NOT_CONFIRMED"
+        "name": "GitHub Actions Browser QA",
+        "result": "IN_PROGRESS run 41443587707 on 7325dcd; not claimed as passed"
       },
       {
-        "name": "GitHub Actions static and Chrome",
-        "result": "NOT_CONFIRMED on new SHA; connector commit-workflow lookup does not expose non-PR runs"
-      },
-      {
-        "name": "GDevelop GUI, HDMI, human peer playtest, physical mobile",
+        "name": "GDevelop GUI, HDMI, peer playtest, physical mobile",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify native Node/Chrome CI for current branch SHA; audit M10 saved project, final demonstration, URL and evidence consistency.",
+    "next": "Confirm Browser QA on 7325dcd and audit M10 project, final demonstration, route URL and evidence consistency; do not modify main.",
     "master_progress": "54/59 unchanged"
   }
 }
