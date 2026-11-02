@@ -29,6 +29,19 @@ const d=s.load('ficticio');for(const x of s.fields)d[x.id]='Resultado observado 
 assert.equal(s.validate('ficticio').ok,true);
 assert.ok(s.evidence('ficticio').includes('Negativo:'));
 assert.ok(s.render({session:'ficticio',phase:'review',status:'submitted',canSubmit:true}).includes('id="submitWork" disabled'));
+// A different saved-project path may point to a different game: old Preview
+// declarations cannot validate its start, negative test or actual conclusion.
+assert.equal(s.updateField(d,'saved','Outro projeto editável na pasta revisada'),true);
+assert.equal(d.checks.length,0,'M07 project change invalidates all three Preview checks');
+s.save('ficticio',d);
+assert.equal(s.validate('ficticio').field,'checks','M07 submission blocked until all Preview tests rerun');
+assert.match(s.render({session:'ficticio',phase:'practice',status:'draft'}),/trocar o projeto salvo exige reabrir o arquivo indicado e repetir os três testes/);
+d.checks=[0,1,2];s.save('ficticio',d);
+assert.equal(s.validate('ficticio').ok,true,'M07 accepts manual retest declarations');
+assert.equal(s.updateField(d,'saved','  '+d.saved+'  '),false,'M07 whitespace-only path edit is harmless');
+assert.equal(d.checks.length,3,'M07 equivalent path preserves confirmations');
+assert.equal(s.updateField(d,'negative','Resultado negativo diferente no Preview'),true);
+assert.equal(d.checks.length,0,'M07 changed negative observation invalidates all Preview checks');
 const app=read('v3/app.js');new vm.Script(app);
 assert.match(app,/teacherMissionSevenValidation=TEACHER&&m.n===7/);
 assert.match(app,/PIT_STUDENT_MISSION_SEVEN.validate\(q.session\)/);
