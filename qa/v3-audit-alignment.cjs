@@ -671,6 +671,7 @@ for(const [number,filename,globalName,warning,] of earlyEvidenceFixtures.map(x=>
  assert.equal(mod.updateField(d,'negative','Teste negativo repetido com outro comando'),true,'M08 negative edited');
  assert.equal(d.checks.join(','),'0,1','M08 negative edit invalidates only negative check');
  assert.equal(mod.updateField(d,'unknown','nada'),false,'M08 unknown field ignored');
+ assert(m08Validation.includes('no projeto editável reaberto e identificado'),'M08 projected teacher rubric matches student project retest');
  assert(!mod.render({session,phase:'practice',status:'draft',idea:{}}).includes('pit-private-teacher-notes'),'M08 student has no private teacher notes');
 }
 console.log('PASS AUD-02: student/teacher 10 missions wired; corrected M03/M07/M08 practice time; private M01–M03 notes collapsed; M09 custom demo; no fallback in audited routes.');
