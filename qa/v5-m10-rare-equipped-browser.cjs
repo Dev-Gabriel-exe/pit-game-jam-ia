@@ -99,6 +99,24 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
    if(sample.finished)break;
    await page.waitForTimeout(650);
   }
+  // A 650ms Playwright poll can miss a short-lived cue even when the
+  // renderer's monotonic history confirms it reached WebGL. Reconcile
+  // terminal cumulative evidence BEFORE asserting individual rare talents.
+  const terminal=await page.evaluate(()=>{
+   const d=document.querySelector('#arenaStage').dataset;
+   return {rendered:JSON.parse(d.v5TalentFxRenderedKeys||'[]'),
+    dropped:JSON.parse(d.v5TalentFxDroppedKeys||'[]')};
+  });
+  report.terminalCueHistory=Object.fromEntries(targets.map(key=>[key,{
+   rendered:terminal.rendered.includes(key),dropped:terminal.dropped.includes(key)}]));
+  for(const key of targets){
+   const row=report.rare[key];
+   row.rendered ||=terminal.rendered.includes(key);
+   row.dropped ||=terminal.dropped.includes(key);
+   if(!row.firstObservation&&(row.rendered||row.dropped))
+    row.firstObservation={classification:'terminal-cumulative-only',
+     screenshot:null,limitation:'No live screenshot was captured at the short-lived cue frame'};
+  }
   assert(await page.evaluate(()=>window.PIT_V5_ARENA_LAB.finished),
    'M10 WebGL battle did not finish in 300 seconds');
   assert.equal(Number(await stage.getAttribute('data-v5-spectators')),29);
