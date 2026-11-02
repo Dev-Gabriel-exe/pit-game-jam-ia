@@ -1,5 +1,17 @@
 # V5 H.3 — Missão 10, motor experimental (checkpoint 30/10/2026)
 
+
+## Rodada 02/11/2026 — matriz adicional de enquadramento WebGL (em validação)
+
+**Uma missão técnica:** ampliar o diagnóstico de projeção dos efeitos reais J08/P09/A07 para **duas seeds fictícias e modo de qualidade reduzida**, sem alterar renderizador, câmera, combate, orçamento de 18 efeitos, 10 talentos/20 pontos da M10, 5 talentos/10 pontos da M5, quatro KayKits, 120 talentos ou qualquer dado real.
+
+**Alteração:** `.github/workflows/v5-m10-rare-equipped-qa.yml` no commit `f6df0aaf8aa8648645ca96e886737a8ada459b20`. O job `fx-projection-webgl` agora gera a fixture alternativa e executa três cenários com `M10_FX_PROBE=1`: seed original, seed alternativa e modo low de memória sintética 2 GB. Cada execução verifica a origem dos cues, amostras dentro/fora do frustum por plano do diretor, lifecycle, conclusão com 30 GLBs, 29 espectadores e retorno à M5; os três JSONs e screenshots ficam em artefatos separados por prefixo. **Frustum de centro de mesh não comprova pixels, oclusão ou legibilidade no telão.**
+
+**CI acionado e ainda não confirmado neste checkpoint:** [M10 Rare Equipped WebGL 41430225821](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41430225821), [QA geral 41430225921](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41430225921), [Browser QA 41430225915](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41430225915). Não declarar sucesso antes da conclusão; se a nova matriz falhar, analisar logs e corrigir na mesma branch.
+
+**Próximo passo:** consolidar os JSONs por seed/qualidade e investigar o posicionamento/duração dos efeitos que ficam fora do enquadramento. G.2 nos PCs físicos **não realizado**; H.1/H.2 com alunos reais, Fase I, `main`, merge e produção continuam bloqueados.
+
+
 **Estado:** primeiro incremento técnico da Missão 10 concluído e testado em Node/CI. **Não é a arena final visual, não está ligado à V3, a turmas reais, XP ou autenticação e não foi enviado à main.** A Fase G.2 nos PCs reais continua pendente. Manter o desenvolvimento isolado até validação e aprovação.
 
 ## Incremento entregue nesta rodada
