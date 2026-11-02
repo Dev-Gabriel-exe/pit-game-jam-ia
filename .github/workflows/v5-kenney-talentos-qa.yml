@@ -12,7 +12,7 @@ on:
 permissions:
   contents: read
 jobs:
-  120-talent-assets:
+  talent-assets:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
