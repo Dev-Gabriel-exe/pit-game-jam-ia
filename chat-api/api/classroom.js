@@ -10,6 +10,8 @@ function teacher(req){const pin=String(req.headers['x-pit-teacher-pin']||'');ret
 async function student(req){const t=String(req.headers['x-pit-student-token']||'');if(!/^[a-f\d]{64}$/i.test(t))return null;const r=await pool.query('SELECT id,display_name FROM pit_students WHERE room_code=$1 AND token_hash=$2 LIMIT 1',[ROOM,createHash('sha256').update(t).digest('hex')]);return r.rows[0]||null}
 function stageOf(value){const n=Number(value);return Number.isInteger(n)&&n>=1&&n<=MAX_STAGE?n:null}
 function clean(value,max){return String(value||'').replace(/[\x00-\x1f\x7f]/g,' ').trim().slice(0,max)}
+// Evidence is structured by line across M01–M10. Never silently cut a student's answer.
+function cleanEvidence(value){return String(value||'').replace(/\r\n?/g,'\n').replace(/[\x00-\x09\x0b-\x1f\x7f]/g,' ').trim()}
 async function classroom(){const r=await pool.query('SELECT current_stage,phase,updated_at FROM pit_classroom_state WHERE room_code=$1',[ROOM]);return r.rows[0]}
 module.exports=async function handler(req,res){
  const origin=req.headers.origin;
@@ -43,11 +45,12 @@ module.exports=async function handler(req,res){
   if(req.method==='POST'&&action==='progress'){
    if(!me)return err(res,403,'Apenas alunos registram atividade.');
    const n=stageOf(req.body?.stage);if(!n)return err(res,400,'Etapa inválida.');
-   const state=await classroom();if(n>state.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
+   const state=await classroom();if(!state)return err(res,503,'Sala não inicializada.');if(n>state.current_stage)return err(res,403,'Etapa ainda não liberada pelo professor.');
    // A missão liberada permite prática e entrega, independente do quadrante exibido pelo professor.
    const status=clean(req.body?.status,20),route=clean(req.body?.route,10);
    if(!['working','submitted'].includes(status)||!['2d','3d'].includes(route))return err(res,400,'Progresso inválido.');
-   const evidence=clean(req.body?.evidence,750);
+   const evidence=cleanEvidence(req.body?.evidence);
+    if(evidence.length>750)return err(res,400,'A evidência ultrapassa 750 caracteres. Revise o texto antes de enviar; nada foi cortado.');
    if(status==='submitted'&&evidence.length<8)return err(res,400,'Descreva o que foi produzido antes de enviar.');
    const query='INSERT INTO pit_student_stages(student_id,stage,route,status,evidence,feedback,updated_at,reviewed_at) '+
      "VALUES($1,$2,$3,$4,$5,'',NOW(),NULL) "+
@@ -83,7 +86,7 @@ module.exports=async function handler(req,res){
    const r=await pool.query(
     "UPDATE pit_classroom_state SET current_stage=GREATEST(current_stage,$1),phase='practice',updated_at=NOW() WHERE room_code=$2 AND $1<=current_stage+1 RETURNING current_stage,phase,updated_at",
     [stage,ROOM]);
-   if(!r.rowCount)return err(res,409,'Libere uma missão por vez, sem pular etapas.');
+   if(!r.rowCount){const current=await classroom();if(!current)return err(res,503,'Sala não inicializada.');return err(res,409,'Libere uma missão por vez, sem pular etapas.');}
    return res.json({ok:true,state:r.rows[0]});
   }
   if(req.method==='POST'&&action==='review'){

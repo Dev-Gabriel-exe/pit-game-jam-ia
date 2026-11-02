@@ -21,7 +21,7 @@ class MockPool{
    const row=students.find(s=>s.token_hash===hash&&s.room_code===ROOM);
    return result(row?[{id:row.id,display_name:row.display_name}]:[]);
   }
-  if(q.startsWith('select current_stage,phase,updated_at from pit_classroom_state'))return result([state]);
+  if(q.startsWith('select current_stage,phase,updated_at from pit_classroom_state'))return result(state.missing?[]:[state]);
   if(q.startsWith('select stage,route,status,evidence,feedback,updated_at,reviewed_at from pit_student_stages')){
    return result(stages.filter(s=>s.student_id===params[0]).map(({student_id,...rest})=>rest));
   }
@@ -68,6 +68,7 @@ class MockPool{
    const row=students.find(s=>s.id===params[0]);if(row){row.active_stage=params[1];row.last_seen_at='2026-10-28T00:10:00Z'}return result([]);
   }
   if(q.startsWith('update pit_classroom_state set current_stage=')){
+   if(state.missing)return result([]);
    if(params[0]>state.current_stage+1)return result([]);
    state.current_stage=Math.max(state.current_stage,params[0]);state.phase='practice';return result([state]);
   }
@@ -141,6 +142,14 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  assert.equal(students.length,2);assert.equal(stages.length,1);
  console.log('PASS FUN-02: actual chat/classroom handlers, two fictional users, hashed tokens, invalid-session rejection and isolated persisted progress');
  const origin='https://dev-gabriel-exe.github.io',pin='0123456789abcdef';
+ // Missing classroom row is 503 (never accepted as student progress nor stage skip).
+ state.missing=true;
+ try {
+  assert.equal((await call(classroom,'GET','state',{},a.body.token)).statusCode,503);
+  assert.equal((await call(classroom,'POST','progress',{stage:1,route:'2d',status:'working',evidence:'Fictitious draft'},a.body.token)).statusCode,503);
+  assert.equal((await call(classroom,'POST','heartbeat',{stage:1},a.body.token)).statusCode,503);
+  assert.equal((await call(classroom,'POST','stage',{stage:2},'',origin,pin)).statusCode,503);
+ } finally {state.missing=false;}
  const invalidPin=await call(chat,'POST','teacher-login',{},'',origin,'wrong-pin');
  assert.equal(invalidPin.statusCode,403,'wrong teacher PIN rejected');
  const shortPin=await call(chat,'POST','teacher-login',{},'',origin,'123456789012345');
@@ -286,8 +295,9 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const restoreM10=await call(classroom,'POST','stage',{stage:10,phase:'review'},'',origin,pin);
  assert.equal(restoreM10.statusCode,200,'restore M10 review before existing FUN-05 size test');
  const oversized=await call(classroom,'POST','progress',{stage:10,route:'3d',status:'submitted',evidence:'X'.repeat(900)},b.body.token);
- assert.equal(oversized.statusCode,200,'long evidence is accepted after server-side sanitization');
- assert.equal(oversized.body.progress.evidence.length,750,'evidence truncated at 750 characters');
+ assert.equal(oversized.statusCode,400,'oversized evidence is rejected without truncation');
+ const bAfterOversize=await call(classroom,'GET','state',{},b.body.token);
+ assert(!bAfterOversize.body.progress.some(x=>x.stage===10),'failed submission never inserts a partial M10 record');
  console.log('PASS FUN-05: ten real handler stage cycles, drafts, 2D/3D, invalid inputs, revision/resubmission, approval, lock, 750-char limit, 3 fictional students isolated');
 
  // FUN-06 — roster/heartbeat based on the real handler and its actual SQL contract.
@@ -317,8 +327,8 @@ async function call(handler,method,action,body={},token='',origin='https://dev-g
  const bRow=teacherRoster.body.roster.find(s=>s.id===b.body.studentId);
  assert.equal(bRow.active_stage,2,'B activity is independent');
  assert.equal(bRow.approved,0,'B has no approved work');
- assert.equal(bRow.highest_stage,10,'B has evidence at M10');
- assert.equal(bRow.stages.length,3,'B has three own stage records');
+ assert.equal(bRow.highest_stage,3,'B retains only M02 submitted and M03 draft; M10 rejected');
+ assert.equal(bRow.stages.length,2,'B has two valid stage records');
  assert(!JSON.stringify(teacherRoster.body).includes(cToken),'roster never leaks raw student tokens');
  console.log('PASS FUN-06: actual roster and heartbeat handlers, three fictional students, per-stage status, approved totals, activity, teacher-only access, already-released stages cannot be relocked');
 

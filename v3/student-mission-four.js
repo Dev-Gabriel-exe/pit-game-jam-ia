@@ -23,24 +23,40 @@
  const clean=x=>String(x??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
  const blank=()=>({route:null,command:'',response:'',boundary:'',retest:'',saved:'',issue:'',checks:[]});
  const storageKey=id=>'pit_v3_missao04_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+ // In-tab fallback is not persistent: never claim a successful save after storage denial.
+ const volatileDrafts=new Map(),writeStatus=new Map();
  function load(id){
   const d=blank();
   try{
-   const source=JSON.parse(localStorage.getItem(storageKey(id))||'{}');
+   const key=storageKey(id);
+   const source=volatileDrafts.get(key)||JSON.parse(localStorage.getItem(key)||'{}');
    if(Number.isInteger(source.route)&&source.route>=0&&source.route<4)d.route=source.route;
-   for(const field of keys)if(typeof source[field]==='string')d[field]=source[field].slice(0,config[field].max);
+   for(const field of keys)if(typeof source[field]==='string')d[field]=source[field];
    d.checks=Array.isArray(source.checks)?[...new Set(source.checks.filter(x=>Number.isInteger(x)&&x>=0&&x<3))]:[];
   }catch{}
   return d;
  }
  function save(id,d){
+  const safeData=blank(),key=storageKey(id);
+  safeData.route=Number.isInteger(d.route)&&d.route>=0&&d.route<=3?d.route:null;
+  for(const name of keys)safeData[name]=String(d[name]??'');
+  safeData.checks=Array.isArray(d.checks)?[...new Set(d.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
+  volatileDrafts.set(key,safeData);
   try{
-   const safeData=blank();
-   safeData.route=Number.isInteger(d.route)&&d.route>=0&&d.route<=3?d.route:null;
-   for(const name of keys)safeData[name]=String(d[name]??'').slice(0,config[name].max);
-   safeData.checks=Array.isArray(d.checks)?[...new Set(d.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
-   localStorage.setItem(storageKey(id),JSON.stringify(safeData));
-  }catch{}
+   localStorage.setItem(key,JSON.stringify(safeData));
+   writeStatus.set(key,true);
+   return true;
+  }catch{
+   writeStatus.set(key,false);
+   return false;
+  }
+ }
+ function draftNotice(id,filled){
+  const key=storageKey(id),prefix=filled+'/6 registros e testes · ';
+  if(writeStatus.get(key)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+  if(writeStatus.get(key)===true)return prefix+'rascunho salvo neste navegador';
+  try{if(localStorage.getItem(key)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+  return prefix+'comece a preencher para salvar seu rascunho';
  }
  function suggestedRoute(ctx={}){
   const requested=ctx?.previous?.objectType==='3D Box/Modelo';
@@ -49,6 +65,28 @@
  }
  function activeRoute(ctx,d){
   return Number.isInteger(d.route)&&d.route>=0&&d.route<4?d.route:suggestedRoute(ctx);
+ }
+ function selectRoute(d,index){
+  if(!Number.isInteger(index)||index<0||index>=names.length)return false;
+  if(d.route===index)return false;
+  d.route=index;
+  // A Preview check for another control/obstacle route cannot certify this route.
+  d.checks=[];
+  return true;
+ }
+ // A manual Preview declaration is no longer valid when its underlying
+ // observation changes. Keep unrelated checks and the student's full draft.
+ function updateField(d,field,next){
+  if(!Object.prototype.hasOwnProperty.call(config,field))return false;
+  const value=String(next??''),changed=clean(d[field])!==clean(value);
+  d[field]=value;
+  if(!changed)return false;
+  const affected={
+   command:[0,2],response:[0,2],boundary:[1,2],
+   retest:[2],saved:[0,1,2],issue:[]
+  };
+  d.checks=d.checks.filter(n=>!affected[field].includes(n));
+  return true;
  }
  function routeServerType(index){return index===3?'3d':'2d'}
  function profile(ctx){
@@ -95,14 +133,16 @@
   return [rpg,platform,puzzle,three][r]||rpg;
  }
  function validity(d,ctx){
-  const result=keys.filter(k=>config[k].min>0).map(k=>clean(d[k]).length>=config[k].min);
-  result.push([0,1,2].every(n=>d.checks.includes(n)));
+  const result=keys.filter(k=>config[k].min>0).map(k=>clean(d[k]).length>=config[k].min&&String(d[k]??'').length<=config[k].max);
+  // An oversized optional diagnosis also prevents a misleading 6/6 ready state.
+  result.push([0,1,2].every(n=>d.checks.includes(n))&&String(d.issue??'').length<=config.issue.max);
   return result;
  }
  function validate(session,ctx={}){
   const d=load(session);
-  for(const k of keys)if(config[k].min>0&&clean(d[k]).length<config[k].min){
-   return {ok:false,field:k,label:'Descreva o resultado real: '+config[k].label};
+  for(const k of keys){
+   if(String(d[k]??'').length>config[k].max)return {ok:false,field:k,label:'Revise '+config[k].label+' Limite: '+config[k].max+' caracteres. O texto foi preservado.'};
+   if(config[k].min>0&&clean(d[k]).length<config[k].min)return {ok:false,field:k,label:'Descreva o resultado real: '+config[k].label};
   }
   if(![0,1,2].every(x=>d.checks.includes(x)))return {
    ok:false,field:'checks',label:'Confirme os três testes realizados no Preview: entrada, limite e repetição.'
@@ -129,26 +169,43 @@
   ].join('\n');
  }
  function parseEvidence(raw){
-  if(typeof raw!=='string'||!raw.startsWith('MISSÃO 04 — PRIMEIRO JOGÁVEL'))return null;
-  const lines=raw.split('\n'),read=pre=>{
-   const line=lines.find(x=>x.startsWith(pre));return line?line.slice(pre.length).trim():'';
-  };
-  const route=names.indexOf(read('Rota: '));
+  // Old API records with removed newlines are ambiguous: never guess fields,
+  // route or Preview results from a flattened or partial submission.
+  if(typeof raw!=='string')return null;
+  const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+  const labels=[
+   'MISSÃO 04 — PRIMEIRO JOGÁVEL','Jogo: ','Gênero: ','Projeto: ',
+   'Cena: ','Rota: ','Comando: ','Resposta: ','Limite: ',
+   'Repetição: ','Salvo em: ','Correção: '
+  ];
+  if(lines.length!==labels.length||lines[0]!==labels[0])return null;
+  for(let n=1;n<labels.length;n++){
+   if(!lines[n].startsWith(labels[n]))return null;
+  }
+  const read=n=>lines[n].slice(labels[n].length).trim();
+  // Require complete metadata and exactly one known route.
+  for(const [n,max] of [[1,45],[2,20],[3,37],[4,32]]){
+   if(!read(n)||read(n).length>max)return null;
+  }
+  const route=names.indexOf(read(5));
   if(route<0)return null;
   const d=blank();d.route=route;
-  Object.assign(d,{
-   command:read('Comando: '),response:read('Resposta: '),boundary:read('Limite: '),
-   retest:read('Repetição: '),saved:read('Salvo em: '),issue:read('Correção: ')==='Não informada'?'':read('Correção: ')
-  });
-  // Restoration of a submitted evidence reflects the three test declarations.
-  d.checks=[0,1,2];return d;
+  const indexes={command:6,response:7,boundary:8,retest:9,saved:10,issue:11};
+  for(const [key,n] of Object.entries(indexes)){
+   const value=read(n);
+   if(key==='issue'&&value==='Não informada'){d.issue='';continue}
+   if(value.length>config[key].max||clean(value).length<config[key].min)return null;
+   d[key]=value;
+  }
+  // Evidence never certifies the three manual GDevelop Preview checks.
+  return d;
  }
  function hydrate(session,raw,status){
   const d=parseEvidence(raw);
   if(!d||!d.command||!d.response)return;
   const old=load(session);
-  if(status==='revision'&&keys.some(k=>clean(old[k])))return;
-  if(status!=='submitted'&&status!=='approved'&&keys.some(k=>clean(old[k])))return;
+  // Never overwrite an existing local draft, including checked tests, with remote text.
+  if(keys.some(k=>clean(old[k]))||old.checks.length||old.route!==null)return;
   save(session,d);
  }
  function title(phase,ctx){
@@ -204,7 +261,7 @@
   const count=validity(d,ctx).filter(Boolean).length;
   return '<div class="m4s-page m4s-practice"><div class="m4s-lead"><small>◈ 36 MIN DE PRÁTICA · GDEVELOP</small>'+
    '<h3>Implemente um controle. Teste um limite.</h3><p>Continue o projeto <strong>'+esc(i.project)+'</strong>, salve a versão atualizada e descreva apenas o que realmente funcionou. O tutorial apresenta quatro rotas; <b>você precisa executar somente uma.</b></p>'+
-   '<div class="m4s-continue" role="note"><strong>COMO REALIZAR ESTA PRÁTICA</strong><p><b>Onde:</b> abra o projeto salvo na Missão 03 no GDevelop. <b>1.</b> Escolha somente uma das quatro rotas do tutorial abaixo, conforme seu gênero. <b>2.</b> Siga os cliques do tutorial para configurar um controle ou clique que produza resposta visível. <b>3.</b> Acrescente uma parede, chão, limite ou área clicável, conforme a rota. <b>4.</b> Abra o Preview e faça três testes: comando válido, tentativa contra o limite e repetição com caso inválido. <b>5.</b> Salve o projeto editável. <b>6.</b> Nesta página, descreva o comando, a resposta, o limite, a repetição e onde salvou. Marque apenas os testes que realmente fez. <b>Entrega:</b> clique em “Verificar minha entrega” e depois envie ao professor quando estiver liberado.</p><p><b>Se algo falhar:</b> confira se o comportamento foi adicionado ao objeto correto, se existe instância do obstáculo na cena e se a condição de colisão também possui uma ação de bloqueio. Não declare como concluído um Preview que não executou.</p></div>'+
+   '<div class="m4s-continue" role="note"><strong>COMO REALIZAR ESTA PRÁTICA</strong><p><b>Onde:</b> abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop (nova aba)</a> ou o aplicativo já instalado e reabra o projeto salvo na Missão 03. Abrir o link não importa nem recupera seu projeto automaticamente; se estiver sem internet, use o aplicativo instalado e o arquivo local. <b>1.</b> Escolha somente uma das quatro rotas do tutorial abaixo, conforme seu gênero. <b>2.</b> Siga os cliques do tutorial para configurar um controle ou clique que produza resposta visível. <b>3.</b> Acrescente uma parede, chão, limite ou área clicável, conforme a rota. <b>4.</b> Abra o Preview e faça três testes: comando válido, tentativa contra o limite e repetição com caso inválido. <b>5.</b> Salve o projeto editável. <b>6.</b> Nesta página, descreva o comando, a resposta, o limite, a repetição e onde salvou. Marque apenas os testes que realmente fez. Se mudar comando, resposta, limite, repetição ou projeto salvo, reconfirme no Preview os testes desmarcados; se trocar o projeto salvo, reabra o arquivo indicado e repita os três testes. <b>Entrega:</b> clique em “Verificar minha entrega” e depois envie ao professor quando estiver liberado. Confira o aviso de salvamento antes de sair; se o navegador bloquear o armazenamento, copie a ficha na revisão.</p><p><b>Se algo falhar:</b> confira se o comportamento foi adicionado ao objeto correto, se existe instância do obstáculo na cena e se a condição de colisão também possui uma ação de bloqueio. Não declare como concluído um Preview que não executou.</p></div>'+
    (locked?'<div class="m4s-locked">Entrega '+(ctx.status==='approved'?'aprovada':'enviada')+'; campos preservados para consulta.</div>':'')+
    '<div class="m4s-timebox"><span><b>12 min</b> · controle/entrada</span><span><b>15 min</b> · obstáculo ou restrição</span><span><b>9 min</b> · três testes e salvar</span></div></div>'+
    '<div class="m4s-3d-hint" id="m4s3DHint" '+(r===3?'':'hidden')+'>'+
@@ -219,7 +276,7 @@
    field('boundary',d,ctx,r,locked)+field('retest',d,ctx,r,locked)+
    field('saved',d,ctx,r,locked)+field('issue',d,ctx,r,locked)+
    tests(d,locked)+
-   '<div class="m4s-form-footer"><span id="m4sNotice" aria-live="polite">Rascunho guardado neste navegador</span>'+
+   '<div class="m4s-form-footer"><span id="m4sNotice" role="status" aria-live="polite">'+esc(draftNotice(ctx.session,count))+'</span>'+
    '<button type="button" class="m4s-action" data-m4s-nav="review">VERIFICAR MINHA ENTREGA ›</button></div></section>'+
    '<aside class="m4s-aside"><div class="m4s-aside-image"><span>JOGO EM CONSTRUÇÃO</span></div>'+
    '<div class="m4s-aside-inner"><small>◈ PROTÓTIPO · PRIMEIRO JOGÁVEL</small><h4>'+esc(i.title)+'</h4>'+
@@ -246,8 +303,9 @@
    ].map(([label,value])=>'<div><small>'+label+'</small><p>'+esc(value||'Não informado')+'</p></div>').join('')+'</div>'+
    '<label for="evidenceInput">Texto estruturado enviado ao professor</label>'+
    '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx))+'</textarea>'+
-   '<small>A evidência é uma declaração do aluno; o caderno não testa o jogo por conta própria.</small></div>'+
-   (!v.ok?'<div class="m4s-warning">'+esc(v.label)+'</div>':'')+
+   '<small>A evidência é uma declaração do aluno; o caderno não testa o jogo por conta própria.</small>'+
+    (writeStatus.get(storageKey(ctx.session))===false?'<p class="m4s-warning" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+
+   (!submitted&&!v.ok?'<div class="m4s-warning">'+esc(v.label)+'</div>':'')+
    '<div class="m4s-submit"><button type="button" class="m4s-back" data-m4s-nav="practice" '+(submitted?'disabled':'')+'>‹ REVISAR TESTES</button>'+
    '<button type="button" class="m4s-action" id="submitWork" '+(!v.ok||submitted||(!ctx.canSubmit&&!ctx.preview)?'disabled':'')+'>'+
    (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
@@ -265,17 +323,26 @@
   const d=load(ctx.session),r=activeRoute(ctx,d);
   const guide=root.querySelector('#g4Tutorial');
   const locked=['approved','submitted'].includes(ctx.status);
-  // A route switch changes only the selected tutorial. Existing answers remain intact.
+  // Route changes keep the student's text but require new Preview confirmations.
   window.PIT_GDEVELOP_M04_GUIDE?.mount(guide,{
    initialRoute:r,
    onRouteChange:(routeName,index)=>{
     if(locked)return;
-    d.route=index;save(ctx.session,d);
+    const changed=selectRoute(d,index);
+    if(changed){
+     save(ctx.session,d);
+     root.querySelectorAll('[data-m4s-check]').forEach(input=>{input.checked=false});
+    }
     const label=root.querySelector('#m4sRouteLabel');if(label)label.textContent=names[index];
     const hint3D=root.querySelector('#m4s3DHint');if(hint3D)hint3D.hidden=index!==3;
     for(const key of ['command','response','boundary','retest']){
      const el=root.querySelector('#m4s-'+key);
      if(el)el.placeholder='Ex.: '+routeHints(ctx,index)[key];
+    }
+    if(changed){
+     redraw();
+     const notice=root.querySelector('#m4sNotice');
+     if(notice)notice.textContent='⚠ Rota alterada: repita os três testes no Preview e confira se os relatos ainda correspondem à rota escolhida. '+draftNotice(ctx.session,validity(d,ctx).filter(Boolean).length);
     }
    }
   });
@@ -284,7 +351,7 @@
    const count=root.querySelector('#m4sCount'),bar=root.querySelector('#m4sBar'),notice=root.querySelector('#m4sNotice');
    if(count)count.textContent=String(done);
    if(bar)bar.style.width=done/6*100+'%';
-   if(notice)notice.textContent=done+'/6 registros e testes · rascunho guardado neste navegador';
+   if(notice)notice.textContent=draftNotice(ctx.session,done);
    root.querySelectorAll('[data-m4s-preview]').forEach(el=>{
     const k=el.dataset.m4sPreview;
     el.textContent=clean(d[k])||'Aguardando teste real';
@@ -292,7 +359,16 @@
   }
   root.querySelectorAll('[data-m4s-field]').forEach(input=>input.addEventListener('input',()=>{
    if(locked)return;
-   d[input.dataset.m4sField]=input.value;save(ctx.session,d);redraw();
+   const before=d.checks.length;
+    const changed=updateField(d,input.dataset.m4sField,input.value);
+    if(changed)root.querySelectorAll('[data-m4s-check]').forEach(check=>{
+     check.checked=d.checks.includes(Number(check.dataset.m4sCheck));
+    });
+    save(ctx.session,d);redraw();
+    if(changed&&d.checks.length<before){
+     const notice=root.querySelector('#m4sNotice');
+     if(notice)notice.textContent='⚠ Relato alterado: repita no Preview os testes desmarcados antes de enviar. '+draftNotice(ctx.session,validity(d,ctx).filter(Boolean).length);
+    }
   }));
   root.querySelectorAll('[data-m4s-check]').forEach(input=>input.addEventListener('change',()=>{
    if(locked)return;
@@ -317,6 +393,6 @@
  }
  window.PIT_STUDENT_MISSION_FOUR={
   render,mount,load,save,hydrate,validate,evidence,validity,
-  suggestedRoute,activeRoute,routeServerType,routeHints,parseEvidence
+  suggestedRoute,activeRoute,selectRoute,updateField,routeServerType,routeHints,parseEvidence
  };
 })();
