@@ -37,14 +37,20 @@ function updateField(d,id,value){
  return affected.filter(n=>old.includes(n));
 }
 function validLink(s){
- // The gd.games route is not a generic website field: prevent unrelated or spoofed hosts.
- // A game-specific path is required; the gd.games homepage is not a playable evidence link.
- // A URL pode conter nomes de parâmetros codificados ou no fragmento.
- // Nunca incluir credenciais no registro de entrega, mesmo com %XX.
+ // gd.games link must point to a game, not the homepage or an unrelated host.
+ // Decode bounded nested %-escapes to avoid laundering sensitive query/fragment keys.
+ // A link carrying credentials must never enter a student's evidence record.
  try {
-  const decoded=decodeURIComponent(s);
-  return /^https:\/\/(?:[a-z0-9-]+\.)*gd\.games\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(s)
-   && !/[?&#;](token|key|secret|password|auth|session)=/i.test(decoded)
+  if(!/^https:\/\/(?:[a-z0-9-]+\.)*gd\.games\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(s))return false;
+  let decoded=s;
+  for(let depth=0;depth<5;depth++){
+   const next=decodeURIComponent(decoded);
+   if(next===decoded)break;
+   decoded=next;
+  }
+  // Reject any still-encoded layers rather than guessing what the recipient decodes.
+  if(/%[0-9a-f]{2}/i.test(decoded))return false;
+  return !/[?&#;](?:token|access[_-]?token|id[_-]?token|api[_-]?key|key|secret|client[_-]?secret|password|passwd|auth|authorization|session|session[_-]?id|credential|jwt|signature|sig)=/i.test(decoded)
    && !decoded.includes('@');
  } catch { return false; }
 }
