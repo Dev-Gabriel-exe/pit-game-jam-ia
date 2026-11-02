@@ -3,29 +3,106 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const clean=s=>String(s??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
 const routes=['local','web','gd'];
-const fields=[['pitch','Público e experiência do jogo',12,85],['mechanic','Mecânica principal demonstrada',12,75],['rule','Regra SE/ENTÃO e condição final',12,75],['demo','Percurso demonstrado no Preview',12,75],['test','Observação do playtest e correção',12,75],['next','Limitação e próximo incremento',12,65],['project','Local do projeto editável e assets',8,80],['access','Como o professor acessa o jogo',12,80]].map(([id,label,min,max])=>({id,label,min,max}));
+const fields=[['pitch','Público e experiência do jogo',12,85],['mechanic','Mecânica principal demonstrada',12,75],['rule','Regra SE/ENTÃO e condição final',12,75],['demo','Percurso demonstrado no Preview',12,75],['test','Observação e decisão após o playtest',12,75],['next','Limitação e próximo incremento',12,65],['project','Local do projeto editável e assets',8,80],['access','Como o professor acessa o jogo',12,80]].map(([id,label,min,max])=>({id,label,min,max}));
+const fieldHints={
+  "pitch": "Descreva para quem é o jogo e qual experiência a pessoa terá. Use o público e a ideia que você definiu no início da oficina, sem inventar avaliação.",
+  "mechanic": "Identifique o controle usado, o objeto ou personagem afetado e o feedback visível quando a mecânica funciona no Preview.",
+  "rule": "Escreva a condição SE e a ação ENTÃO implementadas no GDevelop; indique a condição observável de vitória ou encerramento.",
+  "demo": "Registre a sequência que você realmente executou: cena inicial, controle, regra, feedback e final. Se algo falhou, descreva o ocorrido.",
+  "test": "Resuma a observação real da Missão 09 e sua decisão: correção com reteste, backlog justificado ou nenhuma mudança após teste sem falha.",
+  "next": "Diga uma limitação que ainda existe no protótipo e uma melhoria concreta que você implementaria depois, sem afirmar que já a realizou.",
+  "project": "Indique pasta ou local da cópia editável, como reabrir no GDevelop e onde estão os assets. Não registre senha, conta ou dados pessoais."
+};
 const blank=()=>({route:'local',checks:[],...Object.fromEntries(fields.map(f=>[f.id,'']))});
 const key=s=>'pit_v3_m10_'+String(s||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
-function load(s){const d=blank();try{const x=JSON.parse(localStorage.getItem(key(s))||'{}');if(routes.includes(x.route))d.route=x.route;for(const f of fields)if(typeof x[f.id]==='string')d[f.id]=x[f.id].slice(0,f.max);if(Array.isArray(x.checks))d.checks=[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]}catch{}return d}
-function save(s,d){const x=blank();x.route=routes.includes(d.route)?d.route:'local';for(const f of fields)x[f.id]=clean(d[f.id]).slice(0,f.max);x.checks=[...new Set((d.checks||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<3))];try{localStorage.setItem(key(s),JSON.stringify(x));return true}catch{return false}}
-function validLink(s){return /^https?:\/\/[^\s/@:?#]+\.[^\s/@:?#]+(?:[/:?#][^\s]*)?$/i.test(s)&&!/[?&](token|key|secret|password|auth|session)=/i.test(s)&&!s.includes('@')}
-function validate(s){const d=load(s);for(const f of fields)if(clean(d[f.id]).length<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};if(d.route==='gd'&&!validLink(d.access))return {ok:false,field:'access',label:'Informe link HTTP(S) sem credenciais, ou escolha Preview local.'};if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview.'};return {ok:true,label:'Ficha pronta para revisão humana.'}}
+const volatileDrafts=new Map(),writeStatus=new Map(); // Apenas na aba atual; não substitui salvamento permanente.
+function load(s){const d=blank();try{const k=key(s),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');if(routes.includes(x.route))d.route=x.route;for(const f of fields)if(typeof x[f.id]==='string')d[f.id]=x[f.id];if(Array.isArray(x.checks))d.checks=[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]}catch{}return d}
+function save(s,d){const x=blank();x.route=routes.includes(d.route)?d.route:'local';for(const f of fields)x[f.id]=clean(d[f.id]);x.checks=[...new Set((d.checks||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<3))];const k=key(s);volatileDrafts.set(k,x);try{localStorage.setItem(k,JSON.stringify(x));writeStatus.set(k,true);return true}catch{writeStatus.set(k,false);return false}}
+function draftNotice(session){const k=key(session);if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. O rascunho permanece apenas nesta aba: copie a ficha de lançamento antes de sair.';if(writeStatus.get(k)===true)return 'Rascunho salvo neste navegador. Não enviado.';try{if(localStorage.getItem(k)!==null)return 'Rascunho salvo neste navegador. Não enviado.'}catch{}return 'Rascunho local. Não enviado.'}
+// Switching delivery methods changes what was actually verified. Preserve only the editable-project check.
+function switchRoute(d,route){if(!routes.includes(route)||d.route===route)return false;d.route=route;d.access='';d.checks=(Array.isArray(d.checks)?d.checks:[]).filter(n=>n===0);return true}
+// As confirmações manuais pertencem ao projeto e à demonstração efetivamente conferidos.
+// Formatação equivalente (espaços/quebras de linha) não muda a evidência nem exige reteste.
+function updateField(d,id,value){
+ const f=fields.find(x=>x.id===id);
+ if(!f||typeof value!=='string')return [];
+ const before=clean(d[id]),after=clean(value);
+ d[id]=value;
+ if(before===after)return [];
+ // Toda alteração substantiva exige reconferir privacidade/licenças da ficha;
+ // mecânica/regra/demo também exigem nova confirmação da execução.
+ const affected=id==='project'?[0,1,2]:id==='access'?[1,2]:['mechanic','rule','demo'].includes(id)?[1,2]:[2];
+ const old=Array.isArray(d.checks)?d.checks:[];
+ d.checks=old.filter(n=>!affected.includes(n));
+ return affected.filter(n=>old.includes(n));
+}
+function validLink(s){
+ // gd.games link must point to a game, not the homepage or an unrelated host.
+ // Decode bounded nested %-escapes to avoid laundering sensitive query/fragment keys.
+ // A link carrying credentials must never enter a student's evidence record.
+ try {
+  if(!/^https:\/\/(?:[a-z0-9-]+\.)*gd\.games\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(s))return false;
+  let decoded=s;
+  for(let depth=0;depth<5;depth++){
+   const next=decodeURIComponent(decoded);
+   if(next===decoded)break;
+   decoded=next;
+  }
+  // Reject any still-encoded layers rather than guessing what the recipient decodes.
+  if(/%[0-9a-f]{2}/i.test(decoded))return false;
+  return !/[?&#;](?:token|access[_-]?token|id[_-]?token|api[_-]?key|key|secret|client[_-]?secret|password|passwd|auth|authorization|session|session[_-]?id|credential|jwt|signature|sig)=/i.test(decoded)
+   && !decoded.includes('@');
+ } catch { return false; }
+}
+function validate(s){const d=load(s);for(const f of fields){const size=clean(d[f.id]).length;if(size>f.max)return {ok:false,field:f.id,label:'O campo "'+f.label+'" excede '+f.max+' caracteres ('+size+'). Revise sem perder seu rascunho.'};if(size<f.min)return {ok:false,field:f.id,label:'Preencha "'+f.label+'" com pelo menos '+f.min+' caracteres.'};}if(d.route==='gd'&&!validLink(d.access))return {ok:false,field:'access',label:'Informe a URL HTTPS de seu jogo em gd.games (não a página inicial nem outro site), sem credenciais; se não tiver, escolha Preview local.'};if(d.checks.length!==3)return {ok:false,field:'checks',label:'Confirme os três testes reais no Preview.'};return {ok:true,label:'Ficha pronta para revisão humana.'}}
 const names={pitch:'Experiência',mechanic:'Mecânica',rule:'Regra',demo:'Demo',test:'Playtest',next:'Próximo',project:'Projeto',access:'Acesso'};
+const accessHelp=route=>({
+ local:'Preview local: informe onde está o projeto editável e como o professor poderá assistir à execução no GDevelop. Não invente URL pública.',
+ web:'Exportação Web: informe a pasta da build, como executá-la localmente (servidor estático, se necessário) e onde está o projeto editável.',
+ gd:'gd.games: cole a URL HTTPS específica do seu jogo, que você abriu e testou sem login. Não cole a página inicial, links de outros sites ou credenciais. Para uma exportação Web em outra hospedagem, escolha a rota Exportação Web; se falhar, use Preview local.'
+}[route]||'Descreva como o professor terá acesso ao jogo.');
+const accessPlaceholder=route=>({
+ local:'Ex.: laboratório, projeto salvo na pasta Jogos; abrir no GDevelop e iniciar Preview',
+ web:'Ex.: pasta exportacao-web, executar em servidor local; projeto editável na pasta Jogos',
+ gd:'https://gd.games/seu-jogo'
+}[route]||'Descreva o acesso ao jogo');
 function evidence(s){const d=load(s);return ['M10 | '+d.route,...fields.map(f=>names[f.id]+': '+clean(d[f.id]))].join('\n')}
-function parseEvidence(s){if(typeof s!=='string'||!s.startsWith('M10 | '))return null;const d=blank(),lines=s.split(/\r?\n/),route=lines[0].slice(6).trim();if(routes.includes(route))d.route=route;const inv=Object.fromEntries(Object.entries(names).map(([k,v])=>[v,k]));for(const line of lines.slice(1)){const n=line.indexOf(': ');if(n<0)continue;const id=inv[line.slice(0,n)],f=fields.find(x=>x.id===id);if(f)d[id]=line.slice(n+2).slice(0,f.max)}return d}
-function hydrate(s,e,status){const d=parseEvidence(e);if(!d)return;if(fields.some(f=>load(s)[f.id].trim()))return;d.checks=['submitted','approved'].includes(status)?[0,1,2]:[];save(s,d)}
+function parseEvidence(s){
+ // Evidências legadas com LF removido são ambíguas: não adivinhar rota, campos ou testes.
+ if(typeof s!=='string'||s.length>750)return null;
+ const lines=s.replace(/\r\n?/g,'\n').split('\n');
+ if(lines.length!==fields.length+1||!/^M10 \\| (local|web|gd)$/.test(lines[0]))return null;
+ const d=blank();d.route=lines[0].slice(6);
+ for(let i=0;i<fields.length;i++){
+  const f=fields[i],prefix=names[f.id]+': ',line=lines[i+1];
+  if(!line.startsWith(prefix))return null;
+  const value=line.slice(prefix.length);
+  if(value!==clean(value)||value.length<f.min||value.length>f.max)return null;
+  d[f.id]=value;
+ }
+ if(d.route==='gd'&&!validLink(d.access))return null;
+ // A ficha não comprova Preview, reabertura do projeto ou privacidade.
+ return d;
+}
+function hydrate(s,e,status){
+ const d=parseEvidence(e);if(!d)return;
+ const current=load(s);
+ // Preservar também rascunhos com somente checkboxes marcados.
+ if(volatileDrafts.has(key(s))||fields.some(f=>current[f.id].trim())||current.checks.length)return;
+ d.checks=[];save(s,d);
+}
 function profile(c){const i=c.idea||{};return {title:clean(i.title)||'seu jogo',genre:clean(i.genre)||'gênero autoral'}}
-function render(c){const d=load(c.session),p=profile(c),locked=['submitted','approved'].includes(c.status),v=validate(c.session);
+function render(c){const d=load(c.session),p=profile(c),locked=['submitted','approved'].includes(c.status),v=locked?{ok:true}:validate(c.session);
 const head='<header><small>MISSÃO 10 / 10 · LANÇAMENTO · 30 MIN</small><h2>Seu jogo merece ser jogado.</h2><p>'+esc(p.title)+' · '+esc(p.genre)+'</p></header>';
-const brief='<section class="m10s-brief"><h3>Uma demonstração técnica de até dois minutos.</h3><p>Mostre início, mecânica, regra, conclusão e playtest. Salve o projeto editável; link público é opcional, sem pagamento.</p><button type="button" data-m10s-nav="practice">PREPARAR LANÇAMENTO ›</button></section>';
+const brief='<section class="m10s-brief"><h3>Uma demonstração técnica de até dois minutos.</h3><p>Mostre início, mecânica, regra, conclusão e playtest. Em turma grande, apresente em dupla; somente alguns jogos serão destacados no telão, mas todos devem demonstrar e entregar sua ficha individual. Salve o projeto editável; link público é opcional, sem pagamento.</p><button type="button" data-m10s-nav="practice">PREPARAR LANÇAMENTO ›</button></section>';
 const guide=window.PIT_GDEVELOP_M10_GUIDE?window.PIT_GDEVELOP_M10_GUIDE.render(routes.indexOf(d.route)):'<p>Guia indisponível. Use Preview local.</p>';
-const form='<section class="m10s-practice"><h3>18 minutos · demonstração e registro</h3>'+guide+'<div class="m10s-log" role="note"><strong>PASSO A PASSO · PREPARE A DEMONSTRAÇÃO FINAL</strong><p><b>1.</b> Reabra no GDevelop o projeto editável com cenas, eventos e assets. <b>2.</b> Escolha no guia acima uma forma de acesso: Preview local, exportação Web ou compartilhamento permitido pelo GDevelop. Publicar na internet não é obrigatório. <b>3.</b> Prepare uma demonstração de até dois minutos: objetivo, controle, regra SE/ENTÃO, conclusão e melhoria após o playtest. <b>4.</b> Execute o jogo do início ao final e confirme que o professor conseguirá abrir o projeto ou acompanhar a demonstração. <b>5.</b> Confira licenças, atribuições e ausência de dados pessoais, senhas e tokens. <b>6.</b> Preencha os oito campos, marque somente verificações reais e clique “Conferir entrega” antes de enviar.</p><p><b>Se o link não funcionar:</b> escolha Preview local, sem inventar URL pública. Se o projeto abrir sem assets, confira os recursos vinculados e salve uma cópia editável completa. A ficha não publica o jogo nem concede aprovação automática.</p></div><div class="m10s-log"><p>Não inclua PINs, e-mails, tokens ou dados de colegas.</p>'+fields.map(f=>'<label for="m10s-'+f.id+'"><b>'+esc(f.label)+'</b><textarea id="m10s-'+f.id+'" data-m10s-field="'+f.id+'" maxlength="'+f.max+'" rows="2" '+(locked?'disabled':'')+'>'+esc(d[f.id])+'</textarea></label>').join('')+'<div class="m10s-checks"><b>DECLARAÇÃO MANUAL</b>'+['Reabri projeto editável e assets.','Executei mecânica e final no Preview/build.','Conferi privacidade, licença e acesso.'].map((x,i)=>'<label><input type="checkbox" data-m10s-check="'+i+'" '+(d.checks.includes(i)?'checked':'')+' '+(locked?'disabled':'')+'>'+esc(x)+'</label>').join('')+'</div><p id="m10sStatus" role="status">Rascunho local; não enviado.</p><button type="button" data-m10s-nav="review">CONFERIR ENTREGA ›</button></div></section>';
-const review='<section class="m10s-review"><h3>O professor conseguirá jogar?</h3><div class="m10s-summary">'+fields.map(f=>'<p><b>'+esc(f.label)+'</b> '+esc(d[f.id]||'Não preenchido')+'</p>').join('')+'</div><label for="evidenceInput">Ficha de lançamento</label><textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(c.session))+'</textarea>'+(!v.ok?'<p class="m10s-warning">'+esc(v.label)+'</p>':'')+(c.feedback?'<p>'+esc(c.feedback)+'</p>':'')+'<button type="button" data-m10s-nav="practice" '+(locked?'disabled':'')+'>‹ CORRIGIR</button><button type="button" id="submitWork" '+(!v.ok||locked||(!c.canSubmit&&!c.preview)?'disabled':'')+'>'+(c.preview?'SIMULAR ENTREGA':'ENVIAR AO PROFESSOR')+'</button><small>O envio não aprova automaticamente.</small></section>';
+const form='<section class="m10s-practice"><h3>18 minutos · demonstração e registro</h3><p class="m10s-demo-rotation">Se houver 30 alunos: 15 duplas demonstram em paralelo por 2 minutos cada (4 minutos para ambos); até seis jogos vão ao telão por 2 minutos (12 minutos), com 2 minutos de transição. Mesmo sem ir ao telão, mostre seu jogo ao colega e entregue a ficha individual. O professor só aprova depois de verificar a evidência real.</p><div class="m10s-editor-handoff"><strong>ONDE COMEÇAR · SEU PROJETO DA MISSÃO 09</strong><p>Abra <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">o editor gratuito do GDevelop</a> em outra aba e carregue manualmente o projeto editável salvo na Missão 09. Este link não abre nem importa seu jogo automaticamente. Se estiver sem internet, use o aplicativo GDevelop já instalado e sua cópia local, incluindo os assets. Depois volte ao caderno para registrar os testes e a entrega.</p></div>'+guide+'<div class="m10s-log" role="note"><strong>PASSO A PASSO · PREPARE A DEMONSTRAÇÃO FINAL</strong><p><b>1.</b> Reabra no GDevelop o projeto editável com cenas, eventos e assets. <b>2.</b> Escolha no guia acima uma forma de acesso: Preview local, exportação Web ou compartilhamento permitido pelo GDevelop. Publicar na internet não é obrigatório. <b>3.</b> Prepare uma demonstração de até dois minutos: objetivo, controle, regra SE/ENTÃO, conclusão e decisão após o playtest (correção retestada, backlog ou ausência de falha). <b>4.</b> Execute o jogo do início ao final e confirme que o professor conseguirá abrir o projeto ou acompanhar a demonstração. <b>5.</b> Confira licenças, atribuições e ausência de dados pessoais, senhas e tokens. <b>6.</b> Preencha os oito campos, marque somente verificações reais e clique “Conferir entrega” antes de enviar.</p><p><b>Se o link não funcionar:</b> escolha Preview local, sem inventar URL pública. Se o projeto abrir sem assets, confira os recursos vinculados e salve uma cópia editável completa. A ficha não publica o jogo nem concede aprovação automática. <b>Ao trocar a forma de entrega, informe novamente o acesso e refaça as conferências de execução e privacidade.</b></p></div><div class="m10s-log"><p>Não inclua PINs, e-mails, tokens ou dados de colegas.</p>'+fields.map(f=>'<label for="m10s-'+f.id+'"><b>'+esc(f.label)+'</b>'+'<small id="'+(f.id==='access'?'m10sAccessHelp':'m10s-help-'+f.id)+'" class="m10s-field-hint">'+esc(f.id==='access'?accessHelp(d.route):fieldHints[f.id])+'</small>'+'<textarea id="m10s-'+f.id+'" data-m10s-field="'+f.id+'" maxlength="'+f.max+'" rows="2" aria-describedby="'+(f.id==='access'?'m10sAccessHelp':'m10s-help-'+f.id)+'" '+(f.id==='access'?'placeholder="'+esc(accessPlaceholder(d.route))+'" ':'')+(locked?'disabled':'')+'>'+esc(d[f.id])+'</textarea><small class="m10s-field-limit" data-m10s-limit="'+f.id+'" role="status">'+(clean(d[f.id]).length>f.max?'⚠ '+esc(f.label)+' excede '+f.max+' caracteres ('+clean(d[f.id]).length+'). Revise antes de enviar.':'')+'</small></label>').join('')+'<div class="m10s-checks"><b>DECLARAÇÃO MANUAL</b>'+['Reabri projeto editável e assets.','Executei mecânica e final no Preview/build.','Conferi privacidade, licença e acesso.'].map((x,i)=>'<label><input type="checkbox" data-m10s-check="'+i+'" '+(d.checks.includes(i)?'checked':'')+' '+(locked?'disabled':'')+'>'+esc(x)+'</label>').join('')+'</div><p id="m10sStatus" role="status">'+esc(draftNotice(c.session))+'</p><button type="button" data-m10s-nav="review">CONFERIR ENTREGA ›</button></div></section>';
+const review='<section class="m10s-review"><h3>O professor conseguirá jogar?</h3><div class="m10s-summary">'+fields.map(f=>'<p><b>'+esc(f.label)+'</b> '+esc(d[f.id]||'Não preenchido')+'</p>').join('')+'</div><label for="evidenceInput">Ficha de lançamento</label><textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(c.session))+'</textarea>'+(writeStatus.get(key(c.session))===false?'<p class="m10s-warning">⚠ Salvamento permanente indisponível. Copie a ficha de lançamento acima antes de sair desta aba.</p>':'')+(!v.ok?'<p class="m10s-warning">'+esc(v.label)+'</p>':'')+(c.feedback?'<p>'+esc(c.feedback)+'</p>':'')+'<button type="button" data-m10s-nav="practice" '+(locked?'disabled':'')+'>‹ CORRIGIR</button><button type="button" id="submitWork" '+(!v.ok||locked||(!c.canSubmit&&!c.preview)?'disabled':'')+'>'+(c.preview?'SIMULAR ENTREGA':'ENVIAR AO PROFESSOR')+'</button><small>O envio não aprova automaticamente.</small></section>';
 return '<section class="m10s-root" id="m10sRoot">'+head+(c.phase==='practice'?form:c.phase==='review'?review:brief)+(window.PIT_FINAL_ACHIEVEMENT?window.PIT_FINAL_ACHIEVEMENT.render(c.approvedStages,c.preview):'')+'</section>'}
 function mount(c){const root=document.querySelector('#m10sRoot');if(!root)return;const d=load(c.session),locked=['submitted','approved'].includes(c.status);
-if(c.phase==='practice'&&window.PIT_GDEVELOP_M10_GUIDE){const g=root.querySelector('#g10Guide');window.PIT_GDEVELOP_M10_GUIDE.mount(g,{initialRoute:routes.indexOf(d.route),onRouteChange:id=>{if(!locked){d.route=id;save(c.session,d)}}});if(locked)g?.querySelectorAll('button').forEach(b=>b.disabled=true)}
-root.querySelectorAll('[data-m10s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;d[el.dataset.m10sField]=el.value;const ok=save(c.session,d),status=root.querySelector('#m10sStatus');if(status)status.textContent=ok?'Rascunho salvo, não enviado.':'Falha ao salvar.'}));
-root.querySelectorAll('[data-m10s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m10sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(c.session,d)}));
+if(c.phase==='practice'&&window.PIT_GDEVELOP_M10_GUIDE){const g=root.querySelector('#g10Guide');window.PIT_GDEVELOP_M10_GUIDE.mount(g,{initialRoute:routes.indexOf(d.route),onRouteChange:id=>{if(!locked){const changed=switchRoute(d,id),hint=root.querySelector('#m10sAccessHelp'),access=root.querySelector('#m10s-access');if(changed){const ok=save(c.session,d);if(access)access.value='';root.querySelectorAll('[data-m10s-check]').forEach(el=>{if(Number(el.dataset.m10sCheck)>0)el.checked=false});const status=root.querySelector('#m10sStatus');if(status)status.textContent='Forma de entrega alterada: informe o novo acesso e repita as conferências de execução e privacidade. '+draftNotice(c.session)}if(hint)hint.textContent=accessHelp(id);if(access)access.placeholder=accessPlaceholder(id)}}});if(locked)g?.querySelectorAll('button').forEach(b=>b.disabled=true)}
+root.querySelectorAll('[data-m10s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const invalidated=updateField(d,el.dataset.m10sField,el.value);save(c.session,d);const f=fields.find(x=>x.id===el.dataset.m10sField),limit=root.querySelector('[data-m10s-limit="'+el.dataset.m10sField+'"]');if(f&&limit){const size=clean(d[f.id]).length;limit.textContent=size>f.max?'⚠ '+f.label+' excede '+f.max+' caracteres ('+size+'). Revise antes de enviar.':'';}if(invalidated.length)root.querySelectorAll('[data-m10s-check]').forEach(box=>{box.checked=d.checks.includes(Number(box.dataset.m10sCheck))});const status=root.querySelector('#m10sStatus');if(status)status.textContent=(invalidated.length?'Campo alterado: repita as conferências desmarcadas antes de enviar. ':'')+draftNotice(c.session)}));
+root.querySelectorAll('[data-m10s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m10sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(c.session,d);const status=root.querySelector('#m10sStatus');if(status)status.textContent=draftNotice(c.session)}));
 root.querySelectorAll('[data-m10s-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.m10sNav==='practice'){c.onPhase('practice');return}const v=validate(c.session);if(!v.ok){c.onMessage(v.label);root.querySelector(v.field==='checks'?'[data-m10s-check]':'#m10s-'+v.field)?.focus();return}c.onPhase('review')}))}
-window.PIT_STUDENT_MISSION_TEN={fields,routes,load,save,validLink,validate,evidence,parseEvidence,hydrate,profile,render,mount};
+window.PIT_STUDENT_MISSION_TEN={fields,fieldHints,routes,accessHelp,accessPlaceholder,load,save,draftNotice,switchRoute,updateField,validLink,validate,evidence,parseEvidence,hydrate,profile,render,mount};
 })();

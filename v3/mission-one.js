@@ -12,37 +12,67 @@ const FIELDS=[
 const GENRES=['','Aventura','RPG','Terror','Plataforma','Corrida','Puzzle','Narrativa interativa','Exploração','Outro'];
 const escapeHTML=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=()=>({genre:'',title:'',hero:'',action:'',objective:'',victory:'',feedback:''});
+// Keep work usable in this tab if the browser denies persistent storage.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function key(session){return 'pit_v3_missao01_rascunho_'+String(session||'preview').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80);}
 function load(session){
+ const id=key(session);
  try{
-  const data=JSON.parse(localStorage.getItem(key(session))||'{}');
+  const data=volatileDrafts.get(id)||JSON.parse(localStorage.getItem(id)||'{}');
   const base=initial();for(const field of ['genre',...FIELDS.map(f=>f.id)])if(typeof data[field]==='string')base[field]=data[field].slice(0,110);
   return base;
  }catch{return initial();}
 }
-function save(session,draft){try{localStorage.setItem(key(session),JSON.stringify(draft))}catch{}}
+function save(session,draft){
+ const id=key(session);
+ volatileDrafts.set(id,{...draft});
+ try{localStorage.setItem(id,JSON.stringify(draft));writeStatus.set(id,true);return true;}
+ catch{writeStatus.set(id,false);return false;}
+}
+function draftNotice(session,completed){
+ const id=key(session),prefix='✧ '+completed+'/3 fragmentos definidos · ';
+ if(writeStatus.get(id)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(id)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(id)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
+}
+function parseEvidence(raw){
+ // Evidencias legadas achatadas nao permitem reconstruir campos com seguranca.
+ if(typeof raw!=='string')return null;
+ const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+ const labels=['Jogo: ','Gênero: ','Ação principal: ','Objetivo do jogador: ','Condição de conclusão: ','Feedback da conquista: '];
+ if(lines.length!==labels.length+1||lines[0]!=='MISSÃO 01 — O CHAMADO')return null;
+ const values=[];
+ for(let i=0;i<labels.length;i++){
+  if(!lines[i+1].startsWith(labels[i]))return null;
+  const value=lines[i+1].slice(labels[i].length);
+  if(value!==value.trim())return null;
+  values.push(value);
+ }
+ const [title,pair,action,objective,victory,feedback]=values;
+ const separator='; Protagonista: ',split=pair.indexOf(separator);
+ if(split<=0||pair.indexOf(separator,split+separator.length)!==-1)return null;
+ const genre=pair.slice(0,split),hero=pair.slice(split+separator.length);
+ const parsed={genre,title,hero,action,objective,victory,feedback};
+ if(!GENRES.includes(genre)||!genre)return null;
+ if(FIELDS.some(field=>parsed[field.id].trim().length<field.min||parsed[field.id].length>field.max))return null;
+ return parsed;
+}
 function hydrate(session,serverEvidence,status){
- if(!serverEvidence||typeof serverEvidence!=='string'||!serverEvidence.startsWith('MISSÃO 01 — O CHAMADO'))return;
- const stored=load(session),exists=Object.values(stored).some(x=>!!x);
- // A entrega aprovada/enviada é a versão oficial, não um rascunho antigo.
- if(exists&&status!=='approved'&&status!=='submitted')return;
- const lines=serverEvidence.split('\n'),parsed=initial();
- const take=prefix=>{const line=lines.find(x=>x.startsWith(prefix));return line?line.slice(prefix.length).trim():''};
- parsed.title=take('Jogo: ');
- const pair=take('Gênero: ');
- const split=pair.indexOf('; Protagonista: ');
- if(split>=0){parsed.genre=pair.slice(0,split);parsed.hero=pair.slice(split+'; Protagonista: '.length)}
- parsed.action=take('Ação principal: ');
- parsed.objective=take('Objetivo do jogador: ');
- parsed.victory=take('Condição de conclusão: ');
- parsed.feedback=take('Feedback da conquista: ');
- if(parsed.title&&parsed.genre&&parsed.action)save(session,parsed);
+ const parsed=parseEvidence(serverEvidence);if(!parsed)return;
+ // Rascunhos locais prevalecem, mesmo se a entrega remota ja foi aprovada.
+ if(Object.values(load(session)).some(Boolean))return;
+ save(session,parsed);
 }
 function stepProgress(draft){
+ const ready=id=>{
+  const field=FIELDS.find(f=>f.id===id),value=draft[id]||'';
+  return value.trim().length>=field.min&&value.length<=field.max;
+ };
  return [
-  !!(draft.genre&&draft.title.trim().length>=3&&draft.hero.trim().length>=3),
-  !!(draft.action.trim().length>=3&&draft.objective.trim().length>=5),
-  !!(draft.victory.trim().length>=5&&draft.feedback.trim().length>=5)
+  !!(draft.genre&&GENRES.includes(draft.genre)&&ready('title')&&ready('hero')),
+  ready('action')&&ready('objective'),
+  ready('victory')&&ready('feedback')
  ];
 }
 function validate(session){
@@ -50,6 +80,7 @@ function validate(session){
  if(!GENRES.includes(d.genre)||!d.genre)return {ok:false,field:'genre',label:'Escolha o gênero do jogo.'};
  for(const field of FIELDS){
   if(d[field.id].trim().length<field.min)return {ok:false,field:field.id,label:'Preencha "'+field.label+'" com pelo menos '+field.min+' caracteres.'};
+  if(d[field.id].length>field.max)return {ok:false,field:field.id,label:'Reduza "'+field.label+'" para no máximo '+field.max+' caracteres.'};
  }
  return {ok:true,field:null,label:'Pronta para entregar.'};
 }
@@ -105,11 +136,11 @@ function designFlow(d){
  '<span class="qo-cycle-step-number">'+num+'</span><div><strong>'+label+'</strong><p data-q-flow="'+id+'">'+escapeHTML(d[id].trim()||empty)+'</p></div></div>').join('')+
  '</div><p class="qo-cycle-explain">Durante a partida, o jogador tenta, observa o resultado e decide novamente. A condição e o feedback acima definem quando esse ciclo termina.</p></section>';
 }
-function progressMarkup(d){
+function progressMarkup(d,session){
  const steps=stepProgress(d),done=steps.filter(Boolean).length;
  return '<div class="qo-fragments" aria-label="Progresso do planejamento">'+
  steps.map((yes,i)=>'<div class="qo-fragment '+(yes?'complete':'')+'"><span>'+(yes?'✦':'0'+(i+1))+'</span><small>'+['IDENTIDADE','MECÂNICA','CONCLUSÃO'][i]+'</small></div>').join('')+
- '</div><div class="qo-save-notice" id="qoSaveNotice" aria-live="polite">✧ '+done+'/3 fragmentos definidos · rascunho salvo neste navegador</div>';
+ '</div><div class="qo-save-notice" id="qoSaveNotice" role="status" aria-live="polite">'+escapeHTML(draftNotice(session,done))+'</div>';
 }
 function intro(d){
  const idea=chosenExample(d),personal=d.genre&&idea?'<div class="qo-genre-intro">✧ SEU UNIVERSO: '+escapeHTML(d.genre.toUpperCase())+' · '+escapeHTML(idea.intro)+'</div>':'';
@@ -128,7 +159,7 @@ function building(session,status,preview){
  const d=load(session),disabled=status==='approved'||status==='submitted',idea=chosenExample(d);
  return '<div class="qo-page qo-build"><div class="qo-lead"><span class="qo-crest">✦ O CHAMADO · SUA OFICINA</span>'+
  '<h3>Escreva o destino do <em>seu universo.</em></h3><p>As escolhas abaixo serão o primeiro registro do seu jogo. Não é preciso programar nesta missão.</p>'+
- '<div class="qo-tip" role="note"><strong>COMO FAZER · MISSÃO 01</strong><p><b>Onde:</b> nesta página, nos campos dos três fragmentos abaixo. <b>Como:</b> escolha um gênero, digite o título e o protagonista, descreva a ação e o objetivo, depois defina quando termina e qual sinal aparece ao vencer. <b>Exemplo:</b> coletar 3 cristais → abrir a porta → mostrar “Vitória!”. <b>Como conferir:</b> veja a prévia da sua ficha à direita e confirme que os 3 fragmentos estão completos. <b>O que entregar:</b> clique em “Ver minha ficha de missão”, revise o texto gerado e depois em “Enviar ao professor” quando a prática estiver liberada.</p><p>Se não conseguir avançar, procure o campo indicado na mensagem de validação. Seu rascunho é salvo neste navegador; não o confunda com a entrega ao professor.</p></div>'+
+ '<div class="qo-tip" role="note"><strong>COMO FAZER · MISSÃO 01</strong><p><b>Onde:</b> nesta página, nos campos dos três fragmentos abaixo. <b>Como:</b> escolha um gênero, digite o título e o protagonista, descreva a ação e o objetivo, depois defina quando termina e qual sinal aparece ao vencer. <b>Exemplo:</b> coletar 3 cristais → abrir a porta → mostrar “Vitória!”. <b>Como conferir:</b> veja a prévia da sua ficha à direita e confirme que os 3 fragmentos estão completos. <b>O que entregar:</b> clique em “Ver minha ficha de missão”, revise o texto gerado e depois em “Enviar ao professor” quando a prática estiver liberada.</p><p>Se não conseguir avançar, procure o campo indicado na mensagem de validação. O sistema tenta salvar seu rascunho neste navegador: confira o aviso de salvamento abaixo dos campos. Se houver falha, copie sua ficha antes de sair. Rascunho não é entrega ao professor.</p></div>'+
  (disabled?'<div class="qo-lock-note">Sua entrega já foi '+(status==='approved'?'aprovada':'enviada para avaliação')+'. O registro permanece visível, sem novas edições.</div>':'')+
  '</div><div class="qo-builder-grid"><div class="qo-fields">'+
  '<section class="qo-section">'+heading('01','♜','O mundo e seu protagonista','Escolha o tipo de jogo e quem vive a aventura.')+
@@ -140,7 +171,7 @@ function building(session,status,preview){
  '<section class="qo-section">'+heading('03','✦','A conquista final','Um bom jogo deixa claro quando a missão terminou.')+
  field('victory','O que precisa acontecer para terminar?','Defina uma condição que outra pessoa possa testar.',d,'Ex.: Abrir a porta com os três fragmentos',disabled)+
  field('feedback','Como o jogador percebe a conquista?','Uma mensagem, mudança de cena, cor ou som já resolve.',d,'Ex.: Surge a mensagem “Castelo libertado!”',disabled)+'</section>'+
- '<div class="qo-builder-bottom">'+progressMarkup(d)+
+ '<div class="qo-builder-bottom">'+progressMarkup(d,session)+
  '<button class="qo-action" type="button" data-q-action="review">VER MINHA FICHA DE MISSÃO <span aria-hidden="true">›</span></button></div>'+
  '</div><div class="qo-preview-column">'+worldPreview(d)+designFlow(d)+
  '<div class="qo-tip"><span id="qoGenreLabel">✧ EXEMPLO DE '+escapeHTML((d.genre||'AVENTURA').toUpperCase())+'</span><p id="qoGenreExample">'+escapeHTML(idea?idea.intro:'Em um jogo de aventura, uma personagem pode coletar itens para abrir uma saída.')+'</p><p class="qo-inspiration-note">Exemplo de referência, não uma resposta pronta. Você pode criar outra mecânica.</p></div>'+
@@ -159,7 +190,7 @@ function delivery(session,status,feedback,preview,canSubmit){
  '<section class="qo-record"><div class="qo-record-head"><span>◈ REGISTRO DO CRIADOR</span><small>GERADO A PARTIR DAS SUAS ESCOLHAS</small></div>'+
  '<label for="evidenceInput" class="qo-record-label">Texto que será enviado ao professor</label>'+
  '<textarea id="evidenceInput" maxlength="750" readonly>'+escapeHTML(evidence(session))+'</textarea>'+
- '<p class="qo-record-help">A ficha é montada automaticamente. Para corrigir algo, volte à construção.</p></section>'+
+ '<p class="qo-record-help">A ficha é montada automaticamente. Para corrigir algo, volte à construção.</p>'+ (writeStatus.get(key(session))===false?'<p class="qo-validation" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</section>'+
  '<div class="qo-delivery-buttons">'+
  '<button class="qo-secondary" type="button" data-q-action="back" '+(submitted?'disabled':'')+'>‹ REVISAR MINHAS ESCOLHAS</button>'+
  '<button id="submitWork" class="qo-action" type="button" '+(!v.ok||submitted||!canSubmit?'disabled':'')+'>'+(preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
@@ -205,7 +236,7 @@ function update(root,session){
  if(a)a.textContent=d.action||'[FAZER ALGO]';if(b)b.textContent=d.objective||'[ALCANÇAR O OBJETIVO]';
  const flags=stepProgress(d),count=flags.filter(Boolean).length;
  root.querySelectorAll('.qo-fragment').forEach((node,i)=>{node.classList.toggle('complete',flags[i]);node.querySelector('span').textContent=flags[i]?'✦':'0'+(i+1)});
- const notice=root.querySelector('#qoSaveNotice');if(notice)notice.textContent='✧ '+count+'/3 fragmentos definidos · rascunho salvo neste navegador';
+ const notice=root.querySelector('#qoSaveNotice');if(notice)notice.textContent=draftNotice(session,count);
 }
 function mount(ctx){
  const root=document.getElementById('qOne');if(!root)return;
@@ -227,5 +258,5 @@ function mount(ctx){
  }));
  update(root,ctx.session);
 }
-window.PIT_MISSION_ONE={render,mount,validate,evidence,load,hydrate,stepProgress};
+window.PIT_MISSION_ONE={render,mount,validate,evidence,load,hydrate,parseEvidence,stepProgress};
 })();

@@ -22,12 +22,14 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const clean=x=>String(x??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
 const fresh=()=>({route:null,checks:[],...Object.fromEntries(fields.map(f=>[f.key,'']))});
 const key=id=>'pit_v3_m05_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+// Volatile fallback is isolated per session and lives only in this tab.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function load(id){
  const d=fresh();
  try{
-  const x=JSON.parse(localStorage.getItem(key(id))||'{}');
+  const k=key(id),x=volatileDrafts.get(k)||JSON.parse(localStorage.getItem(k)||'{}');
   if(Number.isInteger(x.route)&&x.route>=0&&x.route<3)d.route=x.route;
-  for(const f of fields)if(typeof x[f.key]==='string')d[f.key]=x[f.key].slice(0,f.max);
+  for(const f of fields)if(typeof x[f.key]==='string')d[f.key]=x[f.key];
   d.checks=Array.isArray(x.checks)?[...new Set(x.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
  }catch{}
  return d;
@@ -35,10 +37,18 @@ function load(id){
 function save(id,raw){
  const d=fresh();
  d.route=Number.isInteger(raw.route)&&raw.route>=0&&raw.route<3?raw.route:null;
- for(const f of fields)d[f.key]=String(raw[f.key]??'').slice(0,f.max);
+ for(const f of fields)d[f.key]=String(raw[f.key]??'');
  d.checks=Array.isArray(raw.checks)?[...new Set(raw.checks.filter(n=>Number.isInteger(n)&&n>=0&&n<3))]:[];
- try{localStorage.setItem(key(id),JSON.stringify(d))}catch{}
- return d;
+ const k=key(id);volatileDrafts.set(k,d);
+ try{localStorage.setItem(k,JSON.stringify(d));writeStatus.set(k,true);return true;}
+ catch{writeStatus.set(k,false);return false;}
+}
+function draftNotice(id,completed){
+ const k=key(id),prefix=completed+'/8 critérios registrados · ';
+ if(writeStatus.get(k)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(k)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(k)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
 }
 function suggestedRoute(ctx={}){
  const m4=ctx.playable||{};
@@ -89,22 +99,49 @@ function suggestion(ctx,route){
  };
 }
 function validity(d){
- return fields.filter(f=>f.min>0).map(f=>clean(d[f.key]).length>=f.min)
-  .concat([0,1,2].every(n=>d.checks.includes(n)));
+ return fields.filter(f=>f.min>0).map(f=>clean(d[f.key]).length>=f.min&&String(d[f.key]??'').length<=f.max)
+  // An oversized optional diagnosis must not appear as a complete 8/8 report.
+  .concat([0,1,2].every(n=>d.checks.includes(n))&&fields.filter(f=>f.min===0).every(f=>String(d[f.key]??'').length<=f.max));
 }
 function validate(session){
  const d=load(session);
- for(const f of fields.filter(f=>f.min>0))if(clean(d[f.key]).length<f.min)
-  return {ok:false,field:f.key,label:'Preencha com observações reais: '+f.label};
+ for(const f of fields){
+  if(String(d[f.key]??'').length>f.max)
+   return {ok:false,field:f.key,label:'Revise '+f.label+' Limite: '+f.max+' caracteres. O texto foi preservado.'};
+  if(f.min>0&&clean(d[f.key]).length<f.min)
+   return {ok:false,field:f.key,label:'Preencha com observações reais: '+f.label};
+ }
  if(![0,1,2].every(n=>d.checks.includes(n)))
   return {ok:false,field:'checks',label:'Execute e confirme os três testes no Preview: positivo, negativo e repetição.'};
  return {ok:true,label:'Evidência pronta para análise do professor.'};
 }
+function selectRoute(d,index){
+ if(!Number.isInteger(index)||index<0||index>=routes.length||d.route===index)return false;
+ d.route=index;
+ // A different tutorial route requires new positive, negative and repeat tests.
+ d.checks=[];
+ return true;
+}
+// Confirmações manuais pertencem à versão atual da regra e dos resultados.
+// Mudanças somente de espaços não invalidam testes; o rascunho é preservado.
+const retestByField={
+ condition:[0,1,2],action:[0,1,2],variable:[0,1,2],
+ positive:[0],negative:[1,2],feedback:[0],saved:[0,1,2],issue:[2]
+};
+function updateField(d,id,value){
+ if(!fields.some(f=>f.key===id))return [];
+ const next=String(value??''),changed=clean(d[id])!==clean(next);
+ d[id]=next;
+ if(!changed)return [];
+ const affected=retestByField[id]||[];
+ d.checks=(d.checks||[]).filter(n=>!affected.includes(n));
+ return affected;
+}
 function evidence(session,ctx={}){
  const d=load(session),p=profile(ctx),r=activeRoute(ctx,d);
  return [
-  'MISSÃO 05 — A PRIMEIRA REGRA',
-  'Jogo: '+clean(p.title).slice(0,32),
+  'M05 — A PRIMEIRA REGRA',
+  'Jogo: '+clean(p.title).slice(0,55),
   'Gênero: '+clean(p.genre).slice(0,19),
   'Projeto: '+clean(p.project).slice(0,34),
   'Cena: '+clean(p.scene).slice(0,29),
@@ -120,24 +157,40 @@ function evidence(session,ctx={}){
  ].join('\n');
 }
 function parseEvidence(raw){
- if(typeof raw!=='string'||!raw.startsWith('MISSÃO 05 — A PRIMEIRA REGRA'))return null;
- const lines=raw.split('\n'),get=label=>{
-  const hit=lines.find(l=>l.startsWith(label));return hit?hit.slice(label.length).trim():'';
- };
- const route=routes.findIndex(r=>r.short===get('Trilha: '));
- if(route<0)return null;
- const d=fresh();d.route=route;
- for(const [f,label] of [['condition','Condição: '],['action','Ação: '],['variable','Variável: '],
-  ['positive','Positivo: '],['negative','Negativo: '],['feedback','Feedback: '],
-  ['saved','Salvo em: '],['issue','Correção: ']]){
-  const val=get(label);d[f]=val==='Não informada'&&f==='issue'?'':val.slice(0,fields.find(x=>x.key===f).max);
+ // Legacy API records sometimes lost line breaks. Never infer a student's
+ // rule, Preview results or selected route from flattened/partial evidence.
+ if(typeof raw!=='string'||raw.length>750)return null;
+ const lines=raw.split('\n');
+ if(lines.length!==14||!['M05 — A PRIMEIRA REGRA','MISSÃO 05 — A PRIMEIRA REGRA'].includes(lines[0]))return null;
+ const metadata=[['Jogo: ',55],['Gênero: ',19],['Projeto: ',34],['Cena: ',29]];
+ for(let i=0;i<metadata.length;i++){
+  const [label,max]=metadata[i],line=lines[i+1];
+  if(!line.startsWith(label))return null;
+  const value=line.slice(label.length);
+  if(!value.trim()||value.length>max)return null;
  }
- d.checks=[0,1,2];return d;
+ if(!lines[5].startsWith('Trilha: '))return null;
+ const route=routes.findIndex(r=>r.short===lines[5].slice('Trilha: '.length));
+ if(route<0)return null;
+ const labels=['Condição: ','Ação: ','Variável: ','Positivo: ','Negativo: ',
+  'Feedback: ','Salvo em: ','Correção: '];
+ const d=fresh();d.route=route;
+ for(let i=0;i<fields.length;i++){
+  const f=fields[i],label=labels[i],line=lines[i+6];
+  if(!line.startsWith(label))return null;
+  const value=line.slice(label.length);
+  const normalized=f.key==='issue'&&value==='Não informada'?'':value;
+  if(value!==value.trim()||normalized.length>f.max||
+    (f.min>0&&clean(normalized).length<f.min))return null;
+  d[f.key]=normalized;
+ }
+ // Remote evidence cannot attest to Preview tests; never restore checkboxes.
+ return d;
 }
 function hydrate(session,raw,status){
  const d=parseEvidence(raw);if(!d||!d.condition||!d.positive)return;
- const old=load(session),hasLocal=fields.some(f=>clean(old[f.key]));
- if(status==='submitted'||status==='approved'){save(session,d);return}
+ const old=load(session),hasLocal=fields.some(f=>clean(old[f.key]))||old.checks.length||old.route!==null;
+ // Preserve local answers and manually checked tests even when the server record is approved.
  if(!hasLocal)save(session,d);
 }
 function heading(ctx,phase){
@@ -198,6 +251,7 @@ function practice(ctx){
   '<p class="m5s-warning">Abra a aba Events do GDevelop, configure uma condição, uma ação e teste no Preview.</p>';
  return '<section class="m5s-practice"><div class="m5s-leadtext"><small>◈ OFICINA · 24 MINUTOS</small><h3>Construa uma regra real no seu projeto.</h3>'+
  '<p>Reabra <strong>'+esc(p.project)+'</strong> na cena <strong>'+esc(p.scene)+'</strong>. Escolha uma das três rotas ou adapte o exemplo à sua mecânica. Não é necessário construir todas.</p>'+
+ '<div class="m5s-context" role="note"><strong>ABRIR O EDITOR DO GDEVELOP</strong><p><a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">Abrir o editor gratuito do GDevelop em outra aba</a>. No editor, abra manualmente o mesmo projeto salvo na Missão 04; este botão não abre nem importa seu jogo automaticamente. Se estiver sem internet, use o aplicativo GDevelop já instalado e abra o projeto local. O caderno continua nesta aba para consultar o tutorial e registrar seus testes.</p></div>'+ 
  '<div class="m5s-context" role="note"><strong>PASSO A PASSO · UMA REGRA NO SEU JOGO</strong><p><b>Onde:</b> reabra o projeto no GDevelop e entre na aba Events (Eventos) da cena. <b>1.</b> Escolha apenas uma rota do tutorial abaixo. <b>2.</b> Adicione um evento e uma condição SE, como colisão ou clique válido. <b>3.</b> No mesmo evento, adicione uma ação ENTÃO que altere uma variável e produza um feedback visível. <b>4.</b> Abra o Preview e teste quando a condição é verdadeira, quando é falsa e ao repetir a ação. <b>5.</b> Salve o projeto editável. <b>6.</b> Preencha nesta página Condição, Ação, Variável, Positivo, Negativo, Feedback e Salvo em; marque apenas testes realmente executados. <b>7.</b> Clique “Conferir minha evidência” e envie quando a prática estiver liberada.</p><p><b>Se a pontuação duplicar:</b> confira se o evento dispara a cada quadro; remova o item coletado ou controle o estado. Se nada acontecer, confira se condição, objeto e ação estão no mesmo evento. O rascunho no navegador não é a entrega ao professor.</p></div>'+ 
  '<div class="m5s-timebox"><span><b>8 min</b> · evento + condição</span><span><b>8 min</b> · variável + feedback</span><span><b>8 min</b> · testes + evidência</span></div>'+
  (locked?'<div class="m5s-warning">A entrega está '+(ctx.status==='approved'?'aprovada':'enviada')+'. Os registros foram bloqueados para preservar o envio.</div>':'')+
@@ -212,7 +266,7 @@ function practice(ctx){
  '<div class="m5s-lab"><section class="m5s-form"><small>◈ CADERNO DE ENGENHARIA · REGISTRO AUTORAL</small><h3>O que você implementou e comprovou?</h3>'+
  '<p>Os exemplos nos campos são apenas pistas; cada resposta descreve o que aconteceu no SEU jogo, não no exemplo da página.</p>'+
  fields.map(f=>input(f,d,ctx,r,locked)).join('')+checks(d,locked)+
- '<div class="m5s-form-footer"><span id="m5sStatus" aria-live="polite">Rascunho salvo neste navegador.</span>'+
+ '<div class="m5s-form-footer"><span id="m5sStatus" aria-live="polite" role="status">'+esc(draftNotice(ctx.session,completed))+'</span>'+
  '<button type="button" class="m5s-primary" data-m5s-nav="review">CONFERIR MINHA EVIDÊNCIA ›</button></div></section>'+
  '<aside class="m5s-aside"><div class="m5s-aside-art"><span>✦ A PRIMEIRA REGRA</span></div>'+
  '<div class="m5s-aside-content"><small>PAINEL DO PROTÓTIPO</small><h4>'+esc(p.title)+'</h4>'+
@@ -236,8 +290,9 @@ function review(ctx){
  '<div class="m5s-summary-grid">'+summary.map(([label,value])=>'<div><small>'+esc(label)+'</small><p>'+esc(value)+'</p></div>').join('')+'</div>'+
  '<label for="evidenceInput">Evidência estruturada para o professor</label>'+
  '<textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx))+'</textarea>'+
- '<small>Esta evidência é um relato. Se necessário, demonstre o resultado no Preview.</small></div>'+
- (!v.ok?'<div class="m5s-warning">'+esc(v.label)+'</div>':'')+
+ '<small>Esta evidência é um relato. Se necessário, demonstre o resultado no Preview.</small>'+ 
+ (writeStatus.get(key(ctx.session))===false?'<p class="m5s-warning" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+
+ (!fixed&&!v.ok?'<div class="m5s-warning">'+esc(v.label)+'</div>':'')+
  '<div class="m5s-actions"><button type="button" class="m5s-back" data-m5s-nav="practice" '+(fixed?'disabled':'')+'>‹ CORRIGIR REGISTRO</button>'+
  '<button type="button" class="m5s-primary" id="submitWork" '+(!v.ok||fixed||(!ctx.canSubmit&&!ctx.preview)?'disabled':'')+'>'+
  (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
@@ -256,7 +311,12 @@ function mount(ctx){
  window.PIT_GDEVELOP_M05_GUIDE?.mount(root.querySelector('#m5Guide'),{
   initialRoute:activeRoute(ctx,d),onRouteChange:(id,index)=>{
    if(locked)return;
-   d.route=index;save(ctx.session,d);
+   if(!selectRoute(d,index))return;
+   save(ctx.session,d);
+   root.querySelectorAll('[data-m5s-check]').forEach(box=>{box.checked=false;});
+   redraw();
+   const notice=root.querySelector('#m5sStatus');
+   if(notice)notice.textContent='Trilha alterada: refaça os três testes no Preview e revise seus relatos antes de enviar.';
    const name=root.querySelector('#m5sRouteName');if(name)name.textContent=routes[index].label;
    const box=root.querySelector('#m5s3DNote');if(box)box.hidden=index!==2;
    for(const f of fields){
@@ -272,14 +332,23 @@ function mount(ctx){
   const c=root.querySelector('#m5sComplete'),g=root.querySelector('#m5sGauge'),s=root.querySelector('#m5sStatus');
   if(c)c.textContent=String(count);
   if(g)g.style.width=(count/8*100)+'%';
-  if(s)s.textContent=count+'/8 critérios preenchidos · rascunho salvo neste navegador';
+  if(s)s.textContent=draftNotice(ctx.session,count);
   root.querySelectorAll('[data-m5s-preview]').forEach(el=>{
    el.textContent=clean(d[el.dataset.m5sPreview])||'Aguardando resultado real';
   });
  }
  root.querySelectorAll('[data-m5s-input]').forEach(input=>input.addEventListener('input',()=>{
   if(locked)return;
-  d[input.dataset.m5sInput]=input.value;save(ctx.session,d);redraw();
+  const affected=updateField(d,input.dataset.m5sInput,input.value);
+  save(ctx.session,d);
+  if(affected.length)root.querySelectorAll('[data-m5s-check]').forEach(box=>{
+   if(affected.includes(Number(box.dataset.m5sCheck)))box.checked=false;
+  });
+  redraw();
+  if(affected.length){
+   const notice=root.querySelector('#m5sStatus');
+   if(notice)notice.textContent='Regra ou relato alterado: repita os testes afetados no Preview antes de enviar. '+draftNotice(ctx.session,validity(d).filter(Boolean).length);
+  }
  }));
  root.querySelectorAll('[data-m5s-check]').forEach(box=>box.addEventListener('change',()=>{
   if(locked)return;
@@ -299,5 +368,5 @@ function mount(ctx){
  }));
  redraw();
 }
-window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,evidence,parseEvidence,hydrate,render,mount};
+window.PIT_STUDENT_MISSION_FIVE={fields,routes,load,save,draftNotice,suggestedRoute,activeRoute,routeType,profile,suggestion,validity,validate,selectRoute,updateField,evidence,parseEvidence,hydrate,render,mount};
 })();

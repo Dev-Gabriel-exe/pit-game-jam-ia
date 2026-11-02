@@ -3,48 +3,100 @@
 (function(){
 'use strict';
 const FIELDS=[
- {key:'project',max:70,min:3,label:'Nome real do projeto no GDevelop',hint:'Nome que aparece na lista de projetos; deve permitir reencontrar o arquivo.'},
- {key:'scene',max:65,min:3,label:'Nome da cena inicial',hint:'Confira o nome da cena aberta no gerenciador.'},
- {key:'object',max:65,min:2,label:'Nome do primeiro objeto',hint:'Confira o nome na lista Objects. Use letras, números ou _ sem espaços; ex.: Personagem, Caixa3D.'},
- {key:'source',max:75,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Asset Store do GDevelop, 3D Box nativo ou desenho próprio. Registre a origem real.'},
- {key:'preview',max:180,min:15,label:'O que apareceu quando abriu o Preview?',hint:'Descreva o que você viu na execução, inclusive se precisou corrigir algo.'},
- {key:'saved',max:105,min:6,label:'Onde o projeto foi salvo?',hint:'Informe se foi em arquivo/pasta local ou na nuvem, com nome ou caminho que consiga localizar.'},
- {key:'fix',max:105,min:0,label:'Qual problema apareceu e como resolveu? (opcional)',hint:'Se não houve falha, deixe em branco ou explique uma escolha que fez.'}
+ {key:'project',max:60,min:3,label:'Nome real do projeto no GDevelop',hint:'Nome que aparece na lista de projetos; deve permitir reencontrar o arquivo.'},
+ {key:'scene',max:53,min:3,label:'Nome da cena inicial',hint:'Confira o nome da cena aberta no gerenciador.'},
+ {key:'object',max:53,min:2,label:'Nome do primeiro objeto',hint:'Confira o nome na lista Objects. Use letras, números ou _ sem espaços; ex.: Personagem, Caixa3D.'},
+ {key:'source',max:69,min:3,label:'Como criou ou encontrou esse asset?',hint:'Ex.: Gemini + PNG, Asset Store do GDevelop, 3D Box nativo ou desenho próprio. Registre a origem real.'},
+ {key:'preview',max:140,min:15,label:'O que apareceu quando abriu o Preview?',hint:'Descreva o que você viu na execução, inclusive se precisou corrigir algo.'},
+ {key:'saved',max:85,min:6,label:'Onde o projeto foi salvo?',hint:'Informe se foi em arquivo/pasta local ou na nuvem, com nome ou caminho que consiga localizar.'},
+ {key:'fix',max:75,min:0,label:'Qual problema apareceu e como resolveu? (opcional)',hint:'Se não houve falha, deixe em branco ou explique uma escolha que fez.'}
 ];
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clean=s=>String(s??'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
 const blank=()=>({project:'',scene:'',object:'',source:'',preview:'',saved:'',fix:'',objectType:'2D Sprite',checks:[]});
 const key=id=>'pit_v3_missao03_rascunho_'+String(id||'preview').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80);
+// Keep in-tab changes when storage is denied, without pretending they are persistent.
+// Preserve legacy draft values intact even when they exceed current evidence budgets.
+const volatileDrafts=new Map(),writeStatus=new Map();
 function load(id){
- try{const o=JSON.parse(localStorage.getItem(key(id))||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key].slice(0,f.max);
+ try{const storageKey=key(id),o=volatileDrafts.get(storageKey)||JSON.parse(localStorage.getItem(storageKey)||'{}'),d=blank();for(const f of FIELDS)if(typeof o[f.key]==='string')d[f.key]=o[f.key];
  if(['2D Sprite','3D Box/Modelo'].includes(o.objectType))d.objectType=o.objectType;
  d.checks=Array.isArray(o.checks)?o.checks.filter(x=>[0,1,2].includes(x)):[];
  return d;
  }catch{return blank()}
 }
-function save(id,d){try{localStorage.setItem(key(id),JSON.stringify(d))}catch{}}
+function save(id,d){
+ const storageKey=key(id);
+ volatileDrafts.set(storageKey,{...d,checks:[...(d.checks||[])]});
+ try{localStorage.setItem(storageKey,JSON.stringify(d));writeStatus.set(storageKey,true);return true;}
+ catch{writeStatus.set(storageKey,false);return false;}
+}
+function draftNotice(id,filled){
+ const storageKey=key(id),prefix=filled+'/7 registros e verificações · ';
+ if(writeStatus.get(storageKey)===false)return '⚠ Não foi possível salvar neste navegador. Copie sua ficha antes de sair ou tente outro navegador.';
+ if(writeStatus.get(storageKey)===true)return prefix+'rascunho salvo neste navegador';
+ try{if(localStorage.getItem(storageKey)!==null)return prefix+'rascunho salvo neste navegador';}catch{}
+ return prefix+'comece a preencher para salvar seu rascunho';
+}
 function parseEvidence(raw){
- if(typeof raw!=='string'||!raw.startsWith('MISSÃO 03 — LIGAR O MOTOR'))return null;
- const lines=raw.split('\n');
- const find=p=>{const l=lines.find(s=>s.startsWith(p));return l?l.slice(p.length).trim():''};
- const d=blank();d.project=find('Projeto: ');d.scene=find('Cena: ');d.object=find('Objeto: ');
- const type=find('Tipo: ');if(['2D Sprite','3D Box/Modelo'].includes(type))d.objectType=type;
- d.source=find('Recurso: ');d.preview=find('Preview: ');d.saved=find('Salvo em: ');d.fix=find('Diagnóstico: ');
- d.checks=[0,1,2];return d;
+ // Legacy API snapshots without line breaks are ambiguous: never guess field values.
+ if(typeof raw!=='string')return null;
+ const lines=raw.replace(/\r\n?/g,'\n').split('\n');
+ const labels=['Jogo: ','Gênero: ','Projeto: ','Cena: ','Objeto: ','Tipo: ','Recurso: ','Preview: ','Salvo em: ','Diagnóstico: '];
+ if(lines.length!==labels.length+1||lines[0]!=='MISSÃO 03 — LIGAR O MOTOR')return null;
+ const values=[];
+ for(let i=0;i<labels.length;i++){
+  if(!lines[i+1].startsWith(labels[i]))return null;
+  const value=lines[i+1].slice(labels[i].length);
+  if(value!==value.trim())return null;
+  values.push(value);
+ }
+ const [title,genre,project,scene,object,type,source,preview,saved,fix]=values;
+ if(title.length>55||genre.length>25||!['2D Sprite','3D Box/Modelo'].includes(type))return null;
+ const d={...blank(),project,scene,object,objectType:type,source,preview,saved,
+  fix:fix==='Nenhum problema relatado'?'':fix};
+ if(FIELDS.some(f=>clean(d[f.key]).length<f.min||d[f.key].length>f.max))return null;
+ // Evidence text never attests to manual Preview checks; they remain unchecked.
+ return d;
 }
 function hydrate(id,raw,status){
- const d=parseEvidence(raw);if(!d||!d.project||!d.scene)return;
- if(Object.values(load(id)).some(v=>typeof v==='string'&&v.trim())&&!['approved','submitted'].includes(status))return;
+ const d=parseEvidence(raw);if(!d)return;
+ const old=load(id);
+ // A local draft, including a selected 3D route or checkbox-only progress, wins.
+ if(FIELDS.some(f=>clean(old[f.key]))||old.checks.length||old.objectType!==blank().objectType)return;
  save(id,d);
 }
+// A previous manual confirmation must not certify a changed project or Preview result.
+const affectedChecks={
+ project:[0,1,2],scene:[0,1],object:[0,1],source:[0,1],
+ preview:[1],saved:[2],fix:[1]
+};
+function updateField(d,name,value){
+ if(!Object.prototype.hasOwnProperty.call(affectedChecks,name))return false;
+ const previous=clean(d[name]),next=clean(value);
+ d[name]=String(value??'');
+ if(previous===next)return false;
+ d.checks=(d.checks||[]).filter(n=>!affectedChecks[name].includes(n));
+ return true;
+}
+function selectObjectType(d,type){
+ if(!['2D Sprite','3D Box/Modelo'].includes(type)||d.objectType===type)return false;
+ d.objectType=type;
+ // A different object type changes the project being attested: recheck scene, Preview and saved copy.
+  d.checks=[];
+ return true;
+}
 function validity(d){
- const vals=FIELDS.filter(f=>f.min).map(f=>clean(d[f.key]).length>=f.min);
+ const vals=FIELDS.filter(f=>f.min).map(f=>clean(d[f.key]).length>=f.min&&String(d[f.key]??'').length<=f.max);
  const checks=[0,1,2].every(x=>d.checks.includes(x));
  return [...vals,checks];
 }
 function validate(id){
  const d=load(id);
- for(const f of FIELDS)if(clean(d[f.key]).length<f.min)return {ok:false,field:f.key,label:'Descreva com precisão: '+f.label};
+ for(const f of FIELDS){
+  if(clean(d[f.key]).length<f.min)return {ok:false,field:f.key,label:'Descreva com precisão: '+f.label};
+  if(String(d[f.key]??'').length>f.max)return {ok:false,field:f.key,label:'O campo "'+f.label+'" aceita no máximo '+f.max+' caracteres. Revise seu rascunho sem perder o texto original.'};
+ }
  if(![0,1,2].every(n=>d.checks.includes(n)))return {ok:false,field:'checks',label:'Confirme os três testes realizados no GDevelop (cena, Preview e salvamento).'};
  return {ok:true,field:null,label:'Registro técnico pronto para enviar.'};
 }
@@ -129,7 +181,7 @@ function practice(ctx){
  ['03','PREVIEW E SALVAR','Execute o jogo, observe o resultado e salve o projeto editável.','preview','saved','fix']
  ];
  return '<div class="m3-page m3-work"><div class="m3-lead"><span>◈ PRIMEIRO PROJETO REAL</span><h3>Construa o começo do seu jogo.</h3>'+
- '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo é ver o objeto no Preview, não movimentá-lo.</p><p>Este caderno mostra o tutorial e registra sua evidência; ele não abre nem cria o jogo automaticamente. Abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop em outra aba</a> e siga as etapas abaixo. Se a internet falhar, use o aplicativo instalado, se disponível.</p><div class="m3-time-plan"><span><b>4 min</b> · projeto e cena</span><span><b>8 min</b> · um asset</span><span><b>6 min</b> · Preview e salvar</span></div></div>'+
+ '<p>Use as imagens do tutorial e execute as ações no GDevelop. O objetivo é ver o objeto no Preview, não movimentá-lo. Confira o aviso de salvamento abaixo do formulário: se o navegador bloquear o armazenamento, copie sua ficha antes de sair.</p><p>Este caderno mostra o tutorial e registra sua evidência; ele não abre nem cria o jogo automaticamente. Abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop em outra aba</a> e siga as etapas abaixo. Se a internet falhar, use o aplicativo instalado, se disponível.</p><div class="m3-time-plan"><span><b>4 min</b> · projeto e cena</span><span><b>8 min</b> · um asset</span><span><b>6 min</b> · Preview e salvar</span></div></div>'+
  (locked?'<div class="m3-notice">Esta entrega está '+(ctx.status==='approved'?'aprovada':'em análise')+'. O registro permanece disponível para leitura.</div>':'')+
  (window.PIT_GDEVELOP_FIRST_RUN?window.PIT_GDEVELOP_FIRST_RUN.render('student'):'<p>Projeto vazio → cena → objeto → Preview → salvar.</p>')+
  '<div class="m3-asset-bridge"><strong>✦ UM ASSET VISUAL, DUAS ROTAS</strong><p>Use Gemini ou o Asset Store integrado ao GDevelop. Não perca tempo com animação, música ou vídeo agora: Flow, Suno e ElevenLabs ficam para a Missão 06. O primeiro recurso deve aparecer no Preview.</p></div>'+
@@ -141,7 +193,7 @@ function practice(ctx){
  '</div></div>':'')+
  keys.map(k=>field(FIELDS.find(f=>f.key===k),d,i,locked)).join('')+
  (num==='03'?checklist(d,locked):'')+'</section>').join('')+
- '<div class="m3-controls"><span id="m3Notice" aria-live="polite">Rascunho guardado neste navegador</span>'+
+ '<div class="m3-controls"><span id="m3Notice" role="status" aria-live="polite">'+esc(draftNotice(ctx.session,validity(d).filter(Boolean).length))+'</span>'+ 
  '<button type="button" class="m3-primary" data-m3-action="review">CONFERIR MEU PRIMEIRO PROJETO ›</button></div></div>'+
  '<aside class="m3-status">'+
  '<div class="m3-status-art"><span>SEU PRIMEIRO PREVIEW</span></div>'+
@@ -162,8 +214,9 @@ function review(ctx){
  '<div class="m3-review-grid">'+[['PROJETO',d.project],['CENA',d.scene],['OBJETO',d.object],['RECURSO / ORIGEM',d.source],['TIPO',d.objectType],['PREVIEW',d.preview],['SALVAMENTO',d.saved],['DIAGNÓSTICO',d.fix||'Nenhum problema relatado']].map(([label,v])=>
  '<div><span>'+label+'</span><p>'+esc(v||'Não informado')+'</p></div>').join('')+'</div>'+
  '<label for="evidenceInput">Evidência enviada para avaliação</label><textarea id="evidenceInput" readonly maxlength="750">'+esc(evidence(ctx.session,ctx.idea))+'</textarea>'+
- '<small>O professor receberá somente os dados declarados aqui. O site não consegue verificar automaticamente seu Preview.</small></div>'+
- (!v.ok?'<div class="m3-notice">Antes de enviar: '+esc(v.label)+'</div>':'')+
+ '<small>O professor receberá somente os dados declarados aqui. O site não consegue verificar automaticamente seu Preview.</small>'+ 
+ (writeStatus.get(key(ctx.session))===false?'<p class="m3-notice" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</div>'+ 
+ (!submitted&&!v.ok?'<div class="m3-notice">Antes de enviar: '+esc(v.label)+'</div>':'')+
  '<div class="m3-actions"><button type="button" data-m3-action="back" class="m3-back" '+(submitted?'disabled':'')+'>‹ REVISAR PROJETO</button>'+
  '<button type="button" id="submitWork" class="m3-primary" '+(!v.ok||submitted||!ctx.canSubmit?'disabled':'')+'>'+
  (ctx.preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
@@ -177,7 +230,7 @@ function mount(ctx){
  const root=document.querySelector('#m3Root');if(!root)return;
  window.PIT_GDEVELOP_FIRST_RUN?.mount(root.querySelector('.gd3-root'));
  window.PIT_ASSET_STUDIO?.mount(root.querySelector('.ast3-root'),{...ctx.idea,scene:ideaOf(ctx).scene});
- let d=load(ctx.session);
+ let d=load(ctx.session),retestMessage='';
  function update(){
   const result=validity(d),filled=result.filter(Boolean).length;
   const n=root.querySelector('#m3Progress'),rail=root.querySelector('#m3ProgressRail');
@@ -192,17 +245,23 @@ function mount(ctx){
    const input=root.querySelector('#m3-'+fieldKey);
    if(input)input.placeholder=exampleFor(fieldKey,idea,d.objectType);
   }
-  const note=root.querySelector('#m3Notice');if(note)note.textContent=filled+'/7 registros e verificações · rascunho salvo neste navegador';
+  root.querySelectorAll('[data-m3-check]').forEach(el=>{el.checked=d.checks.includes(Number(el.dataset.m3Check));});
+  const note=root.querySelector('#m3Notice');if(note)note.textContent=(retestMessage?retestMessage+' · ':'')+draftNotice(ctx.session,filled);
  }
  root.querySelectorAll('[data-m3-field]').forEach(el=>el.addEventListener('input',()=>{
-  d[el.dataset.m3Field]=el.value;save(ctx.session,d);update();
+  const changed=updateField(d,el.dataset.m3Field,el.value);
+  if(changed)retestMessage='Reconfirme os testes desmarcados após alterar o projeto ou o registro.';
+  save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-type]').forEach(el=>el.addEventListener('change',()=>{
-  if(!el.checked)return;d.objectType=el.value;save(ctx.session,d);update();
+  if(!el.checked)return;
+  if(selectObjectType(d,el.value))retestMessage='Tipo de objeto alterado: confira novamente a cena, o Preview e o salvamento.';
+  save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-check]').forEach(el=>el.addEventListener('change',()=>{
   const v=Number(el.dataset.m3Check);
   d.checks=el.checked?[...new Set([...d.checks,v])].sort() :d.checks.filter(x=>x!==v);
+  if([0,1,2].every(n=>d.checks.includes(n)))retestMessage='';
   save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-action]').forEach(el=>el.addEventListener('click',()=>{
@@ -218,5 +277,5 @@ function mount(ctx){
  }));
  update();
 }
-window.PIT_STUDENT_MISSION_THREE={render,mount,load,save,hydrate,validate,evidence,validity};
+window.PIT_STUDENT_MISSION_THREE={render,mount,load,save,parseEvidence,hydrate,validate,evidence,validity,updateField,selectObjectType};
 })();
