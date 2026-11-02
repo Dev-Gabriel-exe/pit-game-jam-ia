@@ -7,6 +7,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
+import * as KAYKIT_MOTION from './kaykit-motion-pack.mjs';
 import {createArenaAudio} from './arena-audio.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
@@ -358,6 +359,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  const floatingLayer=document.createElement('div');floatingLayer.className='battle-float-layer';floatingLayer.setAttribute('aria-hidden','true');container.append(floatingLayer);
  const floating=new Set(),floatDebounce=new Map();
  let modelLoadedCount=0,modelErrorCount=0;
+ let kaykitMotionReady=0,kaykitMotionBound=0,kaykitMotionPlays=0;
+ const extraMotionEnabled=new URLSearchParams(window.location.search).get('kaykitmotion')!=='0';
+ container.dataset.v5KaykitMotionStatus=extraMotionEnabled?'loading':'off';
+ container.dataset.v5KaykitMotionReady='0';
+ container.dataset.v5KaykitMotionBound='0';
+ container.dataset.v5KaykitMotionPlays='0';
  let simulation=null,playing=false,speed=1,elapsed=0,previous=0,frame=0,live=true,resizeObserver;
   const arenaAudio=createArenaAudio();let victoryAudioPlayed=false;
  let accumulator=0;const shots=new Map();let followId=null;const followBack=new THREE.Vector3();
@@ -396,6 +403,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  function clearVisuals(){for(const e of effects)discardEffect(e);effects.length=0}
  function clearHeroes(){
   modelLoadedCount=0;modelErrorCount=0;
+  kaykitMotionReady=0;kaykitMotionBound=0;kaykitMotionPlays=0;
+  container.dataset.v5KaykitMotionStatus=extraMotionEnabled?'loading':'off';
+  container.dataset.v5KaykitMotionReady='0';
+  container.dataset.v5KaykitMotionBound='0';
+  container.dataset.v5KaykitMotionPlays='0';
   delete container.dataset.v5ModelsLoaded;delete container.dataset.v5ModelsFailed;
   delete container.dataset.v5ModelsExpected;
   clearVisuals();
@@ -431,8 +443,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    victory:[/victory/,/celebrat/,/cheer/,/taunt/,/emote/,/idle/],
    defeated:[/death/,/die/,/dead/,/hit/,/idle/]
   }[motion]||[/idle/];
-  let matches=[];
-  for(const regex of choices){
+  // Only matching Rig_Medium bone clips are used; native actions remain fallback.
+  let matches=KAYKIT_MOTION.preferredClips(item.build.klass,motion)
+   .map(name=>item.actions.get('kaykit:'+name.toLowerCase())).filter(Boolean);
+  for(const regex of matches.length?[]:choices){
    matches=[...item.actions].filter(([name])=>regex.test(name)).map(([,action])=>action);
    if(matches.length)break;
   }
@@ -456,7 +470,13 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    chosen.clampWhenFinished=transient;
    chosen.reset().fadeIn(.13).play();
    chosen.timeScale=transient?1.12*Math.max(.65,Math.min(1.4,clipSpeed)):1;
-   if(item.id!=='preview')container.dataset.v5LastGlbClip=[...item.actions].find(([,action])=>action===chosen)?.[0]||'unknown';
+   if(item.id!=='preview'){
+    const clipKey=[...item.actions].find(([,action])=>action===chosen)?.[0]||'unknown';
+    container.dataset.v5LastGlbClip=clipKey;
+    if(clipKey.startsWith('kaykit:')){
+     kaykitMotionPlays++;container.dataset.v5KaykitMotionPlays=String(kaykitMotionPlays);
+    }
+   }
    item.lastAction=chosen;
   }
   item.lastMotion=motion;
@@ -586,6 +606,26 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     if(item.id!=='preview')container.dataset.v5ActiveClipsPerFighter=String(selected.size);
     if(item.id!=='preview'){availableClips+=gltf.animations.length;container.dataset.v5GlbClips=String(availableClips)}
     animateModel(item,'idle');
+    if(extraMotionEnabled){
+     // Animation groups are cached once for all 30 heroes. No gameplay edits.
+     KAYKIT_MOTION.loadForClass(klass,loader).then(library=>{
+      if(!live||individuals.get(item.id)!==item||!item.mixer)return;
+      const applied=KAYKIT_MOTION.attachToHero(THREE,klass,model,item.mixer,item.actions,library);
+      if(item.id!=='preview'){
+       kaykitMotionBound+=applied.added;
+       if(applied.added>0)kaykitMotionReady++;
+       container.dataset.v5KaykitMotionReady=String(kaykitMotionReady);
+       container.dataset.v5KaykitMotionBound=String(kaykitMotionBound);
+       container.dataset.v5KaykitMotionStatus=kaykitMotionReady>0?'ready':'fallback';
+      }
+      if(applied.added&&(!playing||item.lastMotion==='idle'))animateModel(item,'idle',true);
+     }).catch(error=>{
+      if(live&&individuals.get(item.id)===item){
+       container.dataset.v5KaykitMotionStatus=kaykitMotionReady>0?'partial':'fallback';
+       container.dataset.v5KaykitMotionError=String(error?.message||error).slice(0,120);
+      }
+     });
+    }
    }
    if(item.id==='preview'){container.dataset.v5Asset='loaded';container.dataset.v5AnimationCount=String(gltf.animations?.length||0)}
   }).catch(err=>{
