@@ -12,6 +12,7 @@ import {createArenaAudio} from './arena-audio.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
 const SPRITE_FX=window.PIT_V5_TALENT_SPRITES;
+const M10_VISUAL_QUEUE=window.PIT_V5_M10_VISUAL_QUEUE;
 const CUES=PHASE2&&TALENT_FX?TALENT_FX.manifest(PHASE2.TALENTS):null;
 const DIRECTOR=window.PIT_V5_CHOREOGRAPHY;
 const CHOREOGRAPHIES=CUES&&DIRECTOR?DIRECTOR.buildManifest(CUES):null;
@@ -332,6 +333,20 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // Disabled by default; never feeds combat, camera selection or quality.
   const fxProbeEnabled=new URLSearchParams(window.location.search).get('m10fxprobe')==='1';
   const fxProbe={frames:0,visible:new Map(),offscreen:new Map(),lifecycle:new Map()};
+  // H.3 opt-in M10 visual scheduler. Genuine proc cues are dispatched once
+  // per rendered frame, after physics and effect expiry, before WebGL draw.
+  const visualQueue=new URLSearchParams(window.location.search).get('m10visualqueue')==='1'
+   &&M10_VISUAL_QUEUE?.createQueue(18)||null;
+  container.dataset.v5M10VisualQueueEnabled=String(!!visualQueue);
+  function reportVisualQueue(){
+   if(!visualQueue)return;
+   const q=visualQueue.snapshot();
+   container.dataset.v5M10VisualQueueSize=String(q.size);
+   container.dataset.v5M10VisualQueueAccepted=String(q.accepted);
+   container.dataset.v5M10VisualQueueRejected=String(q.rejected);
+   container.dataset.v5M10VisualQueueDispatched=String(q.dispatched);
+  }
+  reportVisualQueue();
   // H.3 opt-in diagnosis: a real cue created does not imply a rendered frame.
   function trackFxCreate(e){
    if(!fxProbeEnabled||container.dataset.v5ArenaMission!=='10'||!e.talentCue?.key)return;
@@ -414,7 +429,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   if(!e.spriteVisual)e.mesh.geometry?.dispose?.();
   if(Array.isArray(e.mesh.material))e.mesh.material.forEach(m=>m.dispose?.());else e.mesh.material?.dispose?.();
  }
- function clearVisuals(){for(const e of effects)discardEffect(e);effects.length=0}
+ function clearVisuals(){
+  for(const e of effects)discardEffect(e);
+  effects.length=0;
+  visualQueue?.clear();reportVisualQueue();
+ }
  function clearHeroes(){
   modelLoadedCount=0;modelErrorCount=0;
   delete container.dataset.v5ModelsLoaded;delete container.dataset.v5ModelsFailed;
@@ -801,9 +820,11 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  }
  // C.1: genuine Phase2 actions select motion and bounded 3D VFX.
  // Real GLB clips are reused; bespoke animation per talent is a later phase.
- function talentVisual(item,event,position=null,subtle=false){
-  if(!item||item.spectator||!isPhase2()||!event?.talent)return false;
-  const cue=cueFor(item.build.klass,event.talent);
+ function talentVisual(item,event,position=null,subtle=false,queuedCue=null){
+  if(!isPhase2()||(!queuedCue&&(!item||item.spectator||!event?.talent)))return false;
+  // A queued cue is a canonical lookup of a PREVIOUSLY confirmed engine proc.
+  // No synthetic combat event, student ID or new damage is introduced.
+  const cue=queuedCue||cueFor(item.build.klass,event.talent);
   if(!cue)return false;
   // M10-only: one rotating subtle proc cue. Telegraph/warning rings can
   // independently occupy 18 ability slots, even when reduced motion limits
@@ -938,6 +959,33 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   container.dataset.v5TalentCueLast=cue.key;container.dataset.v5TalentCueStyle=cue.style;
   container.dataset.v5TalentFxActive=String(effects.filter(e=>e.talentCue).length);
   return true;
+ }
+ function queueM10Visual(item,event,position=null){
+  if(!visualQueue||container.dataset.v5CombatEngine!=='phase2-m10')
+   return talentVisual(item,event,position,true);
+  if(!item||item.spectator||!event?.talent)return false;
+  const cue=cueFor(item.build.klass,event.talent);
+  if(!cue)return false;
+  const x=Number.isFinite(position?.x)?position.x:item.mesh.root.position.x;
+  const z=Number.isFinite(position?.z)?position.z:item.mesh.root.position.z;
+  const accepted=visualQueue.enqueue({key:cue.key,x,z});
+  if(!accepted){
+   talentFxDropped++;container.dataset.v5TalentFxDropped=String(talentFxDropped);
+   recordVisualType(cue,true);
+   if(spriteKit){spriteVisualDropped++;container.dataset.v5SpriteVisualDropped=String(spriteVisualDropped)}
+  }
+  reportVisualQueue();
+  return accepted;
+ }
+ function dispatchM10Visual(){
+  if(!visualQueue||container.dataset.v5CombatEngine!=='phase2-m10'||contextLost)return;
+  const next=visualQueue.nextForFrame(frame);
+  if(next){
+   const [klass,id]=next.key.split(':');
+   const cue=cueFor(klass,id);
+   if(cue)talentVisual(null,null,{x:next.x,z:next.z},true,cue);
+  }
+  reportVisualQueue();
  }
  function burst(x,z,color=0xf4bb7e,count=10){
   if(effects.length>140)return;
@@ -1197,10 +1245,10 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     }else if(ev.type==='proc'||ev.type==='charge'){
      if(cue&&ev.type==='proc'){
       if(!attacker?.choreography||elapsed>=attacker.choreoUntil)playChoreography(attacker,cue);
-      talentVisual(attacker,ev,null,true);
+      queueM10Visual(attacker,ev,null);
      }
     }else if(ev.type==='trap'||ev.type==='talent-impact'||ev.type==='zone'){
-     if(cue)talentVisual(attacker,ev,{x:ev.x,z:ev.z},true);
+     if(cue)queueM10Visual(attacker,ev,{x:ev.x,z:ev.z});
     }else if(ev.type==='teleport'){
      if(cue){triggerMotion(attacker,'dodge',.42);talentVisual(attacker,ev,{x:ev.x,z:ev.z});}
     }else if(ev.type==='launch'){
@@ -1492,6 +1540,9 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    const x=(wp.x*.5+.5)*rectW,y=(-wp.y*.5+.5)*rectH-fl.offset;
    fl.node.style.transform='translate(-50%,-50%) translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
   }
+  // Queue dispatch happens after expiry and before WebGL; the new cue
+  // cannot be evicted by another physics tick before its first frame.
+  dispatchM10Visual();
   if(!contextLost)renderer.render(scene,camera);
   if(fxProbeEnabled&&!contextLost&&container.dataset.v5ArenaMission==='10'&&isPhase2()){
    fxProbe.frames++;
