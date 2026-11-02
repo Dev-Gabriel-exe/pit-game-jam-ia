@@ -15,30 +15,31 @@
    throw new RangeError('Visual queue capacity must be an integer from 1 to 18');
   const lanes=new Map();
   const order=[];
-  let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0,evicted=0;
+  let size=0,cursor=0,lastFrame=-1,accepted=0,rejected=0,dispatched=0,evicted=0,evictedSingleton=0;
   const acceptedByKey=new Map(),rejectedByKey=new Map(),dispatchedByKey=new Map();
-  const evictedByKey=new Map();
+  const seenByKey=new Map(),evictedByKey=new Map(),evictedSingletonByKey=new Map();
   function count(map,key){map.set(key,(map.get(key)||0)+1)}
   function enqueue(entry){
    if(!entry||!KEY.test(entry.key)||!Number.isFinite(entry.x)||!Number.isFinite(entry.z))
     throw new TypeError('A confirmed talent cue requires canonical key and finite x/z');
+   count(seenByKey,entry.key);
    if(size===capacity){
     // Admit a first-display canonical talent only by reclaiming a redundant
-    // pending cue from an overrepresented key. Never evict a one-off key,
-    // even if that key produced other cues earlier in the match.
+    // pending cue from an overrepresented key. Never evict a one-off key.
     // This is visual scheduling only: engine events remain untouched.
     let victim=-1,score=0;
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
-      // Only currently queued duplicates are replaceable. Historical
-      // submissions (including rejections) must not unprotect a singleton.
-      const redundancy=lane.length-1;
+      const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
       if(redundancy>score){score=redundancy;victim=i}
      }
     }
     if(victim<0){rejected++;count(rejectedByKey,entry.key);return false}
     const victimKey=order[victim],lane=lanes.get(victimKey);
+    // Diagnostic only: track when the last pending visual of a key is
+    // displaced by admission pressure. Do not change the proven WebGL policy.
+    if(lane.length===1){evictedSingleton++;count(evictedSingletonByKey,victimKey)}
     lane.shift();size--;evicted++;count(evictedByKey,victimKey);
     if(!lane.length){
      lanes.delete(victimKey);order.splice(victim,1);
@@ -71,17 +72,18 @@
   }
   function clear(){
    lanes.clear();order.length=0;
-   size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;evicted=0;
+   size=0;cursor=0;lastFrame=-1;accepted=0;rejected=0;dispatched=0;evicted=0;evictedSingleton=0;
    acceptedByKey.clear();rejectedByKey.clear();dispatchedByKey.clear();
-   evictedByKey.clear();
+   seenByKey.clear();evictedByKey.clear();evictedSingletonByKey.clear();
   }
   function snapshot(){
    return Object.freeze({capacity,size,queuedKeys:Object.freeze(order.slice()),
-    accepted,rejected,dispatched,evicted,lastFrame,
+    accepted,rejected,dispatched,evicted,evictedSingleton,lastFrame,
     acceptedByKey:Object.freeze(Object.fromEntries(acceptedByKey)),
     rejectedByKey:Object.freeze(Object.fromEntries(rejectedByKey)),
     dispatchedByKey:Object.freeze(Object.fromEntries(dispatchedByKey)),
-    evictedByKey:Object.freeze(Object.fromEntries(evictedByKey))});
+    evictedByKey:Object.freeze(Object.fromEntries(evictedByKey)),
+    evictedSingletonByKey:Object.freeze(Object.fromEntries(evictedSingletonByKey))});
   }
   return Object.freeze({enqueue,nextForFrame,clear,snapshot});
  }
