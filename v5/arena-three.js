@@ -327,6 +327,17 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   // versus rejected by the visual budget. Never count charge/readiness here.
   // Update DOM only for a newly seen key to avoid JSON churn per combat event.
   const visualKeys={rendered:new Set(),dropped:new Set()};
+  // H.3 M10 diagnostic only: screen-space projection of LIVE cue meshes after
+  // the actual WebGL frame. NDC visibility does NOT prove unobstructed pixels.
+  // Disabled by default; never feeds combat, camera selection or quality.
+  const fxProbeEnabled=new URLSearchParams(window.location.search).get('m10fxprobe')==='1';
+  const fxProbe={frames:0,visible:new Map(),offscreen:new Map()};
+  if(fxProbeEnabled){
+   container.dataset.v5FxProbeEnabled='true';
+   container.dataset.v5FxProbeVisibleFrames='{}';
+   container.dataset.v5FxProbeOffscreenFrames='{}';
+   container.dataset.v5FxProbeActiveKeys='[]';
+  }
   function recordVisualType(cue,dropped=false){
    const kind=cue?.type;if(!Object.hasOwn(visualByType,kind))return;
    const counter=dropped?droppedByType:visualByType;
@@ -665,6 +676,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
   animationEvents=0;specialFxEvents=0;
   talentFxEvents=0;talentFxDropped=0;choreographyEvents=0;unmatchedClipEvents=0;hitReactions=0;
   visualKeys.rendered.clear();visualKeys.dropped.clear();
+  if(fxProbeEnabled){
+   fxProbe.frames=0;fxProbe.visible.clear();fxProbe.offscreen.clear();
+   container.dataset.v5FxProbeVisibleFrames='{}';
+   container.dataset.v5FxProbeOffscreenFrames='{}';
+   container.dataset.v5FxProbeActiveKeys='[]';
+  }
   container.dataset.v5TalentFxRenderedKeys='[]';
   container.dataset.v5TalentFxDroppedKeys='[]';
    for(const kind of Object.keys(visualByType)){
@@ -1457,6 +1474,26 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
    fl.node.style.transform='translate(-50%,-50%) translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
   }
   if(!contextLost)renderer.render(scene,camera);
+  if(fxProbeEnabled&&!contextLost&&container.dataset.v5ArenaMission==='10'&&isPhase2()){
+   fxProbe.frames++;
+   const active=[];
+   for(const effect of effects){
+    if(!effect.talentCue?.key||!effect.mesh?.visible)continue;
+    const key=effect.talentCue.key;
+    const p=effect.mesh.getWorldPosition(new THREE.Vector3()).project(camera);
+    const inFrustum=Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z)&&
+     Math.abs(p.x)<=1&&Math.abs(p.y)<=1&&p.z>=-1&&p.z<=1;
+    const bucket=inFrustum?fxProbe.visible:fxProbe.offscreen;
+    bucket.set(key,(bucket.get(key)||0)+1);
+    if(inFrustum)active.push(key);
+   }
+   // Bounded, synthetic DOM telemetry; no player IDs, XP or server writes.
+   container.dataset.v5FxProbeActiveKeys=JSON.stringify([...new Set(active)].sort());
+   if(fxProbe.frames%5===0||active.length){
+    container.dataset.v5FxProbeVisibleFrames=JSON.stringify(Object.fromEntries(fxProbe.visible));
+    container.dataset.v5FxProbeOffscreenFrames=JSON.stringify(Object.fromEntries(fxProbe.offscreen));
+   }
+  }
   monitorFrames++;
   const monitorNow=performance.now(),monitorSpan=monitorNow-monitorStarted;
   if(monitorSpan>=950){
