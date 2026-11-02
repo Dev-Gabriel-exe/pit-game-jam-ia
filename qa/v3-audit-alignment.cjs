@@ -298,7 +298,15 @@ for(const unsafe of [
  'https://gd.games/jogo-teste?session%3Dsegredo',
  'https://gd.games/jogo-teste#auth=segredo',
  'https://gd.games/jogo-teste?key%3Dsegredo',
- 'https://gd.games/jogo-teste?token=%ZZ'
+ 'https://gd.games/jogo-teste?token=%ZZ',
+ // These variants previously bypassed the first-level token/key guard.
+ 'https://gd.games/jogo-teste?access_token=segredo',
+ 'https://gd.games/jogo-teste?api_key=segredo',
+ 'https://gd.games/jogo-teste#authorization=segredo',
+ 'https://gd.games/jogo-teste?client_secret=segredo',
+ 'https://gd.games/jogo-teste?signature=segredo',
+ 'https://gd.games/jogo-teste?%2561uth=segredo',
+ 'https://gd.games/jogo-teste#%2574oken=segredo'
 ]){
  assert.equal(m10.validLink(unsafe),false,'M10 rejects credential-like URL '+unsafe);
  launchFixture.access=unsafe;
