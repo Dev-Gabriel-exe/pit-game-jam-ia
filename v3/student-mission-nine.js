@@ -24,7 +24,7 @@ observed:'Registre somente o que viu no Preview: tentativas, dificuldades, resul
 steps:'Informe cena inicial, controles e sequência de ações suficientes para outra pessoa repetir a situação.',
 impact:'Explique se o ocorrido bloqueia a conclusão, dificulta entender o jogo ou afeta apenas a aparência.',
 decision:'Se corrigiu, diga o que mudou e como retestou. Se ficou no backlog, justifique. Sem falha, explique por que manteve.',
-saved:'Indique o projeto editável realmente testado. Se alterar este caminho, reabra o arquivo e confirme que é o mesmo jogo usado no playtest; se for outro jogo, repita o teste. Não compartilhe credenciais.'
+saved:'Indique o projeto editável realmente testado. Se alterar este caminho, reabra o projeto e repita as três verificações do playtest: colega real, observação fiel e decisão/reteste. Se for outro jogo, realize um novo playtest. Não compartilhe credenciais.'
 };
 const outcomes=['issue','passed'];
 const resolutions=['fixed','backlog','nochange'];
@@ -76,7 +76,7 @@ function changeResolution(session,d,next){if(!resolutions.includes(next)||d.reso
 // A manual peer-test declaration belongs to the exact task and observation it attests.
 const retestByField={
  peer:[0,1,2],hypothesis:[0,1,2],task:[0,1,2],expected:[0,1,2],
- observed:[1,2],steps:[1,2],impact:[1,2],decision:[2],saved:[0]
+ observed:[1,2],steps:[1,2],impact:[1,2],decision:[2],saved:[0,1,2]
 };
 function changeField(session,d,id,value){
  if(!Object.prototype.hasOwnProperty.call(retestByField,id))return [];
@@ -88,7 +88,7 @@ function changeField(session,d,id,value){
  return invalidated;
 }
 function mount(ctx){const root=document.querySelector('#m9sRoot');if(!root)return;const d=load(ctx.session),locked=['submitted','approved'].includes(ctx.status);
-root.querySelectorAll('[data-m9s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const invalidated=changeField(ctx.session,d,el.dataset.m9sField,el.value);if(invalidated.length)root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(invalidated.includes(Number(c.dataset.m9sCheck)))c.checked=false});const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(invalidated.length?(el.dataset.m9sField==='saved'?' Reabra o projeto editável indicado e confira que é o mesmo jogo do playtest antes de reconfirmar a primeira declaração. Se mudou de jogo, repita o teste.':' O relatório mudou: confirme novamente as declarações desmarcadas após verificar o teste real.'):'')}));
+root.querySelectorAll('[data-m9s-field]').forEach(el=>el.addEventListener('input',()=>{if(locked)return;const invalidated=changeField(ctx.session,d,el.dataset.m9sField,el.value);if(invalidated.length)root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(invalidated.includes(Number(c.dataset.m9sCheck)))c.checked=false});const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(invalidated.length?(el.dataset.m9sField==='saved'?' Reabra o projeto editável indicado e repita as três verificações antes de reconfirmar. Se mudou de jogo, faça um novo playtest com colega real.':' O relatório mudou: confirme novamente as declarações desmarcadas após verificar o teste real.'):'')}));
 root.querySelectorAll('input[name="m9Resolution"]').forEach(el=>el.addEventListener('change',()=>{if(locked||!el.checked)return;const changed=changeResolution(ctx.session,d,el.value);if(changed){root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(c.dataset.m9sCheck==='2')c.checked=false})}const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(changed?' Confira novamente a reprodução e marque a terceira declaração somente após justificar a nova decisão.':'')}));
 root.querySelectorAll('input[name="m9Outcome"]').forEach(el=>el.addEventListener('change',()=>{if(locked||!el.checked)return;const changed=changeOutcome(ctx.session,d,el.value);if(changed){root.querySelectorAll('input[name="m9Resolution"]').forEach(r=>{r.checked=false});root.querySelectorAll('[data-m9s-check]').forEach(c=>{if(c.dataset.m9sCheck==='2')c.checked=false})}const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)+(changed?' Selecione novamente a decisão e confirme a terceira declaração após revisar o novo resultado.':'')}));
 root.querySelectorAll('[data-m9s-check]').forEach(el=>el.addEventListener('change',()=>{if(locked)return;const n=Number(el.dataset.m9sCheck);d.checks=el.checked?[...new Set([...d.checks,n])]:d.checks.filter(x=>x!==n);save(ctx.session,d);const status=root.querySelector('#m9sStatus');if(status)status.textContent=draftNotice(ctx.session)}));
