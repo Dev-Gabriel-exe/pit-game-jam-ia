@@ -26,10 +26,11 @@ O GitHub retornou **33 branches no total**, incluindo `main`. As comparações a
 | `feature/v5-duelos-d1b` / `feature/v5-duelos-d1a` | 727 / 700 | 21 | Etapas históricas de D1, não substituir a integração mais recente |
 | `feature/v5-h1b-integration-safe` | 686 | 21 | Armazenamento/contratos de laboratório, não base de deploy |
 | `feature/pit-gamejam-v5-arena-rpg` / `feature/pit-gamejam-v5-arena` | 31 / 17 | 21 | Protótipos anteriores, alto risco de retroceder visual e mecânica |
+| `feature/pit-gamejam-v5-classes-3d-real` | 46 | 21 | Variante histórica de personagens 3D; não substituir os quatro KayKits padronizados |
 | `feature/v5-talentos-cinematograficos-20261031` | 0 | 0 | Idêntica à main no instante da comparação; nada a transportar |
 | `feature/m01-projecao-continua-20261028` | 141 | 90 | Outra linha de projetor, não sobrepor apresentação recente da main |
 
-**Demais branches verificadas (22):**
+**Demais 19 branches verificadas (não detalhadas na tabela):**
 `experiment/ltx-missions-01-10`,
 `experiment/missao-01-cinematic-footage`,
 `experiment/missao-01-gothic-motion`,
@@ -43,14 +44,13 @@ O GitHub retornou **33 branches no total**, incluindo `main`. As comparações a
 `feature/liberacao-missoes-motion-20261028`,
 `feature/ltx-cinematic-slides-v3-20261028`,
 `feature/m01-oficina-7-telas-20261028`,
-`feature/m01-projecao-continua-20261028` (já contabilizada acima),
 `feature/oficina-projetada-10-missoes-20261028`,
 `feature/portal-hero-cinematico-parallax-20261028`,
 `feature/portal-ltx-longer-muted-20261028`,
 `feature/portal-planeswalker-video-20261028`,
 `feature/projetor-continuo-m02-m10-20261028`,
 `fix/biblioteca-principal-3d-visivel-20261028`.
-As linhas LTX/motion e de portal são históricas/experimentais e algumas estão centenas de commits atrás da main; não integrar por árvore inteira. **Nota:** a lista intitulada 'demais' contém 20 nomes, incluindo repetição declarada da branch M01, porque o inventário acima agrupa os V5 relevantes; usar a lista oficial do GitHub para a contagem completa de 33.
+As linhas LTX/motion e de portal são históricas/experimentais e algumas estão centenas de commits atrás da main; não integrar por árvore inteira. O inventário total é de 33 branches (main + 13 origens na tabela, contando as duas linhas agrupadas por branch, + 19 outras).
 
 ## Diferenças críticas verificadas em código, não só em documentação
 
