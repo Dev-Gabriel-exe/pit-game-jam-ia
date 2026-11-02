@@ -122,11 +122,18 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
     return {accepted:Number(d.v5M10VisualQueueAccepted||0),
      rejected:Number(d.v5M10VisualQueueRejected||0),
      dispatched:Number(d.v5M10VisualQueueDispatched||0),
-     remaining:Number(d.v5M10VisualQueueSize||0)};
+     evicted:Number(d.v5M10VisualQueueEvicted||0),
+     evictedSingleton:Number(d.v5M10VisualQueueEvictedSingleton||0),
+     remaining:Number(d.v5M10VisualQueueSize||0),
+     byKey:JSON.parse(d.v5M10VisualQueueByKey||'{}')};
    });
    assert(stats.accepted>0&&stats.dispatched>0,'Opt-in queue did not dispatch real M10 proc cues');
    assert(stats.dispatched<=stats.accepted,'Visual queue dispatched more cues than accepted');
    assert(stats.remaining<=18,'Visual queue exceeded its bounded capacity');
+   assert.equal(stats.accepted-stats.dispatched-stats.remaining,stats.evicted,
+    'Accepted queue cues must equal dispatched plus pending plus evicted');
+   assert(stats.evictedSingleton<=stats.evicted,
+    'Singleton evictions cannot exceed total queue evictions');
    report.visualQueue=stats;
   }
   if(frameProbe){
@@ -214,6 +221,8 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
      return {accepted:Number(d.v5M10VisualQueueAccepted||0),
       rejected:Number(d.v5M10VisualQueueRejected||0),
       dispatched:Number(d.v5M10VisualQueueDispatched||0),
+      evicted:Number(d.v5M10VisualQueueEvicted||0),
+      evictedSingleton:Number(d.v5M10VisualQueueEvictedSingleton||0),
       remaining:Number(d.v5M10VisualQueueSize||0),
       byKey:JSON.parse(d.v5M10VisualQueueByKey||'{"accepted":{},"rejected":{},"dispatched":{}}'),
       renderedKeys:JSON.parse(d.v5TalentFxRenderedKeys||'[]'),
