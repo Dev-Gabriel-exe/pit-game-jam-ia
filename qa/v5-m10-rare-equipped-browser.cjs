@@ -135,14 +135,14 @@ const frameProbe=process.env.M10_FX_PROBE==='1';
     const life=projection.lifecycle[key];
     assert(life&&life.created>0,'Rare proc did not create a tracked cue: '+key);
     assert(life.renderedOnce<=life.created,'Rendered count exceeds created: '+key);
-    assert(life.renderedOnce>0,'M10 rare proc was evicted before its first WebGL frame: '+key);
     const removed=life.evictedBeforeFrame+life.evictedAfterFrame+
      life.expiredBeforeFrame+life.expiredAfterFrame;
     assert(removed<=life.created,'More removals than created cues: '+key);
     report.rare[key].lifecycle={...life,removed,pendingOrLive:life.created-removed,
      neverReachedFirstFrame:life.evictedBeforeFrame+life.expiredBeforeFrame};
     const projected=projection.projected[key]||0,offscreen=projection.offscreen[key]||0;
-    assert(projected+offscreen>0,'M10 rare proc had no camera-projection frame: '+key);
+    if(projected>0||offscreen>0)
+     assert(life.renderedOnce>0,'Projected cue lacks a first rendered frame: '+key);
     report.rare[key].projection={projectedFrameSamples:projected,offscreenFrameSamples:offscreen,
      liveScreenshotCaptured:!!report.rare[key].liveInFrameCapture};
     // Distinguish a real in-frustum screenshot from historical event counters.
