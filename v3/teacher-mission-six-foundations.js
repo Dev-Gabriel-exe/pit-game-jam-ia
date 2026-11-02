@@ -49,6 +49,10 @@ function render(){
  '<select id="f6Situation">'+quiz.map((q,i)=>'<option value="'+i+'">'+esc(q.text)+'</option>').join('')+'</select>'+
  '<div class="f6-buttons">'+assets.map(a=>'<button type="button" data-f6-answer="'+a.id+'">'+esc(a.format)+'</button>').join('')+'</div>'+
  '<div id="f6Answer" class="f6-answer" aria-live="polite">Escolha um formato para conferir a recomendação e seu motivo.</div></div></div>'+
+ '<section class="f6-scope" aria-label="Diagnóstico de importação de recursos"><strong>SE NÃO APARECER NO PREVIEW · DIAGNÓSTICO EM 3 PASSOS</strong>'+
+ '<p><b>1 · ARQUIVO:</b> confirme que o recurso foi baixado e que sua extensão corresponde ao tipo escolhido: PNG para Sprite, WAV para efeito, GLB para modelo 3D. Não basta colar um link da IA.</p>'+
+ '<p><b>2 · OBJETO E CENA:</b> no GDevelop, confira se o recurso foi associado ao objeto correto e se uma instância do objeto foi colocada na cena. Para som, verifique se existe um evento que executa Play a sound após interação.</p>'+
+ '<p><b>3 · TESTE ISOLADO:</b> execute Preview, verifique posição, escala e evento; se falhar, reverta apenas o novo recurso e confirme que o jogo da Missão 05 continua funcional. Registre o erro e use um asset local como plano B.</p></section>'+
  '<div class="f6-ethics"><strong>QUATRO VERIFICAÇÕES DE USO RESPONSÁVEL</strong>'+
  '<div>'+[
  ['AUTORIA','Registrar a origem e o prompt/alterações autorais. IA não substitui decisão artística.'],
@@ -56,8 +60,9 @@ function render(){
  ['PRIVACIDADE','Não enviar rostos, vozes ou dados pessoais de terceiros sem autorização.'],
  ['DEPENDÊNCIA','Manter alternativa local/Asset Store quando acabar o crédito gratuito ou a rede falhar.']
  ].map(([h,p])=>'<article><b>'+h+'</b><p>'+p+'</p></article>').join('')+'</div></div>'+
- '<footer class="f6-end"><strong>PRÓXIMA ETAPA DO PROFESSOR</strong><p>Na demonstração de 5 minutos: importar um arquivo real e executar Preview. Na prática de 32 minutos: cada aluno escolhe uma modalidade, gera ou encontra um recurso, importa, testa e identifica a origem. Na avaliação de 3 minutos: comprovar que a regra anterior segue funcionando.</p>'+
- '<p>Os serviços de IA, seus limites gratuitos e alternativas serão verificados especificamente na M06-02, pois preços e cotas mudam.</p></footer></div></section>';
+ '<footer class="f6-end"><strong>PRÓXIMA ETAPA · UM ASSET NO JOGO</strong><p>O objetivo é importar um recurso no mesmo projeto, demonstrar o resultado no Preview e confirmar que a regra da Missão 05 continua funcionando. Escolha apenas um formato necessário ao seu jogo.</p>'+
+ '<p>Antes de usar uma ferramenta de IA, confira limites atuais de exportação e licença. Desenho ou gravação própria também são caminhos válidos.</p></footer>'+
+ '<details class="pit-private-teacher-notes"><summary aria-label="Abrir roteiro privado da Missão 06">▤</summary><div class="pit-private-teacher-notes-body"><small>ROTEIRO RESERVADO · CONSULTAR SEM ESPELHAMENTO HDMI</small><p>Na demonstração de 5 minutos, importe um arquivo real e execute Preview. Na prática de 32 minutos, acompanhe escolha (5), criação (12), importação (8) e teste/registro (7). Na avaliação de 3 minutos, confirme a regra anterior e a procedência do arquivo. Feche este painel antes de voltar a projetar.</p></div></details></div></section>';
 }
 function mount(rootOverride){
  const root=rootOverride||document.querySelector('#f6Foundations');if(!root)return;
