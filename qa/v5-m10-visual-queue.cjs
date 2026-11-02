@@ -47,8 +47,8 @@ assert.equal(q.nextForFrame(18),null);
 assert.throws(()=>q.nextForFrame(17),RangeError);
 q.clear();
 assert.deepEqual(q.snapshot(),{capacity:18,size:0,queuedKeys:[],
- accepted:0,rejected:0,dispatched:0,lastFrame:-1,
- acceptedByKey:{},rejectedByKey:{},dispatchedByKey:{}});
+ accepted:0,rejected:0,dispatched:0,evicted:0,lastFrame:-1,
+ acceptedByKey:{},rejectedByKey:{},dispatchedByKey:{},evictedByKey:{}});
 assert.equal(q.enqueue({key:keys[2],x:0,z:0}),true);
 assert.deepEqual(q.nextForFrame(0),{key:keys[2],x:0,z:0});
 // Single-key bursts cannot starve later arriving canonical keys.
@@ -59,6 +59,26 @@ for(let i=0;i<3;i++)assert(fair.enqueue({key:keys[2],x:i,z:0}));
 assert.deepEqual(Array.from({length:9},(_,i)=>fair.nextForFrame(i).key),
  [keys[0],keys[1],keys[2],keys[0],keys[1],keys[2],keys[0],keys[1],keys[2]]);
 assert.equal(fair.snapshot().size,9);
+// A new canonical proc gets a slot by replacing only redundant queued visuals.
+const admission=createQueue(18);
+for(let i=0;i<17;i++)assert(admission.enqueue({key:'warrior:B06',x:i,z:0}));
+assert(admission.enqueue({key:'guardian:G06',x:0,z:0}));
+assert(admission.enqueue({key:'guardian:J08',x:1,z:1}),
+ 'A first-display proc must replace one redundant queued visual');
+assert.equal(admission.snapshot().size,18);
+assert.equal(admission.snapshot().evicted,1);
+assert.deepEqual(admission.snapshot().evictedByKey,{'warrior:B06':1});
+assert.deepEqual([0,1,2].map(i=>admission.nextForFrame(i).key),
+ ['warrior:B06','guardian:G06','guardian:J08']);
+assert.equal(admission.snapshot().dispatchedByKey['guardian:J08'],1);
+// Do not sacrifice a unique pending proc when all 18 keys are one-offs.
+const unique=createQueue(18);
+const canonical=Object.entries(PHASE2.TALENTS)
+ .flatMap(([klass,talents])=>talents.map(t=>klass+':'+t.id));
+for(const key of canonical.slice(0,18))assert(unique.enqueue({key,x:0,z:0}));
+assert.equal(unique.enqueue({key:canonical[18],x:0,z:0}),false);
+assert.equal(unique.snapshot().evicted,0);
+assert.equal(unique.snapshot().rejected,1);
 // Deterministic replay, bounded under 1,000 synthetic incoming proc cues.
 function replay(){
  const a=createQueue(18),out=[];
