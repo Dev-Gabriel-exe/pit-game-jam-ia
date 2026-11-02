@@ -35,3 +35,13 @@ Teste reproduzível: `node qa/v3-audit-alignment.cjs`.
 A validação do aluno em `student-mission-nine.js` permite três decisões reais: `fixed` (correção com reteste), `backlog` (falha registrada para depois) e `nochange` (teste sem falha, sem mudança necessária). O cabeçalho projetado de `teacher-mission-nine-validation.js` e o protocolo/saída de `teacher-mission-nine-foundations.js` ainda falavam apenas em correção ou backlog, sugerindo reprovação indevida de um playtest que não encontrou defeito. Ambos foram alinhados às três opções, inclusive o critério reservado do professor. Cinco asserções de regressão foram acrescentadas em `qa/v3-audit-alignment.cjs`. Este ajuste **não comprova** playtest real nem autoriza aprovação automática; o registro do aluno continua declaratório. Testes GDevelop GUI, HDMI físico e playtest humano: `NOT_RUN`.
 
 Também foi corrigido nesta matriz um registro documental desatualizado: a prática da M03 é **4+8+6=18 minutos**, não 16; o plano e as telas já haviam sido corrigidos em commits anteriores.
+
+## Revisão de integridade M03 — 02/11/2026
+
+**Falha confirmada no código:** ao alternar o tipo de objeto entre `2D Sprite` e `3D Box/Modelo`, `student-mission-three.js` desmarcava somente as declarações de cena e Preview (`checks` 0 e 1), preservando a confirmação de projeto salvo (`checks` 2). Assim, a ficha podia indicar salvamento conferido para uma configuração diferente daquela descrita na entrega.
+
+**Correção:** `selectObjectType` agora desmarca as três confirmações manuais quando o tipo muda, sem apagar o nome do projeto, o caminho de salvamento ou os demais campos. Selecionar novamente o mesmo tipo não invalida verificações. A mensagem ao aluno solicita reconferir cena, Preview **e salvamento** antes do envio. Não é prova automática de execução no GDevelop.
+
+**Testes executados:** 3 verificações diretas de comportamento em V8 antes do commit; depois, 98 asserções do arquivo `qa/v3-m03-legacy-evidence.cjs` executadas em V8 com adaptadores de `fs`, `vm` e `localStorage` fictícios — PASS. A regressão `qa/v3-audit-alignment.cjs` foi alinhada à nova regra. A QA estática dos commits intermediários falhou porque ainda exigia o comportamento antigo; o resultado da CI no commit de alinhamento precisa ser verificado separadamente. Browser QA, GDevelop GUI, HDMI físico e alunos reais não foram executados nesta rodada.
+
+**Escopo:** apenas o aluno da M03 e as regressões; não há novas notas privadas ou alterações na apresentação projetada do professor. Nenhuma publicação em `main`.
