@@ -1,5 +1,23 @@
 # V5 H.3 — Missão 10, motor experimental (checkpoint 30/10/2026)
 
+
+## Rodada 02/11/2026 — corrigir falso negativo de polling e preservar cues únicos na fila
+
+**Missão única H.3/M10:** analisar o CI [41438629687](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41438629687), que terminou com `rare-equipped-webgl` e `fx-projection-webgl` SUCCESS, mas `queued-fx-projection-webgl` FAILURE no cenário de seed alternativa. A falha NÃO foi ocultada. O artefato [m10-fx-queued-projection (13137232808)](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41438629687/artifacts/13137232808) confirma:
+
+- Seed principal com fila: J08, P09 e A07 chegaram ao primeiro frame; apenas A07 teve uma amostra dentro do frustum. Rejeições 149; substituições 198; substituições de último pendente 185. Isto não prova legibilidade no telão.
+- Seed alternativa: J08 teve 1 entrada aceita, 1 despachada e consta na telemetria cumulativa `renderedKeys`, mas o polling de 650 ms não o observou e gerou **falso negativo de teste**. P09 teve 3 procs, 1 aceito, 2 rejeitados, 1 substituído antes do despacho (evictedSingleton): **falha real de justiça visual**. A07 foi aceito e despachado. Na seed alternativa houve 133 rejeições e 190 substituições de último pendente.
+- A causa do P09 é que o escalonador confundia `seenByKey>1` com uma exibição anterior, permitindo sacrificar o último cue pendente ainda **não renderizado**.
+
+**Correções isoladas, sem alterar combate, dano, atributos, XP, dados reais, M5 ou V3:**
+- `v5/m10-visual-queue.js` — [5414607](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/5414607c6797693763e488b3e0c0f72b09ac7cf3): só substitui cue duplicado ou singleton de chave **já despachada**; não considera mera contagem de tentativas como exibição.
+- `qa/v5-m10-visual-queue.cjs` — [823ebb7](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/823ebb7ea07ae53fbd9f81d40d15899c60d0ca23): regressão para singleton tentado repetidas vezes mas ainda não despachado.
+- `qa/v5-m10-rare-equipped-browser.cjs` — [4a9a89e](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/4a9a89ebd38895591321546932d0fa3ce61c2675): reconcilia histórico cumulativo no fim da M10, diferenciando evidência histórica de screenshot ao vivo.
+- `.github/workflows/v5-m10-rare-equipped-qa.yml` — [e833c12](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/e833c1217456f86473d644ff4cb6fce355e1cfb4): dispara a matriz também quando mudam a fila e seus testes.
+
+**Status no momento deste checkpoint:** alterações publicadas somente em `feature/v5-arena-dos-criadores`; o novo CI ainda precisa ser consultado. **Não declarar aprovação** antes de confirmar os três cenários, regressão M5 e QA. Se o CI falhar, analisar o novo JSON e corrigir na MESMA missão. G.2 nos PCs físicos NÃO realizado; homologação humana, H.1/H.2, `main`, merge e produção bloqueados.
+
+
 ## Rodada 02/11/2026 — fila visual + projeção simultâneas, três cenários (CI em execução)
 
 **Missão técnica H.3/M10:** instrumentar no CI a comparação que faltava: a fila experimental `M10_VISUAL_QUEUE=1` e a sonda WebGL `M10_FX_PROBE=1` ligadas **simultaneamente** com 30 KayKits. A matriz inclui seed principal, seed alternativa e qualidade low com memória sintética de 2 GB. O teste existente verifica os cues genuínos J08/P09/A07, primeira renderização, descarte prematuro, contagem de 29 espectadores, classificação dentro/fora do frustum por plano de câmera, restauração M5 (5 talentos) e isolamento da M10 (10 talentos/20 pontos). Os artefatos `m10-fx-queued-projection` contêm três JSONs e capturas quando houver amostras. Um PASS de auditoria **não prova** legibilidade, oclusão nem contraste no projetor.
