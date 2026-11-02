@@ -119,3 +119,12 @@ O job `fx-projection-webgl` do [run 41373193453](https://github.com/Dev-Gabriel-
 **Correção seguinte, ainda experimental:** [`ee8bf661`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/ee8bf661ccc695d04a00940346ea727d7ec86db6), apenas `v5/arena-three.js`. Ao atingir 18 efeitos na M10, a prioridade para admitir um proc real é: remover aviso sem talento, depois efeito não sutil já desenhado, depois efeito não sutil ainda não desenhado. Mantém efeitos sutis pendentes por pelo menos um frame quando possível, sem aumentar o teto de 18 nem alterar eventos do combate, atributos, M5 ou XP. **Sintaxe verificada; CI do novo SHA ainda pendente.**
 
 **Próximo passo:** revisar logs do novo workflow, especialmente J08/P09/A07. Se falhar, não mascarar a falha: investigar uma fila visual limitada ou agendamento de efeitos genuínos em quadros sucessivos, com regressões M5 e limite GPU. G.2 físico, avaliação humana e H.1/H.2 continuam bloqueados.
+
+
+### Fechamento seguro desta rodada — tentativa revertida (02/11/2026)
+
+O ajuste adicional `ee8bf661` **também falhou** nos dois jobs WebGL do [run 41379878378](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41379878378), novamente com `guardian:J08` sem vaga na faixa visual. A prioridade de remoção não resolve o caso em que a fila de efeitos do mesmo tick já preencheu o teto de 18. **Não homologar nem afirmar correção visual.**
+
+Para não deixar uma regressão experimental na branch, os dois arquivos executáveis `v5/arena-three.js` e `qa/v5-m10-rare-equipped-browser.cjs` foram restaurados **byte a byte** do commit diagnóstico aprovado `50c369f` no commit [`7a77719`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/7a77719e18bb90c960efbacfe822c551b911f6ef). A telemetria de ciclo de vida fica disponível para reprodução. O CI específico da restauração ainda precisa ser conferido, embora o mesmo conteúdo executável tenha passado anteriormente no [run 41379388325](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41379388325).
+
+**Missão 10 continua ABERTA. Próximo incremento recomendado:** fila **limitada e somente visual** para eventos `proc` genuínos, com escoamento de no máximo um por frame e limite de atraso explícito, sem alterar dano, tempo lógico do combate, talentos, M5 ou teto de efeitos GPU. O novo teste deve exigir primeiro frame e projeção individual de J08/P09/A07; não confundir projeção com contraste no projetor. G.2 físico e H.1/H.2 reais continuam bloqueados.
