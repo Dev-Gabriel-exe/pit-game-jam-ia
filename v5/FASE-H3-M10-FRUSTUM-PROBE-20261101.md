@@ -110,3 +110,12 @@ O job `fx-projection-webgl` do [run 41373193453](https://github.com/Dev-Gabriel-
 **Estado:** sintaxe JavaScript verificada antes do commit; **CI da correção `3c043815` pendente**, sem afirmar que a correção passou em WebGL. QA geral do commit anterior `50c369f` foi aprovado no [run 41379388305](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41379388305). Conferir o CI WebGL da correção, as contagens de projeção dentro/fora da câmera e a regressão M5 antes de encerrar o gate.
 
 **Próximo passo:** se a retenção por um frame não bastar, ajustar exclusivamente a política visual com evidência, nunca o motor de combate; depois revisar enquadramento, contraste e capturas. G.2 físico, avaliação humana no projetor e H.1/H.2 reais continuam bloqueados.
+
+
+### Reteste após retenção de um frame — falha observada e ajuste (02/11/2026)
+
+**CI do commit `3c043815` FALHOU**: [run 41379640837](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41379640837), jobs `rare-equipped-webgl` e `fx-projection-webgl` falharam em `Real rare proc did not obtain the bounded M10 subtle visual lane: guardian:J08`. A retenção de procs não desenhados protegeu os já admitidos, mas, quando o teto de 18 efeitos ficou cheio, não havia vaga para novos procs genuínos. **Não declarar gate aprovado.**
+
+**Correção seguinte, ainda experimental:** [`ee8bf661`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/ee8bf661ccc695d04a00940346ea727d7ec86db6), apenas `v5/arena-three.js`. Ao atingir 18 efeitos na M10, a prioridade para admitir um proc real é: remover aviso sem talento, depois efeito não sutil já desenhado, depois efeito não sutil ainda não desenhado. Mantém efeitos sutis pendentes por pelo menos um frame quando possível, sem aumentar o teto de 18 nem alterar eventos do combate, atributos, M5 ou XP. **Sintaxe verificada; CI do novo SHA ainda pendente.**
+
+**Próximo passo:** revisar logs do novo workflow, especialmente J08/P09/A07. Se falhar, não mascarar a falha: investigar uma fila visual limitada ou agendamento de efeitos genuínos em quadros sucessivos, com regressões M5 e limite GPU. G.2 físico, avaliação humana e H.1/H.2 continuam bloqueados.
