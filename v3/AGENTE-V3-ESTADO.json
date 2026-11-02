@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 gd.games credential-bearing query/fragment guard committed with regression; new Node/CI/Chrome not yet confirmed. Prior Browser QA 41443587707 SUCCESS on 7325dcd. Continue M10 saved project/demo/evidence and verify CI at new SHA. Manual GDevelop GUI, HDMI, peer, physical mobile NOT_RUN. No main merge.",
+  "priority": "M10 gd.games credential-bearing query/fragment guard committed with regression; 19/19 V8 checks PASS; new Node/CI/Chrome not yet confirmed. Prior Browser QA 41443587707 SUCCESS on 7325dcd. Continue M10 saved project/demo/evidence and verify CI at new SHA. Manual GDevelop GUI, HDMI, peer, physical mobile NOT_RUN. No main merge.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
   "completed_count": 54,
@@ -3474,14 +3474,14 @@
     {
       "task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
       "completed_at": "2026-11-02T13:18:32Z",
-      "commit": "4bde5e3a76b7ffcf70a4a8d2a48a6f1f3eb2f599",
+      "commit": "096181a6fc7771493037357d4c5a757230402568",
       "files": [
         "v3/student-mission-ten.js",
         "qa/v3-audit-alignment.cjs",
         "v3/AUDITORIA-V4-MISSOES.md",
         "v3/AGENTE-V3-ESTADO.json"
       ],
-      "tests": "Source inspected; new regression committed for fragment/encoded credential URL, blocked submission and hydration, harmless UTM link. New Node/CI/Chrome NOT_CONFIRMED. Prior Browser QA 41443587707 SUCCESS at earlier SHA. GDevelop GUI/HDMI/peer/physical mobile NOT_RUN.",
+      "tests": "19/19 V8 functional assertions executed against fetched M10 student module and teacher markup with fictitious localStorage: safe/unsafe URLs, encoded credential fragments, submission guard, evidence hydration, project retest and private notes PASS. New Node/CI/Chrome NOT_CONFIRMED; prior Browser QA 41443587707 SUCCESS on older SHA. GDevelop GUI/HDMI/peer/physical mobile NOT_RUN.",
       "notes": "M10 optional gd.games URLs now reject secret-bearing fragment and percent-encoded parameter keys. Teacher projected rubric already aligns; private notes untouched. Master 54/59 unchanged; branch V3 only, no main or real student data."
     }
   ],
@@ -3496,7 +3496,7 @@
       "af429cc8d238274f0e63fdc7aada554d760d5e4b",
       "2a16dc0661ece8ccaaecb8beb8fe9ac1cb9e33b3"
     ],
-    "documentation_commit": "4bde5e3a76b7ffcf70a4a8d2a48a6f1f3eb2f599",
+    "documentation_commit": "096181a6fc7771493037357d4c5a757230402568",
     "tests": [
       {
         "name": "Previous GitHub Actions static QA",
@@ -3505,6 +3505,10 @@
       {
         "name": "Previous GitHub Actions Browser QA",
         "result": "SUCCESS run 41443587707 on 7325dcd; predates M10 URL fix"
+      },
+      {
+        "name": "V8 M10 functional assertions (actual fetched module, fake storage)",
+        "result": "19/19 PASS: URL safety, validation, hydration, project retest, private teacher notes"
       },
       {
         "name": "New M10 Node/CI/Chrome",
