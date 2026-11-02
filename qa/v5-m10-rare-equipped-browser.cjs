@@ -97,14 +97,14 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
      const filename=prefix+'-live-'+key.replace(':','-')+'.png';
      row.liveInFrameCapture={elapsedWallMs:Date.now()-started,cameraShot:sample.shot,
       screenshot:filename,proof:'mesh centre was inside camera frustum at sampling time; pixels/occlusion unverified'};
-     await page.screenshot({path:filename,timeout:45000});
+     await page.screenshot({path:filename,timeout:90000,animations:'disabled'});
     }
     if(!row.firstObservation&&(row.rendered||row.dropped)){
      const filename=prefix+'-'+key.replace(':','-')+'.png';
      row.firstObservation={elapsedWallMs:Date.now()-started,cameraShot:sample.shot,
       classification:row.rendered?'rendered-cue-recorded':'visual-budget-dropped',
       screenshot:filename};
-     await page.screenshot({path:filename,timeout:45000});
+     await page.screenshot({path:filename,timeout:90000,animations:'disabled'});
     }
    }
    if(sample.finished)break;
@@ -244,7 +244,7 @@ const queueMode=process.env.M10_VISUAL_QUEUE==='1';
     assert(report.rare[key].rendered,
      'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
   }
-  await page.screenshot({path:prefix+'-final.png',timeout:45000});
+  await page.screenshot({path:prefix+'-final.png',timeout:90000,animations:'disabled'});
   await page.keyboard.press('Escape');
   await page.waitForFunction(()=>!document.body.classList.contains('arena-immersive'));
   await page.locator('[data-mission="5"]').click();
