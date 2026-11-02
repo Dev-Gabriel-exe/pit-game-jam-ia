@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T13:18:32Z",
+  "last_completed_at": "2026-11-02T14:19:44Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 gd.games credential-bearing query/fragment guard committed with regression; 19/19 V8 checks PASS; new Node/CI/Chrome not yet confirmed. Prior Browser QA 41443587707 SUCCESS on 7325dcd. Continue M10 saved project/demo/evidence and verify CI at new SHA. Manual GDevelop GUI, HDMI, peer, physical mobile NOT_RUN. No main merge.",
+  "priority": "M10 nested-encoded access_token/api_key/authorization/client_secret/signature URL guard committed; 15 V8 checks PASS and QA syntax PASS; new Node/CI/Chrome NOT_CONFIRMED. Next: verify latest Actions and continue M10 project/demo/access/evidence audit. Human GDevelop GUI, HDMI, peer and physical mobile NOT_RUN. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
+  "last_task": "V4-AUD-M10-NESTED-CREDENTIAL-GUARD",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3483,43 +3483,51 @@
       ],
       "tests": "19/19 V8 functional assertions executed against fetched M10 student module and teacher markup with fictitious localStorage: safe/unsafe URLs, encoded credential fragments, submission guard, evidence hydration, project retest and private notes PASS. New Node/CI/Chrome NOT_CONFIRMED; prior Browser QA 41443587707 SUCCESS on older SHA. GDevelop GUI/HDMI/peer/physical mobile NOT_RUN.",
       "notes": "M10 optional gd.games URLs now reject secret-bearing fragment and percent-encoded parameter keys. Teacher projected rubric already aligns; private notes untouched. Master 54/59 unchanged; branch V3 only, no main or real student data."
+    },
+    {
+      "task": "V4-AUD-M10-NESTED-CREDENTIAL-GUARD",
+      "completed_at": "2026-11-02T14:19:44Z",
+      "commit": "73f698d99798cddeaa3a38848196ceb8790d7517",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-audit-alignment.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "15 V8 functional checks on actual M10 module with fake localStorage PASS; 7 regression URL cases added; V8 parse of QA script PASS. Native Node/CI/Chrome on latest commit NOT_CONFIRMED. Manual GDevelop GUI/HDMI/human peer/physical mobile NOT_RUN.",
+      "notes": "M10 refuses credential-bearing gd.games links with compound key names or nested percent encoding; safe game links remain valid. No teacher notes changed; master 54/59, V3 branch only, no main/production/student data."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M10-GD-LINK-SECRET-GUARD",
+    "task": "V4-AUD-M10-NESTED-CREDENTIAL-GUARD",
     "status": "CODE_COMMITTED_CI_PENDING",
-    "updated_at": "2026-11-02T13:18:32Z",
+    "updated_at": "2026-11-02T14:19:44Z",
     "code_commits": [
-      "ffe310abd7920dac97a6539bd5cf3a81dac5a93a"
+      "365d81b6805ddc19f8d9c4030bd957a740ccadab"
     ],
     "regression_commits": [
-      "af429cc8d238274f0e63fdc7aada554d760d5e4b",
-      "2a16dc0661ece8ccaaecb8beb8fe9ac1cb9e33b3"
+      "104e777e1eb98dc33578b9f0e06a5e3b92f9d8ab"
     ],
-    "documentation_commit": "096181a6fc7771493037357d4c5a757230402568",
+    "documentation_commit": "73f698d99798cddeaa3a38848196ceb8790d7517",
     "tests": [
       {
-        "name": "Previous GitHub Actions static QA",
-        "result": "SUCCESS run 41443587873 on 7325dcd; predates M10 URL fix"
+        "name": "M10 actual module V8 + fictitious localStorage",
+        "result": "15/15 PASS: safe/unsafe URL, blocked submission, blocked evidence hydration"
       },
       {
-        "name": "Previous GitHub Actions Browser QA",
-        "result": "SUCCESS run 41443587707 on 7325dcd; predates M10 URL fix"
+        "name": "QA script syntax",
+        "result": "PASS via V8 parse; execution not claimed"
       },
       {
-        "name": "V8 M10 functional assertions (actual fetched module, fake storage)",
-        "result": "19/19 PASS: URL safety, validation, hydration, project retest, private teacher notes"
-      },
-      {
-        "name": "New M10 Node/CI/Chrome",
-        "result": "NOT_CONFIRMED at checkpoint; tests committed but not claimed executed"
+        "name": "GitHub Actions static QA and Browser QA at latest SHA",
+        "result": "NOT_CONFIRMED"
       },
       {
         "name": "GDevelop GUI, HDMI, human peer, physical mobile",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify new M10 regression in GitHub Actions on latest SHA; continue auditing M10 project, demonstration, URL and evidence, before visual polish.",
+    "next": "Check Actions on checkpoint SHA; continue pedagogical alignment of M10 project reopen, demo, access and evidence before aesthetics.",
     "master_progress": "54/59 unchanged"
   }
 }
