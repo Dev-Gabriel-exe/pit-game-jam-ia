@@ -1166,3 +1166,20 @@ No perfil misto com +5 VIT/+5 DEF, **14/16** Guardiões estavam vivos aos 35s e 
 **CI disparado, não homologado na consulta:** [M10 Rare Equipped WebGL 41454954798](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41454954798) `in_progress`; [fila visual 41454954529](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41454954529) `in_progress`; [QA geral 41454954651](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41454954651) `queued` na consulta. Não declarar sucesso enquanto o CI estiver vermelho ou pendente.
 
 **Próximo passo da MESMA missão:** ler o JSON da seed alternativa e separar `rejected` versus `evicted` versus descarte pelo orçamento WebGL, identificar a ordem dos efeitos e fazer um ajuste mínimo testado em todas as seeds, sem prejudicar J08 na principal. Não enfraquecer asserções para produzir PASS. **G.2 em PCs físicos NÃO realizado; H.1/H.2 reais, homologação humana, Fase I, merge, `main` e produção bloqueados.**
+
+
+### Resultado do reteste do diagnóstico — seed alternativa (02/11/2026)
+
+O novo relatório por chave foi efetivamente emitido no job `queued-fx-projection-webgl` do [run 41454954798](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41454954798), SHA de código `01cfd3b97ca826fd5353b4458e87ff3b3f62ed44`. **O job permanece FAILURE**: o incremento comprovou a observabilidade, não corrigiu a falha. A seed principal `20261101` passou com J08/P09/A07 renderizados ao menos uma vez (apenas J08 projetado dentro do frustum nessa execução). A seed alternativa `4175863657` falhou com a asserção `Rare proc did not create a tracked cue: guardian:J08`, agora acompanhada dos contadores:
+
+| Talento na seed alternativa | Procs reais | Aceitos | Rejeitados | Despachados | Substituídos | Primeiro quadro |
+|---|---:|---:|---:|---:|---:|---|
+| Guardião J08 | 1 | 0 | 1 | 0 | 0 | não |
+| Caçador P09 | 3 | 2 | 1 | 0 | 2 (2 singleton) | não |
+| Arcanista A07 | 1 | 1 | 0 | 1 | 0 | sim (1 quadro no frustum) |
+
+**Causa imediata identificada:** J08 foi rejeitado pela fila cheia; P09 foi aceito duas vezes, mas seus dois cues pendentes foram deslocados antes de despacho. Não atribuir a causa ao frustum, à duração WebGL ou à física: J08/P09 nem chegaram ao primeiro quadro. A ordem exata de ocupação/vítimas ainda não foi registrada. A asserção continua estrita; nenhum PASS foi forçado.
+
+**CI observado:** [fila isolada 41454954529](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41454954529) **SUCCESS**; [QA geral 41454954651](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41454954651) **SUCCESS**; no run 41454954798, `rare-equipped-webgl` **SUCCESS**, `queued-fx-projection-webgl` **FAILURE**, `fx-projection-webgl` ainda executando na consulta. O checkpoint não representa homologação visual.
+
+**Próximo incremento da mesma missão:** registrar uma trilha **limitada e anônima de admissões/substituições** da fila para a seed alternativa e reproduzir a sequência em teste determinístico, então corrigir admissão sem regredir J08/P09/A07 na seed principal e no modo low. Preservar teto 18, M5 e todos os bloqueios G.2/H.1/H.2.
