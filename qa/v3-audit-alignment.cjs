@@ -350,6 +350,47 @@ for(const [number,source,globalName,warningClass] of [
  mod.hydrate('original-'+number,remoteText,'approved');
  assert.equal(mod.load('original-'+number).checks.length,3,'M'+number+' preserves actual existing local checkbox declarations');
 }
+// M06: changing the saved project path cannot preserve an old import/Preview
+// declaration. License/negative-case verification belongs to the asset, not path.
+{
+ const store=new Map(),env={window:{},localStorage:{
+  getItem:k=>store.get(k)||null,
+  setItem:(k,v)=>store.set(k,v)
+ }};
+ vm.runInNewContext(m06Student,env,{timeout:3000,filename:'student-mission-six.js'});
+ const mod=env.window.PIT_STUDENT_MISSION_SIX;
+ const fixture=()=>({route:'image',checks:[0,1,2],
+  need:'Meu jogo precisa de um efeito visual de alerta',
+  file:'alerta.png importado na cena principal',
+  source:'Imagem autoral desenhada no editor local',
+  license:'Autoria própria, não usa material de terceiros',
+  before:'Antes não havia indicador de alerta na cena',
+  after:'No Preview o indicador aparece quando acionado',
+  negative:'Sem acionar o evento o alerta não aparece',
+  saved:'Projeto original salvo na pasta local'
+ });
+ const d=fixture();
+ assert.equal(mod.save('m06-project-qa',d),true,'M06 stores fictional fixture');
+ assert.equal(mod.validate('m06-project-qa').ok,true,'M06 baseline ready for teacher review');
+ const changed=mod.updateField(d,'saved','Projeto revisado salvo em outra pasta');
+ assert.equal(Array.from(changed).join(','),'0,1','M06 project change invalidates import and Preview, not license');
+ assert.equal(Array.from(d.checks).join(','),'2','M06 preserves only license/negative check');
+ assert.equal(d.license,fixture().license,'M06 preserves student authorship text');
+ mod.save('m06-project-qa',d);
+ assert.equal(mod.validate('m06-project-qa').field,'checks','M06 blocks submission until import and Preview reconfirmed');
+ d.checks=[0,1,2];mod.save('m06-project-qa',d);
+ assert.equal(mod.validate('m06-project-qa').ok,true,'M06 accepts manual reconfirmation');
+ const whitespace=fixture();
+ assert.equal(mod.updateField(whitespace,'saved','  '+whitespace.saved+'  ').length,0,'M06 equivalent path whitespace does not invalidate');
+ assert.equal(whitespace.checks.length,3,'M06 equivalent whitespace retains confirmations');
+ const license=fixture();
+ assert.equal(Array.from(mod.updateField(license,'license','Licença CC0 verificada pelo aluno')).join(','),'2','M06 license edit invalidates only provenance check');
+ assert.equal(Array.from(license.checks).join(','),'0,1','M06 import and Preview remain valid on license edit');
+ const asset=fixture();
+ assert.equal(mod.updateField(asset,'file','outro-asset.png importado na cena').length,3,'M06 changed asset invalidates all checks');
+ assert.equal(asset.checks.length,0,'M06 changed asset requires complete retest');
+ assert(m06Student.includes('Projeto indicado alterado: reabra-o no GDevelop'),'M06 student gets actionable reconfirmation guidance');
+}
 // M03-M05 regression: an approved/submitted text record cannot attest to
 // three Preview tests. Existing local answers and manually marked checks win.
 const earlyEvidenceFixtures=[
