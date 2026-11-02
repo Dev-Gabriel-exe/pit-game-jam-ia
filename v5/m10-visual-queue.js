@@ -31,7 +31,11 @@
     if(!lanes.has(entry.key)&&!(dispatchedByKey.get(entry.key)||0)){
      for(let i=0;i<order.length;i++){
       const key=order[i],lane=lanes.get(key);
-      const redundancy=(lane.length-1)*1000+(seenByKey.get(key)||0)-1;
+      // A proc being SEEN repeatedly is not evidence it was ever DRAWN.
+      // Never displace the last pending first-display cue for another key.
+      // Reclaim a duplicate, or a singleton whose key already dispatched.
+      const redundancy=(lane.length-1)*1000+
+       ((dispatchedByKey.get(key)||0)>0?1:0);
       if(redundancy>score){score=redundancy;victim=i}
      }
     }
