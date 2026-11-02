@@ -9,6 +9,7 @@ const targets=['guardian:J08','hunter:P09','mage:A07'];
 const prefix=process.env.M10_RARE_PREFIX||'qa/v5-m10-rare-equipped';
 // Diagnostic only: emulate a constrained device without modifying classroom hardware.
 const lowQuality=process.env.M10_RARE_LOW==='1';
+const frameProbe=process.env.M10_FX_PROBE==='1';
 (async()=>{
  const browser=await chromium.launch({headless:true,args:[
   '--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'
@@ -17,6 +18,7 @@ const lowQuality=process.env.M10_RARE_LOW==='1';
   seed:fixture.seed,engineProcCounts:fixture.procs,
   renderer:'SwiftShader',qualityMode:lowQuality?'low':'auto',
   emulatedDeviceMemoryGb:lowQuality?2:null,physicalPCsValidated:false,humanVisualApproval:false,
+  projectionAudit:frameProbe?'frustum-centre-per-rendered-frame':'disabled',
   limitation:'Screenshots are sampled after cumulative cue detection; they do not prove the short-lived effect is within camera view.',
   cameraShots:[],rare:{}};
  try{
@@ -26,13 +28,14 @@ const lowQuality=process.env.M10_RARE_LOW==='1';
    Object.defineProperty(navigator,'deviceMemory',{configurable:true,value:2});
   });
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&m10variant=9&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&sprites=1&seed='+fixture.seed,
+  await page.goto('http://127.0.0.1:8899/v5/arena-lab.html?m10preview=1&m10variant=9&count=30&phase2=1&nav=steer&counterplay=1&balance=hp2&sprites=1&seed='+fixture.seed+(frameProbe?'&m10fxprobe=1':''),
    {waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.PIT_V5_ARENA_LAB?.modelState.loaded===30,null,{timeout:180000});
   const stage=page.locator('#arenaStage');
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m10');
   assert.equal(await stage.getAttribute('data-v5-quality-mode'),lowQuality?'low':'auto',
    'Renderer must honor the expected quality preset');
+  if(frameProbe)assert.equal(await stage.getAttribute('data-v5-fx-probe-enabled'),'true');
   if(lowQuality){
    assert.equal(Number(await stage.getAttribute('data-v5-sprite-frames')),3,
     'Low-quality sprite atlas must use three frames, not the normal six');
@@ -102,6 +105,25 @@ const lowQuality=process.env.M10_RARE_LOW==='1';
     assert(report.rare[key].rendered,
      'Real rare proc did not obtain the bounded M10 subtle visual lane: '+key);
   }
+  if(frameProbe){
+   const projection=await page.evaluate(()=>{
+    const d=document.querySelector('#arenaStage').dataset;
+    return {projected:JSON.parse(d.v5FxProbeVisibleFrames||'{}'),
+     offscreen:JSON.parse(d.v5FxProbeOffscreenFrames||'{}')};
+   });
+   const total=Object.values(projection.projected).reduce((a,b)=>a+b,0);
+   const offscreen=Object.values(projection.offscreen).reduce((a,b)=>a+b,0);
+   assert(total+offscreen>0,'Projection probe did not sample any live cue mesh');
+   assert(total>0,'No cue mesh centre entered the camera frustum in this battle');
+   for(const [key,n] of Object.entries({...projection.projected,...projection.offscreen})){
+    assert(equipped.has(key),'Projected cue must belong to an equipped talent: '+key);
+    assert(Number.isInteger(n)&&n>0,'Projection counts must be positive frame samples');
+   }
+   report.projection={...projection,projectedFrameSamples:total,offscreenFrameSamples:offscreen,
+    rareTargets:Object.fromEntries(targets.map(k=>[k,{
+     projected:projection.projected[k]||0,offscreen:projection.offscreen[k]||0}])),
+    limitation:'Frustum centre samples after WebGL render, not pixel contrast, occlusion, or human projector legibility.'};
+  }
   await page.screenshot({path:prefix+'-final.png',timeout:45000});
   await page.keyboard.press('Escape');
   await page.waitForFunction(()=>!document.body.classList.contains('arena-immersive'));
@@ -110,6 +132,10 @@ const lowQuality=process.env.M10_RARE_LOW==='1';
   assert.equal(await stage.getAttribute('data-v5-combat-engine'),'phase2-m5');
   assert.equal(Number(await stage.getAttribute('data-v5-approved-talent-slots')),5);
   assert.equal(await stage.getAttribute('data-v5-talent-fx-rendered-keys'),'[]');
+  if(frameProbe){
+   assert.equal(await stage.getAttribute('data-v5-fx-probe-visible-frames'),'{}');
+   assert.equal(await stage.getAttribute('data-v5-fx-probe-offscreen-frames'),'{}');
+  }
   assert((await page.evaluate(()=>window.PIT_V5_ARENA_LAB.selectedTalents)).every(b=>b.ids.length===5));
   assert.deepEqual(errors,[],'Browser errors: '+errors.join(' | '));
   report.m5Regression='5 talent slots restored, visual provenance reset';
