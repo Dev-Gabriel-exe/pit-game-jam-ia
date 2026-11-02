@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T00:20:34.151Z",
+  "last_completed_at": "2026-11-02T01:22:06.596Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M08 native QA regression fixed after three source/test fixture mismatches. Static QA run 41366524028 SUCCESS on 7c47d8a; Chrome run 41366524045 still in progress at checkpoint. Next: confirm Chrome on current SHA and audit M09 saved-project evidence/reconfirmation. GDevelop GUI, physical HDMI, human tests and V5 integration NOT_RUN. Master 54/59, main untouched.",
+  "priority": "M09 saved-project peer-test integrity corrected; native static QA SUCCESS on 8de1d37 (run 41372075906), Chrome on latest code still pending. Next: verify Chrome on M09 changes, then continue professor/aluno cross-audit and GDevelop evidence. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-CI-M08-REGRESSION-REPAIR",
+  "last_task": "V4-AUD-M09-SAVED-PROJECT-RECHECK",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3309,37 +3309,55 @@
       ],
       "tests": "GitHub static QA 41366524028 SUCCESS on 7c47d8a, including updated M08 selective retest regression; previous failures reproduced via workflow logs. Chrome 41366524045 IN_PROGRESS. GDevelop GUI/HDMI/human/mobile/V5 NOT_RUN.",
       "notes": "Fixed stale all-or-nothing M08 test expectations, saved-project path assertion, unknown-field fixture state, and fake checkbox dataset. Production student/teacher code unchanged. Master 54/59; no main merge."
+    },
+    {
+      "task": "V4-AUD-M09-SAVED-PROJECT-RECHECK",
+      "completed_at": "2026-11-02T01:22:06.596Z",
+      "commit": "8de1d3749cc97e41cb69fe0e8dc8cdad2ffd1111",
+      "files": [
+        "v3/student-mission-nine.js",
+        "v3/teacher-mission-nine-validation.js",
+        "qa/v3-m09-storage-failsafe.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md"
+      ],
+      "tests": "GitHub native static QA 41372068624 SUCCESS on regression SHA f1d16df; native static QA 41372075906 SUCCESS on teacher code SHA 8de1d37; Browser QA 41372075898 and 41372068560 IN_PROGRESS at check. Earlier Browser QA 41366524045 SUCCESS on old code, not proof of M09 fix. GDevelop GUI/HDMI/real students/mobile physical/V5 NOT_RUN.",
+      "notes": "M09 saved project path changes now invalidate manual check 0 only; check 0 explicitly binds peer-tested game to reopened saved project. Observation/decision preserved for same game; new game requires actual playtest. UI and persisted checkbox sync, submission block, whitespace exemption. Teacher projected rubric aligned; private notes unchanged. Branch V3 only, no main/production/real students. Master progress 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-CI-M08-REGRESSION-REPAIR",
+    "task": "V4-AUD-M09-SAVED-PROJECT-RECHECK",
     "status": "STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-02T00:20:34.151Z",
-    "code_commits": [],
+    "updated_at": "2026-11-02T01:22:06.596Z",
+    "code_commits": [
+      "aab5c38ff7f6a7d1491f344c96d2279cc0202418",
+      "8de1d3749cc97e41cb69fe0e8dc8cdad2ffd1111"
+    ],
     "regression_commits": [
-      "f8d39c68897ed9b0e85226541eed1ed817a3406e",
-      "9c51959586ba07a0280b90793b273e09676422a6",
-      "7c47d8a638f5e000189319d648b678862bd27454"
+      "f1d16df3919c9fabf9ad25e0a1f38b38166565ec"
     ],
     "tests": [
       {
-        "name": "M08 native Node acceptance in static GitHub Actions run 41366524028",
-        "result": "PASS on 7c47d8a (all static workflow steps passed)"
+        "name": "Native static QA on M09 regression",
+        "result": "PASS run 41372068624 on f1d16df"
       },
       {
-        "name": "Previous CI runs 41361406293, 41366464693, 41366489737",
-        "result": "FAILED before regression fixture repairs; investigated logs, fixed assertions and mock DOM dataset"
+        "name": "Native static QA after M09 teacher rubric",
+        "result": "PASS run 41372075906 on 8de1d37"
       },
       {
-        "name": "Browser QA run 41366524045",
-        "result": "IN_PROGRESS at checkpoint; do not claim pass"
+        "name": "Chrome Browser QA on M09 regression and teacher rubric",
+        "result": "IN_PROGRESS runs 41372068560 and 41372075898; not yet a pass"
+      },
+      {
+        "name": "Previous M08 Browser QA",
+        "result": "PASS run 41366524045 on 7c47d8a; different SHA"
       },
       {
         "name": "GDevelop GUI, HDMI physical projection, real student playtest, mobile physical device, V5 end-to-end",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Verify Chrome QA run 41366524045, then audit M09 professor/student saved-project path and manual peer-test check integrity. No main merge.",
+    "next": "Confirm Chrome Browser QA for M09 changed SHA, repair any regression, then continue M01–M10 teacher/student alignment audit. No main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
