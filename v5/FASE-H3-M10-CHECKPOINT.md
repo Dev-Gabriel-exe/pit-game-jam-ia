@@ -1,5 +1,15 @@
 # V5 H.3 — Missão 10, motor experimental (checkpoint 30/10/2026)
 
+## Rodada 02/11/2026 — fila visual + projeção simultâneas, três cenários (CI em execução)
+
+**Missão técnica H.3/M10:** instrumentar no CI a comparação que faltava: a fila experimental `M10_VISUAL_QUEUE=1` e a sonda WebGL `M10_FX_PROBE=1` ligadas **simultaneamente** com 30 KayKits. A matriz inclui seed principal, seed alternativa e qualidade low com memória sintética de 2 GB. O teste existente verifica os cues genuínos J08/P09/A07, primeira renderização, descarte prematuro, contagem de 29 espectadores, classificação dentro/fora do frustum por plano de câmera, restauração M5 (5 talentos) e isolamento da M10 (10 talentos/20 pontos). Os artefatos `m10-fx-queued-projection` contêm três JSONs e capturas quando houver amostras. Um PASS de auditoria **não prova** legibilidade, oclusão nem contraste no projetor.
+
+**Arquivo/commit:** `.github/workflows/v5-m10-rare-equipped-qa.yml` em [`2843c6bd4416f1c23af7bc8f8e05883970a4274e`](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/commit/2843c6bd4416f1c23af7bc8f8e05883970a4274e), novo job `queued-fx-projection-webgl`. **CI observado in_progress:** [run 41438629687](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41438629687), com os três jobs ativos na última consulta. **Não declarar sucesso até ver a conclusão e os JSONs.** Baseline anterior sem fila: [41430225821](https://github.com/Dev-Gabriel-exe/pit-game-jam-ia/actions/runs/41430225821) SUCCESS, mas J08/P09/A07 tinham 0 quadros renderizados nos três cenários.
+
+**Próximo passo da MESMA missão:** conferir os três JSONs do novo job; se falhar, corrigir a causa, sem mexer em combate. Se passar, comparar `firstVisible`, `byShot`, rejeições e efeitos fora de câmera e propor ajuste visual mínimo e testável. G.2 em PCs físicos **NÃO realizado**; H.1/H.2 com alunos reais, homologação humana, merge, `main` e produção continuam bloqueados.
+
+
+
 
 ## Rodada 02/11/2026 — matriz adicional de enquadramento WebGL (em validação)
 
