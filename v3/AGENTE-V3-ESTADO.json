@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T15:19:42Z",
+  "last_completed_at": "2026-11-02T15:20:59Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,7 +14,7 @@
     "M02",
     "M03"
   ],
-  "priority": "M10 saved-project recovery tutorial corrected in V3 for all 3 routes; GitHub Node static QA SUCCESS at eb5ba72, Browser QA pending. PR #24 already merged by another agent; 10 student module blobs match main, but shared M10 guide in main still shows PROFESSOR heading to students and omits no-defect playtest. Do NOT touch main; hand off isolated guide patch to authorized integrator. GDevelop GUI/HDMI/peer/physical mobile NOT_RUN.",
+  "priority": "V3 M10 saved-project reopen fixed and static QA SUCCESS; Browser QA pending. PR #24 already merged by another agent: student M01-M10 blobs match main, but main shared M10 guide shows teacher heading to student and omits no-defect outcome. Main teacher M05/M06/M07/M08 still contain projected operational review instructions; M05 chapter IV instead of V; M08 demands mobile even for desktop-only games. Documented P1 handoff in v3/AUDITORIA-V4-MISSOES.md. Do not touch main/integration; human GDevelop GUI/HDMI/peer/mobile NOT_RUN.",
   "current_phase": "AUDITORIA",
   "last_task": "V4-AUD-M10-SAVED-PROJECT-REOPEN",
   "completed_count": 54,
@@ -3508,7 +3508,7 @@
         "v3/AGENTE-V3-ESTADO.json"
       ],
       "tests": "V3 M10 tutorial now requires saved project reopen in local/web/gd routes. GitHub static QA run 41470403304 SUCCESS at eb5ba72; Browser QA 41470403440 IN_PROGRESS when checked. Main static/browser at 6d2e75e SUCCESS but missed shared-guide semantic regression. Manual GDevelop GUI, HDMI, peer and physical mobile NOT_RUN.",
-      "notes": "PR #24 merged by other agent at 14:47Z; V3 student M01-M10 and teacher M09/M10+private notes guard match main blob SHA, but main shared M10 guide differs: student sees PROFESSOR heading, M09 no-defect outcome omitted, and saved-project reopen not included. No changes to main, integration branch, deploy, production data. Master 54/59 unchanged."
+      "notes": "PR #24 merged by other agent at 14:47Z; V3 student M01-M10 and teacher M09/M10+private notes guard match main blob SHA, but main shared M10 guide differs: student sees PROFESSOR heading, M09 no-defect outcome omitted, and saved-project reopen not included. No changes to main, integration branch, deploy, production data. Master 54/59 unchanged. Additional main teacher review inspection: M05 chapter IV and projected Acompanhamento workflow; M06/M07 projected operational teacher navigation; M08 unconditional mobile criterion and projected review workflow. M02/M03 main mount(rootOverride) must be preserved. Documented in audit appendix commit 6320b3a; no main changes."
     }
   ],
   "v4_checkpoint": {
@@ -3521,7 +3521,7 @@
     "regression_commits": [
       "eb5ba7242a76c8b20609e38af527718dbaecc478"
     ],
-    "documentation_commit": "a91cfc4df4d2e5c6c274a38406592c112f0e15a5",
+    "documentation_commit": "6320b3ab2a0c8608bc69f8c13eb046831e60496c",
     "tests": [
       {
         "name": "M10 guide 3 routes saved project reopen and no-fictitious-playtest regression",
@@ -3540,7 +3540,7 @@
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Browser QA on eb5ba72 or checkpoint SHA; keep M10 shared-guide regression on main as P1 handoff only, no direct integration. Continue professor/student pedagogical audit, not aesthetics.",
+    "next": "Confirm Browser QA at eb5ba72 or latest checkpoint SHA. Main P1 handoff: M10 shared guide and teacher M05–M08 projected private workflow / M08 optional mobile / M05 chapter numeral. Only authorized integrator may apply small patch; continue V3 pedagogical audit without overwriting main.",
     "master_progress": "54/59 unchanged"
   }
 }
