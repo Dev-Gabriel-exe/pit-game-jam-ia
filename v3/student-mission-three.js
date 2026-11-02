@@ -82,7 +82,8 @@ function updateField(d,name,value){
 function selectObjectType(d,type){
  if(!['2D Sprite','3D Box/Modelo'].includes(type)||d.objectType===type)return false;
  d.objectType=type;
- d.checks=(d.checks||[]).filter(n=>![0,1].includes(n));
+ // A different object type changes the project being attested: recheck scene, Preview and saved copy.
+  d.checks=[];
  return true;
 }
 function validity(d){
@@ -254,7 +255,7 @@ function mount(ctx){
  }));
  root.querySelectorAll('[data-m3-type]').forEach(el=>el.addEventListener('change',()=>{
   if(!el.checked)return;
-  if(selectObjectType(d,el.value))retestMessage='Tipo de objeto alterado: confira novamente a cena e o Preview.';
+  if(selectObjectType(d,el.value))retestMessage='Tipo de objeto alterado: confira novamente a cena, o Preview e o salvamento.';
   save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-check]').forEach(el=>el.addEventListener('change',()=>{
