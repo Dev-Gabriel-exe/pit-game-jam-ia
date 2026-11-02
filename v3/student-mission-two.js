@@ -53,7 +53,7 @@ function parseEvidence(raw){
   values.push(value);
  }
  const [title,genre,scene,mechanic,elements,test,later]=values;
- if(title.length>50||genre.length>25)return null;
+ if(title.length>55||genre.length>23)return null;
  const d={scene,mechanic,elements,test,later:later==='Não informado'?'':later};
  if(FIELDS.some(f=>clean(d[f.id]).length<f.min||d[f.id].length>f.max))return null;
  if(parts(d.elements).length!==3)return null;
@@ -180,8 +180,8 @@ function delivery(ctx){
 }
 function evidence(session,source){
  const i=getIdea({idea:source}),d=load(session);
- // Orçamento total máximo: 747 caracteres; nunca truncar um campo no meio.
- const lines=['MISSÃO 02 — MVP EM FOCO','Jogo: '+clean(i.title).slice(0,50),'Gênero: '+clean(i.genre).slice(0,25),
+ // Orçamento total máximo: 750 caracteres (55 no título, 23 no gênero);\n // preserva integralmente o título de até 55 caracteres definido na Missão 01.
+ const lines=['MISSÃO 02 — MVP EM FOCO','Jogo: '+clean(i.title).slice(0,55),'Gênero: '+clean(i.genre).slice(0,23),
   'Cena: '+clean(d.scene),'Mecânica: '+clean(d.mechanic),'Elementos: '+clean(d.elements),
   'Teste: '+clean(d.test),'Depois: '+clean(d.later||'Não informado')];
  return lines.join('\n');
