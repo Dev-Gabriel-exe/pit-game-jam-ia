@@ -4,7 +4,7 @@
   "branch": "feature/pit-gamejam-v3-arcade",
   "workflow_version": 1,
   "initialized_at": "2026-10-27",
-  "last_completed_at": "2026-11-02T01:22:06.596Z",
+  "last_completed_at": "2026-11-02T02:13:10.381Z",
   "status": "RUNNING",
   "cadence_requested_minutes": 60,
   "cadence_supported_by_chatgpt_minutes": 60,
@@ -14,9 +14,9 @@
     "M02",
     "M03"
   ],
-  "priority": "M09 saved-project peer-test integrity corrected; native static QA SUCCESS on 8de1d37 (run 41372075906), Chrome on latest code still pending. Next: verify Chrome on M09 changes, then continue professor/aluno cross-audit and GDevelop evidence. No main merge.",
+  "priority": "M10 gd.games route now accepts only game-specific HTTPS links on gd.games, with Web export/local Preview alternatives. Static CI SUCCESS run 41376451267 on 938b589; Chrome on changed SHA still pending. Next: confirm Chrome, then audit M01–M10 professor/aluno content and manual GDevelop evidence. No main merge.",
   "current_phase": "AUDITORIA",
-  "last_task": "V4-AUD-M09-SAVED-PROJECT-RECHECK",
+  "last_task": "V4-AUD-M10-GD-GAMES-URL-INTEGRITY",
   "completed_count": 54,
   "total_tasks": 59,
   "tasks": [
@@ -3322,42 +3322,59 @@
       ],
       "tests": "GitHub native static QA 41372068624 SUCCESS on regression SHA f1d16df; native static QA 41372075906 SUCCESS on teacher code SHA 8de1d37; Browser QA 41372075898 and 41372068560 IN_PROGRESS at check. Earlier Browser QA 41366524045 SUCCESS on old code, not proof of M09 fix. GDevelop GUI/HDMI/real students/mobile physical/V5 NOT_RUN.",
       "notes": "M09 saved project path changes now invalidate manual check 0 only; check 0 explicitly binds peer-tested game to reopened saved project. Observation/decision preserved for same game; new game requires actual playtest. UI and persisted checkbox sync, submission block, whitespace exemption. Teacher projected rubric aligned; private notes unchanged. Branch V3 only, no main/production/real students. Master progress 54/59 unchanged."
+    },
+    {
+      "task": "V4-AUD-M10-GD-GAMES-URL-INTEGRITY",
+      "completed_at": "2026-11-02T02:13:10.381Z",
+      "commit": "938b58935dadb610ad67c501eac0810eee6d5890",
+      "files": [
+        "v3/student-mission-ten.js",
+        "qa/v3-m10-field-guidance.cjs",
+        "v3/AUDITORIA-V4-MISSOES.md",
+        "v3/AGENTE-V3-ESTADO.json"
+      ],
+      "tests": "Local Node URL expression 12/12 PASS; GitHub static QA 41376451267 SUCCESS on 938b589. Intermediate static QA 41376442778 failed on incorrect percent-encoded URL test, repaired. Browser QA 41376451399 IN_PROGRESS; no human/GDevelop GUI/HDMI/mobile/V5 testing.",
+      "notes": "M10 gd.games route no longer accepts arbitrary HTTPS sites, spoofed hosts, homepage, HTTP or tokenized URL as game evidence. Allows specific gd.games game path. Student directed to Web export or local Preview fallback, no paid publication. Teacher private notes unchanged. Branch V3 only, main/production/student data untouched. Master 54/59 unchanged."
     }
   ],
   "v4_checkpoint": {
-    "task": "V4-AUD-M09-SAVED-PROJECT-RECHECK",
+    "task": "V4-AUD-M10-GD-GAMES-URL-INTEGRITY",
     "status": "STATIC_CI_PASS_BROWSER_PENDING",
-    "updated_at": "2026-11-02T01:22:06.596Z",
+    "updated_at": "2026-11-02T02:13:10.381Z",
     "code_commits": [
-      "aab5c38ff7f6a7d1491f344c96d2279cc0202418",
-      "8de1d3749cc97e41cb69fe0e8dc8cdad2ffd1111"
+      "2d0a994ab7ebb09fa4f9902d0cdb7c0286f57c76"
     ],
     "regression_commits": [
-      "f1d16df3919c9fabf9ad25e0a1f38b38166565ec"
+      "60a8d190ba29a5cfcdc214faa76b2ba36f2c17fe",
+      "938b58935dadb610ad67c501eac0810eee6d5890"
     ],
     "tests": [
       {
-        "name": "Native static QA on M09 regression",
-        "result": "PASS run 41372068624 on f1d16df"
+        "name": "M09 prior static and Chrome QA",
+        "result": "PASS runs 41372130004 and 41372130001 on 870a28f; previous checkpoint Chrome pending now confirmed"
       },
       {
-        "name": "Native static QA after M09 teacher rubric",
-        "result": "PASS run 41372075906 on 8de1d37"
+        "name": "M10 URL regex local Node samples",
+        "result": "PASS 12/12 (3 valid, 9 invalid) using matching expression"
       },
       {
-        "name": "Chrome Browser QA on M09 regression and teacher rubric",
-        "result": "IN_PROGRESS runs 41372068560 and 41372075898; not yet a pass"
+        "name": "M10 static QA on final code+regression",
+        "result": "PASS run 41376451267 on 938b589"
       },
       {
-        "name": "Previous M08 Browser QA",
-        "result": "PASS run 41366524045 on 7c47d8a; different SHA"
+        "name": "Intermediate M10 static QA regression",
+        "result": "FAIL run 41376442778 on 60a8d19: test mistakenly rejected percent-encoded space; corrected in 938b589"
       },
       {
-        "name": "GDevelop GUI, HDMI physical projection, real student playtest, mobile physical device, V5 end-to-end",
+        "name": "M10 Browser QA",
+        "result": "IN_PROGRESS run 41376451399 on 938b589 at last check; NOT_CONFIRMED"
+      },
+      {
+        "name": "GDevelop GUI, physical HDMI, human peer test, real mobile, V5 end-to-end",
         "result": "NOT_RUN"
       }
     ],
-    "next": "Confirm Chrome Browser QA for M09 changed SHA, repair any regression, then continue M01–M10 teacher/student alignment audit. No main merge.",
+    "next": "Confirm Chrome Browser QA for 938b589 and newer doc checkpoint, repair regressions, then resume cross-audit of professor/student M01–M10. No main merge.",
     "master_progress": "54/59 unchanged"
   }
 }
