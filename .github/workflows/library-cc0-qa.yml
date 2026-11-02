@@ -1,12 +1,14 @@
 name: Biblioteca CC0 real QA
 on:
   push:
-    branches: [feature/biblioteca-cc0-real-20261028]
+    branches: [feature/biblioteca-cc0-real-20261028, feature/v5-arena-dos-criadores]
   pull_request:
     paths:
       - 'index.html'
       - 'v3/library-open-assets.*'
       - 'qa/library-cc0-browser.cjs'
+      - 'v5/assets/quaternius-nature/**'
+      - 'v3/GUIA-IMPORTACAO-ASSETS-GDEVELOP.md'
   workflow_dispatch:
 permissions:
   contents: read

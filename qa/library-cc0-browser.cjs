@@ -22,10 +22,10 @@ const {chromium}=require('playwright');
    const mainTitle=await page.locator('#recursos .section-head h2').textContent();
    assert.match(mainTitle,/Heróis, mapas e sons/,'Outdated library introduction');
    const tally=await page.locator('#pitOpenCount').textContent();
-   assert.match(tally,/17 modelos GLB individuais/);
-   assert.match(tally,/17 pacotes gratuitos/);
-   assert.equal(await page.locator('#pitGlbGrid .pit-real-model').count(),17,'17 real GLBs');
-   assert.equal(await page.locator('#pitPackGrid .pit-real-pack').count(),17,'17 CC0 source packs');
+   assert.match(tally,/20 modelos GLB individuais/);
+   assert.match(tally,/21 pacotes gratuitos/);
+   assert.equal(await page.locator('#pitGlbGrid .pit-real-model').count(),20,'17 real GLBs');
+   assert.equal(await page.locator('#pitPackGrid .pit-real-pack').count(),21,'21 source packs');
    assert.equal(await page.locator('#pitPackGrid a.pit-real-download[href$=".zip"]').count(),13,'13 ZIP direct');
    const modelUrl=await page.evaluate(()=>window.PIT_OPEN_ASSETS.models[0].url);
    assert(modelUrl.includes('raw.githubusercontent.com'),'Model must point to upstream binary');
@@ -41,17 +41,42 @@ const {chromium}=require('playwright');
    assert(await page.locator('#pitPackGrid .pit-real-pack').count()>3,'Map filter must include world kits');
    await page.locator('[data-pit-tab="sons"]').click();
    assert.equal(await page.locator('#pitPackGrid .pit-real-pack').count(),4,'Sound packs missing');
+   await page.locator('[data-pit-tab="efeitos"]').click();
+   assert.equal(await page.locator('#pitPackGrid .pit-real-pack').count(),3,'Missing three CC0 visual effect packs');
+   for(const id of ['vfx-kenney-particles','vfx-foozle-magic','vfx-pvfx-foundry']){
+    const card=page.locator('#pitPackGrid [data-id="'+id+'"]');
+    assert.equal(await card.count(),1,'Missing VFX pack '+id);
+    assert(await card.locator('a.pit-real-source').getAttribute('href'),'Missing official URL');
+    await card.locator('summary').click();
+    assert.equal(await card.locator('details').getAttribute('open'),'','Instruction panel should be open');
+    assert((await card.locator('ol li').count())>=4,'Per-pack GDevelop instructions missing');
+   }
+   await page.locator('[data-pit-tab="mapas"]').click();
+   assert.equal(await page.locator('#pitPackGrid [data-id="q-nature-mega"]').count(),1,'Quaternius pack absent from resource maps');
+   const nature=page.locator('#pitPackGrid [data-id="q-nature-mega"]');
+   assert.match(await nature.locator('.pit-real-download').getAttribute('href'),/quaternius\.com\/packs\/stylizednaturemegakit/);
+   await nature.locator('summary').click();
+   assert.match(await nature.locator('ol').innerText(),/3D Model/);
+   assert(await page.locator('#pitResourceGuide').isVisible(),'Student field guide must be visible');
    await page.locator('[data-pit-tab="modelos"]').click();
-   assert.equal(await page.locator('#pitGlbGrid .pit-real-card').count(),17);
+   assert.equal(await page.locator('#pitGlbGrid .pit-real-card').count(),20);
    assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),0);
    await page.locator('[data-pit-tab="sons"]').click();
    assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),4);
    await page.locator('[data-pit-tab="2d"]').click();
-   assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),2);
+   assert.equal(await page.locator('#pitPackGrid .pit-real-card').count(),5);
    await page.locator('[data-pit-tab="todos"]').click();
    await page.locator('#pitOpenSearch').fill('morcego');
    assert.equal(await page.locator('#pitGlbGrid .pit-real-card').count(),1);
    await page.locator('#pitOpenSearch').fill('');
+   // All Quaternius GLBs are served by our project, with real downloadable bytes.
+   for(const id of ['q-tree1','q-tree3','q-bush']){
+    const entry=await page.evaluate(id=>window.PIT_OPEN_ASSETS.models.find(m=>m.id===id),id);
+    assert(entry?.url.startsWith('./v5/assets/quaternius-nature/'),'Local GLB URL missing: '+id);
+    const resource=await page.request.get(new URL(entry.url,page.url()).toString());
+    assert.equal(resource.status(),200,'Local Quaternius GLB missing: '+id);
+    const raw=await resource.body();assert.equal(raw.toString('ascii',0,4),'glTF');assert(raw.length>10000);
+   }
    await page.locator('[data-view="g-bat"]').click();
    await page.locator('#pitRealModal:not([hidden])').waitFor();
    assert.match(await page.locator('#pitRealTitle').textContent(),/Morcego/);
@@ -72,7 +97,7 @@ const {chromium}=require('playwright');
    assert(!await page.locator('#assetGrid').isVisible(),'Backup generator must close cleanly');
    assert.deepEqual(errors,[],'Browser uncaught errors: '+errors.join('; '));
    await page.screenshot({path:'qa/biblioteca-cc0-'+vp.width+'.png',fullPage:true});
-   outputs.push({viewport:vp.width,realGLBs:17,sourcePacks:17,directZIP:13,download:download.suggestedFilename(),overflow:dim.width-dim.screen});
+   outputs.push({viewport:vp.width,realGLBs:20,sourcePacks:21,directZIP:13,download:download.suggestedFilename(),overflow:dim.width-dim.screen});
    await page.close();
   }
   console.log('PASS: verified CC0 individual downloads, 3D preview opening, 2D/audio/3D filters and unchanged local asset library');

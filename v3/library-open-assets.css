@@ -102,3 +102,23 @@
  #pitOpenAssets .pit-real-pack .pit-real-pack-art{aspect-ratio:16/8}
  #pitOpenAssets .pit-real-pack .pit-real-card-body p{font-size:14px}
 }
+
+
+/* Pacotes de talentos e Quaternius — guias acessíveis e arte original opcional. */
+.pit-real-pack-symbol{height:100%;display:grid;place-items:center;font-size:clamp(56px,7vw,94px);filter:drop-shadow(0 9px 15px #0009);background:radial-gradient(circle at 50% 40%,#655047 0,#2d262f 38%,#17131b 75%)}
+.pit-resource-quickguide{margin:0 0 26px;padding:clamp(16px,2.3vw,25px);border:1px solid #b5875a;border-radius:12px;background:linear-gradient(135deg,#292125,#17131b);color:#eedac4}
+.pit-resource-guide-title span{font:800 11px "Cinzel",Georgia,serif;letter-spacing:.1em;color:#ebaf75}
+.pit-resource-guide-title h4{margin:6px 0;font:750 clamp(22px,2.2vw,30px) "Cinzel",Georgia,serif;color:#ffe2b5}
+.pit-resource-guide-title p{margin:0 0 15px;color:#dbc9b4;font:500 15px/1.5 "Source Sans 3",sans-serif}
+.pit-resource-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pit-resource-guide-grid>div{padding:13px;border:1px solid #785843;border-radius:8px;background:#17151c}
+.pit-resource-guide-grid b{font:800 15px/1.4 "Source Sans 3",sans-serif;color:#f2c890}
+.pit-resource-guide-grid p{margin:7px 0 0;font:500 14px/1.5 "Source Sans 3",sans-serif;color:#dbc6b5}
+.pit-resource-guide-links{margin:14px 0 0;font:600 14px/1.5 "Source Sans 3",sans-serif}
+.pit-resource-guide-links a{color:#ffcf93;text-decoration:underline;text-underline-offset:3px}
+.pit-pack-steps{margin-top:5px;border-top:1px solid #745340;padding-top:10px}
+.pit-pack-steps summary{cursor:pointer;min-height:36px;color:#f5cb8b;font:750 13px/1.45 "Source Sans 3",sans-serif;list-style-position:inside}
+.pit-pack-steps summary:focus-visible{outline:3px solid #f5cb8b;outline-offset:2px}
+.pit-pack-steps ol{padding:8px 3px 2px 23px;margin:4px 0 0;color:#ead7c5;font:500 13px/1.5 "Source Sans 3",sans-serif}
+.pit-pack-steps li+li{margin-top:8px}
+@media(max-width:770px){.pit-resource-guide-grid{grid-template-columns:1fr}}
