@@ -118,10 +118,10 @@ assert.equal(student.selectRoute(unchanged,'puzzle'),true,'new route triggers re
 assert.equal(unchanged.checks.length,0,'direct route change invalidates confirmations');
 
 // Each changed field invalidates only the manual Preview checks it attests.
-// A changed saved-project path must be reopened and reconfirmed (check 2).
+// A changed saved-project path may be another game: repeat all three Preview checks.
 const affectedChecks={
  issue:[0,1,2],control:[0,1,2],change:[0,1,2],
- before:[0,1],after:[1,2],negative:[2],saved:[2]
+ before:[0,1],after:[1,2],negative:[2],saved:[0,1,2]
 };
 for(const f of student.fields){
  const draft=student.load('m08-retest-'+f.id);
@@ -137,11 +137,11 @@ unchangedDraft.issue='A mesma observação';unchangedDraft.checks=[0,1,2];
 assert.equal(student.updateField(unchangedDraft,'issue','  A mesma   observação  '),false,'whitespace-only edit does not invalidate checks');
 assert.equal(unchangedDraft.checks.length,3,'same observation keeps tests');
 assert.equal(student.updateField(unchangedDraft,'saved','projeto-local.json'),true,'changed project requires reopen');
-assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'project path only invalidates final/reopen check');
+assert.deepEqual(Array.from(unchangedDraft.checks),[],'new saved project invalidates before, after and negative checks');
 assert.equal(student.updateField(unchangedDraft,'saved','  projeto-local.json  '),false,'whitespace-only project edit preserves checks');
-assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'equivalent project path keeps prior confirmations');
+assert.deepEqual(Array.from(unchangedDraft.checks),[],'equivalent project path does not restore stale confirmations');
 assert.equal(student.updateField(unchangedDraft,'unknown','anything'),false,'unknown field ignored');
-assert.deepEqual(Array.from(unchangedDraft.checks),[0,1],'unknown field keeps currently valid checks');
+assert.deepEqual(Array.from(unchangedDraft.checks),[],'unknown field does not restore invalidated checks');
 // Simulate a real input callback with a fake DOM; this is NOT a browser/HDMI test.
 const editSession='m08-input-event';
 const editDraft=student.load(editSession);
