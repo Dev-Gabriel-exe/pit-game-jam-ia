@@ -146,7 +146,7 @@ assert(legacyModule.evidence(legacySession).length<=750,'corrected evidence fits
 assert(legacyModule.parseEvidence(legacyModule.evidence(legacySession)),'corrected report roundtrips');
 assert(!legacyModule.render({session:legacySession,phase:'practice',status:'',idea:{}}).includes('Rascunho antigo preservado'),'warning clears after correction');
 
-// Editing a playtest after manual attestation must invalidate only affected claims.
+// Editing a playtest invalidates affected claims; switching the project invalidates all peer-test claims.
 const editId='fictional-report-edits',editDraft=m.load(editId);
 editDraft.outcome='issue';editDraft.resolution='backlog';editDraft.checks=[0,1,2];
 for(const f of m.fields)editDraft[f.id]=f.id==='peer'?'Colega A':'Registro fictício '+f.id;
@@ -160,11 +160,11 @@ editDraft.checks=[0,1,2];m.save(editId,editDraft);
 assert.equal(m.changeField(editId,editDraft,'task','Nova tarefa testada').join(','),'0,1,2','changed task requires new complete playtest');
 assert.equal(m.load(editId).checks.length,0,'no stale manual check survives a changed task');
 editDraft.checks=[0,1,2];m.save(editId,editDraft);
-assert.equal(m.changeField(editId,editDraft,'saved','Novo caminho do mesmo projeto').join(','),'0','new saved project path requires reopening the actual tested game');
-assert.equal(m.load(editId).checks.join(','),'1,2','observation and decision attestations are preserved for the same tested game');
+assert.equal(m.changeField(editId,editDraft,'saved','Novo caminho do mesmo projeto').join(','),'0,1,2','changed project path requires repeating all peer-test checks');
+assert.equal(m.load(editId).checks.join(','),'','observations and decisions cannot certify a changed project');
 assert.equal(m.validate(editId).ok,false,'submission blocked until the saved-project attestation is renewed');
 assert.equal(m.changeField(editId,editDraft,'saved',' Novo caminho do mesmo projeto ').length,0,'whitespace-only saved edit is idempotent');
-assert.equal(m.load(editId).checks.join(','),'1,2','whitespace does not invalidate further checks');
+assert.equal(m.load(editId).checks.join(','),'','whitespace cannot restore stale peer-test confirmations');
 editDraft.checks=[0,1,2];m.save(editId,editDraft);
 assert.equal(m.validate(editId).ok,true,'manual reconfirmation restores submission readiness');
 assert.equal(m.changeField(editId,editDraft,'unknown','arbitrary').length,0,'unknown field cannot mutate report');
