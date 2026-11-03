@@ -70,7 +70,7 @@ async function entrants(db,room,ids,mission){
 function simulate(roster,mission){
  if(!Array.isArray(roster)||roster.length<2||roster.length>30)throw Object.assign(Error('A arena exige de 2 a 30 heróis.'),{status:400});
  const seed=randomInt(1,2147483647);
- const options={arenaMission:mission,arenaScale:5,damageScale:.5,stormDelay:35,stormRateFactor:.65,
+ const options={arenaMission:mission,limit:95,arenaScale:5,damageScale:.5,stormDelay:35,stormRateFactor:.65,
   engagementMode:'spaced',navigationMode:'steer',rangedCommitment:'recovery',balancePreset:'e-hp2'};
  const battle=engine.battle(roster,{...options,seed});
  const result=battle.run(2300);
