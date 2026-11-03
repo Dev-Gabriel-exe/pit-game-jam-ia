@@ -79,7 +79,7 @@ const server=http.createServer((req,res)=>{
   console.log('PASS fictional 3D duel replay: frame, two players, server-pinned match, live animation and WebGL.');
   // Exercise real teacher/student controls, without reaching the production server.
   const controls=await browser.newPage();
-  let enabled=false,pending=false,peerAccepted=false,studentPolls=0;
+  let enabled=false,pending=false,peerAccepted=false,studentPolls=0,historyOutcome='win';
   await controls.route('https://pit-game-jam-chat.vercel.app/api/coliseum**',async route=>{
    const req=route.request(),url=new URL(req.url()),action=url.searchParams.get('action');
    const teacher=!!req.headers()['x-pit-teacher-pin'];
@@ -95,6 +95,7 @@ const server=http.createServer((req,res)=>{
     optedIn:true,busy:pending,peers:pending?[]:[{id:roster[1].id,name:roster[1].name}],
     invites:pending?[{id:'90000000-0000-4000-8000-000000000002',
        status:peerAccepted?'accepted':'pending',matchId:peerAccepted?match.id:null,
+       outcome:peerAccepted?historyOutcome:null,
        outgoing:true,peerName:roster[1].name,createdAt:new Date().toISOString(),
        expiresAt:new Date(Date.now()+50000).toISOString()}]:[],
     arena:[]};
@@ -129,6 +130,13 @@ const server=http.createServer((req,res)=>{
   // directly without Playwright's scrolling/actionability check over active WebGL.
   await controls.evaluate(()=>document.querySelector('[data-back]')?.click());
   await controls.locator('iframe.pit-live-replay').waitFor({state:'detached',timeout:10000});
+  await controls.locator('.pit-live-outcome:has-text("Vitória")').waitFor({timeout:10000});
+  historyOutcome='loss';
+  await controls.evaluate(()=>document.querySelector('[data-refresh]')?.click());
+  await controls.locator('.pit-live-outcome:has-text("Derrota")').waitFor({timeout:10000});
+  historyOutcome='draw';
+  await controls.evaluate(()=>document.querySelector('[data-refresh]')?.click());
+  await controls.locator('.pit-live-outcome:has-text("Empate")').waitFor({timeout:10000});
   await controls.evaluate(()=>window.PIT_V5_LIVE.unmount());
   await controls.close();
   console.log('PASS native teacher duel release, student availability and server-backed invitation button.');
