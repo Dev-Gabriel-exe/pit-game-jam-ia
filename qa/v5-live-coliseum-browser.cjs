@@ -159,7 +159,7 @@ const server=http.createServer((req,res)=>{
   assert.equal(await controls.locator('[data-start="5"]').isDisabled(),true);
   await controls.evaluate(()=>window.PIT_V5_LIVE.mount(
     document.querySelector('#liveRoot'),{role:'student',authenticated:true,room:'PITGAME26',
-    visualPreview:false,studentId:roster[0].id,tokenProvider:()=>'a'.repeat(64)},'arena'));
+    visualPreview:false,studentId:'10000000-0000-4000-8000-000000000001',tokenProvider:()=>'a'.repeat(64)},'arena'));
   await controls.locator('[data-join="5"]').waitFor({timeout:10000});
   await controls.evaluate(()=>document.querySelector('[data-join="5"]')?.click());
   await controls.locator('text=Você já está na sala de espera.').waitFor({timeout:10000});
