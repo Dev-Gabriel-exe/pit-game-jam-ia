@@ -1,0 +1,167 @@
+/* Teacher-only V3 roster v4: same gothic/gold design language as chat v4.
+   Keeps real classroom backend, moderation and approved-stage counters unchanged. */
+body[data-role="teacher"] #rosterDrawer{
+ top:clamp(8px,1.5dvh,19px);bottom:clamp(8px,1.5dvh,19px);
+ right:clamp(8px,1.5vw,24px);width:min(1170px,calc(100vw - 16px));
+ border:1px solid #a78653;border-radius:17px;
+ background:linear-gradient(150deg,#1c1924,#13121b 70%);
+ color:#f1e2cc;box-shadow:0 25px 85px #04030de6,inset 0 0 0 1px #f2d2a019;
+ font:14px/1.5 Inter,"Segoe UI",system-ui,sans-serif;
+ overflow:hidden;transform:translateX(calc(100% + 35px));
+}
+body[data-role="teacher"] #rosterDrawer.open{transform:translateX(0)}
+body[data-role="teacher"] #rosterDrawer .drawer-head{
+ flex:none;padding:17px 24px;min-height:83px;
+ background:linear-gradient(110deg,#32232c,#1d1b28);
+ border-bottom:1px solid #a47a5199;
+}
+body[data-role="teacher"] #rosterDrawer .drawer-head h2{
+ margin:0;color:#f3d3a5;font:750 clamp(20px,2.4vw,29px) Cinzel,Georgia,serif;
+}
+body[data-role="teacher"] #rosterDrawer .drawer-head small{display:block;color:#c5a886;font-size:11px;font-weight:800;letter-spacing:.13em;margin-bottom:5px}
+body[data-role="teacher"] #rosterDrawer .drawer-head button{
+ border:1px solid #ac8456;background:#332832;color:#f8e4c6;
+ padding:10px 16px;min-height:42px;border-radius:8px;font-size:13px;font-weight:800;
+}
+body[data-role="teacher"] #rosterDrawer .drawer-content{
+ min-height:0;flex:1;overflow-y:auto;padding:20px clamp(13px,2.5vw,28px) 26px;
+ scrollbar-color:#a27a51 #231b25;
+}
+body[data-role="teacher"] #rosterDrawer #rosterStats{
+ margin:0 0 14px;padding:12px 16px;
+ border:1px solid #88694a;background:#30262d;color:#e9d1b2;
+ border-radius:10px;font-size:13px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-dashboard{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:13px 0 20px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-stat{
+ padding:15px 18px;min-width:0;border:1px solid #8c6d4d87;
+ border-radius:11px;background:linear-gradient(140deg,#302630,#201c27);
+ box-shadow:0 7px 18px #09081244;
+}
+body[data-role="teacher"] #rosterDrawer .roster-stat span{
+ display:block;color:#c3a581;font-size:11px;letter-spacing:.11em;font-weight:800;
+}
+body[data-role="teacher"] #rosterDrawer .roster-stat strong{
+ display:block;margin-top:5px;color:#f5d4a3;
+ font:750 clamp(23px,2.7vw,34px) Cinzel,Georgia,serif;
+}
+body[data-role="teacher"] #rosterDrawer .drawer-controls{gap:9px;margin:16px 0}
+body[data-role="teacher"] #rosterDrawer .drawer-controls button{
+ border:1px solid #91714c;background:#302733;color:#e5d0b7;
+ border-radius:8px;padding:10px 15px;min-height:43px;font-weight:750;font-size:13px;
+}
+body[data-role="teacher"] #rosterDrawer .drawer-controls button.active,
+body[data-role="teacher"] #rosterDrawer .drawer-controls button[aria-pressed="true"]{
+ color:#241926;background:#dfb078;border-color:#f3cf96;
+}
+body[data-role="teacher"] #rosterDrawer #rosterContent{min-width:0;overflow-wrap:anywhere}
+body[data-role="teacher"] #rosterDrawer .roster-table{
+ width:100%;border-collapse:separate;border-spacing:0 7px;
+ font-family:inherit;table-layout:fixed;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table th{
+ padding:8px 16px;color:#ba9e7e;letter-spacing:.09em;font-size:11px;
+ text-transform:uppercase;text-align:left;border:0;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table td{
+ padding:15px 16px;background:#28232f;border-top:1px solid #655043;
+ border-bottom:1px solid #655043;color:#f0e2cf;font-size:13px;
+ overflow-wrap:anywhere;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table td:first-child{
+ border-left:1px solid #655043;border-radius:10px 0 0 10px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table td:last-child{
+ border-right:1px solid #655043;border-radius:0 10px 10px 0;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table tr:hover td,
+body[data-role="teacher"] #rosterDrawer .roster-table tr:focus-visible td{
+ background:#45313a;border-color:#c29a66;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table tr[data-student]{
+ cursor:pointer;outline-offset:-3px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-table .roster-name{
+ color:#f8d9aa;font-size:14px;font-weight:750;
+}
+body[data-role="teacher"] #rosterDrawer .roster-pill{
+ display:inline-flex;align-items:center;gap:5px;padding:5px 9px;
+ border:1px solid #907251;border-radius:99px;background:#3b3031;
+ font-size:11px;font-weight:800;color:#e7c8a1;
+}
+body[data-role="teacher"] #rosterDrawer .roster-pill.online{
+ color:#bbe5b7;border-color:#60825b;background:#233c30;
+}
+body[data-role="teacher"] #rosterDrawer .roster-pill.pending{
+ color:#f3d59e;border-color:#9d7843;background:#403020;
+}
+body[data-role="teacher"] #rosterDrawer .roster-detail{
+ max-width:1050px;display:grid;gap:15px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-detail-header{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:14px;padding:19px 21px;border:1px solid #80684d;border-radius:11px;
+ background:linear-gradient(120deg,#392833,#251e2b);
+}
+body[data-role="teacher"] #rosterDrawer .roster-detail-header h2{
+ margin:5px 0;font:800 clamp(19px,2vw,25px) Cinzel,Georgia,serif;color:#f8d6a1;
+}
+body[data-role="teacher"] #rosterDrawer .roster-detail-header p{
+ margin:4px 0;color:#c9b09a;font-size:12px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-detail-header .roster-mark{
+ font-size:36px;color:#f6c58b;
+}
+body[data-role="teacher"] #rosterDrawer .concept-card{
+ background:#28232f;border:1px solid #76604e;border-radius:12px;
+ padding:17px 21px;margin:0;color:#f2dfc5;
+}
+body[data-role="teacher"] #rosterDrawer .concept-card strong{
+ color:#f1ce9b;font-size:15px;
+}
+body[data-role="teacher"] #rosterDrawer .roster-evidence{
+ background:#15151f;border:1px solid #74563d;border-radius:9px;
+ margin:10px 0;padding:13px;color:#efdac0;
+}
+body[data-role="teacher"] #rosterDrawer .roster-evidence pre{
+ max-width:100%;white-space:pre-wrap;word-break:break-word;max-height:240px;overflow:auto;
+}
+body[data-role="teacher"] #rosterDrawer .review-comment{
+ width:100%;min-height:94px;background:#15131d;color:#f6e8d2;
+ border:1px solid #967348;border-radius:9px;padding:12px;
+}
+body[data-role="teacher"] #rosterDrawer .buttonrow{display:flex;flex-wrap:wrap;gap:10px}
+body[data-role="teacher"] #rosterDrawer .buttonrow button{
+ min-height:42px;border-radius:8px;padding:10px 15px;
+}
+body[data-role="teacher"] #rosterDrawer .buttonrow .action{
+ color:#211825;background:linear-gradient(100deg,#ecc28b,#c9985e);border:1px solid #f6d5a1;
+}
+body[data-role="teacher"] #rosterDrawer button:focus-visible,
+body[data-role="teacher"] #rosterDrawer tr:focus-visible,
+body[data-role="teacher"] #rosterDrawer textarea:focus-visible{
+ outline:3px solid #fbd795;outline-offset:2px;
+}
+@media(max-width:820px){
+ body[data-role="teacher"] #rosterDrawer .roster-dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body[data-role="teacher"] #rosterDrawer .roster-table th,
+ body[data-role="teacher"] #rosterDrawer .roster-table td{padding:11px 8px}
+}
+@media(max-width:580px){
+ body[data-role="teacher"] #rosterDrawer{
+  top:0;right:0;bottom:0;width:100vw;border-radius:0;border:0;
+ }
+ body[data-role="teacher"] #rosterDrawer .drawer-content{padding:12px}
+ body[data-role="teacher"] #rosterDrawer .drawer-head{padding:12px;min-height:67px}
+ body[data-role="teacher"] #rosterDrawer .drawer-head h2{font-size:19px}
+ body[data-role="teacher"] #rosterDrawer .roster-stat{padding:11px}
+ body[data-role="teacher"] #rosterDrawer .roster-table{table-layout:auto;font-size:11px}
+ body[data-role="teacher"] #rosterDrawer .roster-table th:nth-child(4),
+ body[data-role="teacher"] #rosterDrawer .roster-table td:nth-child(4){display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-role="teacher"] #rosterDrawer{transition:none}
+ body[data-role="teacher"] #rosterDrawer *{animation:none!important;scroll-behavior:auto!important}
+}
