@@ -167,6 +167,14 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await tp.locator('#rosterButton').click();
  await tp.locator('#rosterDrawer.open').waitFor();
  await tp.waitForFunction(()=>document.querySelector('#rosterStats')?.textContent?.includes('inscritos'),null,{timeout:6500});
+ assert.equal(await tp.locator('#rosterStatTotal').innerText(),'1','real enrolled students count shown');
+ assert.equal(await tp.locator('#rosterStatActive').innerText(),'1','recent activity count shown');
+ assert.equal(await tp.locator('#rosterStatPending').innerText(),'1','pending submission count shown');
+ assert.equal(await tp.locator('#rosterStatHelp').innerText(),'0','unread question count shown');
+ assert.equal(await tp.locator('#rosterDrawer .roster-dashboard').isVisible(),true);
+ assert.equal(await tp.locator('#rosterDrawer').evaluate(el=>getComputedStyle(el).borderRadius),'17px');
+ assert.match(await tp.locator('#rosterDrawer .drawer-head').innerText(),/PIT GAME JAM IA/);
+
  assert.match(await tp.locator('#rosterStats').innerText(),/1 inscritos/,'roster uses fake enrolled student');
  await tp.locator('#filterPending').click();
  assert.equal(await tp.locator('#filterPending').getAttribute('aria-pressed'),'true','pending filter announces selection');
@@ -177,6 +185,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await tp.locator('#filterAll').click();
  assert.equal(await tp.locator('#filterAll').getAttribute('aria-pressed'),'true','all filter restores selection');
  assert.equal(await tp.locator('tr[data-student]').count(),1,'all filter restores fake student');
+ assert.equal(await tp.locator('tr[data-student]').getAttribute('tabindex'),'0');
+ assert.match(await tp.locator('tr[data-student] .roster-name').innerText(),/Aluno QA/);
+
  await tp.locator('tr[data-student]').click();
  await tp.locator('button[data-review="revision"]').click();
  assert.equal(store.progress[0].status,'submitted','revision without explanation must not reach API');
