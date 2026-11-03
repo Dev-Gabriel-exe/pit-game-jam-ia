@@ -34,13 +34,26 @@
 - Depois testar 30 modelos reais no mesmo navegador e, separadamente, múltiplos navegadores. 30 combatentes simulados no Node **não equivalem** a 30 clientes reais.
 - Todos os testes usam alunos fictícios, sem PIN nem token de produção.
 
+## Achado confirmado por regressão automatizada
+
+**Erro confirmado:** a ponte `v3/v5-h1e-bridge.js` chama `allowedToDuel()` (definido apenas para staging localhost) dentro de `update()`, inclusive quando a origem é o GitHub Pages real. O fluxo `chooseTab('hero')` remove a visualização atual e desmonta o `iframe` 3D. O botão do duelo também fica desativado durante atualizações da V3.
+
+**Prova:** `qa/v6-duel-bridge-regression.cjs` simula a origem `https://dev-gabriel-exe.github.io` sem usar contas reais, abre o duelo e chama `PIT_V5_H1E.update()`. Antes da correção, o GitHub Actions falhou com o resultado `'hero' !== 'duel'`, exatamente na verificação de persistência da aba aberta (run `41685355796`). A mudança na `v6` ignora esse bloqueio de homologação quando `productionLive()` é verdadeiro e deixa a autorização com o servidor Coliseu.
+
+**Limitação:** isso comprova que a interface podia sumir ao atualizar o estado, mas **não comprova** que seja a única origem dos travamentos WebGL.
+
+## Primeiro teste de asset real
+
+Run `41684668123`: dois navegadores com `Mage.glb` e `Knight.glb` autênticos (ambos HTTP 200, ~3,59 e 3,66 MB), duas instâncias simultâneas de WebGL, aproximadamente **27 segundos** de luta cada. Sem exceções JavaScript, falhas de rede ou perdas de WebGL; FPS de **9 a 16** sob SwiftShader. Isso mostra que carregar GLBs não é, sozinho, condição suficiente para reproduzir o crash. O teste ainda não inclui o painel V3 completo nem a GPU da escola.
+
 ## Estado
 
 - [x] Branch `v6` criada a partir da `main` sem diferença inicial.
 - [x] Auditoria de fluxos V5 isolada versus V3 integrada e identificação do mock enganoso de GLBs.
 - [x] Teste de dois navegadores reais criado exclusivamente na `v6`.
-- [ ] Resultado do novo CI e coleta de sinais de travamento com assets reais.
-- [ ] Hipótese confirmada por falha reproduzida e mudança mínima.
+- [x] Primeiro teste com modelos reais: dois navegadores por ~27s, sem travamentos em CI (não conclui homologação de PCs reais).
+- [x] Reprodução do fechamento indevido do duelo durante o refresh V3; correção feita só na v6, pendente nova validação.
+- [ ] Investigação independente das falhas de GPU/renderização.
 - [ ] Regressões de 30 combatentes e de múltiplos computadores.
 - [ ] Homologação final antes de cogitar integração à `main`.
 
