@@ -106,8 +106,10 @@ async function studentState(db,user,state){
    "WHERE p.room_code=$1 AND p.available=true AND p.seen_at>now()-interval '60 seconds' AND p.student_id<>$3 ORDER BY s.display_name,s.id LIMIT 60",
    [user.room,state.current_stage,user.id]),
   db.query("SELECT i.id,i.status,i.match_id,i.created_at,i.expires_at,i.sender_id,i.receiver_id,"+
-   "CASE WHEN i.sender_id=$2 THEN receiver.display_name ELSE sender.display_name END AS peer_name "+
+   "CASE WHEN i.sender_id=$2 THEN receiver.display_name ELSE sender.display_name END AS peer_name, "+
+   "m.result->'winner'->>'id' AS winner_id, (m.id IS NOT NULL) AS has_result "+
    "FROM public.pit_coliseum_invites i "+
+   "LEFT JOIN public.pit_coliseum_matches m ON m.id=i.match_id AND m.room_code=i.room_code AND m.kind='duel' "+
    "JOIN public.pit_students sender ON sender.id=i.sender_id "+
    "JOIN public.pit_students receiver ON receiver.id=i.receiver_id "+
    "WHERE i.room_code=$1 AND (i.sender_id=$2 OR i.receiver_id=$2) "+
@@ -117,7 +119,10 @@ async function studentState(db,user,state){
   db.query("SELECT available AND seen_at>now()-interval '60 seconds' AS online FROM public.pit_coliseum_presence WHERE student_id=$1",[user.id])
  ]);
  const invites=qinvites.rows.map(x=>({id:x.id,status:x.status,matchId:x.match_id,
-  outgoing:x.sender_id===user.id,peerName:x.peer_name,createdAt:x.created_at,expiresAt:x.expires_at}));
+  outgoing:x.sender_id===user.id,peerName:x.peer_name,createdAt:x.created_at,expiresAt:x.expires_at,
+  // Compute the outcome from the official saved match, relative to the authenticated user.
+  outcome:x.status==='accepted'&&x.has_result
+   ?(x.winner_id===null?'draw':String(x.winner_id)===String(user.id)?'win':'loss'):null}));
  const busy=invites.some(x=>x.status==='pending');
  return {ok:true,role:'student',room:user.room,stage:state.current_stage,duelsEnabled:enabled,
   eligible:status,heroSaved:!!hasHero,optedIn:presence.rows[0]?.online===true,
