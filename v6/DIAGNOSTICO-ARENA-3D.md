@@ -152,7 +152,7 @@ O [run final com o caderno completo](https://github.com/Dev-Gabriel-exe/pit-game
 | Arena M5 | 30 | Vencedor aos 73,9 s simulados e replay reaberto | Sem perda de contexto ou exceções |
 | Arena M10 | 30 | Vencedor aos 82,5 s simulados e replay reaberto | Sem perda de contexto ou exceções |
 
-O duelo teve medianas de 17 e 18 FPS nesse run de software. As duas arenas tiveram amostras de 0–1 FPS arredondados, assim como no teste da V5 de referência. A validação confirma ciclo de vida, carregamento e resultado; a fluidez de 30 heróis requer os PCs da escola. A `main` permaneceu em `789ed8bccc22db4410adffec654bb2aab20efc24` e não houve deploy nem acesso ao banco de produção nesta investigação.
+O duelo teve medianas de 17 e 18 FPS nesse run de software. As duas arenas tiveram amostras de 0–1 FPS arredondados, assim como no teste da V5 de referência. A validação confirma ciclo de vida, carregamento e resultado; a fluidez de 30 heróis requer os PCs da escola. A investigação partiu da `main` em `789ed8bccc22db4410adffec654bb2aab20efc24` e escreveu apenas na `v6`. Na última conferência, a `main` avançou independentemente para `d3243d6d7cff8d64a6ec70994347814b4f2a9ff5`, com mudanças em seis arquivos de instruções das missões V3 sobre a troca de rota 2D/3D. O diff `789ed8b..d3243d6` não inclui código de Coliseu/V5/V6. Esta investigação não iniciou deploy nem acessou o banco de produção.
 
 ## Estado
 
