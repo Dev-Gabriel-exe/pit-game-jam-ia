@@ -1,0 +1,32 @@
+name: V6 Forensics - Integrated Two-Student WebGL
+on:
+  push:
+    branches: [v6]
+    paths:
+      - 'qa/v6-duel-integrated-browser.cjs'
+      - '.github/workflows/v6-integrated-webgl.yml'
+      - 'v3/v5-h1e-bridge.js'
+      - 'v3/v5-coliseum-live.js'
+      - 'v5/coliseum-live.js'
+      - 'v5/arena-three.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrated-two-students:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+          npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
+      - run: npx playwright install --with-deps chromium
+      - run: node qa/v6-duel-integrated-browser.cjs
