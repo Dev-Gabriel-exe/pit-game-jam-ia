@@ -1,9 +1,13 @@
 name: V5 H1e V3 Sunday Integration QA
 on:
   push:
-    branches: [main, feature/v5-h1e-v3-integracao-domingo, feature/v5-homologacao-20261031, fix/v3-acompanhamento-duelos-reais-20261103, fix/20261103-duas-turmas-fichas-herois-reais]
+    branches: [main, feature/v5-h1e-v3-integracao-domingo, feature/v5-homologacao-20261031, fix/v3-acompanhamento-duelos-reais-20261103, fix/20261103-duas-turmas-fichas-herois-reais, fix/20261103-heroi-retorno-multiturma]
     paths:
       - 'v3/v5-h1e-*'
+      - 'v5/real-hero-profile.js'
+      - 'v5/real-hero-profile.css'
+      - 'v5/hero-portrait-real.html'
+      - 'qa/v5-real-hero.cjs'
       - 'v3/teacher-roster-v4.css'
       - 'qa/v3-e2e.cjs'
       - 'v3/app.js'
@@ -37,6 +41,8 @@ jobs:
         run: |
           node --check v3/app.js
           node --check v3/v5-h1e-bridge.js
+          node --check v5/real-hero-profile.js
+          node qa/v5-real-hero.cjs
           node --check v5/hero-lab-h1d.js
           node --check v5/duel-lobby-d1c.js
           node --check v5/duel-teacher-d1c.js
