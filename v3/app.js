@@ -13,6 +13,8 @@ let teacherPin=sessionStorage.getItem('pit_teacher_pin')||'';
 let activeRoom=sessionStorage.getItem('pit_teacher_room')||'PITGAME26';
 if(!['PITGAME26','PITGAME26B'].includes(activeRoom))activeRoom='PITGAME26';
 let studentSession=null;try{studentSession=JSON.parse(localStorage.getItem('pit_chat_student_v09')||'null')}catch{}
+const urlRoom=new URLSearchParams(location.search).get('turma')?.toUpperCase();
+const linkedRoom=['PITGAME26','PITGAME26B'].includes(urlRoom)?urlRoom:null;
 let state={current_stage:1,phase:'briefing',updated_at:null},progress=[],roster=[],activeStage=1,activePhase='briefing';
 let selectedThread=null,selectedRoster=null,chatOpen=false,chatTimer=null,rosterOpen=false,lastServerStage=1;
 let lastUnread=0,rosterFilter='all',requestInFlight=false,chatRequest=0,chatSending=false;
@@ -822,6 +824,7 @@ async function authenticate(){
  $('authTitle').textContent=TEACHER?'🔐 Acesso do professor':'🎮 Entre na sua jornada';
  $('authMessage').textContent=TEACHER?'Use o PIN privado de professor. O painel de acompanhamento fica disponível após a entrada.':'Informe seu nome ou apelido e o código da turma. O progresso é vinculado a esta sessão.';
  $('authCode').parentElement.hidden=TEACHER;
+ if(!TEACHER&&linkedRoom)$('authCode').value=linkedRoom;
  $('authName').parentElement.hidden=TEACHER;
  $('authPin').parentElement.hidden=!TEACHER;
  $('authForm').onsubmit=async ev=>{
@@ -834,7 +837,7 @@ async function authenticate(){
     sessionStorage.setItem('pit_teacher_pin',teacherPin);
    }else{
     const joined=await call('chat','join','POST',{name:$('authName').value,code:$('authCode').value.trim()});
-    studentSession={studentId:joined.studentId,name:joined.name,token:joined.token};
+    studentSession={studentId:joined.studentId,name:joined.name,token:joined.token,room:joined.code||'PITGAME26'};
     localStorage.setItem('pit_chat_student_v09',JSON.stringify(studentSession));
    }
    $('auth').hidden=true;
@@ -1182,7 +1185,7 @@ if($('changeUserTop'))$('changeUserTop').onclick=changeIdentity;
   $('loading').hidden=true;
   return;
  }
- if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token)){
+ if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token&&(!linkedRoom||studentSession.room===linkedRoom))){
   try{await startApp();if($('workspace').hidden)await authenticate()}
   catch{await authenticate()}
  }else await authenticate();
