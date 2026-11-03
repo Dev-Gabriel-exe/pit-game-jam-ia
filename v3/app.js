@@ -833,14 +833,86 @@ function showCohortPicker(){
  }
  select.value=activeRoom;
 }
+function studentRecoveryStorageKey(){return 'pit_recovery_'+String(studentSession?.studentId||'')}
+function recoveryCodeInBrowser(){return studentSession?localStorage.getItem(studentRecoveryStorageKey())||'':''}
+function presentRecoveryCode(code,force=false){
+ if(TEACHER||!studentSession)return;
+ if(code)localStorage.setItem(studentRecoveryStorageKey(),String(code));
+ const saved=recoveryCodeInBrowser(),panel=$('pitRecoveryBanner'),button=$('myRecoveryCode');
+ if(button)button.hidden=false;
+ if(!panel||!saved)return;
+ panel.hidden=false;
+ panel.innerHTML='<strong>🔑 CÓDIGO PESSOAL DE RETORNO · '+esc(studentSession.name)+'</strong>'+
+  '<p>Guarde este código fora do computador. Na segunda aula, o mesmo navegador entra automaticamente. Em outro computador, selecione a mesma turma e use este código com seu nome para recuperar a conta.</p>'+
+  '<div style="font:800 18px monospace;color:#ffe9b5;letter-spacing:.08em;user-select:all">'+esc(saved)+'</div>'+
+  '<button type="button" id="pitCopyRecovery" class="outline" style="margin-top:8px">📋 Copiar código</button> '+
+  '<button type="button" id="pitDismissRecovery" class="outline">Entendi, já guardei</button>';
+ $('pitCopyRecovery').onclick=()=>navigator.clipboard.writeText(saved)
+  .then(()=>setToast('Código pessoal copiado. Guarde em local seguro.'))
+  .catch(()=>setToast('Selecione e copie o código exibido.',true));
+ $('pitDismissRecovery').onclick=()=>panel.hidden=true;
+}
+async function ensureRecoveryAvailability(){
+ if(TEACHER||visualPreview||!studentSession?.token)return;
+ const button=$('myRecoveryCode');if(!button)return;
+ button.hidden=false;
+ button.onclick=async()=>{
+  const saved=recoveryCodeInBrowser();if(saved){presentRecoveryCode(saved,true);return}
+  try{
+   const probe=await fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)});
+   const health=probe.ok?await probe.json():null;
+   if(health?.version!=='20261103-two-cohorts')
+    throw Error('O servidor ainda não habilitou códigos de retorno. Não saia deste cadastro neste computador.');
+   const result=await call('chat','setup-recovery','POST');
+   presentRecoveryCode(result.recoveryCode,true);
+  }catch(e){setToast(e.message,true)}
+ };
+ if(recoveryCodeInBrowser())return;
+ try{
+  const response=await fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)});
+  const info=response.ok?await response.json():null;
+  if(info?.version==='20261103-two-cohorts'){
+   const result=await call('chat','setup-recovery','POST');
+   presentRecoveryCode(result.recoveryCode,true);
+  }
+ }catch{/* Old server: original student token remains valid on this browser. */}
+}
 async function authenticate(){
  $('auth').hidden=false;
  $('authTitle').textContent=TEACHER?'🔐 Acesso do professor':'🎮 Entre na sua jornada';
- $('authMessage').textContent=TEACHER?'Use o PIN privado de professor. O painel de acompanhamento fica disponível após a entrada.':'Informe seu nome ou apelido e o código da turma. O progresso é vinculado a esta sessão.';
+ $('authMessage').textContent=TEACHER?'Use o PIN privado de professor. O painel de acompanhamento fica disponível após a entrada.':
+  'Primeira aula: cadastre-se. Segunda aula: no mesmo navegador seu progresso volta automaticamente; em outro computador use seu código pessoal.';
  $('authCode').parentElement.hidden=TEACHER;
- if(!TEACHER&&linkedRoom)$('authCode').value=linkedRoom;
  $('authName').parentElement.hidden=TEACHER;
  $('authPin').parentElement.hidden=!TEACHER;
+ const choice=$('authRoomChoice'),recoverButton=$('authToggleRecovery'),recoverInput=$('authRecoveryCode');
+ if(choice)choice.parentElement.hidden=TEACHER;
+ if(recoverButton)recoverButton.hidden=TEACHER;
+ if(recoverInput)recoverInput.parentElement.hidden=TEACHER;
+ let recoverMode=false;
+ if(!TEACHER&&choice){
+  choice.value=linkedRoom||'PITGAME26';
+  $('authCode').value=choice.value;
+  choice.onchange=()=>$('authCode').value=choice.value;
+  $('authCode').onchange=()=>{const room=$('authCode').value.trim().toUpperCase();
+   if(['PITGAME26','PITGAME26B'].includes(room))choice.value=room};
+  fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)})
+   .then(r=>r.ok?r.json():null).then(v=>{
+    const option=choice.querySelector('option[value="PITGAME26B"]');
+    if(option&&v?.version==='20261103-two-cohorts'){
+     option.disabled=false;option.textContent='Turma 2 · PITGAME26B';
+    }
+   }).catch(()=>{});
+ }
+ if(recoverButton)recoverButton.onclick=()=>{
+  recoverMode=!recoverMode;
+  recoverButton.setAttribute('aria-expanded',String(recoverMode));
+  recoverInput.parentElement.hidden=!recoverMode;
+  recoverInput.parentElement.style.display=recoverMode?'block':'none';
+  $('authSubmit').textContent=recoverMode?'Recuperar meu progresso →':'Entrar na oficina →';
+  recoverButton.textContent=recoverMode?'← Fazer novo cadastro':'↻ Já participei · recuperar meu progresso';
+ };
+ if(recoverInput){recoverInput.parentElement.hidden=true;recoverInput.parentElement.style.display='none'}
  $('authForm').onsubmit=async ev=>{
   ev.preventDefault();const btn=$('authSubmit');btn.disabled=true;$('authError').textContent='';
   try{
@@ -850,9 +922,14 @@ async function authenticate(){
     if(activeRoom!=='PITGAME26'&&teacherLogin.room!==activeRoom)throw Error('Turma 2 indisponível no servidor.');
     sessionStorage.setItem('pit_teacher_pin',teacherPin);
    }else{
-    const joined=await call('chat','join','POST',{name:$('authName').value,code:$('authCode').value.trim()});
+    const joinData={name:$('authName').value,code:$('authCode').value.trim()};
+    const joined=recoverMode?await call('chat','recover','POST',
+      {...joinData,recoveryCode:recoverInput.value.trim()}):
+      await call('chat','join','POST',joinData);
     studentSession={studentId:joined.studentId,name:joined.name,token:joined.token,room:joined.code||'PITGAME26'};
     localStorage.setItem('pit_chat_student_v09',JSON.stringify(studentSession));
+    if(joined.recoveryCode)presentRecoveryCode(joined.recoveryCode,true);
+    if(recoverMode)presentRecoveryCode(recoverInput.value.trim(),true);
    }
    $('auth').hidden=true;
    await startApp();
@@ -874,6 +951,7 @@ async function startApp(){
   // On F5, return to the actual in-progress caderno. The modern cinema
   // gallery remains in 'Escolher missão' and opens on first successful login.
   if(!TEACHER){
+   await ensureRecoveryAvailability();
    const galleryKey='pit_v3_gallery_seen_'+(studentSession?.room||'PITGAME26')+'_'+studentSession?.studentId;
    if(!sessionStorage.getItem(galleryKey)){
     sessionStorage.setItem(galleryKey,'1');showMissionGallery();
@@ -1208,7 +1286,7 @@ if($('changeUserTop'))$('changeUserTop').onclick=changeIdentity;
   $('loading').hidden=true;
   return;
  }
- if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token&&(!linkedRoom||studentSession.room===linkedRoom))){
+ if(TEACHER?Boolean(teacherPin):Boolean(studentSession?.token&&(!linkedRoom||(studentSession.room||'PITGAME26')===linkedRoom))){
   try{await startApp();if($('workspace').hidden)await authenticate()}
   catch{await authenticate()}
  }else await authenticate();
