@@ -8,6 +8,11 @@
  const esc=value=>String(value??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x])).slice(0,160);
  let live=null;
  const isUUID=s=>/^[0-9a-f-]{36}$/i.test(String(s||''));
+ const seen=new Set();
+ const recent=x=>{const age=Date.now()-Date.parse(x?.createdAt||'');return age>=-30000&&age<=180000};
+ const seenKey=(ctx,id)=>String(ctx?.room||'')+'|'+String(ctx?.studentId||'')+'|'+id;
+ const alreadySeen=(ctx,id)=>{const key=seenKey(ctx,id);try{return seen.has(key)||sessionStorage.getItem('pit_live_open_'+key)==='1'}catch{return seen.has(key)}};
+ const markSeen=(ctx,id)=>{const key=seenKey(ctx,id);seen.add(key);try{sessionStorage.setItem('pit_live_open_'+key,'1')}catch{}};
  function sessionToken(x){return x.role==='student'?x.tokenProvider?.():x.teacherPinProvider?.()}
  function activeRoom(x){return x.room==='PITGAME26B'?'PITGAME26B':'PITGAME26'}
  async function request(x,action,body=null,id=null){
@@ -71,6 +76,7 @@
    const result=await request(a.ctx,'match',null,id);
    if(live!==a)return;
    a.viewing=result.match;
+   if(a.ctx.role==='student')markSeen(a.ctx,id);
    a.busy=false;
    a.root.innerHTML='<div class="pit-live-toolbar"><button type="button" data-back>← Voltar ao Coliseu</button>'+
     '<div><strong>⚔ '+(a.viewing.kind==='arena'?'ARENA M'+a.viewing.mission:'DUELO 1 × 1')+'</strong>'+
@@ -85,6 +91,17 @@
  function render(){
   const a=live;if(!a||!a.data||a.viewing||a.busy)return;
   const d=a.data,teacher=a.ctx.role==='teacher',room=activeRoom(a.ctx);
+  // Both participants automatically enter a freshly accepted shared duel.
+  // Fresh classroom arenas also open for students already viewing the arena tab.
+  // A session-scoped marker prevents replay loops when returning to the lobby.
+  if(!teacher&&a.tab==='duel'){
+   const accepted=(d.invites||[]).find(i=>i.status==='accepted'&&isUUID(i.matchId)&&recent(i)&&!alreadySeen(a.ctx,i.matchId));
+   if(accepted){void viewMatch(accepted.matchId);return}
+  }
+  if(!teacher&&a.tab==='arena'){
+   const justStarted=(d.arena||[]).find(i=>isUUID(i.id)&&recent(i)&&!alreadySeen(a.ctx,i.id));
+   if(justStarted){void viewMatch(justStarted.id);return}
+  }
   const note=a.note?'<p role="status" data-live-note data-kind="'+esc(a.note.kind)+'">'+esc(a.note.text)+'</p>':
    '<p role="status" data-live-note>Os controles são sincronizados com o servidor desta turma.</p>';
   const head='<div class="pit-live-head"><div><small>✦ SALÃO DO COLISEU · '+(room==='PITGAME26'?'TURMA 1':'TURMA 2')+'</small>'+
