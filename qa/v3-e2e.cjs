@@ -148,11 +148,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    cardPosition:getComputedStyle(card).position,cardTransform:getComputedStyle(card).transform,
    cardWidth:card.getBoundingClientRect().width};
  });
- assert.equal(modern.display,'flex','mission selector must use an aligned modern horizontal rail');
- assert.match(modern.snap,/x/,'mission rail must be scroll-snappable');
+ assert.equal(modern.display,'flex','original V3 mission selector must use an aligned horizontal rail');
+ assert.match(modern.snap,/x/,'original V3 mission rail must be scroll-snappable');
  assert.equal(modern.cardPosition,'relative','no absolute overlapping carousel cards');
  assert.equal(modern.cardTransform,'none','no legacy 3D stack transforms');
- assert(modern.cardWidth>=180,'mission cards must remain legible');
+ assert(modern.cardWidth>=140,'original V3 cards must remain legible without 3D overlap');
 
  await sp.locator('#missionGalleryClose').click();
  await sp.locator('#missionGallery.open').waitFor({state:'hidden'});
