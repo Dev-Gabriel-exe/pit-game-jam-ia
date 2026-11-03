@@ -35,7 +35,8 @@ const server=http.createServer((req,res)=>{
    if(!file.startsWith(path.resolve(root,'node_modules/three')+path.sep)||!fs.existsSync(file))return route.fulfill({status:404});
    return route.fulfill({status:200,headers:{'content-type':'text/javascript','access-control-allow-origin':'*'},body:fs.readFileSync(file)});
   });
-  await page.route('https://raw.githubusercontent.com/**',route=>route.fulfill({status:404}));
+  // Official CC0 KayKit hero GLBs are hosted here; blocking this host makes every hero fail loading.
+   // Browser smoke must load the real characters to validate an actual 3D duel.
   await page.goto(rootURL+'/fixture');
   const frame=page.frameLocator('#viewer');
   await frame.locator('#replayStatus').waitFor();
@@ -43,10 +44,21 @@ const server=http.createServer((req,res)=>{
    const f=document.querySelector('#viewer');
    f.contentWindow.postMessage({type:'PIT_COLISEUM_REPLAY',match:data},location.origin);
   },match);
-  await frame.locator('#playReplay:not([disabled])').waitFor({timeout:25000});
+  try{await frame.locator('#replayStatus:has-text("Batalha em reprodução.")').waitFor({timeout:25000})}
+   catch(e){
+    const diagnostics=await frame.locator('body').evaluate(()=>({status:document.getElementById('replayStatus')?.textContent,
+     heading:document.getElementById('coliseumHeading')?.textContent,
+     modelsLoaded:document.getElementById('arenaStage')?.dataset.v5ModelsLoaded,
+     modelsFailed:document.getElementById('arenaStage')?.dataset.v5ModelsFailed,
+     engine:document.getElementById('arenaStage')?.dataset.v5CombatEngine,
+     webgl:document.getElementById('arenaStage')?.dataset.v5GraphicsContext,
+     playDisabled:document.getElementById('playReplay')?.disabled}));
+    console.error('AUTO_START_DIAGNOSTICS',JSON.stringify({diagnostics,errors}));
+    throw e;
+   }
   assert.equal(await frame.locator('#followHero option').count(),3);
   assert.equal(await frame.locator('#scoreboard>div').count(),2);
-  await frame.locator('#playReplay').click();
+  assert.equal(await frame.locator('#playReplay').isDisabled(),true,'Duelo deve iniciar automaticamente, sem precisar clicar em replay');
   // Previous test only watched 1.5s; reported crash happens after 2–3s.
   await page.waitForTimeout(9000);
   assert.equal(errors.length,0,'The replay JS must not throw after the initial seconds: '+JSON.stringify(errors));
@@ -59,7 +71,7 @@ const server=http.createServer((req,res)=>{
   assert.ok(Number(diagnostics.fps)>=5,'Duel renderer must deliver >=5 fps, observed '+diagnostics.fps+'.');
   console.log('Nine-second duel diagnostics',JSON.stringify(diagnostics));
   const clock=await frame.locator('#replayClock').innerText();
-  assert.notEqual(clock,'00:00','simulation must advance after user starts replay');
+  assert.notEqual(clock,'00:00','simulation must advance automatically after accepting a duel, without any replay click');
   const canvas=await frame.locator('#arenaStage canvas').count();
   assert.ok(canvas>=1,'WebGL canvas must be initialized');
   assert.equal(errors.filter(x=>/Uncaught|TypeError|ReferenceError/.test(x)).length,0,JSON.stringify(errors));

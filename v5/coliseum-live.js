@@ -14,7 +14,7 @@ function selectInitialCamera(){
 const ui=(text)=>{$('replayStatus').textContent=text};
 function startPlayback(){
  if(!stage||!modelsReady)return;
- stage.resume();$('pauseReplay').disabled=false;ui('Batalha em reprodução.');
+ stage.resume();$('playReplay').disabled=true;$('pauseReplay').disabled=false;ui('Batalha em reprodução.');
 }
 function tick(){
  if(!stage?.simulation)return;
@@ -29,9 +29,9 @@ function tick(){
    ui('Carregando personagens 3D: '+loaded+' / '+match.roster.length+'. O combate começa após todos estarem visíveis.');
    return;
   }
-  modelsReady=true;$('playReplay').disabled=false;
-  ui('Todos os personagens carregaram. Clique em Iniciar replay para acompanhar a batalha.');
+  modelsReady=true;
   if(startWhenReady){startWhenReady=false;startPlayback()}
+  else{$('playReplay').disabled=false;ui('Personagens carregados. Pronto para continuar.')}
  }
  const sim=stage.simulation,alive=sim.fighters.filter(x=>x.alive).length;
  $('fightersAlive').textContent=String(alive);
@@ -49,7 +49,8 @@ function tick(){
   $('resultPanel').hidden=false;
   if(actual!==expected){$('resultPanel').textContent='Replay divergente. O resultado oficial permanece no servidor.';ui('O servidor detectou um confronto incompatível com a versão visual.');return}
   $('resultPanel').textContent='🏆 CAMPEÃO: '+safe(match.result.winner?.name||'Sem vencedor');
-  $('pauseReplay').disabled=true;
+  $('pauseReplay').disabled=true;$('playReplay').disabled=false;
+  $('playReplay').textContent='↻ Rever duelo';
   ui('Partida concluída! Resultado calculado e registrado pelo servidor; nenhuma nota ou XP alterados.');
  }
 }
@@ -61,7 +62,7 @@ function load(record,viewerHeroId){
  if(!window.PIT_V5_PHASE2||record.roster.some(x=>x.build?.schema!==window.PIT_V5_PHASE2.VERSION))
   throw Error('Versão do motor de combate incompatível com o registro do servidor.');
  studentHeroId=typeof viewerHeroId==='string'&&record.roster.some(hero=>hero.id===viewerHeroId)?viewerHeroId:null;
- match=record;verified=false;modelsReady=false;startWhenReady=false;
+ match=record;verified=false;modelsReady=false;startWhenReady=true;
  $('coliseumHeading').textContent=record.kind==='arena'?'ARENA DA MISSÃO '+record.mission:'DUELO ENTRE HEROIS';
  $('coliseumSub').textContent=record.roster.length+' jogadores · mesmo resultado em todos os computadores · replay oficial';
  try{
@@ -102,7 +103,7 @@ $('playReplay').onclick=()=>{
  }
  startPlayback();
 };
-$('pauseReplay').onclick=()=>{stage?.pause();ui('Reprodução pausada.');$('pauseReplay').disabled=true};
+$('pauseReplay').onclick=()=>{stage?.pause();ui('Reprodução pausada.');$('pauseReplay').disabled=true;$('playReplay').disabled=false;$('playReplay').textContent='▶ Continuar'};
 $('directorCam').onclick=()=>stage?.enableAutoCamera(true);
 $('overviewCam').onclick=()=>stage?.overview();
 $('followHero').onchange=()=>{if($('followHero').value)stage?.focusFighter($('followHero').value);else stage?.enableAutoCamera(true)};
