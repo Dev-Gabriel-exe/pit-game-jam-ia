@@ -4,6 +4,7 @@ const {Pool}=require('../chat-api/node_modules/pg');
 process.env.DATABASE_URL||='postgresql://postgres:ci_only_password@127.0.0.1:5432/pit_v5_test';
 process.env.PIT_TEACHER_PIN='ci_only_teacher_pin_32chars_long';
 const {createHandler}=require('../chat-api/api/coliseum.js');
+const classroomHandler=require('../chat-api/api/classroom.js');
 const db=new Pool({connectionString:process.env.DATABASE_URL});
 const tokens=['a','b','c','d'].map(c=>c.repeat(64));
 const ids=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002',
@@ -17,6 +18,11 @@ async function call(action,method='GET',body=null,{token,teacher=false,room,id}=
  const res={code:200,setHeader(){return this},status(c){this.code=c;return this},
   json(b){this.body=b;return this},end(){this.body=null;return this}};
  await handler(req,res);return res;
+}
+async function teacherDelete(id,confirmName,{room='PITGAME26',pin=process.env.PIT_TEACHER_PIN}={}){
+ const req={method:'POST',headers:{origin,'x-pit-teacher-pin':pin,'x-pit-room':room},query:{action:'delete-student'},body:{studentId:id,confirmName}};
+ const res={code:200,setHeader(){return this},status(n){this.code=n;return this},json(x){this.body=x;return this},end(){return this}};
+ await classroomHandler(req,res);return res;
 }
 async function seed(){
  await db.query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
@@ -132,7 +138,22 @@ async function main(){
   assert.equal(after,before+10,'fights never modify stages');
   const count=(await db.query("SELECT count(*)::int AS n FROM public.pit_coliseum_matches")).rows[0].n;
   assert.equal(count,3);
-  console.log('PASS PostgreSQL: authenticated 2-room arena lobby, joins, capacity/idempotency, teacher start, duel regressions and no XP writes.');
+  
+  // Duplicate names are allowed. Teacher must choose UUID, match the exact name and use the correct room.
+  const duplicate='10000000-0000-4000-8000-000000000099';
+  await db.query("INSERT INTO public.pit_students(id,room_code,display_name,token_hash) VALUES($1,'PITGAME26','Fictício 1',$2)",
+   [duplicate,crypto.createHash('sha256').update('duplicate.fixture.token').digest('hex')]);
+  await db.query("INSERT INTO public.pit_student_heroes(student_id,klass) VALUES($1,'warrior')",[duplicate]);
+  await db.query("INSERT INTO public.pit_student_stages(student_id,stage,status) VALUES($1,1,'working')",[duplicate]);
+  assert.equal((await teacherDelete(duplicate,'Fictício 1',{pin:'wrong'})).code,401,'only teacher can delete');
+  assert.equal((await teacherDelete(duplicate,'Fictício 1',{room:'PITGAME26B'})).code,409,'cannot delete from other cohort');
+  assert.equal((await teacherDelete(duplicate,'Wrong name')).code,409,'exact name confirmation required');
+  const removed=await teacherDelete(duplicate,'Fictício 1');
+  assert.equal(removed.code,200,JSON.stringify(removed.body));
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM public.pit_students WHERE id=$1",[duplicate])).rows[0].n,0);
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM public.pit_students WHERE id=$1",[ids[0]])).rows[0].n,1,'other duplicate-name account remains');
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM public.pit_student_heroes WHERE student_id=$1",[duplicate])).rows[0].n,0,'child records cascade');
+  console.log('PASS PostgreSQL: authenticated 2-room arena lobby, joins, teacher start, duplicate account deletion and no XP writes.');
  }finally{await db.end()}
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
