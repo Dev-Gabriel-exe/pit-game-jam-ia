@@ -1052,6 +1052,31 @@ function renderStudentDetails(){
  (st.status==='submitted'?'<div class="formline"><label>Devolutiva ao aluno</label><textarea class="review-comment" data-n="'+st.stage+'" maxlength="550" placeholder="Para pedir revisão, descreva o teste que deve ser repetido (mín. 8 caracteres)."></textarea><small>Obrigatória ao pedir revisão; opcional para aprovação.</small></div><div class="buttonrow"><button class="action btnsmall" data-review="approved" data-stage="'+st.stage+'">✓ Aprovar</button><button class="outline btnsmall" data-review="revision" data-stage="'+st.stage+'">↻ Pedir revisão</button></div>':'')+'</div>').join('')+
  (!(user.stages||[]).length?'<p class="notice">O estudante ainda não registrou prática.</p>':'')+'</div>';
  $('rosterBack').onclick=()=>{selectedRoster=null;renderRoster()};
+ // The private PIN allows the teacher to help a student who has changed
+ // computers or misplaced the individual return code, without using name-only
+ // account takeover. The server verifies the selected cohort and student UUID.
+ const resetAccess=document.createElement('button');
+ resetAccess.type='button';resetAccess.className='outline btnsmall';resetAccess.id='rosterResetAccess';
+ resetAccess.textContent='🔑 Gerar código de retorno para este aluno';
+ $('rosterBack').parentElement.appendChild(resetAccess);
+ resetAccess.onclick=async()=>{
+  if(!confirm('Gerar novo código pessoal para '+user.display_name+'? O anterior deixará de funcionar.'))return;
+  resetAccess.disabled=true;
+  try{
+   const result=await call('chat','teacher-reset-access','POST',{studentId:user.id});
+   const code=result.recoveryCode;
+   if(!code)throw Error('Servidor ainda não habilitou a recuperação de alunos.');
+   const box=document.createElement('div');box.className='notice';
+   box.id='rosterRecoveryResult';box.style.cssText='margin:12px 0;border:1px solid #c99562';
+   const strong=document.createElement('strong');strong.textContent='Guarde o novo código de '+user.display_name+':';
+   const text=document.createElement('p');text.textContent=code;text.style.cssText='font:800 18px monospace;user-select:all';
+   box.append(strong,text);
+   $('rosterContent').querySelector('#rosterRecoveryResult')?.remove();
+   $('rosterBack').parentElement.after(box);
+   setToast('Código pessoal gerado. Entregue apenas ao aluno correspondente.');
+  }catch(e){setToast(e.message,true)}
+  finally{resetAccess.disabled=false}
+ };
  $('rosterContent').querySelectorAll('[data-review]').forEach(btn=>btn.onclick=async()=>{
   const n=Number(btn.dataset.stage),field=$('rosterContent').querySelector('textarea[data-n="'+n+'"]'),comment=field?.value?.trim()||'';
   if(btn.dataset.review==='revision'&&comment.length<8){
