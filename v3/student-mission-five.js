@@ -250,7 +250,7 @@ function practice(ctx){
  const guide=window.PIT_GDEVELOP_M05_GUIDE?window.PIT_GDEVELOP_M05_GUIDE.render(r):
   '<p class="m5s-warning">Abra a aba Events do GDevelop, configure uma condição, uma ação e teste no Preview.</p>';
  return '<section class="m5s-practice"><div class="m5s-leadtext"><small>◈ OFICINA · 24 MINUTOS</small><h3>Construa uma regra real no seu projeto.</h3>'+
- '<p>Reabra <strong>'+esc(p.project)+'</strong> na cena <strong>'+esc(p.scene)+'</strong>. Escolha uma das três rotas ou adapte o exemplo à sua mecânica. Não é necessário construir todas.</p>'+
+ '<p>Reabra <strong>'+esc(p.project)+'</strong> na cena <strong>'+esc(p.scene)+'</strong>. Escolha uma das três rotas ou adapte o exemplo à sua mecânica. Não é necessário construir todas. Se trocar de rota, suas fichas anteriores continuam registradas; adapte o projeto e refaça os testes.</p>'+
  '<div class="m5s-context" role="note"><strong>ABRIR O EDITOR DO GDEVELOP</strong><p><a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">Abrir o editor gratuito do GDevelop em outra aba</a>. No editor, abra manualmente o mesmo projeto salvo na Missão 04; este botão não abre nem importa seu jogo automaticamente. Se estiver sem internet, use o aplicativo GDevelop já instalado e abra o projeto local. O caderno continua nesta aba para consultar o tutorial e registrar seus testes.</p></div>'+ 
  '<div class="m5s-context" role="note"><strong>PASSO A PASSO · UMA REGRA NO SEU JOGO</strong><p><b>Onde:</b> reabra o projeto no GDevelop e entre na aba Events (Eventos) da cena. <b>1.</b> Escolha apenas uma rota do tutorial abaixo. <b>2.</b> Adicione um evento e uma condição SE, como colisão ou clique válido. <b>3.</b> No mesmo evento, adicione uma ação ENTÃO que altere uma variável e produza um feedback visível. <b>4.</b> Abra o Preview e teste quando a condição é verdadeira, quando é falsa e ao repetir a ação. <b>5.</b> Salve o projeto editável. <b>6.</b> Preencha nesta página Condição, Ação, Variável, Positivo, Negativo, Feedback e Salvo em; marque apenas testes realmente executados. <b>7.</b> Clique “Conferir minha evidência” e envie quando a prática estiver liberada.</p><p><b>Se a pontuação duplicar:</b> confira se o evento dispara a cada quadro; remova o item coletado ou controle o estado. Se nada acontecer, confira se condição, objeto e ação estão no mesmo evento. O rascunho no navegador não é a entrega ao professor.</p></div>'+ 
  '<div class="m5s-timebox"><span><b>8 min</b> · evento + condição</span><span><b>8 min</b> · variável + feedback</span><span><b>8 min</b> · testes + evidência</span></div>'+
@@ -316,7 +316,7 @@ function mount(ctx){
    root.querySelectorAll('[data-m5s-check]').forEach(box=>{box.checked=false;});
    redraw();
    const notice=root.querySelector('#m5sStatus');
-   if(notice)notice.textContent='Trilha alterada: refaça os três testes no Preview e revise seus relatos antes de enviar.';
+   if(notice)notice.textContent='Trilha alterada: fichas anteriores preservadas. Adapte o jogo no GDevelop, refaça os três testes no Preview e revise seus relatos antes de enviar.';
    const name=root.querySelector('#m5sRouteName');if(name)name.textContent=routes[index].label;
    const box=root.querySelector('#m5s3DNote');if(box)box.hidden=index!==2;
    for(const f of fields){

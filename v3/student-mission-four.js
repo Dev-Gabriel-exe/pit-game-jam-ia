@@ -260,7 +260,7 @@
   const locked=['approved','submitted'].includes(ctx.status);
   const count=validity(d,ctx).filter(Boolean).length;
   return '<div class="m4s-page m4s-practice"><div class="m4s-lead"><small>◈ 36 MIN DE PRÁTICA · GDEVELOP</small>'+
-   '<h3>Implemente um controle. Teste um limite.</h3><p>Continue o projeto <strong>'+esc(i.project)+'</strong>, salve a versão atualizada e descreva apenas o que realmente funcionou. O tutorial apresenta quatro rotas; <b>você precisa executar somente uma.</b></p>'+
+   '<h3>Implemente um controle. Teste um limite.</h3><p>Continue o projeto <strong>'+esc(i.project)+'</strong>, salve a versão atualizada e descreva apenas o que realmente funcionou. O tutorial apresenta quatro rotas; <b>você precisa executar somente uma.</b> Mudar a rota não altera as fichas anteriores: adapte seu projeto no GDevelop e faça os testes da nova rota.</p>'+
    '<div class="m4s-continue" role="note"><strong>COMO REALIZAR ESTA PRÁTICA</strong><p><b>Onde:</b> abra o <a href="https://editor.gdevelop.io/" target="_blank" rel="noopener noreferrer">editor gratuito do GDevelop (nova aba)</a> ou o aplicativo já instalado e reabra o projeto salvo na Missão 03. Abrir o link não importa nem recupera seu projeto automaticamente; se estiver sem internet, use o aplicativo instalado e o arquivo local. <b>1.</b> Escolha somente uma das quatro rotas do tutorial abaixo, conforme seu gênero. <b>2.</b> Siga os cliques do tutorial para configurar um controle ou clique que produza resposta visível. <b>3.</b> Acrescente uma parede, chão, limite ou área clicável, conforme a rota. <b>4.</b> Abra o Preview e faça três testes: comando válido, tentativa contra o limite e repetição com caso inválido. <b>5.</b> Salve o projeto editável. <b>6.</b> Nesta página, descreva o comando, a resposta, o limite, a repetição e onde salvou. Marque apenas os testes que realmente fez. Se mudar comando, resposta, limite, repetição ou projeto salvo, reconfirme no Preview os testes desmarcados; se trocar o projeto salvo, reabra o arquivo indicado e repita os três testes. <b>Entrega:</b> clique em “Verificar minha entrega” e depois envie ao professor quando estiver liberado. Confira o aviso de salvamento antes de sair; se o navegador bloquear o armazenamento, copie a ficha na revisão.</p><p><b>Se algo falhar:</b> confira se o comportamento foi adicionado ao objeto correto, se existe instância do obstáculo na cena e se a condição de colisão também possui uma ação de bloqueio. Não declare como concluído um Preview que não executou.</p></div>'+
    (locked?'<div class="m4s-locked">Entrega '+(ctx.status==='approved'?'aprovada':'enviada')+'; campos preservados para consulta.</div>':'')+
    '<div class="m4s-timebox"><span><b>12 min</b> · controle/entrada</span><span><b>15 min</b> · obstáculo ou restrição</span><span><b>9 min</b> · três testes e salvar</span></div></div>'+
@@ -342,7 +342,7 @@
     if(changed){
      redraw();
      const notice=root.querySelector('#m4sNotice');
-     if(notice)notice.textContent='⚠ Rota alterada: repita os três testes no Preview e confira se os relatos ainda correspondem à rota escolhida. '+draftNotice(ctx.session,validity(d,ctx).filter(Boolean).length);
+     if(notice)notice.textContent='⚠ Rota alterada: suas fichas anteriores permanecem registradas. Adapte o projeto no GDevelop, repita os três testes no Preview e revise seus relatos. '+draftNotice(ctx.session,validity(d,ctx).filter(Boolean).length);
     }
    }
   });
