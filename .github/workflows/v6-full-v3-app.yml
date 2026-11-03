@@ -1,0 +1,36 @@
+name: V6 - Actual student app duels and 30-model arenas
+on:
+  push:
+    branches: [v6]
+    paths:
+      - 'qa/v6-hero-late-response.cjs'
+      - 'v5/real-hero-profile.js'
+      - '.github/workflows/v6-full-v3-app.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-v3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [duel, arena5, arena10]
+    env:
+      V6_SCENARIO: ${{ matrix.scenario }}
+      V6_ARMS: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
+      - run: npx playwright install --with-deps chromium
+      - run: node qa/v6-hero-late-response.cjs && node --experimental-vm-modules qa/v6-viewer-readiness.cjs
+      - run: node qa/v6-render-matrix.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v6-actual-app-${{ matrix.scenario }}
+          path: qa/v6-evidence/

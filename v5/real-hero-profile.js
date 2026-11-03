@@ -50,12 +50,19 @@
  let model={key:null,draft:null,saved:null,approved:0,room:'',id:'',name:'',flash:'',warning:'',remoteState:'idle',revision:0,serverApproved:null,remoteExists:false,saving:false,localBackup:null};
  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
  const tokenOf=context=>typeof context.tokenProvider==='function'?context.tokenProvider():null;
+ // The hero editor shares its container with duels/arenas. Async responses
+ // may update the cached profile, but only its own still-mounted view may paint.
+ const ownsView=(container,context)=>{
+  const key=storageKey(context.room||'PITGAME26',context.studentId);
+  return model.key===key&&container.querySelector('.rhero-root')?.dataset.heroProfile===key;
+ };
+ function repaint(container,context){if(ownsView(container,context))mount(container,context)}
  const canSync=context=>!context.visualPreview&&context.authenticated&&
   location.hostname==='dev-gabriel-exe.github.io'&&/^[a-f\d]{64}$/i.test(String(tokenOf(context)||''));
  async function syncFromNeon(container,context){
-  if(model.remoteState==='loading'||!canSync(context))return;
+  if(model.remoteState==='loading'||!canSync(context)||!ownsView(container,context))return;
   const key=model.key,token=tokenOf(context);
-  model.remoteState='loading';mount(container,context);
+  model.remoteState='loading';repaint(container,context);
   try{
    const response=await fetch(SYNC_URL,{headers:{'X-PIT-Student-Token':token},cache:'no-store',signal:AbortSignal.timeout(12000)});
    const data=await response.json();
@@ -81,7 +88,7 @@
    if(model.key!==key||token!==tokenOf(context))return;
    model.remoteState='offline';model.warning='Servidor do personagem indisponível: '+e.message+'. Sua ficha local foi mantida.';
   }
-  mount(container,context);
+  repaint(container,context);
  }
 
  function load(room,id,approved,catalog){
@@ -129,7 +136,7 @@
   const info=model.remoteState==='ready'?'☁ Neon conectado · ficha da conta do aluno':
    model.remoteState==='loading'?'Buscando personagem no Neon...':
    '⚠ Sem sincronização neste momento · somente cópia local';
-  container.innerHTML='<section class="rhero-root" aria-label="Meu herói real">'+
+  container.innerHTML='<section class="rhero-root" data-hero-profile="'+esc(model.key)+'" aria-label="Meu herói real">'+
    '<div class="rhero-head"><div><span>✦ FORJA DO AVENTUREIRO · '+esc(model.room)+'</span><h3>'+esc(model.name)+'</h3>'+
    '<p>Seu personagem usa apenas recompensas das fichas aprovadas pelo professor.</p></div>'+
    '<div class="rhero-rewards"><div><strong>'+(approved*100)+'</strong><small>XP confirmados</small></div>'+
@@ -205,7 +212,7 @@
    }catch(e){
     if(model.key===key){model.warning='Sua ficha continua guardada neste navegador.';
      model.flash='⚠ Neon não confirmou: '+e.message;model.remoteState='offline';}
-   }finally{if(model.key===key){model.saving=false;mount(container,context)}}
+   }finally{if(model.key===key){model.saving=false;repaint(container,context)}}
   };
   container.querySelector('#rheroReload').onclick=()=>{
    if(busy)return;
@@ -224,7 +231,7 @@
     await navigator.clipboard.writeText(code);
     model.flash='Código de ficha copiado. Leve para a próxima aula; ele não é uma senha de acesso.';
    }catch(e){model.flash='Não foi possível copiar. Use HTTPS ou as permissões de transferência do navegador.'}
-   mount(container,context);
+   repaint(container,context);
   };
   container.querySelector('#rheroImport').onclick=()=>{
    const code=window.prompt('Cole o código da sua ficha da aula anterior (não o código da turma):');
