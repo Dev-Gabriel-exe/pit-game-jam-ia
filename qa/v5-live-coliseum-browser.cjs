@@ -35,7 +35,8 @@ const server=http.createServer((req,res)=>{
    if(!file.startsWith(path.resolve(root,'node_modules/three')+path.sep)||!fs.existsSync(file))return route.fulfill({status:404});
    return route.fulfill({status:200,headers:{'content-type':'text/javascript','access-control-allow-origin':'*'},body:fs.readFileSync(file)});
   });
-  await page.route('https://raw.githubusercontent.com/**',route=>route.fulfill({status:404}));
+  // Official CC0 KayKit hero GLBs are hosted here; blocking this host makes every hero fail loading.
+   // Browser smoke must load the real characters to validate an actual 3D duel.
   await page.goto(rootURL+'/fixture');
   const frame=page.frameLocator('#viewer');
   await frame.locator('#replayStatus').waitFor();
