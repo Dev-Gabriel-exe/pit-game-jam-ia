@@ -150,7 +150,7 @@ function renderRight(){
   return '<div class="badge-item '+(isDone?'done':'')+'"><span class="dot"></span><span>'+m.icon+' '+esc(m.title)+(isActive&&!isDone?' · em curso':'')+'</span></div>'
  }).join('');
  $('roleSubtitle').textContent=TEACHER?'MISSION CONTROL · CONTROLE DIDÁTICO':'CREATOR MODE · MINHA JORNADA';
- $('roomState').textContent=visualPreview?'PRÉVIA VISUAL · 10 MISSÕES LIBERADAS PARA TESTE · SEM ENVIO':'TURMA · MISSÃO '+String(state.current_stage).padStart(2,'0')+' LIBERADA';
+ $('roomState').textContent=visualPreview?'PRÉVIA VISUAL · 10 MISSÕES LIBERADAS PARA TESTE · SEM ENVIO':(!['practice','review'].includes(state.phase)?'TURMA · MISSÃO '+String(state.current_stage).padStart(2,'0')+' · AGUARDANDO LIBERAÇÃO DE ENTREGAS':'TURMA · MISSÃO '+String(state.current_stage).padStart(2,'0')+' LIBERADA');
 }
 // A tela do aluno usa scroll interno no desktop, mas scroll da página no celular.
 // Ao trocar de etapa, reposicionamos no início do capítulo, nunca no meio da etapa nova.
