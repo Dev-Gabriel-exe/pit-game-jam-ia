@@ -4,6 +4,7 @@ on:
     branches: [v6]
     paths:
       - 'qa/v6-hero-late-response.cjs'
+      - 'qa/v6-render-matrix.cjs'
       - 'v5/real-hero-profile.js'
       - '.github/workflows/v6-full-v3-app.yml'
   workflow_dispatch:

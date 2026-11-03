@@ -198,7 +198,19 @@ async function sample(page,arm){
      await pages[i].locator('#pitV5HubTabs [data-tab="'+(count===2?'duel':'arena')+'"]').click();
      if(await pages[i].locator('iframe.pit-live-replay').count()===0)
       await pages[i].locator('[data-view="'+match.id+'"]').click();
-     await pages[i].frameLocator('iframe.pit-live-replay').locator('#playReplay:not([disabled])').waitFor({timeout:150000});
+     try{
+      await pages[i].frameLocator('iframe.pit-live-replay').locator('#playReplay:not([disabled])').waitFor({timeout:150000});
+     }catch(error){
+      const debug=await pages[i].evaluate(()=>({
+       tab:window.PIT_V5_H1E.snapshot.currentTab,
+       frames:[...document.querySelectorAll('iframe')].map(f=>({src:f.src,connected:f.isConnected})),
+       status:document.querySelector('iframe.pit-live-replay')?.contentDocument?.querySelector('#replayStatus')?.textContent,
+       dataset:{...document.querySelector('iframe.pit-live-replay')?.contentDocument?.querySelector('#arenaStage')?.dataset},
+       text:document.querySelector('#pitV5TeacherPanel')?.textContent.slice(-800)
+      })).catch(e=>({error:e.message}));
+      console.error('V6_REOPEN_DEBUG '+JSON.stringify({scenario,index:i,debug,errors:log.jsErrors,failed:log.failed,assets:log.assets}));
+      throw error;
+     }
      await pages[i].frameLocator('iframe.pit-live-replay').locator('#playReplay').click();
      await wait(2500);
      await pages[i].frameLocator('iframe.pit-live-replay').locator('#pauseReplay').click();
