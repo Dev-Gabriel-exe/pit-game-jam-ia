@@ -101,7 +101,9 @@ const server=http.createServer((req,res)=>{
   await controls.locator('button:has-text("Cancelar convite")').waitFor({timeout:10000});
   await controls.locator('[data-refresh]').click();
   await controls.locator('iframe.pit-live-replay').waitFor({timeout:15000});
-  await controls.locator('[data-back]').click();
+  // The isolated HTML fixture lacks the production CSS, so trigger the same DOM click
+  // directly without Playwright's scrolling/actionability check over active WebGL.
+  await controls.evaluate(()=>document.querySelector('[data-back]')?.click());
   await controls.locator('iframe.pit-live-replay').waitFor({state:'detached',timeout:10000});
   await controls.evaluate(()=>window.PIT_V5_LIVE.unmount());
   await controls.close();
