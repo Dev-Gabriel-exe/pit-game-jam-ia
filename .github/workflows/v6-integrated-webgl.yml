@@ -6,6 +6,7 @@ on:
       - 'qa/v6-duel-integrated-browser.cjs'
       - '.github/workflows/v6-integrated-webgl.yml'
       - 'v3/v5-h1e-bridge.js'
+      - 'v3/v5-h1e-bridge.css'
       - 'v3/v5-coliseum-live.js'
       - 'v5/coliseum-live.js'
       - 'v5/arena-three.js'
