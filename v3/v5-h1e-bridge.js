@@ -139,7 +139,7 @@
    if(resolved.origin!==location.origin)return;
    currentTab=key;
    if(frame.getAttribute('src')!==url)frame.setAttribute('src',url);
-   frame.title=t.label.replace(/[^\\p{L}\\d ]/gu,'').trim()+' — PIT Game Jam V5';
+   frame.title=t.label+' — PIT Game Jam V5';
   }
   nav.querySelectorAll('button').forEach(b=>{
    const selected=b.dataset.tab===key;
