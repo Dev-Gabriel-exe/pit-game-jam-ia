@@ -26,3 +26,8 @@
 #pitV5TeacherPanel .pit-live-toolbar small{display:block;color:#b9b1c8;margin-top:3px}
 #pitV5TeacherPanel .pit-live-replay{width:100%;height:min(76vh,740px);min-height:430px;border:1px solid #b98e5b;border-radius:12px;margin-top:10px;background:#10101a}
 @media(max-width:700px){#pitV5TeacherPanel .pit-live-grid{grid-template-columns:1fr}#pitV5TeacherPanel .pit-live-row{flex-wrap:wrap}}
+
+#pitV5TeacherPanel .pit-live-outcome{font-weight:800;white-space:nowrap}
+#pitV5TeacherPanel .pit-live-outcome[data-outcome=win]{color:#a9e9b4}
+#pitV5TeacherPanel .pit-live-outcome[data-outcome=loss]{color:#ffc2c2}
+#pitV5TeacherPanel .pit-live-outcome[data-outcome=draw]{color:#ffe0a0}
