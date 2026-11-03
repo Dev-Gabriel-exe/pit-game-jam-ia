@@ -66,7 +66,10 @@
    const data=await request(a.ctx,kind,body);
    if(live!==a)return;
    banner(kind==='invite'?'Convite enviado!':kind==='respond'?'Resposta registrada.':
-    kind==='arena-start'?'Arena iniciada e registrada no Neon.':'Controle atualizado.','success');
+    kind==='arena-start'?'Arena iniciada e registrada no Neon.':
+    kind==='arena-open'?'Sala de espera aberta! Os alunos já podem entrar.':
+    kind==='arena-join'?'Você entrou na sala de espera. Aguarde o professor iniciar.':
+    kind==='arena-cancel'?'Sala de espera cancelada.':'Controle atualizado.','success');
    a.busy=false;
    if(kind==='respond'&&data.matchId)return viewMatch(data.matchId);
    if(kind==='arena-start'&&data.matchId)return viewMatch(data.matchId);
@@ -110,7 +113,7 @@
    if(accepted){void viewMatch(accepted.matchId);return}
   }
   if(!teacher&&a.tab==='arena'){
-   const justStarted=(d.arena||[]).find(i=>isUUID(i.id)&&recent(i)&&!alreadySeen(a.ctx,i.id));
+   const justStarted=(d.arena||[]).find(i=>i.joined===true&&isUUID(i.id)&&recent(i)&&!alreadySeen(a.ctx,i.id));
    if(justStarted){void viewMatch(justStarted.id);return}
   }
   const note=a.note?'<p role="status" data-live-note data-kind="'+esc(a.note.kind)+'">'+esc(a.note.text)+'</p>':
@@ -129,27 +132,46 @@
     '<small>'+d.pendingInvites+' convite(s) pendente(s). Pausar impede novos convites e aceites, mas mantém os confrontos já iniciados.</small></section>';
   }else if(teacher&&a.tab==='collective'){
    const roster=d.students||[],available=roster.filter(x=>x.heroSaved),m10=available.filter(x=>x.approved===10);
-   content='<div class="pit-live-grid">'+[5,10].map(m=>{
-    const record=d.arena?.find(x=>x.mission===m),ready=m===5?available:m10;
-    const disabled=!record&&(d.stage<m||ready.length<2);
-    return '<section class="pit-live-panel"><span class="pit-live-mission">MISSÃO '+String(m).padStart(2,'0')+'</span>'+
-     '<h4>'+(m===5?'Primeira arena':'Grande final')+'</h4><p>'+ready.length+' de '+roster.length+' aluno(s) com personagem apto(s)'+
-     (m===10?' (10 missões aprovadas)':'')+'.</p>'+
-     '<button type="button" '+(disabled?'disabled ':'')+(record?'data-view="'+esc(record.id)+'"':'data-start="'+m+'"')+'>'+
-     (record?'▶ Rever arena M'+m:'▶ Iniciar Arena M'+m)+'</button>'+
-     '<small>'+(record?'Partida registrada. '+record.fighters+' combatentes.':d.stage<m?
-      'Disponível após o professor liberar a missão '+m+'.':ready.length<2?
-      'São necessários pelo menos dois personagens aptos.':'Até 30 heróis · mesma turma · batalha automática 3D')+'</small></section>';
-   }).join('')+'</div>'+
+   const lobby=d.lobby||null;
+   content=(lobby?'<section class="pit-live-panel pit-live-invite"><strong class="pit-live-state">🏟 SALA DE ESPERA · MISSÃO '+lobby.mission+'</strong>'+
+      '<div class="pit-live-count"><strong>'+lobby.joinedCount+' / 30</strong> alunos entraram na arena</div>'+
+      '<p>O professor controla quando o combate começa. A lista é atualizada automaticamente.</p>'+
+      '<p>'+((lobby.participants||[]).map(x=>esc(x.name)).join(' · ')||'Aguardando os primeiros alunos…')+'</p></section>':'')+
+    '<div class="pit-live-grid">'+[5,10].map(m=>{
+     const record=d.arena?.find(x=>x.mission===m),ready=m===5?available:m10,waiting=lobby?.mission===m;
+     const locked=d.stage<m||!!(lobby&&!waiting);
+     const startDisabled=!waiting||lobby.joinedCount<2;
+     return '<section class="pit-live-panel"><span class="pit-live-mission">MISSÃO '+String(m).padStart(2,'0')+'</span>'+
+      '<h4>'+(m===5?'Primeira arena':'Grande final')+'</h4><p>'+ready.length+' alunos com heróis aptos na turma.</p>'+
+      (record?'<button type="button" data-view="'+esc(record.id)+'">▶ Rever arena M'+m+'</button>':
+       waiting?'<div class="pit-live-count">👥 '+lobby.joinedCount+' / 30 confirmados</div>'+
+        '<div class="pit-live-actions"><button type="button" data-start="'+m+'" '+(startDisabled?'disabled':'')+'>▶ Iniciar batalha ('+lobby.joinedCount+')</button>'+
+        '<button type="button" data-cancel="'+m+'">✕ Fechar sala</button></div>'+
+        '<small>'+(startDisabled?'Mínimo de dois alunos para iniciar.':'Pronto para iniciar apenas com quem entrou.')+'</small>':
+       '<button type="button" data-open="'+m+'" '+(locked||ready.length<2?'disabled':'')+'>🏟 Abrir sala de espera M'+m+'</button>'+
+       '<small>'+(locked?'Libere esta missão e feche a sala anterior antes.':ready.length<2?'São necessários dois heróis aptos.':'Os alunos verão o botão Entrar na Arena em suas telas.')+'</small>')+
+      '</section>';
+    }).join('')+'</div>'+
     '<section class="pit-live-panel"><h4>Alunos e personagens</h4>'+
     '<div class="pit-live-roster">'+roster.map(x=>'<div>'+esc(x.name)+'<span>'+
-     (x.heroSaved?'✦ Herói salvo · ':'Sem herói salvo · ')+x.approved+'/10 aprovadas</span></div>').join('')+'</div></section>';
+    (x.heroSaved?'✦ Herói salvo · ':'Sem herói salvo · ')+x.approved+'/10 aprovadas</span></div>').join('')+'</div></section>';
   }else if(!teacher&&a.tab==='arena'){
-   const arenas=d.arena||[];
-   content='<section class="pit-live-panel"><h4>Confrontos iniciados pelo professor</h4>'+
-    (arenas.length?arenas.map(x=>'<div class="pit-live-row"><span>🏟 Arena da Missão '+x.mission+'</span>'+
+   const arenas=d.arena||[],lobby=d.lobby||null;
+   const qualifies=d.heroSaved&&(lobby?.mission===5||lobby?.mission===10&&d.approved===10);
+   content=(lobby?'<section class="pit-live-panel pit-live-invite"><h4>🏟 ARENA M'+lobby.mission+' · SALA DE ESPERA</h4>'+
+    '<div class="pit-live-count"><strong>'+lobby.joinedCount+' / 30</strong> alunos entraram</div>'+
+    '<p>'+(lobby.joined?'Você já está na sala de espera. Aguarde o professor iniciar.':
+     qualifies?'Sua arena está aberta! Entre para participar do combate.':
+     'Salve seu personagem (e conclua as 10 missões para a final) antes de entrar.')+'</p>'+
+    '<div class="pit-live-actions">'+(lobby.joined?
+      '<button type="button" data-leave="'+lobby.mission+'">↩ Sair da espera</button>':
+      '<button type="button" data-join="'+lobby.mission+'" '+(!qualifies?'disabled':'')+'>⚔ Entrar na arena</button>')+'</div></section>':
+    '<section class="pit-live-panel"><p>Não há arena aberta neste momento. Quando o professor abrir, aparecerá um botão de entrada na sua tela.</p></section>')+
+    '<section class="pit-live-panel"><h4>Arenas realizadas nesta turma</h4>'+
+    (arenas.length?arenas.map(x=>'<div class="pit-live-row"><span>🏟 Arena da Missão '+x.mission+
+     (x.joined?' · Você participou':' · Modo espectador')+'</span>'+
      '<button type="button" data-view="'+esc(x.id)+'">▶ Assistir em 3D</button></div>').join(''):
-     '<p>Aguardando o professor iniciar a Arena M5 ou a Arena M10. Volte aqui quando ela for liberada.</p>')+'</section>';
+     '<p>A primeira batalha ainda não começou.</p>')+'</section>';
   }else{
    const eligible=d.eligible&&d.heroSaved,canPlay=eligible&&d.duelsEnabled;
    const active=(d.invites||[]).find(x=>x.status==='pending');
@@ -186,6 +208,13 @@
   $(a.root,'[data-refresh]')?.addEventListener('click',()=>void refresh());
   a.root.querySelectorAll('[data-view]').forEach(btn=>btn.onclick=()=>void viewMatch(btn.dataset.view));
   a.root.querySelectorAll('[data-start]').forEach(btn=>btn.onclick=()=>void action('arena-start',{mission:Number(btn.dataset.start)}));
+  a.root.querySelectorAll('[data-open]').forEach(btn=>btn.onclick=()=>void action('arena-open',{mission:Number(btn.dataset.open)}));
+  a.root.querySelectorAll('[data-cancel]').forEach(btn=>btn.onclick=()=>{
+   if(confirm('Fechar a sala de espera desta missão? Os alunos precisarão entrar novamente se ela for reaberta.'))
+    void action('arena-cancel',{mission:Number(btn.dataset.cancel)});
+  });
+  a.root.querySelectorAll('[data-join]').forEach(btn=>btn.onclick=()=>void action('arena-join',{mission:Number(btn.dataset.join)}));
+  a.root.querySelectorAll('[data-leave]').forEach(btn=>btn.onclick=()=>void action('arena-leave',{mission:Number(btn.dataset.leave)}));
   a.root.querySelectorAll('[data-duels]').forEach(btn=>btn.onclick=()=>void action('duels',{enabled:btn.dataset.duels==='true'}));
   a.root.querySelectorAll('[data-available]').forEach(btn=>btn.onclick=()=>void action('presence',{available:btn.dataset.available==='true'}));
   a.root.querySelectorAll('[data-invite]').forEach(btn=>btn.onclick=()=>void action('invite',{targetId:btn.dataset.invite}));
@@ -198,7 +227,7 @@
   clear();
   live={root,ctx,tab,key,data:null,note:null,busy:false,viewing:null,errorCount:0,timer:null};
   root.innerHTML='<div class="pit-live-head"><h3>⚔ Conectando ao Coliseu...</h3></div><p role="status" data-live-note>Sincronizando sua turma.</p>';
-  live.timer=setInterval(()=>{if(!document.hidden)void refresh()},4500);
+  live.timer=setInterval(()=>{if(!document.hidden)void refresh()},tab==='arena'||tab==='collective'?2600:4500);
   // Availability is temporary; renew opt-in every 25 seconds while this panel is visible.
   live.heartbeat=setInterval(async()=>{
    const current=live;
