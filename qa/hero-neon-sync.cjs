@@ -4,6 +4,7 @@ const assert=require('node:assert/strict');
 const crypto=require('node:crypto');
 const catalog=require('../chat-api/lib/v5-phase2-talent-ids.json').classes;
 const phase2=require('../v5/phase2-combat.js');
+process.env.DATABASE_URL ||= 'postgresql://never-connected.invalid/test'; // mocked db only
 const {createHandler,validateProfile}=require('../chat-api/api/hero.js');
 const token='a'.repeat(64),otherToken='b'.repeat(64);
 const a={id:'11111111-1111-4111-8111-111111111111',room_code:'PITGAME26'};
