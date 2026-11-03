@@ -87,8 +87,9 @@
  function load(room,id,approved,catalog){
   const key=storageKey(room,id);
   if(key===model.key){
-   model.approved=approved;
-   const cleaned=clean(model.draft,approved,catalog);
+   const budget=Math.max(approved,model.serverApproved??0);
+   model.approved=budget;
+   const cleaned=clean(model.draft,budget,catalog);
    if(JSON.stringify(cleaned)!==JSON.stringify(model.draft)){
     model.warning='O orçamento mudou: as escolhas acima do limite foram retiradas.';
     model.draft=cleaned;
@@ -114,7 +115,7 @@
   }
   const reported=clamp(context.approved,0,10);
   load(context.room||'PITGAME26',id,reported,catalog);
-  const approved=model.serverApproved==null?reported:model.serverApproved;
+  const approved=Math.max(reported,model.serverApproved??0);
   model.approved=approved;
   if(model.remoteState==='idle'&&canSync(context))Promise.resolve().then(()=>syncFromNeon(container,context));
   model.name=String(context.studentName||'Aventureiro').slice(0,56);
