@@ -1,0 +1,61 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meu herói — personagem KayKit real</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 50% 42%,#493652 0,#130f22 67%,#0b0a15 100%);color:#f6dab3;font-family:system-ui}canvas{display:block;width:100%;height:100%}#message{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:14px;font-size:12px;pointer-events:none}#message strong{display:block;font-size:60px;filter:drop-shadow(0 0 17px #c69062)}#credit{position:absolute;bottom:8px;left:10px;right:10px;text-align:center;font-size:10px;color:#e8caad;text-shadow:0 2px 4px #000}#message[hidden]{display:none}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script src="./character-assets.js"></script></head><body>
+<div id="message" role="status"><div><strong id="classIcon">⚔</strong>Carregando personagem 3D…</div></div>
+<div id="credit">KayKit Adventurers · CC0 · prévia real da classe</div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const icons={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
+const klass=new URLSearchParams(location.search).get('classe');
+const key=Object.hasOwn(icons,klass)?klass:'warrior';
+const model=window.PIT_V5_ASSETS?.[key];
+document.getElementById('classIcon').textContent=icons[key];
+const message=document.getElementById('message');
+try{
+ if(!model||!window.WebGL2RenderingContext)throw Error('3D indisponível');
+ const scene=new THREE.Scene();
+ const camera=new THREE.PerspectiveCamera(32,1,.05,120);
+ camera.position.set(5,3.8,7.7);camera.lookAt(0,1.18,0);
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
+ renderer.setClearColor(0x000000,0);document.body.prepend(renderer.domElement);
+ scene.add(new THREE.HemisphereLight(0xddeeff,0x5b3042,2.6));
+ const keylight=new THREE.DirectionalLight(0xffe5ac,3.7);keylight.position.set(4,9,5);scene.add(keylight);
+ const rim=new THREE.PointLight(0x9f73fe,13,22);rim.position.set(-4,3,-3);scene.add(rim);
+ const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.57,.28,64),new THREE.MeshStandardMaterial({color:0x49344e,metalness:.6,roughness:.43}));
+ pedestal.position.y=-.16;scene.add(pedestal);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(1.28,.025,5,60),new THREE.MeshBasicMaterial({color:0xf3c789}));
+ ring.rotation.x=Math.PI/2;ring.position.y=.02;scene.add(ring);
+ const gltf=await new GLTFLoader().loadAsync(model.model);
+ const hero=gltf.scene,box=new THREE.Box3().setFromObject(hero),size=box.getSize(new THREE.Vector3());
+ const height=size.y||1;hero.scale.setScalar(2.9/height);
+ const bounds=new THREE.Box3().setFromObject(hero);
+ const center=bounds.getCenter(new THREE.Vector3());
+ hero.position.x=-center.x;hero.position.z=-center.z;hero.position.y=-bounds.min.y;
+ scene.add(hero);
+ const mixer=gltf.animations.length?new THREE.AnimationMixer(hero):null;
+ if(mixer){
+  const idle=gltf.animations.find(clip=>/idle/i.test(clip.name))||gltf.animations[0];
+  mixer.clipAction(idle).play();
+ }
+ message.hidden=true;
+ const clock=new THREE.Clock();
+ const sizeCanvas=()=>{const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
+ addEventListener('resize',sizeCanvas);sizeCanvas();
+ const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ function frame(){
+  if(document.hidden){requestAnimationFrame(frame);return}
+  const dt=Math.min(clock.getDelta(),.05);
+  if(mixer)mixer.update(dt);
+  if(!reduce)hero.rotation.y+=dt*.13;
+  ring.rotation.z+=dt*.14;
+  renderer.render(scene,camera);requestAnimationFrame(frame);
+ }
+ frame();
+}catch(e){
+ message.querySelector('div').lastChild.textContent='Modelo 3D indisponível no momento. A classe continua selecionável.';
+}
+</script></body></html>
