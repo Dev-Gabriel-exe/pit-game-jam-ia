@@ -43,6 +43,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.reload();await page.locator('#workspace:visible').waitFor({timeout:12000});
  await page.locator('#rosterButton').click();
  await page.locator('#rosterDrawer').waitFor({state:'visible',timeout:10000});
+ // New teacher UX automatically opens the pending-submissions filter.
+ assert.match(await page.locator('#rosterContent').innerText(),/Aluno QA Pendente/);
+ await page.locator('#filterAll').click();
  await page.locator('#rosterDrawer').filter({hasText:/Aluno QA Isolado/}).waitFor({timeout:10000});
  assert.match(await page.locator('#rosterDrawer').innerText(),/Aluno QA Isolado/,'teacher sees fictional roster');
  await page.locator('#rosterStats').filter({hasText:/3 inscritos · 2 ativos/}).waitFor({timeout:10000});
