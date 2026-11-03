@@ -192,7 +192,7 @@ async function sample(page,arm){
      assert(log.lateHeroReleased,'Delayed hero request was not exercised');
      assert(log.api.filter(x=>x.service==='/api/classroom'&&x.action==='state').length>=2,'Real V3 polling must run during the battle');
      assert(log.samples.every(x=>x.tab===(count===2?'duel':'arena')),'Late hero callback changed the active V3 view');
-     await pages[i].locator('#pitV5HubClose').click();
+     await pages[i].locator('#pitV5HubClose').press('Enter');
      assert.equal(await pages[i].locator('#pitV5Hub iframe.pit-live-replay').count(),0);
      await pages[i].locator('#pitV5HubButton').click();
      await pages[i].locator('#pitV5HubTabs [data-tab="'+(count===2?'duel':'arena')+'"]').click();
@@ -211,11 +211,11 @@ async function sample(page,arm){
       console.error('V6_REOPEN_DEBUG '+JSON.stringify({scenario,index:i,debug,errors:log.jsErrors,failed:log.failed,assets:log.assets}));
       throw error;
      }
-     await pages[i].frameLocator('iframe.pit-live-replay').locator('#playReplay').click();
+     await pages[i].frameLocator('iframe.pit-live-replay').locator('#playReplay').press('Enter');
      await wait(2500);
-     await pages[i].frameLocator('iframe.pit-live-replay').locator('#pauseReplay').click();
+     await pages[i].frameLocator('iframe.pit-live-replay').locator('#pauseReplay').press('Enter');
      const reopened=await sample(pages[i],arm);assert.equal(reopened.loaded,count);assert.equal(reopened.losses,0);
-     await pages[i].locator('#pitV5HubClose').click();
+     await pages[i].locator('#pitV5HubClose').press('Enter');
      log.reopenedAndDisposed=true;
     }
    }

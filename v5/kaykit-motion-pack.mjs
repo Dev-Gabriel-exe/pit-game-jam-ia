@@ -47,7 +47,7 @@ export async function loadForClass(klass,loader){
  }
  return {filesLoaded,filesRequested:groupNames.length,clips,errors};
 }
-export function retargetClip(THREE,clip,model){
+function targetBones(model){
  // Keep original KayKit names and account for glTFLoader dot/underscore sanitization.
  const bones=new Map();
  model.traverse(node=>{
@@ -55,6 +55,9 @@ export function retargetClip(THREE,clip,model){
    const key=normalize(node.name);if(!bones.has(key))bones.set(key,node.name);
   }
  });
+ return bones;
+}
+function retargetToBones(THREE,clip,bones){
  if(bones.size<18)return null;
  const tracks=[];
  for(const track of clip.tracks){
@@ -69,14 +72,22 @@ export function retargetClip(THREE,clip,model){
  if(tracks.length<Math.max(36,Math.floor(clip.tracks.length*.65)))return null;
  return new THREE.AnimationClip(clip.name,clip.duration,tracks);
 }
+export function retargetClip(THREE,clip,model){return retargetToBones(THREE,clip,targetBones(model))}
+// AnimationClip/keyframe arrays are immutable data, already shared by the
+// native GLTF clips. Cache retargeted data too; each hero keeps its own mixer.
+const retargetedClips=new WeakMap();
 export function attachToHero(THREE,klass,model,mixer,actions,library){
  if(!mixer||!model||!actions||!library?.clips)return {added:0,requested:0};
+ const bones=targetBones(model),signature=JSON.stringify([...bones].sort((a,b)=>a[0].localeCompare(b[0])));
  const names=[...new Set(['idle','run','dodge','hit','defeated','attack','cast','block'].flatMap(m=>preferredClips(klass,m)))];
  let added=0;
  for(const name of names){
   const key='kaykit:'+name.toLowerCase(),original=library.clips.get(name.toLowerCase());
   if(!original||actions.has(key))continue;
-  const clip=retargetClip(THREE,original,model);if(!clip)continue;
+  let variants=retargetedClips.get(original);
+  if(!variants){variants=new Map();retargetedClips.set(original,variants)}
+  if(!variants.has(signature))variants.set(signature,retargetToBones(THREE,original,bones));
+  const clip=variants.get(signature);if(!clip)continue;
   actions.set(key,mixer.clipAction(clip));added++;
  }
  return {added,requested:names.length};
