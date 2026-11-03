@@ -18,3 +18,70 @@
 #pitV5Hub button:focus-visible{outline:3px solid #ffcf8d;outline-offset:2px}
 @media(max-width:780px){#pitV5Hub.pit-v5-h1e-overlay{padding:0}#pitV5Hub .pit-v5-h1e-shell{height:100dvh;border:0}#pitV5Hub .pit-v5-h1e-head{padding:11px 13px}#pitV5HubClose{font-size:11px;padding:9px}#pitV5Hub .pit-v5-h1e-tabs{padding:7px 9px}#pitV5Hub .pit-v5-h1e-tabs button{flex:1 1 100px;padding:8px;font-size:10px}#pitV5Hub .pit-v5-h1e-status{padding:7px 10px}}
 @media(prefers-reduced-motion:reduce){#pitV5Hub *,#pitV5HubButton{animation:none!important;transition:none!important}}
+
+
+/* Teacher native online-control panel: no fictional switches on production. */
+#pitV5Hub iframe[hidden],#pitV5Hub .pit-v5-teacher-panel[hidden],
+#pitV5Hub .pit-v5-h1e-safety[hidden]{display:none!important}
+#pitV5Hub .pit-v5-teacher-panel{
+ flex:1;min-height:0;overflow-y:auto;
+ padding:clamp(19px,4vw,46px);
+ background:radial-gradient(ellipse at 18% 0%,#61402b55,transparent 58%),#15131c;
+ color:#f5e7d5;
+}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-intro{max-width:850px;margin-bottom:25px}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-intro span{
+ font:800 12px Inter,system-ui,sans-serif;letter-spacing:.18em;color:#d7a874;
+}
+#pitV5Hub .pit-v5-teacher-panel h3{
+ margin:12px 0 14px;font:800 clamp(25px,4vw,43px) Cinzel,Georgia,serif;
+ color:#f6d49f;
+}
+#pitV5Hub .pit-v5-teacher-panel p{line-height:1.7;font-size:14px;color:#dbc5ab;margin:8px 0}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;
+ margin:22px 0 23px;max-width:1040px;
+}
+#pitV5Hub .pit-v5-teacher-panel article{
+ border:1px solid #916e4b;background:linear-gradient(145deg,#342630,#231d2b);
+ border-radius:13px;padding:24px;min-height:140px;
+ box-shadow:0 10px 27px #09070b46;
+}
+#pitV5Hub .pit-v5-teacher-panel article>span{
+ color:#dbb584;font-size:11px;font-weight:800;letter-spacing:.1em;
+}
+#pitV5Hub .pit-v5-teacher-panel article h4{
+ margin:11px 0;font:800 clamp(18px,2vw,25px) Cinzel,Georgia,serif;
+ color:#ffe1af;
+}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-actions{
+ display:flex;flex-wrap:wrap;gap:10px;margin:22px 0;
+}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-actions button,
+#pitV5Hub .pit-v5-teacher-panel article button{
+ padding:12px 19px;min-height:46px;
+ border:1px solid #a98257;border-radius:9px;
+ background:linear-gradient(120deg,#c9965a,#f0c997);
+ color:#211522;font-weight:850;
+}
+#pitV5Hub .pit-v5-teacher-panel button:disabled{
+ cursor:not-allowed!important;opacity:.5;filter:grayscale(.36)
+}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-state{
+ max-width:1000px;border:1px solid #927052;border-left:4px solid #d4a66f;
+ background:#29242c;border-radius:10px;padding:18px 20px;margin:22px 0;
+}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-state strong{color:#f1ce97}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-state p{font-size:13px}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-go{
+ border-radius:8px;border:1px solid #eac18b;
+ background:#3a2c30;color:#ffe2b3;
+ font-size:14px;font-weight:850;min-height:49px;padding:12px 20px;cursor:pointer;
+}
+#pitV5Hub .pit-v5-teacher-panel .pit-teacher-go:hover{
+ background:#61402d;color:#fff3df
+}
+@media(max-width:690px){
+ #pitV5Hub .pit-v5-teacher-panel .pit-teacher-grid{grid-template-columns:1fr}
+ #pitV5Hub .pit-v5-teacher-panel article{padding:17px;min-height:unset}
+}
