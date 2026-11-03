@@ -1,0 +1,41 @@
+name: V6 - V5 reference vs integrated full 3D battles
+on:
+  push:
+    branches: [v6]
+    paths:
+      - 'qa/v6-render-matrix.cjs'
+      - 'v5/arena-three.js'
+      - 'v5/coliseum-live.*'
+      - 'v3/v5-coliseum-live.*'
+      - '.github/workflows/v6-render-matrix.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  full-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [duel, arena5, arena10]
+    env:
+      V6_SCENARIO: ${{ matrix.scenario }}
+      V6_REFERENCE_ROOT: reference-v5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: 16184fedfd3119efb7e60cd302b0bafee11dcf79
+          path: reference-v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
+      - run: npx playwright install --with-deps chromium
+      - run: node qa/v6-render-matrix.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v6-render-${{ matrix.scenario }}
+          path: qa/v6-evidence/
