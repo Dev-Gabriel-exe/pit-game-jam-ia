@@ -66,10 +66,7 @@ function load(record){
  $('coliseumHeading').textContent=record.kind==='arena'?'ARENA DA MISSÃO '+record.mission:'DUELO ENTRE HEROIS';
  $('coliseumSub').textContent=record.roster.length+' jogadores · mesmo resultado em todos os computadores · replay oficial';
  try{
-  // Keep full official combat geometry/seed in the engine; only the duel
-  // presentation uses fewer WebGL draw calls so two tabs remain responsive.
-  const duel=record.kind==='duel';
-  void switchVisual('safe');
+  // The default visualizer never loads Three.js or WebGL.
   $('scoreboard').replaceChildren();
   for(const item of record.roster){
    const node=document.createElement('div');node.dataset.hero=item.id;node.textContent=safe(item.name);
@@ -79,12 +76,10 @@ function load(record){
   for(const item of record.roster){
    const op=document.createElement('option');op.value=item.id;op.textContent=safe(item.name);$('followHero').appendChild(op);
   }
-  for(const id of ['playReplay','pauseReplay','directorCam','overviewCam','followHero'])$(id).disabled=false;
-  $('pauseReplay').disabled=true;
-  ui('Confronto oficial carregado. Clique em Iniciar replay para acompanhar a batalha.');
   interval=setInterval(tick,150);
+  void switchVisual('safe');
   tick();
- }catch(e){ui('Não foi possível montar a arena 3D: '+e.message)}
+ }catch(e){ui('Não foi possível montar a arena: '+e.message)}
 }
 window.addEventListener('message',event=>{
  if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='PIT_COLISEUM_REPLAY'||match)return;
@@ -98,7 +93,7 @@ $('playReplay').onclick=()=>{
   verified=false;stage.fighters(match.roster,{seed:match.seed,...match.options});
   stage.enableAutoCamera(true);$('resultPanel').hidden=true;
  }
- stage.resume();$('pauseReplay').disabled=false;ui('Batalha em reprodução · câmera cinematográfica.');
+ stage.resume();$('pauseReplay').disabled=false;ui('Batalha em reprodução · '+(stage.kind==='safe-2d'?'modo seguro':'câmera cinematográfica')+'.');
 };
 $('pauseReplay').onclick=()=>{stage?.pause();ui('Reprodução pausada.');$('pauseReplay').disabled=true};
 $('directorCam').onclick=()=>stage?.enableAutoCamera(true);
