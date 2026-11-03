@@ -838,26 +838,39 @@ function renderRoster(){
  const pend=roster.filter(s=>s.stages?.some(p=>p.status==='submitted')).length;
  const needsHelp=roster.filter(s=>Number(s.unread_chat)>0).length;
  $('rosterStats').textContent=roster.length+' inscritos · '+active+' ativos nos últimos 90s · '+pend+' com entrega pendente · '+needsHelp+' com dúvida';
+ for(const [id,count] of [['rosterStatTotal',roster.length],['rosterStatActive',active],
+  ['rosterStatPending',pend],['rosterStatHelp',needsHelp]]){
+  if($(id))$(id).textContent=String(count);
+ }
  if(selectedRoster){renderStudentDetails();return}
  const f=rosterFilter;
  const visible=roster.filter(x=>f==='all'||(f==='pending'&&x.stages?.some(p=>p.status==='submitted'))||(f==='online'&&Date.now()-new Date(x.last_seen_at).getTime()<90000)||(f==='help'&&Number(x.unread_chat)>0));
- $('rosterContent').innerHTML='<table class="roster-table"><thead><tr><th>Aluno</th><th>Etapa</th><th>Entregas</th><th>Atividade</th></tr></thead><tbody>'+
+ $('rosterContent').innerHTML='<table class="roster-table"><thead><tr><th style="width:32%">Aventureiro</th><th>Missão atual</th><th>Entregas aprovadas</th><th>Atividade</th></tr></thead><tbody>'+
   visible.map(s=>{
    const stages=s.stages||[],latest=stages.find(p=>Number(p.stage)===Number(s.active_stage))||stages[stages.length-1];
-   const when=Date.now()-new Date(s.last_seen_at).getTime()<90000?'🟢 Online':'⚪ Ausente';
-   return '<tr data-student="'+esc(s.id)+'"><td><b>'+esc(s.display_name)+'</b>'+(s.unread_chat?' <span class="count-bubble">'+s.unread_chat+'</span>':'')+'</td><td>'+esc(s.active_stage||latest?.stage||0)+'/10 · '+esc(chooseStatus(latest?.status))+'</td><td>'+s.approved+' aprovadas</td><td>'+when+'</td></tr>'
+   const online=Date.now()-new Date(s.last_seen_at).getTime()<90000;
+   const current=Number(s.active_stage||latest?.stage||0);
+   const status=chooseStatus(latest?.status);
+   return '<tr data-student="'+esc(s.id)+'" tabindex="0" aria-label="Abrir acompanhamento de '+esc(s.display_name)+'"><td><span class="roster-name">♟ '+esc(s.display_name)+'</span>'+(s.unread_chat?' <span class="count-bubble">'+Number(s.unread_chat)+'</span>':'')+'</td>'+
+    '<td><strong>Missão '+String(current).padStart(2,'0')+' / 10</strong><div style="margin-top:6px;color:#cdb79f;font-size:12px">'+esc(status)+'</div></td>'+
+    '<td><span class="roster-pill '+(latest?.status==='submitted'?'pending':'')+'">'+Number(s.approved)||0+' / 10 aprovadas</span></td>'+
+    '<td><span class="roster-pill '+(online?'online':'')+'">'+(online?'● Ativo':'○ Ausente')+'</span></td></tr>'
   }).join('')+'</tbody></table>'+(visible.length?'':'<p class="notice">Nenhum estudante nesse filtro.</p>');
- $('rosterContent').querySelectorAll('tr[data-student]').forEach(tr=>tr.onclick=()=>{selectedRoster=tr.dataset.student;renderStudentDetails()});
+ $('rosterContent').querySelectorAll('tr[data-student]').forEach(tr=>{
+  const enter=()=>{selectedRoster=tr.dataset.student;renderStudentDetails()};
+  tr.addEventListener('click',enter);
+  tr.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();enter()}});
+ });
 }
 function renderStudentDetails(){
  const user=roster.find(x=>x.id===selectedRoster);if(!user){selectedRoster=null;renderRoster();return}
- $('rosterContent').innerHTML='<div class="buttonrow"><button id="rosterBack" class="outline">← Voltar à turma</button></div>'+
- '<h2>'+esc(user.display_name)+'</h2><p class="muted">Última atualização: '+new Date(user.last_seen_at).toLocaleString('pt-BR')+'</p>'+
- (user.stages||[]).map(st=>'<div class="concept-card"><strong>Etapa '+String(st.stage).padStart(2,'0')+' · '+esc(mission(st.stage).title)+'</strong>'+
+ $('rosterContent').innerHTML='<div class="roster-detail"><div class="buttonrow"><button id="rosterBack" class="outline">← Voltar à turma</button></div>'+
+ '<div class="roster-detail-header"><div><small style="color:#d9b483;font-weight:800;letter-spacing:.12em">FICHA DO AVENTUREIRO</small><h2>'+esc(user.display_name)+'</h2><p>Última atividade: '+new Date(user.last_seen_at).toLocaleString('pt-BR')+' · '+Number(user.approved||0)+' / 10 aprovadas</p></div><span class="roster-mark" aria-hidden="true">♟</span></div>'+
+ (user.stages||[]).map(st=>'<div class="concept-card"><strong>Missão '+String(st.stage).padStart(2,'0')+' · '+esc(mission(st.stage).title)+'</strong>'+
  '<span class="state-pill '+esc(st.status)+'">'+esc(chooseStatus(st.status))+'</span><p>Rota '+esc(String(st.route||'2d').toUpperCase())+'</p><div class="roster-evidence"><b>REGISTRO DO ALUNO</b><pre>'+esc(st.evidence||'Nenhum registro')+'</pre></div>'+
  (st.feedback?'<p><b>Retorno anterior:</b> '+esc(st.feedback)+'</p>':'')+
  (st.status==='submitted'?'<div class="formline"><label>Devolutiva ao aluno</label><textarea class="review-comment" data-n="'+st.stage+'" maxlength="550" placeholder="Para pedir revisão, descreva o teste que deve ser repetido (mín. 8 caracteres)."></textarea><small>Obrigatória ao pedir revisão; opcional para aprovação.</small></div><div class="buttonrow"><button class="action btnsmall" data-review="approved" data-stage="'+st.stage+'">✓ Aprovar</button><button class="outline btnsmall" data-review="revision" data-stage="'+st.stage+'">↻ Pedir revisão</button></div>':'')+'</div>').join('')+
- (!(user.stages||[]).length?'<p class="notice">O estudante ainda não registrou prática.</p>':'');
+ (!(user.stages||[]).length?'<p class="notice">O estudante ainda não registrou prática.</p>':'')+'</div>';
  $('rosterBack').onclick=()=>{selectedRoster=null;renderRoster()};
  $('rosterContent').querySelectorAll('[data-review]').forEach(btn=>btn.onclick=async()=>{
   const n=Number(btn.dataset.stage),field=$('rosterContent').querySelector('textarea[data-n="'+n+'"]'),comment=field?.value?.trim()||'';
