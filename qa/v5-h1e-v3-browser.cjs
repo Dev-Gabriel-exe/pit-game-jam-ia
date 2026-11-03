@@ -96,25 +96,24 @@ const BASE='http://127.0.0.1:8899';
   if(await T.locator('#missionGallery').evaluate(el=>el.classList.contains('open')))
    await T.locator('#missionGalleryClose').click();
   await T.locator('#pitV5HubButton').click();
-  assert.equal(await T.locator('#pitV5HubFrame').getAttribute('src'),
-   './v5/duel-teacher-d1c.html?demo=1');
-  const TF=T.frameLocator('#pitV5HubFrame');
-  await TF.locator('#enableDuels').waitFor();
-  await TF.locator('#enableDuels').click();
-  assert.equal(await TF.locator('#teacherStatus').textContent(),'LIBERADOS');
-  await TF.locator('#pauseDuels').click();
-  assert.equal(await TF.locator('#teacherStatus').textContent(),'PAUSADOS');
-  // Teacher collective gate is also inside the V3 experience.
+  // Production teacher hub must never show simulated release switches.
+  assert.equal(await T.locator('#pitV5HubFrame').isVisible(),false);
+  assert.equal(await T.locator('#pitV5HubFrame').getAttribute('src'),null);
+  assert.equal(await T.locator('#pitV5TeacherPanel').isVisible(),true);
+  assert.match(await T.locator('#pitV5TeacherPanel').innerText(),/Duelos online ainda indisponíveis/);
+  assert.equal(await T.locator('#pitV5TeacherPanel button:has-text("Liberar duelos")').isDisabled(),true);
+  assert.doesNotMatch(await T.locator('#pitV5TeacherPanel').innerText(),/fictíci|homologaç|laboratório/i);
   await T.locator('[data-tab=collective]').click();
-  assert.equal(await T.locator('#pitV5HubFrame').getAttribute('src'),'./v5/teacher-arena-lab.html');
-  const C=T.frameLocator('#pitV5HubFrame');
-  await C.locator('#eligibleCount').waitFor();
-  assert.equal(await C.locator('#eligibleCount').innerText(),'30');
-  assert.equal(await C.locator('#release').isDisabled(),true);
+  assert.match(await T.locator('#pitV5TeacherPanel').innerText(),/Arenas coletivas/);
+  assert.equal(await T.locator('#pitV5TeacherPanel button:has-text("Liberar arena M5")').isDisabled(),true);
+  assert.equal(await T.locator('#pitV5TeacherPanel button:has-text("Liberar arena M10")').isDisabled(),true);
+  assert.equal(await T.locator('#pitV5HubFrame').getAttribute('src'),null,'teacher controls cannot load lab iframes');
   const teaching=await T.evaluate(()=>window.PIT_V5_H1E.snapshot);
   assert.equal(teaching.role,'teacher');
   assert.equal(teaching.tokenExposed,false);
-  await T.locator('#pitV5HubClose').click();
+  await T.locator('#pitV5TeacherPanel [data-open-roster]').click();
+  await T.locator('#rosterDrawer.open').waitFor();
+  await T.locator('#rosterClose').click();
   await teacher.context.close();
 
   const noPreview=await newPage('/aluno-v3.html');
@@ -140,6 +139,6 @@ const BASE='http://127.0.0.1:8899';
   assert(!urls.some(x=>/\/api\/|neon\.tech|vercel\.app/.test(x)),
    'Static preview must make ZERO real API calls');
   assert.deepEqual(errors,[],'Unexpected JS errors: '+errors.join(' | '));
-  console.log('PASS staging V3+V5: 10 original missions, H1e forge, duels, new 3D duel and teacher collective gate; static-only, no PIN, token or API.');
+  console.log('PASS V3+V5: original missions, isolated student visuals, native teacher without simulated release, roster shortcut, no exposed secrets.');
  }finally{await browser.close()}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
