@@ -566,6 +566,9 @@ function syncV5Integration(){
   approved:TEACHER?0:progress.filter(p=>p.status==='approved').length,
   authenticated:TEACHER?!!teacherPin:!!studentSession?.token,
   visualPreview,
+  studentId:TEACHER?null:studentSession?.studentId||null,
+  studentName:TEACHER?'':studentSession?.name||'',
+  room:TEACHER?activeRoom:studentSession?.room||linkedRoom||'PITGAME26',
   tokenProvider:!TEACHER&&!visualPreview&&studentSession?.token?
     ()=>studentSession?.token||null:null
  });
@@ -861,13 +864,21 @@ async function startApp(){
  try{
   const data=await call('classroom','state');
   if(TEACHER&&activeRoom!=='PITGAME26'&&data.room!==activeRoom)throw Error('Turma 2 ainda não habilitada no servidor.');
-  if(!TEACHER&&studentSession&&data.room)studentSession.room=data.room;
+  if(!TEACHER&&studentSession&&data.room){studentSession.room=data.room;
+   localStorage.setItem('pit_chat_student_v09',JSON.stringify(studentSession));}
   state=data.state;progress=data.progress||[];
   activeStage=state.current_stage;activePhase='briefing';lastServerStage=state.current_stage;
   $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name;
   showCohortPicker();
   renderAll();$('loading').hidden=true;$('workspace').hidden=false;
-  if(!TEACHER)showMissionGallery();
+  // On F5, return to the actual in-progress caderno. The modern cinema
+  // gallery remains in 'Escolher missão' and opens on first successful login.
+  if(!TEACHER){
+   const galleryKey='pit_v3_gallery_seen_'+(studentSession?.room||'PITGAME26')+'_'+studentSession?.studentId;
+   if(!sessionStorage.getItem(galleryKey)){
+    sessionStorage.setItem(galleryKey,'1');showMissionGallery();
+   }
+  }
   $('lastSync').textContent='Conectado · '+stamp();
   clearInterval(window.pitPoll);window.pitPoll=setInterval(poll,14000);
   await refreshUnread();
