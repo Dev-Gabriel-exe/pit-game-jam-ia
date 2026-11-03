@@ -125,6 +125,8 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
   {name:names[0],code:'PITGAME26',recoveryCode:reset.body.recoveryCode});
  assert.equal(finalRecover.statusCode,200);
  assert.equal(finalRecover.body.studentId,original.studentId);
+ // Continue the remaining cohort-isolation assertions with the new token.
+ users[0].token=finalRecover.body.token;
  const finalState=await call(classroom,'GET','state',{},finalRecover.body.token);
  assert.equal(finalState.body.progress.some(x=>x.status==='approved'),true);
  console.log('PASS RETURN: same student UUID and 10-mission approvals across lessons, name collision guard, 96-bit recovery, token rotation, teacher reset and room isolation');
