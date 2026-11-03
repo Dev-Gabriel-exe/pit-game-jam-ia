@@ -4,6 +4,7 @@
  */
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const ROOM='PITGAME26',students=[],stages=[],messages=[];
+const rooms=require('../chat-api/lib/pit-rooms.js');
 const state={current_stage:1,phase:'practice',updated_at:'2026-10-28T00:00:00Z'};
 function result(rows){return {rows,rowCount:rows.length}}
 class MockPool{
@@ -16,10 +17,10 @@ class MockPool{
    const row={id,room_code:params[0],display_name:params[1],token_hash:params[2],joined_at:state.updated_at,last_seen_at:null,active_stage:1};
    students.push(row);return result([{id,display_name:row.display_name}]);
   }
-  if(q.startsWith('select id,display_name from pit_students where')){
+  if(q.startsWith('select id,display_name,room_code from pit_students where')){
    const hash=params.find(p=>typeof p==='string'&&/^[a-f0-9]{64}$/i.test(p));
-   const row=students.find(s=>s.token_hash===hash&&s.room_code===ROOM);
-   return result(row?[{id:row.id,display_name:row.display_name}]:[]);
+   const row=students.find(s=>s.token_hash===hash);
+   return result(row?[{id:row.id,display_name:row.display_name,room_code:row.room_code}]:[]);
   }
   if(q.startsWith('select current_stage,phase,updated_at from pit_classroom_state'))return result(state.missing?[]:[state]);
   if(q.startsWith('select stage,route,status,evidence,feedback,updated_at,reviewed_at from pit_student_stages')){
@@ -90,7 +91,7 @@ function load(file){
  const module={exports:{}};
  const ctx={module,exports:module.exports,Buffer,console,
   process:{env:{DATABASE_URL:'postgres://isolated.invalid/test',PIT_TEACHER_PIN:'0123456789abcdef'}},
-  require(name){if(name==='pg')return {Pool:MockPool};if(name==='node:crypto')return crypto;throw Error('Unexpected module '+name)}};
+  require(name){if(name==='pg')return {Pool:MockPool};if(name==='node:crypto')return crypto;if(name==='../lib/pit-rooms.js')return rooms;throw Error('Unexpected module '+name)}};
  vm.runInNewContext(fs.readFileSync(file,'utf8'),ctx,{filename:file,timeout:1500});
  return module.exports;
 }
