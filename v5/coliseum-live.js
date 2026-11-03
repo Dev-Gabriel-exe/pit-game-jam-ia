@@ -1,7 +1,7 @@
 /* Deterministic 3D replay of a server-verified duel/arena. This iframe has no auth secrets.
  * Only the authenticated V3 parent can deliver a signed-off match snapshot.
  */
-import {createStage} from './arena-three.js';
+import {createStage} from './arena-three.js?v=20261103-duel-lite-2';
 const $=id=>document.getElementById(id);
 const safe=s=>String(s??'').slice(0,58);
 let stage=null,match=null,interval=null,elapsed=0,verified=false;
