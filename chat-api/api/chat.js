@@ -127,7 +127,7 @@ module.exports = async function handler(req, res) {
         }
         const row=await client.query(
           'INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',
-          [room,id,author,mission,caption?'[Imagem]\\n'+caption:'[Imagem]']);
+          [room,id,author,mission,caption?'[Imagem]\n'+caption:'[Imagem]']);
         await client.query('INSERT INTO pit_chat_images(message_id,mime,bytes) VALUES($1,$2,$3)',
           [row.rows[0].id,mime,binary]);
         await client.query('COMMIT');
