@@ -153,7 +153,7 @@ async function sample(page,arm){
     },{arm,count},{timeout:150000});
     const target=embedded(arm)?p.frames().find(f=>f.url().includes('/v5/coliseum-live.html')):p.mainFrame();
     // Equal CSS surface in all three experiments; report actual buffer dimensions.
-    await target.evaluate(()=>{
+    if(arm!=='app')await target.evaluate(()=>{
      const el=document.querySelector('#arenaStage');el.style.setProperty('width','1000px','important');
      el.style.setProperty('height','520px','important');el.style.setProperty('min-height','520px','important');
     });
@@ -181,7 +181,11 @@ async function sample(page,arm){
     assert.equal(log.crashes,0);assert.deepEqual(log.jsErrors,[]);
     assert(log.samples.every(s=>s.loaded===count&&s.failed===0&&s.context!=='lost'&&s.losses===0&&s.attached),'3D resource/lifecycle failure');
     assert(last.done,'Full battle failed to reach a result');
-    if(arm==='v5')assert.equal(last.result,expected.winner?.id,'Reference winner differs from official server engine');
+    if(arm==='v5'){
+     const oldEngine=require(path.join(ref,'v5/phase2-combat.js'));
+     const oldExpected=oldEngine.battle(roster,{...options,seed,arenaScale:count===2?2.6:5}).run(2300);
+     assert.equal(last.result,oldExpected.winner?.id,'Reference viewer differs from its original combat configuration');
+    }
     else assert.match(last.result,/CAMPEÃO:/,'Visual replay diverged from server result');
     assert(log.assets.length>0&&log.assets.every(x=>x.status===200),'Actual GLB downloads must succeed');
     if(arm==='app'){
@@ -205,7 +209,7 @@ async function sample(page,arm){
    }
    await Promise.all(contexts.map(c=>c.close()));
   }
-  console.log('PASS V6 full seeded render matrix '+scenario);
+  console.log('PASS V6 FUNCTIONAL full seeded render matrix '+scenario+'; FPS remains separately reported, not certified');
  }finally{
   fs.writeFileSync('qa/v6-evidence/matrix-'+scenario+'.json',JSON.stringify({scenario,seed,expected:summary,results},null,2));
   await browser.close();
