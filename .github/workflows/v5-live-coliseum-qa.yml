@@ -8,6 +8,7 @@ on:
       - 'v5/coliseum-live.js'
       - 'qa/v5-live-coliseum-contract.cjs'
       - 'qa/v5-live-coliseum-postgres.cjs'
+      - 'qa/v5-live-coliseum-browser.cjs'
       - '.github/workflows/v5-live-coliseum-qa.yml'
   pull_request:
     paths:
@@ -16,6 +17,7 @@ on:
       - 'v5/coliseum-live.js'
       - 'qa/v5-live-coliseum-contract.cjs'
       - 'qa/v5-live-coliseum-postgres.cjs'
+      - 'qa/v5-live-coliseum-browser.cjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -55,3 +57,16 @@ jobs:
           node-version: '22'
       - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
       - run: node qa/v5-live-coliseum-postgres.cjs
+
+  browser-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+      - run: npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
+      - run: npx playwright install --with-deps chromium
+      - run: node qa/v5-live-coliseum-browser.cjs
