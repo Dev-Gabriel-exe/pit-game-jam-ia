@@ -1,0 +1,30 @@
+name: Hero Neon Sync QA
+on:
+  push:
+    paths:
+      - 'chat-api/api/hero.js'
+      - 'chat-api/lib/v5-phase2-talent-ids.json'
+      - 'chat-api/migrations/20261103_hero_sync.sql'
+      - 'v5/real-hero-profile.js'
+      - 'v3/v5-h1e-bridge.js'
+      - 'qa/hero-neon-sync.cjs'
+      - '.github/workflows/hero-neon-sync-qa.yml'
+  pull_request:
+    paths:
+      - 'chat-api/api/hero.js'
+      - 'v5/real-hero-profile.js'
+      - 'qa/hero-neon-sync.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hero-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --no-audit --no-fund --ignore-scripts
+      - run: node --check chat-api/api/hero.js && node --check v5/real-hero-profile.js && node --check v3/v5-h1e-bridge.js
+      - run: node qa/hero-neon-sync.cjs
