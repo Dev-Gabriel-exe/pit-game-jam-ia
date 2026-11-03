@@ -59,6 +59,41 @@
   (isLive()&&['submitted','approved'].includes(context.status));
  const isLive=()=>staging&&context.authenticated&&!context.visualPreview;
  const productionLive=()=>location.origin==='https://dev-gabriel-exe.github.io'&&context.authenticated&&!context.visualPreview;
+ // Student-facing floating entry button, including when the Coliseum modal is closed.
+ const arenaNotify=document.createElement('button');
+ arenaNotify.id='pitArenaJoinPrompt';arenaNotify.type='button';arenaNotify.hidden=true;
+ arenaNotify.style.cssText='position:fixed;right:20px;bottom:22px;z-index:2147482500;background:#3b263c;border:2px solid #dfb36f;color:#ffe6b5;box-shadow:0 8px 30px #000c;border-radius:14px;padding:14px 18px;font:800 15px Georgia,serif;max-width:min(340px,90vw);cursor:pointer';
+ document.body.appendChild(arenaNotify);
+ arenaNotify.onclick=()=>{if(hub.hidden)open('arena');else chooseTab('arena')};
+ let arenaChecking=false,lastArenaCheck=0,autoOpenedArenaId=null;
+ async function refreshArenaNotice(){
+  if(arenaChecking)return;
+  if(!productionLive()||context.role!=='student'||!tokenProvider?.()){arenaNotify.hidden=true;return}
+  arenaChecking=true;lastArenaCheck=Date.now();
+  try{
+   const target=new URL('https://pit-game-jam-chat.vercel.app/api/coliseum');
+   target.searchParams.set('action','state');
+   const response=await fetch(target,{headers:{'X-PIT-Student-Token':tokenProvider()},cache:'no-store',signal:AbortSignal.timeout(12000)});
+   if(!response.ok)throw Error('Arena offline');
+   const d=await response.json();
+   if(!productionLive()||context.role!=='student'){arenaNotify.hidden=true;return}
+   const lobby=d.lobby,match=(d.arena||[]).find(x=>x.joined===true&&Date.now()-Date.parse(x.createdAt)>=-30000&&Date.now()-Date.parse(x.createdAt)<=180000);
+   if(lobby){
+    arenaNotify.textContent=lobby.joined?'🏟 Na espera · '+lobby.joinedCount+'/30 · Abrir arena':
+     '⚔ Arena M'+lobby.mission+' aberta · Entrar agora';
+    arenaNotify.hidden=!hub.hidden&&currentTab==='arena';
+   }else if(match){
+    arenaNotify.textContent='🏟 Arena M'+match.mission+' começou · Assistir';
+    arenaNotify.hidden=!hub.hidden&&currentTab==='arena';
+    if(autoOpenedArenaId!==match.id&&!document.hidden&&currentTab!=='duel'){
+     autoOpenedArenaId=match.id;
+     if(hub.hidden)open('arena');else if(currentTab!=='arena')chooseTab('arena');
+    }
+   }else{arenaNotify.hidden=true}
+  }catch{arenaNotify.hidden=true}
+  finally{arenaChecking=false}
+ }
+ setInterval(()=>{if(Date.now()-lastArenaCheck>=5200)void refreshArenaNotice()},5500);
  function statusText(){
   if(context.role==='teacher')
    return 'Professor · Missão '+context.stage+' / 10 · controle da turma';
@@ -246,6 +281,7 @@
    }
   }
   updateSafety();
+  if(Date.now()-lastArenaCheck>3500)void refreshArenaNotice();
   if(!hub.hidden){
    for(const key of ['duel','duel3d'])nav.querySelector('[data-tab="'+key+'"]')?.toggleAttribute('disabled',
     !allowedToDuel()&&!previewRequested&&!productionLive());
