@@ -21,8 +21,3 @@ body.pit-coliseum-live{margin:0;background:radial-gradient(ellipse at 50% 0,#342
 .pit-coliseum-scoreboard>div[data-defeated=true]{opacity:.54}
 .pit-coliseum-live footer{margin:14px 0 4px;color:#948da9;text-align:center;font-size:11px}
 @media(max-width:650px){.pit-coliseum-stage{height:43vh!important}.pit-coliseum-title h1{font-size:22px}}
-
-/* Stable shared-screen arena: responsive canvas, no WebGL required. */
-.pit-coliseum-stage canvas.pit-safe-canvas{width:100%;height:100%;object-fit:contain;display:block;background:#111222;image-rendering:auto}
-#try3d{opacity:.75;background:#28303d;border-color:#627b88}
-#back2d{background:#25442f;border-color:#90c09d}
