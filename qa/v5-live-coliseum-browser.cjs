@@ -56,6 +56,7 @@ const server=http.createServer((req,res)=>{
    fps:el.dataset.v5FrameRate,talents:el.dataset.v5TalentFxEvents
   }));
   assert.notEqual(diagnostics.context,'lost','No permanent WebGL context loss on duel replay');
+  assert.ok(Number(diagnostics.fps)>=5,'Duel renderer must deliver >=5 fps, observed '+diagnostics.fps+'.');
   console.log('Nine-second duel diagnostics',JSON.stringify(diagnostics));
   const clock=await frame.locator('#replayClock').innerText();
   assert.notEqual(clock,'00:00','simulation must advance after user starts replay');
@@ -110,7 +111,7 @@ const server=http.createServer((req,res)=>{
   await controls.locator('button:has-text("Desafiar")').waitFor({timeout:10000});
   await controls.locator('button:has-text("Desafiar")').click();
   await controls.locator('button:has-text("Cancelar convite")').waitFor({timeout:10000});
-  await controls.locator('[data-refresh]').click();
+  await controls.evaluate(()=>document.querySelector('[data-refresh]')?.click());
   await controls.locator('iframe.pit-live-replay').waitFor({timeout:15000});
   // The isolated HTML fixture lacks the production CSS, so trigger the same DOM click
   // directly without Playwright's scrolling/actionability check over active WebGL.
