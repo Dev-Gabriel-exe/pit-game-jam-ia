@@ -1,7 +1,7 @@
 /* Deterministic 3D replay of a server-verified duel/arena. This iframe has no auth secrets.
  * Only the authenticated V3 parent can deliver a signed-off match snapshot.
  */
-import {createStage} from './arena-three.js';
+import {createStage} from './arena-three.js?v=20261103-duel-lite-2';
 const $=id=>document.getElementById(id);
 const safe=s=>String(s??'').slice(0,58);
 let stage=null,match=null,interval=null,elapsed=0,verified=false;
@@ -39,7 +39,11 @@ function load(record){
  $('coliseumHeading').textContent=record.kind==='arena'?'ARENA DA MISSÃO '+record.mission:'DUELO ENTRE HEROIS';
  $('coliseumSub').textContent=record.roster.length+' jogadores · mesmo resultado em todos os computadores · replay oficial';
  try{
-  stage=createStage($('arenaStage'),{mode:'hero',arenaScale:5,quality:'auto',spriteEffects:'on'});
+  // Keep full official combat geometry/seed in the engine; only the duel
+  // presentation uses fewer WebGL draw calls so two tabs remain responsive.
+  const duel=record.kind==='duel';
+  stage=createStage($('arenaStage'),{mode:duel?'duel':'hero',arenaScale:5,
+   quality:duel?'low':'auto',spriteEffects:'on'});
   stage.fighters(record.roster,{seed:record.seed,...record.options});
   stage.enableAutoCamera(true);
   $('scoreboard').replaceChildren();

@@ -5,10 +5,12 @@ process.env.DATABASE_URL='postgresql://ci.invalid/unused';
 const {simulate,battleBuild}=require('../chat-api/api/coliseum.js');
 const {chromium}=require('playwright');
 const root=process.cwd(),rootURL='http://127.0.0.1:8877';
+// Anonymized regression equivalent to the M5 accepted duel observed on Nov 3:
 const roster=['warrior','mage'].map((klass,i)=>({
  id:'10000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),name:'Herói Fictício '+(i+1),
- approvedMissions:5,finalTrial:false,
- build:battleBuild({klass,attributes:{FOR:0,DES:0,INT:0,VIT:0,DEF:0},talents:[]},5,5,'Herói Fictício '+(i+1))
+ approvedMissions:3,finalTrial:false,
+ build:battleBuild({klass,attributes:i?{FOR:0,DES:0,INT:3,VIT:0,DEF:0}:{FOR:3,DES:0,INT:0,VIT:0,DEF:1},
+  talents:i?['E01','R10']:['B01','B04']},3,5,'Herói Fictício '+(i+1))
 }));
 const sim=simulate(roster,5);
 const match={id:'90000000-0000-4000-8000-000000000001',kind:'duel',room:'PITGAME26',
@@ -45,7 +47,17 @@ const server=http.createServer((req,res)=>{
   assert.equal(await frame.locator('#followHero option').count(),3);
   assert.equal(await frame.locator('#scoreboard>div').count(),2);
   await frame.locator('#playReplay').click();
-  await page.waitForTimeout(1500);
+  // Previous test only watched 1.5s; reported crash happens after 2–3s.
+  await page.waitForTimeout(9000);
+  assert.equal(errors.length,0,'The replay JS must not throw after the initial seconds: '+JSON.stringify(errors));
+  const diagnostics=await frame.locator('#arenaStage').evaluate(el=>({
+   context:el.dataset.v5GraphicsContext,losses:el.dataset.v5GraphicsLosses,
+   modelErrors:el.dataset.v5ModelsFailed,sim:el.dataset.v5CombatEngine,
+   fps:el.dataset.v5FrameRate,talents:el.dataset.v5TalentFxEvents
+  }));
+  assert.notEqual(diagnostics.context,'lost','No permanent WebGL context loss on duel replay');
+  assert.ok(Number(diagnostics.fps)>=5,'Duel renderer must deliver >=5 fps, observed '+diagnostics.fps+'.');
+  console.log('Nine-second duel diagnostics',JSON.stringify(diagnostics));
   const clock=await frame.locator('#replayClock').innerText();
   assert.notEqual(clock,'00:00','simulation must advance after user starts replay');
   const canvas=await frame.locator('#arenaStage canvas').count();
@@ -99,7 +111,7 @@ const server=http.createServer((req,res)=>{
   await controls.locator('button:has-text("Desafiar")').waitFor({timeout:10000});
   await controls.locator('button:has-text("Desafiar")').click();
   await controls.locator('button:has-text("Cancelar convite")').waitFor({timeout:10000});
-  await controls.locator('[data-refresh]').click();
+  await controls.evaluate(()=>document.querySelector('[data-refresh]')?.click());
   await controls.locator('iframe.pit-live-replay').waitFor({timeout:15000});
   // The isolated HTML fixture lacks the production CSS, so trigger the same DOM click
   // directly without Playwright's scrolling/actionability check over active WebGL.

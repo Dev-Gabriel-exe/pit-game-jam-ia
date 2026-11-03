@@ -49,6 +49,12 @@ async function main(){
   assert.equal((await call('state','GET',null,teacherB)).body.duelsEnabled,false);
   q=await call('presence','POST',{available:true},{token:tokens[0]});assert.equal(q.code,200,JSON.stringify(q.body));
   q=await call('presence','POST',{available:true},{token:tokens[1]});assert.equal(q.code,200);
+  // Recover from a crashed/closed duel tab: a stale heartbeat must not masquerade
+  // as online, and a fresh availability POST must revive the same session.
+  await db.query("UPDATE public.pit_coliseum_presence SET seen_at=now()-interval '90 seconds' WHERE student_id=$1",[ids[0]]);
+  assert.equal((await call('state','GET',null,{token:tokens[0]})).body.optedIn,false);
+  q=await call('presence','POST',{available:true},{token:tokens[0]});assert.equal(q.code,200);
+  assert.equal((await call('state','GET',null,{token:tokens[0]})).body.optedIn,true);
   q=await call('presence','POST',{available:true},{token:tokens[2]});assert.equal(q.code,403,'other room duels paused');
   const state=(await call('state','GET',null,{token:tokens[0]})).body;
   assert.equal(state.peers.length,1);assert.equal(state.peers[0].id,ids[1]);
