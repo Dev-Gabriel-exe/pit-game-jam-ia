@@ -62,6 +62,9 @@ async function main(){
   assert.equal(q.code,409,'cross-cohort invitation forbidden');
   q=await call('invite','POST',{targetId:ids[1]},{token:tokens[0]});
   assert.equal(q.code,201,JSON.stringify(q.body));const inviteId=q.body.inviteId;
+  const pendingHistory=(await call('state','GET',null,{token:tokens[0]})).body.invites.find(x=>x.id===inviteId);
+  assert.equal(pendingHistory.status,'pending');
+  assert.equal(pendingHistory.outcome,null,'unaccepted invitations must not count as a loss');
   q=await call('respond','POST',{inviteId,decision:'accept'},{token:tokens[0]});
   assert.equal(q.code,403,'sender cannot accept');
   q=await call('respond','POST',{inviteId,decision:'accept'},{token:tokens[1]});
@@ -73,6 +76,17 @@ async function main(){
   assert.equal(replayA.code,200);assert.equal(replayB.code,200);assert.equal(replayC.code,404);
   assert.equal(replayA.body.match.sha256,replayB.body.match.sha256,'same replay for both players');
   assert.equal(replayA.body.match.roster.length,2);
+  const winnerId=replayA.body.match.result.winner?.id||null;
+  const historyA=(await call('state','GET',null,{token:tokens[0]})).body.invites.find(x=>x.id===inviteId);
+  const historyB=(await call('state','GET',null,{token:tokens[1]})).body.invites.find(x=>x.id===inviteId);
+  const expectedA=winnerId===null?'draw':winnerId===ids[0]?'win':'loss';
+  const expectedB=winnerId===null?'draw':winnerId===ids[1]?'win':'loss';
+  assert.equal(historyA.outcome,expectedA,'sender sees their official result');
+  assert.equal(historyB.outcome,expectedB,'receiver sees their official result');
+  assert.equal(historyA.matchId,matchId);
+  assert.equal(historyB.matchId,matchId);
+  assert.equal((await call('state','GET',null,{token:tokens[2]})).body.invites.length,0,
+   'other classroom students cannot see duel history');
   const before=(await db.query("SELECT count(*)::int AS n FROM public.pit_student_stages")).rows[0].n;
   q=await call('arena-start','POST',{mission:10},teacherA);assert.equal(q.code,403,'M10 gated');
   q=await call('arena-start','POST',{mission:5},teacherA);assert.equal(q.code,201,JSON.stringify(q.body));
