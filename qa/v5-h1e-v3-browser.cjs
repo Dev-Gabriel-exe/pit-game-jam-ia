@@ -54,7 +54,7 @@ const BASE='http://127.0.0.1:8899';
    'Student Hero must not load a fictional iframe');
   assert.equal(await S.locator('#pitV5HubFrame').getAttribute('src'),null);
   assert.match(await S.locator('#pitV5TeacherPanel').innerText(),
-   /Distribuição de atributos indisponível/);
+   /Entre como aluno para acessar seu próprio personagem/);
   assert.equal((await S.locator('#pitV5TeacherPanel').innerText()).includes('200 / 1.000'),false,
    'preview cannot display credit for fictional approval');
   await S.locator('[data-tab=duel]').click();
@@ -119,22 +119,45 @@ const BASE='http://127.0.0.1:8899';
   const N=noPreview.page;
   await N.evaluate(()=>window.PIT_V5_H1E.update({
    role:'student',stage:3,status:'working',approved:2,
-   authenticated:true,visualPreview:false
+   authenticated:true,visualPreview:false,
+   studentId:'00000000-0000-4000-8000-000000000021',
+   studentName:'Aventureiro Verificado',room:'PITGAME26'
   }));
   // Unauthenticated V3 correctly keeps its auth overlay active. This is a
   // state-contract test with an injected fictional context, not a user login.
   await N.locator('#pitV5HubButton').dispatchEvent('click');
-  assert.equal(await N.locator('[data-tab=duel]').isDisabled(),true);
-  assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),true);
+  assert.equal(await N.locator('[data-tab=duel]').count(),0,'No misleading fake duel button');
+  assert.equal(await N.locator('[data-tab=duel3d]').count(),0);
+  assert.equal(await N.locator('[data-tab=arena]').count(),0,'No fake arena in real student session');
+  assert.equal(await N.locator('[data-rhero-class]').count(),4,'All four canonical heroes');
+  assert.equal(await N.locator('[data-rhero-talent]').count(),30,'Thirty talents per class');
   await N.evaluate(()=>window.PIT_V5_H1E.update({
    role:'student',stage:3,status:'submitted',approved:2,
-   authenticated:true,visualPreview:false
+   authenticated:true,visualPreview:false,
+   studentId:'00000000-0000-4000-8000-000000000021',
+   studentName:'Aventureiro Verificado',room:'PITGAME26'
   }));
-  assert.equal(await N.locator('[data-tab=duel]').isDisabled(),true);
-  assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),true);
   assert.equal(await N.locator('#pitV5HubFrame').getAttribute('src'),null);
-  assert.match(await N.locator('#pitV5TeacherPanel').innerText(),/200 \/ 1.000/);
-  assert.match(await N.locator('#pitV5TeacherPanel').innerText(),/PONTOS DE ATRIBUTO LIBERADOS[\s\S]*?4/);
+  assert.match(await N.locator('.rhero-rewards').innerText(),/200/);
+  assert.match(await N.locator('.rhero-rewards').innerText(),/4/);
+  await N.locator('[data-rhero-class=mage]').click();
+  await N.locator('[data-rhero-plus=INT]').click();
+  await N.locator('[data-rhero-talent=E01]').click();
+  await N.locator('#rheroSave').click();
+  const localHero=await N.evaluate(()=>JSON.parse(localStorage.getItem(
+   'pit_v5_real_hero_1_PITGAME26_00000000-0000-4000-8000-000000000021')));
+  assert.equal(localHero.klass,'mage');
+  assert.equal(localHero.attributes.INT,1);
+  assert.deepEqual(localHero.talents,['E01']);
+  assert.match(await N.locator('#rheroMessage').innerText(),/salvo NESTE navegador/);
+  await N.evaluate(()=>window.PIT_V5_H1E.update({
+   role:'student',stage:3,status:'submitted',approved:2,
+   authenticated:true,visualPreview:false,
+   studentId:'00000000-0000-4000-8000-000000000022',
+   studentName:'Outra Aluna',room:'PITGAME26B'
+  }));
+  assert.equal(await N.locator('[data-rhero-class=warrior]').getAttribute('aria-pressed'),'true',
+   'Another room and student never inherits the previous hero');
   assert.equal((await N.evaluate(()=>window.PIT_V5_H1E.snapshot)).connectedToStaging,false);
   await noPreview.context.close();
 
