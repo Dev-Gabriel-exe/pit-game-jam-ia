@@ -17,11 +17,11 @@ const origin='https://dev-gabriel-exe.github.io',pin='0123456789abcdef';
 async function call(handler,method,action,body={},token='',teacherPin='',query={},room='PITGAME26'){
  const headers={origin};if(token)headers['x-pit-student-token']=token;if(teacherPin){headers['x-pit-teacher-pin']=teacherPin;headers['x-pit-room']=room;}
  const req={method,headers,query:{action,...query},body};
- const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;return this},status(n){this.statusCode=n;return this},json(data){this.body=data;return this},end(){return this}};
+ const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;return this},status(n){this.statusCode=n;return this},json(data){this.body=data;return this},send(data){this.body=data;return this},end(){return this}};
  await handler(req,res);return res;
 }
 (async()=>{
- await pool.query('DROP TABLE IF EXISTS pit_chat_messages,pit_student_stages,pit_classroom_state,pit_students CASCADE');
+ await pool.query('DROP TABLE IF EXISTS pit_chat_images,pit_chat_messages,pit_student_stages,pit_classroom_state,pit_students CASCADE');
  await pool.query(`CREATE TABLE pit_students(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),room_code text NOT NULL,display_name text NOT NULL,token_hash text NOT NULL UNIQUE,
   joined_at timestamptz NOT NULL DEFAULT now(),last_seen_at timestamptz NOT NULL DEFAULT now(),active_stage integer NOT NULL DEFAULT 1
@@ -38,6 +38,7 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
   id bigserial PRIMARY KEY,room_code text NOT NULL,student_id uuid NOT NULL REFERENCES pit_students(id),
   author text NOT NULL,mission integer,body text NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),read_at timestamptz
  )`);
+ await pool.query('CREATE TABLE pit_chat_images(message_id bigint PRIMARY KEY REFERENCES pit_chat_messages(id) ON DELETE CASCADE,mime text NOT NULL,bytes bytea NOT NULL,created_at timestamptz NOT NULL DEFAULT now())');
  await pool.query("INSERT INTO pit_classroom_state(room_code,current_stage,phase) VALUES('PITGAME26',1,'practice'),('PITGAME26B',1,'briefing')");
  const names=['QA Postgres A','QA Postgres B','QA Postgres C'],users=[];
  for(const name of names){
@@ -132,6 +133,21 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  assert.equal(t2after.body.roster.length,1);
  const invalidRoom=await call(classroom,'GET','roster',{},'',pin,{},'PITGAME26Z');
  assert.equal(invalidRoom.statusCode,400);
+ const png='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==';
+ const attached=await call(chat,'POST','send-image',{image:png,mime:'image/png',caption:'Exemplo M01'},other.body.token);
+ assert.equal(attached.statusCode,201,'private screenshot uploaded in cohort B');
+ const retrieved=await call(chat,'GET','image',{},other.body.token,'',{messageId:attached.body.id});
+ assert.equal(retrieved.statusCode,200,'cohort B author reads image');
+ assert(Buffer.isBuffer(retrieved.body));assert.equal(retrieved.headers['Content-Type'],'image/png');
+ const wrongCohort=await call(chat,'GET','image',{},'',pin,{messageId:attached.body.id});
+ assert.equal(wrongCohort.statusCode,404,'cohort A teacher cannot read cohort B image');
+ const ownRoom=await call(chat,'GET','image',{},'',pin,{messageId:attached.body.id},'PITGAME26B');
+ assert.equal(ownRoom.statusCode,200,'cohort B teacher can read its screenshot');
+ const wrongStudent=await call(chat,'GET','image',{},users[0].token,'',{messageId:attached.body.id});
+ assert.equal(wrongStudent.statusCode,404,'cohort A student cannot read image');
+ const malformed=await call(chat,'POST','send-image',{image:'AAAA',mime:'image/png'},other.body.token);
+ assert.notEqual(malformed.statusCode,201,'invalid image signature rejected');
+ console.log('PASS PRIVATE IMAGES in disposable Postgres: authenticated 2 MB PNG, correct room author, teacher scope and other-room denial');
  console.log('PASS TWO COHORTS in disposable Postgres: independent joins, stages, roster, chat, teacher review and cross-room denial');
  console.log('PASS REAL POSTGRES 16: 3 fictional students, token hashing, stage release, 2D/3D drafts, review/resubmit/approval, heartbeat, roster, isolated chat');
  await pool.end();process.exit(0);
