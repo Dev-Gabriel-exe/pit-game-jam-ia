@@ -19,7 +19,8 @@ assert.deepEqual(Object.keys(engine.TALENTS).map(k=>engine.TALENTS[k].length),[3
 assert.equal(battleBuild({klass:'warrior',attributes:{FOR:10,DES:4,INT:0,VIT:0,DEF:0},talents:[]},7,5,'Player').approvedMissions,5);
 assert.deepEqual(battleBuild({klass:'warrior',attributes:{FOR:10,DES:4,INT:0,VIT:0,DEF:0},talents:[]},7,5,'Player').attributes,{FOR:10,DES:0,INT:0,VIT:0,DEF:0});
 assert.throws(()=>battleBuild({...base('mage'),talents:['B01']},5,5,'Bad'),/Talento/);
-assert.throws(()=>battleBuild(base('mage'),4,10,'Unapproved'),/Motor padrão|exige|inválido|opt-in/);
+assert.equal(battleBuild(base('mage'),4,10,'Unapproved').approvedMissions,4);
+assert.throws(()=>simulate(students.slice(0,2).map(x=>make(x.klass,4,10,x.name,x.id)),10),/M10 experimental exige dez missões/);
 let entries=students.slice(0,2).map(x=>make(x.klass,4,5,x.name,x.id));
 let now=Date.now();
 let duel=simulate(entries,5);
