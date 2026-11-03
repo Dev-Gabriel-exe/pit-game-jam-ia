@@ -155,6 +155,40 @@ function arenaScenery(scene,ground){
  map.add(new THREE.Points(dust,new THREE.PointsMaterial({color:0xb88a58,size:.085,transparent:true,opacity:.42,sizeAttenuation:true,depthWrite:false})));
  ground.add(map);return {map};
 }
+/* Lightweight real-duel court: retains the original Phase2 combat world scale, 
+ * but avoids loading an entire 30-person citadel inside each student's iframe.
+ * The official 30-player arenas still use buildEclipseCitadel unchanged.
+ */
+function duelScenery(root,worldScale,stadiumScale){
+ const group=new THREE.Group();group.name='v5-duel-court';root.add(group);
+ const radius=18*worldScale;
+ const floorMaterial=new THREE.MeshStandardMaterial({color:0x3c303d,roughness:.93,metalness:.02});
+ const floor=put(group,geo('CylinderGeometry',radius+8,radius+8,.9,64),floorMaterial,0,-.53,0);
+ floor.receiveShadow=false;
+ for(const ratio of [0.42,0.73,1.0]){
+  const ring=put(group,geo('TorusGeometry',radius*ratio,ratio===1?.30:.105,6,96),
+   ratio===1?MATERIAL.gold:MATERIAL.floorEdge,0,.025,0);
+  ring.rotation.x=Math.PI/2;
+ }
+ // Eight pillars mark the edge without hundreds of stadium meshes or GLB downloads.
+ const columns=8,stone=new THREE.MeshStandardMaterial({color:0x5f4b56,roughness:.9});
+ const geometry=geo('CylinderGeometry',.85,1.2,5.2,8);
+ const instances=new THREE.InstancedMesh(geometry,stone,columns);
+ const dummy=new THREE.Object3D();
+ for(let i=0;i<columns;i++){
+  const angle=(i+.5)*Math.PI*2/columns;
+  dummy.position.set(Math.cos(angle)*(radius+5),2.35,Math.sin(angle)*(radius+5));
+  dummy.updateMatrix();instances.setMatrixAt(i,dummy.matrix);
+ }
+ instances.instanceMatrix.needsUpdate=true;instances.castShadow=false;
+ group.add(instances);
+ const spectatorSeats=Array.from({length:30},(_,i)=>{
+  const angle=i*Math.PI*2/30;
+  return {x:Math.cos(angle)*(radius+5)/stadiumScale,
+   y:2/stadiumScale,z:Math.sin(angle)*(radius+5)/stadiumScale};
+ });
+ return {map:group,mapType:'duel-court-lite',spectatorSeats,duelCourts:1};
+}
 // Real CC0 GLB architectural pieces from Tactical Slash (KayKit derivatives).
 // Asset provenance: https://github.com/sion-rgb/tactical-slash/blob/main/THIRD_PARTY_ASSETS.md
 // Use source-commit-pinned URLs rather than unlicensed third-party game content.
@@ -306,8 +340,16 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  scene.add(moon);
  const amber=new THREE.PointLight(0xd66c38,42,29);amber.position.set(12,11,-8);scene.add(amber);
  const root=new THREE.Group();scene.add(root);
- const world=worldScale>1.3?buildEclipseCitadel(root,{quality}):arenaScenery(scene,root);
- if(worldScale>1.3){
+ const duelCourt=mode==='duel';
+ const world=duelCourt?duelScenery(root,worldScale,stadiumScale):
+  worldScale>1.3?buildEclipseCitadel(root,{quality}):arenaScenery(scene,root);
+ if(duelCourt){
+  container.dataset.v5Map='duel-court-lite';
+  container.dataset.v5PlayfieldWidth=String(Math.round(36*worldScale));
+  container.dataset.v5SpectatorCapacity=String(world.spectatorSeats.length);
+  container.dataset.v5DuelCourts='1';
+  container.dataset.v5Environment='lightweight';
+ }else if(worldScale>1.3){
   world.world.scale.setScalar(stadiumScale);
   container.dataset.v5StaticBatches=String(world.world.userData.staticBatches||0);
   container.dataset.v5StaticMergedMeshes=String(world.world.userData.staticMergedMeshes||0);
