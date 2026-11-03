@@ -43,10 +43,10 @@ const server=http.createServer((req,res)=>{
    const f=document.querySelector('#viewer');
    f.contentWindow.postMessage({type:'PIT_COLISEUM_REPLAY',match:data},location.origin);
   },match);
-  await frame.locator('#playReplay:not([disabled])').waitFor({timeout:25000});
+  await frame.locator('#replayStatus:has-text("Batalha em reprodução.")').waitFor({timeout:25000});
   assert.equal(await frame.locator('#followHero option').count(),3);
   assert.equal(await frame.locator('#scoreboard>div').count(),2);
-  await frame.locator('#playReplay').click();
+  assert.equal(await frame.locator('#playReplay').isDisabled(),true,'Duelo deve iniciar automaticamente, sem precisar clicar em replay');
   // Previous test only watched 1.5s; reported crash happens after 2–3s.
   await page.waitForTimeout(9000);
   assert.equal(errors.length,0,'The replay JS must not throw after the initial seconds: '+JSON.stringify(errors));
@@ -59,7 +59,7 @@ const server=http.createServer((req,res)=>{
   assert.ok(Number(diagnostics.fps)>=5,'Duel renderer must deliver >=5 fps, observed '+diagnostics.fps+'.');
   console.log('Nine-second duel diagnostics',JSON.stringify(diagnostics));
   const clock=await frame.locator('#replayClock').innerText();
-  assert.notEqual(clock,'00:00','simulation must advance after user starts replay');
+  assert.notEqual(clock,'00:00','simulation must advance automatically after accepting a duel, without any replay click');
   const canvas=await frame.locator('#arenaStage canvas').count();
   assert.ok(canvas>=1,'WebGL canvas must be initialized');
   assert.equal(errors.filter(x=>/Uncaught|TypeError|ReferenceError/.test(x)).length,0,JSON.stringify(errors));
