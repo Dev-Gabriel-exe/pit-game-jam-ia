@@ -43,7 +43,8 @@ function load(record){
   // presentation uses fewer WebGL draw calls so two tabs remain responsive.
   const duel=record.kind==='duel';
   stage=createStage($('arenaStage'),{mode:duel?'duel':'hero',arenaScale:5,
-   quality:duel?'low':'auto',spriteEffects:'on'});
+   quality:duel?'low':'auto',spriteEffects:'on',
+   renderScale:duel?.58:1});
   stage.fighters(record.roster,{seed:record.seed,...record.options});
   stage.enableAutoCamera(true);
   $('scoreboard').replaceChildren();
