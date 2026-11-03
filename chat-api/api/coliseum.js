@@ -94,6 +94,18 @@ async function expire(db,room){
  await db.query("UPDATE public.pit_coliseum_invites SET status='expired',responded_at=now() "+
   "WHERE room_code=$1 AND status='pending' AND expires_at<now()",[room]);
 }
+async function arenaLobby(db,room,viewer=null){
+ const q=await db.query("SELECT mission,opened_at FROM public.pit_coliseum_arena_lobbies "+
+  "WHERE room_code=$1 AND status='waiting' ORDER BY opened_at DESC LIMIT 1",[room]);
+ if(!q.rowCount)return null;
+ const mission=q.rows[0].mission;
+ const participants=await db.query("SELECT j.student_id,s.display_name FROM public.pit_coliseum_arena_joins j "+
+  "JOIN public.pit_students s ON s.id=j.student_id "+
+  "WHERE j.room_code=$1 AND j.mission=$2 ORDER BY j.joined_at,j.student_id LIMIT 30",[room,mission]);
+ const joined=participants.rows.some(x=>x.student_id===viewer?.id);
+ return {mission,openedAt:q.rows[0].opened_at,joinedCount:participants.rows.length,
+  ...(viewer?.role==='teacher'?{participants:participants.rows.map(x=>({id:x.student_id,name:x.display_name}))}:{joined})};
+}
 async function studentState(db,user,state){
  const [status,hasHero,enabled,qpeers,qinvites,qarenas,presence]=await Promise.all([
   eligible(db,user.id,state.current_stage),
@@ -114,8 +126,9 @@ async function studentState(db,user,state){
    "JOIN public.pit_students receiver ON receiver.id=i.receiver_id "+
    "WHERE i.room_code=$1 AND (i.sender_id=$2 OR i.receiver_id=$2) "+
    "ORDER BY i.created_at DESC LIMIT 12",[user.room,user.id]),
-  db.query("SELECT id,mission,created_at,result->'winner' AS winner FROM public.pit_coliseum_matches "+
-   "WHERE room_code=$1 AND kind='arena' ORDER BY mission ASC",[user.room]),
+  db.query("SELECT m.id,m.mission,m.created_at,m.result->'winner' AS winner, "+
+   "EXISTS(SELECT 1 FROM public.pit_coliseum_arena_joins j WHERE j.room_code=m.room_code AND j.mission=m.mission AND j.student_id=$2) AS joined "+
+   "FROM public.pit_coliseum_matches m WHERE m.room_code=$1 AND m.kind='arena' ORDER BY m.mission ASC",[user.room,user.id]),
   db.query("SELECT available AND seen_at>now()-interval '60 seconds' AS online FROM public.pit_coliseum_presence WHERE student_id=$1",[user.id])
  ]);
  const invites=qinvites.rows.map(x=>({id:x.id,status:x.status,matchId:x.match_id,
@@ -125,9 +138,10 @@ async function studentState(db,user,state){
    ?(x.winner_id===null?'draw':String(x.winner_id)===String(user.id)?'win':'loss'):null}));
  const busy=invites.some(x=>x.status==='pending');
  return {ok:true,role:'student',room:user.room,stage:state.current_stage,duelsEnabled:enabled,
-  eligible:status,heroSaved:!!hasHero,optedIn:presence.rows[0]?.online===true,
+  eligible:status,approved:await approved(db,user.id),heroSaved:!!hasHero,optedIn:presence.rows[0]?.online===true,
   peers:status&&hasHero&&enabled&&!busy?qpeers.rows.map(x=>({id:x.id,name:x.display_name})):[],
-  invites,arena:qarenas.rows.map(x=>({id:x.id,mission:x.mission,createdAt:x.created_at,winner:x.winner})),busy};
+  invites,lobby:await arenaLobby(db,user.room,user),
+  arena:qarenas.rows.map(x=>({id:x.id,mission:x.mission,createdAt:x.created_at,winner:x.winner,joined:x.joined})),busy};
 }
 async function teacherState(db,user,state){
  const [heroes,arenas,invitations]=await Promise.all([
@@ -140,7 +154,8 @@ async function teacherState(db,user,state){
   db.query("SELECT count(*)::int AS n FROM public.pit_coliseum_invites WHERE room_code=$1 AND status='pending'",[user.room])
  ]);
  return {ok:true,role:'teacher',room:user.room,stage:state.current_stage,duelsEnabled:state.duels_enabled,
-  pendingInvites:invitations.rows[0]?.n||0,students:heroes.rows.map(x=>({id:x.id,name:x.display_name,
+  pendingInvites:invitations.rows[0]?.n||0,lobby:await arenaLobby(db,user.room,user),
+  students:heroes.rows.map(x=>({id:x.id,name:x.display_name,
    heroSaved:x.hero_saved,approved:Number(x.approved)})),
   arena:arenas.rows.map(x=>({id:x.id,mission:x.mission,createdAt:x.created_at,winner:x.winner,fighters:x.fighters}))};
 }
@@ -178,25 +193,42 @@ async function callAction(db,user,state,req,res){
     await db.query('UPDATE public.pit_coliseum_rooms SET duels_enabled=$2,updated_at=now() WHERE room_code=$1',[user.room,req.body.enabled]);
     await db.query('COMMIT');return res.status(200).json({ok:true,duelsEnabled:req.body.enabled});
    }
+   if(action==='arena-open'){
+    const mission=req.body.mission;
+    if(![5,10].includes(mission))throw Object.assign(Error('Somente as arenas M5/M10 podem ser abertas.'),{status:400});
+    if(live.current_stage<mission)throw Object.assign(Error('Libere a missão '+mission+' antes de abrir a arena.'),{status:403});
+    const prior=await db.query("SELECT id FROM public.pit_coliseum_matches WHERE room_code=$1 AND kind='arena' AND mission=$2",[user.room,mission]);
+    if(prior.rowCount)throw Object.assign(Error('A arena desta missão já foi realizada.'),{status:409});
+    const another=await db.query("SELECT mission FROM public.pit_coliseum_arena_lobbies WHERE room_code=$1 AND status='waiting'",[user.room]);
+    if(another.rows.some(x=>Number(x.mission)!==mission))throw Object.assign(Error('Encerre a sala de espera anterior antes de abrir outra arena.'),{status:409});
+    await db.query("INSERT INTO public.pit_coliseum_arena_lobbies(room_code,mission) VALUES($1,$2) ON CONFLICT DO NOTHING",[user.room,mission]);
+    await db.query('COMMIT');return res.status(200).json({ok:true,mission,lobby:'waiting'});
+   }
+   if(action==='arena-cancel'){
+    const mission=req.body.mission;
+    if(![5,10].includes(mission))throw Object.assign(Error('Missão inválida.'),{status:400});
+    const out=await db.query("DELETE FROM public.pit_coliseum_arena_lobbies WHERE room_code=$1 AND mission=$2 AND status='waiting' RETURNING mission",[user.room,mission]);
+    if(!out.rowCount)throw Object.assign(Error('Não há sala de espera aberta para cancelar.'),{status:409});
+    await db.query('COMMIT');return res.status(200).json({ok:true,cancelled:true});
+   }
    if(action==='arena-start'){
     const mission=req.body.mission;
     if(![5,10].includes(mission))throw Object.assign(Error('Somente as arenas M5 e M10 estão disponíveis.'),{status:400});
     if(live.current_stage<mission)throw Object.assign(Error('O professor deve liberar a missão '+mission+' antes da arena.'),{status:403});
     const prior=await db.query("SELECT id FROM public.pit_coliseum_matches WHERE room_code=$1 AND kind='arena' AND mission=$2",[user.room,mission]);
     if(prior.rows[0]){await db.query('COMMIT');return res.status(200).json({ok:true,matchId:prior.rows[0].id,alreadyStarted:true});}
-    const candidates=await db.query(
-      "SELECT s.id FROM public.pit_students s JOIN public.pit_student_heroes h ON h.student_id=s.id "+
-      "WHERE s.room_code=$1 AND ($2=5 OR (SELECT count(*)::int FROM public.pit_student_stages st "+
-      "WHERE st.student_id=s.id AND st.status='approved')=10) ORDER BY s.joined_at,s.id",
-      [user.room,mission]);
-    if(candidates.rows.length<2)throw Object.assign(Error(mission===10?
-     'A final exige ao menos dois alunos com personagem salvo e dez missões aprovadas.':
-     'A primeira arena exige ao menos dois alunos com personagem salvo.'),{status:409});
-    if(candidates.rows.length>30)throw Object.assign(Error('Há mais de 30 heróis. Organize a turma antes de iniciar.'),{status:409});
-    const roster=await entrants(db,user.room,candidates.rows.map(x=>x.id),mission);
+    const lobby=await db.query("SELECT mission FROM public.pit_coliseum_arena_lobbies WHERE room_code=$1 AND mission=$2 AND status='waiting'",[user.room,mission]);
+    if(!lobby.rowCount)throw Object.assign(Error('Abra a sala de espera para os alunos entrarem antes de iniciar.'),{status:409});
+    const joined=await db.query("SELECT j.student_id AS id FROM public.pit_coliseum_arena_joins j "+
+     "JOIN public.pit_students s ON s.id=j.student_id "+
+     "WHERE j.room_code=$1 AND j.mission=$2 ORDER BY j.joined_at,j.student_id",[user.room,mission]);
+    if(joined.rows.length<2)throw Object.assign(Error('Aguarde pelo menos dois alunos entrarem na arena.'),{status:409});
+    if(joined.rows.length>30)throw Object.assign(Error('O limite é de 30 participantes.'),{status:409});
+    const roster=await entrants(db,user.room,joined.rows.map(x=>x.id),mission);
     const match=await insertMatch(db,user.room,'arena',mission,roster);
-    await db.query('COMMIT');
-    return res.status(201).json({ok:true,matchId:match.id,mission,participants:roster.length});
+    await db.query("UPDATE public.pit_coliseum_arena_lobbies SET status='started',match_id=$3,started_at=now() "+
+     "WHERE room_code=$1 AND mission=$2 AND status='waiting'",[user.room,mission,match.id]);
+    await db.query('COMMIT');return res.status(201).json({ok:true,matchId:match.id,mission,participants:roster.length});
    }
    throw Object.assign(Error('Ação docente desconhecida.'),{status:404});
   }
@@ -207,6 +239,24 @@ async function callAction(db,user,state,req,res){
    await db.query("INSERT INTO public.pit_coliseum_presence(student_id,room_code,available,seen_at) VALUES($1,$2,$3,now()) "+
     "ON CONFLICT(student_id) DO UPDATE SET available=EXCLUDED.available,seen_at=now()",[user.id,user.room,req.body.available]);
    await db.query('COMMIT');return res.status(200).json({ok:true,available:req.body.available});
+  }
+  if(action==='arena-join'||action==='arena-leave'){
+   const mission=req.body.mission;
+   if(![5,10].includes(mission))throw Object.assign(Error('Selecione uma arena válida.'),{status:400});
+   const lobby=await db.query("SELECT mission FROM public.pit_coliseum_arena_lobbies WHERE room_code=$1 AND mission=$2 AND status='waiting'",[user.room,mission]);
+   if(!lobby.rowCount)throw Object.assign(Error('A sala de espera não está aberta.'),{status:409});
+   if(action==='arena-join'){
+    if(live.current_stage<mission||!await profile(db,user.id)||
+       mission===10&&await approved(db,user.id)!==10)
+     throw Object.assign(Error('Salve seu personagem e aguarde a missão da arena ser liberada.'),{status:403});
+    const count=await db.query("SELECT count(*)::int AS n FROM public.pit_coliseum_arena_joins WHERE room_code=$1 AND mission=$2",[user.room,mission]);
+    const already=await db.query("SELECT 1 FROM public.pit_coliseum_arena_joins WHERE room_code=$1 AND mission=$2 AND student_id=$3",[user.room,mission,user.id]);
+    if(!already.rowCount&&Number(count.rows[0].n)>=30)throw Object.assign(Error('A arena atingiu o limite de 30 jogadores.'),{status:409});
+    await db.query("INSERT INTO public.pit_coliseum_arena_joins(room_code,mission,student_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",[user.room,mission,user.id]);
+   }else{
+    await db.query("DELETE FROM public.pit_coliseum_arena_joins WHERE room_code=$1 AND mission=$2 AND student_id=$3",[user.room,mission,user.id]);
+   }
+   await db.query('COMMIT');return res.status(200).json({ok:true,mission,joined:action==='arena-join'});
   }
   if(!live.duels_enabled)throw Object.assign(Error('Duelos pausados pelo professor.'),{status:403});
   if(!await eligible(db,user.id,live.current_stage)||!await profile(db,user.id))

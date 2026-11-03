@@ -4,6 +4,7 @@ const {Pool}=require('../chat-api/node_modules/pg');
 process.env.DATABASE_URL||='postgresql://postgres:ci_only_password@127.0.0.1:5432/pit_v5_test';
 process.env.PIT_TEACHER_PIN='ci_only_teacher_pin_32chars_long';
 const {createHandler}=require('../chat-api/api/coliseum.js');
+const classroomHandler=require('../chat-api/api/classroom.js');
 const db=new Pool({connectionString:process.env.DATABASE_URL});
 const tokens=['a','b','c','d'].map(c=>c.repeat(64));
 const ids=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002',
@@ -18,14 +19,21 @@ async function call(action,method='GET',body=null,{token,teacher=false,room,id}=
   json(b){this.body=b;return this},end(){this.body=null;return this}};
  await handler(req,res);return res;
 }
+async function teacherDelete(id,confirmName,{room='PITGAME26',pin=process.env.PIT_TEACHER_PIN}={}){
+ const req={method:'POST',headers:{origin,'x-pit-teacher-pin':pin,'x-pit-room':room},query:{action:'delete-student'},body:{studentId:id,confirmName}};
+ const res={code:200,setHeader(){return this},status(n){this.code=n;return this},json(x){this.body=x;return this},end(){return this}};
+ await classroomHandler(req,res);return res;
+}
 async function seed(){
  await db.query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
  await db.query("CREATE TABLE public.pit_classroom_state(room_code text PRIMARY KEY,current_stage smallint NOT NULL,phase text NOT NULL DEFAULT 'practice',updated_at timestamptz NOT NULL DEFAULT now())");
  await db.query("CREATE TABLE public.pit_students(id uuid PRIMARY KEY,room_code text NOT NULL,display_name varchar(100) NOT NULL,token_hash char(64) NOT NULL,joined_at timestamptz NOT NULL DEFAULT now())");
- await db.query("CREATE TABLE public.pit_student_stages(student_id uuid NOT NULL REFERENCES public.pit_students(id),stage smallint NOT NULL,status text NOT NULL,PRIMARY KEY(student_id,stage))");
+ await db.query("CREATE TABLE public.pit_student_stages(student_id uuid NOT NULL REFERENCES public.pit_students(id) ON DELETE CASCADE,stage smallint NOT NULL,status text NOT NULL,PRIMARY KEY(student_id,stage))");
  await db.query("INSERT INTO public.pit_classroom_state(room_code,current_stage) VALUES('PITGAME26',5),('PITGAME26B',5)");
  await db.query(fs.readFileSync('chat-api/migrations/20261103_hero_sync.sql','utf8'));
  await db.query(fs.readFileSync('chat-api/migrations/20261103_coliseum_live.sql','utf8'));
+ await db.query(fs.readFileSync('chat-api/migrations/20261103_arena_lobby.sql','utf8'));
+
  for(let i=0;i<4;i++){
   const room=i<2?'PITGAME26':'PITGAME26B';
   await db.query("INSERT INTO public.pit_students(id,room_code,display_name,token_hash) VALUES($1,$2,$3,$4)",
@@ -88,8 +96,28 @@ async function main(){
   assert.equal((await call('state','GET',null,{token:tokens[2]})).body.invites.length,0,
    'other classroom students cannot see duel history');
   const before=(await db.query("SELECT count(*)::int AS n FROM public.pit_student_stages")).rows[0].n;
-  q=await call('arena-start','POST',{mission:10},teacherA);assert.equal(q.code,403,'M10 gated');
+  q=await call('arena-open','POST',{mission:10},teacherA);assert.equal(q.code,403,'M10 gated');
+  q=await call('arena-start','POST',{mission:5},teacherA);assert.equal(q.code,409,'cannot start before opening waiting room');
+  q=await call('arena-open','POST',{mission:5},{token:tokens[0]});assert.equal(q.code,404,'students cannot open a teacher lobby');
+  q=await call('arena-join','POST',{mission:5},{token:tokens[0]});assert.equal(q.code,409,'cannot join unopened lobby');
+  q=await call('arena-open','POST',{mission:5},teacherA);assert.equal(q.code,200,JSON.stringify(q.body));
+  assert.equal((await call('state','GET',null,teacherA)).body.lobby.joinedCount,0);
+  assert.equal((await call('state','GET',null,teacherB)).body.lobby,null,'rooms isolated');
+  q=await call('arena-join','POST',{mission:5},{token:tokens[2]});assert.equal(q.code,409,'other classroom cannot join');
+  q=await call('arena-join','POST',{mission:5},{token:tokens[0]});assert.equal(q.code,200);
+  assert.equal((await call('state','GET',null,{token:tokens[0]})).body.lobby.joined,true);
+  assert.equal((await call('state','GET',null,{token:tokens[1]})).body.lobby.joined,false);
+  q=await call('arena-start','POST',{mission:5},teacherA);assert.equal(q.code,409,'requires two joined students');
+  q=await call('arena-join','POST',{mission:5},{token:tokens[1]});assert.equal(q.code,200);
+  q=await call('arena-join','POST',{mission:5},{token:tokens[1]});assert.equal(q.code,200,'idempotent duplicate join');
+  assert.equal((await call('state','GET',null,teacherA)).body.lobby.joinedCount,2);
+  q=await call('arena-leave','POST',{mission:5},{token:tokens[1]});assert.equal(q.code,200);
+  assert.equal((await call('state','GET',null,teacherA)).body.lobby.joinedCount,1);
+  q=await call('arena-join','POST',{mission:5},{token:tokens[1]});assert.equal(q.code,200);
   q=await call('arena-start','POST',{mission:5},teacherA);assert.equal(q.code,201,JSON.stringify(q.body));
+  assert.equal(q.body.participants,2);
+  assert.equal((await call('state','GET',null,{token:tokens[0]})).body.lobby,null);
+  assert.equal((await call('state','GET',null,{token:tokens[0]})).body.arena[0].joined,true);
   q=await call('arena-start','POST',{mission:5},teacherA);assert.equal(q.code,200);
   assert.equal(q.body.alreadyStarted,true);
   assert.equal((await call('state','GET',null,{token:tokens[2]})).body.arena.length,0,'arena stays in cohort');
@@ -100,13 +128,32 @@ async function main(){
    await db.query("UPDATE public.pit_student_stages SET status='approved' WHERE student_id=$1 AND stage=5",[ids[i]]);
    for(let n=6;n<=10;n++)await db.query("INSERT INTO public.pit_student_stages(student_id,stage,status) VALUES($1,$2,'approved')",[ids[i],n]);
   }
+  q=await call('arena-open','POST',{mission:10},teacherB);assert.equal(q.code,200);
+  assert.equal((await call('state','GET',null,teacherB)).body.lobby.joinedCount,0);
+  q=await call('arena-join','POST',{mission:10},{token:tokens[2]});assert.equal(q.code,200);
+  q=await call('arena-join','POST',{mission:10},{token:tokens[3]});assert.equal(q.code,200);
   q=await call('arena-start','POST',{mission:10},teacherB);assert.equal(q.code,201,JSON.stringify(q.body));
   assert.equal(q.body.participants,2);
   const after=(await db.query("SELECT count(*)::int AS n FROM public.pit_student_stages")).rows[0].n;
   assert.equal(after,before+10,'fights never modify stages');
   const count=(await db.query("SELECT count(*)::int AS n FROM public.pit_coliseum_matches")).rows[0].n;
   assert.equal(count,3);
-  console.log('PASS PostgreSQL: two rooms, authenticated invite/accept, same replay, pause, M5/M10 gates and no XP writes.');
+  
+  // Duplicate names are allowed. Teacher must choose UUID, match the exact name and use the correct room.
+  const duplicate='10000000-0000-4000-8000-000000000099';
+  await db.query("INSERT INTO public.pit_students(id,room_code,display_name,token_hash) VALUES($1,'PITGAME26','Fictício 1',$2)",
+   [duplicate,crypto.createHash('sha256').update('duplicate.fixture.token').digest('hex')]);
+  await db.query("INSERT INTO public.pit_student_heroes(student_id,klass) VALUES($1,'warrior')",[duplicate]);
+  await db.query("INSERT INTO public.pit_student_stages(student_id,stage,status) VALUES($1,1,'working')",[duplicate]);
+  assert.equal((await teacherDelete(duplicate,'Fictício 1',{pin:'wrong'})).code,401,'only teacher can delete');
+  assert.equal((await teacherDelete(duplicate,'Fictício 1',{room:'PITGAME26B'})).code,409,'cannot delete from other cohort');
+  assert.equal((await teacherDelete(duplicate,'Wrong name')).code,409,'exact name confirmation required');
+  const removed=await teacherDelete(duplicate,'Fictício 1');
+  assert.equal(removed.code,200,JSON.stringify(removed.body));
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM public.pit_students WHERE id=$1",[duplicate])).rows[0].n,0);
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM public.pit_students WHERE id=$1",[ids[0]])).rows[0].n,1,'other duplicate-name account remains');
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM public.pit_student_heroes WHERE student_id=$1",[duplicate])).rows[0].n,0,'child records cascade');
+  console.log('PASS PostgreSQL: authenticated 2-room arena lobby, joins, teacher start, duplicate account deletion and no XP writes.');
  }finally{await db.end()}
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
