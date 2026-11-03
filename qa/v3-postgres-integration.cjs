@@ -14,8 +14,8 @@ const {Pool}=require('../chat-api/node_modules/pg');
 const pool=new Pool({connectionString:process.env.DATABASE_URL});
 const chat=require('../chat-api/api/chat.js'),classroom=require('../chat-api/api/classroom.js');
 const origin='https://dev-gabriel-exe.github.io',pin='0123456789abcdef';
-async function call(handler,method,action,body={},token='',teacherPin='',query={}){
- const headers={origin};if(token)headers['x-pit-student-token']=token;if(teacherPin)headers['x-pit-teacher-pin']=teacherPin;
+async function call(handler,method,action,body={},token='',teacherPin='',query={},room='PITGAME26'){
+ const headers={origin};if(token)headers['x-pit-student-token']=token;if(teacherPin){headers['x-pit-teacher-pin']=teacherPin;headers['x-pit-room']=room;}
  const req={method,headers,query:{action,...query},body};
  const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;return this},status(n){this.statusCode=n;return this},json(data){this.body=data;return this},end(){return this}};
  await handler(req,res);return res;
@@ -38,7 +38,7 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
   id bigserial PRIMARY KEY,room_code text NOT NULL,student_id uuid NOT NULL REFERENCES pit_students(id),
   author text NOT NULL,mission integer,body text NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),read_at timestamptz
  )`);
- await pool.query("INSERT INTO pit_classroom_state(room_code,current_stage,phase) VALUES('PITGAME26',1,'practice')");
+ await pool.query("INSERT INTO pit_classroom_state(room_code,current_stage,phase) VALUES('PITGAME26',1,'practice'),('PITGAME26B',1,'briefing')");
  const names=['QA Postgres A','QA Postgres B','QA Postgres C'],users=[];
  for(const name of names){
   const r=await call(chat,'POST','join',{name,code:'PITGAME26'});
@@ -89,6 +89,50 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  assert(hashRows.rows.every(x=>/^[a-f0-9]{64}$/.test(x.token_hash)&&users.every(u=>u.token!==x.token_hash)),'database stores only token hashes');
  const count=await pool.query('SELECT count(*)::int AS n FROM pit_student_stages');
  assert.equal(count.rows[0].n,3,'three persisted stage records');
+ // TWO REAL COHORT SCOPES in disposable Postgres: each stage, roster and
+ // thread is independently authorized under the same teacher PIN.
+ const other=await call(chat,'POST','join',{name:'QA Turma 2',code:'PITGAME26B'});
+ assert.equal(other.statusCode,201,'second cohort join allowed');
+ assert.equal(other.body.code,'PITGAME26B');
+ const bstudent=await call(classroom,'GET','state',{},other.body.token);
+ assert.equal(bstudent.body.room,'PITGAME26B');
+ assert.equal(bstudent.body.state.current_stage,1);
+ const astate=await call(classroom,'GET','state',{},users[0].token);
+ assert.equal(astate.body.room,'PITGAME26');
+ assert.equal(astate.body.state.current_stage,4);
+ const t1=await call(classroom,'GET','roster',{},'',pin);
+ const t2=await call(classroom,'GET','roster',{},'',pin,{},'PITGAME26B');
+ assert.equal(t1.body.roster.length,3);assert.equal(t2.body.roster.length,1);
+ assert.equal(t2.body.roster[0].display_name,'QA Turma 2');
+ const denied=await call(classroom,'POST','review',
+  {studentId:other.body.studentId,stage:1,status:'approved'},'',pin);
+ assert.equal(denied.statusCode,409,'teacher in room 1 cannot review room 2');
+ const m2=await call(chat,'POST','send',
+  {body:'Mensagem somente da turma 2',mission:1},other.body.token);
+ assert.equal(m2.statusCode,201);
+ const unreadA=await call(chat,'GET','unread',{},'',pin);
+ const unreadB=await call(chat,'GET','unread',{},'',pin,{},'PITGAME26B');
+ assert.equal(unreadB.body.unread,1,'teacher room 2 sees its own unread');
+ assert.equal(unreadA.body.unread,1,'room 1 has only its original unread');
+ const cross=await call(chat,'POST','send',
+  {studentId:other.body.studentId,body:'Tentativa de outra turma',mission:1},'',pin);
+ assert.equal(cross.statusCode,404,'cannot message student in another room');
+ const crossMessages=await call(chat,'GET','messages',{},'',pin,{studentId:other.body.studentId});
+ assert.equal(crossMessages.statusCode,404,'cannot read student in another room');
+ const same=await call(chat,'GET','messages',{},'',pin,
+  {studentId:other.body.studentId},'PITGAME26B');
+ assert.equal(same.statusCode,200);
+ assert.equal(same.body.messages.length,1);
+ const unlockedB=await call(classroom,'POST','stage',
+  {stage:2,phase:'practice'},'',pin,{},'PITGAME26B');
+ assert.equal(unlockedB.statusCode,200);
+ const stillA=await call(classroom,'GET','state',{},users[0].token);
+ assert.equal(stillA.body.state.current_stage,4,'room B release cannot advance room A');
+ const t2after=await call(classroom,'GET','roster',{},'',pin,{},'PITGAME26B');
+ assert.equal(t2after.body.roster.length,1);
+ const invalidRoom=await call(classroom,'GET','roster',{},'',pin,{},'PITGAME26Z');
+ assert.equal(invalidRoom.statusCode,400);
+ console.log('PASS TWO COHORTS in disposable Postgres: independent joins, stages, roster, chat, teacher review and cross-room denial');
  console.log('PASS REAL POSTGRES 16: 3 fictional students, token hashing, stage release, 2D/3D drafts, review/resubmit/approval, heartbeat, roster, isolated chat');
  await pool.end();process.exit(0);
 })().catch(async e=>{console.error(e);await pool.end().catch(()=>{});process.exit(1)});
