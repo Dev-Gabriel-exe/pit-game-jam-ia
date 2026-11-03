@@ -1,0 +1,26 @@
+name: V6 Forensics - V3 Production Duel Bridge
+on:
+  push:
+    branches: [v6]
+    paths:
+      - 'qa/v6-duel-bridge-regression.cjs'
+      - 'v3/v5-h1e-bridge.js'
+      - '.github/workflows/v6-bridge-regression.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  production-origin-bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-package-lock playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Keep production duel tab alive during V3 refresh
+        run: node qa/v6-duel-bridge-regression.cjs
