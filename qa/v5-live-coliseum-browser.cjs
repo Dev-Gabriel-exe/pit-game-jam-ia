@@ -55,7 +55,7 @@ const server=http.createServer((req,res)=>{
   console.log('PASS fictional 3D duel replay: frame, two players, server-pinned match, live animation and WebGL.');
   // Exercise real teacher/student controls, without reaching the production server.
   const controls=await browser.newPage();
-  let enabled=false,pending=false;
+  let enabled=false,pending=false,peerAccepted=false,studentPolls=0;
   await controls.route('https://pit-game-jam-chat.vercel.app/api/coliseum**',async route=>{
    const req=route.request(),url=new URL(req.url()),action=url.searchParams.get('action');
    const teacher=!!req.headers()['x-pit-teacher-pin'];
@@ -64,14 +64,20 @@ const server=http.createServer((req,res)=>{
     ok:true,role:'teacher',room:'PITGAME26',stage:5,duelsEnabled:enabled,pendingInvites:0,
     students:[{id:roster[0].id,name:roster[0].name,heroSaved:true,approved:5},
       {id:roster[1].id,name:roster[1].name,heroSaved:true,approved:5}],arena:[]};
-   if(action==='state'&&!teacher)data={
+   if(action==='state'&&!teacher){
+    if(pending&&studentPolls++>=1)peerAccepted=true;
+    data={
     ok:true,role:'student',room:'PITGAME26',stage:5,duelsEnabled:true,heroSaved:true,eligible:true,
     optedIn:true,busy:pending,peers:pending?[]:[{id:roster[1].id,name:roster[1].name}],
     invites:pending?[{id:'90000000-0000-4000-8000-000000000002',
-       status:'pending',outgoing:true,peerName:roster[1].name,expiresAt:new Date(Date.now()+50000).toISOString()}]:[],
+       status:peerAccepted?'accepted':'pending',matchId:peerAccepted?match.id:null,
+       outgoing:true,peerName:roster[1].name,createdAt:new Date().toISOString(),
+       expiresAt:new Date(Date.now()+50000).toISOString()}]:[],
     arena:[]};
+   }
    if(action==='duels'){enabled=JSON.parse(req.postData()).enabled;data={ok:true,duelsEnabled:enabled}}
-   if(action==='invite'){pending=true;data={ok:true,inviteId:'90000000-0000-4000-8000-000000000002'}}
+   if(action==='invite'){pending=true;studentPolls=0;data={ok:true,inviteId:'90000000-0000-4000-8000-000000000002'}}
+   if(action==='match')data={ok:true,match};
    await route.fulfill({status:action==='invite'?201:200,contentType:'application/json',
      headers:{'access-control-allow-origin':'*'},body:JSON.stringify(data)});
   });
@@ -93,6 +99,10 @@ const server=http.createServer((req,res)=>{
   await controls.locator('button:has-text("Desafiar")').waitFor({timeout:10000});
   await controls.locator('button:has-text("Desafiar")').click();
   await controls.locator('button:has-text("Cancelar convite")').waitFor({timeout:10000});
+  await controls.locator('[data-refresh]').click();
+  await controls.locator('iframe.pit-live-replay').waitFor({timeout:15000});
+  await controls.locator('[data-back]').click();
+  await controls.locator('iframe.pit-live-replay').waitFor({state:'detached',timeout:10000});
   await controls.evaluate(()=>window.PIT_V5_LIVE.unmount());
   await controls.close();
   console.log('PASS native teacher duel release, student availability and server-backed invitation button.');
