@@ -89,6 +89,14 @@ async function routePage(page,arm,index,log){
   return route.fulfill({contentType:MIME[path.extname(file)]||'application/octet-stream',body:fs.readFileSync(file)});
  });
 }
+async function waitViewerReady(page){
+ await page.waitForFunction(n=>{
+  const frame=document.querySelector('iframe.pit-live-replay'),doc=frame?.contentDocument;
+  const start=doc?.getElementById('playReplay'),stage=doc?.getElementById('arenaStage');
+  return frame?.clientWidth>0&&frame.clientHeight>0&&start&&!start.disabled&&
+   stage?.querySelector('canvas')&&Number(stage.dataset.v5ModelsLoaded)===n;
+ },count,{polling:100,timeout:150000});
+}
 async function sample(page,arm){
  return page.evaluate(arm=>{
   const f=['embedded','app'].includes(arm)?document.querySelector('iframe.pit-live-replay'):null;
@@ -137,7 +145,7 @@ async function sample(page,arm){
      await wait(1800);
      assert(heroGates.has(p),'Hero GET must have been deliberately held');
      heroGates.get(p)();heroGates.delete(p);
-     await p.frameLocator('iframe.pit-live-replay').locator('#playReplay:not([disabled])').waitFor({timeout:150000});
+     await waitViewerReady(p);
     }else{
      await p.addScriptTag({url:base+'v3/v5-h1e-bridge.js'});await p.addScriptTag({url:base+'v3/v5-coliseum-live.js'});
      await p.evaluate(({id,mission,tab})=>{
@@ -161,7 +169,8 @@ async function sample(page,arm){
    await wait(2500);
    await Promise.all(pages.map(async p=>{
     if(arm==='v5')return p.evaluate(()=>window.__v6Stage.resume());
-    return (embedded(arm)?p.frameLocator('iframe.pit-live-replay'):p).locator('#playReplay').click();
+    const play=(embedded(arm)?p.frameLocator('iframe.pit-live-replay'):p).locator('#playReplay');
+    return arm==='app'?play.press('Enter'):play.click();
    }));
    const began=Date.now();
    while(Date.now()-began<240000){
@@ -174,6 +183,9 @@ async function sample(page,arm){
     },{id:roster[i].id,mission})));
     if(samples.every(s=>s.done))break;
    }
+   // Both complete battles ran concurrently. Reopen individually after closing
+   // both scenes; the two test clients share one software GPU, unlike school PCs.
+   if(arm==='app')await Promise.all(pages.map(p=>p.locator('#pitV5HubClose').press('Enter')));
    for(let i=0;i<pages.length;i++){
     const log=logs[i],last=log.samples.at(-1),fps=log.samples.map(s=>s.fps).sort((a,b)=>a-b);
     log.fps={min:fps[0],p10:fps[Math.floor(fps.length*.1)],median:fps[Math.floor(fps.length*.5)]};
@@ -192,14 +204,13 @@ async function sample(page,arm){
      assert(log.lateHeroReleased,'Delayed hero request was not exercised');
      assert(log.api.filter(x=>x.service==='/api/classroom'&&x.action==='state').length>=2,'Real V3 polling must run during the battle');
      assert(log.samples.every(x=>x.tab===(count===2?'duel':'arena')),'Late hero callback changed the active V3 view');
-     await pages[i].locator('#pitV5HubClose').press('Enter');
      assert.equal(await pages[i].locator('#pitV5Hub iframe.pit-live-replay').count(),0);
      await pages[i].locator('#pitV5HubButton').click();
      await pages[i].locator('#pitV5HubTabs [data-tab="'+(count===2?'duel':'arena')+'"]').click();
      if(await pages[i].locator('iframe.pit-live-replay').count()===0)
       await pages[i].locator('[data-view="'+match.id+'"]').click();
      try{
-      await pages[i].frameLocator('iframe.pit-live-replay').locator('#playReplay:not([disabled])').waitFor({timeout:150000});
+      await waitViewerReady(pages[i]);
      }catch(error){
       const debug=await pages[i].evaluate(()=>({
        tab:window.PIT_V5_H1E.snapshot.currentTab,
