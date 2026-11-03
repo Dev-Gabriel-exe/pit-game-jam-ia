@@ -197,6 +197,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(store.progress[0].status,'submitted','revision without explanation must not reach API');
  assert.equal(await tp.locator('.review-comment').count()>0,true,'review form exposes feedback field');
  await tp.locator('button[data-review="approved"]').click();
+ // The approval handler performs an asynchronous mock API request; wait for it
+ // to resolve rather than asserting synchronously after dispatching the click.
+ for(let i=0;i<100&&store.progress[0].status!=='approved';i++)
+  await new Promise(resolve=>setTimeout(resolve,50));
  assert.equal(store.progress[0].status,'approved','teacher approves submitted work');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
