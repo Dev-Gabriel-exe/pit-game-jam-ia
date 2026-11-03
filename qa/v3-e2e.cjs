@@ -184,6 +184,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.match(await tp.locator('#navPrimary').innerText(),/Habilitar entregas da missão 01/);
  assert.equal(await tp.locator('#navPrimary').isDisabled(),false);
  await tp.locator('#navPrimary').click();
+ // Teacher action uses an asynchronous API; wait for the mock to settle.
+ for(let i=0;i<60&&store.phase!=='practice';i++)await new Promise(resolve=>setTimeout(resolve,50));
  assert.equal(store.phase,'practice','M01 submissions open after teacher action');
  assert.equal(store.stage,1,'opening submissions must not skip to M02');
  await sp.reload();

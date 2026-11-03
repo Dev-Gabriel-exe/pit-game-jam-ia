@@ -151,7 +151,7 @@ const BASE='http://127.0.0.1:8899';
   assert.equal(localHero.klass,'mage');
   assert.equal(localHero.attributes.INT,1);
   assert.deepEqual(localHero.talents,['E01']);
-  assert.match(await N.locator('#rheroMessage').innerText(),/salvo NESTE navegador/);
+  assert.match(await N.locator('#rheroMessage').innerText(),/Cópia local salva/);
   await N.evaluate(()=>window.PIT_V5_H1E.update({
    role:'student',stage:3,status:'submitted',approved:2,
    authenticated:true,visualPreview:false,
