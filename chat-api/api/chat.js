@@ -2,7 +2,7 @@
 const { Pool } = require('pg');
 const { randomBytes, createHash, timingSafeEqual } = require('node:crypto');
 
-const ROOM = 'PITGAME26';
+const {ROOMS,DEFAULT_ROOM,roomCode,allowed,teacherRoom}=require('../lib/pit-rooms.js');
 const MAX_BODY = 1200;
 const ORIGINS = new Set([
   'https://dev-gabriel-exe.github.io',
@@ -28,14 +28,14 @@ function teacherOK(req) {
 async function student(req) {
   const token=String(req.headers['x-pit-student-token']||'');
   if(!/^[a-f0-9]{64}$/i.test(token)) return null;
-  const rows=await db.query('SELECT id,display_name FROM pit_students WHERE token_hash=$1 AND room_code=$2 LIMIT 1',[hash(token),ROOM]);
+  const rows=await db.query('SELECT id,display_name,room_code FROM pit_students WHERE token_hash=$1 LIMIT 1',[hash(token)]);
   return rows.rows[0]||null;
 }
 function validId(id) { return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id||'')); }
 module.exports = async function handler(req, res) {
   const origin=req.headers.origin;
   if(origin && ORIGINS.has(origin)) res.setHeader('Access-Control-Allow-Origin',origin);
-  res.setHeader('Access-Control-Allow-Headers','Content-Type, X-PIT-Student-Token, X-PIT-Teacher-Pin');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, X-PIT-Student-Token, X-PIT-Teacher-Pin, X-PIT-Room');
   res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');
   res.setHeader('Cache-Control','no-store, private');
   res.setHeader('X-Content-Type-Options','nosniff');
@@ -50,70 +50,75 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ok:true,chat:true,db:answer.rows[0]?.students && answer.rows[0]?.messages});
     }
     if(req.method==='POST' && action==='join') {
-      if(clean(req.body?.code,18).toUpperCase()!==ROOM) return sendError(res,403,'Código da turma inválido.');
+      const room=roomCode(clean(req.body?.code,18));
+      if(!allowed(room)) return sendError(res,403,'Código da turma inválido.');
       const name=clean(req.body?.name,56);
       if(name.length<2) return sendError(res,400,'Informe nome ou apelido com pelo menos dois caracteres.');
-      const recently=await db.query("SELECT count(*)::int AS n FROM pit_students WHERE joined_at > now()-interval '1 minute' AND room_code=$1",[ROOM]);
+      const recently=await db.query("SELECT count(*)::int AS n FROM pit_students WHERE joined_at > now()-interval '1 minute' AND room_code=$1",[room]);
       if(recently.rows[0].n>=15) return sendError(res,429,'Muitas entradas simultâneas. Tente novamente em um minuto.');
-      const count=await db.query('SELECT count(*)::int AS n FROM pit_students WHERE room_code=$1',[ROOM]);
+      const count=await db.query('SELECT count(*)::int AS n FROM pit_students WHERE room_code=$1',[room]);
       if(count.rows[0].n>=160) return sendError(res,429,'Turma atingiu o limite de cadastros.');
       const token=randomBytes(32).toString('hex');
-      const result=await db.query('INSERT INTO pit_students(room_code,display_name,token_hash) VALUES($1,$2,$3) RETURNING id,display_name',[ROOM,name,hash(token)]);
-      return res.status(201).json({ok:true,studentId:result.rows[0].id,name:result.rows[0].display_name,token,code:ROOM});
+      const result=await db.query('INSERT INTO pit_students(room_code,display_name,token_hash) VALUES($1,$2,$3) RETURNING id,display_name',[room,name,hash(token)]);
+      return res.status(201).json({ok:true,studentId:result.rows[0].id,name:result.rows[0].display_name,token,code:room});
     }
     if(req.method==='POST' && action==='teacher-login') {
       if(!teacherOK(req)) return sendError(res,403,'PIN do professor inválido.');
-      return res.status(200).json({ok:true,room:ROOM});
+      return res.status(200).json({ok:true,room:teacherRoom(req)||DEFAULT_ROOM,rooms:ROOMS});
     }
     if(req.method==='GET' && action==='unread') {
       if(teacherOK(req)) {
-        const rows=await db.query("SELECT count(*)::int AS unread FROM pit_chat_messages WHERE room_code=$1 AND author='student' AND read_at IS NULL",[ROOM]);
+        const room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
+        const rows=await db.query("SELECT count(*)::int AS unread FROM pit_chat_messages WHERE room_code=$1 AND author='student' AND read_at IS NULL",[room]);
         return res.status(200).json({ok:true,unread:rows.rows[0].unread});
       }
       const me=await student(req);
       if(!me) return sendError(res,401,'Sessão do aluno inválida.');
-      const rows=await db.query("SELECT count(*)::int AS unread FROM pit_chat_messages WHERE room_code=$1 AND student_id=$2 AND author='teacher' AND read_at IS NULL",[ROOM,me.id]);
+      const rows=await db.query("SELECT count(*)::int AS unread FROM pit_chat_messages WHERE room_code=$1 AND student_id=$2 AND author='teacher' AND read_at IS NULL",[me.room_code,me.id]);
       return res.status(200).json({ok:true,unread:rows.rows[0].unread});
     }
     if(req.method==='GET' && action==='threads') {
       if(!teacherOK(req)) return sendError(res,403,'Acesso exclusivo do professor.');
+      const room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
       const data=await db.query(
         "SELECT s.id,s.display_name,s.joined_at, " +
         "(SELECT m.body FROM pit_chat_messages m WHERE m.student_id=s.id ORDER BY m.id DESC LIMIT 1) AS last_body, " +
         "(SELECT m.created_at FROM pit_chat_messages m WHERE m.student_id=s.id ORDER BY m.id DESC LIMIT 1) AS last_at, " +
         "(SELECT count(*)::int FROM pit_chat_messages m WHERE m.student_id=s.id AND m.author='student' AND m.read_at IS NULL) AS unread " +
-        "FROM pit_students s WHERE s.room_code=$1 ORDER BY unread DESC NULLS LAST,last_at DESC NULLS LAST,s.joined_at DESC LIMIT 180",[ROOM]);
+        "FROM pit_students s WHERE s.room_code=$1 ORDER BY unread DESC NULLS LAST,last_at DESC NULLS LAST,s.joined_at DESC LIMIT 180",[room]);
       return res.status(200).json({ok:true,threads:data.rows});
     }
     if(req.method==='GET' && action==='messages') {
       const teacher=teacherOK(req);
-      let id;
+      let id,room;
       if(teacher) {
+        room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
         id=String(req.query.studentId||'');
         if(!validId(id)) return sendError(res,400,'Identificador do aluno inválido.');
-        const check=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2 LIMIT 1',[id,ROOM]);
+        const check=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2 LIMIT 1',[id,room]);
         if(!check.rowCount) return sendError(res,404,'Aluno não encontrado.');
       } else {
         const me=await student(req);
         if(!me) return sendError(res,401,'Sessão do aluno expirada ou inválida.');
-        id=me.id;
+        id=me.id;room=me.room_code;
       }
       const data=await db.query(
-        'SELECT id,author,mission,body,created_at,read_at FROM pit_chat_messages WHERE student_id=$1 AND room_code=$2 ORDER BY id DESC LIMIT 100',[id,ROOM]);
+        'SELECT id,author,mission,body,created_at,read_at FROM pit_chat_messages WHERE student_id=$1 AND room_code=$2 ORDER BY id DESC LIMIT 100',[id,room]);
       return res.status(200).json({ok:true,messages:data.rows.reverse()});
     }
     if(req.method==='POST' && action==='send') {
       const teacher=teacherOK(req);
-      let id;
+      let id,room;
       if(teacher) {
+        room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
         id=String(req.body?.studentId||'');
         if(!validId(id)) return sendError(res,400,'Escolha um aluno válido.');
-        const exists=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2 LIMIT 1',[id,ROOM]);
+        const exists=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2 LIMIT 1',[id,room]);
         if(!exists.rowCount) return sendError(res,404,'Aluno não encontrado.');
       } else {
         const me=await student(req);
         if(!me) return sendError(res,401,'Sessão do aluno inválida.');
-        id=me.id;
+        id=me.id;room=me.room_code;
       }
       const body=clean(req.body?.body,MAX_BODY);
       if(body.length<2) return sendError(res,400,'Escreva pelo menos dois caracteres.');
@@ -125,23 +130,26 @@ module.exports = async function handler(req, res) {
       const mission=Number.isInteger(rawMission)&&rawMission>=1&&rawMission<=10 ? rawMission : null;
       const result=await db.query(
         'INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',
-        [ROOM,id,author,mission,body]);
+        [room,id,author,mission,body]);
       return res.status(201).json({ok:true,id:result.rows[0].id});
     }
     if(req.method==='POST' && action==='read') {
       const teacher=teacherOK(req);
-      let id, author;
+      let id, author,room;
       if(teacher) {
+        room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
         id=String(req.body?.studentId||'');
         if(!validId(id)) return sendError(res,400,'Aluno inválido.');
         author='student';
+        const exists=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2',[id,room]);
+        if(!exists.rowCount)return sendError(res,404,'Aluno não encontrado nesta turma.');
       } else {
         const me=await student(req);
         if(!me) return sendError(res,401,'Sessão do aluno inválida.');
-        id=me.id;
+        id=me.id;room=me.room_code;
         author='teacher';
       }
-      await db.query('UPDATE pit_chat_messages SET read_at=now() WHERE student_id=$1 AND room_code=$2 AND author=$3 AND read_at IS NULL',[id,ROOM,author]);
+      await db.query('UPDATE pit_chat_messages SET read_at=now() WHERE student_id=$1 AND room_code=$2 AND author=$3 AND read_at IS NULL',[id,room,author]);
       return res.status(200).json({ok:true});
     }
     return sendError(res,404,'Ação inexistente.');
