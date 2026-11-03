@@ -109,6 +109,20 @@ module.exports=async function handler(req,res){
    if(!r.rowCount)return err(res,409,'Não há entrega pendente para validar.');
    return res.json({ok:true,progress:r.rows[0]});
   }
+
+  if(req.method==='POST'&&action==='delete-student'){
+   if(!isTeacher)return err(res,403,'Somente o professor pode excluir contas.');
+   const id=clean(req.body?.studentId,40),confirmName=clean(req.body?.confirmName,100);
+   if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id)||!confirmName)
+    return err(res,400,'Identifique a conta e confirme exatamente o nome cadastrado.');
+   // SQL row identity + exact name + cohort protects against deleting another account
+   // with the same display name, or an account from the other classroom.
+   const deleted=await pool.query(
+    'DELETE FROM pit_students WHERE id=$1 AND room_code=$2 AND display_name=$3 RETURNING id,display_name',
+    [id,room,confirmName]);
+   if(!deleted.rowCount)return err(res,409,'Conta não encontrada nessa turma ou nome de confirmação incorreto.');
+   return res.json({ok:true,deletedId:deleted.rows[0].id,deletedName:deleted.rows[0].display_name});
+  }
   return err(res,404,'Ação desconhecida.');
  }catch(e){console.error('PIT classroom:',e.code||e.name);return err(res,500,'Erro temporário na sala. Tente novamente.')}
 };
