@@ -307,14 +307,18 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
    container.dataset.v5NatureMeshes=natural.map(x=>x.file).join(',');
  });
 }
-export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',onEvent=()=>{}}={}){
+export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',renderScale=1,onEvent=()=>{}}={}){
  const worldScale=Math.max(1,Math.min(5,Number(arenaScale)||1));
  const stadiumScale=worldScale>1.3?worldScale/2.6:1;
  if(!container)throw Error('Stage container is required');
  if(!window.WebGL2RenderingContext)throw Error('Este dispositivo não suporta WebGL 2.');
  const renderer=new THREE.WebGLRenderer({antialias:quality!=='low',alpha:false,powerPreference:'high-performance'});
  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,quality==='low'?.85:1.18));
+ // V6-only experiment: reduce pixel workload of embedded WebGL without changing physics or assets.
+ const normalizedScale=Number.isFinite(renderScale)?Math.max(.45,Math.min(1,renderScale)):1;
+ const actualPixelRatio=Math.min(window.devicePixelRatio||1,quality==='low'?.85:1.18)*normalizedScale;
+ renderer.setPixelRatio(actualPixelRatio);
+ container.dataset.v5RenderPixelRatio=actualPixelRatio.toFixed(3);
  renderer.shadowMap.enabled=quality!=='low';
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
