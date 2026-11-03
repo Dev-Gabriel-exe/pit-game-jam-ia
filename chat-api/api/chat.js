@@ -66,6 +66,75 @@ module.exports = async function handler(req, res) {
       if(!teacherOK(req)) return sendError(res,403,'PIN do professor inválido.');
       return res.status(200).json({ok:true,room:teacherRoom(req)||DEFAULT_ROOM,rooms:ROOMS});
     }
+    if(req.method==='GET' && action==='image') {
+      const teacher=teacherOK(req);
+      const room=teacher?teacherRoom(req):null;
+      if(teacher&&!room)return sendError(res,400,'Turma inválida.');
+      const me=teacher?null:await student(req);
+      if(!teacher&&!me)return sendError(res,401,'Sessão de aluno inválida.');
+      const messageId=String(req.query?.messageId||'');
+      if(!/^[1-9][0-9]{0,17}$/.test(messageId))return sendError(res,400,'Imagem inválida.');
+      const out=await db.query(
+       "SELECT i.mime,i.bytes FROM pit_chat_images i JOIN pit_chat_messages m ON m.id=i.message_id "+
+       "WHERE m.id=$1 AND m.room_code=$2 AND ($3::uuid IS NULL OR m.student_id=$3::uuid) LIMIT 1",
+       [messageId,teacher?room:me.room_code,teacher?null:me.id]);
+      if(!out.rowCount)return sendError(res,404,'Imagem não encontrada nesta turma.');
+      const img=out.rows[0];
+      if(!['image/png','image/jpeg','image/webp'].includes(img.mime))return sendError(res,415,'Imagem inválida.');
+      res.setHeader('Content-Type',img.mime);
+      return res.status(200).send(img.bytes);
+    }
+    if(req.method==='POST' && action==='send-image') {
+      const teacher=teacherOK(req);
+      let id,room;
+      if(teacher){
+        room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
+        id=String(req.body?.studentId||'');
+        if(!validId(id))return sendError(res,400,'Selecione um aluno válido.');
+        const exists=await db.query('SELECT 1 FROM pit_students WHERE id=$1 AND room_code=$2',[id,room]);
+        if(!exists.rowCount)return sendError(res,404,'Aluno não encontrado nesta turma.');
+      }else{
+        const me=await student(req);
+        if(!me)return sendError(res,401,'Sessão do aluno inválida.');
+        id=me.id;room=me.room_code;
+      }
+      const mime=String(req.body?.mime||'');
+      if(!['image/png','image/jpeg','image/webp'].includes(mime))
+       return sendError(res,415,'Formato de imagem não permitido.');
+      const encoded=String(req.body?.image||'');
+      if(encoded.length<8||encoded.length>2800000||!/^[A-Za-z0-9+/]+={0,2}$/.test(encoded))
+       return sendError(res,413,'Imagem inválida ou superior a 2 MB.');
+      const binary=Buffer.from(encoded,'base64');
+      if(binary.length<8||binary.length>2*1024*1024)
+       return sendError(res,413,'Imagem inválida ou superior a 2 MB.');
+      const validSignature=mime==='image/png'?
+        binary.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])):
+        mime==='image/jpeg'?(binary[0]===255&&binary[1]===216&&binary[2]===255):
+        binary.subarray(0,4).toString('ascii')==='RIFF'&&binary.subarray(8,12).toString('ascii')==='WEBP';
+      if(!validSignature)return sendError(res,415,'O arquivo não corresponde ao formato informado.');
+      const caption=clean(req.body?.caption,950);
+      const rawMission=Number(req.body?.mission);
+      const mission=Number.isInteger(rawMission)&&rawMission>=1&&rawMission<=6?rawMission:null;
+      const author=teacher?'teacher':'student';
+      const client=await db.connect();
+      try{
+        await client.query('BEGIN');
+        const counter=await client.query(
+          "SELECT count(*)::int n FROM pit_chat_messages WHERE room_code=$1 AND student_id=$2 AND author=$3 AND created_at>now()-interval '1 minute'",
+          [room,id,author]);
+        if(counter.rows[0].n>=12){
+          await client.query('ROLLBACK');return sendError(res,429,'Limite de mensagens por minuto.');
+        }
+        const row=await client.query(
+          'INSERT INTO pit_chat_messages(room_code,student_id,author,mission,body) VALUES($1,$2,$3,$4,$5) RETURNING id',
+          [room,id,author,mission,caption?'[Imagem]\\n'+caption:'[Imagem]']);
+        await client.query('INSERT INTO pit_chat_images(message_id,mime,bytes) VALUES($1,$2,$3)',
+          [row.rows[0].id,mime,binary]);
+        await client.query('COMMIT');
+        return res.status(201).json({ok:true,id:row.rows[0].id});
+      }catch(e){await client.query('ROLLBACK').catch(()=>{});throw e}
+      finally{client.release()}
+    }
     if(req.method==='GET' && action==='unread') {
       if(teacherOK(req)) {
         const room=teacherRoom(req);if(!room)return sendError(res,400,'Turma inválida.');
