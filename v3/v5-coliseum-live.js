@@ -10,6 +10,10 @@
  const isUUID=s=>/^[0-9a-f-]{36}$/i.test(String(s||''));
  const seen=new Set();
  const recent=x=>{const age=Date.now()-Date.parse(x?.createdAt||'');return age>=-30000&&age<=180000};
+ const historyLabel=i=>{
+  if(i.status==='accepted')return {win:'🏆 Vitória',loss:'💀 Derrota',draw:'🤝 Empate'}[i.outcome]||'Duelo registrado';
+  return {pending:'Aguardando resposta',declined:'Recusado',cancelled:'Cancelado',expired:'Expirado'}[i.status]||i.status;
+ };
  const seenKey=(ctx,id)=>String(ctx?.room||'')+'|'+String(ctx?.studentId||'')+'|'+id;
  const alreadySeen=(ctx,id)=>{const key=seenKey(ctx,id);try{return seen.has(key)||sessionStorage.getItem('pit_live_open_'+key)==='1'}catch{return seen.has(key)}};
  const markSeen=(ctx,id)=>{const key=seenKey(ctx,id);seen.add(key);try{sessionStorage.setItem('pit_live_open_'+key,'1')}catch{}};
@@ -173,7 +177,8 @@
       '<p>Nenhum rival disponível agora. Os colegas devem ativar a disponibilidade no próprio computador.</p>')+
     '</section><section class="pit-live-panel"><h4>Convites e confrontos anteriores</h4>'+
     (history.length?history.map(i=>'<div class="pit-live-row"><span>'+esc(i.peerName)+' · '+
-      (i.outgoing?'enviado':'recebido')+' · '+esc(i.status)+'</span>'+
+      (i.outgoing?'desafiado':'desafiante')+' · <strong class="pit-live-outcome" data-outcome="'+
+      esc(i.outcome||i.status)+'">'+esc(historyLabel(i))+'</strong></span>'+
       (i.matchId?'<button type="button" data-view="'+esc(i.matchId)+'">▶ Rever duelo</button>':'')+
       '</div>').join(''):'<p>Ainda não há duelos nesta conta.</p>')+'</section>';
   }
