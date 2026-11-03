@@ -23,7 +23,8 @@ for(let approved=0;approved<=10;approved++){
 const forged=HERO.clean({klass:'mage',attributes:{FOR:999,DES:-1,VIT:NaN},talents:['E01','E01','forged']},1,CORE);
 assert.equal(forged.attributes.FOR,2);assert.equal(forged.attributes.DES,0);
 assert.deepEqual(forged.talents,['E01']);
-const approved=HERO.clean({klass:'guardian',attributes:{DEF:1,VIT:1},talents:['B01','T01']},1,CORE);
-assert.deepEqual(approved.talents,['T01']);
+const guardianTalent=CORE.TALENTS.guardian[0].id;
+const approved=HERO.clean({klass:'guardian',attributes:{DEF:1,VIT:1},talents:['B01',guardianTalent]},1,CORE);
+assert.deepEqual(approved.talents,[guardianTalent]);
 assert.equal(HERO.clean(approved,0,CORE).talents.length,0,'revocation also revokes local talent budget');
 console.log('PASS REAL HERO: 4 canonical classes, 120 talents, 0–10 approved missions, no imported fake XP, per-cohort/UUID isolation and revoked-point clamping');
