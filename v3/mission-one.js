@@ -190,7 +190,7 @@ function delivery(session,status,feedback,preview,canSubmit){
  '<section class="qo-record"><div class="qo-record-head"><span>◈ REGISTRO DO CRIADOR</span><small>GERADO A PARTIR DAS SUAS ESCOLHAS</small></div>'+
  '<label for="evidenceInput" class="qo-record-label">Texto que será enviado ao professor</label>'+
  '<textarea id="evidenceInput" maxlength="750" readonly>'+escapeHTML(evidence(session))+'</textarea>'+
- '<p class="qo-record-help">A ficha é montada automaticamente. Para corrigir algo, volte à construção.</p>'+ (writeStatus.get(key(session))===false?'<p class="qo-validation" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</section>'+
+ '<p class="qo-record-help"><strong>O texto foi gerado automaticamente, mas o envio NÃO é automático.</strong> Clique em “Enviar ao professor” e aguarde a confirmação de que foi recebido. Para corrigir, volte à construção.</p>'+ (writeStatus.get(key(session))===false?'<p class="qo-validation" role="status">⚠ O rascunho não foi salvo no navegador. Copie o texto da ficha antes de sair.</p>':'')+'</section>'+
  '<div class="qo-delivery-buttons">'+
  '<button class="qo-secondary" type="button" data-q-action="back" '+(submitted?'disabled':'')+'>‹ REVISAR MINHAS ESCOLHAS</button>'+
  '<button id="submitWork" class="qo-action" type="button" '+(!v.ok||submitted||!canSubmit?'disabled':'')+'>'+(preview?'✧ SIMULAR ENTREGA':'✦ ENVIAR AO PROFESSOR')+'</button></div>'+
