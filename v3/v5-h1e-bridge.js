@@ -23,9 +23,8 @@
    {key:'arena',label:'🎥 ARENA 3D',src:'./v5/duel-replay-d1b.html?demo=1'}
   ],
   teacher:[
-   {key:'teacher',label:'♛ CONTROLE',src:'./v5/duel-teacher-d1c.html?demo=1',live:'./v5/duel-teacher-d1c.html'},
-   {key:'collective',label:'🏟 TORNEIO M5/M10',src:'./v5/teacher-arena-lab.html'},
-   {key:'arena',label:'🎥 ARENA 3D',src:'./v5/duel-replay-d1b.html?demo=1'}
+   {key:'teacher',label:'⚔ LIBERAR DUELOS',native:true},
+   {key:'collective',label:'🏟 ARENAS M5/M10',native:true}
   ]
  };
  let context={role:document.body.dataset.role==='teacher'?'teacher':'student',
@@ -41,24 +40,26 @@
  hub.innerHTML=
   '<div class="pit-v5-h1e-shell">'+
    '<header class="pit-v5-h1e-head">'+
-    '<div><small>✦ PIT GAME JAM IA V5 · INTEGRAÇÃO EXPERIMENTAL</small>'+
+    '<div><small id="pitV5HubEdition">✦ PIT GAME JAM IA V5</small>'+
     '<h2 id="pitV5HubTitle">Forja &amp; Coliseu</h2></div>'+
     '<button id="pitV5HubClose" type="button" aria-label="Fechar a experiência V5">✕ SAIR</button></header>'+
    '<div id="pitV5HubSafety" class="pit-v5-h1e-safety" role="status" aria-live="polite"></div>'+
    '<nav id="pitV5HubTabs" class="pit-v5-h1e-tabs" aria-label="Ferramentas da arena V5"></nav>'+
    '<p id="pitV5HubStatus" class="pit-v5-h1e-status" role="status" aria-live="polite"></p>'+
    '<iframe id="pitV5HubFrame" title="Ferramenta V5" loading="eager" allow="autoplay"></iframe>'+
+   '<section id="pitV5TeacherPanel" class="pit-v5-teacher-panel" hidden aria-label="Gestão de duelos e arenas"></section>'+
    '<footer>Esta experiência não altera a ordem das 10 missões, as notas ou o XP.</footer>'+
   '</div>';
  document.body.appendChild(hub);
  const frame=$('pitV5HubFrame'),nav=$('pitV5HubTabs'),openButton=$('pitV5HubButton'),
-   closeButton=$('pitV5HubClose'),statusNode=$('pitV5HubStatus'),safety=$('pitV5HubSafety');
+   closeButton=$('pitV5HubClose'),statusNode=$('pitV5HubStatus'),safety=$('pitV5HubSafety'),
+   teacherPanel=$('pitV5TeacherPanel'),edition=$('pitV5HubEdition');
  const allowedToDuel=()=>context.visualPreview||
   ['submitted','approved'].includes(context.status);
  const isLive=()=>staging&&context.authenticated&&!context.visualPreview;
  function statusText(){
   if(context.role==='teacher')
-   return 'Professor · missão liberada '+context.stage+' / 10. Controle docente sem acesso a notas.';
+   return 'Professor · Missão '+context.stage+' / 10 · controle da turma';
   const progress='Missão '+context.stage+' / 10 · '+context.approved+' aprovada(s)';
   if(context.visualPreview)return progress+' · MODO VISUAL FICTÍCIO';
   if(!context.authenticated)return progress+' · aguardando identificação';
@@ -66,7 +67,11 @@
    'ainda em atividade; conclua e entregue para liberar duelos');
  }
  function updateSafety(){
-  safety.textContent=isLive()?
+  const isTeacher=context.role==='teacher';
+  edition.textContent=isTeacher?'✦ PIT GAME JAM IA · PAINEL DO PROFESSOR':
+   '✦ PIT GAME JAM IA · FORJA & COLISEU';
+  safety.hidden=isTeacher;
+  safety.textContent=isTeacher?'':isLive()?
    'HOMOLOGAÇÃO COM DADOS FICTÍCIOS: API isolada habilitada por configuração local. A produção permanece desligada.':
    'PRÉVIA FICTÍCIA: forja, convites e arena demonstrativos. Nenhuma conta real, token, PIN ou XP é enviado.';
   statusNode.textContent=statusText();
@@ -77,6 +82,42 @@
  }
  function clearFrame(){frame.removeAttribute('src');frame.title='Ferramenta V5';}
  const tabs=()=>TABS[context.role]||TABS.student;
+ function renderTeacherPanel(key){
+  if(context.role!=='teacher')return;
+  const level=context.stage;
+  const status=context.authenticated?'EM PREPARAÇÃO':'SEM SESSÃO';
+  const note='A comunicação de convites e partidas entre computadores ainda não está habilitada no servidor. '
+   +'Por isso, os comandos de liberação permanecem bloqueados até que funcionem de verdade.';
+  if(key==='collective'){
+   teacherPanel.innerHTML=
+    '<div class="pit-teacher-intro"><span>✦ COLISEU</span><h3>Arenas coletivas</h3>'+
+    '<p>O professor iniciará a primeira arena na Missão 5 e a final na Missão 10.</p></div>'+
+    '<div class="pit-teacher-grid">'+
+    '<article><span>MISSÃO 05</span><h4>Primeiro confronto</h4><p>Missão '+(level>=5?'liberada':'ainda não liberada')+' para a turma.</p>'+
+    '<button disabled title="Partida compartilhada ainda não habilitada">Liberar arena M5</button></article>'+
+    '<article><span>MISSÃO 10</span><h4>Grande final</h4><p>Missão '+(level>=10?'liberada':'ainda não liberada')+' para a turma.</p>'+
+    '<button disabled title="Partida compartilhada ainda não habilitada">Liberar arena M10</button></article></div>'+
+    '<div class="pit-teacher-state" role="status"><strong>Partidas online pendentes de conexão</strong><p>'+note+'</p></div>'+
+    '<button type="button" data-open-roster class="pit-teacher-go">👥 Consultar acompanhamento</button>';
+  }else{
+   teacherPanel.innerHTML=
+    '<div class="pit-teacher-intro"><span>⚔ CONTROLE DOCENTE</span><h3>Duelo entre aventureiros</h3>'+
+    '<p>Os desafios 1 × 1 poderão ser liberados pelo professor durante as pausas da oficina.</p></div>'+
+    '<div class="pit-teacher-grid"><article><span>SITUAÇÃO DA TURMA</span>'+
+    '<h4>Missão '+String(level).padStart(2,'0')+' / 10</h4>'+
+    '<p>Os avanços e aprovações continuam registrados no acompanhamento da turma.</p></article>'+
+    '<article><span>CONEXÃO DOS DUELOS</span><h4>'+status+'</h4>'+
+    '<p>O controle só será habilitado após confirmação de uma partida sincronizada.</p></article></div>'+
+    '<div class="pit-teacher-actions"><button type="button" disabled>⚔ Liberar duelos</button>'+
+    '<button type="button" disabled>⏸ Pausar duelos</button></div>'+
+    '<div class="pit-teacher-state" role="status"><strong>Duelos online ainda indisponíveis</strong>'+
+    '<p>'+note+'</p></div>'+
+    '<button type="button" data-open-roster class="pit-teacher-go">👥 Ver alunos e entregas</button>';
+  }
+  teacherPanel.querySelector('[data-open-roster]')?.addEventListener('click',()=>{
+   close();document.getElementById('rosterButton')?.click();
+  });
+ }
  function chooseTab(key){
   const t=tabs().find(x=>x.key===key);
   if(!t)return;
@@ -84,12 +125,22 @@
    statusNode.textContent='Você ainda está fazendo a missão. Entregue seu trabalho para liberar desafios.';
    return;
   }
-  const url=isLive()&&t.live?t.live:t.src;
-  const resolved=new URL(url,location.href);
-  if(resolved.origin!==location.origin)return;
-  currentTab=key;
-  if(frame.getAttribute('src')!==url)frame.setAttribute('src',url);
-  frame.title=t.label.replace(/[^p{L}d ]/gu,'').trim()+' — PIT Game Jam V5';
+  if(t.native){
+   frame.hidden=true;
+   frame.removeAttribute('src');
+   teacherPanel.hidden=false;
+   currentTab=key;
+   renderTeacherPanel(key);
+  }else{
+   teacherPanel.hidden=true;teacherPanel.replaceChildren();
+   frame.hidden=false;
+   const url=isLive()&&t.live?t.live:t.src;
+   const resolved=new URL(url,location.href);
+   if(resolved.origin!==location.origin)return;
+   currentTab=key;
+   if(frame.getAttribute('src')!==url)frame.setAttribute('src',url);
+   frame.title=t.label.replace(/[^\\p{L}\\d ]/gu,'').trim()+' — PIT Game Jam V5';
+  }
   nav.querySelectorAll('button').forEach(b=>{
    const selected=b.dataset.tab===key;
    b.setAttribute('aria-selected',String(selected));
@@ -124,7 +175,7 @@
  function close(){
   if(hub.hidden)return;
   hub.hidden=true;
-  clearFrame();currentTab=null;
+  clearFrame();teacherPanel.hidden=true;teacherPanel.replaceChildren();currentTab=null;
   document.body.classList.remove('pit-v5-h1e-active');
   lastFocus?.focus?.();
  }
@@ -168,7 +219,7 @@
    for(const key of ['duel','duel3d'])nav.querySelector('[data-tab="'+key+'"]')?.toggleAttribute('disabled',
     !allowedToDuel()&&!previewRequested);
    if(['duel','duel3d'].includes(currentTab)&&!allowedToDuel()&&!previewRequested)chooseTab('hero');
-   else statusNode.textContent=statusText();
+   else{statusNode.textContent=statusText();if(context.role==='teacher'&&currentTab)renderTeacherPanel(currentTab)}
   }
  }
  closeButton.addEventListener('click',close);
