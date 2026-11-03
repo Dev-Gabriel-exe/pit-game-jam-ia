@@ -114,13 +114,13 @@ async function studentState(db,user,state){
    "ORDER BY i.created_at DESC LIMIT 12",[user.room,user.id]),
   db.query("SELECT id,mission,created_at,result->'winner' AS winner FROM public.pit_coliseum_matches "+
    "WHERE room_code=$1 AND kind='arena' ORDER BY mission ASC",[user.room]),
-  db.query("SELECT available,seen_at FROM public.pit_coliseum_presence WHERE student_id=$1",[user.id])
+  db.query("SELECT available AND seen_at>now()-interval '60 seconds' AS online FROM public.pit_coliseum_presence WHERE student_id=$1",[user.id])
  ]);
  const invites=qinvites.rows.map(x=>({id:x.id,status:x.status,matchId:x.match_id,
   outgoing:x.sender_id===user.id,peerName:x.peer_name,createdAt:x.created_at,expiresAt:x.expires_at}));
  const busy=invites.some(x=>x.status==='pending');
  return {ok:true,role:'student',room:user.room,stage:state.current_stage,duelsEnabled:enabled,
-  eligible:status,heroSaved:!!hasHero,optedIn:presence.rows[0]?.available===true,
+  eligible:status,heroSaved:!!hasHero,optedIn:presence.rows[0]?.online===true,
   peers:status&&hasHero&&enabled&&!busy?qpeers.rows.map(x=>({id:x.id,name:x.display_name})):[],
   invites,arena:qarenas.rows.map(x=>({id:x.id,mission:x.mission,createdAt:x.created_at,winner:x.winner})),busy};
 }
