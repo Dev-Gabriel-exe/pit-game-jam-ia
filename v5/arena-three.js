@@ -307,7 +307,7 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
    container.dataset.v5NatureMeshes=natural.map(x=>x.file).join(',');
  });
 }
-export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',renderScale=1,onEvent=()=>{}}={}){
+export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',renderScale=1,deferRenderUntilModels=false,onEvent=()=>{}}={}){
  const worldScale=Math.max(1,Math.min(5,Number(arenaScale)||1));
  const stadiumScale=worldScale>1.3?worldScale/2.6:1;
  if(!container)throw Error('Stage container is required');
@@ -1323,6 +1323,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  },50);
  function loop(t){
   if(!live)return;
+  // On a shared replay, do not compile/rasterize the full empty arena while
+  // GLTF decoding is still in flight. Software WebGL can otherwise block
+  // loading long enough for successful HTTP responses to time out in GLTFLoader.
+  if(deferRenderUntilModels&&(!simulation||modelLoadedCount<simulation.fighters.length||modelErrorCount)){
+   previous=0;monitorFrames=0;monitorStarted=performance.now();return;
+  }
   const rawDt=Math.max(0,(t-previous)/1000||0);
   if(previous)worstFrameMs=Math.max(worstFrameMs,rawDt*1000);
   const dt=Math.min(.06,rawDt);

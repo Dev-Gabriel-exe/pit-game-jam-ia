@@ -7,6 +7,8 @@ on:
       - 'qa/v6-render-matrix.cjs'
       - 'v5/real-hero-profile.js'
       - 'v5/kaykit-motion-pack.mjs'
+      - 'v5/arena-three.js'
+      - 'v5/coliseum-live.js'
       - 'qa/v6-motion-sharing.cjs'
       - '.github/workflows/v6-full-v3-app.yml'
   workflow_dispatch:

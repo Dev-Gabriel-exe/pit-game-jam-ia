@@ -63,7 +63,7 @@ function load(record){
   const duel=record.kind==='duel';
   stage=createStage($('arenaStage'),{mode:duel?'duel':'hero',arenaScale:5,
    quality:duel?'low':'auto',spriteEffects:'on',
-   renderScale:duel?.58:1});
+   renderScale:duel?.58:1,deferRenderUntilModels:true});
   stage.fighters(record.roster,{seed:record.seed,...record.options});
   stage.enableAutoCamera(true);
   $('scoreboard').replaceChildren();
