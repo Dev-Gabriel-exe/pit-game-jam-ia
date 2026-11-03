@@ -17,7 +17,7 @@
  const staging=local&&provided?.enabled===true&&provided?.environment==='fictional-only';
  const TABS={
   student:[
-   {key:'hero',label:'✦ MEU HERÓI',src:'./v5/hero-lab-h1c.html',live:'./v5/hero-lab-h1d.html'},
+   {key:'hero',label:'✦ MEU HERÓI',native:true},
    {key:'duel',label:'⚔ DUELOS',src:'./v5/duel-lab-d1a.html',live:'./v5/duel-lobby-d1c.html'},
    {key:'duel3d',label:'⚔ DUELO 3D',src:'./v5/duel-window-lab.html'},
    {key:'arena',label:'🎥 ARENA 3D',src:'./v5/duel-replay-d1b.html?demo=1'}
@@ -55,7 +55,7 @@
    closeButton=$('pitV5HubClose'),statusNode=$('pitV5HubStatus'),safety=$('pitV5HubSafety'),
    teacherPanel=$('pitV5TeacherPanel'),edition=$('pitV5HubEdition');
  const allowedToDuel=()=>context.visualPreview||
-  ['submitted','approved'].includes(context.status);
+  (isLive()&&['submitted','approved'].includes(context.status));
  const isLive=()=>staging&&context.authenticated&&!context.visualPreview;
  function statusText(){
   if(context.role==='teacher')
@@ -63,8 +63,8 @@
   const progress='Missão '+context.stage+' / 10 · '+context.approved+' aprovada(s)';
   if(context.visualPreview)return progress+' · MODO VISUAL FICTÍCIO';
   if(!context.authenticated)return progress+' · aguardando identificação';
-  return progress+' · '+(allowedToDuel()?'entrega concluída; pode solicitar duelos':
-   'ainda em atividade; conclua e entregue para liberar duelos');
+  return progress+' · '+(allowedToDuel()?'duelos habilitados em homologação':
+   'duelos reais ainda sem sincronização com o servidor');
  }
  function updateSafety(){
   const isTeacher=context.role==='teacher';
@@ -73,7 +73,8 @@
   safety.hidden=isTeacher;
   safety.textContent=isTeacher?'':isLive()?
    'HOMOLOGAÇÃO COM DADOS FICTÍCIOS: API isolada habilitada por configuração local. A produção permanece desligada.':
-   'PRÉVIA FICTÍCIA: forja, convites e arena demonstrativos. Nenhuma conta real, token, PIN ou XP é enviado.';
+   context.visualPreview?'VISUALIZAÇÃO DE PRÉVIA: sem registros ou recompensas reais.':
+   'DADOS DO ALUNO: o orçamento abaixo é calculado pelas suas fichas aprovadas. A gravação das escolhas de talentos no servidor ainda não está disponível; nenhum personagem fictício será exibido.';
   statusNode.textContent=statusText();
   if(openButton){
    openButton.hidden=!context.visualPreview&&!context.authenticated&&!previewRequested;
@@ -82,6 +83,19 @@
  }
  function clearFrame(){frame.removeAttribute('src');frame.title='Ferramenta V5';}
  const tabs=()=>TABS[context.role]||TABS.student;
+ function renderStudentHeroPanel(){
+  const approved=context.authenticated&&!context.visualPreview?context.approved:0;
+  const xp=approved*100,pts=approved*2;
+  teacherPanel.innerHTML='<div class="pit-teacher-intro"><span>✦ FORJA DO AVENTUREIRO</span><h3>Meu herói</h3>'+
+   '<p>Recompensas obtidas em fichas <strong>aprovadas pelo professor</strong>, não apenas enviadas.</p></div>'+
+   '<div class="pit-teacher-grid">'+
+    '<article><span>MISSÕES APROVADAS</span><h4>'+approved+' / 10</h4></article>'+
+    '<article><span>XP CONQUISTADO</span><h4>'+xp+' / 1.000</h4></article>'+
+    '<article><span>PONTOS DE ATRIBUTO LIBERADOS</span><h4>'+pts+'</h4></article>'+
+    '<article><span>TALENTOS DESBLOQUEADOS</span><h4>'+approved+'</h4></article></div>'+
+    '<div class="pit-teacher-state" role="status"><strong>Distribuição de atributos indisponível por enquanto</strong>'+
+    '<p>As escolhas ainda não podem ser gravadas na sua conta. Não exibimos builds de outros alunos, personagens de teste ou uma falsa confirmação de salvamento. Continue a missão; seus pontos permanecem vinculados às aprovações.</p></div>';
+ }
  function renderTeacherPanel(key){
   if(context.role!=='teacher')return;
   const level=context.stage;
@@ -130,7 +144,8 @@
    frame.removeAttribute('src');
    teacherPanel.hidden=false;
    currentTab=key;
-   renderTeacherPanel(key);
+   if(context.role==='teacher')renderTeacherPanel(key);
+   else renderStudentHeroPanel();
   }else{
    teacherPanel.hidden=true;teacherPanel.replaceChildren();
    frame.hidden=false;
@@ -219,7 +234,9 @@
    for(const key of ['duel','duel3d'])nav.querySelector('[data-tab="'+key+'"]')?.toggleAttribute('disabled',
     !allowedToDuel()&&!previewRequested);
    if(['duel','duel3d'].includes(currentTab)&&!allowedToDuel()&&!previewRequested)chooseTab('hero');
-   else{statusNode.textContent=statusText();if(context.role==='teacher'&&currentTab)renderTeacherPanel(currentTab)}
+   else{statusNode.textContent=statusText();if(currentTab&&tabs().find(t=>t.key===currentTab)?.native){
+    if(context.role==='teacher')renderTeacherPanel(currentTab);else renderStudentHeroPanel();
+   }}
   }
  }
  closeButton.addEventListener('click',close);
