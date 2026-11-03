@@ -43,6 +43,10 @@ const metrics=[];
      (events.realAssets??=[]).push({name:resp.url().split('/').pop(),status:resp.status()});
    });
    await page.route('https://pit-game-jam-chat.vercel.app/api/coliseum**',async route=>{
+    if(route.request().method()==='OPTIONS')return route.fulfill({status:204,headers:{
+     'access-control-allow-origin':origin,
+     'access-control-allow-methods':'GET,POST,OPTIONS',
+     'access-control-allow-headers':'Content-Type,X-PIT-Student-Token,X-PIT-Teacher-Pin,X-PIT-Room'}});
     const url=new URL(route.request().url()),action=url.searchParams.get('action');
     const json=action==='state'?{
      ok:true,role:'student',room:'PITGAME26',stage:3,duelsEnabled:true,
