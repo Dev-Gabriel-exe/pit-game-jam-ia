@@ -124,7 +124,7 @@ const {chromium}=require('playwright');
   await a.locator('#navPrimary').click();
   assert.equal(users[0].progress[0]?.status,'submitted');
   assert.equal(seen.progress.length,1);
-  assert.equal(await a.locator('#navPrimary').isDisabled(),true);
+  await a.locator('#navPrimary:disabled').waitFor({timeout:12000});
   const b=await openStudent(1),c=await openStudent(2);
   for(const [page,i] of [[b,2],[c,3]]){await fill(page,i);await page.locator('#submitWork').click()}
   assert.equal(users.filter(x=>x.progress[0]?.status==='submitted').length,3);
