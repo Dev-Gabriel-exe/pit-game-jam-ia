@@ -50,14 +50,13 @@ const BASE='http://127.0.0.1:8899';
    await S.locator('#missionGalleryClose').click();
   await S.locator('#pitV5HubButton').click();
   assert.equal(await S.locator('#pitV5Hub').isVisible(),true);
-  const src=await S.locator('#pitV5HubFrame').getAttribute('src');
-  assert.equal(src,'./v5/hero-lab-h1c.html');
-  await S.waitForFunction(()=>{
-   const f=document.querySelector('#pitV5HubFrame')?.contentWindow;
-   return !!f?.PIT_V5_H1C_LAB;
-  },null,{timeout:35000});
-  assert.equal(await S.evaluate(()=>document.querySelector('#pitV5HubFrame')
-   .contentDocument.querySelectorAll('#classGrid .class-option').length),4);
+  assert.equal(await S.locator('#pitV5HubFrame').isVisible(),false,
+   'Student Hero must not load a fictional iframe');
+  assert.equal(await S.locator('#pitV5HubFrame').getAttribute('src'),null);
+  assert.match(await S.locator('#pitV5TeacherPanel').innerText(),
+   /Distribuição de atributos indisponível/);
+  assert.equal((await S.locator('#pitV5TeacherPanel').innerText()).includes('200 / 1.000'),false,
+   'preview cannot display credit for fictional approval');
   await S.locator('[data-tab=duel]').click();
   await S.waitForFunction(()=>document.querySelector('#pitV5HubFrame')
    ?.contentDocument?.querySelectorAll('.player-switch').length===4,
@@ -131,8 +130,11 @@ const BASE='http://127.0.0.1:8899';
    role:'student',stage:3,status:'submitted',approved:2,
    authenticated:true,visualPreview:false
   }));
-  assert.equal(await N.locator('[data-tab=duel]').isDisabled(),false);
-  assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),false);
+  assert.equal(await N.locator('[data-tab=duel]').isDisabled(),true);
+  assert.equal(await N.locator('[data-tab=duel3d]').isDisabled(),true);
+  assert.equal(await N.locator('#pitV5HubFrame').getAttribute('src'),null);
+  assert.match(await N.locator('#pitV5TeacherPanel').innerText(),/200 \/ 1.000/);
+  assert.match(await N.locator('#pitV5TeacherPanel').innerText(),/PONTOS DE ATRIBUTO LIBERADOS[\s\S]*?4/);
   assert.equal((await N.evaluate(()=>window.PIT_V5_H1E.snapshot)).connectedToStaging,false);
   await noPreview.context.close();
 
