@@ -43,7 +43,18 @@ const server=http.createServer((req,res)=>{
    const f=document.querySelector('#viewer');
    f.contentWindow.postMessage({type:'PIT_COLISEUM_REPLAY',match:data},location.origin);
   },match);
-  await frame.locator('#replayStatus:has-text("Batalha em reprodução.")').waitFor({timeout:25000});
+  try{await frame.locator('#replayStatus:has-text("Batalha em reprodução.")').waitFor({timeout:25000})}
+   catch(e){
+    const diagnostics=await frame.locator('body').evaluate(()=>({status:document.getElementById('replayStatus')?.textContent,
+     heading:document.getElementById('coliseumHeading')?.textContent,
+     modelsLoaded:document.getElementById('arenaStage')?.dataset.v5ModelsLoaded,
+     modelsFailed:document.getElementById('arenaStage')?.dataset.v5ModelsFailed,
+     engine:document.getElementById('arenaStage')?.dataset.v5CombatEngine,
+     webgl:document.getElementById('arenaStage')?.dataset.v5GraphicsContext,
+     playDisabled:document.getElementById('playReplay')?.disabled}));
+    console.error('AUTO_START_DIAGNOSTICS',JSON.stringify({diagnostics,errors}));
+    throw e;
+   }
   assert.equal(await frame.locator('#followHero option').count(),3);
   assert.equal(await frame.locator('#scoreboard>div').count(),2);
   assert.equal(await frame.locator('#playReplay').isDisabled(),true,'Duelo deve iniciar automaticamente, sem precisar clicar em replay');
