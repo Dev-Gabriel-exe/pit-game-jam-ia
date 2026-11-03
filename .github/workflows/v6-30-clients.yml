@@ -1,0 +1,36 @@
+name: V6 - 30 concurrent clients isolated PostgreSQL
+on:
+  push:
+    branches: [v6]
+    paths:
+      - 'qa/v6-30-clients-postgres.cjs'
+      - 'chat-api/api/coliseum.js'
+      - '.github/workflows/v6-30-clients.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  thirty-clients:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      DATABASE_URL: postgresql://postgres:ci_only_password@127.0.0.1:5432/v6_coliseum_test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: v6_coliseum_test
+          POSTGRES_PASSWORD: ci_only_password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d v6_coliseum_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+      - run: node qa/v6-30-clients-postgres.cjs
