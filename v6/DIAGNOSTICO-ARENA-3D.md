@@ -57,6 +57,22 @@ A regressão `qa/v6-duel-integrated-browser.cjs` reproduziu com dados **fictíci
 
 **Conclusão técnica limitada:** há ao menos dois problemas separados — desmontagem da aba por regra de staging (reproduzida e corrigida) e degradação de FPS na incorporação WebGL dentro da interface V3 (reproduzida e **ainda não resolvida**). Não é correto atribuir toda a falha ao Neon, à classe do personagem ou apenas ao blur sem outro experimento.
 
+## Experimento V6 de desempenho — resultado
+
+**Run 41686813852 (V6, resolução interna controlada do WebGL apenas em duelos 1×1):** os dois navegadores atravessaram o fluxo completo V3 → convite já aceito → iframe Coliseu → carregamento real de `Barbarian.glb` + `Mage.glb` → atualização do estado V3 durante o combate. O painel permaneceu na aba **Duelos**, o iframe continuou conectado e ambos os navegadores mantiveram os dois modelos reais carregados.
+
+Amostras de FPS no renderizador de software:
+
+| Experimento | Navegador 1 | Navegador 2 | Resultado |
+| --- | --- | --- | --- |
+| V3 original com blur de 14px | 2, 5, 3, 4 | não coletado após o primeiro erro | Reprovação |
+| Sem blur | 4, 5, 7, 7 | 6, 7, 3, 6 | Reprovação |
+| Sem blur + `renderScale: 0.58` na arena 1×1 | **9, 8, 7, 6** | **8, 7, 8, 5** | Passou critério mínimo de 5 FPS |
+
+Sem erros de JavaScript, GLB HTTP 200 e sem perda de contexto WebGL no último experimento. A resolução interna foi reduzida somente na variante de visualização de duelo dentro da V6; física, seed, atributos, talentos, arena de 30 participantes e motor de combate foram preservados. A aparência e nitidez deverão ser avaliadas antes de qualquer integração.
+
+**Importante:** 5–9 FPS no renderizador de software ainda é desempenho modesto. Não representa garantia de fluidez nos computadores da escola, especialmente com 30 alunos simultâneos. Ainda será necessário testar uma visualização 3D fora de `iframe`/overlay para melhorar a fluidez sem perda de resolução.
+
 ## Estado
 
 - [x] Branch `v6` criada a partir da `main` sem diferença inicial.
@@ -65,7 +81,7 @@ A regressão `qa/v6-duel-integrated-browser.cjs` reproduziu com dados **fictíci
 - [x] Primeiro teste com modelos reais: dois navegadores por ~27s, sem travamentos em CI (não conclui homologação de PCs reais).
 - [x] Reprodução do fechamento indevido do duelo durante o refresh V3; correção feita só na v6, pendente nova validação.
 - [x] Queda de FPS no Coliseu integrado reproduzida em dois navegadores com modelos reais.
-- [ ] Otimizar visualização no painel e repetir regressão sem aceitar menos de 5 FPS persistentes.
+- [x] Experimento de redução controlada do custo de pixels elevou as duas janelas integradas para 5–9 FPS em CI (critério técnico mínimo atendido, fluidez ainda insuficiente para homologação).
 - [ ] Homologar GPU dos PCs reais e concorrência de até 30 alunos.
 - [ ] Regressões de 30 combatentes e de múltiplos computadores.
 - [ ] Homologação final antes de cogitar integração à `main`.
