@@ -80,18 +80,25 @@ const server=http.createServer((req,res)=>{
   // Exercise real teacher/student controls, without reaching the production server.
   const controls=await browser.newPage();
   let enabled=false,pending=false,peerAccepted=false,studentPolls=0,historyOutcome='win';
+  let lobbyOpen=false,arenaStarted=false;const lobbyJoined=new Set();
+  const fakeLobby=viewer=>lobbyOpen&&!arenaStarted?{
+   mission:5,joinedCount:lobbyJoined.size,
+   ...(viewer==='teacher'?{participants:[...lobbyJoined].map(id=>({id,name:roster.find(x=>x.id===id)?.name||'Herói'}))}:
+      {joined:lobbyJoined.has(roster[0].id)})
+  }:null;
   await controls.route('https://pit-game-jam-chat.vercel.app/api/coliseum**',async route=>{
    const req=route.request(),url=new URL(req.url()),action=url.searchParams.get('action');
    const teacher=!!req.headers()['x-pit-teacher-pin'];
    let data={ok:true};
    if(action==='state'&&teacher)data={
     ok:true,role:'teacher',room:'PITGAME26',stage:5,duelsEnabled:enabled,pendingInvites:0,
-    students:[{id:roster[0].id,name:roster[0].name,heroSaved:true,approved:5},
+    lobby:fakeLobby('teacher'),students:[{id:roster[0].id,name:roster[0].name,heroSaved:true,approved:5},
       {id:roster[1].id,name:roster[1].name,heroSaved:true,approved:5}],arena:[]};
    if(action==='state'&&!teacher){
     if(pending&&studentPolls++>=1)peerAccepted=true;
     data={
-    ok:true,role:'student',room:'PITGAME26',stage:5,duelsEnabled:true,heroSaved:true,eligible:true,
+    ok:true,role:'student',room:'PITGAME26',stage:5,duelsEnabled:true,heroSaved:true,approved:5,eligible:true,
+    lobby:fakeLobby('student'),
     optedIn:true,busy:pending,peers:pending?[]:[{id:roster[1].id,name:roster[1].name}],
     invites:pending?[{id:'90000000-0000-4000-8000-000000000002',
        status:peerAccepted?'accepted':'pending',matchId:peerAccepted?match.id:null,
@@ -102,6 +109,10 @@ const server=http.createServer((req,res)=>{
    }
    if(action==='duels'){enabled=JSON.parse(req.postData()).enabled;data={ok:true,duelsEnabled:enabled}}
    if(action==='invite'){pending=true;studentPolls=0;data={ok:true,inviteId:'90000000-0000-4000-8000-000000000002'}}
+   if(action==='arena-open'){lobbyOpen=true;data={ok:true,lobby:'waiting'}}
+   if(action==='arena-join'){lobbyJoined.add(roster[0].id);data={ok:true,joined:true}}
+   if(action==='arena-leave'){lobbyJoined.delete(roster[0].id);data={ok:true,joined:false}}
+   if(action==='arena-start'){arenaStarted=true;data={ok:true,matchId:match.id}}
    if(action==='match')data={ok:true,match};
    await route.fulfill({status:action==='invite'?201:200,contentType:'application/json',
      headers:{'access-control-allow-origin':'*'},body:JSON.stringify(data)});
@@ -137,6 +148,30 @@ const server=http.createServer((req,res)=>{
   historyOutcome='draw';
   await controls.evaluate(()=>document.querySelector('[data-refresh]')?.click());
   await controls.locator('.pit-live-outcome:has-text("Empate")').waitFor({timeout:10000});
+  // Teacher opens a waiting room. The student must explicitly join; the teacher
+  // cannot start until the actual joined headcount reaches at least two.
+  await controls.evaluate(()=>window.PIT_V5_LIVE.mount(
+    document.querySelector('#liveRoot'),{role:'teacher',authenticated:true,room:'PITGAME26',
+     visualPreview:false,teacherPinProvider:()=> 'fixture_private_teacher_pin'},'collective'));
+  await controls.locator('[data-open="5"]').waitFor({timeout:10000});
+  await controls.evaluate(()=>document.querySelector('[data-open="5"]')?.click());
+  await controls.locator('[data-start="5"]').waitFor({timeout:10000});
+  assert.equal(await controls.locator('[data-start="5"]').isDisabled(),true);
+  await controls.evaluate(()=>window.PIT_V5_LIVE.mount(
+    document.querySelector('#liveRoot'),{role:'student',authenticated:true,room:'PITGAME26',
+    visualPreview:false,studentId:roster[0].id,tokenProvider:()=>'a'.repeat(64)},'arena'));
+  await controls.locator('[data-join="5"]').waitFor({timeout:10000});
+  await controls.evaluate(()=>document.querySelector('[data-join="5"]')?.click());
+  await controls.locator('text=Você já está na sala de espera.').waitFor({timeout:10000});
+  await controls.evaluate(()=>window.PIT_V5_LIVE.mount(
+    document.querySelector('#liveRoot'),{role:'teacher',authenticated:true,room:'PITGAME26',
+     visualPreview:false,teacherPinProvider:()=> 'fixture_private_teacher_pin'},'collective'));
+  await controls.locator('[data-start="5"]').waitFor({timeout:10000});
+  assert.equal(await controls.locator('[data-start="5"]').isDisabled(),true);
+  lobbyJoined.add(roster[1].id);
+  await controls.evaluate(()=>document.querySelector('[data-refresh]')?.click());
+  await controls.locator('[data-start="5"]:not([disabled])').waitFor({timeout:10000});
+  await controls.locator('.pit-live-count:has-text("2 / 30")').first().waitFor({timeout:10000});
   await controls.evaluate(()=>window.PIT_V5_LIVE.unmount());
   await controls.close();
   console.log('PASS native teacher duel release, student availability and server-backed invitation button.');
