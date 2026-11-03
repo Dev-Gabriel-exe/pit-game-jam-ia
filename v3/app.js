@@ -400,18 +400,32 @@ function renderMain(){
  if(TEACHER){
   // Quadrantes são apenas conteúdo local. A liberação da turma é por missão.
   const released=m.n<=state.current_stage,next=m.n===state.current_stage+1;
-  $('missionStatus').textContent=released?'MISSÃO LIBERADA':'MISSÃO EM PRÉVIA · AINDA BLOQUEADA';
+  const mustOpenDelivery=m.n===state.current_stage&&!['practice','review'].includes(state.phase);
+  $('missionStatus').textContent=mustOpenDelivery?'MISSÃO VISÍVEL · ENTREGAS AINDA BLOQUEADAS':
+   released?'MISSÃO LIBERADA':'MISSÃO EM PRÉVIA · AINDA BLOQUEADA';
   $('missionStatus').className='state-pill';
-  $('navPrimary').textContent=released?'✓ Missão já liberada':next?(visualPreview?'Simular liberação da missão '+String(m.n).padStart(2,'0'):'Liberar missão '+String(m.n).padStart(2,'0')+' para turma'):'Libere a missão anterior primeiro';
-  $('navPrimary').disabled=!next;
-  $('navPrimary').title=next?'Libera o conteúdo e a entrega da missão inteira, sem liberar quadrantes separadamente.':'Missões anteriores permanecem liberadas; próximas missões são liberadas em ordem.';
+  $('navPrimary').textContent=mustOpenDelivery?
+   '✦ Habilitar entregas da missão '+String(m.n).padStart(2,'0'):
+   released?'✓ Missão já liberada':
+   next?(visualPreview?'Simular liberação da missão '+String(m.n).padStart(2,'0'):
+   'Liberar missão '+String(m.n).padStart(2,'0')+' para turma'):'Libere a missão anterior primeiro';
+  $('navPrimary').disabled=!mustOpenDelivery&&!next;
+  $('navPrimary').title=mustOpenDelivery?'Permite enviar as fichas para avaliação sem avançar a turma.':
+   next?'Libera conteúdo e entregas da próxima missão.':
+   'As missões são liberadas em ordem.';
   $('navSecondary').textContent='Prévia da próxima missão →';
   $('navSecondary').disabled=m.n>=10;
  }else{
   $('missionStatus').textContent=statusLabel(m.n);
   $('missionStatus').className='state-pill '+(e?.status||'');
-  $('navPrimary').textContent=activePhase==='review'?((missionOne||missionTwo||missionThree||missionFour||missionFive||missionSix||missionSeven||missionEight||missionNine||missionTen)?'✦ CONFIRMAR NA FICHA':'🏆 Entregar missão'):'Continuar a missão →';
-  $('navPrimary').disabled=false;
+  const alreadySent=['submitted','approved'].includes(e?.status);
+  $('navPrimary').textContent=activePhase==='review'?
+   alreadySent?(e?.status==='approved'?'✓ Missão aprovada':'⌛ Entrega aguardando avaliação'):
+   '✦ ENVIAR MISSÃO AO PROFESSOR':
+   'Continuar a missão →';
+  $('navPrimary').disabled=activePhase==='review'&&alreadySent;
+  $('navPrimary').title=activePhase==='review'&&!alreadySent?
+   'Envia a ficha ao servidor. Preencher e salvar os campos não constitui entrega.':'';
   $('navSecondary').textContent='← Passo anterior';
   $('navSecondary').disabled=activePhase==='briefing';
  }
@@ -664,6 +678,9 @@ async function sendWork(status){
   if(visualPreview)return setToast('Essa é uma prévia visual: entre pela oficina oficial para enviar trabalhos.',true);
   if(status==='submitted'&&savedChecks(activeStage).length<mission().steps.length)return setToast('Conclua e marque os três passos da oficina antes de entregar.',true);
  }
+ if(status==='submitted'&&activeStage===state.current_stage&&
+    !['practice','review'].includes(state.phase))
+  return setToast('O professor ainda precisa habilitar as entregas desta missão. Sua ficha permanece salva.',true);
  if(status==='submitted'&&evidence.trim().length<8)return setToast('Descreva sua evidência em pelo menos 8 caracteres.',true);
  try{
   const response=await call('classroom','progress','POST',{stage:activeStage,route,evidence,status});
@@ -674,7 +691,8 @@ async function sendWork(status){
  }catch(e){setToast(e.message,true)}
 }
 async function teacherAdvance(stage){
- if(!TEACHER||stage!==state.current_stage+1)return setToast('Libere a próxima missão na ordem.',true);
+ const opening=stage===state.current_stage&&!['practice','review'].includes(state.phase);
+ if(!TEACHER||(!opening&&stage!==state.current_stage+1))return setToast('Libere a próxima missão na ordem.',true);
  if(visualPreview){
   state={current_stage:stage,phase:'practice',updated_at:null};activeStage=stage;
   renderAll();scrollMissionToStart();
@@ -682,10 +700,14 @@ async function teacherAdvance(stage){
   return;
  }
  try{
-  const result=await call('classroom','stage','POST',{stage});
+  // The deployed legacy classroom endpoint REQUIRES phase; the modern
+  // sequential mission-only endpoint ignores it. Compatible with both.
+  const result=await call('classroom','stage','POST',{stage,phase:'practice'});
   state=result.state;lastServerStage=state.current_stage;
   activeStage=stage;renderAll();
-  setToast('Missão '+String(stage).padStart(2,'0')+' liberada: conteúdo e entregas disponíveis.');
+  setToast(opening?
+   'Entregas da missão '+String(stage).padStart(2,'0')+' habilitadas. Alunos já podem enviar.':
+   'Missão '+String(stage).padStart(2,'0')+' liberada: conteúdo e entregas disponíveis.');
  }catch(e){setToast(e.message,true)}
 }
 
@@ -726,7 +748,12 @@ $('navPrimary').onclick=()=>{
  if(TEACHER)return teacherAdvance(activeStage);
  const idx=phaseList.indexOf(activePhase);
  if(idx<phaseList.length-1){activePhase=phaseList[idx+1];renderMain();scrollMissionToStart();}
- else {if(!TEACHER&&((activeStage===1&&window.PIT_MISSION_ONE)||(activeStage===2&&window.PIT_STUDENT_MISSION_TWO)||(activeStage===3&&window.PIT_STUDENT_MISSION_THREE)||(activeStage===4&&window.PIT_STUDENT_MISSION_FOUR)||(activeStage===5&&window.PIT_STUDENT_MISSION_FIVE)||(activeStage===6&&window.PIT_STUDENT_MISSION_SIX)||(activeStage===7&&window.PIT_STUDENT_MISSION_SEVEN)||(activeStage===8&&window.PIT_STUDENT_MISSION_EIGHT)||(activeStage===9&&window.PIT_STUDENT_MISSION_NINE)||(activeStage===10&&window.PIT_STUDENT_MISSION_TEN))){$('mainContent').querySelector('#submitWork')?.focus();setToast('Sua ficha é montada automaticamente a partir do planejamento.');}else{$('mainContent').querySelector('#evidenceInput')?.focus();setToast('Descreva sua entrega e clique em Entregar missão.')}}
+ else{
+  if(['submitted','approved'].includes(entry(activeStage)?.status))return;
+  // An explicitly labelled action must actually POST the delivery.
+  // A generated local summary is not an automatic submission.
+  return sendWork('submitted');
+ }
 };
 $('navSecondary').onclick=()=>{
  if(TEACHER){if(activeStage<10)selectStage(activeStage+1);return}
