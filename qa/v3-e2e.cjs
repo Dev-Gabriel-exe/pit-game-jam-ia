@@ -217,6 +217,24 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await tp.locator('#chatWindow').getAttribute('aria-hidden'),'false','teacher chat is exposed to assistive tech');
  await tp.locator('#chatMessages .chat-empty').waitFor({timeout:6500});
  assert.match(await tp.locator('#chatMessages').innerText(),/Nenhuma mensagem/,'chat empty state explains what to do');
+ // Teacher's approved three-panel layout: threads / chat / student context.
+ await tp.locator('#chatStudentName').getByText('Aluno QA').waitFor({timeout:10000});
+ const columns=await tp.locator('#chatWindow .teacher-chat-layout').evaluate(el=>
+  getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean));
+ assert.equal(columns.length,3,'teacher desktop chat has three visual columns');
+ assert.equal(await tp.locator('#chatStudentInfo').isVisible(),true);
+ assert.match(await tp.locator('#chatStudentMission').innerText(),/Missão 01/);
+ assert.match(await tp.locator('#chatStudentProgress').innerText(),/1 \/ 10 aprovadas/);
+ assert.equal(await tp.locator('#chatViewProgress').isEnabled(),true);
+ await tp.locator('#chatViewProgress').click();
+ await tp.locator('#rosterDrawer.open').waitFor({timeout:8000});
+ await tp.locator('#rosterContent h2').getByText('Aluno QA').waitFor({timeout:10000});
+ await tp.locator('#rosterClose').click();
+ await tp.locator('#chatButton').click();
+ await tp.locator('#chatWindow.open').waitFor();
+ await tp.locator('#chatMessages .chat-empty').waitFor({timeout:6500});
+ console.log('PASS teacher chat v4: three-column gothic conversation, authenticated progress sidebar and student-detail navigation');
+
  await tp.locator('#chatInput').fill('Bom trabalho na etapa 1.');
  await tp.locator('#chatForm button[type="submit"]').click();
  await tp.waitForFunction(()=>document.querySelector('#chatInput')?.value==='',null,{timeout:6500});
