@@ -853,7 +853,7 @@ function renderRoster(){
    const status=chooseStatus(latest?.status);
    return '<tr data-student="'+esc(s.id)+'" tabindex="0" aria-label="Abrir acompanhamento de '+esc(s.display_name)+'"><td><span class="roster-name">♟ '+esc(s.display_name)+'</span>'+(s.unread_chat?' <span class="count-bubble">'+Number(s.unread_chat)+'</span>':'')+'</td>'+
     '<td><strong>Missão '+String(current).padStart(2,'0')+' / 10</strong><div style="margin-top:6px;color:#cdb79f;font-size:12px">'+esc(status)+'</div></td>'+
-    '<td><span class="roster-pill '+(latest?.status==='submitted'?'pending':'')+'">'+Number(s.approved)||0+' / 10 aprovadas</span></td>'+
+    '<td><span class="roster-pill '+(latest?.status==='submitted'?'pending':'')+'">'+(Number(s.approved)||0)+' / 10 aprovadas</span></td>'+
     '<td><span class="roster-pill '+(online?'online':'')+'">'+(online?'● Ativo':'○ Ausente')+'</span></td></tr>'
   }).join('')+'</tbody></table>'+(visible.length?'':'<p class="notice">Nenhum estudante nesse filtro.</p>');
  $('rosterContent').querySelectorAll('tr[data-student]').forEach(tr=>{
