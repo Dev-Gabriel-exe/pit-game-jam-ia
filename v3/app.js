@@ -891,7 +891,7 @@ let lastTeacherChatRosterAt=0;
 function renderTeacherChatProfile(thread=null,messages=[]){
  if(!TEACHER||!$('chatStudentInfo'))return;
  const profile=thread?roster.find(student=>student.id===thread.id):null;
- const active=Number(profile?.active_stage)||Number(messages.at(-1)?.mission)||0;
+ const active=Number(profile?.active_stage)||Number(profile?.stages?.at(-1)?.stage)||Number(messages.at(-1)?.mission)||0;
  const stage=profile?.stages?.find(item=>Number(item.stage)===active)
   ||profile?.stages?.at(-1)||null;
  const approved=Number(profile?.approved)||0;
