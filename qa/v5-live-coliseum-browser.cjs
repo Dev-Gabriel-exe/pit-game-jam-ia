@@ -51,6 +51,51 @@ const server=http.createServer((req,res)=>{
   const canvas=await frame.locator('#arenaStage canvas').count();
   assert.ok(canvas>=1,'WebGL canvas must be initialized');
   assert.equal(errors.filter(x=>/Uncaught|TypeError|ReferenceError/.test(x)).length,0,JSON.stringify(errors));
+
   console.log('PASS fictional 3D duel replay: frame, two players, server-pinned match, live animation and WebGL.');
+  // Exercise real teacher/student controls, without reaching the production server.
+  const controls=await browser.newPage();
+  let enabled=false,pending=false;
+  await controls.route('https://pit-game-jam-chat.vercel.app/api/coliseum**',async route=>{
+   const req=route.request(),url=new URL(req.url()),action=url.searchParams.get('action');
+   const teacher=!!req.headers()['x-pit-teacher-pin'];
+   let data={ok:true};
+   if(action==='state'&&teacher)data={
+    ok:true,role:'teacher',room:'PITGAME26',stage:5,duelsEnabled:enabled,pendingInvites:0,
+    students:[{id:roster[0].id,name:roster[0].name,heroSaved:true,approved:5},
+      {id:roster[1].id,name:roster[1].name,heroSaved:true,approved:5}],arena:[]};
+   if(action==='state'&&!teacher)data={
+    ok:true,role:'student',room:'PITGAME26',stage:5,duelsEnabled:true,heroSaved:true,eligible:true,
+    optedIn:true,busy:pending,peers:pending?[]:[{id:roster[1].id,name:roster[1].name}],
+    invites:pending?[{id:'90000000-0000-4000-8000-000000000002',
+       status:'pending',outgoing:true,peerName:roster[1].name,expiresAt:new Date(Date.now()+50000).toISOString()}]:[],
+    arena:[]};
+   if(action==='duels'){enabled=JSON.parse(req.postData()).enabled;data={ok:true,duelsEnabled:enabled}}
+   if(action==='invite'){pending=true;data={ok:true,inviteId:'90000000-0000-4000-8000-000000000002'}}
+   await route.fulfill({status:action==='invite'?201:200,contentType:'application/json',
+     headers:{'access-control-allow-origin':'*'},body:JSON.stringify(data)});
+  });
+  await controls.goto(rootURL+'/fixture');
+  await controls.evaluate(()=>{
+   document.querySelector('#viewer')?.remove();
+   const el=document.createElement('div');el.id='liveRoot';document.body.append(el);
+  });
+  await controls.addScriptTag({url:rootURL+'/v3/v5-coliseum-live.js'});
+  await controls.evaluate(()=>window.PIT_V5_LIVE.mount(
+   document.querySelector('#liveRoot'),{role:'teacher',authenticated:true,room:'PITGAME26',
+    visualPreview:false,teacherPinProvider:()=> 'fixture_private_teacher_pin'},'teacher'));
+  await controls.locator('[data-duels=true]').waitFor({timeout:10000});
+  await controls.locator('[data-duels=true]').click();
+  await controls.locator('.pit-live-state:has-text("LIBERADOS")').waitFor({timeout:10000});
+  await controls.evaluate(()=>window.PIT_V5_LIVE.mount(
+   document.querySelector('#liveRoot'),{role:'student',authenticated:true,room:'PITGAME26',
+   visualPreview:false,studentId:'10000000-0000-4000-8000-000000000001',tokenProvider:()=>'a'.repeat(64)},'duel'));
+  await controls.locator('button:has-text("Desafiar")').waitFor({timeout:10000});
+  await controls.locator('button:has-text("Desafiar")').click();
+  await controls.locator('button:has-text("Cancelar convite")').waitFor({timeout:10000});
+  await controls.evaluate(()=>window.PIT_V5_LIVE.unmount());
+  await controls.close();
+  console.log('PASS native teacher duel release, student availability and server-backed invitation button.');
+
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>server.close());
