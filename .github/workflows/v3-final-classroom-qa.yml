@@ -1,0 +1,40 @@
+name: V3 Final Class — Legacy API Compatibility and Evidence
+on:
+  push:
+    branches: [main, fix/20261103-libera-entrega-missoes]
+    paths:
+      - 'v3/app.js'
+      - 'v3/mission-one.js'
+      - 'aluno-v3.html'
+      - 'professor-v3.html'
+      - 'qa/v3-legacy-release-submission-browser.cjs'
+      - '.github/workflows/v3-final-classroom-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  final-classroom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check sources and browser harness
+        run: |
+          node --check v3/app.js
+          node --check v3/mission-one.js
+          node --check qa/v3-legacy-release-submission-browser.cjs
+      - name: Install headless browser
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.58.2
+          google-chrome --version
+      - name: Run legacy and modern classroom end-to-end flows
+        run: |
+          python3 -m http.server 8899 --bind 127.0.0.1 >/tmp/pit-final-classroom.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          sleep 2
+          node qa/v3-legacy-release-submission-browser.cjs
+          node qa/v3-multi-student-browser.cjs
