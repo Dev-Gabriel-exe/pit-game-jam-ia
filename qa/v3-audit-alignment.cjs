@@ -47,9 +47,17 @@ const m04Student=read('v3/student-mission-four.js');
 assert.equal((m04Teacher.match(/<details class="pit-private-teacher-notes">/g)||[]).length,2,'M04 practice and review each conceal private guidance');
 assert((m04Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length>=1,'M04 practice notes use shared CSS');
 assert(m04Teacher.includes('aria-label="Abrir roteiro privado da prática da Missão 04"'),'M04 practice paper control accessible');
-assert(m04Teacher.includes('aria-label="Orientações reservadas ao professor — abrir somente sem espelhamento"'),'M04 review paper control accessible');
+assert(m04Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 04"'),'M04 review paper control accessible');
 assert(!m04Teacher.includes('<details class="pit-private-teacher-notes" open'),'M04 notes default closed');
 assert(!m04Student.includes('pit-private-teacher-notes'),'student M04 must not contain private teacher notes');
+assert((m04Teacher.match(/class="pit-private-teacher-notes-body"/g)||[]).length===2,'M04 both private notes use shared styling');
+const m06Teacher=read('v3/teacher-mission-six-validation.js');
+assert(m06Teacher.includes('Acompanhamento → aluno → Missão 06')&&m06Teacher.indexOf('Acompanhamento → aluno → Missão 06')<m06Teacher.indexOf('</details>'),'M06 review navigation is inside closed teacher-only notes');
+assert(!m06Teacher.includes('<p>Em <b>Acompanhamento'),'M06 must not expose teacher-only review instructions in public offline guidance');
+const m07Teacher=read('v3/teacher-mission-seven-validation.js');
+assert(m07Teacher.includes('aria-label="Abrir roteiro privado da avaliação da Missão 07"'),'M07 review must use accessible, closed private notes');
+assert(m07Teacher.includes('O QUE A EVIDÊNCIA COMPROVA'),'M07 public section must remain educational instead of private navigation');
+
 assert(teacher.includes('./v3/gdevelop-mission-four-guide.js'),'M04 GDevelop guide must be loaded');
 assert(read('v3/gdevelop-mission-four-guide.js').includes('GDevelop'),'M04 guide must explain GDevelop');
 for(const time of ['12 min','15 min','9 min'])assert(m04Student.includes(time),'M04 student practice time '+time);
