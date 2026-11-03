@@ -1,0 +1,46 @@
+/* Real student-only hero editor, consistent with existing V3/V5 gothic palette. */
+#pitV5Hub .rhero-root{max-width:1220px;margin:auto;color:#f8e6ce;font-family:system-ui,sans-serif}
+#pitV5Hub .rhero-head{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;padding:12px 2px 22px}
+#pitV5Hub .rhero-head>div>span{font:800 11px system-ui;letter-spacing:.12em;color:#e2b982}
+#pitV5Hub .rhero-head h3{font:800 clamp(24px,3.2vw,37px) Cinzel,Georgia,serif;margin:10px 0;color:#ffdda9}
+#pitV5Hub .rhero-head p{margin:4px 0;color:#dfc9b6;font-size:13px}
+#pitV5Hub .rhero-rewards{display:flex;gap:12px;flex-wrap:wrap}
+#pitV5Hub .rhero-rewards>div{min-width:100px;max-width:140px;text-align:center;border:1px solid #8c6b4c;border-radius:9px;padding:11px;background:#31222c}
+#pitV5Hub .rhero-rewards strong{display:block;font:800 25px Cinzel,Georgia,serif;color:#ffdc97}
+#pitV5Hub .rhero-rewards small{font-size:10px;color:#dfbf94}
+#pitV5Hub .rhero-layout{display:grid;grid-template-columns:minmax(210px,350px) minmax(0,1fr);align-items:start;gap:25px}
+#pitV5Hub .rhero-visual{position:sticky;top:0;background:linear-gradient(160deg,#352338,#201823 65%);border:1px solid #936e4c;border-radius:13px;padding:13px;text-align:center}
+#pitV5Hub .rhero-preview{height:330px;position:relative;isolation:isolate;background:radial-gradient(circle at center,#4b3543,#171523);border:1px solid #8c664e;border-radius:9px;overflow:hidden}
+#pitV5Hub .rhero-preview iframe{position:absolute;inset:0;width:100%;height:100%;z-index:2;border:0;background:transparent}
+#pitV5Hub .rhero-portrait-fallback{display:grid;place-items:center;position:absolute;inset:0;font-size:98px;color:#eec58f}
+#pitV5Hub .rhero-visual>strong{display:block;font:800 24px Cinzel,Georgia,serif;margin:14px 0 5px;color:#f5c994}
+#pitV5Hub .rhero-visual>small{font-size:11px;color:#bcadca}
+#pitV5Hub .rhero-visual p{font-size:12px;line-height:1.5;color:#e5c7ab}
+#pitV5Hub .rhero-settings{min-width:0}
+#pitV5Hub .rhero-settings h4{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0;font:800 16px Cinzel,Georgia,serif;color:#f5cf9c}
+#pitV5Hub .rhero-settings h4 small{font:600 12px system-ui;color:#d7ba9b}
+#pitV5Hub .rhero-classes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:23px}
+#pitV5Hub .rhero-classes button{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center;background:#281e2b;border:1px solid #8a644a;border-radius:10px;color:#f9e5c9;min-height:93px;padding:10px;cursor:pointer}
+#pitV5Hub .rhero-classes button>span{font-size:28px}
+#pitV5Hub .rhero-classes button>strong{font-size:12px}
+#pitV5Hub .rhero-classes button.selected,#pitV5Hub .rhero-talents button.selected{border-color:#ffd18f;box-shadow:0 0 0 1px #ffd18f80,inset 0 0 24px #b8893730;background:#513529}
+#pitV5Hub .rhero-attrs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+#pitV5Hub .rhero-attr{display:grid;grid-template-columns:minmax(90px,1fr) 33px 29px 33px;gap:6px;align-items:center;padding:8px;border:1px solid #765b52;border-radius:8px;background:#241b29}
+#pitV5Hub .rhero-attr span{font-size:12px;font-weight:750}
+#pitV5Hub .rhero-attr strong{text-align:center;font-size:16px}
+#pitV5Hub .rhero-attr button{border-radius:6px;border:1px solid #cb945c;color:#ffebc5;background:#482d35;min-height:32px;padding:2px;cursor:pointer}
+#pitV5Hub .rhero-attr button:disabled{opacity:.35}
+#pitV5Hub .rhero-talents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#pitV5Hub .rhero-talents button{min-height:92px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:11px;border:1px solid #746055;background:#25202d;border-radius:9px;color:#f0dbbf;cursor:pointer;text-align:left}
+#pitV5Hub .rhero-talents button span{font-size:10px;color:#e5b97f;text-transform:uppercase}
+#pitV5Hub .rhero-talents button strong{font-size:12px}
+#pitV5Hub .rhero-talents button small{font-size:10px;color:#abdcdb}
+#pitV5Hub .rhero-talents button:disabled{opacity:.48;cursor:not-allowed}
+#pitV5Hub .rhero-footer{margin-top:26px;padding:17px 20px;background:#2b242e;border:1px solid #916944;border-radius:11px}
+#pitV5Hub .rhero-footer p{font-size:12px;line-height:1.6;margin:0 0 12px;color:#e2c8a8}
+#pitV5Hub .rhero-actions{display:flex;flex-wrap:wrap;gap:9px}
+#pitV5Hub .rhero-actions button{border-radius:8px;border:1px solid #d0a26f;color:#241b21;background:linear-gradient(135deg,#c9955e,#f6d8a8);padding:11px 15px;min-height:44px;font-weight:850;cursor:pointer;font-size:12px}
+#pitV5Hub #rheroMessage{margin-top:11px;font-size:12px;color:#bcebd5}
+#pitV5Hub .rhero-empty{padding:24px;border:1px solid #8f7150;border-radius:10px}
+@media(max-width:900px){#pitV5Hub .rhero-layout{grid-template-columns:1fr}#pitV5Hub .rhero-visual{position:relative;max-width:400px;margin:auto;width:100%}#pitV5Hub .rhero-talents{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){#pitV5Hub .rhero-classes{grid-template-columns:repeat(2,minmax(0,1fr))}#pitV5Hub .rhero-attrs,#pitV5Hub .rhero-talents{grid-template-columns:1fr}#pitV5Hub .rhero-rewards>div{min-width:82px}}
