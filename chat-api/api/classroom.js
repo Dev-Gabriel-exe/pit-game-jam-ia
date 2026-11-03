@@ -113,7 +113,7 @@ module.exports=async function handler(req,res){
   if(req.method==='POST'&&action==='delete-student'){
    if(!isTeacher)return err(res,403,'Somente o professor pode excluir contas.');
    const id=clean(req.body?.studentId,40),confirmName=clean(req.body?.confirmName,100);
-   if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id)||!confirmName)
+   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)||!confirmName)
     return err(res,400,'Identifique a conta e confirme exatamente o nome cadastrado.');
    // SQL row identity + exact name + cohort protects against deleting another account
    // with the same display name, or an account from the other classroom.
