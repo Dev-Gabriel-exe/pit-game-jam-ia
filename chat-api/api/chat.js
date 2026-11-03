@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
   try {
     if(req.method==='GET' && action==='health') {
       const answer=await db.query("SELECT to_regclass('public.pit_students') IS NOT NULL AS students, to_regclass('public.pit_chat_messages') IS NOT NULL AS messages");
-      return res.status(200).json({ok:true,chat:true,db:answer.rows[0]?.students && answer.rows[0]?.messages});
+      return res.status(200).json({ok:true,chat:true,db:answer.rows[0]?.students && answer.rows[0]?.messages,version:'20261103-two-cohorts'});
     }
     if(req.method==='POST' && action==='join') {
       const room=roomCode(clean(req.body?.code,18));
