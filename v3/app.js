@@ -1095,7 +1095,7 @@ async function openChatImage(id,button){
  try{
   const url=new URL(BASE+'chat.js');url.pathname='/api/chat';url.searchParams.set('action','image');url.searchParams.set('messageId',id);
   const headers={};
-  if(TEACHER&&teacherPin)headers['X-PIT-Teacher-Pin']=teacherPin;
+  if(TEACHER&&teacherPin){headers['X-PIT-Teacher-Pin']=teacherPin;headers['X-PIT-Room']=activeRoom;}
   if(!TEACHER&&studentSession?.token)headers['X-PIT-Student-Token']=studentSession.token;
   const response=await fetch(url,{headers,cache:'no-store',signal:AbortSignal.timeout(15000)});
   if(!response.ok)throw Error('Acesso à imagem indisponível.');
