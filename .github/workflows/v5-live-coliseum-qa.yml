@@ -1,0 +1,30 @@
+name: V5 Real Coliseum Contract
+on:
+  push:
+    paths:
+      - 'chat-api/api/coliseum.js'
+      - 'chat-api/lib/v5-phase2-engine.js'
+      - 'v3/v5-coliseum-live.js'
+      - 'v5/coliseum-live.js'
+      - 'qa/v5-live-coliseum-contract.cjs'
+      - '.github/workflows/v5-live-coliseum-qa.yml'
+  pull_request:
+    paths:
+      - 'chat-api/api/coliseum.js'
+      - 'v3/v5-coliseum-live.js'
+      - 'v5/coliseum-live.js'
+      - 'qa/v5-live-coliseum-contract.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+      - run: node --check chat-api/api/coliseum.js && node --check v3/v5-coliseum-live.js && node --check v5/coliseum-live.js && node --check v3/v5-h1e-bridge.js && node --check v3/app.js
+      - run: node qa/v5-live-coliseum-contract.cjs
