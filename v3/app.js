@@ -1049,7 +1049,7 @@ function renderRoster(){
 function renderStudentDetails(){
  const user=roster.find(x=>x.id===selectedRoster);if(!user){selectedRoster=null;renderRoster();return}
  $('rosterContent').innerHTML='<div class="roster-detail"><div class="buttonrow"><button id="rosterBack" class="outline">← Voltar à turma</button></div>'+
- '<div class="roster-detail-header"><div><small style="color:#d9b483;font-weight:800;letter-spacing:.12em">FICHA DO AVENTUREIRO</small><h2>'+esc(user.display_name)+'</h2><p>Última atividade: '+new Date(user.last_seen_at).toLocaleString('pt-BR')+' · '+Number(user.approved||0)+' / 10 aprovadas</p></div><span class="roster-mark" aria-hidden="true">♟</span></div>'+
+ '<div class="roster-detail-header"><div><small style="color:#d9b483;font-weight:800;letter-spacing:.12em">FICHA DO AVENTUREIRO</small><h2>'+esc(user.display_name)+'</h2><p>Conta: ...'+esc(String(user.id).slice(-8))+' · Cadastro: '+new Date(user.joined_at).toLocaleString('pt-BR')+'</p><p>Última atividade: '+new Date(user.last_seen_at).toLocaleString('pt-BR')+' · '+Number(user.approved||0)+' / 10 aprovadas</p></div><span class="roster-mark" aria-hidden="true">♟</span></div>'+
  (user.stages||[]).map(st=>'<div class="concept-card"><strong>Missão '+String(st.stage).padStart(2,'0')+' · '+esc(mission(st.stage).title)+'</strong>'+
  '<span class="state-pill '+esc(st.status)+'">'+esc(chooseStatus(st.status))+'</span><p>Rota '+esc(String(st.route||'2d').toUpperCase())+'</p><div class="roster-evidence"><b>REGISTRO DO ALUNO</b><pre>'+esc(st.evidence||'Nenhum registro')+'</pre></div>'+
  (st.feedback?'<p><b>Retorno anterior:</b> '+esc(st.feedback)+'</p>':'')+
@@ -1063,6 +1063,26 @@ function renderStudentDetails(){
  resetAccess.type='button';resetAccess.className='outline btnsmall';resetAccess.id='rosterResetAccess';
  resetAccess.textContent='🔑 Gerar código de retorno para este aluno';
  $('rosterBack').parentElement.appendChild(resetAccess);
+ // Deleting an extra account is irreversible: demand exact display-name entry,
+ // then ask again with its unique UUID suffix to avoid confusing duplicates.
+ const removeAccount=document.createElement('button');
+ removeAccount.type='button';removeAccount.className='outline btnsmall';removeAccount.id='rosterDeleteAccount';
+ removeAccount.textContent='🗑 Excluir esta conta';
+ removeAccount.style.cssText='border-color:#b86b72;color:#ffd0d0';
+ $('rosterBack').parentElement.appendChild(removeAccount);
+ removeAccount.onclick=async()=>{
+  const typed=prompt('Excluir a conta '+user.display_name+' (final '+String(user.id).slice(-8)+')?\nDigite exatamente o nome do aluno para confirmar.\nO histórico, as entregas e as mensagens dessa conta serão apagados permanentemente.');
+  if(typed!==user.display_name){if(typed!==null)setToast('Nome diferente: a conta foi preservada.',true);return}
+  if(!confirm('CONFIRMAR EXCLUSÃO PERMANENTE de '+user.display_name+' (final '+String(user.id).slice(-8)+')? Esta ação não pode ser desfeita.'))return;
+  removeAccount.disabled=true;
+  try{
+   await call('classroom','delete-student','POST',{studentId:user.id,confirmName:typed});
+   if(selectedThread===user.id)selectedThread=null;
+   selectedRoster=null;
+   await loadRoster();
+   setToast('Conta '+user.display_name+' excluída. As outras contas foram preservadas.');
+  }catch(e){removeAccount.disabled=false;setToast(e.message,true)}
+ };
  resetAccess.onclick=async()=>{
   if(!confirm('Gerar novo código pessoal para '+user.display_name+'? O anterior deixará de funcionar.'))return;
   resetAccess.disabled=true;
