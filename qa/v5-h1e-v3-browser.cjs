@@ -32,7 +32,9 @@ const BASE='http://127.0.0.1:8899';
   });
   const page=await context.newPage();
   page.on('pageerror',e=>errors.push(pathname+' :: '+e.message));
-  page.on('request',req=>urls.push(req.url()));
+  // A real-session contract check below may legitimately request /api/;
+  // only the static preview pages must avoid backend requests.
+  if(pathname.includes('preview=1'))page.on('request',req=>urls.push(req.url()));
   await page.goto(BASE+pathname,{waitUntil:'domcontentloaded',timeout:45000});
   await page.waitForFunction(()=>!!window.PIT_V5_H1E,{timeout:25000});
   return {page,context};
@@ -162,7 +164,7 @@ const BASE='http://127.0.0.1:8899';
   await noPreview.context.close();
 
   assert(!urls.some(x=>/\/api\/|neon\.tech|vercel\.app/.test(x)),
-   'Static preview must make ZERO real API calls');
+   'Static preview must make ZERO real API calls: '+urls.filter(x=>/\/api\/|neon\.tech|vercel\.app/.test(x)).join(' | '));
   assert.deepEqual(errors,[],'Unexpected JS errors: '+errors.join(' | '));
   console.log('PASS V3+V5: original missions, isolated student visuals, native teacher without simulated release, roster shortcut, no exposed secrets.');
  }finally{await browser.close()}
