@@ -46,6 +46,17 @@
 
 Run `41684668123`: dois navegadores com `Mage.glb` e `Knight.glb` autênticos (ambos HTTP 200, ~3,59 e 3,66 MB), duas instâncias simultâneas de WebGL, aproximadamente **27 segundos** de luta cada. Sem exceções JavaScript, falhas de rede ou perdas de WebGL; FPS de **9 a 16** sob SwiftShader. Isso mostra que carregar GLBs não é, sozinho, condição suficiente para reproduzir o crash. O teste ainda não inclui o painel V3 completo nem a GPU da escola.
 
+## Terceiro achado: queda de FPS dentro do painel V3
+
+A regressão `qa/v6-duel-integrated-browser.cjs` reproduziu com dados **fictícios** o ciclo completo: V3 (em origem simulada do GitHub Pages) → Coliseu → convite aceito → snapshot → `iframe` WebGL com dois GLBs KayKit reais → atualização do estado do aluno. O teste intercepta chamadas à API e não se conecta à produção.
+
+- **Run 41685991643 (CSS original):** carregamento dos dois GLBs HTTP 200, sem exceções nem perda de contexto; porém amostras no primeiro navegador de **2, 5, 3 e 4 FPS**. A aba não fechou depois do fix da ponte, mas o desempenho ficou insuficiente.
+- **Run 41686321937 (sem blur de 14px):** FPS medidos de **4, 5, 7, 7** no primeiro e **6, 7, 3, 6** no segundo. O blur contribui, mas retirá-lo **não resolve** o desempenho de todos os navegadores.
+- **Comparação com V6 sem painel V3 (run 41684668123):** dois tabs com GLBs e animações reais durante ~27s, FPS **9–16**, sem travamento.
+- **QA antiga reforçada:** `qa/v5-live-coliseum-browser.cjs` não retorna mais HTTP 404 artificial aos GLBs, exige `v5ModelsLoaded===2` e passou em V6 no run `41686176269`.
+
+**Conclusão técnica limitada:** há ao menos dois problemas separados — desmontagem da aba por regra de staging (reproduzida e corrigida) e degradação de FPS na incorporação WebGL dentro da interface V3 (reproduzida e **ainda não resolvida**). Não é correto atribuir toda a falha ao Neon, à classe do personagem ou apenas ao blur sem outro experimento.
+
 ## Estado
 
 - [x] Branch `v6` criada a partir da `main` sem diferença inicial.
@@ -53,7 +64,9 @@ Run `41684668123`: dois navegadores com `Mage.glb` e `Knight.glb` autênticos (a
 - [x] Teste de dois navegadores reais criado exclusivamente na `v6`.
 - [x] Primeiro teste com modelos reais: dois navegadores por ~27s, sem travamentos em CI (não conclui homologação de PCs reais).
 - [x] Reprodução do fechamento indevido do duelo durante o refresh V3; correção feita só na v6, pendente nova validação.
-- [ ] Investigação independente das falhas de GPU/renderização.
+- [x] Queda de FPS no Coliseu integrado reproduzida em dois navegadores com modelos reais.
+- [ ] Otimizar visualização no painel e repetir regressão sem aceitar menos de 5 FPS persistentes.
+- [ ] Homologar GPU dos PCs reais e concorrência de até 30 alunos.
 - [ ] Regressões de 30 combatentes e de múltiplos computadores.
 - [ ] Homologação final antes de cogitar integração à `main`.
 
