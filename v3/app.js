@@ -887,6 +887,31 @@ function setChatEnabled(enabled){
  if(submit)submit.disabled=!enabled||chatSending;
 }
 $('chatRetry').onclick=()=>loadChat();
+let lastTeacherChatRosterAt=0;
+function renderTeacherChatProfile(thread=null,messages=[]){
+ if(!TEACHER||!$('chatStudentInfo'))return;
+ const profile=thread?roster.find(student=>student.id===thread.id):null;
+ const active=Number(profile?.active_stage)||Number(messages.at(-1)?.mission)||0;
+ const stage=profile?.stages?.find(item=>Number(item.stage)===active)
+  ||profile?.stages?.at(-1)||null;
+ const approved=Number(profile?.approved)||0;
+ const last=profile?.last_seen_at||thread?.last_at||null;
+ const time=last?new Date(last).getTime():NaN;
+ $('chatStudentName').textContent=thread?.display_name||'Escolha um aluno';
+ $('chatStudentRole').textContent=thread?'Aventureiro da turma':'Acompanhamento individual';
+ $('chatStudentMission').textContent=active?'Missão '+String(active).padStart(2,'0')+' / 10':'Aguardando entrada';
+ $('chatStudentProgress').textContent=profile?approved+' / 10 aprovadas':'Aguardando dados';
+ $('chatStudentStatus').textContent=profile?chooseStatus(stage?.status):'Aguardando dados';
+ $('chatStudentActivity').textContent=Number.isFinite(time)
+  ?new Date(time).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})
+  :'Sem atividade registrada';
+ $('chatViewProgress').disabled=!thread;
+}
+$('chatViewProgress')?.addEventListener('click',()=>{
+ if(!TEACHER||!selectedThread)return;
+ selectedRoster=selectedThread;
+ openDrawer('roster');
+});
 async function loadChat(){
  if(!chatOpen)return;
  const request=++chatRequest;
@@ -897,11 +922,12 @@ async function loadChat(){
    if(!chatOpen||request!==chatRequest)return;
    const threads=response.threads||[];
    if(!threads.some(t=>t.id===selectedThread))selectedThread=threads[0]?.id||null;
-   $('chatThreads').innerHTML=threads.map(t=>'<button type="button" data-thread="'+esc(t.id)+'" aria-pressed="'+String(t.id===selectedThread)+'" class="'+(t.id===selectedThread?'active':'')+'">'+esc(t.display_name)+(t.unread?' • '+Number(t.unread):'')+'</button>').join('')||'<p class="chat-empty">Nenhuma conversa disponível.</p>';
+   $('chatThreads').innerHTML=threads.map(t=>'<button type="button" data-thread="'+esc(t.id)+'" aria-pressed="'+String(t.id===selectedThread)+'" class="'+(t.id===selectedThread?'active':'')+'"><span class="thread-name"><strong>'+esc(t.display_name)+'</strong><small>'+(t.unread?Number(t.unread)+' não lida(s)':'Conversa privada')+'</small></span></button>').join('')||'<p class="chat-empty">Nenhuma conversa disponível.</p>';
    $('chatThreads').querySelectorAll('button').forEach(b=>b.onclick=()=>{selectedThread=b.dataset.thread;loadChat()});
    if(!selectedThread){
     setChatEnabled(false);
     $('chatMessages').innerHTML='<div class="chat-empty"><strong>Aguardando o primeiro aluno</strong>Quando alguém entrar na turma, a conversa individual aparecerá aqui.</div>';
+    renderTeacherChatProfile();
     setChatStatus('Nenhum aluno disponível para responder.');return;
    }
    setChatEnabled(true);
@@ -910,6 +936,18 @@ async function loadChat(){
    const read=await call('chat','messages','GET',null,{studentId:selectedThread});
    if(!chatOpen||request!==chatRequest)return;
    renderChat(read.messages);
+   // Teacher-only roster provides approved stages/last activity; never
+   // infer grades or student progress from chat message bodies.
+   if(Date.now()-lastTeacherChatRosterAt>45000){
+    try{
+     const classroom=await call('classroom','roster');
+     if(!chatOpen||request!==chatRequest)return;
+     roster=classroom.roster||[];
+     lastTeacherChatRosterAt=Date.now();
+    }catch{ /* Chat remains available when progress service is offline. */ }
+   }
+   if(!chatOpen||request!==chatRequest)return;
+   renderTeacherChatProfile(student,read.messages||[]);
    setChatStatus('Conversa individual com '+(student?.display_name||'aluno')+'.','success');
    if(student?.unread){await call('chat','read','POST',{studentId:selectedThread});await refreshUnread()}
   }else{
