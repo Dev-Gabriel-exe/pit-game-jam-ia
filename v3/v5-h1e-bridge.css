@@ -1,7 +1,7 @@
 #pitV5HubButton{background:linear-gradient(135deg,#493025,#29192b);border:1px solid #d8a66e;color:#ffe4b7;font:800 12px Cinzel,Georgia,serif;padding:10px 14px;min-height:39px;white-space:nowrap}
 #pitV5HubButton:hover{filter:brightness(1.14)}#pitV5HubButton:focus-visible{outline:3px solid #f5d6a7;outline-offset:2px}
 .pit-v5-h1e-active{overflow:hidden}#pitV5Hub[hidden]{display:none!important}
-#pitV5Hub.pit-v5-h1e-overlay{position:fixed;z-index:2147483000;inset:0;display:flex;justify-content:center;align-items:center;padding:12px;background:#07060cf0;backdrop-filter:blur(14px);overflow:auto}
+#pitV5Hub.pit-v5-h1e-overlay{position:fixed;z-index:2147483000;inset:0;display:flex;justify-content:center;align-items:center;padding:12px;background:#07060cf0;backdrop-filter:none;/* V6 benchmark: test expensive full-screen blur over a live WebGL iframe */overflow:auto}
 #pitV5Hub .pit-v5-h1e-shell{display:flex;flex-direction:column;background:linear-gradient(155deg,#211822,#0d0d16 60%);border:1px solid #c79e67ab;box-shadow:0 20px 80px #000e;width:min(1460px,100%);height:min(960px,calc(100dvh - 24px));min-height:320px;overflow:hidden}
 #pitV5Hub .pit-v5-h1e-head{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:15px 23px;border-bottom:1px solid #b48c576b;background:#1b151e}
 #pitV5Hub .pit-v5-h1e-head small{font:800 11px system-ui,sans-serif;letter-spacing:.14em;color:#d9a975}

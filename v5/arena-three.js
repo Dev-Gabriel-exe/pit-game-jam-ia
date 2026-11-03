@@ -7,7 +7,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {buildEclipseCitadel} from './arena-citadel.js';
-import * as KAYKIT_MOTION from './kaykit-motion-pack.mjs';
+import * as KAYKIT_MOTION from './kaykit-motion-pack.mjs?v=20261103-duel-pilot1';
 import {createArenaAudio} from './arena-audio.js';
 const CORE=window.PIT_V5_CORE, PHASE2=window.PIT_V5_PHASE2, ASSETS=window.PIT_V5_ASSETS||{};
 const TALENT_FX=window.PIT_V5_TALENT_VFX;
@@ -307,14 +307,18 @@ function loadMedievalArchitecture(root,worldScale,quality,container){
    container.dataset.v5NatureMeshes=natural.map(x=>x.file).join(',');
  });
 }
-export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',onEvent=()=>{}}={}){
+export function createStage(container,{mode='hero',quality='auto',arenaScale=1,spriteEffects='off',renderScale=1,deferRenderUntilModels=false,onEvent=()=>{}}={}){
  const worldScale=Math.max(1,Math.min(5,Number(arenaScale)||1));
  const stadiumScale=worldScale>1.3?worldScale/2.6:1;
  if(!container)throw Error('Stage container is required');
  if(!window.WebGL2RenderingContext)throw Error('Este dispositivo não suporta WebGL 2.');
  const renderer=new THREE.WebGLRenderer({antialias:quality!=='low',alpha:false,powerPreference:'high-performance'});
  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,quality==='low'?.85:1.18));
+ // V6-only experiment: reduce pixel workload of embedded WebGL without changing physics or assets.
+ const normalizedScale=Number.isFinite(renderScale)?Math.max(.45,Math.min(1,renderScale)):1;
+ const actualPixelRatio=Math.min(window.devicePixelRatio||1,quality==='low'?.85:1.18)*normalizedScale;
+ renderer.setPixelRatio(actualPixelRatio);
+ container.dataset.v5RenderPixelRatio=actualPixelRatio.toFixed(3);
  renderer.shadowMap.enabled=quality!=='low';
  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -1290,6 +1294,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     framingPose=null;framingRecalc=-Infinity;
     container.dataset.v5CameraAudience='student';
     container.dataset.v5StudentCamera='spectating';
+    container.dataset.v5CameraPreset='director';
     container.dataset.v5CameraDirector='on';
     container.dispatchEvent(new CustomEvent('v5-student-view',{detail:transition}));
    }
@@ -1319,6 +1324,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
  },50);
  function loop(t){
   if(!live)return;
+  // On a shared replay, do not compile/rasterize the full empty arena while
+  // GLTF decoding is still in flight. Software WebGL can otherwise block
+  // loading long enough for successful HTTP responses to time out in GLTFLoader.
+  if(deferRenderUntilModels&&(!simulation||modelLoadedCount<simulation.fighters.length||modelErrorCount)){
+   previous=0;monitorFrames=0;monitorStarted=performance.now();return;
+  }
   const rawDt=Math.max(0,(t-previous)/1000||0);
   if(previous)worstFrameMs=Math.max(worstFrameMs,rawDt*1000);
   const dt=Math.min(.06,rawDt);
@@ -1501,7 +1512,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     controls.target.lerp(pose.look,ease);
     camera.position.lerp(pose.boom,ease);
     // Negative = camera stays BEHIND the hero's engine-facing direction.
-    followBack.set(camera.position.x-f.x,0,camera.position.z-f.z);
+    const heroPosition=individuals.get(followId)?.mesh.root.position||f;
+    followBack.set(camera.position.x-heroPosition.x,0,camera.position.z-heroPosition.z);
+    if(cameraViewer?.state().audience==='student'&&followBack.x*pose.fx+followBack.z*pose.fz>=0){
+     camera.position.copy(pose.boom);controls.target.copy(pose.look);
+     followBack.set(camera.position.x-heroPosition.x,0,camera.position.z-heroPosition.z);
+    }
     const len=Math.max(.001,followBack.length());
     container.dataset.v5FollowBackDot=String(((followBack.x*pose.fx+followBack.z*pose.fz)/len).toFixed(3));
    }

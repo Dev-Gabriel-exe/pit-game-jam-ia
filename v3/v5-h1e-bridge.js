@@ -248,8 +248,10 @@
   updateSafety();
   if(!hub.hidden){
    for(const key of ['duel','duel3d'])nav.querySelector('[data-tab="'+key+'"]')?.toggleAttribute('disabled',
-    !allowedToDuel()&&!previewRequested);
-   if(['duel','duel3d'].includes(currentTab)&&!allowedToDuel()&&!previewRequested)chooseTab('hero');
+    !allowedToDuel()&&!previewRequested&&!productionLive());
+   // In production, the Coliseum server (not localhost staging) authorizes duels.
+   // The old condition auto-closed the live iframe during ordinary V3 state refreshes.
+   if(['duel','duel3d'].includes(currentTab)&&!allowedToDuel()&&!previewRequested&&!productionLive())chooseTab('hero');
    else{statusNode.textContent=statusText();if(currentTab&&(tabs().find(t=>t.key===currentTab)?.native||(productionLive()&&['duel','arena'].includes(currentTab)))){
     if(context.role==='teacher')renderTeacherPanel(currentTab);
     else if(productionLive()&&['duel','arena'].includes(currentTab))renderStudentLive(currentTab);

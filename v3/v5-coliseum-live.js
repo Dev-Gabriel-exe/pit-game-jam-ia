@@ -81,10 +81,11 @@
    a.root.innerHTML='<div class="pit-live-toolbar"><button type="button" data-back>← Voltar ao Coliseu</button>'+
     '<div><strong>⚔ '+(a.viewing.kind==='arena'?'ARENA M'+a.viewing.mission:'DUELO 1 × 1')+'</strong>'+
     '<small>Confronto compartilhado · resultado validado pelo servidor</small></div></div>'+
-    '<iframe class="pit-live-replay" title="Replay 3D do combate" src="./v5/coliseum-live.html?v=20261103-small3d-return1" allow="autoplay; fullscreen"></iframe>';
+    '<iframe class="pit-live-replay" title="Replay 3D do combate" src="./v5/coliseum-live.html?v=20261103-student-camera1" allow="autoplay; fullscreen"></iframe>';
    const frame=$(a.root,'iframe');
    frame.addEventListener('load',()=>frame.contentWindow?.postMessage({
-    type:'PIT_COLISEUM_REPLAY',match:a.viewing},location.origin),{once:true});
+    type:'PIT_COLISEUM_REPLAY',match:a.viewing,
+    studentHeroId:a.ctx.role==='student'?a.ctx.studentId:null},location.origin),{once:true});
    $(a.root,'[data-back]').onclick=()=>{
     // Dispose of the WebGL iframe immediately, before fetching the lobby again.
     // Otherwise its render loop can keep consuming GPU memory behind the lobby.
