@@ -138,7 +138,7 @@ async function studentState(db,user,state){
    ?(x.winner_id===null?'draw':String(x.winner_id)===String(user.id)?'win':'loss'):null}));
  const busy=invites.some(x=>x.status==='pending');
  return {ok:true,role:'student',room:user.room,stage:state.current_stage,duelsEnabled:enabled,
-  eligible:status,heroSaved:!!hasHero,optedIn:presence.rows[0]?.online===true,
+  eligible:status,approved:await approved(db,user.id),heroSaved:!!hasHero,optedIn:presence.rows[0]?.online===true,
   peers:status&&hasHero&&enabled&&!busy?qpeers.rows.map(x=>({id:x.id,name:x.display_name})):[],
   invites,lobby:await arenaLobby(db,user.room,user),
   arena:qarenas.rows.map(x=>({id:x.id,mission:x.mission,createdAt:x.created_at,winner:x.winner,joined:x.joined})),busy};
