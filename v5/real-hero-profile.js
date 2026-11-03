@@ -1,6 +1,6 @@
 /* Forja do herói — perfil REAL vinculado ao aluno, sem personagens de demonstração.
  * Recompensas vêm EXCLUSIVAMENTE do total de fichas aprovado no servidor V3.
- * Build local temporário, escopado por (turma, UUID); nunca é fingido como salvo no Neon.
+ * A ficha no Neon é a fonte principal; uma cópia local mantém migração e contingência.
  */
 (function(root,factory){
  const api=factory();
@@ -12,6 +12,7 @@
  const ATTR_LABEL={FOR:'Força',DES:'Destreza',INT:'Intelecto',VIT:'Vitalidade',DEF:'Defesa'};
  const ICON={warrior:'⚔',mage:'✦',hunter:'➶',guardian:'◆'};
  const COPY_VERSION='pit-v5-personagem-local-1';
+ const SYNC_URL='https://pit-game-jam-chat.vercel.app/api/hero';
  const clamp=(x,min,max)=>Math.max(min,Math.min(max,Number.isFinite(Number(x))?Number(x):min));
  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const storageKey=(room,id)=>'pit_v5_real_hero_1_'+String(room||'PITGAME26').toUpperCase()+'_'+String(id||'');
@@ -46,7 +47,43 @@
     ATTR.some(k=>profile.attributes[k]!==v.attributes?.[k]))throw Error('A ficha excede as recompensas aprovadas deste aluno');
   return profile;
  }
- let model={key:null,draft:null,saved:null,approved:0,room:'',id:'',name:'',flash:'',warning:''};
+ let model={key:null,draft:null,saved:null,approved:0,room:'',id:'',name:'',flash:'',warning:'',remoteState:'idle',revision:0,serverApproved:null,remoteExists:false,saving:false,localBackup:null};
+ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ const tokenOf=context=>typeof context.tokenProvider==='function'?context.tokenProvider():null;
+ const canSync=context=>!context.visualPreview&&context.authenticated&&
+  location.hostname==='dev-gabriel-exe.github.io'&&/^[a-f\d]{64}$/i.test(String(tokenOf(context)||''));
+ async function syncFromNeon(container,context){
+  if(model.remoteState==='loading'||!canSync(context))return;
+  const key=model.key,token=tokenOf(context);
+  model.remoteState='loading';mount(container,context);
+  try{
+   const response=await fetch(SYNC_URL,{headers:{'X-PIT-Student-Token':token},cache:'no-store',signal:AbortSignal.timeout(12000)});
+   const data=await response.json();
+   if(!response.ok||!data.ok)throw Error(data.error||'Servidor indisponível');
+   if(model.key!==key||token!==tokenOf(context))return;
+   if(data.room!==model.room||!Number.isInteger(data.approved)||!Number.isInteger(data.revision))throw Error('Resposta de personagem inválida');
+   model.serverApproved=data.approved;model.approved=data.approved;
+   const localDraft=clean(model.draft,data.approved,window.PIT_V5_PHASE2);
+   if(data.exists){
+    const remote=clean(data.profile,data.approved,window.PIT_V5_PHASE2);
+    const backup=(()=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}})();
+    if(backup&&!same(clean(backup,data.approved,window.PIT_V5_PHASE2),remote))model.localBackup=clean(backup,data.approved,window.PIT_V5_PHASE2);
+    model.draft=remote;model.saved=structuredClone(remote);
+    model.warning=model.localBackup?'A ficha do Neon foi recuperada. Há também uma cópia diferente neste computador, preservada para você escolher.':'';
+   }else{
+    // Migração manual: a ficha local já existente NÃO é enviada sem o aluno salvar.
+    model.draft=localDraft;model.saved=structuredClone(create());
+    if(!same(localDraft,create()))model.warning='Sua ficha deste computador foi encontrada. Clique em Salvar no Neon para vinculá-la à conta.';
+   }
+   model.revision=data.revision;model.remoteExists=!!data.exists;
+   model.remoteState='ready';model.flash='';
+  }catch(e){
+   if(model.key!==key||token!==tokenOf(context))return;
+   model.remoteState='offline';model.warning='Servidor do personagem indisponível: '+e.message+'. Sua ficha local foi mantida.';
+  }
+  mount(container,context);
+ }
+
  function load(room,id,approved,catalog){
   const key=storageKey(room,id);
   if(key===model.key){
@@ -60,7 +97,8 @@
   }
   let raw=null;try{raw=JSON.parse(localStorage.getItem(key)||'null')}catch{}
   model={key,room,id,approved,name:'',draft:clean(raw||create(),approved,catalog),
-   saved:raw,flash:'',warning:''};
+   saved:raw,flash:'',warning:'',remoteState:'idle',revision:0,serverApproved:null,
+   remoteExists:false,saving:false,localBackup:null};
   if(raw&&JSON.stringify(clean(raw,approved,catalog))!==JSON.stringify(raw))
    model.warning='A ficha guardada foi ajustada ao total atual de missões aprovadas.';
  }
@@ -74,15 +112,22 @@
   if(!/^[0-9a-f-]{36}$/i.test(id)||!context.authenticated||context.visualPreview){
    container.innerHTML='<div class="rhero-empty">Entre como aluno para acessar seu próprio personagem. Nenhum personagem fictício será carregado.</div>';return;
   }
-  const approved=clamp(context.approved,0,10);
-  load(context.room||'PITGAME26',id,approved,catalog);
+  const reported=clamp(context.approved,0,10);
+  load(context.room||'PITGAME26',id,reported,catalog);
+  const approved=model.serverApproved==null?reported:model.serverApproved;
+  model.approved=approved;
+  if(model.remoteState==='idle'&&canSync(context))Promise.resolve().then(()=>syncFromNeon(container,context));
   model.name=String(context.studentName||'Aventureiro').slice(0,56);
   const m=model.draft,pts=approved*2-ATTR.reduce((n,k)=>n+m.attributes[k],0);
   const talentsLeft=approved-m.talents.length;
   const classes=Object.entries(catalog.CLASSES);
   const list=catalog.TALENTS[m.klass]||[];
   const chosen=catalog.CLASSES[m.klass];
-  const dirty=JSON.stringify(m)!==JSON.stringify(model.saved?clean(model.saved,approved,catalog):create());
+  const dirty=!same(m,model.saved?clean(model.saved,approved,catalog):create());
+  const busy=model.remoteState==='loading'||model.saving;
+  const info=model.remoteState==='ready'?'☁ Neon conectado · ficha da conta do aluno':
+   model.remoteState==='loading'?'Buscando personagem no Neon...':
+   '⚠ Sem sincronização neste momento · somente cópia local';
   container.innerHTML='<section class="rhero-root" aria-label="Meu herói real">'+
    '<div class="rhero-head"><div><span>✦ FORJA DO AVENTUREIRO · '+esc(model.room)+'</span><h3>'+esc(model.name)+'</h3>'+
    '<p>Seu personagem usa apenas recompensas das fichas aprovadas pelo professor.</p></div>'+
@@ -96,21 +141,24 @@
    '<p>A personagem e os talentos escolhidos ficam vinculados a esta ficha do aluno.</p></aside>'+
    '<div class="rhero-settings"><h4>1. Escolha sua classe</h4>'+
    '<div class="rhero-classes">'+classes.map(([k,v])=>
-    '<button type="button" data-rhero-class="'+k+'" aria-pressed="'+(k===m.klass)+'" class="'+(k===m.klass?'selected':'')+'"><span>'+ICON[k]+'</span><strong>'+esc(v.name)+'</strong></button>').join('')+'</div>'+
+    '<button type="button" data-rhero-class="'+k+'" aria-pressed="'+(k===m.klass)+'" '+(busy?'disabled':'')+' class="'+(k===m.klass?'selected':'')+'"><span>'+ICON[k]+'</span><strong>'+esc(v.name)+'</strong></button>').join('')+'</div>'+
    '<h4>2. Distribua os atributos <small>2 por missão aprovada</small></h4>'+
    '<div class="rhero-attrs">'+ATTR.map(a=>'<div class="rhero-attr"><span>'+ATTR_LABEL[a]+'</span>'+
-    '<button type="button" data-rhero-minus="'+a+'" '+(m.attributes[a]===0?'disabled':'')+' aria-label="Reduzir '+ATTR_LABEL[a]+'">−</button>'+
+    '<button type="button" data-rhero-minus="'+a+'" '+(busy||m.attributes[a]===0?'disabled':'')+' aria-label="Reduzir '+ATTR_LABEL[a]+'">−</button>'+
     '<strong>'+m.attributes[a]+'</strong>'+
-    '<button type="button" data-rhero-plus="'+a+'" '+(pts===0?'disabled':'')+' aria-label="Aumentar '+ATTR_LABEL[a]+'">+</button></div>').join('')+'</div>'+
+    '<button type="button" data-rhero-plus="'+a+'" '+(busy||pts===0?'disabled':'')+' aria-label="Aumentar '+ATTR_LABEL[a]+'">+</button></div>').join('')+'</div>'+
    '<h4>3. Escolha os talentos <small>'+m.talents.length+' / '+approved+' selecionados</small></h4>'+
-   '<div class="rhero-talents" role="group" aria-label="Trinta talentos da classe">'+list.map((t,i)=>'<button type="button" data-rhero-talent="'+esc(t.id)+'" aria-pressed="'+m.talents.includes(t.id)+'" '+(!m.talents.includes(t.id)&&talentsLeft===0?'disabled':'')+' class="'+(m.talents.includes(t.id)?'selected':'')+'">'+
+   '<div class="rhero-talents" role="group" aria-label="Trinta talentos da classe">'+list.map((t,i)=>'<button type="button" data-rhero-talent="'+esc(t.id)+'" aria-pressed="'+m.talents.includes(t.id)+'" '+(busy||(!m.talents.includes(t.id)&&talentsLeft===0)?'disabled':'')+' class="'+(m.talents.includes(t.id)?'selected':'')+'">'+
     '<span>'+esc(t.id)+' · '+esc(t.type)+'</span><strong>'+esc(t.name)+'</strong>'+
     '<small>'+esc(t.primary)+' / '+esc(t.secondary)+'</small></button>').join('')+'</div>'+
    '</div></div>'+
-   '<div class="rhero-footer"><p><strong>Salvamento local:</strong> a ficha fica neste navegador, separada por aluno e turma. O XP vem do servidor; as escolhas da Forja ainda não sincronizam entre computadores. Guarde seu código para usar outro PC.</p>'+
-   '<div class="rhero-actions"><button type="button" id="rheroSave">💾 Salvar personagem neste navegador</button>'+
+   '<div class="rhero-footer"><p><strong>'+esc(info)+'</strong> · O XP e os pontos são autorizados pelas missões aprovadas. Em outro computador, recupere a mesma conta com seu código pessoal.</p>'+
+   '<div class="rhero-actions"><button type="button" id="rheroSave" '+(busy?'disabled':'')+'>'+
+    (model.remoteState==='ready'?'☁ Salvar personagem no Neon':'💾 Salvar cópia local')+'</button>'+
    '<button type="button" id="rheroExport">📋 Copiar ficha para a próxima aula</button>'+
-   '<button type="button" id="rheroImport">↥ Importar ficha</button></div>'+
+   '<button type="button" id="rheroImport" '+(busy?'disabled':'')+'>↥ Importar ficha</button>'+
+   '<button type="button" id="rheroReload" '+(busy?'disabled':'')+'>↻ Atualizar do Neon</button>'+
+   (model.localBackup?'<button type="button" id="rheroUseLocal" '+(busy?'disabled':'')+'>Usar ficha antiga deste PC</button>':'')+'</div>'+
    '<div role="status" id="rheroMessage">'+esc(model.warning||model.flash||(dirty?'Há alterações ainda não salvas.':'Pronto para configurar seu herói.'))+'</div></div>'+
    '</section>';
   const mutate=(change)=>{change();model.warning='';model.flash='Alterações ainda não salvas.';mount(container,context)};
@@ -131,13 +179,42 @@
     else if(m.talents.length<approved)m.talents.push(id);
    });
   };
-  container.querySelector('#rheroSave').onclick=()=>{
+  container.querySelector('#rheroSave').onclick=async()=>{
+   if(busy)return;
+   const key=model.key,token=tokenOf(context);
    try{
-    const cleanProfile=clean(model.draft,approved,catalog);
-    if(JSON.stringify(cleanProfile)!==JSON.stringify(model.draft))throw Error('Seu personagem excede os pontos aprovados');
-    localStorage.setItem(model.key,JSON.stringify(cleanProfile));
-    model.saved=structuredClone(cleanProfile);model.flash='✓ Personagem salvo NESTE navegador, para esta turma e este aluno.';
-   }catch(e){model.flash='Falha ao salvar: '+e.message}
+    const profile=clean(model.draft,approved,catalog);
+    if(!same(profile,model.draft))throw Error('Seu personagem excede os pontos aprovados');
+    // Cópia de segurança antes de toda operação, sem sobrescrever o servidor sem autorização.
+    localStorage.setItem(key,JSON.stringify(profile));
+    if(model.remoteState!=='ready'||!canSync(context)){
+     model.saved=structuredClone(profile);model.flash='✓ Cópia local salva. O Neon não confirmou este salvamento; use Atualizar do Neon quando voltar a conexão.';
+     return;
+    }
+    model.saving=true;mount(container,context);
+    const response=await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'application/json','X-PIT-Student-Token':token},
+     body:JSON.stringify({profile:{klass:profile.klass,attributes:profile.attributes,talents:profile.talents},revision:model.revision}),
+     cache:'no-store',signal:AbortSignal.timeout(12000)});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok){if(response.status===409)throw Error('Conflito: sua ficha mudou em outro computador. Atualize do Neon antes de substituir.');throw Error(data.error||'Falha no salvamento no Neon');}
+    if(model.key!==key||token!==tokenOf(context))return;
+    model.draft=clean(data.profile,data.approved,catalog);model.saved=structuredClone(model.draft);
+    model.serverApproved=data.approved;model.revision=data.revision;model.remoteExists=true;
+    model.localBackup=null;model.warning='';model.flash='✓ Personagem salvo no Neon! Vinculado à sua conta e disponível em outro computador.';
+   }catch(e){
+    if(model.key===key){model.warning='Sua ficha continua guardada neste navegador.';
+     model.flash='⚠ Neon não confirmou: '+e.message;model.remoteState='offline';}
+   }finally{if(model.key===key){model.saving=false;mount(container,context)}}
+  };
+  container.querySelector('#rheroReload').onclick=()=>{
+   if(busy)return;
+   try{localStorage.setItem(model.key,JSON.stringify(model.draft))}catch{}
+   model.remoteState='idle';model.warning='';model.flash='';mount(container,context);
+  };
+  if(model.localBackup)container.querySelector('#rheroUseLocal').onclick=()=>{
+   if(busy)return;
+   model.draft=clean(model.localBackup,approved,catalog);model.localBackup=null;
+   model.flash='Ficha antiga recuperada. Clique em Salvar personagem no Neon para confirmar esta versão.';
    mount(container,context);
   };
   container.querySelector('#rheroExport').onclick=async()=>{

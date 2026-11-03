@@ -75,7 +75,7 @@
   safety.textContent=isTeacher?'':isLive()?
    'HOMOLOGAÇÃO COM DADOS FICTÍCIOS: API isolada habilitada por configuração local. A produção permanece desligada.':
    context.visualPreview?'VISUALIZAÇÃO DE PRÉVIA: sem registros ou recompensas reais.':
-   'MEU HERÓI REAL: os pontos vêm das fichas aprovadas. Escolhas salvas no navegador atual e transferíveis por código de ficha; sem sincronização de builds no servidor ainda.';
+   'MEU HERÓI REAL: a ficha é sincronizada com a conta no Neon. O código pessoal de retorno permite recuperá-la em outro computador; rascunhos locais são preservados.';
   statusNode.textContent=statusText();
   if(openButton){
    openButton.hidden=!context.visualPreview&&!context.authenticated&&!previewRequested;
@@ -94,7 +94,7 @@
   const key=context.room+'-'+context.studentId+'-'+context.approved;
   if(teacherPanel.dataset.heroKey===key&&teacherPanel.querySelector('.rhero-root'))return;
   teacherPanel.dataset.heroKey=key;
-  window.PIT_V5_REAL_HERO.mount(teacherPanel,context);
+  window.PIT_V5_REAL_HERO.mount(teacherPanel,{...context,tokenProvider});
  }
 
  function renderTeacherPanel(key){
