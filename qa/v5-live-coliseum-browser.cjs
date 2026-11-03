@@ -35,7 +35,8 @@ const server=http.createServer((req,res)=>{
    if(!file.startsWith(path.resolve(root,'node_modules/three')+path.sep)||!fs.existsSync(file))return route.fulfill({status:404});
    return route.fulfill({status:200,headers:{'content-type':'text/javascript','access-control-allow-origin':'*'},body:fs.readFileSync(file)});
   });
-  await page.route('https://raw.githubusercontent.com/**',route=>route.fulfill({status:404}));
+  // V6: allow the four official KayKit GLBs to load from their real source.
+  // Mocking all GLBs to 404 made prior replay QA pass without any real models.
   await page.goto(rootURL+'/fixture');
   const frame=page.frameLocator('#viewer');
   await frame.locator('#replayStatus').waitFor();
@@ -44,6 +45,12 @@ const server=http.createServer((req,res)=>{
    f.contentWindow.postMessage({type:'PIT_COLISEUM_REPLAY',match:data},location.origin);
   },match);
   await frame.locator('#playReplay:not([disabled])').waitFor({timeout:25000});
+  await page.waitForFunction(()=>{
+   const stage=document.querySelector('#viewer')?.contentDocument?.querySelector('#arenaStage');
+   return Number(stage?.dataset.v5ModelsLoaded||0)===2;
+  },null,{timeout:110000});
+  assert.equal(await frame.locator('#arenaStage').getAttribute('data-v5-models-failed'),'0',
+   'No real KayKit GLB is allowed to fail silently in V6');
   assert.equal(await frame.locator('#followHero option').count(),3);
   assert.equal(await frame.locator('#scoreboard>div').count(),2);
   await frame.locator('#playReplay').click();
