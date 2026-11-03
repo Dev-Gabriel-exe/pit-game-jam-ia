@@ -30,7 +30,7 @@
  let context={role:document.body.dataset.role==='teacher'?'teacher':'student',
   stage:1,status:null,approved:0,authenticated:false,visualPreview:false,
   studentId:null,studentName:'',room:'PITGAME26'},
- tokenProvider=null,lastFocus=null,currentTab=null,tabFrame=null,focusable=[];
+ tokenProvider=null,teacherPinProvider=null,lastFocus=null,currentTab=null,tabFrame=null,focusable=[];
  const hub=document.createElement('section');
  hub.className='pit-v5-h1e-overlay';
  hub.id='pitV5Hub';
@@ -58,12 +58,14 @@
  const allowedToDuel=()=>context.visualPreview||
   (isLive()&&['submitted','approved'].includes(context.status));
  const isLive=()=>staging&&context.authenticated&&!context.visualPreview;
+ const productionLive=()=>location.origin==='https://dev-gabriel-exe.github.io'&&context.authenticated&&!context.visualPreview;
  function statusText(){
   if(context.role==='teacher')
    return 'Professor · Missão '+context.stage+' / 10 · controle da turma';
   const progress='Missão '+context.stage+' / 10 · '+context.approved+' aprovada(s)';
   if(context.visualPreview)return progress+' · MODO VISUAL FICTÍCIO';
   if(!context.authenticated)return progress+' · aguardando identificação';
+  if(productionLive())return progress+' · duelos e arenas conectados à sua turma';
   return progress+' · '+(allowedToDuel()?'duelos habilitados em homologação':
    'duelos reais ainda sem sincronização com o servidor');
  }
@@ -72,7 +74,8 @@
   edition.textContent=isTeacher?'✦ PIT GAME JAM IA · PAINEL DO PROFESSOR':
    '✦ PIT GAME JAM IA · FORJA & COLISEU';
   safety.hidden=isTeacher;
-  safety.textContent=isTeacher?'':isLive()?
+  safety.textContent=isTeacher?'':productionLive()?
+   'HERÓI E COLISEU: duelos 1 × 1 sincronizados e arenas M5/M10 iniciadas pelo professor; batalhas não atribuem XP.':isLive()?
    'HOMOLOGAÇÃO COM DADOS FICTÍCIOS: API isolada habilitada por configuração local. A produção permanece desligada.':
    context.visualPreview?'VISUALIZAÇÃO DE PRÉVIA: sem registros ou recompensas reais.':
    'MEU HERÓI REAL: a ficha é sincronizada com a conta no Neon. O código pessoal de retorno permite recuperá-la em outro computador; rascunhos locais são preservados.';
@@ -84,7 +87,7 @@
  }
  function clearFrame(){frame.removeAttribute('src');frame.title='Ferramenta V5';}
  const tabs=()=>context.role==='student'&&!context.visualPreview?
-  TABS.student.filter(x=>x.key==='hero'):
+  TABS.student.filter(x=>productionLive()?['hero','duel','arena'].includes(x.key):x.key==='hero'):
   TABS[context.role]||TABS.student;
  function renderStudentHeroPanel(){
   if(!window.PIT_V5_REAL_HERO){
@@ -99,6 +102,7 @@
 
  function renderTeacherPanel(key){
   if(context.role!=='teacher')return;
+  if(productionLive()&&window.PIT_V5_LIVE?.mount(teacherPanel,{...context,teacherPinProvider},key))return;
   const level=context.stage;
   const status=context.authenticated?'EM PREPARAÇÃO':'SEM SESSÃO';
   const note='A comunicação de convites e partidas entre computadores ainda não está habilitada no servidor. '
@@ -133,19 +137,25 @@
    close();document.getElementById('rosterButton')?.click();
   });
  }
+ function renderStudentLive(key){
+  if(!window.PIT_V5_LIVE?.mount(teacherPanel,{...context,tokenProvider},key))
+   teacherPanel.textContent='Coliseu indisponível. Atualize esta página.';
+ }
  function chooseTab(key){
   const t=tabs().find(x=>x.key===key);
   if(!t)return;
-  if(['duel','duel3d'].includes(t.key)&&!allowedToDuel()&&!previewRequested){
+  if(['duel','duel3d'].includes(t.key)&&!allowedToDuel()&&!previewRequested&&!productionLive()){
    statusNode.textContent='Você ainda está fazendo a missão. Entregue seu trabalho para liberar desafios.';
    return;
   }
-  if(t.native){
+  window.PIT_V5_LIVE?.unmount();
+  if(t.native||(productionLive()&&['duel','arena'].includes(t.key))){
    frame.hidden=true;
    frame.removeAttribute('src');
    teacherPanel.hidden=false;
    currentTab=key;
    if(context.role==='teacher')renderTeacherPanel(key);
+   else if(productionLive()&&['duel','arena'].includes(key))renderStudentLive(key);
    else renderStudentHeroPanel();
   }else{
    teacherPanel.hidden=true;teacherPanel.replaceChildren();
@@ -181,7 +191,7 @@
    const b=document.createElement('button');
    b.type='button';b.dataset.tab=tab.key;b.textContent=tab.label;
    b.setAttribute('role','tab');b.setAttribute('aria-selected','false');
-   b.disabled=['duel','duel3d'].includes(tab.key)&&!allowedToDuel()&&!previewRequested;
+   b.disabled=['duel','duel3d'].includes(tab.key)&&!allowedToDuel()&&!previewRequested&&!productionLive();
    b.addEventListener('click',()=>chooseTab(tab.key));
    nav.appendChild(b);
   }
@@ -191,6 +201,7 @@
  function close(){
   if(hub.hidden)return;
   hub.hidden=true;
+  window.PIT_V5_LIVE?.unmount();
   clearFrame();teacherPanel.hidden=true;teacherPanel.replaceChildren();delete teacherPanel.dataset.heroKey;currentTab=null;
   document.body.classList.remove('pit-v5-h1e-active');
   lastFocus?.focus?.();
@@ -210,6 +221,7 @@
    room:['PITGAME26','PITGAME26B'].includes(value.room)?value.room:'PITGAME26'
   };
   tokenProvider=typeof value.tokenProvider==='function'?value.tokenProvider:null;
+  teacherPinProvider=typeof value.teacherPinProvider==='function'?value.teacherPinProvider:null;
   // Temporary, in-memory same-origin staging bridge. No student/PIN leaks
   // to other origins or into demo iframe URLs.
   delete window.__PIT_V5_H1E_BRIDGE;
@@ -238,8 +250,10 @@
    for(const key of ['duel','duel3d'])nav.querySelector('[data-tab="'+key+'"]')?.toggleAttribute('disabled',
     !allowedToDuel()&&!previewRequested);
    if(['duel','duel3d'].includes(currentTab)&&!allowedToDuel()&&!previewRequested)chooseTab('hero');
-   else{statusNode.textContent=statusText();if(currentTab&&tabs().find(t=>t.key===currentTab)?.native){
-    if(context.role==='teacher')renderTeacherPanel(currentTab);else renderStudentHeroPanel();
+   else{statusNode.textContent=statusText();if(currentTab&&(tabs().find(t=>t.key===currentTab)?.native||(productionLive()&&['duel','arena'].includes(currentTab)))){
+    if(context.role==='teacher')renderTeacherPanel(currentTab);
+    else if(productionLive()&&['duel','arena'].includes(currentTab))renderStudentLive(currentTab);
+    else renderStudentHeroPanel();
    }}
   }
  }

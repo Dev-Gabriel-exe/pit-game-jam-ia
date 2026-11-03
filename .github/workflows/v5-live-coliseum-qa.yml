@@ -1,0 +1,72 @@
+name: V5 Real Coliseum Contract
+on:
+  push:
+    paths:
+      - 'chat-api/api/coliseum.js'
+      - 'chat-api/lib/v5-phase2-engine.js'
+      - 'v3/v5-coliseum-live.js'
+      - 'v5/coliseum-live.js'
+      - 'qa/v5-live-coliseum-contract.cjs'
+      - 'qa/v5-live-coliseum-postgres.cjs'
+      - 'qa/v5-live-coliseum-browser.cjs'
+      - '.github/workflows/v5-live-coliseum-qa.yml'
+  pull_request:
+    paths:
+      - 'chat-api/api/coliseum.js'
+      - 'v3/v5-coliseum-live.js'
+      - 'v5/coliseum-live.js'
+      - 'qa/v5-live-coliseum-contract.cjs'
+      - 'qa/v5-live-coliseum-postgres.cjs'
+      - 'qa/v5-live-coliseum-browser.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+      - run: node --check chat-api/api/coliseum.js && node --check v3/v5-coliseum-live.js && node --check v5/coliseum-live.js && node --check v3/v5-h1e-bridge.js && node --check v3/app.js
+      - run: node qa/v5-live-coliseum-contract.cjs
+
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      DATABASE_URL: postgresql://postgres:ci_only_password@127.0.0.1:5432/pit_v5_test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: pit_v5_test
+          POSTGRES_PASSWORD: ci_only_password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d pit_v5_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+      - run: node qa/v5-live-coliseum-postgres.cjs
+
+  browser-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix chat-api --ignore-scripts --no-audit --no-fund
+      - run: npm install --no-save --no-package-lock playwright@1.58.2 three@0.186.1
+      - run: npx playwright install --with-deps chromium
+      - run: node qa/v5-live-coliseum-browser.cjs

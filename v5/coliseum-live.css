@@ -1,0 +1,23 @@
+body.pit-coliseum-live{margin:0;background:radial-gradient(ellipse at 50% 0,#342040,#090b16 75%);color:#f5ecdf;font:15px/1.45 system-ui,Arial,sans-serif;min-height:100vh}
+.pit-coliseum-live *{box-sizing:border-box}.pit-coliseum-live main{padding:12px;max-width:1550px;margin:auto}
+.pit-coliseum-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pit-coliseum-title h1{font:700 clamp(23px,3vw,39px) Georgia,serif;color:#f1d6a4;margin:4px 0}
+.pit-coliseum-title small{letter-spacing:.1em;color:#b2e3ec;font-size:11px}
+.pit-coliseum-title p{margin:5px 0;color:#b9b4cb}
+.pit-coliseum-stats{padding:7px 12px;border:1px solid #937e63;border-radius:9px}
+.pit-coliseum-stats span{font-weight:800;color:#e9c27f;margin:0 4px}
+.pit-coliseum-stage{position:relative;min-height:315px;height:min(61vh,640px)!important;width:100%;overflow:hidden;background:#100d19;border-radius:13px;border:1px solid #7d5d48;margin:10px 0}
+.pit-coliseum-stage canvas.v5-webgl{width:100%;height:100%;display:block}
+.pit-coliseum-placeholder{display:grid;place-content:center;height:100%;color:#efd4af}
+.pit-coliseum-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:11px 0}
+.pit-coliseum-controls button,.pit-coliseum-controls select{background:#30243a;border:1px solid #a87a53;border-radius:8px;color:#ffe6be;padding:8px 12px;cursor:pointer}
+.pit-coliseum-controls button:disabled{opacity:.42;cursor:default}
+.pit-coliseum-controls label{color:#dfc3a5;font-weight:650}
+#replayClock{font-weight:bold;color:#d6e7fd;margin-left:auto}
+#replayStatus{color:#b9e1f0;background:#1a2635;padding:9px;border-radius:7px}
+.pit-coliseum-result{padding:17px;border:1px solid #ceaa70;border-radius:10px;background:#1e2630;text-align:center;font:700 19px Georgia,serif;color:#ffe0aa}
+.pit-coliseum-scoreboard{display:flex;flex-wrap:wrap;gap:6px;max-height:155px;overflow-y:auto}
+.pit-coliseum-scoreboard>div{font-size:12px;min-width:125px;padding:6px 9px;border:1px solid #4f485d;border-radius:7px;background:#221a2a}
+.pit-coliseum-scoreboard>div[data-defeated=true]{opacity:.54}
+.pit-coliseum-live footer{margin:14px 0 4px;color:#948da9;text-align:center;font-size:11px}
+@media(max-width:650px){.pit-coliseum-stage{height:43vh!important}.pit-coliseum-title h1{font-size:22px}}

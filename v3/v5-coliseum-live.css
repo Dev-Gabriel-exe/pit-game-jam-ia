@@ -1,0 +1,28 @@
+/* Real Coliseum controls inside the existing V3/V5 Gothic overlay. */
+#pitV5TeacherPanel .pit-live-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:15px;flex-wrap:wrap}
+#pitV5TeacherPanel .pit-live-head h3{font-family:Georgia,serif;font-size:clamp(21px,3vw,35px);margin:4px 0;color:#f9e8c8}
+#pitV5TeacherPanel .pit-live-head small,#pitV5TeacherPanel .pit-live-mission{color:#d7a965;letter-spacing:.12em;font-weight:800;font-size:11px}
+#pitV5TeacherPanel .pit-live-head p{color:#bfb8ce;margin:6px 0}
+#pitV5TeacherPanel .pit-live-panel{border:1px solid rgba(201,157,97,.32);background:linear-gradient(145deg,rgba(25,17,32,.96),rgba(14,14,30,.94));border-radius:14px;padding:18px;margin:12px 0}
+#pitV5TeacherPanel .pit-live-panel h4{font:700 20px Georgia,serif;color:#f3d8ae;margin:0 0 12px}
+#pitV5TeacherPanel .pit-live-panel p,#pitV5TeacherPanel .pit-live-panel small{color:#c8bed1;line-height:1.55}
+#pitV5TeacherPanel .pit-live-panel small{display:block;margin-top:9px}
+#pitV5TeacherPanel .pit-live-state{display:block;margin:12px 0;color:#f5d390;font-size:16px}
+#pitV5TeacherPanel .pit-live-actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+#pitV5TeacherPanel button{max-width:100%}
+#pitV5TeacherPanel .pit-live-panel button,#pitV5TeacherPanel [data-refresh],#pitV5TeacherPanel [data-back]{padding:10px 14px;border-radius:9px;cursor:pointer;border:1px solid #a98152;background:#33253a;color:#f8e3c4;font-weight:700}
+#pitV5TeacherPanel .pit-live-panel button:hover:not(:disabled){background:#624564}
+#pitV5TeacherPanel .pit-live-panel button:disabled{opacity:.42;cursor:not-allowed}
+#pitV5TeacherPanel .pit-live-row{padding:9px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(225,192,149,.12)}
+#pitV5TeacherPanel .pit-live-roster{max-height:180px;overflow-y:auto}
+#pitV5TeacherPanel .pit-live-roster>div{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid #ffffff14}
+#pitV5TeacherPanel .pit-live-roster span{color:#a9bfca;font-size:12px}
+#pitV5TeacherPanel .pit-live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#pitV5TeacherPanel .pit-live-invite{border-color:#a9a5ff}
+#pitV5TeacherPanel [data-live-note]{padding:10px 12px;border-radius:8px;background:#162638;color:#c2e7ff}
+#pitV5TeacherPanel [data-live-note][data-kind=error]{color:#ffc2cf;background:#452530}
+#pitV5TeacherPanel [data-live-note][data-kind=success]{color:#bcffd9;background:#163c36}
+#pitV5TeacherPanel .pit-live-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#pitV5TeacherPanel .pit-live-toolbar small{display:block;color:#b9b1c8;margin-top:3px}
+#pitV5TeacherPanel .pit-live-replay{width:100%;height:min(76vh,740px);min-height:430px;border:1px solid #b98e5b;border-radius:12px;margin-top:10px;background:#10101a}
+@media(max-width:700px){#pitV5TeacherPanel .pit-live-grid{grid-template-columns:1fr}#pitV5TeacherPanel .pit-live-row{flex-wrap:wrap}}

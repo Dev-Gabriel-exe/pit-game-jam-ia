@@ -570,7 +570,8 @@ function syncV5Integration(){
   studentName:TEACHER?'':studentSession?.name||'',
   room:TEACHER?activeRoom:studentSession?.room||linkedRoom||'PITGAME26',
   tokenProvider:!TEACHER&&!visualPreview&&studentSession?.token?
-    ()=>studentSession?.token||null:null
+    ()=>studentSession?.token||null:null,
+  teacherPinProvider:TEACHER&&!visualPreview&&teacherPin?()=>teacherPin:null
  });
 }
 function renderAll(){renderJourney();renderRight();renderMain();syncV5Integration();}
