@@ -146,10 +146,14 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await sp.locator('.stage-btn[data-stage="2"]').isDisabled(),true,'next stage locked by teacher');
  await sp.locator('[data-q-tab="review"]').click();
  assert.equal(await sp.locator('#submitWork').isDisabled(),true,'incomplete mission brief cannot be submitted');
- // M01 is already released by default: changing teacher quadrants never sends stage requests.
+ // M01 is visible initially, but the deployed legacy server blocks student
+ // submissions until its practice phase is unlocked by the teacher.
  await tp.locator('[data-phase="practice"]').click();
- assert.equal(await tp.locator('#navPrimary').isDisabled(),true,'current mission is already released');
- assert.equal(store.stage,1,'changing quadrants does not release a different mission');
+ assert.match(await tp.locator('#navPrimary').innerText(),/Habilitar entregas da missão 01/);
+ assert.equal(await tp.locator('#navPrimary').isDisabled(),false);
+ await tp.locator('#navPrimary').click();
+ assert.equal(store.phase,'practice','M01 submissions open after teacher action');
+ assert.equal(store.stage,1,'opening submissions must not skip to M02');
  await sp.reload();
  await sp.locator('#workspace:visible').waitFor();
  await closeArcade(sp);
