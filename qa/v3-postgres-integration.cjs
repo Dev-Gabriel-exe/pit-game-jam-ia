@@ -23,7 +23,7 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
 (async()=>{
  await pool.query('DROP TABLE IF EXISTS pit_chat_images,pit_chat_messages,pit_student_stages,pit_classroom_state,pit_students CASCADE');
  await pool.query(`CREATE TABLE pit_students(
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),room_code text NOT NULL,display_name text NOT NULL,token_hash text NOT NULL UNIQUE,
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),room_code text NOT NULL,display_name text NOT NULL,token_hash text NOT NULL UNIQUE,recovery_hash text,
   joined_at timestamptz NOT NULL DEFAULT now(),last_seen_at timestamptz NOT NULL DEFAULT now(),active_stage integer NOT NULL DEFAULT 1
  )`);
  await pool.query(`CREATE TABLE pit_classroom_state(
@@ -86,6 +86,48 @@ async function call(handler,method,action,body={},token='',teacherPin='',query={
  const messagesA=await call(chat,'GET','messages',{},users[0].token);
  const messagesB=await call(chat,'GET','messages',{},users[1].token);
  assert.equal(messagesA.body.messages.length,2);assert.equal(messagesB.body.messages.length,0,'student messages isolated');
+ // A second lesson must use the same UUID and progress, never create
+ // another row for a matching name. A high-entropy code, not a name alone,
+ // proves ownership on another computer.
+ const original=users[0];
+ const repeated=await call(chat,'POST','join',{name:names[0],code:'PITGAME26'});
+ assert.equal(repeated.statusCode,409,'same-name duplicate cannot silently register');
+ const wrongRecovery=await call(chat,'POST','recover',
+  {name:names[0],code:'PITGAME26',recoveryCode:'0000-0000-0000-0000-0000-0000'});
+ assert.equal(wrongRecovery.statusCode,403,'name only or incorrect code cannot hijack student');
+ const returned=await call(chat,'POST','recover',
+  {name:names[0],code:'PITGAME26',recoveryCode:original.recoveryCode});
+ assert.equal(returned.statusCode,200,'previous-day student returns with code');
+ assert.equal(returned.body.studentId,original.studentId,'same UUID after recovery');
+ assert.notEqual(returned.body.token,original.token,'rotate session token on recovery');
+ const previousToken=await call(classroom,'GET','state',{},original.token);
+ assert.equal(previousToken.statusCode,401,'older device token is revoked');
+ const resumed=await call(classroom,'GET','state',{},returned.body.token);
+ assert.equal(resumed.statusCode,200);
+ assert.equal(resumed.body.progress.some(x=>x.status==='approved'),true,'teacher approvals survive return');
+ const crossRoomRecovery=await call(chat,'POST','recover',
+  {name:names[0],code:'PITGAME26B',recoveryCode:original.recoveryCode});
+ assert.equal(crossRoomRecovery.statusCode,403,'recovery cannot cross room');
+ const newCode=await call(chat,'POST','setup-recovery',{},returned.body.token);
+ assert.equal(newCode.statusCode,200);
+ assert.match(newCode.body.recoveryCode,/^(?:[A-F0-9]{4}-){5}[A-F0-9]{4}$/,'96-bit readable return code');
+ const oldCode=await call(chat,'POST','recover',
+  {name:names[0],code:'PITGAME26',recoveryCode:original.recoveryCode});
+ assert.equal(oldCode.statusCode,403,'replaced code invalid');
+ const reset=await call(chat,'POST','teacher-reset-access',
+  {studentId:original.studentId},'',pin,{},'PITGAME26');
+ assert.equal(reset.statusCode,200,'teacher can help retrieve second lesson account');
+ assert.match(reset.body.recoveryCode,/^[A-F0-9-]{29}$/);
+ const otherTeacher=await call(chat,'POST','teacher-reset-access',
+  {studentId:original.studentId},'',pin,{},'PITGAME26B');
+ assert.equal(otherTeacher.statusCode,404,'teacher in other cohort cannot reset access');
+ const finalRecover=await call(chat,'POST','recover',
+  {name:names[0],code:'PITGAME26',recoveryCode:reset.body.recoveryCode});
+ assert.equal(finalRecover.statusCode,200);
+ assert.equal(finalRecover.body.studentId,original.studentId);
+ const finalState=await call(classroom,'GET','state',{},finalRecover.body.token);
+ assert.equal(finalState.body.progress.some(x=>x.status==='approved'),true);
+ console.log('PASS RETURN: same student UUID and 10-mission approvals across lessons, name collision guard, 96-bit recovery, token rotation, teacher reset and room isolation');
  const hashRows=await pool.query('SELECT token_hash FROM pit_students');
  assert(hashRows.rows.every(x=>/^[a-f0-9]{64}$/.test(x.token_hash)&&users.every(u=>u.token!==x.token_hash)),'database stores only token hashes');
  const count=await pool.query('SELECT count(*)::int AS n FROM pit_student_stages');
