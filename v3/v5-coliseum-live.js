@@ -32,6 +32,7 @@
  function clear(){
   if(!live)return;
   clearInterval(live.timer);
+  clearInterval(live.heartbeat);
   live.root.replaceChildren();
   live=null;
  }
@@ -169,6 +170,13 @@
   live={root,ctx,tab,key,data:null,note:null,busy:false,viewing:null,errorCount:0,timer:null};
   root.innerHTML='<div class="pit-live-head"><h3>⚔ Conectando ao Coliseu...</h3></div><p role="status" data-live-note>Sincronizando sua turma.</p>';
   live.timer=setInterval(()=>{if(!document.hidden)void refresh()},4500);
+  // Availability is temporary; renew opt-in every 25 seconds while this panel is visible.
+  live.heartbeat=setInterval(async()=>{
+   const current=live;
+   if(!current||document.hidden||current.viewing||current.busy||current.ctx.role!=='student'||
+      current.tab!=='duel'||!current.data?.optedIn||!current.data?.duelsEnabled)return;
+   try{await request(current.ctx,'presence',{available:true})}catch(e){banner('Presença temporária: '+e.message,'error')}
+  },25000);
   void refresh();
   return true;
  }
