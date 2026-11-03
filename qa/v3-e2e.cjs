@@ -142,17 +142,36 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await sp.locator('#missionGallery.open').waitFor();
  assert.equal(await sp.locator('.arcade-card').count(),10,'student cinematic carousel contains ten mission cards');
  assert.equal(await sp.locator('#arcadeHeading').innerText(),'ESCOLHER MISSÃO','mission picker is not a second student notebook');
- const modern=await sp.locator('#missionGalleryGrid').evaluate(el=>{
-  const card=el.querySelector('.arcade-card');
+ const coverflow=await sp.locator('#missionGalleryGrid').evaluate(el=>{
+  const current=el.querySelector('.arcade-card[data-distance="0"]');
+  const side=el.querySelector('.arcade-card[data-distance="1"]');
+  const far=el.querySelector('.arcade-card[data-distance="4"]');
+  const visible=[...el.querySelectorAll('.arcade-card')].filter(c=>getComputedStyle(c).visibility==='visible');
   return {display:getComputedStyle(el).display,snap:getComputedStyle(el).scrollSnapType,
-   cardPosition:getComputedStyle(card).position,cardTransform:getComputedStyle(card).transform,
-   cardWidth:card.getBoundingClientRect().width};
+   perspective:getComputedStyle(el).perspective,overflow:getComputedStyle(el).overflowX,
+   position:getComputedStyle(current).position,transform:getComputedStyle(current).transform,
+   width:current.getBoundingClientRect().width,
+   sideVisible:side&&getComputedStyle(side).visibility==='visible',
+   sideTransform:side&&getComputedStyle(side).transform,
+   farHidden:far&&getComputedStyle(far).visibility==='hidden',
+   visibleCount:visible.length};
  });
- assert.equal(modern.display,'flex','original V3 mission selector must use an aligned horizontal rail');
- assert.match(modern.snap,/x/,'original V3 mission rail must be scroll-snappable');
- assert.equal(modern.cardPosition,'relative','no absolute overlapping carousel cards');
- assert.equal(modern.cardTransform,'none','no legacy 3D stack transforms');
- assert(modern.cardWidth>=140,'original V3 cards must remain legible without 3D overlap');
+ assert.equal(coverflow.display,'block','modern selector uses a centered coverflow track');
+ assert.equal(coverflow.snap,'none','coverflow must not retain flat horizontal snapping');
+ assert.equal(coverflow.overflow,'hidden','coverflow clips distant cards');
+ assert.notEqual(coverflow.perspective,'none','coverflow uses 3D perspective');
+ assert.equal(coverflow.position,'absolute','coverflow cards overlap in the scene');
+ assert.notEqual(coverflow.transform,'none','selected mission uses centered transform');
+ assert(coverflow.width>=220,'selected card remains legible in 3D');
+ assert(coverflow.sideVisible,'adjacent mission remains visible');
+ assert.notEqual(coverflow.sideTransform,coverflow.transform,'side mission uses a distinct 3D transform');
+ assert(coverflow.farHidden,'distant missions hidden without removing progress');
+ assert(coverflow.visibleCount>=3&&coverflow.visibleCount<=5,'coverflow shows focused and adjacent cards');
+ const beforeSelection=await sp.locator('#arcadeIndex').innerText();
+ await sp.locator('#arcadeNext').click();
+ assert.notEqual(await sp.locator('#arcadeIndex').innerText(),beforeSelection,'coverflow arrow changes mission');
+ await sp.locator('#arcadePrev').click();
+ assert.equal(await sp.locator('#arcadeIndex').innerText(),beforeSelection,'previous selection restored');
 
  await sp.locator('#missionGalleryClose').click();
  await sp.locator('#missionGallery.open').waitFor({state:'hidden'});
