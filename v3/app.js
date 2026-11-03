@@ -805,6 +805,14 @@ function showCohortPicker(){
   }
   holder.appendChild(select);
   $('currentUser')?.before(holder);
+  const second=select.querySelector('option[value="PITGAME26B"]');
+  // No phantom second cohort when the source has been updated but the Vercel
+  // runtime is still on its previous deployment. Do not send a PIN here.
+  second.disabled=true;second.textContent='Turma 2 (aguardando servidor)';
+  fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)})
+   .then(r=>r.ok?r.json():null).then(data=>{
+    if(data?.version==='20261103-two-cohorts'&&data.db){second.disabled=false;second.textContent='Turma 2';}
+   }).catch(()=>{});
   select.onchange=async()=>{
    const previous=activeRoom;activeRoom=select.value;
    closePanels();selectedThread=null;selectedRoster=null;roster=[];progress=[];
