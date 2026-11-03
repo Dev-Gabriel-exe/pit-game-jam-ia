@@ -59,7 +59,7 @@ const {chromium}=require('playwright');
    await open('mapa-floresta');
    assert.equal(await page.locator('#pitPreviewStage img').evaluate(async img=>{await img.decode();return img.complete&&img.naturalWidth===1024&&img.naturalHeight===576}),true,'actual 1024x576 map');
    await page.locator('.pit-preview-close').click();
-   for(const id of ['coruja-mecanica','mapa-jardim-luz','ampulheta','sentinela','arqueiro','mapa-arquipelago','mapa-fortaleza','bussola','reliquia','grifo','druida','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
+   for(const id of ['raposa-automata','mapa-laboratorio','coruja-mecanica','mapa-jardim-luz','ampulheta','sentinela','arqueiro','mapa-arquipelago','mapa-fortaleza','bussola','reliquia','grifo','druida','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
     await open(id);
     const actual=await page.locator('#pitPreviewStage img').evaluate(async img=>{
      await img.decode();return {width:img.naturalWidth,height:img.naturalHeight,complete:img.complete};
@@ -71,14 +71,14 @@ const {chromium}=require('playwright');
    }
    const newPng=await page.evaluate(async()=>{
     const api=window.PIT_LIBRARY_API,results=[];
-    for(const id of ['feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
+    for(const id of ['raposa-automata','mapa-laboratorio','feiticeira','golem','mapa-ruinas','mapa-pantano','lanterna','escudo','mapa-necropole','mapa-observatorio','espinhos','pedestal']){
      const blob=await api.assetBlob(api.assets.find(a=>a.id===id));
      const b=new Uint8Array(await blob.arrayBuffer());
      results.push({id,type:blob.type,size:blob.size,magic:Array.from(b.slice(0,8)).join(',')});
     }
     return results;
    });
-   assert.equal(newPng.length,10,'all ten downloadable resources generated');
+   assert.equal(newPng.length,12,'all twelve downloadable resources generated');
    for(const a of newPng){
     assert.equal(a.type,'image/png','real PNG '+a.id);
     assert(a.size>500,'nonempty PNG '+a.id);
