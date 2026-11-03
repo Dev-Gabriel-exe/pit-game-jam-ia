@@ -1294,6 +1294,7 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     framingPose=null;framingRecalc=-Infinity;
     container.dataset.v5CameraAudience='student';
     container.dataset.v5StudentCamera='spectating';
+    container.dataset.v5CameraPreset='director';
     container.dataset.v5CameraDirector='on';
     container.dispatchEvent(new CustomEvent('v5-student-view',{detail:transition}));
    }
@@ -1511,7 +1512,12 @@ export function createStage(container,{mode='hero',quality='auto',arenaScale=1,s
     controls.target.lerp(pose.look,ease);
     camera.position.lerp(pose.boom,ease);
     // Negative = camera stays BEHIND the hero's engine-facing direction.
-    followBack.set(camera.position.x-f.x,0,camera.position.z-f.z);
+    const heroPosition=individuals.get(followId)?.mesh.root.position||f;
+    followBack.set(camera.position.x-heroPosition.x,0,camera.position.z-heroPosition.z);
+    if(cameraViewer?.state().audience==='student'&&followBack.x*pose.fx+followBack.z*pose.fz>=0){
+     camera.position.copy(pose.boom);controls.target.copy(pose.look);
+     followBack.set(camera.position.x-heroPosition.x,0,camera.position.z-heroPosition.z);
+    }
     const len=Math.max(.001,followBack.length());
     container.dataset.v5FollowBackDot=String(((followBack.x*pose.fx+followBack.z*pose.fz)/len).toFixed(3));
    }

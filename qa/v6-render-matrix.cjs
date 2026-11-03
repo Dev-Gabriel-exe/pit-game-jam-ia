@@ -146,6 +146,10 @@ async function sample(page,arm){
      assert(heroGates.has(p),'Hero GET must have been deliberately held');
      heroGates.get(p)();heroGates.delete(p);
      await waitViewerReady(p);
+     const initialView=await p.frameLocator('iframe.pit-live-replay').locator('#arenaStage').evaluate(el=>({
+      hero:el.dataset.v5FollowTarget,mode:el.dataset.v5StudentCamera,preset:el.dataset.v5CameraPreset
+     }));
+     assert.deepEqual(initialView,{hero:roster[i].id,mode:'following',preset:'third-person'});
     }else{
      await p.addScriptTag({url:base+'v3/v5-h1e-bridge.js'});await p.addScriptTag({url:base+'v3/v5-coliseum-live.js'});
      await p.evaluate(({id,mission,tab})=>{

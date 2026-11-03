@@ -7,18 +7,20 @@ const match={kind:'duel',mission:5,seed:123,sha256:'a'.repeat(64),options:{arena
 function element(){return {dataset:{},children:[],disabled:true,hidden:true,textContent:'',
  replaceChildren(){this.children=[]},appendChild(n){this.children.push(n)},addEventListener(){}}}
 (async()=>{
- const nodes=new Map(),events={},timers=new Set();let resumes=0,disposals=0,attempts=0;
+ const nodes=new Map(),events={},timers=new Set();let resumes=0,disposals=0,attempts=0;const cameras=[];
  const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const stage={simulation:{fighters:[{id:'a',name:'A',alive:true,hp:20},{id:'b',name:'B',alive:true,hp:20}],time:0,finished:false,result(){return {winner:{id:'a'}}}},
   fighters(){attempts++;this.simulation.finished=false;get('arenaStage').dataset.v5ModelsLoaded='0';get('arenaStage').dataset.v5ModelsFailed='0'},
-  enableAutoCamera(){},resume(){resumes++},pause(){},dispose(){disposals++}};
+  enableAutoCamera(){cameras.push('director')},setStudentCamera(id){cameras.push(id);return true},resume(){resumes++},pause(){},dispose(){disposals++}};
  const win={parent:{},PIT_V5_PHASE2:{VERSION:'fixture'},addEventListener(k,fn){events[k]=fn}};
  const context=vm.createContext({window:win,document:{getElementById:get,createElement:element},location:{origin:'https://fixture.invalid'},
   setInterval(fn){timers.add(fn);return fn},clearInterval(fn){timers.delete(fn)},console});
  const module=new vm.SourceTextModule(fs.readFileSync('v5/coliseum-live.js','utf8'),{context});
  await module.link(()=>new vm.SyntheticModule(['createStage'],function(){this.setExport('createStage',()=>stage)},{context}));
  await module.evaluate();
- events.message({source:win.parent,origin:'https://fixture.invalid',data:{type:'PIT_COLISEUM_REPLAY',match}});
+ events.message({source:win.parent,origin:'https://fixture.invalid',data:{type:'PIT_COLISEUM_REPLAY',match,studentHeroId:process.env.PIT_CAMERA_TEST_ROLE==='teacher'?null:'b'}});
+ const expectedCamera=process.env.PIT_CAMERA_TEST_ROLE==='teacher'?['director']:['director','b'];
+ assert.deepEqual(cameras,expectedCamera);
  assert.equal(attempts,1);
  assert.equal(get('playReplay').disabled,true,'Replay must wait for both genuine GLBs, as the isolated V5 did');
  get('playReplay').onclick();assert.equal(resumes,0,'Click during loading cannot start invisible combat');
@@ -29,7 +31,7 @@ function element(){return {dataset:{},children:[],disabled:true,hidden:true,text
  get('playReplay').onclick();assert.equal(resumes,1,'Two real loaded models permit playback');
  stage.simulation.finished=true;for(const tick of timers)tick();
  assert.equal(get('resultPanel').hidden,false);
- get('playReplay').onclick();assert.equal(attempts,2);
+ get('playReplay').onclick();assert.equal(attempts,2);assert.deepEqual(cameras,[...expectedCamera,...expectedCamera]);
  assert.equal(resumes,1,'Replay restart must also wait for newly attached models');
  get('arenaStage').dataset.v5ModelsLoaded='2';for(const tick of timers)tick();
  assert.equal(resumes,2,'Completed battle can restart when cached real models are reattached');
