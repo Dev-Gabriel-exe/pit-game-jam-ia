@@ -896,7 +896,8 @@ async function authenticate(){
   choice.onchange=()=>$('authCode').value=choice.value;
   $('authCode').onchange=()=>{const room=$('authCode').value.trim().toUpperCase();
    if(['PITGAME26','PITGAME26B'].includes(room))choice.value=room};
-  fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)})
+  if(window.PIT_HOSTING_POLICY?.mode(location.origin,false)!=='static-only')
+   fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)})
    .then(r=>r.ok?r.json():null).then(v=>{
     const option=choice.querySelector('option[value="PITGAME26B"]');
     if(option&&v?.version==='20261103-two-cohorts'){
