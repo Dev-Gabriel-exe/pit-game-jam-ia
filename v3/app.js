@@ -10,6 +10,8 @@ const stageThumbs=['#22bcff','#ffb865','#58f1c6','#f47fe4','#ae8cff','#ffe37f','
 const teacherContent=window.PIT_TEACHER_CONTENT||[];
 const stageStatuses={working:'Em atividade',submitted:'Aguardando validação',approved:'Concluída ✓',revision:'Revisar entrega'};
 let teacherPin=sessionStorage.getItem('pit_teacher_pin')||'';
+let activeRoom=sessionStorage.getItem('pit_teacher_room')||'PITGAME26';
+if(!['PITGAME26','PITGAME26B'].includes(activeRoom))activeRoom='PITGAME26';
 let studentSession=null;try{studentSession=JSON.parse(localStorage.getItem('pit_chat_student_v09')||'null')}catch{}
 let state={current_stage:1,phase:'briefing',updated_at:null},progress=[],roster=[],activeStage=1,activePhase='briefing';
 let selectedThread=null,selectedRoster=null,chatOpen=false,chatTimer=null,rosterOpen=false,lastServerStage=1;
@@ -22,7 +24,7 @@ async function call(service,action,method='GET',data=null,query=null){
  const u=new URL(BASE+service+'.js');u.pathname='/api/'+service;u.searchParams.set('action',action);
  if(query)for(const [key,value] of Object.entries(query))u.searchParams.set(key,String(value));
  const headers={'Content-Type':'application/json'};
- if(TEACHER&&teacherPin)headers['X-PIT-Teacher-Pin']=teacherPin;
+ if(TEACHER&&teacherPin){headers['X-PIT-Teacher-Pin']=teacherPin;headers['X-PIT-Room']=activeRoom;}
  if(!TEACHER&&studentSession?.token)headers['X-PIT-Student-Token']=studentSession.token;
  const response=await fetch(u.toString(),{method,headers,body:method==='POST'?JSON.stringify(data||{}):undefined,cache:'no-store',signal:AbortSignal.timeout(15000)});
  let result;try{result=await response.json()}catch{throw Error('Serviço indisponível. Tente novamente.')}
@@ -776,12 +778,44 @@ async function poll(){
   syncV5Integration();
   if(!TEACHER&&window.PIT_ARCADE?.isOpen())window.PIT_ARCADE.refresh({activeStage,currentStage:state.current_stage,progress,studentName:studentSession?.name||'AVENTUREIRO'});
    if(!TEACHER&&studentSession?.token)await call('classroom','heartbeat','POST',{stage:activeStage});
-  if(rosterOpen)await loadRoster();
+  if(TEACHER)await refreshTeacherPendingCount();
   if(chatOpen)await loadChat();
   else await refreshUnread();
   $('lastSync').textContent='Atualizado às '+stamp();
  }catch(e){$('lastSync').textContent='Sem conexão: '+e.message}
  finally{requestInFlight=false}
+}
+function showCohortPicker(){
+ if(!TEACHER)return;
+ let select=$('pitTeacherCohort');
+ if(!select){
+  const holder=document.createElement('label');holder.id='pitCohortControl';
+  holder.style.cssText='display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#f4d5a6';
+  holder.textContent='TURMA';
+  select=document.createElement('select');select.id='pitTeacherCohort';
+  select.setAttribute('aria-label','Selecionar turma do professor');
+  select.style.cssText='background:#211923;color:#fff1da;border:1px solid #c3945b;border-radius:7px;padding:7px;max-width:140px';
+  for(const [code,name] of [['PITGAME26','Turma 1'],['PITGAME26B','Turma 2']]){
+   const opt=document.createElement('option');opt.value=code;opt.textContent=name;select.appendChild(opt);
+  }
+  holder.appendChild(select);
+  $('currentUser')?.before(holder);
+  select.onchange=async()=>{
+   const previous=activeRoom;activeRoom=select.value;
+   closePanels();selectedThread=null;selectedRoster=null;roster=[];progress=[];
+   try{
+    const data=await call('classroom','state');
+    // Reject old backend responses: NEVER display Room 1 under a Room 2 label.
+    if(activeRoom!=='PITGAME26'&&data.room!==activeRoom)
+     throw Error('A Turma 2 ainda não está habilitada no servidor. A Turma 1 foi preservada.');
+    sessionStorage.setItem('pit_teacher_room',activeRoom);
+    state=data.state;activeStage=state.current_stage;activePhase='briefing';renderAll();
+    await loadRoster();await refreshUnread();
+    setToast('Sessão do professor: '+(activeRoom==='PITGAME26'?'Turma 1':'Turma 2'));
+   }catch(e){activeRoom=previous;select.value=previous;setToast(e.message,true)}
+  };
+ }
+ select.value=activeRoom;
 }
 async function authenticate(){
  $('auth').hidden=false;
@@ -795,7 +829,8 @@ async function authenticate(){
   try{
    if(TEACHER){
     teacherPin=$('authPin').value.trim();
-    await call('chat','teacher-login','POST');
+    const teacherLogin=await call('chat','teacher-login','POST');
+    if(activeRoom!=='PITGAME26'&&teacherLogin.room!==activeRoom)throw Error('Turma 2 indisponível no servidor.');
     sessionStorage.setItem('pit_teacher_pin',teacherPin);
    }else{
     const joined=await call('chat','join','POST',{name:$('authName').value,code:$('authCode').value.trim()});
@@ -811,14 +846,18 @@ async function authenticate(){
 async function startApp(){
  try{
   const data=await call('classroom','state');
+  if(TEACHER&&activeRoom!=='PITGAME26'&&data.room!==activeRoom)throw Error('Turma 2 ainda não habilitada no servidor.');
+  if(!TEACHER&&studentSession&&data.room)studentSession.room=data.room;
   state=data.state;progress=data.progress||[];
   activeStage=state.current_stage;activePhase='briefing';lastServerStage=state.current_stage;
   $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name;
+  showCohortPicker();
   renderAll();$('loading').hidden=true;$('workspace').hidden=false;
   if(!TEACHER)showMissionGallery();
   $('lastSync').textContent='Conectado · '+stamp();
   clearInterval(window.pitPoll);window.pitPoll=setInterval(poll,14000);
   await refreshUnread();
+  if(TEACHER)await refreshTeacherPendingCount();
  }catch(e){
   $('auth').hidden=false;$('authError').textContent=e.message;
   if(TEACHER)teacherPin='';
@@ -844,7 +883,7 @@ function closePanels(){
  $('chatWindow').setAttribute('aria-hidden','true');$('chatButton').setAttribute('aria-expanded','false');
  if(restore)$('chatButton').focus();
 }
-$('rosterButton').onclick=()=>openDrawer('roster');
+$('rosterButton').onclick=()=>{if(TEACHER&&roster.some(s=>s.stages?.some(p=>p.status==='submitted'))){rosterFilter='pending';selectedRoster=null;}openDrawer('roster')};
 $('rosterClose').onclick=closePanels;$('drawerShade').onclick=closePanels;
 $('chatButton').onclick=()=>chatOpen?closePanels():openDrawer('chat');
 $('chatClose').onclick=closePanels;
@@ -852,8 +891,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
 function chooseStatus(s){if(s==='approved')return '✓ Aprovada';if(s==='submitted')return '⏳ Pendente';if(s==='revision')return '↻ Revisão';return s==='working'?'🎮 Criando':'—'}
 async function loadRoster(){
  if(!TEACHER)return;
- try{const data=await call('classroom','roster');roster=data.roster||[];renderRoster()}
+ try{const data=await call('classroom','roster');roster=data.roster||[];renderRoster();updatePendingReviewButton()}
  catch(e){$('rosterContent').textContent=e.message}
+}
+function updatePendingReviewButton(){
+ if(!TEACHER||!$('rosterButton'))return;
+ const count=roster.reduce((total,user)=>total+(user.stages||[]).filter(p=>p.status==='submitted').length,0);
+ $('rosterButton').textContent=count?'📄 VALIDAR FICHAS · '+count+' PENDENTE'+(count>1?'S':''):'👥 Acompanhamento da turma';
+ $('rosterButton').title=count?'Clique para abrir as fichas que precisam de aprovação ou orientação.':'Consultar alunos, fichas e progresso individual';
+}
+async function refreshTeacherPendingCount(){
+ if(!TEACHER||visualPreview)return;
+ try{const result=await call('classroom','roster');roster=result.roster||[];updatePendingReviewButton();
+  if(rosterOpen)renderRoster();}catch{/* preserve last known pending count if disconnected */}
 }
 function renderRoster(){
  for(const [id,filter] of [['filterAll','all'],['filterPending','pending'],['filterOnline','online'],['filterHelp','help']]){
@@ -864,7 +914,7 @@ function renderRoster(){
  const active=roster.filter(s=>Date.now()-new Date(s.last_seen_at).getTime()<90000).length;
  const pend=roster.filter(s=>s.stages?.some(p=>p.status==='submitted')).length;
  const needsHelp=roster.filter(s=>Number(s.unread_chat)>0).length;
- $('rosterStats').textContent=roster.length+' inscritos · '+active+' ativos nos últimos 90s · '+pend+' com entrega pendente · '+needsHelp+' com dúvida';
+ $('rosterStats').textContent=(activeRoom==='PITGAME26'?'TURMA 1':'TURMA 2')+' · '+roster.length+' inscritos · '+active+' ativos nos últimos 90s · '+pend+' com entrega pendente · '+needsHelp+' com dúvida';
  for(const [id,count] of [['rosterStatTotal',roster.length],['rosterStatActive',active],
   ['rosterStatPending',pend],['rosterStatHelp',needsHelp]]){
   if($(id))$(id).textContent=String(count);
