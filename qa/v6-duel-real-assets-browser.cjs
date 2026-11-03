@@ -20,7 +20,7 @@ const names=['V6-Guardian-Test','V6-Mage-Test'],classes=['guardian','mage'];
 const fighters=classes.map((klass,i)=>{
  const name=names[i];
  const attrs=i?{FOR:0,DES:0,INT:3,VIT:0,DEF:0}:{FOR:0,DES:0,INT:0,VIT:3,DEF:0};
- const talents=i?['E01','R10']:['P01','P02'];
+ const talents=i?['E01','R10']:['G01','G02'];
  return {id:'10000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),
    name,approvedMissions:3,finalTrial:false,
    build:battleBuild({klass,attributes:attrs,talents},3,5,name)};
