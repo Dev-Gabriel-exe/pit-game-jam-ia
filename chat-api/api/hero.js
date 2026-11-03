@@ -89,7 +89,7 @@ function createHandler(db=pool){
    // Optimistic concurrency: another computer never silently overwrites newer choices.
    const result=await client.query(
     `INSERT INTO public.pit_student_heroes (student_id,klass,attributes,talents,revision)
-     SELECT $1,$2,$3::jsonb,$4::jsonb,1 WHERE $5=0
+     SELECT $1,$2,$3::jsonb,$4::jsonb,1 WHERE $5=0 OR EXISTS (SELECT 1 FROM public.pit_student_heroes WHERE student_id=$1 AND revision=$5)
      ON CONFLICT (student_id) DO UPDATE
        SET klass=EXCLUDED.klass,attributes=EXCLUDED.attributes,talents=EXCLUDED.talents,
            revision=pit_student_heroes.revision+1,updated_at=now()
