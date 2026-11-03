@@ -85,7 +85,13 @@
    const frame=$(a.root,'iframe');
    frame.addEventListener('load',()=>frame.contentWindow?.postMessage({
     type:'PIT_COLISEUM_REPLAY',match:a.viewing},location.origin),{once:true});
-   $(a.root,'[data-back]').onclick=()=>{a.viewing=null;void refresh()};
+   $(a.root,'[data-back]').onclick=()=>{
+    // Dispose of the WebGL iframe immediately, before fetching the lobby again.
+    // Otherwise its render loop can keep consuming GPU memory behind the lobby.
+    frame.remove();a.viewing=null;
+    a.root.innerHTML='<p role="status" data-live-note>Retornando ao salão de duelos…</p>';
+    void refresh();
+   };
   }catch(e){if(live===a){a.viewing=null;a.busy=false;banner(e.message,'error');render()}}
  }
  function render(){
@@ -190,7 +196,7 @@
   // Availability is temporary; renew opt-in every 25 seconds while this panel is visible.
   live.heartbeat=setInterval(async()=>{
    const current=live;
-   if(!current||document.hidden||current.viewing||current.busy||current.ctx.role!=='student'||
+   if(!current||document.hidden||current.busy||current.ctx.role!=='student'||
       current.tab!=='duel'||!current.data?.optedIn||!current.data?.duelsEnabled)return;
    try{await request(current.ctx,'presence',{available:true})}catch(e){banner('Presença temporária: '+e.message,'error')}
   },25000);
