@@ -78,7 +78,9 @@ const durationMs=Number(process.env.V6_WATCH_MS||26000),results=[];
       'access-control-allow-origin':'*'},body:fs.readFileSync(file)});
    });
   }
-  await Promise.all(pages.map(p=>p.goto(origin+'/v6-fixture',{waitUntil:'domcontentloaded',timeout:45000})));
+  await Promise.all(pages.map(p=>p.goto(origin+'/v6-fixture',{waitUntil:'load',timeout:60000})));
+  // A postMessage sent before the iframe's module registers its listener is lost.
+  // Wait until the nested viewer and its deferred module are fully loaded.
   // Send identical server-pinned match to each browser iframe.
   await Promise.all(pages.map(page=>page.evaluate(match=>{
    document.querySelector('#viewer').contentWindow.postMessage({type:'PIT_COLISEUM_REPLAY',match},
