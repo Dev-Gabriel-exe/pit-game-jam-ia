@@ -185,6 +185,7 @@ function practice(ctx){
  (locked?'<div class="m3-notice">Esta entrega está '+(ctx.status==='approved'?'aprovada':'em análise')+'. O registro permanece disponível para leitura.</div>':'')+
  (window.PIT_GDEVELOP_FIRST_RUN?window.PIT_GDEVELOP_FIRST_RUN.render('student'):'<p>Projeto vazio → cena → objeto → Preview → salvar.</p>')+
  '<div class="m3-asset-bridge"><strong>✦ UM ASSET VISUAL, DUAS ROTAS</strong><p>Use Gemini ou o Asset Store integrado ao GDevelop. Não perca tempo com animação, música ou vídeo agora: Flow, Suno e ElevenLabs ficam para a Missão 06. O primeiro recurso deve aparecer no Preview.</p></div>'+
+ '<div class="m3-notice" role="note"><strong>ROTA 2D / 3D:</strong> escolha seu primeiro objeto abaixo. Pode mudar de caminho depois; as fichas das Missões 01 e 02 permanecem registradas e não serão alteradas. Ajuste seu projeto no GDevelop e refaça os testes necessários.</div>'+ 
  (window.PIT_ASSET_STUDIO?window.PIT_ASSET_STUDIO.render({...ctx.idea,scene:i.scene},'student'):'')+
  '<div class="m3-work-layout"><div class="m3-work-fields">'+tags.map(([num,title,desc,...keys])=>
  '<section class="m3-chapter"><span>✦ FRAGMENTO '+num+' / 03</span><h4>'+title+'</h4><p>'+desc+'</p>'+
@@ -255,7 +256,7 @@ function mount(ctx){
  }));
  root.querySelectorAll('[data-m3-type]').forEach(el=>el.addEventListener('change',()=>{
   if(!el.checked)return;
-  if(selectObjectType(d,el.value))retestMessage='Tipo de objeto alterado: confira novamente a cena, o Preview e o salvamento.';
+  if(selectObjectType(d,el.value))retestMessage='Rota 2D/3D alterada: suas fichas anteriores foram preservadas. Adapte o projeto no GDevelop e confira novamente a cena, o Preview e o salvamento.';
   save(ctx.session,d);update();
  }));
  root.querySelectorAll('[data-m3-check]').forEach(el=>el.addEventListener('change',()=>{
