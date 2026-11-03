@@ -1,7 +1,7 @@
 name: V5 H1e V3 Sunday Integration QA
 on:
   push:
-    branches: [main, feature/v5-h1e-v3-integracao-domingo, feature/v5-homologacao-20261031, fix/v3-acompanhamento-duelos-reais-20261103]
+    branches: [main, feature/v5-h1e-v3-integracao-domingo, feature/v5-homologacao-20261031, fix/v3-acompanhamento-duelos-reais-20261103, fix/20261103-duas-turmas-fichas-herois-reais]
     paths:
       - 'v3/v5-h1e-*'
       - 'v3/teacher-roster-v4.css'
