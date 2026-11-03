@@ -28,7 +28,8 @@
   ]
  };
  let context={role:document.body.dataset.role==='teacher'?'teacher':'student',
-  stage:1,status:null,approved:0,authenticated:false,visualPreview:false},
+  stage:1,status:null,approved:0,authenticated:false,visualPreview:false,
+  studentId:null,studentName:'',room:'PITGAME26'},
  tokenProvider=null,lastFocus=null,currentTab=null,tabFrame=null,focusable=[];
  const hub=document.createElement('section');
  hub.className='pit-v5-h1e-overlay';
@@ -74,7 +75,7 @@
   safety.textContent=isTeacher?'':isLive()?
    'HOMOLOGAÇÃO COM DADOS FICTÍCIOS: API isolada habilitada por configuração local. A produção permanece desligada.':
    context.visualPreview?'VISUALIZAÇÃO DE PRÉVIA: sem registros ou recompensas reais.':
-   'DADOS DO ALUNO: o orçamento abaixo é calculado pelas suas fichas aprovadas. A gravação das escolhas de talentos no servidor ainda não está disponível; nenhum personagem fictício será exibido.';
+   'MEU HERÓI REAL: os pontos vêm das fichas aprovadas. Escolhas salvas no navegador atual e transferíveis por código de ficha; sem sincronização de builds no servidor ainda.';
   statusNode.textContent=statusText();
   if(openButton){
    openButton.hidden=!context.visualPreview&&!context.authenticated&&!previewRequested;
@@ -82,20 +83,20 @@
   }
  }
  function clearFrame(){frame.removeAttribute('src');frame.title='Ferramenta V5';}
- const tabs=()=>TABS[context.role]||TABS.student;
+ const tabs=()=>context.role==='student'&&!context.visualPreview?
+  TABS.student.filter(x=>x.key==='hero'):
+  TABS[context.role]||TABS.student;
  function renderStudentHeroPanel(){
-  const approved=context.authenticated&&!context.visualPreview?context.approved:0;
-  const xp=approved*100,pts=approved*2;
-  teacherPanel.innerHTML='<div class="pit-teacher-intro"><span>✦ FORJA DO AVENTUREIRO</span><h3>Meu herói</h3>'+
-   '<p>Recompensas obtidas em fichas <strong>aprovadas pelo professor</strong>, não apenas enviadas.</p></div>'+
-   '<div class="pit-teacher-grid">'+
-    '<article><span>MISSÕES APROVADAS</span><h4>'+approved+' / 10</h4></article>'+
-    '<article><span>XP CONQUISTADO</span><h4>'+xp+' / 1.000</h4></article>'+
-    '<article><span>PONTOS DE ATRIBUTO LIBERADOS</span><h4>'+pts+'</h4></article>'+
-    '<article><span>TALENTOS DESBLOQUEADOS</span><h4>'+approved+'</h4></article></div>'+
-    '<div class="pit-teacher-state" role="status"><strong>Distribuição de atributos indisponível por enquanto</strong>'+
-    '<p>As escolhas ainda não podem ser gravadas na sua conta. Não exibimos builds de outros alunos, personagens de teste ou uma falsa confirmação de salvamento. Continue a missão; seus pontos permanecem vinculados às aprovações.</p></div>';
+  if(!window.PIT_V5_REAL_HERO){
+   teacherPanel.innerHTML='<p>Falha ao carregar a Forja. Atualize a página.</p>';
+   return;
+  }
+  const key=context.room+'-'+context.studentId+'-'+context.approved;
+  if(teacherPanel.dataset.heroKey===key&&teacherPanel.querySelector('.rhero-root'))return;
+  teacherPanel.dataset.heroKey=key;
+  window.PIT_V5_REAL_HERO.mount(teacherPanel,context);
  }
+
  function renderTeacherPanel(key){
   if(context.role!=='teacher')return;
   const level=context.stage;
@@ -190,7 +191,7 @@
  function close(){
   if(hub.hidden)return;
   hub.hidden=true;
-  clearFrame();teacherPanel.hidden=true;teacherPanel.replaceChildren();currentTab=null;
+  clearFrame();teacherPanel.hidden=true;teacherPanel.replaceChildren();delete teacherPanel.dataset.heroKey;currentTab=null;
   document.body.classList.remove('pit-v5-h1e-active');
   lastFocus?.focus?.();
  }
@@ -203,7 +204,10 @@
     value.status:null,
    approved:Number.isInteger(value.approved)?Math.max(0,Math.min(10,value.approved)):0,
    authenticated:value.authenticated===true,
-   visualPreview:value.visualPreview===true
+   visualPreview:value.visualPreview===true,
+   studentId:typeof value.studentId==='string'?value.studentId:null,
+   studentName:String(value.studentName||'Aventureiro').slice(0,56),
+   room:['PITGAME26','PITGAME26B'].includes(value.room)?value.room:'PITGAME26'
   };
   tokenProvider=typeof value.tokenProvider==='function'?value.tokenProvider:null;
   // Temporary, in-memory same-origin staging bridge. No student/PIN leaks

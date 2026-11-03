@@ -12,6 +12,8 @@ class MockPool{
   const q=sql.replace(/\s+/g,' ').trim().toLowerCase();
   if(q.startsWith('select count(*)::int as n from pit_students where joined_at'))return result([{n:students.length}]);
   if(q.startsWith('select count(*)::int as n from pit_students where room_code'))return result([{n:students.length}]);
+  if(q.startsWith('select id from pit_students where room_code=$1 and lower(btrim(display_name))=lower($2)'))return result(students.filter(x=>x.room_code===params[0]&&x.display_name.trim().toLowerCase()===String(params[1]).toLowerCase()).map(x=>({id:x.id})));
+
   if(q.startsWith('insert into pit_students(')){
    const id='00000000-0000-4000-8000-'+String(students.length+1).padStart(12,'0');
    const row={id,room_code:params[0],display_name:params[1],token_hash:params[2],joined_at:state.updated_at,last_seen_at:null,active_stage:1};
@@ -84,6 +86,7 @@ class MockPool{
    return result(students.some(s=>s.id===params[0]&&s.room_code===ROOM)?[{one:1}]:[]);
   }
 
+  console.error('ISOLATED UNMOCKED QUERY:',q.slice(0,180));
   throw Error('UNMOCKED SQL: '+q.slice(0,125));
  }
 }

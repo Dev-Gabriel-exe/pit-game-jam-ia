@@ -15,6 +15,9 @@ const db = new Pool({
   connectionTimeoutMillis: 9000
 });
 const hash = value => createHash('sha256').update(value).digest('hex');
+const newRecoveryCode=()=>randomBytes(12).toString('hex').toUpperCase().match(/.{4}/g).join('-');
+const normalizeRecovery=v=>String(v||'').toUpperCase().replace(/[-\s]/g,'');
+const validRecovery=v=>/^[0-9A-F]{24}$/.test(normalizeRecovery(v));
 const clean = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max);
 const sendError = (res, status, message) => res.status(status).json({ ok:false, error:message });
 function safeEqual(a,b) {
@@ -56,11 +59,49 @@ module.exports = async function handler(req, res) {
       if(name.length<2) return sendError(res,400,'Informe nome ou apelido com pelo menos dois caracteres.');
       const recently=await db.query("SELECT count(*)::int AS n FROM pit_students WHERE joined_at > now()-interval '1 minute' AND room_code=$1",[room]);
       if(recently.rows[0].n>=15) return sendError(res,429,'Muitas entradas simultâneas. Tente novamente em um minuto.');
+      const already=await db.query('SELECT id FROM pit_students WHERE room_code=$1 AND lower(btrim(display_name))=lower($2) LIMIT 1',[room,name]);
+      if(already.rowCount)return sendError(res,409,'Este nome já está cadastrado nesta turma. Use Retomar cadastro e seu código pessoal; se não é você, acrescente o sobrenome.');
       const count=await db.query('SELECT count(*)::int AS n FROM pit_students WHERE room_code=$1',[room]);
       if(count.rows[0].n>=160) return sendError(res,429,'Turma atingiu o limite de cadastros.');
+      const token=randomBytes(32).toString('hex'),recoveryCode=newRecoveryCode();
+      const result=await db.query(
+       'INSERT INTO pit_students(room_code,display_name,token_hash,recovery_hash) VALUES($1,$2,$3,$4) RETURNING id,display_name',
+       [room,name,hash(token),hash(normalizeRecovery(recoveryCode))]);
+      return res.status(201).json({ok:true,studentId:result.rows[0].id,name:result.rows[0].display_name,token,code:room,recoveryCode});
+    }
+    if(req.method==='POST' && action==='recover') {
+      const room=roomCode(clean(req.body?.code,18));
+      const name=clean(req.body?.name,56),secret=req.body?.recoveryCode;
+      if(!allowed(room)||name.length<2||!validRecovery(secret))
+       return sendError(res,403,'Turma, nome ou código de retorno incorreto.');
+      const match=await db.query(
+       'SELECT id,display_name FROM pit_students WHERE room_code=$1 AND lower(btrim(display_name))=lower($2) AND recovery_hash=$3 LIMIT 1',
+       [room,name,hash(normalizeRecovery(secret))]);
+      if(!match.rowCount)return sendError(res,403,'Turma, nome ou código de retorno incorreto.');
       const token=randomBytes(32).toString('hex');
-      const result=await db.query('INSERT INTO pit_students(room_code,display_name,token_hash) VALUES($1,$2,$3) RETURNING id,display_name',[room,name,hash(token)]);
-      return res.status(201).json({ok:true,studentId:result.rows[0].id,name:result.rows[0].display_name,token,code:room});
+      await db.query('UPDATE pit_students SET token_hash=$1,last_seen_at=NOW() WHERE id=$2',
+       [hash(token),match.rows[0].id]);
+      return res.status(200).json({ok:true,studentId:match.rows[0].id,
+       name:match.rows[0].display_name,token,code:room});
+    }
+    if(req.method==='POST' && action==='setup-recovery') {
+      const me=await student(req);
+      if(!me)return sendError(res,401,'Sessão do aluno inválida.');
+      const recoveryCode=newRecoveryCode();
+      await db.query('UPDATE pit_students SET recovery_hash=$1 WHERE id=$2 AND room_code=$3',
+       [hash(normalizeRecovery(recoveryCode)),me.id,me.room_code]);
+      return res.status(200).json({ok:true,recoveryCode});
+    }
+    if(req.method==='POST' && action==='teacher-reset-access') {
+      if(!teacherOK(req))return sendError(res,403,'Apenas o professor pode gerar nova chave.');
+      const room=teacherRoom(req),id=String(req.body?.studentId||'');
+      if(!room||!validId(id))return sendError(res,400,'Aluno ou turma inválido.');
+      const recoveryCode=newRecoveryCode();
+      const row=await db.query(
+       'UPDATE pit_students SET recovery_hash=$1 WHERE id=$2 AND room_code=$3 RETURNING display_name',
+       [hash(normalizeRecovery(recoveryCode)),id,room]);
+      if(!row.rowCount)return sendError(res,404,'Aluno não encontrado nesta turma.');
+      return res.status(200).json({ok:true,name:row.rows[0].display_name,recoveryCode});
     }
     if(req.method==='POST' && action==='teacher-login') {
       if(!teacherOK(req)) return sendError(res,403,'PIN do professor inválido.');
