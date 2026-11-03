@@ -1,0 +1,181 @@
+/* PIT Game Jam IA — teacher chat v4
+ * Three synchronized panels: student threads, conversation, progress context.
+ * Scoped exclusively to teacher #chatWindow; V5/GDevelop/student UI untouched.
+ */
+body[data-role="teacher"] #chatWindow{
+  right:clamp(10px,2vw,25px);bottom:14px;
+  width:min(1320px,calc(100vw - 26px));
+  height:min(800px,calc(100dvh - 32px));
+  max-height:calc(100dvh - 32px);
+  color:#f3e5d1;background:#15121b;
+  border:1px solid #a88454;
+  border-radius:17px;
+  box-shadow:0 32px 85px #07060dda,inset 0 0 0 1px #f2d2a01c;
+  font-family:Inter,"Segoe UI",system-ui,sans-serif;
+}
+body[data-role="teacher"] #chatWindow .chat-header{
+  min-height:72px;padding:14px 23px;flex-shrink:0;
+  background:linear-gradient(105deg,#33232c,#1e1c29 63%,#28212c);
+  border-bottom:1px solid #b28a598c;
+  box-shadow:inset 0 -1px #0d0b12;
+}
+body[data-role="teacher"] #chatWindow .chat-header strong{
+  color:#f6d39c;font:700 clamp(18px,1.55vw,24px) "Cinzel",Georgia,serif;
+  letter-spacing:.01em;
+}
+body[data-role="teacher"] #chatWindow .chat-header button{
+  color:#f1d7ae;background:#332c32;border:1px solid #b28a58;
+  border-radius:9px;padding:9px 17px;min-height:42px;font-size:13px;
+}
+body[data-role="teacher"] #chatWindow .chat-header button:hover{background:#4b3534}
+body[data-role="teacher"] #chatWindow .teacher-chat-layout{
+  display:grid;
+  grid-template-columns:clamp(205px,20vw,255px) minmax(0,1fr) clamp(222px,20vw,272px);
+  gap:0;min-height:0;flex:1;overflow:hidden;
+}
+body[data-role="teacher"] #chatWindow .chat-threads{
+  display:flex;flex-direction:column;flex-wrap:nowrap;gap:7px;
+  max-height:none;min-height:0;overflow:auto;
+  border:0;border-right:1px solid #805e467d;
+  padding:17px 12px;background:linear-gradient(150deg,#261f2b,#161521);
+}
+body[data-role="teacher"] #chatWindow .chat-threads:before{
+  content:"⚜  AVENTUREIROS";color:#deb783;font:700 11px Inter,"Segoe UI",sans-serif;
+  letter-spacing:.15em;padding:5px 11px 13px;border-bottom:1px solid #9c74444a;
+  margin:0 0 5px;
+}
+body[data-role="teacher"] #chatWindow .chat-threads button{
+  width:100%;display:flex;align-items:center;gap:10px;
+  min-height:63px;padding:10px 11px;background:#241d2a;
+  border:1px solid #6c51404f;border-radius:10px;
+  font-size:13px;line-height:1.3;color:#eee0ce;text-align:left;
+  transition:background .15s,border-color .15s;
+}
+body[data-role="teacher"] #chatWindow .chat-threads button:before{
+  content:"♟";display:grid;place-items:center;width:37px;height:37px;
+  flex:0 0 37px;border:1px solid #b48b58;border-radius:11px;
+  background:linear-gradient(145deg,#624338,#312736);color:#f7d7a5;font-size:22px;
+}
+body[data-role="teacher"] #chatWindow .chat-threads button:hover{
+  border-color:#d5a767;background:#3a2932;
+}
+body[data-role="teacher"] #chatWindow .chat-threads button.active,
+body[data-role="teacher"] #chatWindow .chat-threads button[aria-pressed="true"]{
+  border-color:#edc58c;color:#fff4df;background:linear-gradient(105deg,#62402f,#3c2b35);
+  box-shadow:inset 3px 0 #f1c483,0 3px 14px #0005;
+}
+body[data-role="teacher"] #chatWindow .thread-name{min-width:0;display:block;overflow-wrap:anywhere}
+body[data-role="teacher"] #chatWindow .thread-name strong{display:block;font-size:13px}
+body[data-role="teacher"] #chatWindow .thread-name small{display:block;color:#c3b09f;font-size:11px;margin-top:3px}
+body[data-role="teacher"] #chatWindow .chat-threads button.active .thread-name small{color:#eed4b5}
+body[data-role="teacher"] #chatWindow .teacher-chat-conversation{
+  display:flex;flex-direction:column;min-height:0;min-width:0;
+  background:radial-gradient(ellipse at 45% 0%,#45302c44,transparent 70%),#171621;
+}
+body[data-role="teacher"] #chatWindow .chat-status{
+  flex:0 0 auto;min-height:51px;display:flex;align-items:center;
+  padding:10px 19px;border-bottom:1px solid #8a674b68;
+  background:#28222c;color:#f0d4a9;font-size:13px;
+}
+body[data-role="teacher"] #chatWindow .chat-status[data-kind="success"]{color:#badcb6}
+body[data-role="teacher"] #chatWindow .chat-status[data-kind="error"]{color:#ffb6ba;background:#512d32}
+body[data-role="teacher"] #chatWindow .chat-messages{
+  padding:23px 22px;min-height:0;overflow-y:auto;flex:1;
+  background:radial-gradient(circle at 50% 0%,#5e3b2527,transparent 70%);
+  scrollbar-color:#9e754e #211a27;
+}
+body[data-role="teacher"] #chatWindow .msg{
+  width:fit-content;max-width:85%;margin:10px 0;
+  padding:13px 16px;border:1px solid #785c57;border-radius:13px 13px 13px 4px;
+  background:#312933;color:#f5ead9;line-height:1.5;font-size:14px;
+  overflow-wrap:anywhere;box-shadow:0 4px 14px #0806103a;
+}
+body[data-role="teacher"] #chatWindow .msg.mine{
+  margin-left:auto;border-color:#ba8856;background:#403128;
+  border-radius:13px 13px 4px 13px;
+}
+body[data-role="teacher"] #chatWindow .msg small{color:#dcc3a3;font-size:11px}
+body[data-role="teacher"] #chatWindow .msg button{
+  color:#221726;background:#ecc38f;border:1px solid #d6a36b;
+  font-size:12px;font-weight:700;padding:8px 10px;border-radius:6px;
+}
+body[data-role="teacher"] #chatWindow .chat-compose{
+  padding:13px 18px 16px;border-top:1px solid #78583b80;
+  background:#211c27;gap:8px;flex:0 0 auto;
+}
+body[data-role="teacher"] #chatWindow .chat-compose label{color:#efce9e;font-size:12px}
+body[data-role="teacher"] #chatWindow .chat-compose textarea{
+  border:1px solid #97744e;background:#120f19;color:#fff2df;
+  border-radius:9px;min-height:57px;max-height:115px;padding:11px 13px;
+  font-size:14px;resize:vertical;
+}
+body[data-role="teacher"] #chatWindow .chat-compose textarea::placeholder{color:#b29b8c}
+body[data-role="teacher"] #chatWindow .chat-compose button[type="submit"]{
+  background:linear-gradient(100deg,#e5b875,#c38a50);color:#201526;
+  border:1px solid #f0d09b;min-height:43px;font-weight:850;font-size:13px;
+}
+body[data-role="teacher"] #chatWindow .chat-compose button[type="submit"]:hover{
+  filter:brightness(1.08);
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-info{
+  display:flex;flex-direction:column;min-width:0;min-height:0;
+  padding:18px 16px 16px;overflow-y:auto;
+  border-left:1px solid #8e6a4f7a;
+  background:linear-gradient(180deg,#2c2430,#191722);
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile{text-align:center;padding-bottom:16px;border-bottom:1px solid #9e764c55}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile-avatar{
+  width:66px;height:66px;margin:2px auto 12px;display:grid;place-items:center;
+  color:#f9d8a1;font:35px Georgia,serif;border-radius:50%;
+  border:2px solid #d6a76c;background:radial-gradient(circle,#694233,#2a2030 80%);
+  box-shadow:0 0 0 5px #c99c4730,0 5px 25px #0009;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile small{font-size:10px;letter-spacing:.14em;color:#bfa786;font-weight:800}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile h3{
+  margin:8px 0 4px;font:700 16px "Cinzel",Georgia,serif;
+  overflow-wrap:anywhere;color:#f8dcab;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile p{margin:0;color:#b7a99e;font-size:12px}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile-stats{
+  display:grid;gap:0;padding:15px 0;margin-bottom:10px;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile-stats>div{
+  display:flex;flex-direction:column;gap:3px;
+  padding:11px 4px;border-bottom:1px solid #8f6e503d;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile-stats span{
+  font-size:10px;letter-spacing:.12em;color:#bda684;font-weight:800;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-profile-stats strong{
+  color:#f5e5cc;font-size:13px;font-weight:700;overflow-wrap:anywhere;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-progress-button{
+  background:linear-gradient(110deg,#bd8852,#deb47c);color:#1e1422;
+  border:1px solid #f2d49f;min-height:45px;border-radius:9px;
+  font-size:13px;font-weight:850;padding:10px 12px;
+}
+body[data-role="teacher"] #chatWindow .teacher-chat-progress-button:disabled{opacity:.42;cursor:not-allowed}
+body[data-role="teacher"] #chatWindow .teacher-chat-info-note{font-size:11px;line-height:1.55;color:#b7a08f;margin:13px 2px}
+body[data-role="teacher"] #chatWindow button:focus-visible,
+body[data-role="teacher"] #chatWindow textarea:focus-visible,
+body[data-role="teacher"] #chatWindow input:focus-visible{
+  outline:3px solid #ffdf9f;outline-offset:2px;
+}
+@media(max-width:920px){
+ body[data-role="teacher"] #chatWindow .teacher-chat-layout{grid-template-columns:minmax(155px,31%) minmax(0,1fr)}
+ body[data-role="teacher"] #chatWindow .teacher-chat-info{display:none}
+}
+@media(max-width:650px){
+ body[data-role="teacher"] #chatWindow{left:7px;right:7px;top:7px;bottom:7px;width:auto;height:auto;max-height:none}
+ body[data-role="teacher"] #chatWindow .chat-header{min-height:57px;padding:10px 11px}
+ body[data-role="teacher"] #chatWindow .chat-header strong{font-size:16px}
+ body[data-role="teacher"] #chatWindow .chat-threads{padding:8px 5px}
+ body[data-role="teacher"] #chatWindow .chat-threads button{padding:7px 5px;gap:5px;font-size:12px;min-height:52px}
+ body[data-role="teacher"] #chatWindow .chat-threads button:before{flex-basis:24px;width:24px;height:24px;font-size:15px}
+ body[data-role="teacher"] #chatWindow .chat-messages{padding:10px}
+ body[data-role="teacher"] #chatWindow .chat-compose{padding:9px}
+ body[data-role="teacher"] #chatWindow .msg{padding:10px;max-width:97%}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-role="teacher"] #chatWindow *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
