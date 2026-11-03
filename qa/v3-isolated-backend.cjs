@@ -86,6 +86,7 @@ class MockPool{
    return result(students.some(s=>s.id===params[0]&&s.room_code===ROOM)?[{one:1}]:[]);
   }
 
+  console.error('ISOLATED UNMOCKED QUERY:',q.slice(0,180));
   throw Error('UNMOCKED SQL: '+q.slice(0,125));
  }
 }
