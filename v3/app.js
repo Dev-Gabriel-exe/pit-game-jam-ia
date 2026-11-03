@@ -889,7 +889,7 @@ async function authenticate(){
  if(choice)choice.parentElement.hidden=TEACHER;
  if(recoverButton)recoverButton.hidden=TEACHER;
  if(recoverInput)recoverInput.parentElement.hidden=TEACHER;
- let recoverMode=false;
+ let recoverMode=false,cohortsReady=false;
  if(!TEACHER&&choice){
   choice.value=linkedRoom||'PITGAME26';
   $('authCode').value=choice.value;
@@ -900,8 +900,8 @@ async function authenticate(){
    fetch(BASE+'chat?action=health',{cache:'no-store',signal:AbortSignal.timeout(7000)})
    .then(r=>r.ok?r.json():null).then(v=>{
     const option=choice.querySelector('option[value="PITGAME26B"]');
-    if(option&&v?.version==='20261103-two-cohorts'){
-     option.disabled=false;option.textContent='Turma 2 · PITGAME26B';
+    if(option&&v?.version==='20261103-two-cohorts'&&v.db===true){
+     cohortsReady=true;option.disabled=false;option.textContent='Turma 2 · PITGAME26B';
     }
    }).catch(()=>{});
  }
@@ -924,6 +924,8 @@ async function authenticate(){
     sessionStorage.setItem('pit_teacher_pin',teacherPin);
    }else{
     const joinData={name:$('authName').value,code:$('authCode').value.trim()};
+    if(joinData.code.toUpperCase()==='PITGAME26B'&&!cohortsReady)
+     throw Error('A Turma 2 aguarda atualização do servidor. Nenhum cadastro foi alterado.');
     const joined=recoverMode?await call('chat','recover','POST',
       {...joinData,recoveryCode:recoverInput.value.trim()}):
       await call('chat','join','POST',joinData);
@@ -946,7 +948,7 @@ async function startApp(){
    localStorage.setItem('pit_chat_student_v09',JSON.stringify(studentSession));}
   state=data.state;progress=data.progress||[];
   activeStage=state.current_stage;activePhase='briefing';lastServerStage=state.current_stage;
-  $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name;
+  $('currentUser').textContent=TEACHER?'PROFESSOR':studentSession.name+' · '+(studentSession.room==='PITGAME26B'?'TURMA 2':'TURMA 1');
   showCohortPicker();
   renderAll();$('loading').hidden=true;$('workspace').hidden=false;
   // On F5, return to the actual in-progress caderno. The modern cinema

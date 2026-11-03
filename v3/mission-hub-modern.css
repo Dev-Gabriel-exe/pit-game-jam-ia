@@ -1,0 +1,224 @@
+/* PIT Game Jam IA — seletor de missões moderno sobre o cenário gótico V3.
+   O caderno de atividades e as 10 missões continuam intactos; este arquivo
+   modifica SOMENTE a interface do modal de seleção. */
+.pit-arcade.gallery-overlay{
+  --hub-gold:#eec68d;--hub-copper:#b36b46;--hub-paper:#f3e9db;
+  background:rgba(5,7,12,.84);
+  backdrop-filter:blur(7px);
+  padding:clamp(9px,2vh,22px) clamp(8px,2vw,28px);
+  overscroll-behavior:contain;
+}
+.pit-arcade.gallery-overlay.open{display:flex;align-items:center;justify-content:center}
+.pit-arcade .arcade-ambient{display:none}
+.pit-arcade .arcade-layout{
+  width:min(1490px,100%);max-width:1490px;max-height:calc(100dvh - 24px);
+  min-height:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  background:linear-gradient(120deg,#100f15ed,#18141bed 48%,#0c1016f2),url("./abyss-bg.svg") center / cover;
+  border:1px solid #89654d;border-radius:18px;
+  box-shadow:0 0 0 1px #251b1d,inset 0 1px #caa27a48,0 24px 100px #000d;
+  scrollbar-color:#765340 #141014;scrollbar-width:thin;
+}
+.pit-arcade .arcade-hud{
+  min-height:68px;height:auto;flex:none;display:flex;grid-template-columns:none;
+  align-items:center;justify-content:space-between;
+  padding:11px clamp(16px,2.4vw,34px);gap:12px;
+  background:linear-gradient(90deg,#0c1119ec,#25171bea 65%,#111016f2);
+  border-bottom:1px solid #8861438a;
+}
+.pit-arcade .arcade-brand{
+  font:800 clamp(15px,1.65vw,22px)/1.05 Georgia,serif;
+  letter-spacing:.09em;color:#f5e4d2
+}
+.pit-arcade .arcade-brand-mark{
+  width:39px;height:45px;border:1px solid #c49961;
+  background:linear-gradient(140deg,#824124,#20131a 60%,#473126);
+}
+.pit-arcade .arcade-brand small{color:#d4ac83;letter-spacing:.16em;font-size:9px}
+.pit-arcade .arcade-tabs{display:none}
+.pit-arcade .arcade-hud-right{gap:16px;margin-left:auto}
+.pit-arcade .arcade-player{
+  min-width:140px;max-width:260px;border-radius:8px;
+  background:#160f13a8;border-color:#70523d;
+}
+.pit-arcade .arcade-exit{
+  flex:0 0 auto;width:41px;height:41px;border-radius:11px;
+  font-size:18px;background:#28202c;border:1px solid #a18065;
+}
+.pit-arcade .arcade-heading{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,285px);
+  align-items:end;gap:25px;min-height:0;
+  padding:clamp(17px,2.9vw,36px) clamp(18px,3.2vw,50px) 15px;
+}
+.pit-arcade .arcade-title-block{
+  text-align:left;padding:0;max-width:710px
+}
+.pit-arcade .arcade-overline{font:800 10px/1.2 "Segoe UI",sans-serif;letter-spacing:.22em;color:#f4bd86}
+.pit-arcade .arcade-heading h2{
+  margin:8px 0 8px;font:700 clamp(33px,3.4vw,49px)/1.02 Georgia,serif;
+  letter-spacing:.035em;color:#f7e8d5;text-shadow:0 3px 18px #000
+}
+.pit-arcade .arcade-heading p{
+  margin:0;font:600 12px/1.5 "Segoe UI",sans-serif;
+  letter-spacing:.19em;color:#d6c3ae;
+}
+.pit-arcade .arcade-journey{
+  width:100%;max-width:290px;min-width:0;margin:0;
+  padding:15px 17px;border:1px solid #785743;border-radius:12px;
+  background:linear-gradient(145deg,#28202aa8,#12141cce);
+  box-shadow:inset 0 1px #a98b6552;
+}
+.pit-arcade .arcade-journey-head strong{font:700 25px/1 Georgia,serif;color:#f5d19d}
+.pit-arcade .arcade-journey-head small{color:#ead6c0}
+.pit-arcade .arcade-journey-rail{border-radius:12px;height:9px;overflow:hidden}
+.pit-arcade .arcade-journey-fill{border-radius:12px;background:linear-gradient(90deg,#a94431,#e8a35d,#f6d7a1)}
+.pit-arcade .arcade-line{
+  width:calc(100% - 66px);height:1px;margin:0 auto;
+  background:linear-gradient(90deg,transparent,#b98a63,transparent);box-shadow:none;
+}
+.pit-arcade .arcade-carousel-area{
+  position:relative;min-height:0;flex:0 0 auto;
+  display:flex;align-items:center;padding:21px clamp(37px,4.5vw,69px) 6px;
+}
+.pit-arcade .arcade-track{
+  width:100%;height:365px;min-height:0;max-height:none;
+  display:flex;gap:15px;align-items:stretch;
+  padding:11px 8px 17px;perspective:none;
+  overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-padding-inline:13px;
+  touch-action:pan-x pan-y;
+  scrollbar-width:thin;scrollbar-color:#a27450 #17141a;
+}
+.pit-arcade .arcade-card,
+.pit-arcade .arcade-card[data-distance],
+.pit-arcade .arcade-card.out-of-view{
+  position:relative;display:block;flex:0 0 218px;width:218px;height:326px;
+  top:auto;left:auto;transform:none;opacity:1;z-index:1;
+  padding:5px;margin:0;border:1px solid #806651;border-radius:12px;
+  background:linear-gradient(135deg,#423029,#181923 64%,#382826);
+  box-shadow:0 12px 28px #0008,inset 0 1px #d5b58c47;
+  scroll-snap-align:center;filter:none;
+  transition:border-color .22s,box-shadow .22s,filter .22s,translate .22s;
+  will-change:auto;pointer-events:auto;
+}
+.pit-arcade .arcade-card.current,
+.pit-arcade .arcade-card[data-distance="0"]{
+  border:2px solid #f7c789;
+  box-shadow:0 0 0 2px #3b211a,0 0 27px #e8a1547d,0 16px 38px #000b;
+  z-index:3;translate:0 -5px;
+}
+.pit-arcade .arcade-card.current:before{opacity:.6;border-radius:14px;filter:blur(9px)}
+.pit-arcade .arcade-card[data-state="complete"]{border-color:#cdab72}
+.pit-arcade .arcade-card[data-state="locked"]{filter:saturate(.45) brightness(.72);opacity:.75}
+.pit-arcade .arcade-card[data-state="locked"].current{filter:saturate(.7) brightness(.88);opacity:1}
+.pit-arcade .arcade-card:hover:not(.current){filter:brightness(1.13);border-color:#e7b681;translate:0 -3px}
+.pit-arcade .arcade-card[data-state="locked"]:hover:not(.current){filter:saturate(.5) brightness(.86)}
+.pit-arcade .arcade-card-button{
+  height:calc(100% - 29px);min-height:0;border-radius:8px;
+  overflow:hidden;background:#090e19
+}
+.pit-arcade .arcade-poster:after{
+  background:linear-gradient(0deg,#080910 1%,#080910e9 19%,#090a1233 55%,#0d121855);
+}
+.pit-arcade .arcade-card-bottom{bottom:12px;left:13px;right:13px;gap:5px;text-align:left}
+.pit-arcade .arcade-chapter{display:block;font:800 10px "Segoe UI",sans-serif;letter-spacing:.15em;color:#f2c78d}
+.pit-arcade .arcade-card-bottom strong{
+  min-height:0;font:800 21px/1.05 Georgia,serif;color:#fff2e5;
+  text-align:left;text-shadow:0 2px 10px #000
+}
+.pit-arcade .arcade-card-bottom small{
+  min-height:0;font-size:11px;text-align:left;line-height:1.25;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+}
+.pit-arcade .arcade-number-shield{
+  border-radius:0 0 8px 0;clip-path:none;
+  padding:9px;font-size:16px;min-width:35px;
+}
+.pit-arcade .arcade-poster-status{
+  top:12px;left:auto;right:9px;
+  background:#130e14e6;border-radius:6px;padding:5px 7px;
+  color:#ffe0a9;font-size:9px
+}
+.pit-arcade .arcade-card-footer{
+  padding:8px 6px 0;gap:6px;border-top:0;
+  font:800 10px/1.2 "Segoe UI",sans-serif;color:#edd7bd
+}
+.pit-arcade .arcade-arrow{
+  z-index:7;top:50%;margin-top:-26px;width:39px;height:47px;
+  font-size:30px;border-radius:12px;
+  background:#251e26;border:1px solid #b48a62;
+  box-shadow:0 6px 16px #0009
+}
+.pit-arcade .arcade-arrow.prev{left:13px}
+.pit-arcade .arcade-arrow.next{right:13px}
+.pit-arcade .arcade-dossier{
+  width:calc(100% - clamp(32px,6.5vw,100px));margin:9px auto 5px;
+  padding:18px 23px;gap:17px;align-items:center;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  border:1px solid #806044;border-radius:13px;
+  background:linear-gradient(110deg,#271c21d9,#171720ed 70%,#241b22e3);
+  box-shadow:0 0 0 1px #130c10,0 10px 30px #0008;
+}
+.pit-arcade .arcade-dossier h3{
+  font:700 clamp(24px,2.3vw,32px)/1.08 Georgia,serif;color:#f8dfbd
+}
+.pit-arcade .arcade-dossier p{font:500 13px/1.5 "Segoe UI",sans-serif;color:#e0d4c8}
+.pit-arcade .arcade-outcome{font-size:12px;color:#c9b9a8}
+.pit-arcade .arcade-dossier-actions{min-width:205px}
+.pit-arcade .arcade-enter{
+  border-radius:10px;padding:13px 16px;min-height:47px;
+  border:1px solid #fbd396;background:linear-gradient(180deg,#ffdf9b,#d89649);
+  color:#28150a;box-shadow:0 5px 22px #b76a325c;
+  font:800 14px "Segoe UI",sans-serif;letter-spacing:.02em
+}
+.pit-arcade .arcade-enter:disabled{background:#333039;border-color:#63565a;color:#c0b4b4}
+.pit-arcade .arcade-chapters{
+  margin:4px auto 0;padding:11px 12px 20px;
+  width:min(1100px,94%);flex-wrap:wrap;gap:10px;
+}
+.pit-arcade .arcade-chapters:before{display:none}
+.pit-arcade .arcade-chapter-dot{
+  width:38px;height:38px;border-radius:11px;
+  background:#261d25;border:1px solid #85624c;
+  box-shadow:inset 0 1px #c59d7447;
+}
+.pit-arcade .arcade-chapter-dot.current{
+  background:#76402b;border-color:#f1c793;box-shadow:0 0 16px #d58b526e;
+}
+.pit-arcade .arcade-footer-runes{font-size:9px;margin-bottom:8px;color:#a78970}
+@media(max-width:920px){
+  .pit-arcade .arcade-heading{grid-template-columns:1fr;gap:12px}
+  .pit-arcade .arcade-journey{max-width:100%}
+  .pit-arcade .arcade-hud{display:flex;grid-template-columns:none}
+  .pit-arcade .arcade-card,
+  .pit-arcade .arcade-card[data-distance],
+  .pit-arcade .arcade-card.out-of-view{flex-basis:200px;width:200px}
+  .pit-arcade .arcade-dossier{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .pit-arcade.gallery-overlay{padding:0}
+  .pit-arcade .arcade-layout{width:100%;max-height:100dvh;min-height:100dvh;border-radius:0}
+  .pit-arcade .arcade-hud{padding:9px 12px}
+  .pit-arcade .arcade-brand{font-size:15px}
+  .pit-arcade .arcade-player{display:none}
+  .pit-arcade .arcade-heading{display:grid;grid-template-columns:1fr;padding:20px 15px 13px}
+  .pit-arcade .arcade-heading h2{font-size:31px;letter-spacing:.04em}
+  .pit-arcade .arcade-heading p{font-size:10px}
+  .pit-arcade .arcade-journey{max-width:none}
+  .pit-arcade .arcade-line{width:90%}
+  .pit-arcade .arcade-carousel-area{padding:15px 33px 3px}
+  .pit-arcade .arcade-track{height:320px;padding:10px 5px;gap:11px}
+  .pit-arcade .arcade-card,
+  .pit-arcade .arcade-card[data-distance],
+  .pit-arcade .arcade-card.out-of-view{flex-basis:190px;width:190px;height:292px}
+  .pit-arcade .arcade-card-bottom strong{font-size:18px}
+  .pit-arcade .arcade-arrow{width:29px;height:40px;top:48%;font-size:25px;margin-top:-20px}
+  .pit-arcade .arcade-arrow.prev{left:1px}
+  .pit-arcade .arcade-arrow.next{right:1px}
+  .pit-arcade .arcade-dossier{width:calc(100% - 24px);padding:15px;margin-top:9px}
+  .pit-arcade .arcade-chapters{width:100%;gap:5px;padding:10px 9px 14px}
+  .pit-arcade .arcade-chapter-dot{width:30px;height:32px}
+}
+@media(prefers-reduced-motion:reduce){
+  .pit-arcade .arcade-card,.pit-arcade .arcade-card.current{translate:none;transition:none!important}
+  .pit-arcade .arcade-mission-photo{animation:none!important}
+}

@@ -141,6 +141,19 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  if(!(await sp.locator('#missionGallery').evaluate(el=>el.classList.contains('open'))))await sp.locator('#openGallery').click();
  await sp.locator('#missionGallery.open').waitFor();
  assert.equal(await sp.locator('.arcade-card').count(),10,'student cinematic carousel contains ten mission cards');
+ assert.equal(await sp.locator('#arcadeHeading').innerText(),'ESCOLHER MISSÃO','mission picker is not a second student notebook');
+ const modern=await sp.locator('#missionGalleryGrid').evaluate(el=>{
+  const card=el.querySelector('.arcade-card');
+  return {display:getComputedStyle(el).display,snap:getComputedStyle(el).scrollSnapType,
+   cardPosition:getComputedStyle(card).position,cardTransform:getComputedStyle(card).transform,
+   cardWidth:card.getBoundingClientRect().width};
+ });
+ assert.equal(modern.display,'flex','mission selector must use an aligned modern horizontal rail');
+ assert.match(modern.snap,/x/,'mission rail must be scroll-snappable');
+ assert.equal(modern.cardPosition,'relative','no absolute overlapping carousel cards');
+ assert.equal(modern.cardTransform,'none','no legacy 3D stack transforms');
+ assert(modern.cardWidth>=180,'mission cards must remain legible');
+
  await sp.locator('#missionGalleryClose').click();
  await sp.locator('#missionGallery.open').waitFor({state:'hidden'});
  assert.equal(await sp.locator('.stage-btn[data-stage="2"]').isDisabled(),true,'next stage locked by teacher');
