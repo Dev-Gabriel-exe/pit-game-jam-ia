@@ -143,15 +143,21 @@
      const startDisabled=!waiting||lobby.joinedCount<2;
      return '<section class="pit-live-panel"><span class="pit-live-mission">MISSÃO '+String(m).padStart(2,'0')+'</span>'+
       '<h4>'+(m===5?'Primeira arena':'Grande final')+'</h4><p>'+ready.length+' alunos com heróis aptos na turma.</p>'+
-      (record?'<button type="button" data-view="'+esc(record.id)+'">▶ Rever arena M'+m+'</button>':
-       waiting?'<div class="pit-live-count">👥 '+lobby.joinedCount+' / 30 confirmados</div>'+
+      (waiting?'<div class="pit-live-count">👥 '+lobby.joinedCount+' / 30 confirmados</div>'+
         '<div class="pit-live-actions"><button type="button" data-start="'+m+'" '+(startDisabled?'disabled':'')+'>▶ Iniciar batalha ('+lobby.joinedCount+')</button>'+
         '<button type="button" data-cancel="'+m+'">✕ Fechar sala</button></div>'+
         '<small>'+(startDisabled?'Mínimo de dois alunos para iniciar.':'Pronto para iniciar apenas com quem entrou.')+'</small>':
-       '<button type="button" data-open="'+m+'" '+(locked||ready.length<2?'disabled':'')+'>🏟 Abrir sala de espera M'+m+'</button>'+
+       '<button type="button" data-open="'+m+'" '+(locked||ready.length<2?'disabled':'')+'>'+
+        (record?'🏟 Abrir nova rodada M'+m:'🏟 Abrir sala de espera M'+m)+'</button>'+
        '<small>'+(locked?'Libere esta missão e feche a sala anterior antes.':ready.length<2?'São necessários dois heróis aptos.':'Os alunos verão o botão Entrar na Arena em suas telas.')+'</small>')+
+      (record?'<div class="pit-live-actions"><button type="button" data-view="'+esc(record.id)+'">▶ Rever última arena M'+m+'</button></div>':'')+
       '</section>';
     }).join('')+'</div>'+
+    '<section class="pit-live-panel"><h4>Histórico das arenas</h4>'+
+    ((d.arena||[]).length?(d.arena||[]).map(x=>'<div class="pit-live-row"><span>Missão '+x.mission+
+      ' · '+new Date(x.createdAt).toLocaleString('pt-BR')+
+      ' · '+x.fighters+' participantes</span><button type="button" data-view="'+esc(x.id)+'">▶ Rever</button></div>').join(''):
+      '<p>Nenhuma arena realizada nesta turma.</p>')+'</section>'+
     '<section class="pit-live-panel"><h4>Alunos e personagens</h4>'+
     '<div class="pit-live-roster">'+roster.map(x=>'<div>'+esc(x.name)+'<span>'+
     (x.heroSaved?'✦ Herói salvo · ':'Sem herói salvo · ')+x.approved+'/10 aprovadas</span></div>').join('')+'</div></section>';
@@ -168,7 +174,7 @@
       '<button type="button" data-join="'+lobby.mission+'" '+(!qualifies?'disabled':'')+'>⚔ Entrar na arena</button>')+'</div></section>':
     '<section class="pit-live-panel"><p>Não há arena aberta neste momento. Quando o professor abrir, aparecerá um botão de entrada na sua tela.</p></section>')+
     '<section class="pit-live-panel"><h4>Arenas realizadas nesta turma</h4>'+
-    (arenas.length?arenas.map(x=>'<div class="pit-live-row"><span>🏟 Arena da Missão '+x.mission+
+    (arenas.length?arenas.map(x=>'<div class="pit-live-row"><span>🏟 Arena da Missão '+x.mission+' · '+new Date(x.createdAt).toLocaleString('pt-BR')+
      (x.joined?' · Você participou':' · Modo espectador')+'</span>'+
      '<button type="button" data-view="'+esc(x.id)+'">▶ Assistir em 3D</button></div>').join(''):
      '<p>A primeira batalha ainda não começou.</p>')+'</section>';
