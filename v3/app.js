@@ -1053,6 +1053,7 @@ function renderStudentDetails(){
  (user.stages||[]).map(st=>'<div class="concept-card"><strong>Missão '+String(st.stage).padStart(2,'0')+' · '+esc(mission(st.stage).title)+'</strong>'+
  '<span class="state-pill '+esc(st.status)+'">'+esc(chooseStatus(st.status))+'</span><p>Rota '+esc(String(st.route||'2d').toUpperCase())+'</p><div class="roster-evidence"><b>REGISTRO DO ALUNO</b><pre>'+esc(st.evidence||'Nenhum registro')+'</pre></div>'+
  (st.feedback?'<p><b>Retorno anterior:</b> '+esc(st.feedback)+'</p>':'')+
+ (st.status==='approved'&&!(user.stages||[]).some(next=>Number(next.stage)>Number(st.stage))?'<div class="buttonrow"><button class="outline btnsmall" data-undo-approval="'+st.stage+'">↶ Desfazer aprovação</button></div>':'')+
  (st.status==='submitted'?'<div class="formline"><label>Devolutiva ao aluno</label><textarea class="review-comment" data-n="'+st.stage+'" maxlength="550" placeholder="Para pedir revisão, descreva o teste que deve ser repetido (mín. 8 caracteres)."></textarea><small>Obrigatória ao pedir revisão; opcional para aprovação.</small></div><div class="buttonrow"><button class="action btnsmall" data-review="approved" data-stage="'+st.stage+'">✓ Aprovar</button><button class="outline btnsmall" data-review="revision" data-stage="'+st.stage+'">↻ Pedir revisão</button></div>':'')+'</div>').join('')+
  (!(user.stages||[]).length?'<p class="notice">O estudante ainda não registrou prática.</p>':'')+'</div>';
  $('rosterBack').onclick=()=>{selectedRoster=null;renderRoster()};
@@ -1101,6 +1102,17 @@ function renderStudentDetails(){
   }catch(e){setToast(e.message,true)}
   finally{resetAccess.disabled=false}
  };
+ $('rosterContent').querySelectorAll('[data-undo-approval]').forEach(btn=>btn.onclick=async()=>{
+  const n=Number(btn.dataset.undoApproval);
+  if(!window.confirm('Desfazer aprovação da Missão '+String(n).padStart(2,'0')+' de '+String(user.display_name||'este aluno')+'?\\n\\nA entrega voltará a ficar pendente. Esta ação só é permitida antes de o aluno iniciar uma missão posterior.'))return;
+  if(!window.confirm('ÚLTIMA CONFIRMAÇÃO: deseja realmente retirar a aprovação desta missão?'))return;
+  btn.disabled=true;
+  try{
+   await call('classroom','undo-review','POST',{studentId:user.id,stage:n});
+   setToast('Aprovação desfeita. A entrega voltou para análise.');
+   await loadRoster();
+  }catch(e){setToast(e.message,true);btn.disabled=false}
+ });
  $('rosterContent').querySelectorAll('[data-review]').forEach(btn=>btn.onclick=async()=>{
   const n=Number(btn.dataset.stage),field=$('rosterContent').querySelector('textarea[data-n="'+n+'"]'),comment=field?.value?.trim()||'';
   if(btn.dataset.review==='approved'){
