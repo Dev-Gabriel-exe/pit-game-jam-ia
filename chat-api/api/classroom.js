@@ -110,6 +110,23 @@ module.exports=async function handler(req,res){
    return res.json({ok:true,progress:r.rows[0]});
   }
 
+  if(req.method==='POST'&&action==='undo-review'){
+   if(!isTeacher)return err(res,403,'Apenas o professor pode desfazer aprovações.');
+   const id=clean(req.body?.studentId,40),stage=stageOf(req.body?.stage);
+   if(!/^[0-9a-f-]{36}$/i.test(id)||!stage)return err(res,400,'Aluno ou etapa inválida.');
+   // No rollback after the student has started/submitted a subsequent mission.
+   // This protects progression and avoids silently revoking dependent work.
+   const result=await pool.query(
+     "UPDATE pit_student_stages SET status='submitted',reviewed_at=NULL,updated_at=NOW() "+
+     "WHERE student_id=$1 AND stage=$2 AND status='approved' "+
+     "AND EXISTS (SELECT 1 FROM pit_students s WHERE s.id=$1 AND s.room_code=$3) "+
+     "AND NOT EXISTS (SELECT 1 FROM pit_student_stages next_stage WHERE next_stage.student_id=$1 AND next_stage.stage>$2) "+
+     "RETURNING stage,status,feedback",
+     [id,stage,room]);
+   if(!result.rowCount)return err(res,409,'Não foi possível desfazer: a missão não está aprovada ou o aluno já iniciou uma missão seguinte.');
+   return res.json({ok:true,progress:result.rows[0]});
+  }
+
   if(req.method==='POST'&&action==='delete-student'){
    if(!isTeacher)return err(res,403,'Somente o professor pode excluir contas.');
    const id=clean(req.body?.studentId,40),confirmName=clean(req.body?.confirmName,100);
