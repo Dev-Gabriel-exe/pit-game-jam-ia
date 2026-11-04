@@ -1103,6 +1103,11 @@ function renderStudentDetails(){
  };
  $('rosterContent').querySelectorAll('[data-review]').forEach(btn=>btn.onclick=async()=>{
   const n=Number(btn.dataset.stage),field=$('rosterContent').querySelector('textarea[data-n="'+n+'"]'),comment=field?.value?.trim()||'';
+  if(btn.dataset.review==='approved'){
+   const studentName=String(user.name||user.display_name||user.nickname||'este aluno');
+   const confirmed=window.confirm('CONFIRMAR APROVAÇÃO\\n\\nAluno: '+studentName+'\\nMissão: '+String(n).padStart(2,'0')+'\\n\\nA aprovação libera o avanço e impede o aluno de editar esta entrega.\\n\\nDeseja realmente aprovar?');
+   if(!confirmed)return;
+  }
   if(btn.dataset.review==='revision'&&comment.length<8){
    setToast('Explique qual teste o estudante deve repetir (mínimo 8 caracteres).',true);
    field?.focus();return;
