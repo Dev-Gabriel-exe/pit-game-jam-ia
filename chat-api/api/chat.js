@@ -19,6 +19,8 @@ const newRecoveryCode=()=>randomBytes(12).toString('hex').toUpperCase().match(/.
 const normalizeRecovery=v=>String(v||'').toUpperCase().replace(/[-\s]/g,'');
 const validRecovery=v=>/^[0-9A-F]{24}$/.test(normalizeRecovery(v));
 const clean = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max);
+// Preserve newlines in tutorial/chat messages while excluding unsafe control characters.
+const cleanMessage = (v, max) => String(v == null ? '' : v).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').trim().slice(0,max);
 const sendError = (res, status, message) => res.status(status).json({ ok:false, error:message });
 function safeEqual(a,b) {
   const x=Buffer.from(String(a||'')), y=Buffer.from(String(b||''));
@@ -230,7 +232,7 @@ module.exports = async function handler(req, res) {
         if(!me) return sendError(res,401,'Sessão do aluno inválida.');
         id=me.id;room=me.room_code;
       }
-      const body=clean(req.body?.body,MAX_BODY);
+      const body=cleanMessage(req.body?.body,MAX_BODY);
       if(body.length<2) return sendError(res,400,'Escreva pelo menos dois caracteres.');
       const author=teacher?'teacher':'student';
       const count=await db.query(
