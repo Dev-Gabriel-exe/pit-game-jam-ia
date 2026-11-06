@@ -1278,11 +1278,18 @@ async function openChatImage(id,button){
   button.replaceWith(img);
  }catch(error){setChatStatus(error.message,'error');button.disabled=false}
 }
+// Display saved tutorials safely, including messages written before newline preservation.
+function formatChatMessage(value){
+ let raw=String(value||'').replace(/\r\n?/g,'\n');
+ // Earlier server versions replaced paragraph breaks with spaces. Restore numbered steps.
+ raw=raw.replace(/\s+(?=(?:[1-9]|1[0-9])\.\s+(?:[A-Za-zÀ-ÿ*]))/g,'\n');
+ return esc(raw).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+}
 function renderChat(messages){
  const el=$('chatMessages'),prevBottom=el.scrollHeight-el.scrollTop-el.clientHeight;
  el.innerHTML=(messages||[]).map(m=>{
   const mine=(TEACHER&&m.author==='teacher')||(!TEACHER&&m.author==='student');
-  return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+(m.body==='[Imagem]'||/^\[Imagem\]\r?\n/.test(m.body||'')?'<button type="button" data-image-id="'+Number(m.id)+'">🖼️ Abrir imagem privada</button>'+(m.body.length>8?'<p style="overflow-wrap:anywhere;white-space:pre-wrap;margin:8px 0 0">'+esc(m.body.replace(/^\[Imagem\]\r?\n/,''))+'</p>':''):'<div class="pit-chat-message-text">'+esc(m.body||'')+'</div>')+'</div>'
+  return '<div class="msg '+(mine?'mine':'')+'"><small>'+esc(m.author==='teacher'?'Professor':'Aluno')+(m.mission?' · Etapa '+String(m.mission).padStart(2,'0'):'')+' · '+new Date(m.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</small>'+(m.body==='[Imagem]'||/^\[Imagem\]\r?\n/.test(m.body||'')?'<button type="button" data-image-id="'+Number(m.id)+'">🖼️ Abrir imagem privada</button>'+(m.body.length>8?'<p style="overflow-wrap:anywhere;white-space:pre-wrap;margin:8px 0 0">'+formatChatMessage(m.body.replace(/^\[Imagem\]\r?\n/,''))+'</p>':''):'<div class="pit-chat-message-text">'+formatChatMessage(m.body||'')+'</div>')+'</div>'
  }).join('')||'<div class="chat-empty"><strong>Nenhuma mensagem ainda</strong>'+(TEACHER?'Selecione uma conversa e envie uma orientação.':'Descreva em qual missão e passo você precisa de ajuda.')+'</div>';
  el.querySelectorAll('[data-image-id]').forEach(button=>button.onclick=()=>openChatImage(button.dataset.imageId,button));
  if(prevBottom<120)el.scrollTop=el.scrollHeight;
