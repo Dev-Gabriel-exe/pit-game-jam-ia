@@ -37,3 +37,16 @@
  .chat-compose textarea{min-height:65px}
 }
 @media(prefers-reduced-motion:reduce){.chat-window *{transition:none!important;animation:none!important}}
+
+/* Preserve tutorial formatting in both professor and student private chats.
+   Message content remains HTML-escaped by app.js (no unsafe HTML parsing). */
+.chat-messages .pit-chat-message-text{
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ word-break:normal;
+ line-height:1.65;
+ margin:8px 0 0;
+ font-size:inherit;
+ tab-size:2;
+}
+.chat-messages .pit-chat-message-text:first-child{margin-top:0}
